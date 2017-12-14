@@ -4,3 +4,4 @@ kramdown:
   parse_block_html: true
 
 exclude: [Gemfile, Gemfile.lock]
+theme: jekyll-theme-architect

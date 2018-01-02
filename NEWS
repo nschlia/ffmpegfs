@@ -1,6 +1,6 @@
 ffmpegfs NEWS
 
-Important changes in 0.95 (2017-12-XX)
+Important changes in 0.95 (2017-12-29)
 
 NOTE: The cache format has changed and is not compatible with prior versions.
       Please do a "rm -Rf /tmp/ffmpegfs" before starting this version to
@@ -26,6 +26,9 @@ Changes in this release:
 * Set gcc optimisation higer (now -o3).
 
 Important changes in 0.94 (2017-12-19)
+
+nschlia@oblivion-software.de
+
 
 Changes in this release:
 * Decided to rename mp3fs to ffmpegfs because the project has grown far beyond

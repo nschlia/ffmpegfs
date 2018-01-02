@@ -1679,7 +1679,11 @@ int FFMPEG_Transcoder::process_metadata()
 {
     ffmpegfs_trace("Processing metadata for '%s'.", m_in.m_pFormat_ctx->filename);
 
+#if (LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ) )
     if (m_in.m_pAudio_stream != NULL && m_in.m_pAudio_stream->codecpar->codec_id == AV_CODEC_ID_VORBIS)
+#else
+    if (m_in.m_pAudio_stream != NULL && m_in.m_pAudio_stream->codec->codec_id == AV_CODEC_ID_VORBIS)
+#endif
     {
         // For some formats (namely ogg) FFmpeg returns the tags, odd enough, with streams...
         copy_metadata(&m_out.m_pFormat_ctx->metadata, m_in.m_pAudio_stream->metadata);

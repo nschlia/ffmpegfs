@@ -807,7 +807,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
                 (void *)buffer,
                 NULL /*readPacket*/,
                 writePacket,
-                (m_out.m_output_type == TYPE_MP4) ? seek : NULL);
+                seek);
 
     /** Associate the output file (pointer) with the container format context. */
     m_out.m_pFormat_ctx->pb = output_io_context;

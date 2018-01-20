@@ -1,5 +1,13 @@
 ffmpegfs NEWS
 
+Important changes in 1.00 (2018-01-xx)
+
+Changes in this release:
+* Cheers! Made it! This is release version 1.0, the first production release.
+* Fixed compile for FFmpeg versions prior to 3.0.
+
+nschlia@oblivion-software.de
+
 Important changes in 0.95 (2017-12-29)
 
 NOTE: The cache format has changed and is not compatible with prior versions.
@@ -25,10 +33,9 @@ Changes in this release:
 * Report compiler version when run with -v parameter.
 * Set gcc optimisation higer (now -o3).
 
-Important changes in 0.94 (2017-12-19)
-
 nschlia@oblivion-software.de
 
+Important changes in 0.94 (2017-12-19)
 
 Changes in this release:
 * Decided to rename mp3fs to ffmpegfs because the project has grown far beyond

@@ -79,6 +79,7 @@ protected:
     static int64_t seek(void * pOpaque, int64_t i4Offset, int nWhence);
 
     int64_t get_output_bit_rate(AVStream *in_stream, int64_t max_bit_rate) const;
+    double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio);
 
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags);
 

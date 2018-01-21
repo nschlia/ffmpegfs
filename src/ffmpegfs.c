@@ -62,11 +62,9 @@ struct ffmpegfs_params params =
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
 
     .m_videobitrate       	= 2000000,                  // default: 2 MBit
-#ifndef DISABLE_AVFILTER
     .m_videowidth           = 0,                        // default: do not change width
     .m_videoheight          = 0,                        // default: do not change height
     .m_deinterlace          = 0,                        // default: do not interlace video
-#endif
 
     .m_debug              	= 0,                        // default: no debug messages
     .m_log_maxlevel       	= "INFO",                   // default: INFO level
@@ -123,14 +121,12 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Video
     FUSE_OPT_KEY("--videobitrate=%s",           KEY_VIDEO_BITRATE),
     FUSE_OPT_KEY("videobitrate=%s",             KEY_VIDEO_BITRATE),
-#ifndef DISABLE_AVFILTER
-    FFMPEGFS_OPT("--videoheight=%u",            m_videowidth, 0),
-    FFMPEGFS_OPT("videoheight=%u",              m_videowidth, 0),
-    FFMPEGFS_OPT("--videowidth=%u",             m_videoheight, 0),
-    FFMPEGFS_OPT("videowidth=%u",               m_videoheight, 0),
+    FFMPEGFS_OPT("--videoheight=%u",            m_videoheight, 0),
+    FFMPEGFS_OPT("videoheight=%u",              m_videoheight, 0),
+    FFMPEGFS_OPT("--videowidth=%u",             m_videowidth, 0),
+    FFMPEGFS_OPT("videowidth=%u",               m_videowidth, 0),
     FFMPEGFS_OPT("--deinterlace",               m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                 m_deinterlace, 1),
-#endif
 
     // Cache
     FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
@@ -233,7 +229,6 @@ static void usage(char *name)
           "                           Video encoding bit rate. Setting this too high or low may\n"
           "                           cause transcoding to fail.\n"
           "                           Default: 2 Mbit\n"
-      #ifndef DISABLE_AVFILTER
           "    --videoheight=HEIGHT, -o videoheight=HEIGHT\n"
           "                           Sets the height of the target video.\n"
           "                           When the video is rescaled the aspect ratio is\n"
@@ -249,7 +244,6 @@ static void usage(char *name)
           "                           May need higher bit rate, but will increase picture qualitiy\n"
           "                           when streaming via HTML5.\n"
           "                           Default: no deinterlace\n"
-      #endif
           "\n"
           "BITRATE can be defined as...\n"
           " * n bit/s:  #  or #bps\n"
@@ -754,6 +748,8 @@ static void print_params()
     enum AVCodecID video_codecid = AV_CODEC_ID_NONE;
     char audiobitrate[100];
     char audiosamplerate[100];
+    char width[100];
+    char height[100];
     char videobitrate[100];
     char expiry_time[100];
     char max_inactive_suspend[100];
@@ -773,6 +769,8 @@ static void print_params()
 
     format_bitrate(audiobitrate, sizeof(audiobitrate), params.m_audiobitrate);
     format_samplerate(audiosamplerate, sizeof(audiosamplerate), params.m_audiosamplerate);
+    format_number(width, sizeof(width), params.m_videowidth);
+    format_number(height, sizeof(height), params.m_videoheight);
     format_bitrate(videobitrate, sizeof(videobitrate), params.m_videobitrate);
     format_time(expiry_time, sizeof(expiry_time), params.m_expiry_time);
     format_time(max_inactive_suspend, sizeof(expiry_time), params.m_max_inactive_suspend);
@@ -796,18 +794,19 @@ static void print_params()
               #ifndef DISABLE_ISMV
                                "Use ISMV          : %s\n"
               #endif
+                               "\nAudio\n\n"
                                "Audio Format      : %s\n"
                                "Audio Bitrate     : %s\n"
                                "Audio Sample Rate : %s\n"
-              #ifndef DISABLE_AVFILTER
-                               "Video Size        : %ux%u pixels\n"
+                               "\nVideo\n\n"
+                               "Video Size/Pixels : width=%s height=%s\n"
                                "Deinterlace       : %s\n"
-              #endif
                                "Video Format      : %s\n"
                                "Video Bitrate     : %s\n"
+                               "\nLogging\n\n"
                                "Max. Log Level    : %s\n"
-                               "Log to stderr     : %u\n"
-                               "Log to syslog     : %u\n"
+                               "Log to stderr     : %s\n"
+                               "Log to syslog     : %s\n"
                                "Logfile           : %s\n"
                                "\nCache Settings\n\n"
                                "Expiry Time       : %s\n"
@@ -818,6 +817,7 @@ static void print_params()
                                "Cache Path        : %s\n"
                                "Disable Cache     : %s\n"
                                "Maintenance Timer : %s\n"
+                               "\nVarious Options\n\n"
                                "Max. Threads      : %s\n"
                   ,
                   params.m_basepath,
@@ -829,16 +829,13 @@ static void print_params()
                   get_codec_name(audio_codecid),
                   audiobitrate,
                   audiosamplerate,
-              #ifndef DISABLE_AVFILTER
-                  params.m_videowidth,
-                  params.m_videoheight,
+                  width, height,
                   params.m_deinterlace ? "yes" : "no",
-              #endif
                   get_codec_name(video_codecid),
                   videobitrate,
                   params.m_log_maxlevel,
-                  params.m_log_stderr,
-                  params.m_log_syslog,
+                  params.m_log_stderr ? "yes" : "no",
+                  params.m_log_syslog ? "yes" : "no",
                   *params.m_logfile ? params.m_logfile : "none",
                   expiry_time,
                   max_inactive_suspend,

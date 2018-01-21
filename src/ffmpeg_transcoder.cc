@@ -418,6 +418,39 @@ int64_t FFMPEG_Transcoder::get_output_bit_rate(AVStream *in_stream, int64_t max_
     return real_bit_rate;
 }
 
+double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio)
+{
+    double dblAspectRatio = 0;
+
+    // Try to determine display aspect ratio
+    AVRational dar;
+    ::av_reduce(&dar.num, &dar.den,
+                width  * sample_aspect_ratio.num,
+                height * sample_aspect_ratio.den,
+                1024 * 1024);
+
+    if (dar.num && dar.den)
+    {
+        dblAspectRatio = ::av_q2d(dar);
+    }
+
+    // If that fails, try sample aspect ratio instead
+    if (dblAspectRatio <= 0.0 && sample_aspect_ratio.num != 0)
+    {
+        dblAspectRatio = ::av_q2d(sample_aspect_ratio);
+    }
+
+    // If even that fails, try to use video size
+    if (dblAspectRatio <= 0.0 && height)
+    {
+        dblAspectRatio = (double)width / (double)height;
+    }
+
+    // Return value or 0 if all above failed
+    return dblAspectRatio;
+}
+
+
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
     AVCodecContext *codec_ctx           = NULL;
@@ -510,15 +543,72 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         codec_ctx->bit_rate             = (int)get_output_bit_rate(m_in.m_pVideo_stream, params.m_videobitrate);
         //codec_ctx->bit_rate_tolerance   = 0;
-        /* Resolution must be a multiple of two. */
+        // Resolution must be a multiple of two.
+
         codec_ctx->width                = in_video_stream->codec->width;
         codec_ctx->height               = in_video_stream->codec->height;
-        /* timebase: This is the fundamental unit of time (in seconds) in terms
-         * of which frame timestamps are represented. For fixed-fps content,
-         * timebase should be 1/framerate and timestamp increments should be
-         * identical to 1. */
+
+        if (params.m_videowidth || params.m_videoheight)
+        {
+            // Use command line argument(s)
+            int width;
+            int height;
+
+            if (params.m_videowidth && params.m_videoheight)
+            {
+                // Both width/source set. May look strange, but this is an order...
+                width                   = params.m_videowidth;
+                height                  = params.m_videoheight;
+            }
+            else if (params.m_videowidth)
+            {
+                // Only video width
+                double ratio = get_aspect_ratio(codec_ctx->width, codec_ctx->height, codec_ctx->sample_aspect_ratio);
+
+                width                   = params.m_videowidth;
+
+                if (!ratio)
+                {
+                    height              = codec_ctx->height;
+                }
+                else
+                {
+                    height              = (int)(params.m_videowidth / ratio);
+                    height &= ~((int)0x1);
+                }
+            }
+            else //if (params.m_videoheight)
+            {
+                // Only video height
+                double ratio = get_aspect_ratio(codec_ctx->width, codec_ctx->height, codec_ctx->sample_aspect_ratio);
+
+                if (!ratio)
+                {
+                    width               = codec_ctx->width;
+                }
+                else
+                {
+                    width               = (int)(params.m_videoheight * ratio);
+                    width &= ~((int)0x1);
+                }
+                height                  = params.m_videoheight;
+            }
+
+            if (codec_ctx->width > width || codec_ctx->height > height)
+            {
+                ffmpegfs_info("Changing video size from %i/%i to %i/%i for '%s'.", codec_ctx->width, codec_ctx->height, width, height, m_in.m_pFormat_ctx->filename);
+                codec_ctx->width        = width;
+                codec_ctx->height       = height;
+            }
+        }
+
+
+        // timebase: This is the fundamental unit of time (in seconds) in terms
+        // of which frame timestamps are represented. For fixed-fps content,
+        // timebase should be 1/framerate and timestamp increments should be
+        // identical to 1.
         //stream->time_base               = in_video_stream->time_base;
-        out_video_stream->time_base               = { 1, 90000 }; // ??? Fest setzen für MP4?
+        out_video_stream->time_base     = { 1, 90000 }; // TODO: Needs that to be fixed??? Seems so at least.
         codec_ctx->time_base            = out_video_stream->time_base;
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
         codec_ctx->pix_fmt       		= AV_PIX_FMT_YUV420P;
@@ -527,10 +617,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 in_video_stream->codec->width != codec_ctx->width ||
                 in_video_stream->codec->height != codec_ctx->height)
         {
-            // Rescal image if required
+            // Rescale image if required
             const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)in_video_stream->codec->pix_fmt);
             const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(codec_ctx->pix_fmt);
-            ffmpegfs_debug("Initialising pixel format conversion from %s to %s for '%s'.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-", m_in.m_pFormat_ctx->filename);
+            if (in_video_stream->codec->pix_fmt != codec_ctx->pix_fmt)
+            {
+                ffmpegfs_info("Initialising pixel format conversion from %s to %s for '%s'.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-", m_in.m_pFormat_ctx->filename);
+            }
             assert(m_pSws_ctx == NULL);
             m_pSws_ctx = sws_getContext(
                         // Source settings
@@ -541,7 +634,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         codec_ctx->width,                       // width
                         codec_ctx->height,                      // height
                         codec_ctx->pix_fmt,                     // format
-                        SWS_BICUBIC, NULL, NULL, NULL);
+                        SWS_FAST_BILINEAR, NULL, NULL, NULL);
             if (!m_pSws_ctx)
             {
                 ffmpegfs_error("Could not allocate scaling/conversion context for '%s'.", m_in.m_pFormat_ctx->filename);
@@ -1071,10 +1164,13 @@ cleanup2:
 
                 sws_scale(m_pSws_ctx,
                           (const uint8_t * const *)input_frame->data, input_frame->linesize,
-                          0, codec_ctx->height,
+                          0, input_frame->height,
                           tmp_frame->data, tmp_frame->linesize);
 
                 tmp_frame->pts = input_frame->pts;
+#ifndef USING_LIBAV
+                tmp_frame->best_effort_timestamp = input_frame->best_effort_timestamp;
+#endif
 
                 av_frame_free(&input_frame);
 

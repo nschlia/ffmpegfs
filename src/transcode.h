@@ -25,9 +25,8 @@
 
 #pragma once
 
-// For release 1.0: disable ISMV (smooth streaming) and image filters
+// disable ISMV
 #define DISABLE_ISMV
-#define DISABLE_AVFILTER
 
 #define FUSE_USE_VERSION 26
 
@@ -50,11 +49,9 @@ extern struct ffmpegfs_params
     unsigned int    m_audiosamplerate;
     // Video
     unsigned int    m_videobitrate;
-#ifndef DISABLE_AVFILTER
-    unsigned int    m_videowidth;               // TODO Feature #2243: set video width
-    unsigned int    m_videoheight;              // TODO Feature #2243: set video height
-    int             m_deinterlace;              // TODO Feature #2227: deinterlace video
-#endif
+    unsigned int    m_videowidth;               // set video width
+    unsigned int    m_videoheight;              // set video height
+    int             m_deinterlace;              // deinterlace video
     // ffmpegfs options
     int             m_debug;
     const char*     m_log_maxlevel;

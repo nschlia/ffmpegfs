@@ -1,5 +1,16 @@
 ffmpegfs NEWS
 
+Important changes in 1.1 (2017-12-XX)
+
+Changes in this release:
+* Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
+  video size change. If source video is larger it will be scaled down.
+  If already smaller the size will be left as is. You should only set
+  one parameter, if both are set the aspect ratio may be changed and the
+  result look strange.
+
+nschlia@oblivion-software.de
+
 Important changes in 1.00 (2018-01-19)
 
 Changes in this release:

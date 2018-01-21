@@ -85,15 +85,9 @@ void Cache_Entry::clear(int fetch_file_time)
     m_cache_info.m_audiobitrate = params.m_audiobitrate;
     m_cache_info.m_audiosamplerate = params.m_audiosamplerate;
     m_cache_info.m_videobitrate = params.m_videobitrate;
-#ifndef DISABLE_AVFILTER
     m_cache_info.m_videowidth = params.m_videowidth;
     m_cache_info.m_videoheight = params.m_videoheight;
     m_cache_info.m_deinterlace = params.m_deinterlace;
-#else	
-    m_cache_info.m_videowidth = 0;
-    m_cache_info.m_videoheight = 0;
-    m_cache_info.m_deinterlace = false;
-#endif
     m_cache_info.m_predicted_filesize = 0;
     m_cache_info.m_encoded_filesize = 0;
     m_cache_info.m_finished = false;

@@ -3,6 +3,7 @@ ffmpegfs NEWS
 Important changes in 1.1 (2017-12-XX)
 
 Changes in this release:
+* Include configure command line arguments and host OS in "-V" option.
 * Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
   video size change. If source video is larger it will be scaled down.
   If already smaller the size will be left as is. You should only set

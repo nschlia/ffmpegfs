@@ -4,8 +4,17 @@
 AC_INIT([FFMPEGFS], [1.1])
 AC_CONFIG_SRCDIR([src/ffmpegfs.c])
 AC_CONFIG_AUX_DIR([config])
+
+# Get configure arguments
+configure_args="$*"
+AC_DEFINE_UNQUOTED([CONFIGURE_ARGS], ["$configure_args"], [Arguments passed to configure])
+
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+# AC_CANONICAL_HOST is needed to access the 'host_os' variable
+AC_CANONICAL_HOST
+AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
 
 # Optimisation
 CXXFLAGS="-O3 -g"

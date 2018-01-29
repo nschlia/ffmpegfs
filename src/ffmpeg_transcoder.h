@@ -72,13 +72,18 @@ protected:
     void produce_dts(AVPacket * pkt, int64_t *pts);
     int encode_audio_frame(AVFrame *frame, int *data_present);
     int encode_video_frame(AVFrame *frame, int *data_present);
-    int load_encode_and_write();
+    int load_encode_and_write(int frame_size);
     int write_output_file_trailer();
 
     static int writePacket(void * pOpaque, unsigned char * pBuffer, int nBufSize);
     static int64_t seek(void * pOpaque, int64_t i4Offset, int nWhence);
 
-    int64_t get_output_bit_rate(AVStream *in_stream, int64_t max_bit_rate) const;
+    bool get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const;
+#if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)
+    bool get_output_bit_rate(AVStream *stream, int64_t max_bit_rate, int64_t * bit_rate) const;
+#else // USING_LIBAV
+    bool get_output_bit_rate(AVStream *stream, int max_bit_rate, int * bit_rate) const;
+#endif
     double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio);
 
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags);
@@ -94,6 +99,9 @@ private:
 
     // Video conversion and buffering
     SwsContext *                m_pSws_ctx;
+//    AVFilterContext *           m_pBufferSinkContext;
+//    AVFilterContext *           m_pBufferSourceContext;
+//    AVFilterGraph *             m_pFilterGraph;
     queue<AVFrame*>             m_VideoFifo;
     int64_t                     m_pts;
     int64_t                     m_pos;

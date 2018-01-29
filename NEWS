@@ -3,6 +3,8 @@ ffmpegfs NEWS
 Important changes in 1.1 (2017-12-XX)
 
 Changes in this release:
+* Feature request #1: WAV output support (by github user Avuton)
+* Fix: Did not write correct ID3v2 headers (thanks for the fix to gitbug user sdrik)
 * Include configure command line arguments and host OS in "-V" option.
 * Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
   video size change. If source video is larger it will be scaled down.

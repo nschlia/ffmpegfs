@@ -304,6 +304,16 @@ const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID *
         }
         return m_enable_ismv ? "ismv" : "mp4";
     }
+    else if (!strcasecmp(type, "wav"))
+    {
+        *audio_codecid = AV_CODEC_ID_PCM_S16LE;
+        *video_codecid = AV_CODEC_ID_NONE;
+        if (output_type != NULL)
+        {
+            *output_type = TYPE_WAV;
+        }
+        return "wav";
+    }
     else
     {
         return NULL;
@@ -403,7 +413,7 @@ void init_id3v1(ID3v1 *id3v1)
     id3v1->m_bGenre = 0;
 }
 
-void format_number(char *output, size_t size, unsigned int value)
+void format_number(char *output, size_t size, uint64_t value)
 {
     if (!value)
     {
@@ -411,10 +421,10 @@ void format_number(char *output, size_t size, unsigned int value)
         return;
     }
 
-    snprintf(output, size, "%u", value);
+    snprintf(output, size, "%" PRId64, value);
 }
 
-void format_bitrate(char *output, size_t size, unsigned int value)
+void format_bitrate(char *output, size_t size, uint64_t value)
 {
     if (value > 1000000)
     {
@@ -426,7 +436,7 @@ void format_bitrate(char *output, size_t size, unsigned int value)
     }
     else
     {
-        snprintf(output, size, "%u bps", value);
+        snprintf(output, size, "%" PRId64 " bps", value);
     }
 }
 
@@ -522,7 +532,7 @@ void format_size(char *output, size_t size, size_t value)
     }
 }
 
-string format_number(unsigned int value)
+string format_number(int64_t value)
 {
     char buffer[100];
 
@@ -531,7 +541,7 @@ string format_number(unsigned int value)
     return buffer;
 }
 
-string format_bitrate(unsigned int value)
+string format_bitrate(uint64_t value)
 {
     char buffer[100];
 

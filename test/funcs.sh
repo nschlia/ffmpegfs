@@ -31,7 +31,7 @@ DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
 
 #--disable_cache
-( ffmpegfs -f "$SRCDIR" "$DIRNAME" --logfile=$0.$DESTTYPE.builtin.log --log_maxlevel=TRACE --cachepath="$CACHEPATH" --desttype=$DESTTYPE || kill -USR1 $$ ) &
+( ffmpegfs -f "$SRCDIR" "$DIRNAME" --logfile=$0_$DESTTYPE.builtin.log --log_maxlevel=TRACE --cachepath="$CACHEPATH" --desttype=$DESTTYPE || kill -USR1 $$ ) &
 while ! mount | grep -q "$DIRNAME" ; do
     sleep 0.1
 done

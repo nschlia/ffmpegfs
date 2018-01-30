@@ -3,5 +3,6 @@
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 [ "$(ls -m "$DIRNAME")" = "dir.flac, obama.$DESTTYPE, raven.$DESTTYPE" ]
+echo "Pass"
 
 echo OK

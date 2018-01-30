@@ -2,14 +2,54 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+if [ "$DESTTYPE" == "mp4" ];
+then
+# mp4
 echo Checking $DIRNAME/obama.$DESTTYPE
 RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
 echo "Result: $RESULT"
 [ "$RESULT" \< 0.08 ]
+echo "Pass"
 
 echo Checking $DIRNAME/raven.$DESTTYPE
 RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
 echo "Result: $RESULT"
 [ "$RESULT" \< 0.08 ]
+echo "Pass"
+
+elif [ "$DESTTYPE" == "mp3" ];
+then
+# mp3
+echo Checking $DIRNAME/obama.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ "$RESULT" \< 0.6 ]
+echo "Pass"
+
+echo Checking $DIRNAME/raven.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ "$RESULT" \< 0.6 ]
+echo "Pass"
+
+elif [ "$DESTTYPE" == "wav" ];
+then
+# wav
+echo Checking $DIRNAME/obama.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
+echo "Pass"
+
+echo Checking $DIRNAME/raven.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
+echo "Pass"
+
+else
+echo "Internal error, unknown type $DESTTYPE. Fix script!"
+exit 99
+fi
 
 echo OK

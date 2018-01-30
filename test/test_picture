@@ -13,8 +13,10 @@ END
 
 echo Checking $DIRNAME/obama.$DESTTYPE
 [ "$(hash_image "$DIRNAME/obama.$DESTTYPE")" = 794865299f4fac10ba5719b203f0c71b5b524e95 ]
+echo "Pass"
 
 echo Checking $DIRNAME/raven.$DESTTYPE
 [ "$(hash_image "$DIRNAME/raven.$DESTTYPE")" = 5cd44d9e64c90d137ed3614213e309afec060dbc ]
+echo "Pass"
 
 echo OK

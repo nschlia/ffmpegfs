@@ -8,20 +8,18 @@ ffmpegfs
 | gcc 6.3.0 | Libav 12.2 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav))](https://nschlia.github.io/ffmpegfs/) |
 | clang 3.8.1 | Libav 12.2 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libavl-clang))](https://nschlia.github.io/ffmpegfs/) |
 
-*gcc 4/5 and other FFmpeg/Libav versions are also planned...*
-
 Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
 *Release 1.0 is out! Now work commences on V1.1 and V1.2 bringing nice new features like video rescaling, DVD support and WAV format. So please stay tuned.*
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
-and video formats (many formats that FFmpeg can decode to MP3 or MP4) 
-on the fly when opened and read.
+and video formats (many formats that FFmpeg can decode to MP3, MP4 or 
+WAV) on the fly when opened and read.
 
 This can let you use a multi media file collection with software 
-and/or hardware which only understands the MP3 or MP4 format, or 
-transcode files  through simple drag-and-drop in a file browser.
+and/or hardware which only understands the MP3, MP4 or WAC format, 
+or  transcode files through simple drag-and-drop in a file browser.
 
 For installation instructions see the [install](INSTALL.md) file.
 

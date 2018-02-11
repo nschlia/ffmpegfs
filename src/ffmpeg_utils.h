@@ -94,40 +94,45 @@ extern "C" {
 // versions may also work.
 // Also as this was not 100% tested with Libav this only applies to FFmpeg. With Libav
 // none of the extensions will be used.
-#define LIBAVCODEC_MIN_VERSION_INT      AV_VERSION_INT( 57, 64, 101 )
-#define LIBAVFORMAT_MIN_VERSION_INT     AV_VERSION_INT( 57, 25, 100 )
-#define LIBAVUTIL_MIN_VERSION_INT       AV_VERSION_INT( 55, 34, 101 )
+#define LIBAVCODEC_MIN_VERSION_INT      	AV_VERSION_INT( 57, 64, 101 )
+#define LIBAVFORMAT_MIN_VERSION_INT     	AV_VERSION_INT( 57, 25, 100 )
+#define LIBAVUTIL_MIN_VERSION_INT       	AV_VERSION_INT( 55, 34, 101 )
 
 #if (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= LIBAVUTIL_MIN_VERSION_INT )
-#define get_media_type_string av_get_media_type_string
+#define get_media_type_string 			av_get_media_type_string
 #else
-const char *get_media_type_string(enum AVMediaType media_type);
+const char *get_media_type_string(enum 		AVMediaType media_type);
 #endif
 
 // Ignore if this is missing
 #ifndef AV_ROUND_PASS_MINMAX
-#define AV_ROUND_PASS_MINMAX            0
+#define AV_ROUND_PASS_MINMAX            	0
 #endif
 
 // These once had a different name
 #if !defined(AV_CODEC_CAP_DELAY) && defined(CODEC_CAP_DELAY)
-#define AV_CODEC_CAP_DELAY              CODEC_CAP_DELAY
+#define AV_CODEC_CAP_DELAY              	CODEC_CAP_DELAY
 #endif
 
 #if !defined(AV_CODEC_CAP_TRUNCATED) && defined(CODEC_CAP_TRUNCATED)
-#define AV_CODEC_CAP_TRUNCATED          CODEC_CAP_TRUNCATED
+#define AV_CODEC_CAP_TRUNCATED          	CODEC_CAP_TRUNCATED
 #endif
 
 #if !defined(AV_CODEC_FLAG_TRUNCATED) && defined(CODEC_FLAG_TRUNCATED)
-#define AV_CODEC_FLAG_TRUNCATED         CODEC_FLAG_TRUNCATED
+#define AV_CODEC_FLAG_TRUNCATED         	CODEC_FLAG_TRUNCATED
 #endif
 
 #ifndef AV_CODEC_FLAG_GLOBAL_HEADER
-#define AV_CODEC_FLAG_GLOBAL_HEADER     CODEC_FLAG_GLOBAL_HEADER;
+#define AV_CODEC_FLAG_GLOBAL_HEADER     	CODEC_FLAG_GLOBAL_HEADER
 #endif
 
 #ifndef FF_INPUT_BUFFER_PADDING_SIZE
-#define FF_INPUT_BUFFER_PADDING_SIZE    256
+#define FF_INPUT_BUFFER_PADDING_SIZE    	256
+#endif
+
+
+#ifndef AV_CODEC_CAP_VARIABLE_FRAME_SIZE
+#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE
 #endif
 
 typedef enum _tagOUTPUTTYPE

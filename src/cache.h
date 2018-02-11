@@ -51,7 +51,7 @@ typedef struct
     time_t          m_creation_time;
     time_t          m_access_time;
     time_t          m_file_time;
-    uint64_t        m_file_size;
+    size_t          m_file_size;
 } t_cache_info;
 
 class Cache_Entry;

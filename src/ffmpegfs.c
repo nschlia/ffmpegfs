@@ -491,7 +491,7 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)atol(ptr);
+            *value = (time_t)atol(ptr);
             return 0;   // OK
         }
 

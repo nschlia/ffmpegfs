@@ -244,16 +244,16 @@ bool Cache::read_info(t_cache_info & cache_info)
             cache_info.m_videowidth         = sqlite3_column_int(m_cacheidx_select_stmt, 5);
             cache_info.m_videoheight        = sqlite3_column_int(m_cacheidx_select_stmt, 6);
             cache_info.m_deinterlace        = sqlite3_column_int(m_cacheidx_select_stmt, 7);
-            cache_info.m_predicted_filesize = sqlite3_column_int64(m_cacheidx_select_stmt, 8);
-            cache_info.m_encoded_filesize   = sqlite3_column_int64(m_cacheidx_select_stmt, 9);
+            cache_info.m_predicted_filesize = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 8);
+            cache_info.m_encoded_filesize   = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 9);
             cache_info.m_finished           = sqlite3_column_int(m_cacheidx_select_stmt, 10);
             cache_info.m_error              = sqlite3_column_int(m_cacheidx_select_stmt, 11);
             cache_info.m_errno              = sqlite3_column_int(m_cacheidx_select_stmt, 12);
             cache_info.m_averror            = sqlite3_column_int(m_cacheidx_select_stmt, 13);
-            cache_info.m_creation_time      = sqlite3_column_int64(m_cacheidx_select_stmt, 14);
-            cache_info.m_access_time        = sqlite3_column_int64(m_cacheidx_select_stmt, 15);
-            cache_info.m_file_time          = sqlite3_column_int64(m_cacheidx_select_stmt, 16);
-            cache_info.m_file_size          = sqlite3_column_int64(m_cacheidx_select_stmt, 17);
+            cache_info.m_creation_time      = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 14);
+            cache_info.m_access_time        = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 15);
+            cache_info.m_file_time          = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 16);
+            cache_info.m_file_size          = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 17);
         }
         else if (ret != SQLITE_DONE)
         {
@@ -525,8 +525,8 @@ bool Cache::prune_expired()
     char sql[1024];
 
     ffmpegfs_trace("Pruning expired cache entries older than %s...", format_time(params.m_expiry_time).c_str());
-
-    sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %zu < %zu;\n", params.m_expiry_time, now);
+    
+    sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
 

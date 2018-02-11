@@ -48,16 +48,16 @@ Cache_Entry::~Cache_Entry()
     if (m_thread_id && m_thread_id != pthread_self())
     {
         // If not same thread, wait for other to finish
-        ffmpegfs_warning("Waiting for thread id %zx to terminate.", m_thread_id);
+        ffmpegfs_warning("Waiting for thread id %" FFMPEGFS_FORMAT_PTHREAD_T " to terminate.", m_thread_id);
 
         int s = pthread_join(m_thread_id, NULL);
         if (s != 0)
         {
-            ffmpegfs_error("Error joining thread id %zu: %s", m_thread_id, strerror(s));
+            ffmpegfs_error("Error joining thread id %" FFMPEGFS_FORMAT_PTHREAD_T " : %s", m_thread_id, strerror(s));
         }
         else
         {
-            ffmpegfs_info("Thread id %zx has terminated.", m_thread_id);
+            ffmpegfs_info("Thread id %" FFMPEGFS_FORMAT_PTHREAD_T " has terminated.", m_thread_id);
         }
     }
 

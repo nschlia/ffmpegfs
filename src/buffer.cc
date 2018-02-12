@@ -285,7 +285,12 @@ bool Buffer::reserve(size_t size)
 
     lock();
 
-    m_buffer = (uint8_t*)mremap (m_buffer, m_buffer_size, size,  MREMAP_MAYMOVE);
+    if (!size)
+    {
+        size = m_buffer_size;
+    }
+
+    m_buffer = (uint8_t*)mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE);
     if (m_buffer != NULL)
     {
         m_buffer_size = size;

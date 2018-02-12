@@ -307,7 +307,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 
         struct Cache_Entry* cache_entry;
 
-        cache_entry = (struct Cache_Entry*)fi->fh;
+        cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
 
         if (!cache_entry)
         {
@@ -377,7 +377,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     }
 
     /* Store transcoder in the fuse_file_info structure. */
-    fi->fh = (uint64_t)cache_entry;
+    fi->fh = (uintptr_t)cache_entry;
 
     // Clear errors
     errno = 0;
@@ -424,7 +424,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
         errno = 0;
     }
 
-    cache_entry = (struct Cache_Entry*)fi->fh;
+    cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
 
     if (!cache_entry)
     {
@@ -492,7 +492,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 
     ffmpegfs_trace("release %s", path);
 
-    cache_entry = (struct Cache_Entry*)fi->fh;
+    cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
     if (cache_entry)
     {
         transcoder_delete(cache_entry);

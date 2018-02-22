@@ -30,6 +30,7 @@ const char* encoder_list[] =
     "mp3",  // TYPE_MP3
     "mp4",  // TYPE_MP4
     "wav",  // TYPE_WAV
+    "ogg",  // TYPE_OGG
     NULL
 };
 

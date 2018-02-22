@@ -14,12 +14,19 @@ https://nschlia.github.io/ffmpegfs/<br />
 *Release 1.0 is out! Now work commences on V1.1 and V1.2 bringing nice new features like video rescaling, DVD support and WAV format. So please stay tuned.*
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
-and video formats (many formats that FFmpeg can decode to MP3, MP4 or 
-WAV) on the fly when opened and read.
+and video formats on the fly when opened and read.
+
+Supported output formats:
+
+* MP4 (audio & video)
+* OGG (audio & video)
+* MP3 (audio only)
+* WAV (audio only)
 
 This can let you use a multi media file collection with software 
-and/or hardware which only understands the MP3, MP4 or WAC format, 
-or  transcode files through simple drag-and-drop in a file browser.
+and/or hardware which only understands the MP3, MP4, OGG or WAV
+format, or transcode files through simple drag-and-drop in a file 
+browser.
 
 For installation instructions see the [install](INSTALL.md) file.
 

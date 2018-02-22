@@ -140,7 +140,8 @@ typedef enum _tagOUTPUTTYPE
     TYPE_UNKNOWN,
     TYPE_MP3,
     TYPE_MP4,
-    TYPE_WAV
+    TYPE_WAV,
+    TYPE_OGG
 } OUTPUTTYPE;
 
 #include <sys/stat.h>

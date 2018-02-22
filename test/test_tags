@@ -84,6 +84,45 @@ elif [ "$DESTTYPE" == "wav" ];
 then
 # wav
 echo WAVs have no tags.
+
+elif [ "$DESTTYPE" == "ogg" ];
+then
+
+# ogg
+get_metadata "$DIRNAME/obama.ogg" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -s - <(echo "$TAGS")<<END
+ALBUM=US State of the Union 2011
+ARTIST=Barack Obama
+COPYRIGHT=Public Domain
+DATE=2011-01-25
+DISCNUMBER=0
+DISCTOTAL=0
+GENRE=Spoken
+TITLE=The Internet [excerpt]
+TRACKNUMBER=1
+TRACKTOTAL=1
+END
+echo "Pass"
+
+get_metadata "$DIRNAME/raven.ogg" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -s - <(echo "$TAGS")<<END
+album=The Raven
+artist=Edgar Allen Poe
+date=2007
+description=www.librivox.org
+
+ensemble=Edgar Allen Poe
+genre=Speech
+metadata_block_picture=AAAAAwAAAAppbWFnZS9qcGVnAAAAAAAAAAAAAAAAAAAAAAAAAAAAACfy/9j/4AAQSkZJRgABAQABLAEsAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAA$
+title=the_raven
+tracknumber=01
+END
+echo "Pass"
+
 else
 echo "Internal error, unknown type $DESTTYPE. Fix script!"
 exit 99

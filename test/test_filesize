@@ -54,6 +54,22 @@ echo Size: $SIZE
 [ $SIZE -eq 3699406 ]
 echo "Pass"
 
+elif [ "$DESTTYPE" == "ogg" ];
+then
+# ogg
+
+echo Checking $DIRNAME/obama.ogg
+SIZE=$(stat -c %s "$DIRNAME/obama.ogg")
+echo Size: $SIZE
+[ $SIZE -eq 65633 ]
+echo "Pass"
+
+echo Checking $DIRNAME/raven.ogg
+SIZE=$(stat -c %s "$DIRNAME/raven.ogg")
+echo Size: $SIZE
+[ $SIZE -eq 141211 ]
+echo "Pass"
+
 else
 echo "Internal error, unknown type $DESTTYPE. Fix script!"
 exit 99

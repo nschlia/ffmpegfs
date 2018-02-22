@@ -47,6 +47,21 @@ echo "Result: $RESULT"
 [ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
 echo "Pass"
 
+elif [ "$DESTTYPE" == "ogg" ];
+then
+# ogg
+echo Checking $DIRNAME/obama.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ "$RESULT" \< 0.6 ]
+echo "Pass"
+
+echo Checking $DIRNAME/raven.$DESTTYPE
+RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
+echo "Result: $RESULT"
+[ "$RESULT" \< 0.6 ]
+echo "Pass"
+
 else
 echo "Internal error, unknown type $DESTTYPE. Fix script!"
 exit 99

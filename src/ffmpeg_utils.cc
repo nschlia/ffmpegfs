@@ -314,6 +314,16 @@ const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID *
         }
         return "wav";
     }
+    else if (!strcasecmp(type, "ogg"))
+    {
+        *audio_codecid = AV_CODEC_ID_VORBIS;
+        *video_codecid = AV_CODEC_ID_THEORA;
+        if (output_type != NULL)
+        {
+            *output_type = TYPE_OGG;
+        }
+        return "ogg";
+    }
     else
     {
         return NULL;

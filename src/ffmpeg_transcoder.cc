@@ -623,9 +623,20 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // of which frame timestamps are represented. For fixed-fps content,
         // timebase should be 1/framerate and timestamp increments should be
         // identical to 1.
-        //stream->time_base               = in_video_stream->time_base;
-        out_video_stream->time_base     = { .num = 1, .den = 90000 }; // TODO: Needs that to be fixed??? Seems so at least.
-        codec_ctx->time_base            = out_video_stream->time_base;
+        //out_video_stream->time_base               = in_video_stream->time_base;
+
+        if (codec_ctx->codec_id == AV_CODEC_ID_THEORA)
+		{
+            // Strange: Theora seems to need it this way...
+        	out_video_stream->time_base.num = in_video_stream->codec->framerate.den;
+	        out_video_stream->time_base.den = in_video_stream->codec->framerate.num;
+		}
+        else
+        {
+            out_video_stream->time_base     = { .num = 1, .den = 90000 }; // TODO: Needs that to be fixed??? Seems so at least.
+        }
+       	codec_ctx->time_base            = out_video_stream->time_base;
+
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
         codec_ctx->pix_fmt       		= AV_PIX_FMT_YUV420P;
 
@@ -671,6 +682,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
         out_video_stream->avg_frame_rate = codec_ctx->framerate;
 #endif
+
         codec_ctx->sample_aspect_ratio  = in_video_stream->codec->sample_aspect_ratio;
 
         // TODO: ALBUM ARTS
@@ -709,9 +721,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Save the encoder context for easier access later.
         m_out.m_pVideo_codec_ctx    = codec_ctx;
         // Save the stream index
-        m_out.m_nVideo_stream_idx = out_video_stream->index;
+        m_out.m_nVideo_stream_idx   = out_video_stream->index;
         // Save output video stream for faster reference
-        m_out.m_pVideo_stream = out_video_stream;
+        m_out.m_pVideo_stream       = out_video_stream;
         break;
     }
     default:
@@ -759,7 +771,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     int             ret = 0;
 
 #ifndef DISABLE_ISMV
-    ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codecid, params.m_enable_ismv);
+    ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
 #else
     ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
 #endif
@@ -1587,11 +1599,11 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
     // Write one video frame from the temporary packet to the output file.
     if (*data_present)
     {
-
         if (output_packet.pts != (int64_t)AV_NOPTS_VALUE)
         {
             output_packet.pts -=  m_out.m_video_start_pts;
         }
+
         if (output_packet.dts != (int64_t)AV_NOPTS_VALUE)
         {
             output_packet.dts -=  m_out.m_video_start_pts;
@@ -1611,13 +1623,19 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                         - FFMIN3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1)
                         - FFMAX3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1);
             }
+
+            static bool m_bDTSReported = false;
+
             if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
             {
-                int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                int64_t max = m_out.m_last_mux_dts + 1; // !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
                 if (output_packet.dts < max)
                 {
-
-                    ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);
+                    if (!m_bDTSReported)
+                    {
+                        ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);
+                        m_bDTSReported = true;
+                    }
 
                     if (output_packet.pts >= output_packet.dts)
                     {
@@ -1625,6 +1643,10 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                     }
                     output_packet.dts = max;
                 }
+            }
+            else
+            {
+                m_bDTSReported = false;
             }
         }
         m_out.m_last_mux_dts = output_packet.dts;
@@ -1967,7 +1989,7 @@ size_t FFMPEG_Transcoder::calculate_size()
         size_t size = 0;
 
 #ifndef DISABLE_ISMV
-        ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codecid, params.m_enable_ismv);
+        ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
 #else
         ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
 #endif
@@ -2001,31 +2023,6 @@ size_t FFMPEG_Transcoder::calculate_size()
                 // TODO #2260: calculate correct size of mp3
                 // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
                 size += (size_t)(duration * (double)audiobitrate / 8) + ID3V1_TAG_LENGTH;
-
-                //               You can calculate the size using the following formula:
-                //               x = length of song in seconds
-                //               y = bitrate in kilobits per second
-                //               (x * y) / 8
-                //               We divide by 8 to get the result in bytes.
-                //               So for example if you have a 3 minute song
-                //               3 minutes = 180 seconds
-                //               128kbps * 180 seconds = 23,040 kilobits of data 23,040 kilobits / 8 = 2880 kb
-                //               You would then convert to Megabytes by dividing by 1024:
-                //               2880/1024 = 2.8125 Mb
-                //               If all of this was done at a different encoding rate, say 192kbps it would look like this:
-                //               (192 * 180) / 8 = 4320 kb / 1024 = 4.21875 Mb
-
-                // Copied from lame
-                //#define MAX_VBR_FRAME_SIZE 2880
-                //
-                //size_t Mp3Encoder::calculate_size() const {
-                //    if (actual_size != 0) {
-                //        return actual_size;
-                //    } else if (params.vbr) {
-                //        return id3size + ID3V1_TAG_LENGTH + MAX_VBR_FRAME_SIZE + (uint64_t)lame_get_totalframes(lame_encoder) * 144 * params.bitrate * 10 / (lame_get_in_samplerate(lame_encoder) / 100);
-                //    } else {
-                //        return id3size + ID3V1_TAG_LENGTH +                      (uint64_t)lame_get_totalframes(lame_encoder) * 144 * params.bitrate * 10 / (lame_get_out_samplerate(lame_encoder) / 100);
-                //    }
                 break;
             }
             case AV_CODEC_ID_PCM_S16LE:
@@ -2039,6 +2036,12 @@ size_t FFMPEG_Transcoder::calculate_size()
                 // File size:
                 // file duration * sample rate (HZ) * channels * bytes per sample
                 size += (size_t)(duration * nSampleRate * nChannels * nBytesPerSample);
+                break;
+            }
+            case AV_CODEC_ID_VORBIS:
+            {
+                // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
+                size += (size_t)(duration * (double)audiobitrate / 8) /*+ ID3V1_TAG_LENGTH*/;// ???
                 break;
             }
             case AV_CODEC_ID_NONE:
@@ -2078,6 +2081,11 @@ size_t FFMPEG_Transcoder::calculate_size()
                 case AV_CODEC_ID_MJPEG:
                 {
                     // TODO... size += ???
+                    break;
+                }
+                case AV_CODEC_ID_THEORA:
+                {
+                    size += (size_t)(duration * 1.025  * (double)videobitrate / 8); // ??? // add 2.5% for overhead
                     break;
                 }
                 case AV_CODEC_ID_NONE:

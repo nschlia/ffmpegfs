@@ -11,7 +11,7 @@ ffmpegfs
 Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
-*Release 1.0 is out! Now work commences on V1.1 and V1.2 bringing nice new features like video rescaling, DVD support and WAV format. So please stay tuned.*
+*Release 1.0 is out! Now work commences on V1.1 and V1.2 bringing nice new features like DVD support. So please stay tuned.*
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.
@@ -27,6 +27,10 @@ This can let you use a multi media file collection with software
 and/or hardware which only understands the MP3, MP4, OGG or WAV
 format, or transcode files through simple drag-and-drop in a file 
 browser.
+
+For live streaming select MP4 for best results. If video transcoding
+is not required MP3 will also do. The OGG encoder is not fast enough
+for real-time recoding files.
 
 For installation instructions see the [install](INSTALL.md) file.
 
@@ -266,5 +270,3 @@ the terms of the GNU General Public License (GPL) version 3 or later.
 
 This manual is copyright \(C) 2010-2011 K. Henriksson and 2017 N. Schlia 
 and may be distributed under GNU Free Documentation License 1.3 or later.
-
-

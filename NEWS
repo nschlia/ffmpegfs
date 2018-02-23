@@ -5,6 +5,7 @@ Important changes in 1.1 (2018-01-XX)
 Changes in this release:
 * Fix: make clean for checks did not delete all logs
 * Feature request #1: WAV output support (by github user Avuton)
+* OGG output support
 * Fix: Did not write correct ID3v2 headers (thanks for the fix to gitbug user sdrik)
 * Feature: Include configure command line arguments and host OS in "-V" option.
 * Feature: Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow

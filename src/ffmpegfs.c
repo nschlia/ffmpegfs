@@ -184,14 +184,14 @@ static void usage(char *name);
 static void usage(char *name)
 {
     printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
-    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP3 or MP4 upon access.\n"
+    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG or WAV upon access.\n"
           "\n"
           "Encoding options:\n"
           "\n"
           "    --desttype=TYPE, -o desttype=TYPE\n"
           "                           Select destination format. Can currently be\n"
-          "                           either mp3 or mp4. To stream videos, mp4 must be\n"
-          "                           selected.\n"
+          "                           either MP4, MP3, OGG or WAV. To stream videos,\n"
+          "                           MP4 or OGG must be selected.\n"
           "                           Default: mp4\n"
       #ifndef DISABLE_ISMV
           "    --enable_ismv=0|1, -o enable_ismv=0|1\n"

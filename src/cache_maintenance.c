@@ -9,7 +9,7 @@
  * instances will be clients. If the master process goes away one of
  * the clients will automatically take over as master.
  *
- * Copyright (c) 2017 by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

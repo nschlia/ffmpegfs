@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2012 K. Henriksson
- * Copyright (C) 2017 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -861,7 +861,7 @@ int main(int argc, char *argv[])
     printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
     printf("Copyright (C) 2006-2008 David Collett\n"
            "Copyright (C) 2008-2012 K. Henriksson\n"
-           "Copyright (C) 2017 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
+           "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
 
     // Configure FFmpeg
     // register all the codecs

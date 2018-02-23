@@ -1,7 +1,7 @@
 /*
  * Logging class header for ffmpegfs
  *
- * Copyright (C) 2017 K. Henriksson
+ * Copyright (C) 2017-2018 K. Henriksson
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

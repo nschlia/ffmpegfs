@@ -105,7 +105,7 @@ static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Trans
 /* Use "C" linkage to allow access from C code. */
 extern "C" {
 
-void cache_path(char *dir, size_t size)
+void transcoder_cache_path(char *dir, size_t size)
 {
     if (params.m_cachepath != NULL)
     {
@@ -124,7 +124,7 @@ void cache_path(char *dir, size_t size)
     strncat(dir, PACKAGE, size - 1);
 }
 
-int cache_new(void)
+int transcoder_cache_new(void)
 {
     if (cache == NULL)
     {
@@ -146,7 +146,7 @@ int cache_new(void)
     return 0;
 }
 
-void cache_delete(void)
+void transcoder_cache_delete(void)
 {
     Cache *p = cache;
     cache = NULL;
@@ -468,7 +468,19 @@ int transcoder_cache_maintenance(void)
 {
     if (cache != NULL)
     {
-        return cache->cache_maintenance();
+        return cache->maintenance();
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int transcoder_cache_clear(void)
+{
+    if (cache != NULL)
+    {
+        return cache->clear();
     }
     else
     {
@@ -508,7 +520,7 @@ static void *decoder_thread(void *arg)
             throw false;
         }
 
-        if (!cache->cache_maintenance(transcoder->calculate_size()))
+        if (!cache->maintenance(transcoder->calculate_size()))
         {
             throw false;
         }

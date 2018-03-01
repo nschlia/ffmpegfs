@@ -78,11 +78,14 @@ public:
     void lock();
     void unlock();
 
-    bool cache_maintenance(size_t predicted_filesize = 0);
+    bool maintenance(size_t predicted_filesize = 0);
+    bool clear();
 
     bool prune_expired();
     bool prune_cache_size();
     bool prune_disk_space(size_t predicted_filesize);
+
+    bool remove_cachefile(const string & filename);
 
 protected:
     bool read_info(t_cache_info & cache_info);

@@ -68,6 +68,7 @@ extern struct ffmpegfs_params
     int             m_disable_cache;            // Disable cache
     time_t          m_cache_maintenance;        // Prune timer interval
     int             m_prune_cache;              // Prune cache immediately
+    int             m_clear_cache;              // Clear cache on start up
     unsigned int    m_max_threads;              // Max. number of recoder threads
 } params;
 
@@ -84,9 +85,9 @@ struct Cache_Entry;
 extern "C" {
 #endif
 
-void cache_path(char *dir, size_t size);
-int cache_new(void);
-void cache_delete(void);
+void transcoder_cache_path(char *dir, size_t size);
+int transcoder_cache_new(void);
+void transcoder_cache_delete(void);
 
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 int transcoder_cached_filesize(const char *filename, struct stat *stbuf);
@@ -100,6 +101,7 @@ size_t transcoder_buffer_watermark(struct Cache_Entry* cache_entry);
 size_t transcoder_buffer_tell(struct Cache_Entry* cache_entry);
 void transcoder_exit(void);
 int transcoder_cache_maintenance(void);
+int transcoder_cache_clear(void);
 
 /* Functions to print output until C++ conversion is done. */
 void ffmpegfs_trace(const char* f, ...) __attribute__ ((format(printf, 1, 2)));

@@ -39,18 +39,10 @@ Buffer::Buffer(const string &filename)
     , m_buffer(NULL)
     , m_fd(-1)
 {
-    char cachepath[PATH_MAX];
-
-    cache_path(cachepath, sizeof(cachepath));
-
-    m_cachefile = cachepath;
-    m_cachefile += params.m_mountpath;
-    m_cachefile += filename;
-    m_cachefile += ".cache.";
-    m_cachefile += params.m_desttype;
+    make_cachefile_name(m_cachefile, filename);
 }
 
-/* If buffer_data was never allocated, this is a no-op. */
+// If buffer_data was never allocated, this is a no-op.
 Buffer::~Buffer()
 {
     close();
@@ -93,7 +85,7 @@ bool Buffer::open(bool erase_cache)
 
         if (erase_cache)
         {
-            remove_file();
+            remove_cachefile();
             errno = 0;  // ignore this error
         }
 
@@ -171,7 +163,7 @@ bool Buffer::close(int flags /*= CLOSE_CACHE_NOOPT*/)
     {
         if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
         {
-            remove_file();
+            remove_cachefile();
             errno = 0;  // ignore this error
         }
 
@@ -210,7 +202,7 @@ bool Buffer::close(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
     {
-        remove_file();
+        remove_cachefile();
         errno = 0;  // ignore this error
     }
 
@@ -219,17 +211,9 @@ bool Buffer::close(int flags /*= CLOSE_CACHE_NOOPT*/)
     return success;
 }
 
-bool Buffer::remove_file()
+bool Buffer::remove_cachefile()
 {
-    if (unlink(m_cachefile.c_str()) && errno != ENOENT)
-    {
-        ffmpegfs_warning("Cannot unlink the file '%s': %s", m_cachefile.c_str(), strerror(errno));
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return remove_file(m_cachefile);
 }
 
 bool Buffer::flush()
@@ -458,4 +442,34 @@ const string & Buffer::filename() const
 const string & Buffer::cachefile() const
 {
     return m_cachefile;
+}
+
+// Make up a cache file name including full path
+const string & Buffer::make_cachefile_name(string & cachefile, const string & filename)
+{
+    char cachepath[PATH_MAX];
+
+    transcoder_cache_path(cachepath, sizeof(cachepath));
+
+    cachefile = cachepath;
+    cachefile += params.m_mountpath;
+    cachefile += filename;
+    cachefile += ".cache.";
+    cachefile += params.m_desttype;
+
+    return cachefile;
+}
+
+bool Buffer::remove_file(const string & filename)
+{
+    if (unlink(filename.c_str()) && errno != ENOENT)
+    {
+        ffmpegfs_warning("Cannot unlink the file '%s': %s", filename.c_str(), strerror(errno));
+        return false;
+    }
+    else
+    {
+        errno = 0;
+        return true;
+    }
 }

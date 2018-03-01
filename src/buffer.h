@@ -58,8 +58,11 @@ public:
     const string & filename() const;
     const string & cachefile() const;
 
+    static const string & make_cachefile_name(string &cachefile, const string & filename);
+    static bool remove_file(const string & filename);
+
 protected:
-    bool remove_file();
+    bool remove_cachefile();
 
 private:
     uint8_t* write_prepare(size_t length);

@@ -80,7 +80,8 @@ struct ffmpegfs_params params =
     .m_cachepath            = NULL,                     // default: /tmp
     .m_disable_cache        = 0,                        // default: enabled
     .m_cache_maintenance    = (60*60),                  // default: prune every 60 minutes
-    .m_prune_cache          = 0,                        // Do not prune cache immediately
+    .m_prune_cache          = 0,                        // default: Do not prune cache immediately
+    .m_clear_cache          = 0,                        // default: Do not clear cache on startup
     .m_max_threads          = 0,                        // default: 16 * CPU cores (this value here is overwritten later)
 };
 
@@ -146,6 +147,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("--cache_maintenance=%s",      KEY_CACHE_MAINTENANCE),
     FUSE_OPT_KEY("cache_maintenance=%s",        KEY_CACHE_MAINTENANCE),
     FFMPEGFS_OPT("--prune_cache",               m_prune_cache, 1),
+    FFMPEGFS_OPT("--clear_cache",               m_clear_cache, 1),
+    FFMPEGFS_OPT("clear_cache",                 m_clear_cache, 1),
 
     // Other
     FFMPEGFS_OPT("--max_threads=%u",            m_max_threads, 0),
@@ -292,6 +295,8 @@ static void usage(char *name)
           "                           Default: 1 hour\n"
           "     --prune_cache\n"
           "                           Prune cache immediately according to the above settings.\n"
+          "     --clear-cache, -o clear-cache\n"
+          "                           Clear cache on startup. All previously recoded files will be deleted.\n"
           "\n"
           "TIME can be defined as...\n"
           " * Seconds: #\n"
@@ -762,7 +767,7 @@ static void print_params()
     char cache_maintenance[100];
     char max_threads[100];
 
-    cache_path(cachepath, sizeof(cachepath));
+    transcoder_cache_path(cachepath, sizeof(cachepath));
 
 #ifndef DISABLE_ISMV
     get_codecs(params.m_desttype, NULL, &audio_codecid, &video_codecid, params.m_enable_ismv);
@@ -820,6 +825,7 @@ static void print_params()
                                "Cache Path        : %s\n"
                                "Disable Cache     : %s\n"
                                "Maintenance Timer : %s\n"
+                               "Clear Cache       : %s\n"
                                "\nVarious Options\n\n"
                                "Max. Threads      : %s\n"
                   ,
@@ -848,6 +854,7 @@ static void print_params()
                   cachepath,
                   params.m_disable_cache ? "yes" : "no",
                   cache_maintenance,
+                  params.m_clear_cache ? "yes" : "no",
                   max_threads
                   );
 }
@@ -916,7 +923,7 @@ int main(int argc, char *argv[])
         }
 
         // Prune cache and exit
-        if (cache_new())
+        if (transcoder_cache_new())
         {
             return 1;
         }
@@ -968,12 +975,21 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (cache_new())
+    if (transcoder_cache_new())
     {
         return 1;
     }
 
     print_params();
+
+    if (params.m_clear_cache)
+    {
+        // Prune cache and exit
+        if (!transcoder_cache_clear())
+        {
+            return 1;
+        }
+    }
 
     // start FUSE
     ret = fuse_main(args.argc, args.argv, &ffmpegfs_ops, NULL);

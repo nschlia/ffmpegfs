@@ -25,6 +25,7 @@
 
 #include <assert.h>
 #include <vector>
+#include <unistd.h>
 
 #ifndef HAVE_SQLITE_ERRSTR
 #define sqlite3_errstr(rc)  ""
@@ -70,7 +71,7 @@ bool Cache::load_index()
         const char * sql;
         int ret;
 
-        cache_path(cachepath, sizeof(cachepath));
+        transcoder_cache_path(cachepath, sizeof(cachepath));
 
         m_cacheidx_file = cachepath;
         m_cacheidx_file += "/";
@@ -128,7 +129,7 @@ bool Cache::load_index()
                 "    `file_size`            UNSIGNED BIG INT NOT NULL,\n"
                 "    PRIMARY KEY(`filename`,`desttype`)\n"
                 ");\n";
-                //"CREATE UNIQUE INDEX IF NOT EXISTS `idx_cache_entry_key` ON `cache_entry` (`filename`,`desttype`);\n";
+        //"CREATE UNIQUE INDEX IF NOT EXISTS `idx_cache_entry_key` ON `cache_entry` (`filename`,`desttype`);\n";
 
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, callback, 0, &errmsg)))
         {
@@ -556,7 +557,10 @@ bool Cache::prune_expired()
                 delete_entry(&p->second, CLOSE_CACHE_DELETE);
             }
 
-            delete_info(key.first, key.second);
+            if (delete_info(key.first, key.second))
+            {
+                remove_cachefile(key.first);
+            }
         }
     }
     else
@@ -621,7 +625,10 @@ bool Cache::prune_cache_size()
                     delete_entry(&p->second, CLOSE_CACHE_DELETE);
                 }
 
-                delete_info(key.first, key.second);
+                if (delete_info(key.first, key.second))
+                {
+                    remove_cachefile(key.first);
+                }
 
                 total_size -= filesizes[n++];
 
@@ -649,7 +656,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
     char cachepath[PATH_MAX];
     struct statvfs buf;
 
-    cache_path(cachepath, sizeof(cachepath));
+    transcoder_cache_path(cachepath, sizeof(cachepath));
 
     if (statvfs(cachepath, &buf))
     {
@@ -699,7 +706,10 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
                     delete_entry(&p->second, CLOSE_CACHE_DELETE);
                 }
 
-                delete_info(key.first, key.second);
+                if (delete_info(key.first, key.second))
+                {
+                    remove_cachefile(key.first);
+                }
 
                 free_bytes += filesizes[n++];
 
@@ -721,7 +731,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
     return true;
 }
 
-bool Cache::cache_maintenance(size_t predicted_filesize)
+bool Cache::maintenance(size_t predicted_filesize)
 {
     bool bSuccess = true;
 
@@ -741,6 +751,63 @@ bool Cache::cache_maintenance(size_t predicted_filesize)
     return bSuccess;
 }
 
+bool Cache::clear()
+{
+    bool bSuccess = true;
+
+    lock();
+
+    vector<cache_key_t> keys;
+    sqlite3_stmt * stmt;
+    const char * sql;
+
+    sql = "SELECT filename, desttype FROM cache_entry;\n";
+
+    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
+
+    int ret = 0;
+    while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
+    {
+        const char *filename = (const char *) sqlite3_column_text(stmt, 0);
+        const char *desttype = (const char *) sqlite3_column_text(stmt, 1);
+
+        keys.push_back(make_pair(filename, desttype));
+    }
+
+    ffmpegfs_trace("Clearing all %zd entries from cache...", keys.size());
+
+    if (ret == SQLITE_DONE)
+    {
+        for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+        {
+            const cache_key_t & key = *it;
+
+            ffmpegfs_trace("Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
+
+            cache_t::iterator p = m_cache.find(key);
+            if (p != m_cache.end())
+            {
+                delete_entry(&p->second, CLOSE_CACHE_DELETE);
+            }
+
+            if (delete_info(key.first, key.second))
+            {
+                remove_cachefile(key.first);
+            }
+        }
+    }
+    else
+    {
+        ffmpegfs_error("Failed to execute select: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
+    }
+
+    sqlite3_finalize(stmt);
+
+    unlock();
+
+    return bSuccess;
+}
+
 void Cache::lock()
 {
     pthread_mutex_lock(&m_mutex);
@@ -749,4 +816,13 @@ void Cache::lock()
 void Cache::unlock()
 {
     pthread_mutex_unlock(&m_mutex);
+}
+
+bool Cache::remove_cachefile(const string & filename)
+{
+    string cachefile;
+
+    Buffer::make_cachefile_name(cachefile, filename);
+
+    return Buffer::remove_file(cachefile);
 }

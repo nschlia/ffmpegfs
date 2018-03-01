@@ -1,7 +1,7 @@
 /*
  * FFmpeg decoder class source for ffmpegfs
  *
- * Copyright (C) 2017 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -740,7 +740,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     if ((ret = avcodec_open2(codec_ctx, output_codec, &opt)) < 0)
     {
         ffmpegfs_error("Could not open %s output codec %s (error '%s') for '%s'.", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str(), m_in.m_pFormat_ctx->filename);
-        avcodec_free_context(&codec_ctx);
+//        avcodec_free_context(&codec_ctx);
         return ret;
     }
 

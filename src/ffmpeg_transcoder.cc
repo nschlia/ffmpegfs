@@ -770,16 +770,16 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     AVIOContext *   output_io_context = NULL;
     AVCodecID       audio_codec_id = AV_CODEC_ID_NONE;
     AVCodecID       video_codec_id = AV_CODEC_ID_NONE;
-    const char *    ext;
+    const char *    format;
     int             ret = 0;
 
 #ifndef DISABLE_ISMV
-    ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
+    format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
 #else
-    ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
+    format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
 #endif
 
-    if (ext == 0)
+    if (format == NULL)
     {
         ffmpegfs_error("Unknown format type '%s' for '%s'.", params.m_desttype, m_in.m_pFormat_ctx->filename);
         return -1;
@@ -788,7 +788,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     ffmpegfs_debug("Opening format type '%s' for '%s'.", params.m_desttype, m_in.m_pFormat_ctx->filename);
 
     // Create a new format context for the output container format.
-    avformat_alloc_output_context2(&m_out.m_pFormat_ctx, NULL, ext, NULL);
+    avformat_alloc_output_context2(&m_out.m_pFormat_ctx, NULL, format, NULL);
     if (!m_out.m_pFormat_ctx)
     {
         ffmpegfs_error("Could not allocate output format context for '%s'.", m_in.m_pFormat_ctx->filename);

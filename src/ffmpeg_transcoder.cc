@@ -639,9 +639,61 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
         // tbc
         codec_ctx->time_base                = out_video_stream->time_base;
+        out_video_stream->codec->time_base  = out_video_stream->time_base;
+
+        //codec_ctx->time_base            = { .num = 1, .den = 25 };
+        //out_video_stream->time_base     = { .num = 1, .den = 10000000 }; // TODO: Needs that to be fixed??? Seems so at least.
+        //out_video_stream->codec->time_base= { .num = 1, .den = 25 };
+
+#ifdef USING_LIBAV
+#warning "Must be fixed here! USING_LIBAV"
+#else
+        // fps
+        out_video_stream->avg_frame_rate    = in_video_stream->codec->framerate;
+        if (!out_video_stream->avg_frame_rate.num)
+        {
+            out_video_stream->avg_frame_rate = { .num = 25, .den = 1 };
+            ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        }
+
+        codec_ctx->framerate                = out_video_stream->avg_frame_rate;
+#endif
+        codec_ctx->gop_size                 = 12;   // emit one intra frame every twelve frames at most
+
+        codec_ctx->sample_aspect_ratio      = in_video_stream->codec->sample_aspect_ratio;
 
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
-        codec_ctx->pix_fmt       		= AV_PIX_FMT_YUV420P;
+        codec_ctx->pix_fmt                  = AV_PIX_FMT_YUV420P;
+
+        if (codec_ctx->codec_id == AV_CODEC_ID_H264)
+        {
+            // Ignore missing width/height
+            //m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
+
+            //codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
+            //codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
+            //codec_ctx->profile = FF_PROFILE_H264_HIGH;
+            //codec_ctx->level = 31;
+
+            // -profile:v baseline -level 3.0
+            //av_opt_set(codec_ctx->priv_data, "profile", "baseline", 0);
+            //av_opt_set(codec_ctx->priv_data, "level", "3.0", 0);
+
+            // -profile:v high -level 3.1
+            //av_opt_set(codec_ctx->priv_data, "profile", "high", 0);
+            //av_opt_set(codec_ctx->priv_data, "level", "3.1", 0);
+
+            // Set speed (changes profile!)
+            av_opt_set(codec_ctx->priv_data, "preset", "ultrafast", 0);
+            //av_opt_set(codec_ctx->priv_data, "preset", "veryfast", 0);
+            //av_opt_set(codec_ctx->priv_data, "tune", "zerolatency", 0);
+
+            //if (!av_dict_get((AVDictionary*)codec_ctx->priv_data, "threads", NULL, 0))
+            //{
+            //  ffmpegfs_error("Setting threads to auto for codec %s for '%s'.", get_codec_name(codec_id), m_in.m_pFormat_ctx->filename);
+            //  av_dict_set_with_check((AVDictionary**)&codec_ctx->priv_data, "threads", "auto", 0);
+            //}
+        }
 
         if (in_video_stream->codec->pix_fmt != codec_ctx->pix_fmt ||
                 in_video_stream->codec->width != codec_ctx->width ||
@@ -672,22 +724,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             }
         }
 
-        codec_ctx->gop_size             = 12;   // emit one intra frame every twelve frames at most
-
-#ifdef USING_LIBAV
-#warning "Must be fixed here! USING_LIBAV"
-#else
-        codec_ctx->framerate            = in_video_stream->codec->framerate;
-        if (!codec_ctx->framerate.num)
-        {
-            codec_ctx->framerate = { .num = 25, .den = 1 };
-            ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
-        }
-        out_video_stream->avg_frame_rate = codec_ctx->framerate;
-#endif
-
-        codec_ctx->sample_aspect_ratio  = in_video_stream->codec->sample_aspect_ratio;
-
         // TODO: ALBUM ARTS
         // mp4 album arts do not work with ipod profile. Set mp4.
         //    if (m_out.m_pFormat_ctx->oformat->mime_type != NULL && (!strcmp(m_out.m_pFormat_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_pFormat_ctx->oformat->mime_type, "video/mp4")))
@@ -695,31 +731,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //        m_out.m_pFormat_ctx->oformat->name = "mp4";
         //        m_out.m_pFormat_ctx->oformat->mime_type = "application/mp4";
         //    }
-
-        //    // Ignore missing width/height
-        //    m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
-
-        //    codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
-
-        // -profile:v baseline -level 3.0
-        //av_opt_set(codec_ctx->priv_data, "profile", "baseline", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set(codec_ctx->priv_data, "level", "3.0", AV_OPT_SEARCH_CHILDREN);
-        // -profile:v high -level 3.1
-        av_opt_set(codec_ctx->priv_data, "profile", "high", AV_OPT_SEARCH_CHILDREN);
-        av_opt_set(codec_ctx->priv_data, "level", "3.1", AV_OPT_SEARCH_CHILDREN);
-
-        av_opt_set(codec_ctx->priv_data, "preset", "ultrafast", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set(codec_ctx->priv_data, "preset", "veryfast", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set(codec_ctx->priv_data, "tune", "zerolatency", AV_OPT_SEARCH_CHILDREN);
-
-        //av_opt_set(codec_ctx->priv_data, "qmin", "0", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set(codec_ctx->priv_data, "qmax", "69", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set(codec_ctx->priv_data, "qdiff", "4", AV_OPT_SEARCH_CHILDREN);
-
-        // if (!av_dict_get(codec_ctx->priv_data, "threads", NULL, 0))
-        // {
-        //  av_dict_set_with_check(codec_ctx->priv_data, "threads", "auto", 0);
-        // }
 
         // Save the encoder context for easier access later.
         m_out.m_pVideo_codec_ctx    = codec_ctx;

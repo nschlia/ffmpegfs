@@ -1625,8 +1625,6 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                         - FFMAX3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1);
             }
 
-            static bool m_bDTSReported = false;
-
             if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
             {
                 int64_t max = m_out.m_last_mux_dts + 1; // !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);

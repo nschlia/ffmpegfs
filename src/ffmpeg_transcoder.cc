@@ -626,17 +626,19 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // identical to 1.
         //out_video_stream->time_base               = in_video_stream->time_base;
 
+        // tbn
         if (codec_ctx->codec_id == AV_CODEC_ID_THEORA)
-		{
+        {
             // Strange: Theora seems to need it this way...
-        	out_video_stream->time_base.num = in_video_stream->codec->framerate.den;
-	        out_video_stream->time_base.den = in_video_stream->codec->framerate.num;
-		}
+            out_video_stream->time_base.num = in_video_stream->codec->framerate.den;
+            out_video_stream->time_base.den = in_video_stream->codec->framerate.num;
+        }
         else
         {
             out_video_stream->time_base     = { .num = 1, .den = 90000 }; // TODO: Needs that to be fixed??? Seems so at least.
         }
-       	codec_ctx->time_base            = out_video_stream->time_base;
+        // tbc
+        codec_ctx->time_base                = out_video_stream->time_base;
 
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
         codec_ctx->pix_fmt       		= AV_PIX_FMT_YUV420P;
@@ -1112,7 +1114,7 @@ cleanup2:
         AVFrame *input_frame = NULL;
         int ret = 0;
 
-        // Initialize temporary storage for one input frame.
+        // Initialise temporary storage for one input frame.
         ret = init_input_frame(&input_frame);
         if (ret < 0)
         {
@@ -1648,6 +1650,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                 m_bDTSReported = false;
             }
         }
+
         m_out.m_last_mux_dts = output_packet.dts;
 
         ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
@@ -1984,16 +1987,16 @@ size_t FFMPEG_Transcoder::calculate_size()
         double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, AV_TIME_BASE_Q);
         AVCodecID audio_codec_id = AV_CODEC_ID_NONE;
         AVCodecID video_codec_id = AV_CODEC_ID_NONE;
-        const char *    ext;
+        const char *    format;
         size_t size = 0;
 
 #ifndef DISABLE_ISMV
-        ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
+        format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
 #else
-        ext = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
+        format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
 #endif
 
-        if (ext == 0)
+        if (format == NULL)
         {
             ffmpegfs_error("Unknown format type '%s' for '%s'.", params.m_desttype, m_in.m_pFormat_ctx->filename);
             return 0;
@@ -2002,9 +2005,9 @@ size_t FFMPEG_Transcoder::calculate_size()
         if (m_in.m_nAudio_stream_idx > -1)
         {
 #if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)
-           int64_t audiobitrate = m_in.m_pAudio_codec_ctx->bit_rate;
+            int64_t audiobitrate = m_in.m_pAudio_codec_ctx->bit_rate;
 #else // USING_LIBAV
-           int audiobitrate = m_in.m_pAudio_codec_ctx->bit_rate;
+            int audiobitrate = m_in.m_pAudio_codec_ctx->bit_rate;
 #endif
 
             get_output_bit_rate(m_in.m_pAudio_stream, params.m_audiobitrate, &audiobitrate);

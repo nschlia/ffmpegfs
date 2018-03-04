@@ -32,7 +32,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
-    : m_nCalculated_size(0)
+    : m_bDTSReported(false)
+    , m_nCalculated_size(0)
     , m_bIsVideo(false)
     , m_pAudio_resample_ctx(NULL)
     , m_pAudioFifo(NULL)

@@ -46,16 +46,6 @@ QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -Wconversion
 #QMAKE_CFLAGS += -O2 -MT -MD -MP -MF
 #QMAKE_CXXFLAGS += -O2 -MT -MD -MP -MF
 
-#INCLUDEPATH += /home/norbert/dev/ffmpeg/include
-#LIBS += \
-#        -L/home/norbert/dev/ffmpeg/lib \
-#        -L/home/norbert/dev/ffmpeg/bin
-
-INCLUDEPATH += /home/schlia/dev/ffmpeg/include
-LIBS += \
-        -L/home/schlia/dev/ffmpeg/lib \
-        -L/home/schlia/dev/ffmpeg/bin
-
 DISTFILES += \
     COPYING.DOC \
     README.md \

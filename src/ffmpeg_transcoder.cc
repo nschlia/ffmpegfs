@@ -952,41 +952,22 @@ int FFMPEG_Transcoder::write_output_file_header()
 
     if (m_out.m_output_type == TYPE_MP4)
     {
+        // Settings for fast playback start in HTML5
+        av_dict_set_with_check(&dict, "movflags", "+faststart", 0);
+        av_dict_set_with_check(&dict, "frag_duration", "1000000", 0); // 1 sec
+
 #ifndef DISABLE_ISMV
         if (!params.m_enable_ismv)
         {
 #endif
-            // For all but M$ Explorer/Edge
-            // Settings for fast playback start in HTML5
-            av_dict_set_with_check(&dict, "movflags", "+faststart", 0);
             av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0);
             //av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0); // MS Edge
-            av_dict_set_with_check(&dict, "frag_duration", "1000000", 0); // 1 sec
-            //av_dict_set_with_check(&dict, "frag_duration", "10000000", 0);
-
-            // Keine guten Ideen
-            //av_dict_set_with_check(&dict, "movflags", "frag_keyframe", 0);
-            //av_dict_set_with_check(&dict, "movflags", "default_base_moof", 0);
-            //av_dict_set_with_check(&dict, "movflags", "omit_tfhd_offset", 0)
-            //av_dict_set_with_check(&dict, "movflags", "+rtphint", 0);
-            //av_dict_set_with_check(&dict, "movflags", "+disable_chpl", 0);
-
-            // Geht (empty_moov+empty_moov automatisch mit isml)
-            //av_dict_set_with_check(&dict, "movflags", "isml+frag_keyframe+separate_moof", 0);
-            //av_dict_set_with_check(&dict, "movflags", "isml", 0);
-
-            // spielt 50 Sekunden...
-            // ISMV NICHT av_dict_set_with_check(&dict, "frag_duration", "50000000", 0);
 #ifndef DISABLE_ISMV
         }
         else
         {
-            // For M$ Explorer/Edge
-            // Settings for fast playback start in HTML5
-            av_dict_set_with_check(&dict, "movflags", "+faststart", 0);
             // Geht (empty_moov+empty_moov automatisch mit isml)
             av_dict_set_with_check(&dict, "movflags", "isml+frag_keyframe+separate_moof", 0);
-            av_dict_set_with_check(&dict, "frag_duration", "5000000", 0); // 1 sec
         }
 #endif
 

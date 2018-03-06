@@ -1,11 +1,11 @@
 ffmpegfs NEWS
 
-Important changes in 1.1 (2018-01-XX)
+Important changes in 1.1 (2018-02-XX)
 
 Changes in this release:
 * Fix: make clean for checks did not delete all logs
 * Feature request #1: WAV output support (by github user Avuton)
-* OGG output support
+* Feature: OGG output support
 * Fix: Did not write correct ID3v2 headers (thanks for the fix to gitbug user sdrik)
 * Feature: Include configure command line arguments and host OS in "-V" option.
 * Feature: Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
@@ -13,6 +13,8 @@ Changes in this release:
   If already smaller the size will be left as is. You should only set
   one parameter, if both are set the aspect ratio may be changed and the
   result look strange.
+* Feature: Added clear_cache option to clear the whole cache everytime 
+  the application is started.
 
 nschlia@oblivion-software.de
 

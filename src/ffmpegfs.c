@@ -54,9 +54,7 @@ struct ffmpegfs_params params =
     .m_mountpath          	= NULL,                     // required parameter
 
     .m_desttype           	= "mp4",                    // default: encode to mp4
-#ifndef DISABLE_ISMV
     .m_enable_ismv          = 0,                        // default: do not use ISMV
-#endif
 
     .m_audiobitrate       	= 128000,                   // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
@@ -108,10 +106,8 @@ static struct fuse_opt ffmpegfs_opts[] =
 {
     FFMPEGFS_OPT("--desttype=%s",               m_desttype, 0),
     FFMPEGFS_OPT("desttype=%s",                 m_desttype, 0),
-#ifndef DISABLE_ISMV
     FFMPEGFS_OPT("--enable_ismv=%u",            m_enable_ismv, 0),
     FFMPEGFS_OPT("enable_ismv=%u",              m_enable_ismv, 0),
-#endif
 
     // Audio
     FUSE_OPT_KEY("--audiobitrate=%s",           KEY_AUDIO_BITRATE),
@@ -196,14 +192,12 @@ static void usage(char *name)
           "                           either MP4, MP3, OGG or WAV. To stream videos,\n"
           "                           MP4 or OGG must be selected.\n"
           "                           Default: mp4\n"
-      #ifndef DISABLE_ISMV
           "    --enable_ismv=0|1, -o enable_ismv=0|1\n"
           "                           Set to 1 to create a ISMV (Smooth Streaming) file.\n"
           "                           Must be used together with desttype=mp4.\n"
           "                           Resulting files will stream to Internet Explorer, but\n"
           "                           are not compatible with most other players.\n"
           "                           Default: 0\n"
-      #endif
           "\n"
           "Audio Options:\n"
           "\n"
@@ -769,11 +763,7 @@ static void print_params()
 
     transcoder_cache_path(cachepath, sizeof(cachepath));
 
-#ifndef DISABLE_ISMV
     get_codecs(params.m_desttype, NULL, &audio_codecid, &video_codecid, params.m_enable_ismv);
-#else
-    get_codecs(params.m_desttype, NULL, &audio_codecid, &video_codecid, 0);
-#endif
 
     format_bitrate(audiobitrate, sizeof(audiobitrate), params.m_audiobitrate);
     format_samplerate(audiosamplerate, sizeof(audiosamplerate), params.m_audiosamplerate);
@@ -799,9 +789,7 @@ static void print_params()
                                "Base Path         : %s\n"
                                "Mount Path        : %s\n\n"
                                "Destination Type  : %s\n"
-              #ifndef DISABLE_ISMV
                                "Use ISMV          : %s\n"
-              #endif
                                "\nAudio\n\n"
                                "Audio Format      : %s\n"
                                "Audio Bitrate     : %s\n"
@@ -832,9 +820,7 @@ static void print_params()
                   params.m_basepath,
                   params.m_mountpath,
                   params.m_desttype,
-              #ifndef DISABLE_ISMV
                   params.m_enable_ismv ? "yes" : "no",
-              #endif
                   get_codec_name(audio_codecid),
                   audiobitrate,
                   audiosamplerate,

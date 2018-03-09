@@ -25,9 +25,6 @@
 
 #pragma once
 
-// disable ISMV
-#define DISABLE_ISMV
-
 #define FUSE_USE_VERSION 26
 
 #include <fuse.h>
@@ -41,9 +38,7 @@ extern struct ffmpegfs_params
     const char *    m_mountpath;
     // Output type
     const char*     m_desttype;
-#ifndef DISABLE_ISMV
     int             m_enable_ismv;              // TODO Bug #2240: produces ridiculously large files
-#endif
     // Audio
     unsigned int    m_audiobitrate;
     unsigned int    m_audiosamplerate;

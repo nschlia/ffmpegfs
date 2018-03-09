@@ -799,11 +799,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     const char *    format;
     int             ret = 0;
 
-#ifndef DISABLE_ISMV
     format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
-#else
-    format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
-#endif
 
     if (format == NULL)
     {
@@ -965,20 +961,17 @@ int FFMPEG_Transcoder::write_output_file_header()
         av_dict_set_with_check(&dict, "movflags", "+faststart", 0);
         av_dict_set_with_check(&dict, "frag_duration", "1000000", 0); // 1 sec
 
-#ifndef DISABLE_ISMV
         if (!params.m_enable_ismv)
         {
-#endif
             av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0);
             //av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0); // MS Edge
-#ifndef DISABLE_ISMV
         }
         else
         {
             // Geht (empty_moov+empty_moov automatisch mit isml)
             av_dict_set_with_check(&dict, "movflags", "isml+frag_keyframe+separate_moof", 0);
         }
-#endif
+
         av_dict_set_with_check(&dict, "flags:a", "+global_header", 0);
         av_dict_set_with_check(&dict, "flags:v", "+global_header", 0);
     }
@@ -1980,11 +1973,7 @@ size_t FFMPEG_Transcoder::calculate_size()
         const char *    format;
         size_t size = 0;
 
-#ifndef DISABLE_ISMV
         format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
-#else
-        format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, 0);
-#endif
 
         if (format == NULL)
         {

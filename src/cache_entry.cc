@@ -77,11 +77,7 @@ void Cache_Entry::clear(int fetch_file_time)
     //string          m_filename;
     //char            m_desttype[11];
 	
-#ifndef DISABLE_ISMV
     m_cache_info.m_enable_ismv = params.m_enable_ismv;
-#else
-    m_cache_info.m_enable_ismv = false;
-#endif
     m_cache_info.m_audiobitrate = params.m_audiobitrate;
     m_cache_info.m_audiosamplerate = params.m_audiosamplerate;
     m_cache_info.m_videobitrate = params.m_videobitrate;

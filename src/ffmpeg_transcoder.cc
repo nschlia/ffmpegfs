@@ -464,8 +464,8 @@ double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRation
 
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
-    AVCodecContext *codec_ctx           = NULL;
-    AVStream *      out_video_stream    = NULL;
+    AVCodecContext *output_codec_ctx    = NULL;
+    AVStream *      output_stream       = NULL;
     AVCodec *       output_codec        = NULL;
     AVDictionary *  opt                 = NULL;
     int ret;
@@ -478,22 +478,22 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         return AVERROR(EINVAL);
     }
 
-    out_video_stream = avformat_new_stream(m_out.m_pFormat_ctx, output_codec);
-    if (!out_video_stream)
+    output_stream = avformat_new_stream(m_out.m_pFormat_ctx, output_codec);
+    if (!output_stream)
     {
         ffmpegfs_error("Could not allocate stream for '%s'.", m_in.m_pFormat_ctx->filename);
         return AVERROR(ENOMEM);
     }
-    out_video_stream->id = m_out.m_pFormat_ctx->nb_streams - 1;
+    output_stream->id = m_out.m_pFormat_ctx->nb_streams - 1;
 #if (LIBAVCODEC_VERSION_MAJOR > 56) // Check for FFmpeg 3
-    codec_ctx = avcodec_alloc_context3(output_codec);
-    if (!codec_ctx)
+    output_codec_ctx = avcodec_alloc_context3(output_codec);
+    if (!output_codec_ctx)
     {
         ffmpegfs_error("Could not alloc an encoding context for '%s'.", m_in.m_pFormat_ctx->filename);;
         return AVERROR(ENOMEM);
     }
 #else
-    codec_ctx = out_video_stream->codec;
+    output_codec_ctx = output_stream->codec;
 #endif
 
     switch (output_codec->type)
@@ -501,69 +501,67 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     case AVMEDIA_TYPE_AUDIO:
     {
         // Set the basic encoder parameters.
-        if (get_output_bit_rate(m_in.m_pAudio_stream, params.m_audiobitrate, &codec_ctx->bit_rate))
+        if (get_output_bit_rate(m_in.m_pAudio_stream, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("Limiting audio bit rate to %s for '%s'.", format_bitrate(codec_ctx->bit_rate).c_str(), m_in.m_pFormat_ctx->filename);
+            ffmpegfs_info("Limiting audio bit rate to %s for '%s'.", format_bitrate(output_codec_ctx->bit_rate).c_str(), m_in.m_pFormat_ctx->filename);
         }
 
-        codec_ctx->channels                 = 2;
-        codec_ctx->channel_layout           = av_get_default_channel_layout(codec_ctx->channels);
-        codec_ctx->sample_rate              = m_in.m_pAudio_codec_ctx->sample_rate;
-        if (get_output_sample_rate(m_in.m_pAudio_stream, params.m_audiosamplerate, &codec_ctx->sample_rate))
+        output_codec_ctx->channels                 = 2;
+        output_codec_ctx->channel_layout           = av_get_default_channel_layout(output_codec_ctx->channels);
+        output_codec_ctx->sample_rate              = m_in.m_pAudio_codec_ctx->sample_rate;
+        if (get_output_sample_rate(m_in.m_pAudio_stream, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("Limiting audio sample rate to %s for '%s'.", format_samplerate(codec_ctx->sample_rate).c_str(), m_in.m_pFormat_ctx->filename);
+            ffmpegfs_info("Limiting audio sample rate to %s for '%s'.", format_samplerate(output_codec_ctx->sample_rate).c_str(), m_in.m_pFormat_ctx->filename);
         }
-        codec_ctx->sample_fmt               = output_codec->sample_fmts[0];
+        output_codec_ctx->sample_fmt               = output_codec->sample_fmts[0];
 
         // Allow the use of the experimental AAC encoder
-        codec_ctx->strict_std_compliance    = FF_COMPLIANCE_EXPERIMENTAL;
+        output_codec_ctx->strict_std_compliance    = FF_COMPLIANCE_EXPERIMENTAL;
 
         // Set the sample rate for the container.
-        out_video_stream->time_base.den     = codec_ctx->sample_rate;
-        out_video_stream->time_base.num     = 1;
+        output_stream->time_base.den     = output_codec_ctx->sample_rate;
+        output_stream->time_base.num     = 1;
 
 #if (LIBAVCODEC_VERSION_MAJOR <= 56) // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         av_dict_set_with_check(&opt, "strict", "-2", 0);
         // Allow the use of the experimental AAC encoder
-        codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 #endif
 
         // Save the encoder context for easier access later.
-        m_out.m_pAudio_codec_ctx            = codec_ctx;
+        m_out.m_pAudio_codec_ctx            = output_codec_ctx;
         // Save the stream index
-        m_out.m_nAudio_stream_idx           = out_video_stream->index;
+        m_out.m_nAudio_stream_idx           = output_stream->index;
         // Save output audio stream for faster reference
-        m_out.m_pAudio_stream               = out_video_stream;
+        m_out.m_pAudio_stream               = output_stream;
         break;
     }
     case AVMEDIA_TYPE_VIDEO:
     {
-        codec_ctx->codec_id = codec_id;
+        output_codec_ctx->codec_id = codec_id;
 
         // Set the basic encoder parameters.
         // The input file's sample rate is used to avoid a sample rate conversion.
-
-        AVStream *in_video_stream = m_in.m_pVideo_stream;
 
         //        ret = avcodec_parameters_from_context(stream->codecpar, m_in.m_pVideo_codec_ctx);
         //        if (ret < 0) {
         //            return ret;
         //        }
 
-        if (get_output_bit_rate(m_in.m_pVideo_stream, params.m_videobitrate, &codec_ctx->bit_rate))
+        if (get_output_bit_rate(m_in.m_pVideo_stream, params.m_videobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("Limiting video bit rate to %s for '%s'.", format_bitrate(codec_ctx->bit_rate).c_str(), m_in.m_pFormat_ctx->filename);
+            ffmpegfs_info("Limiting video bit rate to %s for '%s'.", format_bitrate(output_codec_ctx->bit_rate).c_str(), m_in.m_pFormat_ctx->filename);
         }
 
         //codec_ctx->bit_rate_tolerance   = 0;
         // Resolution must be a multiple of two.
 
-        codec_ctx->width                = in_video_stream->codec->width;
-        codec_ctx->height               = in_video_stream->codec->height;
+        output_codec_ctx->width                = m_in.m_pVideo_stream->codec->width;
+        output_codec_ctx->height               = m_in.m_pVideo_stream->codec->height;
 
         if (params.m_videowidth || params.m_videoheight)
         {
@@ -580,13 +578,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             else if (params.m_videowidth)
             {
                 // Only video width
-                double ratio = get_aspect_ratio(codec_ctx->width, codec_ctx->height, codec_ctx->sample_aspect_ratio);
+                double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
 
                 width                   = params.m_videowidth;
 
                 if (!ratio)
                 {
-                    height              = codec_ctx->height;
+                    height              = output_codec_ctx->height;
                 }
                 else
                 {
@@ -597,11 +595,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             else //if (params.m_videoheight)
             {
                 // Only video height
-                double ratio = get_aspect_ratio(codec_ctx->width, codec_ctx->height, codec_ctx->sample_aspect_ratio);
+                double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
 
                 if (!ratio)
                 {
-                    width               = codec_ctx->width;
+                    width               = output_codec_ctx->width;
                 }
                 else
                 {
@@ -611,11 +609,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 height                  = params.m_videoheight;
             }
 
-            if (codec_ctx->width > width || codec_ctx->height > height)
+            if (output_codec_ctx->width > width || output_codec_ctx->height > height)
             {
-                ffmpegfs_info("Changing video size from %i/%i to %i/%i for '%s'.", codec_ctx->width, codec_ctx->height, width, height, m_in.m_pFormat_ctx->filename);
-                codec_ctx->width        = width;
-                codec_ctx->height       = height;
+                ffmpegfs_info("Changing video size from %i/%i to %i/%i for '%s'.", output_codec_ctx->width, output_codec_ctx->height, width, height, m_in.m_pFormat_ctx->filename);
+                output_codec_ctx->width        = width;
+                output_codec_ctx->height       = height;
             }
         }
 
@@ -623,98 +621,106 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // of which frame timestamps are represented. For fixed-fps content,
         // timebase should be 1/framerate and timestamp increments should be
         // identical to 1.
-        //out_video_stream->time_base               = in_video_stream->time_base;
+        //output_stream->time_base               = m_in.m_pVideo_stream->time_base;
 
         // tbn
-        if (codec_ctx->codec_id == AV_CODEC_ID_THEORA)
+        if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
         {
             // Strange: Theora seems to need it this way...
-            out_video_stream->time_base.num = in_video_stream->codec->framerate.den;
-            out_video_stream->time_base.den = in_video_stream->codec->framerate.num;
+            output_stream->time_base.num = m_in.m_pVideo_stream->codec->framerate.den;
+            output_stream->time_base.den = m_in.m_pVideo_stream->codec->framerate.num;
         }
         else
         {
-            out_video_stream->time_base     = { .num = 1, .den = 90000 }; // TODO: Needs that to be fixed??? Seems so at least.
+            // TODO: Needs that to be fixed??? Seems so at least. Files get huge if not set this way. Why?!?
+                output_stream->time_base        = { .num = 1, .den = 90000 };
         }
-        // tbc
-        codec_ctx->time_base                = out_video_stream->time_base;
-        out_video_stream->codec->time_base  = out_video_stream->time_base;
 
-        //codec_ctx->time_base            = { .num = 1, .den = 25 };
-        //out_video_stream->time_base     = { .num = 1, .den = 10000000 }; // TODO: Needs that to be fixed??? Seems so at least.
-        //out_video_stream->codec->time_base= { .num = 1, .den = 25 };
+        // tbc
+        output_codec_ctx->time_base             = output_stream->time_base;
+
+        // tbc
+        output_stream->codec->time_base         = output_stream->time_base;
+        // output_stream->codec->time_base      = { .num = 50, .den = 1 };
+        // output_stream->codec->time_base         = m_in.m_pVideo_stream->time_base;
+        //output_stream->codec->time_base.den     *= output_stream->codec->ticks_per_frame;
 
 #ifdef USING_LIBAV
 #warning "Must be fixed here! USING_LIBAV"
 #else
         // fps
-        out_video_stream->avg_frame_rate    = in_video_stream->codec->framerate;
-        if (!out_video_stream->avg_frame_rate.num)
+        output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
+        if (!output_stream->avg_frame_rate.num)
         {
-            out_video_stream->avg_frame_rate = { .num = 25, .den = 1 };
+            output_stream->avg_frame_rate       = { .num = 25, .den = 1 };
             ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
         }
 
-        codec_ctx->framerate                = out_video_stream->avg_frame_rate;
+        output_codec_ctx->framerate             = output_stream->avg_frame_rate;
 #endif
-        codec_ctx->gop_size                 = 12;   // emit one intra frame every twelve frames at most
 
-        codec_ctx->sample_aspect_ratio      = in_video_stream->codec->sample_aspect_ratio;
+        // codec_ctx->time_base                 = { .num = 1, .den = 25 };
+        // output_stream->time_base             = { .num = 1, .den = 10000000 }; // TODO: Needs that to be fixed??? Seems so at least.
+        // output_stream->codec->time_base      = { .num = 1, .den = 25 };
+
+        output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
+
+        output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
 
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
-        codec_ctx->pix_fmt                  = AV_PIX_FMT_YUV420P;
+        output_codec_ctx->pix_fmt               = AV_PIX_FMT_YUV420P;
 
-        if (codec_ctx->codec_id == AV_CODEC_ID_H264)
+        if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
         {
             // Ignore missing width/height
             //m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
 
-            //codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
-            //codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
-            //codec_ctx->profile = FF_PROFILE_H264_HIGH;
-            //codec_ctx->level = 31;
+            //output_codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
+            //output_codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
+            //output_codec_ctx->profile = FF_PROFILE_H264_HIGH;
+            //output_codec_ctx->level = 31;
 
             // -profile:v baseline -level 3.0
-            //av_opt_set(codec_ctx->priv_data, "profile", "baseline", 0);
-            //av_opt_set(codec_ctx->priv_data, "level", "3.0", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "profile", "baseline", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "level", "3.0", 0);
 
             // -profile:v high -level 3.1
-            //av_opt_set(codec_ctx->priv_data, "profile", "high", 0);
-            //av_opt_set(codec_ctx->priv_data, "level", "3.1", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "profile", "high", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "level", "3.1", 0);
 
             // Set speed (changes profile!)
-            av_opt_set(codec_ctx->priv_data, "preset", "ultrafast", 0);
-            //av_opt_set(codec_ctx->priv_data, "preset", "veryfast", 0);
-            //av_opt_set(codec_ctx->priv_data, "tune", "zerolatency", 0);
+            av_opt_set(output_codec_ctx->priv_data, "preset", "ultrafast", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "preset", "veryfast", 0);
+            //av_opt_set(output_codec_ctx->priv_data, "tune", "zerolatency", 0);
 
-            //if (!av_dict_get((AVDictionary*)codec_ctx->priv_data, "threads", NULL, 0))
+            //if (!av_dict_get((AVDictionary*)output_codec_ctx->priv_data, "threads", NULL, 0))
             //{
             //  ffmpegfs_error("Setting threads to auto for codec %s for '%s'.", get_codec_name(codec_id), m_in.m_pFormat_ctx->filename);
-            //  av_dict_set_with_check((AVDictionary**)&codec_ctx->priv_data, "threads", "auto", 0);
+            //  av_dict_set_with_check((AVDictionary**)&output_codec_ctx->priv_data, "threads", "auto", 0);
             //}
         }
 
-        if (in_video_stream->codec->pix_fmt != codec_ctx->pix_fmt ||
-                in_video_stream->codec->width != codec_ctx->width ||
-                in_video_stream->codec->height != codec_ctx->height)
+        if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt ||
+                m_in.m_pVideo_stream->codec->width != output_codec_ctx->width ||
+                m_in.m_pVideo_stream->codec->height != output_codec_ctx->height)
         {
             // Rescale image if required
-            const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)in_video_stream->codec->pix_fmt);
-            const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(codec_ctx->pix_fmt);
-            if (in_video_stream->codec->pix_fmt != codec_ctx->pix_fmt)
+            const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)m_in.m_pVideo_stream->codec->pix_fmt);
+            const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(output_codec_ctx->pix_fmt);
+            if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt)
             {
                 ffmpegfs_info("Initialising pixel format conversion from %s to %s for '%s'.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-", m_in.m_pFormat_ctx->filename);
             }
             assert(m_pSws_ctx == NULL);
             m_pSws_ctx = sws_getContext(
                         // Source settings
-                        in_video_stream->codec->width,          // width
-                        in_video_stream->codec->height,         // height
-                        in_video_stream->codec->pix_fmt,        // format
+                        m_in.m_pVideo_stream->codec->width,         // width
+                        m_in.m_pVideo_stream->codec->height,        // height
+                        m_in.m_pVideo_stream->codec->pix_fmt,       // format
                         // Target settings
-                        codec_ctx->width,                       // width
-                        codec_ctx->height,                      // height
-                        codec_ctx->pix_fmt,                     // format
+                        output_codec_ctx->width,                    // width
+                        output_codec_ctx->height,                   // height
+                        output_codec_ctx->pix_fmt,                  // format
                         SWS_FAST_BILINEAR, NULL, NULL, NULL);
             if (!m_pSws_ctx)
             {
@@ -732,11 +738,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //    }
 
         // Save the encoder context for easier access later.
-        m_out.m_pVideo_codec_ctx    = codec_ctx;
+        m_out.m_pVideo_codec_ctx    = output_codec_ctx;
         // Save the stream index
-        m_out.m_nVideo_stream_idx   = out_video_stream->index;
+        m_out.m_nVideo_stream_idx   = output_stream->index;
         // Save output video stream for faster reference
-        m_out.m_pVideo_stream       = out_video_stream;
+        m_out.m_pVideo_stream       = output_stream;
         break;
     }
     default:
@@ -746,25 +752,25 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     // Some formats want stream headers to be separate.
     if (m_out.m_pFormat_ctx->oformat->flags & AVFMT_GLOBALHEADER)
     {
-        codec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+        output_codec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 
     // Open the encoder for the audio stream to use it later.
-    if ((ret = avcodec_open2(codec_ctx, output_codec, &opt)) < 0)
+    if ((ret = avcodec_open2(output_codec_ctx, output_codec, &opt)) < 0)
     {
         ffmpegfs_error("Could not open %s output codec %s (error '%s') for '%s'.", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str(), m_in.m_pFormat_ctx->filename);
-        //        avcodec_free_context(&codec_ctx);
+        //        avcodec_free_context(&output_codec_ctx);
         return ret;
     }
 
     ffmpegfs_debug("Successfully opened %s output codec %s for '%s'.", get_media_type_string(output_codec->type), get_codec_name(codec_id), m_in.m_pFormat_ctx->filename);
 
 #if (LIBAVCODEC_VERSION_MAJOR > 56) // Check for FFmpeg 3
-    ret = avcodec_parameters_from_context(out_video_stream->codecpar, codec_ctx);
+    ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
     if (ret < 0)
     {
         ffmpegfs_error("Could not initialise stream parameters (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pFormat_ctx->filename);
-        //        avcodec_free_context(&codec_ctx);
+        //        avcodec_free_context(&output_codec_ctx);
         return ret;
     }
 #endif
@@ -969,7 +975,6 @@ int FFMPEG_Transcoder::write_output_file_header()
             av_dict_set_with_check(&dict, "movflags", "isml+frag_keyframe+separate_moof", 0);
         }
 #endif
-
         av_dict_set_with_check(&dict, "flags:a", "+global_header", 0);
         av_dict_set_with_check(&dict, "flags:v", "+global_header", 0);
     }
@@ -1841,7 +1846,6 @@ int FFMPEG_Transcoder::process_single_fr()
             // Decode one frame worth of audio samples, convert it to the
             // output sample format and put it into the FIFO buffer.
 
-
             ret = read_decode_convert_and_store(&finished);
             if (ret < 0)
             {
@@ -1913,7 +1917,6 @@ int FFMPEG_Transcoder::process_single_fr()
     while (!m_VideoFifo.empty())
     {
         AVFrame *output_frame = m_VideoFifo.front();
-
         m_VideoFifo.pop();
 
         // Encode one video frame.

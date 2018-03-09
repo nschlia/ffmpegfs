@@ -62,7 +62,7 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
           .m_nAudio_pts = 0,
           .m_audio_start_pts = 0,
           .m_video_start_pts = 0,
-          .m_last_mux_dts = 0,
+          .m_last_mux_dts = (int64_t)AV_NOPTS_VALUE,
           })
 {
 #pragma GCC diagnostic pop

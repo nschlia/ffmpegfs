@@ -947,7 +947,7 @@ int FFMPEG_Transcoder::init_fifo()
 int FFMPEG_Transcoder::write_output_file_header()
 {
     int ret;
-    AVDictionary* dict = nullptr;
+    AVDictionary* dict = NULL;
 
     if (m_out.m_output_type == TYPE_MP4)
     {

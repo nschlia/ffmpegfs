@@ -856,16 +856,10 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     // Some formats require the time stamps to start at 0, so if there is a difference between
     // the streams we need to drop audio or video until we are in sync.
-    if ((m_in.m_nVideo_stream_idx != INVALID_STREAM) &&
-            (m_in.m_nAudio_stream_idx != INVALID_STREAM))
+    if ((m_in.m_nVideo_stream_idx != INVALID_STREAM) && (m_in.m_nAudio_stream_idx != INVALID_STREAM))
     {
         // Calculate difference
-        AVStream *in_audio_stream = m_in.m_pAudio_stream;
-        AVStream *in_video_stream = m_in.m_pVideo_stream;
-
-        int64_t audio_start = av_rescale_q(in_audio_stream->start_time, in_audio_stream->time_base, AV_TIME_BASE_Q);
-
-        m_out.m_video_start_pts = av_rescale_q(audio_start, AV_TIME_BASE_Q, in_video_stream->time_base);
+        m_out.m_video_start_pts = av_rescale_q(m_in.m_pAudio_stream->start_time, m_in.m_pAudio_stream->time_base, m_out.m_pVideo_stream->time_base);
     }
 
     return 0;

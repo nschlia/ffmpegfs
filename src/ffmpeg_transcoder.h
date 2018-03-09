@@ -89,7 +89,6 @@ protected:
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags);
 
 private:
-    bool                        m_bDTSReported;
     time_t                      m_mtime;
     size_t                      m_nCalculated_size;         // Use this as the size instead of computing it.
     bool                        m_bIsVideo;

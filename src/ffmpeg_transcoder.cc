@@ -32,8 +32,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
-    : m_bDTSReported(false)
-    , m_nCalculated_size(0)
+    : m_nCalculated_size(0)
     , m_bIsVideo(false)
     , m_pAudio_resample_ctx(NULL)
     , m_pAudioFifo(NULL)
@@ -1624,11 +1623,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                 int64_t max = m_out.m_last_mux_dts + 1; // !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
                 if (output_packet.dts < max)
                 {
-                    if (!m_bDTSReported)
-                    {
-                        ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);
-                        m_bDTSReported = true;
-                    }
+                    ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);
 
                     if (output_packet.pts >= output_packet.dts)
                     {
@@ -1636,10 +1631,6 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                     }
                     output_packet.dts = max;
                 }
-            }
-            else
-            {
-                m_bDTSReported = false;
             }
         }
 

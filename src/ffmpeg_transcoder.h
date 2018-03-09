@@ -99,9 +99,9 @@ private:
 
     // Video conversion and buffering
     SwsContext *                m_pSws_ctx;
-//    AVFilterContext *           m_pBufferSinkContext;
-//    AVFilterContext *           m_pBufferSourceContext;
-//    AVFilterGraph *             m_pFilterGraph;
+    //    AVFilterContext *           m_pBufferSinkContext;
+    //    AVFilterContext *           m_pBufferSourceContext;
+    //    AVFilterGraph *             m_pFilterGraph;
     queue<AVFrame*>             m_VideoFifo;
     int64_t                     m_pts;
     int64_t                     m_pos;

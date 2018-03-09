@@ -627,13 +627,19 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
         {
             // Strange: Theora seems to need it this way...
-            output_stream->time_base.num = m_in.m_pVideo_stream->codec->framerate.den;
-            output_stream->time_base.den = m_in.m_pVideo_stream->codec->framerate.num;
+            output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->codec->framerate);
         }
         else
         {
             // TODO: Needs that to be fixed??? Seems so at least. Files get huge if not set this way. Why?!?
+            if (params.m_enable_ismv)
+            {
+                output_stream->time_base        = { .num = 1, .den = 10000000 };
+            }
+            else
+            {
                 output_stream->time_base        = { .num = 1, .den = 90000 };
+            }
         }
 
         // tbc
@@ -648,6 +654,10 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #ifdef USING_LIBAV
 #warning "Must be fixed here! USING_LIBAV"
 #else
+        // tbr
+        output_stream->r_frame_rate             = m_in.m_pVideo_stream->r_frame_rate;
+        // output_stream->r_frame_rate          = { .num = 25, .den = 1 };
+
         // fps
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
         if (!output_stream->avg_frame_rate.num)

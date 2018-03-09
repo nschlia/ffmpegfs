@@ -1619,7 +1619,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 
             if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
             {
-                int64_t max = m_out.m_last_mux_dts + 1; // !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
                 if (output_packet.dts < max)
                 {
                     ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);

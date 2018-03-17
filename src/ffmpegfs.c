@@ -233,7 +233,7 @@ static void usage(char *name)
           "                           Default: keep source video height\n"
           "    --videowidth=WIDTH, -o videowidth=WIDTH\n"
           "                           Sets the width of the target video.\n"
-          "                           Whene the video is rescaled the aspect ratio is\n"
+          "                           When the video is rescaled the aspect ratio is\n"
           "                           preserved if --height is not set at the same time.\n"
           "                           Default: keep source video width\n"
           "    --deinterlace, -o deinterlace\n"

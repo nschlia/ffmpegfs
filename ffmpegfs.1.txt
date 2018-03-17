@@ -81,7 +81,7 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     Default: keep source video height
 *--videowidth*=WIDTH, -o *videowidth*=WIDTH
     Sets the width of the target video.
-    Whene the video is rescaled the aspect ratio is
+    When the video is rescaled the aspect ratio is
     preserved if --height is not set at the same time.
     Default: keep source video width
 *--deinterlace*, -o *deinterlace*

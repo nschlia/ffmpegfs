@@ -238,7 +238,7 @@ bool Cache::read_info(t_cache_info & cache_info)
                 strncat(cache_info.m_desttype, text, sizeof(cache_info.m_desttype) - 1);
             }
             
-            cache_info.m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
+            //cache_info.m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info.m_audiobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 2);
             cache_info.m_audiosamplerate    = sqlite3_column_int(m_cacheidx_select_stmt, 3);
             cache_info.m_videobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 4);
@@ -312,7 +312,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
         SQLBINDTXT(1, cache_info.m_filename.c_str());
         SQLBINDTXT(2, cache_info.m_desttype);
-        SQLBINDNUM(sqlite3_bind_int, 3, cache_info.m_enable_ismv);
+        //SQLBINDNUM(sqlite3_bind_int, 3, cache_info.m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int, 4, cache_info.m_audiobitrate);
         SQLBINDNUM(sqlite3_bind_int, 5, cache_info.m_audiosamplerate);
         SQLBINDNUM(sqlite3_bind_int, 6, cache_info.m_videobitrate);

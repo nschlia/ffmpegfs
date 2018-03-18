@@ -69,7 +69,7 @@ protected:
     int read_decode_convert_and_store(int *finished);
     int init_audio_output_frame(AVFrame **frame, int frame_size);
     AVFrame *alloc_picture(AVPixelFormat pix_fmt, int width, int height);
-    void produce_dts(AVPacket * pkt, int64_t *pts);
+    void produce_audio_dts(AVPacket * pkt, int64_t *pts);
     int encode_audio_frame(AVFrame *frame, int *data_present);
     int encode_video_frame(AVFrame *frame, int *data_present);
     int load_encode_and_write(int frame_size);

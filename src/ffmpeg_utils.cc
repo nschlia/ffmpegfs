@@ -282,7 +282,7 @@ void tempdir(char *dir, size_t size)
     strncpy(dir, "/tmp", size);
 }
 
-const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid, int m_enable_ismv)
+const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
 {
     if (!strcasecmp(type, "mp3"))
     {
@@ -302,7 +302,7 @@ const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID *
         {
             *output_type = TYPE_MP4;
         }
-        return m_enable_ismv ? "ismv" : "mp4";
+        return "mp4";
     }
     else if (!strcasecmp(type, "wav"))
     {

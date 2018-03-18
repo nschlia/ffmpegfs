@@ -631,15 +631,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
         else
         {
-            // TODO: Needs that to be fixed??? Seems so at least. Files get huge if not set this way. Why?!?
-            if (params.m_enable_ismv)
-            {
-                output_stream->time_base        = { .num = 1, .den = 10000000 };
-            }
-            else
-            {
-                output_stream->time_base        = { .num = 1, .den = 90000 };
-            }
+            output_stream->time_base        = { .num = 1, .den = 90000 };
         }
 
         // tbc
@@ -647,17 +639,10 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         // tbc
         output_stream->codec->time_base         = output_stream->time_base;
-        // output_stream->codec->time_base      = { .num = 50, .den = 1 };
-        // output_stream->codec->time_base         = m_in.m_pVideo_stream->time_base;
-        //output_stream->codec->time_base.den     *= output_stream->codec->ticks_per_frame;
 
 #ifdef USING_LIBAV
 #warning "Must be fixed here! USING_LIBAV"
 #else
-        // tbr
-        output_stream->r_frame_rate             = m_in.m_pVideo_stream->r_frame_rate;
-        // output_stream->r_frame_rate          = { .num = 25, .den = 1 };
-
         // fps
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
         if (!output_stream->avg_frame_rate.num)
@@ -668,10 +653,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         output_codec_ctx->framerate             = output_stream->avg_frame_rate;
 #endif
-
-        // codec_ctx->time_base                 = { .num = 1, .den = 25 };
-        // output_stream->time_base             = { .num = 1, .den = 10000000 }; // TODO: Needs that to be fixed??? Seems so at least.
-        // output_stream->codec->time_base      = { .num = 1, .den = 25 };
 
         output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
 
@@ -799,7 +780,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     const char *    format;
     int             ret = 0;
 
-    format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
+    format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id);
 
     if (format == NULL)
     {
@@ -847,7 +828,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     }
 
     // open the output file
-    int nBufSize = 1024;
+    int nBufSize = 1024*1024;
     output_io_context = ::avio_alloc_context(
                 (unsigned char *) ::av_malloc(nBufSize + FF_INPUT_BUFFER_PADDING_SIZE),
                 nBufSize,
@@ -961,16 +942,8 @@ int FFMPEG_Transcoder::write_output_file_header()
         av_dict_set_with_check(&dict, "movflags", "+faststart", 0);
         av_dict_set_with_check(&dict, "frag_duration", "1000000", 0); // 1 sec
 
-        if (!params.m_enable_ismv)
-        {
-            av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0);
-            //av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0); // MS Edge
-        }
-        else
-        {
-            // Geht (empty_moov+empty_moov automatisch mit isml)
-            av_dict_set_with_check(&dict, "movflags", "isml+frag_keyframe+separate_moof", 0);
-        }
+        av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0);
+        //av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0); // MS Edge
 
         av_dict_set_with_check(&dict, "flags:a", "+global_header", 0);
         av_dict_set_with_check(&dict, "flags:v", "+global_header", 0);
@@ -1126,9 +1099,6 @@ cleanup2:
         // NOTE2: some codecs allow the raw parameters (frame size,
         // sample rate) to be changed at any frame. We handle this, so
         // you should also take care of it
-
-        // here, we use a stream based decoder (mpeg1video), so we
-        // feed decoder and see if it could decode a frame
 
         ret = avcodec_decode_video2(m_in.m_pVideo_codec_ctx, input_frame, data_present, input_packet);
 
@@ -1481,7 +1451,7 @@ int FFMPEG_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     return 0;
 }
 
-void FFMPEG_Transcoder::produce_dts(AVPacket *pkt, int64_t *pts)
+void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
@@ -1511,6 +1481,7 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
     // Packet used for temporary storage.
     AVPacket output_packet;
     int ret;
+
     init_packet(&output_packet);
 
     // Encode the audio frame and store it in the temporary packet.
@@ -1527,7 +1498,7 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
     {
         output_packet.stream_index = m_out.m_nAudio_stream_idx;
 
-        produce_dts(&output_packet, &m_out.m_nAudio_pts);
+        produce_audio_dts(&output_packet, &m_out.m_nAudio_pts);
 
         if ((ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet)) < 0)
         {
@@ -1973,7 +1944,7 @@ size_t FFMPEG_Transcoder::calculate_size()
         const char *    format;
         size_t size = 0;
 
-        format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id, params.m_enable_ismv);
+        format = get_codecs(params.m_desttype, &m_out.m_output_type, &audio_codec_id, &video_codec_id);
 
         if (format == NULL)
         {

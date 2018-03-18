@@ -167,7 +167,7 @@ extern "C" {
 void ffmpeg_libinfo(char * buffer, size_t maxsize);
 int show_formats_devices(int device_only);
 const char * get_codec_name(enum AVCodecID codec_id);
-const char * get_codecs(const char * type, OUTPUTTYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid, int m_enable_ismv);
+const char * get_codecs(const char * type, OUTPUTTYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid);
 
 void format_number(char *output, size_t size, uint64_t value);
 void format_bitrate(char *output, size_t size, uint64_t value);

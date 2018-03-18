@@ -15,8 +15,8 @@ Changes in this release:
   result look strange.
 * Feature: Added clear_cache option to clear the whole cache everytime 
   the application is started.
-* Feature: Added enable_ismv option to switch on smooth streaming extensions for
-  mpeg-4.
+* Note: Dropped ISMV option as it did not work as expected, especially creating an
+  mp4 on-the-fly did not work. The streamlined mp4 format already does the work.
 
 nschlia@oblivion-software.de
 

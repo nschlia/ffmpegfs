@@ -1468,8 +1468,8 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
             duration = 1;
         }
 
-        pkt->dts = *pts; // - duration;
-        pkt->pts = *pts;
+        pkt->dts = *pts;
+        pkt->pts = *pts + duration;
 
         *pts += duration;
     }

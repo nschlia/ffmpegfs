@@ -308,11 +308,14 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
     try
     {
+        bool enable_ismv_dummy = 0;
+
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 19);
 
         SQLBINDTXT(1, cache_info.m_filename.c_str());
         SQLBINDTXT(2, cache_info.m_desttype);
         //SQLBINDNUM(sqlite3_bind_int, 3, cache_info.m_enable_ismv);
+        SQLBINDNUM(sqlite3_bind_int, 3, enable_ismv_dummy);
         SQLBINDNUM(sqlite3_bind_int, 4, cache_info.m_audiobitrate);
         SQLBINDNUM(sqlite3_bind_int, 5, cache_info.m_audiosamplerate);
         SQLBINDNUM(sqlite3_bind_int, 6, cache_info.m_videobitrate);

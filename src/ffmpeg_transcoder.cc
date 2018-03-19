@@ -640,9 +640,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // tbc
         output_stream->codec->time_base         = output_stream->time_base;
 
-#ifdef USING_LIBAV
-#warning "Must be fixed here! USING_LIBAV"
-#else
+#ifndef USING_LIBAV
         // fps
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
         if (!output_stream->avg_frame_rate.num)
@@ -729,11 +727,12 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //    }
 
         // Save the encoder context for easier access later.
-        m_out.m_pVideo_codec_ctx    = output_codec_ctx;
+        m_out.m_pVideo_codec_ctx    	= output_codec_ctx;
         // Save the stream index
-        m_out.m_nVideo_stream_idx   = output_stream->index;
+        m_out.m_nVideo_stream_idx   	= output_stream->index;
         // Save output video stream for faster reference
-        m_out.m_pVideo_stream       = output_stream;
+        m_out.m_pVideo_stream       	= output_stream;
+		
         break;
     }
     default:
@@ -1594,6 +1593,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
             if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
             {
                 int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+
                 if (output_packet.dts < max)
                 {
                     ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pFormat_ctx->filename);

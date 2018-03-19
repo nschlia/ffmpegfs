@@ -6,7 +6,6 @@ ffmpegfs TODOs
 * Add option to deinterlace video if required (will improve picture
   quality when view in browsers via HTML5.
 * Improve Libav compatibility (maybe it is possible to use Libav 11+).
-* Make video size selectable,
 * Add album art support.
 * Improve recoding detection. Currently a file is recoded if the source
   file size or timestamp changes, but not if different encoding options

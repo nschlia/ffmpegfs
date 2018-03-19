@@ -1,6 +1,6 @@
 ffmpegfs NEWS
 
-Important changes in 1.11 (2018-03-19)
+Important changes in 1.1 (2018-03-19)
 
 Changes in this release:
 * Fix: make clean for checks did not delete all logs

@@ -29,7 +29,7 @@
 
 using namespace std;
 
-/* Initially Buffer is empty. It will be allocated as needed. */
+// Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer(const string &filename)
     : m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
     , m_filename(filename)
@@ -260,9 +260,7 @@ bool Buffer::clear()
     return bSuccess;
 }
 
-/*
- * Reserve memory without changing size to reduce re-allocations
- */
+// Reserve memory without changing size to reduce re-allocations
 bool Buffer::reserve(size_t size)
 {
     bool success = true;
@@ -291,10 +289,8 @@ bool Buffer::reserve(size_t size)
     return ((m_buffer != NULL) && success);
 }
 
-/*
- * Write data to the current position in the Buffer. The position pointer
- * will be updated.
- */
+// Write data to the current position in the Buffer. The position pointer
+// will be updated.
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
 
@@ -316,11 +312,9 @@ size_t Buffer::write(const uint8_t* data, size_t length)
     return length;
 }
 
-/*
- * Ensure the Buffer has sufficient space for a quantity of data and
- * return a pointer where the data may be written. The position pointer
- * should be updated afterward with increment_pos().
- */
+// Ensure the Buffer has sufficient space for a quantity of data and
+// return a pointer where the data may be written. The position pointer
+// should be updated afterward with increment_pos().
 uint8_t* Buffer::write_prepare(size_t length)
 {
     if (reallocate(m_buffer_pos + length))
@@ -337,11 +331,9 @@ uint8_t* Buffer::write_prepare(size_t length)
     }
 }
 
-/*
- * Increment the location of the internal pointer. This cannot fail and so
- * returns void. It does not ensure the position is valid memory because
- * that is done by the write_prepare methods via reallocate.
- */
+// Increment the location of the internal pointer. This cannot fail and so
+// returns void. It does not ensure the position is valid memory because
+// that is done by the write_prepare methods via reallocate.
 void Buffer::increment_pos(ptrdiff_t increment)
 {
     m_buffer_pos += increment;
@@ -361,25 +353,25 @@ bool Buffer::seek(size_t pos)
     }
 }
 
-/* Give the value of the internal read position pointer. */
+// Give the value of the internal read position pointer.
 size_t Buffer::tell() const
 {
     return m_buffer_pos;
 }
 
-/* Give the value of the internal buffer size pointer. */
+// Give the value of the internal buffer size pointer.
 size_t Buffer::size() const
 {
     return m_buffer_size;
 }
 
-/* Number of bytes written to buffer so far (may be less than m_buffer.size()) */
+// Number of bytes written to buffer so far (may be less than m_buffer.size())
 size_t Buffer::buffer_watermark() const
 {
     return m_buffer_watermark;
 }
 
-/* Copy buffered data into output buffer. */
+// Copy buffered data into output buffer.
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
     if (size() >= offset && m_buffer != NULL)
@@ -403,11 +395,9 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     }
 }
 
-/*
- * Ensure the allocation has at least size bytes available. If not,
- * reallocate memory to make more available. Fill the newly allocated memory
- * with zeroes.
- */
+// Ensure the allocation has at least size bytes available. If not,
+// reallocate memory to make more available. Fill the newly allocated memory
+// with zeroes.
 bool Buffer::reallocate(size_t newsize)
 {
     if (newsize > size())

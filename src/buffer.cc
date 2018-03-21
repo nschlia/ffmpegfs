@@ -374,25 +374,28 @@ size_t Buffer::buffer_watermark() const
 // Copy buffered data into output buffer.
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
+    bool bSuccess = true;
+
+    lock();
+
     if (size() >= offset && m_buffer != NULL)
     {
-        lock();
-
         if (size() < offset + bufsize)
         {
             bufsize = size() - offset - 1;
         }
 
         memcpy(out_data, m_buffer + offset, bufsize);
-        unlock();
-
-        return true;
     }
     else
     {
         errno = ENOMEM;
-        return false;
+        bSuccess = false;
     }
+
+    unlock();
+
+    return bSuccess;
 }
 
 // Ensure the allocation has at least size bytes available. If not,

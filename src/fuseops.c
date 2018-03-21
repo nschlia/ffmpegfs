@@ -125,8 +125,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-                            off_t offset, struct fuse_file_info *fi)
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
 {
     (void)offset;
     (void)fi;
@@ -310,9 +309,9 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
         }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-        stbuf->st_size = (__off_t)transcoder_buffer_tell(cache_entry);
+        stbuf->st_size = (__off_t)transcoder_buffer_watermark(cache_entry);
 #else
-        stbuf->st_size = (__off64_t)transcoder_buffer_tell(cache_entry);
+        stbuf->st_size = (__off64_t)transcoder_buffer_watermark(cache_entry);
 #endif
         stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
     }
@@ -371,6 +370,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
     // Store transcoder in the fuse_file_info structure.
     fi->fh = (uintptr_t)cache_entry;
+    // Need this because we do not know the exact size in advance.
+    fi->direct_io = 1;
 
     // Clear errors
     errno = 0;

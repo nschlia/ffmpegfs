@@ -3,7 +3,7 @@ ffmpegfs NEWS
 Important changes in 1.2 (2018-03-XX)
 
 Changes in this release:
-* Fix:
+* Fix: File size was wrong when file was first accessed.
 * Feature:
 
 nschlia@oblivion-software.de

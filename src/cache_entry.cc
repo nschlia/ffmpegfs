@@ -245,7 +245,16 @@ size_t Cache_Entry::size() const
     }
     else
     {
-        return m_cache_info.m_predicted_filesize;
+        if (m_buffer == NULL)
+        {
+            return m_cache_info.m_predicted_filesize;
+        }
+        else
+        {
+            size_t current_size = m_buffer->buffer_watermark();
+
+            return max(current_size, m_cache_info.m_predicted_filesize);
+        }
     }
 }
 

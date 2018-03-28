@@ -12,7 +12,7 @@ Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
 *Release 1.1 is out! Now work commences on V1.2 that will target at fixing the last
-known glitches. Later V1.3 will bringing nice new features like DVD support. So please
+known glitches. Later V1.3 will be bringing nice new features like DVD support. So please
 stay tuned.*
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio

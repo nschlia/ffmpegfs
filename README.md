@@ -70,7 +70,7 @@ version of the original FFmpeg library.
 
 Tested with:
 
-* `Debian 8 Jessie` **AVLib 0.8.21-0+deb7u1+rpi1**: not working with Libav
+* `Debian 7 Wheezy` **AVLib 0.8.21-0+deb7u1+rpi1**: not working with Libav
 * `Debian 8 Jessie` **AVLib 11.11-1~deb8u1**: not working with Libav
 * `Debian 9 Stretch` **FFmpeg 3.2.8-1~deb9u1**: OK!
 * `Ubuntu 16.04.3 LTS` **FFmpeg 2.8.11-0ubuntu0.16.04.1**: OK!

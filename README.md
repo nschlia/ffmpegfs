@@ -270,5 +270,6 @@ Much thanks to them for the original work!
 This is free software: you are free to change and redistribute it under
 the terms of the GNU General Public License (GPL) version 3 or later.
 
-This manual is copyright \(C) 2010-2011 K. Henriksson and 2017 N. Schlia 
-and may be distributed under GNU Free Documentation License 1.3 or later.
+Manual is copyright \(C) 2010-2011 K. Henriksson. This fork 2017 to present
+ny N. Schlia and may be distributed under GNU Free Documentation License 1.3 
+or later.

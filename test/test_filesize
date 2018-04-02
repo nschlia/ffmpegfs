@@ -13,13 +13,13 @@ then
 echo Checking $DIRNAME/obama.mp4
 SIZE=$(stat -c %s "$DIRNAME/obama.mp4")
 echo Size: $SIZE
-[ $SIZE -ge 99151 -a $SIZE -le 99676 ]
+[ $SIZE -ge 99151 -a $SIZE -le 100191 ]
 echo "Pass"
 
 echo Checking $DIRNAME/raven.mp4
 SIZE=$(stat -c %s "$DIRNAME/raven.mp4")
 echo Size: $SIZE
-[ $SIZE -ge 133661 -a $SIZE -le 133669 ]
+[ $SIZE -ge 133661 -a $SIZE -le 137281 ]
 echo "Pass"
 
 elif [ "$DESTTYPE" == "mp3" ];

@@ -29,7 +29,7 @@ echo "Pass"
 echo Checking $DIRNAME/raven.$DESTTYPE
 RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
 echo "Result: $RESULT"
-[ "$RESULT" \< 0.6 ]
+[ "$RESULT" \< 0.4 ]
 echo "Pass"
 
 elif [ "$DESTTYPE" == "wav" ];
@@ -53,13 +53,13 @@ then
 echo Checking $DIRNAME/obama.$DESTTYPE
 RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
 echo "Result: $RESULT"
-[ "$RESULT" \< 0.6 ]
+[ "$RESULT" \< 0.2 ]
 echo "Pass"
 
 echo Checking $DIRNAME/raven.$DESTTYPE
 RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
 echo "Result: $RESULT"
-[ "$RESULT" \< 0.6 ]
+[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
 echo "Pass"
 
 else

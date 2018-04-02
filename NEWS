@@ -1,11 +1,11 @@
 ffmpegfs NEWS
 
-Important changes in 1.2 (2018-03-XX)
+Important changes in 1.2 (2018-04-XX)
 
 Changes in this release:
 * Fix issue #4: File size was wrong when file was first accessed.
 * Fix issue #5: Fix crashes when transcoding.
-* Feature:
+* Feature: None. This a bug fix release.
 
 nschlia@oblivion-software.de
 

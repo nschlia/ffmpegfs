@@ -1,6 +1,6 @@
 ffmpegfs NEWS
 
-Important changes in 1.2 (2018-04-XX)
+Important changes in 1.2 (2018-04-03)
 
 Changes in this release:
 * Fix issue #4: File size was wrong when file was first accessed.

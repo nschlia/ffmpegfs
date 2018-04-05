@@ -31,6 +31,7 @@
 // TODO: Move this elsewehere, so this file can be library agnostic
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #ifdef __GNUC__
 #  include <features.h>
 #  if __GNUC_PREREQ(5,0) || defined(__clang__)
@@ -898,7 +899,7 @@ int main(int argc, char *argv[])
         }
 
         // Prune cache and exit
-        if (transcoder_cache_new())
+        if (transcoder_init())
         {
             return 1;
         }
@@ -950,7 +951,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (transcoder_cache_new())
+    if (transcoder_init())
     {
         return 1;
     }

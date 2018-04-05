@@ -521,8 +521,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     stop_cache_maintenance();
 
     transcoder_exit();
-
-    transcoder_cache_delete();
+    transcoder_free();
 
     ffmpegfs_debug("%s V%s terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }

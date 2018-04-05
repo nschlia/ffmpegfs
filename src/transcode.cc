@@ -46,11 +46,9 @@ static void *decoder_thread(void *arg);
 }
 static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Transcoder *transcoder);
 
-/*
- * Transcode the buffer until the buffer has enough or until an error occurs.
- * The buffer needs at least 'end' bytes before transcoding stops. Returns true
- * if no errors and false otherwise.
- */
+// Transcode the buffer until the buffer has enough or until an error occurs.
+// The buffer needs at least 'end' bytes before transcoding stops. Returns true
+// if no errors and false otherwise.
 static bool transcode_until(struct Cache_Entry* cache_entry, off_t offset, size_t len)
 {
     size_t end = offset + len;
@@ -73,7 +71,7 @@ static bool transcode_until(struct Cache_Entry* cache_entry, off_t offset, size_
     return success;
 }
 
-/* Close the input file and free everything but the initial buffer. */
+// Close the input file and free everything but the initial buffer.
 
 static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Transcoder *transcoder)
 {
@@ -83,7 +81,7 @@ static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Trans
         return res;
     }
 
-    /* Check encoded buffer size. */
+    // Check encoded buffer size.
     cache_entry->m_cache_info.m_encoded_filesize = cache_entry->m_buffer->buffer_watermark();
     cache_entry->m_cache_info.m_finished = true;
     cache_entry->m_is_decoding = false;
@@ -102,7 +100,7 @@ static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Trans
     return 0;
 }
 
-/* Use "C" linkage to allow access from C code. */
+// Use "C" linkage to allow access from C code.
 extern "C" {
 
 void transcoder_cache_path(char *dir, size_t size)
@@ -124,7 +122,7 @@ void transcoder_cache_path(char *dir, size_t size)
     strncat(dir, PACKAGE, size - 1);
 }
 
-int transcoder_cache_new(void)
+int transcoder_init(void)
 {
     if (cache == NULL)
     {
@@ -146,7 +144,7 @@ int transcoder_cache_new(void)
     return 0;
 }
 
-void transcoder_cache_delete(void)
+void transcoder_free(void)
 {
     Cache *p = cache;
     cache = NULL;
@@ -181,8 +179,7 @@ int transcoder_cached_filesize(const char* filename, struct stat *stbuf)
     }
 }
 
-/* Allocate and initialize the transcoder */
-
+// Allocate and initialize the transcoder
 struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
 {
     int _errno = 0;
@@ -250,7 +247,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 // Must decode the file, otherwise simply use cache
                 cache_entry->m_is_decoding = true;
 
-                /* Initialize thread creation attributes */
+                // Initialise thread creation attributes
                 s = pthread_attr_init(&attr);
                 if (s != 0)
                 {
@@ -360,7 +357,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
     return cache_entry;
 }
 
-/* Read some bytes into the internal buffer and into the given buffer. */
+// Read some bytes into the internal buffer and into the given buffer.
 
 ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
@@ -373,12 +370,10 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
 
     try
     {
-        /*
-         * If we are encoding to MP3 and the requested data overlaps the ID3v1 tag
-         * at the end of the file, do not encode data first up to that position.
-         * This optimizes the case where applications read the end of the file
-         * first to read the ID3v1 tag.
-         */
+        // If we are encoding to MP3 and the requested data overlaps the ID3v1 tag
+        // at the end of the file, do not encode data first up to that position.
+        // This optimizes the case where applications read the end of the file
+        // first to read the ID3v1 tag.
         if (!cache_entry->m_cache_info.m_finished &&
                 (size_t)offset > cache_entry->m_buffer->tell() &&
                 offset + len > (cache_entry->size() - ID3V1_TAG_LENGTH) &&
@@ -436,14 +431,14 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
     return len;
 }
 
-/* Free the transcoder structure. */
+// Free the transcoder structure.
 
 void transcoder_delete(struct Cache_Entry* cache_entry)
 {
     cache->close(&cache_entry);
 }
 
-/* Return size of output file, as computed by Encoder. */
+// Return size of output file, as computed by Encoder.
 size_t transcoder_get_size(struct Cache_Entry* cache_entry)
 {
     return cache_entry->size();

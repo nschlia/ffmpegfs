@@ -80,8 +80,8 @@ extern "C" {
 #endif
 
 void transcoder_cache_path(char *dir, size_t size);
-int transcoder_cache_new(void);
-void transcoder_cache_delete(void);
+int transcoder_init(void);
+void transcoder_free(void);
 
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 int transcoder_cached_filesize(const char *filename, struct stat *stbuf);

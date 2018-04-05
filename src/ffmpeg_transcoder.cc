@@ -267,7 +267,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE);
     if (ret < 0)
     {
-        return -1; // Couldn't open file
+        return ret;
     }
 
     AVDictionaryEntry * t;
@@ -286,8 +286,6 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
     if (ret < 0)
     {
         ffmpegfs_error("Could not open find stream info (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), filename);
-        avformat_close_input(&m_in.m_pFormat_ctx);
-        m_in.m_pFormat_ctx = NULL;
         return ret;
     }
 
@@ -298,8 +296,6 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
     {
         ffmpegfs_error("Failed to open video codec (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), filename);
-        //        avformat_close_input(&m_in.m_pFormat_ctx);
-        //        m_in.m_pFormat_ctx = NULL;
         return ret;
     }
 
@@ -366,14 +362,14 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
     if (m_out.m_nAudio_stream_idx > -1)
     {
-        // Initialize the resampler to be able to convert audio sample formats.
+        // Initialise the resampler to be able to convert audio sample formats.
         res = init_resampler();
         if (res)
         {
             return res;
         }
 
-        // Initialize the FIFO buffer to store audio samples to be encoded.
+        // Initialise the FIFO buffer to store audio samples to be encoded.
         res = init_fifo();
         if (res)
         {

@@ -251,7 +251,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
 
     if (ret < 0)
     {
-        return -1; // Couldn't open file
+        return ret;
     }
 
     // Open the input file to read from it.

@@ -29,6 +29,7 @@
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #ifdef __GNUC__
 #  include <features.h>
 #  if __GNUC_PREREQ(5,0) || defined(__clang__)

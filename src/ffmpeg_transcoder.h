@@ -57,7 +57,7 @@ protected:
     void copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
     int process_metadata();
     void init_packet(AVPacket *packet);
-    int init_input_frame(AVFrame **frame);
+    int init_frame(AVFrame **frame);
     int init_resampler();
     int init_fifo();
     int write_output_file_header();
@@ -116,6 +116,7 @@ private:
         AVStream *              m_pVideo_stream;
         int                     m_nAudio_stream_idx;
         int                     m_nVideo_stream_idx;
+        const char *            m_pszFileName;
     } m_in;
 
     // Output file
@@ -142,4 +143,4 @@ private:
 
 };
 
-#endif
+#endif // FFMPEG_TRANSCODER_H

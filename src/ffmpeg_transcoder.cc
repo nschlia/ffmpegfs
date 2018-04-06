@@ -81,89 +81,6 @@ FFMPEG_Transcoder::~FFMPEG_Transcoder()
     ffmpegfs_trace("FFmpeg trancoder: object destroyed.");
 }
 
-// Open codec context for desired media type
-int FFMPEG_Transcoder::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename)
-{
-    int ret;
-
-    ret = av_find_best_stream(fmt_ctx, type, INVALID_STREAM, INVALID_STREAM, NULL, 0);
-    if (ret < 0)
-    {
-        if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
-        {
-            ffmpegfs_error("Could not find %s stream in input file '%s' (error '%s').", get_media_type_string(type), filename, ffmpeg_geterror(ret).c_str());
-        }
-        return ret;
-    }
-    else
-    {
-        int stream_index;
-        AVCodecContext *dec_ctx = NULL;
-        AVCodec *dec = NULL;
-        AVDictionary *opts = NULL;
-        AVStream *in_stream;
-        AVCodecID codec_id = AV_CODEC_ID_NONE;
-
-        stream_index = ret;
-        in_stream = fmt_ctx->streams[stream_index];
-
-        // Init the decoders, with or without reference counting
-        // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
-
-#if (LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ) )
-        // allocate a new decoding context
-        dec_ctx = avcodec_alloc_context3(dec);
-        if (!dec_ctx)
-        {
-            ffmpegfs_error("Could not allocate a decoding context.");
-            return AVERROR(ENOMEM);
-        }
-
-        // initialise the stream parameters with demuxer information
-        ret = avcodec_parameters_to_context(dec_ctx, in_stream->codecpar);
-        if (ret < 0)
-        {
-            return ret;
-        }
-
-        codec_id = in_stream->codecpar->codec_id;
-#else
-        dec_ctx = in_stream->codec;
-
-        codec_id = dec_ctx->codec_id;
-#endif
-
-        // Find a decoder for the stream.
-        dec = avcodec_find_decoder(codec_id);
-        if (!dec)
-        {
-            ffmpegfs_error("Failed to find %s input codec.", get_media_type_string(type));
-            return AVERROR(EINVAL);
-        }
-
-        dec_ctx->codec_id = dec->id;
-
-        ret = avcodec_open2(dec_ctx, dec, &opts);
-
-        av_dict_free(&opts);
-
-        if (ret < 0)
-        {
-            ffmpegfs_error("Failed to open %s input codec (error '%s').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-
-        ffmpegfs_debug("Successfully opened %s input codec.", get_codec_name(codec_id));
-
-        *stream_idx = stream_index;
-
-        *avctx = dec_ctx;
-    }
-
-    return 0;
-}
-
-
 // FFmpeg handles cover arts like video streams.
 // Try to find out if we have a video stream or a cover art.
 bool FFMPEG_Transcoder::is_video() const
@@ -851,26 +768,6 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     return 0;
 }
 
-// Initialize one data packet for reading or writing.
-void FFMPEG_Transcoder::init_packet(AVPacket *packet)
-{
-    av_init_packet(packet);
-    // Set the packet data and size so that it is recognized as being empty.
-    packet->data = NULL;
-    packet->size = 0;
-}
-
-// Initialize one audio frame for reading from the input file
-int FFMPEG_Transcoder::init_frame(AVFrame **frame)
-{
-    if (!(*frame = av_frame_alloc()))
-    {
-        ffmpegfs_error("Could not allocate input frame for '%s'.", m_in.m_pszFileName);
-        return AVERROR(ENOMEM);
-    }
-    return 0;
-}
-
 // Initialise the audio resampler based on the input and output codec settings.
 // If the input and output sample formats differ, a conversion is required
 // libavresample takes care of this, but requires initialisation.
@@ -998,15 +895,19 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *input_packet, int *data_present)
 
     if (input_packet->stream_index == m_in.m_nAudio_stream_idx && m_out.m_nAudio_stream_idx > -1)
     {
-        // Temporary storage of the input samples of the frame read from the file.
-        AVFrame *input_frame = NULL;
         int ret = 0;
 
+        // Decode the audio frame stored in the temporary packet.
+        // The input audio stream decoder is used to do this.
+        // If we are at the end of the file, pass an empty packet to the decoder
+        // to flush it.
+
+        // Temporary storage of the input samples of the frame read from the file.
+        AVFrame *input_frame = NULL;
         // Initialise temporary storage for one input frame.
-        ret = init_frame(&input_frame);
+        ret = init_frame(&input_frame, m_in.m_pszFileName);
         if (ret < 0)
         {
-            av_frame_free(&input_frame);
             return ret;
         }
 
@@ -1077,15 +978,7 @@ cleanup2:
     }
     else if (input_packet->stream_index == m_in.m_nVideo_stream_idx && m_out.m_nVideo_stream_idx > -1)
     {
-        AVFrame *input_frame = NULL;
         int ret = 0;
-
-        // Initialise temporary storage for one input frame.
-        ret = init_frame(&input_frame);
-        if (ret < 0)
-        {
-            return ret;
-        }
 
         // NOTE1: some codecs are stream based (mpegvideo, mpegaudio)
         // and this is the only method to use them because you cannot
@@ -1099,6 +992,15 @@ cleanup2:
         // NOTE2: some codecs allow the raw parameters (frame size,
         // sample rate) to be changed at any frame. We handle this, so
         // you should also take care of it
+
+        AVFrame *input_frame = NULL;
+
+        // Initialise temporary storage for one input frame.
+        ret = init_frame(&input_frame, m_in.m_pszFileName);
+        if (ret < 0)
+        {
+            return ret;
+        }
 
         ret = avcodec_decode_video2(m_in.m_pVideo_codec_ctx, input_frame, data_present, input_packet);
 

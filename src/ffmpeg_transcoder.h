@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include "ffmpeg_utils.h"
+#include "ffmpeg_base.h"
 #include "id3v1tag.h"
 
 #include <queue>
@@ -32,7 +32,7 @@ using namespace std;
 
 class Buffer;
 
-class FFMPEG_Transcoder
+class FFMPEG_Transcoder : public FFMPEG_Base
 {
 public:
     FFMPEG_Transcoder();
@@ -51,13 +51,10 @@ public:
 
 protected:
     bool is_video() const;
-    int open_codec_context(int *stream_idx, AVCodecContext **avctx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename);
     int add_stream(AVCodecID codec_id);
     int open_output_filestreams(Buffer *buffer);
     void copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
     int process_metadata();
-    void init_packet(AVPacket *packet);
-    int init_frame(AVFrame **frame);
     int init_resampler();
     int init_fifo();
     int write_output_file_header();

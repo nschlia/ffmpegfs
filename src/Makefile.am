@@ -5,7 +5,7 @@ ffmpegfs_SOURCES = ffmpegfs.c fuseops.c transcode.cc transcode.h cache.cc cache.
 ffmpegfs_LDADD = $(fuse_LIBS) -lrt
 
 #if HAVE_FFMPEG
-ffmpegfs_SOURCES += ffmpeg_transcoder.cc ffmpeg_transcoder.h ffmpeg_utils.cc ffmpeg_utils.h
+ffmpegfs_SOURCES += ffmpeg_base.cc ffmpeg_base.h ffmpeg_transcoder.cc ffmpeg_transcoder.h ffmpeg_utils.cc ffmpeg_utils.h
 ffmpegfs_LDADD += $(libavcodec_LIBS) $(libavutil_LIBS) $(libavformat_LIBS) $(libavresample_LIBS) $(libswscale_LIBS)
 AM_CPPFLAGS += $(libavcodec_CFLAGS) $(libavutil_CFLAGS) $(libavformat_CFLAGS) $(libavresample_CFLAGS) $(libswscale_CFLAGS)
 #endif

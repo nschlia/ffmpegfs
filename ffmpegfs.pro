@@ -14,7 +14,8 @@ SOURCES += \
     src/transcode.cc \
     src/cache.cc \
     src/cache_entry.cc \
-    src/cache_maintenance.c
+    src/cache_maintenance.c \
+    src/ffmpeg_base.cc
 
 HEADERS += \
     src/buffer.h \
@@ -26,7 +27,8 @@ HEADERS += \
     src/cache.h \
     src/cache_entry.h \
     src/id3v1tag.h \
-    src/cache_maintenance.h
+    src/cache_maintenance.h \
+    src/ffmpeg_base.h
 
 DEFINES+=_DEBUGencoder_list
 DEFINES+=PACKAGE_NAME='"\\\"FFMPEGFS\\\""' HOST_OS='"\\\"My OS\\\""' CONFIGURE_ARGS='"\\\"\\\""' PACKAGE_TARNAME='"\\\"ffmpegfs"'\\\" PACKAGE_VERSION='"\\\"1.1"'\\\" PACKAGE_STRING='"\\\"FFMPEGFS\ 1.1"'\\\" PACKAGE_BUGREPORT='"\\\""'\\\" PACKAGE_URL='"\\\""'\\\" PACKAGE='"\\\"ffmpegfs"'\\\" VERSION='"\\\"0.91"'\\\" STDC_HEADERS=1 HAVE_SYS_TYPES_H=1 HAVE_SYS_STAT_H=1 HAVE_STDLIB_H=1 HAVE_STRING_H=1 HAVE_MEMORY_H=1 HAVE_STRINGS_H=1 HAVE_INTTYPES_H=1 HAVE_STDINT_H=1 HAVE_UNISTD_H=1 HAVE_SQLITE_CACHEFLUSH=1 HAVE_SQLITE_ERRSTR=1 SIZEOF_INT=4 _POSIX_C_SOURCE=200809L _FILE_OFFSET_BITS=64 FFMPEGFS_FORMAT_TIME_T=\\\"ld\\\" FFMPEGFS_FORMAT_PTHREAD_T=\\\"lx\\\"

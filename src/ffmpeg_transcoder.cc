@@ -2055,15 +2055,19 @@ int64_t FFMPEG_Transcoder::seek(void * pOpaque, int64_t i4Offset, int nWhence)
 
 void FFMPEG_Transcoder::close()
 {
+    int nAudioSamplesLeft = 0;
+    size_t nVideoFramesLeft = 0;
     bool bClosed = false;
 
     if (m_pAudioFifo)
     {
+        nAudioSamplesLeft = av_audio_fifo_size(m_pAudioFifo);
         av_audio_fifo_free(m_pAudioFifo);
         m_pAudioFifo = NULL;
         bClosed = true;
     }
 
+    nVideoFramesLeft = m_VideoFifo.size();
     while (m_VideoFifo.size())
     {
         AVFrame *output_frame = m_VideoFifo.front();
@@ -2179,6 +2183,16 @@ void FFMPEG_Transcoder::close()
 
     if (bClosed)
     {
+        if (nAudioSamplesLeft)
+        {
+            ffmpegfs_warning("%i audio samples left in buffer and not written to target file!", nAudioSamplesLeft);
+        }
+
+        if (nVideoFramesLeft)
+        {
+            ffmpegfs_warning("%zu video frames left in buffer and not written to target file!", nVideoFramesLeft);
+        }
+
         // Closed anything...
         ffmpegfs_debug("FFmpeg trancoder: closed.");
     }

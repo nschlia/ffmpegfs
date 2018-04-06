@@ -93,7 +93,7 @@ static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Trans
         ffmpegfs_warning("Unable to truncate buffer.");
     }
 
-    ffmpegfs_debug("Finishing file. Predicted size: %zu, final size: %zu, diff: %zi (%.1f%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)cache_entry->m_cache_info.m_encoded_filesize * 100 / (cache_entry->m_cache_info.m_predicted_filesize + 1));
+    ffmpegfs_debug("Finishing file. Predicted size: %zu, final size: %zu, diff: %zi (%.1f%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)(long)((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 

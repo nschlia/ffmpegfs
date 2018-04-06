@@ -1393,7 +1393,9 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 
         produce_audio_dts(&output_packet, &m_out.m_nAudio_pts);
 
-        if ((ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet)) < 0)
+        ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+
+        if (ret < 0)
         {
             ffmpegfs_error("Could not write audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
             av_packet_unref(&output_packet);
@@ -1505,6 +1507,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
         m_out.m_last_mux_dts = output_packet.dts;
 
         ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+
         if (ret < 0)
         {
             ffmpegfs_error("Could not write video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);

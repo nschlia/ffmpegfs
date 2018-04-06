@@ -1271,12 +1271,18 @@ int FFMPEG_Transcoder::read_decode_convert_and_store(int *finished)
 
         if (!*finished)
         {
-            // Decode one frame.
-            ret = decode_frame(&input_packet, &data_present);
-            if (ret < 0)
+            do
             {
-                throw false;
+                // Decode one frame.
+                ret = decode_frame(&input_packet, &data_present);
+                if (ret < 0)
+                {
+                    throw false;
+                }
+                input_packet.data += ret;
+                input_packet.size -= ret;
             }
+            while (input_packet.size > 0);
         }
         else
         {

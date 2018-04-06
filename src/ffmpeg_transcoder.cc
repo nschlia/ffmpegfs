@@ -27,9 +27,6 @@
 #define INVALID_STREAM  -1
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
-#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
     : m_nCalculated_size(0)
@@ -2290,7 +2287,6 @@ void FFMPEG_Transcoder::close()
     }
 }
 
-
 int FFMPEG_Transcoder::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags)
 {
     int ret = ::av_dict_set(pm, key, value, flags);
@@ -2302,5 +2298,3 @@ int FFMPEG_Transcoder::av_dict_set_with_check(AVDictionary **pm, const char *key
 
     return ret;
 }
-
-#pragma GCC diagnostic pop

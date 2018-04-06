@@ -21,9 +21,6 @@
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 static int is_device(const AVClass *avclass);
 
 #ifndef AV_ERROR_MAX_STRING_SIZE
@@ -219,8 +216,6 @@ const char * get_codec_name(enum AVCodecID codec_id)
 
     return psz;
 }
-
-#pragma GCC diagnostic pop
 
 int mktree(const char *path, mode_t mode)
 {

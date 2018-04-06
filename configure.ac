@@ -17,8 +17,8 @@ AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
 
 # Optimisation
-CXXFLAGS="-O3 -g"
-CFLAGS="-O3 -g"
+CXXFLAGS="-Ofast -g -Wextra -Wconversion -Wall -W"
+CFLAGS="-Ofast -g -Wextra -Wconversion -Wall -W"
 
 # Checks for programs.
 AC_PROG_CC

@@ -1281,11 +1281,11 @@ int FFMPEG_Transcoder::read_decode_convert_and_store(int *finished)
         else
         {
             // Flush cached frames, ignoring any errors
-            if (m_in.m_pAudio_codec_ctx != NULL && m_in.m_pAudio_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY)
+            if (m_in.m_pAudio_codec_ctx != NULL /*&& m_in.m_pAudio_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY*/)
             {
                 flush_frames(m_in.m_nAudio_stream_idx, &data_present);
             }
-            if (m_in.m_pVideo_codec_ctx != NULL && m_in.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY)
+            if (m_in.m_pVideo_codec_ctx != NULL /*&& m_in.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY*/)
             {
                 flush_frames(m_in.m_nVideo_stream_idx, &data_present);
             }

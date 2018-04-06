@@ -146,12 +146,12 @@ int transcoder_init(void)
 
 void transcoder_free(void)
 {
-    Cache *p = cache;
+    Cache *p1 = cache;
     cache = NULL;
-    if (p != NULL)
+    if (p1 != NULL)
     {
         ffmpegfs_debug("Deleting media file cache.");
-        delete p;
+        delete p1;
     }
 }
 

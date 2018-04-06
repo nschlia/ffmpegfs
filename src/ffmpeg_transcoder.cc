@@ -24,8 +24,6 @@
 
 #include <assert.h>
 
-#define INVALID_STREAM  -1
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
@@ -1221,7 +1219,7 @@ int FFMPEG_Transcoder::flush_frames(int stream_index, int *data_present)
 {
     int ret = 0;
 
-    if (stream_index > -1)
+    if (stream_index > INVALID_STREAM)
     {
         AVPacket flush_packet;
 

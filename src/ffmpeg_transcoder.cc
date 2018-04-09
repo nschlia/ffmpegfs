@@ -1853,7 +1853,7 @@ int FFMPEG_Transcoder::process_single_fr()
 
         if (finished)
         {
-            if (m_out.m_pAudio_codec_ctx != NULL && m_out.m_pAudio_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY)
+            if (m_out.m_pAudio_codec_ctx != NULL)
             {
                 int data_written = 0;
                 // Flush the encoder as it may have delayed frames.
@@ -1907,7 +1907,7 @@ int FFMPEG_Transcoder::process_single_fr()
 
     if (finished)
     {
-        if (m_out.m_pVideo_codec_ctx != NULL && m_out.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY)
+        if (m_out.m_pVideo_codec_ctx != NULL)
         {
             // Flush the encoder as it may have delayed frames.
             int data_written = 0;

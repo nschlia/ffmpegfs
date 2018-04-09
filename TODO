@@ -8,6 +8,8 @@ ffmpegfs TODOs
     Deprecate the entire library. Merged years ago to provide compatibility
     with Libav, it remained unmaintained by the FFmpeg project and duplicated
     functionality provided by libswresample.
+* Fix deprecation: av_iformat_next/av_oformat_next() lack a replacement (currently
+    still used in tools/probetest.c "static void probe" in 58.10.100)
 
 * Add intelligent stream copy, e.g., if transcoding a transport stream
   that already represents a H264 video stream it would be possible to

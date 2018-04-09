@@ -99,19 +99,27 @@ extern "C" {
 #define LIBAVFORMAT_MIN_VERSION_INT     	AV_VERSION_INT( 57, 25, 100 )
 #define LIBAVUTIL_MIN_VERSION_INT       	AV_VERSION_INT( 55, 34, 101 )
 
-// From lavc 57.48.0 use send_/receive_ API for en/decoding
-#define LAVC_NEW_PACKET_INTERFACE           (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 48, 0))
-// From lavc 57.14.0 use codecpar instead of codec
-#define LAVC_USE_CODECPAR                   (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 14, 0))
+// 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
+//  Deprecate AVFormatContext filename field which had limited length, use the
+//   new dynamically allocated url field instead.
+#define LAVF_DEP_FILENAME                   (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
+// 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
+//   Add a new audio/video encoding and decoding API with decoupled input
+//   and output -- avcodec_send_packet(), avcodec_receive_frame(),
+//   avcodec_send_frame() and avcodec_receive_packet().
+#define LAVC_NEW_PACKET_INTERFACE           (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 0))
+// 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
+//   Add AVStream.codecpar, deprecate AVStream.codec.
+#define LAVF_DEP_AVSTREAM_CODEC             (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 33, 0))
 // 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
 //   Deprecate use of av_register_input_format(), av_register_output_format(),
 //   av_register_all(), av_iformat_next(), av_oformat_next().
-#define LAVC_NO_AV_REGISTER                 (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 9, 0))
+#define LAVF_DEP_AV_REGISTER                (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 9, 0))
 // 2018-xx-xx - xxxxxxx - lavc 58.10.100 - avcodec.h
 //   Deprecate use of avcodec_register(), avcodec_register_all(),
 //   av_codec_next(), av_register_codec_parser(), and av_parser_next().
 //   Add av_codec_iterate() and av_parser_iterate().
-#define LAVC_NO_AV_CODEC_REGISTER           (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 10, 0))
+#define LAVC_DEP_AV_CODEC_REGISTER          (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 10, 0))
 
 #if (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= LIBAVUTIL_MIN_VERSION_INT )
 #define get_media_type_string               av_get_media_type_string

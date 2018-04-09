@@ -176,7 +176,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         return ret;
     }
     assert(m_in.m_pFormat_ctx != NULL);
-#if (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT( 58, 7, 100 ))
+#if LAVF_DEP_FILENAME
     m_in.m_pszFileName = m_in.m_pFormat_ctx->url;
 #else
     // lavf 58.7.100 - avformat.h - deprecated
@@ -316,7 +316,7 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
 bool FFMPEG_Transcoder::get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const
 {
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
     *sample_rate = stream->codecpar->sample_rate;
 #else
     *sample_rate = stream->codec->sample_rate;
@@ -337,7 +337,7 @@ bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int64_t max_bit_ra
 bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int max_bit_rate, int * bit_rate) const
 #endif
 {
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
     *bit_rate = stream->codecpar->bit_rate != 0 ? stream->codecpar->bit_rate : m_in.m_pFormat_ctx->bit_rate;
 #else
     *bit_rate = stream->codec->bit_rate != 0 ? stream->codec->bit_rate : m_in.m_pFormat_ctx->bit_rate;
@@ -483,7 +483,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //codec_ctx->bit_rate_tolerance   = 0;
         // Resolution must be a multiple of two.
 
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
         output_codec_ctx->width                = m_in.m_pVideo_stream->codecpar->width;
         output_codec_ctx->height               = m_in.m_pVideo_stream->codecpar->height;
 #else
@@ -555,7 +555,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
         {
             // Strange, but Theora seems to need it this way...
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
             output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->avg_frame_rate);
 #else
             output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->codec->framerate);
@@ -570,7 +570,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->time_base             = output_stream->time_base;
 
         // tbc
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
         //        output_stream->codecpar->time_base          = output_stream->time_base;
         //output_stream->codecpar->time_base        = m_in.m_pVideo_stream->codec->time_base;
         //output_stream->codecpar->time_base.den    *= output_stream->codec->ticks_per_frame;
@@ -586,7 +586,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // output_stream->r_frame_rate          = { .num = 25, .den = 1 };
 
         // fps
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->avg_frame_rate;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -606,7 +606,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
 
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
         output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codecpar->sample_aspect_ratio;
 #else
         output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
@@ -645,7 +645,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             //}
         }
 
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
         if (m_in.m_pVideo_stream->codecpar->format != output_codec_ctx->pix_fmt ||
                 m_in.m_pVideo_stream->codecpar->width != output_codec_ctx->width ||
                 m_in.m_pVideo_stream->codecpar->height != output_codec_ctx->height)
@@ -656,13 +656,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #endif
         {
             // Rescale image if required
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
             const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)m_in.m_pVideo_stream->codecpar->format);
 #else
             const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)m_in.m_pVideo_stream->codec->pix_fmt);
 #endif
             const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(output_codec_ctx->pix_fmt);
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
             if (m_in.m_pVideo_stream->codecpar->format != output_codec_ctx->pix_fmt)
 #else
             if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt)
@@ -673,7 +673,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             assert(m_pSws_ctx == NULL);
             m_pSws_ctx = sws_getContext(
                         // Source settings
-            #if LAVC_USE_CODECPAR
+            #if LAVF_DEP_AVSTREAM_CODEC
                         m_in.m_pVideo_stream->codecpar->width,                  // width
                         m_in.m_pVideo_stream->codecpar->height,                 // height
                         (AVPixelFormat)m_in.m_pVideo_stream->codecpar->format,  // format
@@ -1123,7 +1123,7 @@ cleanup2:
                 }
 
 #ifndef USING_LIBAV
-#if LAVC_USE_CODECPAR
+#if LAVF_DEP_AVSTREAM_CODEC
                 int64_t best_effort_timestamp = input_frame->best_effort_timestamp;
 #else
                 int64_t best_effort_timestamp = ::av_frame_get_best_effort_timestamp(input_frame);

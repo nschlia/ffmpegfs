@@ -1305,7 +1305,7 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
 }
 
 // Flush the remaining frames
-int FFMPEG_Transcoder::flush_frames(int stream_index)
+int FFMPEG_Transcoder::flush_input_frames(int stream_index)
 {
     int ret = 0;
 
@@ -1379,12 +1379,12 @@ int FFMPEG_Transcoder::read_decode_convert_and_store(int *finished)
             // Flush cached frames, ignoring any errors
             if (m_in.m_pAudio_codec_ctx != NULL)
             {
-                flush_frames(m_in.m_nAudio_stream_idx);
+                flush_input_frames(m_in.m_nAudio_stream_idx);
             }
 
             if (m_in.m_pVideo_codec_ctx != NULL)
             {
-                flush_frames(m_in.m_nVideo_stream_idx);
+                flush_input_frames(m_in.m_nVideo_stream_idx);
             }
         }
 
@@ -1467,19 +1467,19 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
-    AVPacket output_packet;
+    AVPacket pkt;
     int ret;
 
-    init_packet(&output_packet);
+    init_packet(&pkt);
 
     // Encode the audio frame and store it in the temporary packet.
     // The output audio stream encoder is used to do this.
-    ret = avcodec_encode_audio2(m_out.m_pAudio_codec_ctx, &output_packet, frame, data_present);
+    ret = avcodec_encode_audio2(m_out.m_pAudio_codec_ctx, &pkt, frame, data_present);
 
     if (ret < 0)
     {
         ffmpegfs_error("Could not encode audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-        av_packet_unref(&output_packet);
+        av_packet_unref(&pkt);
         return ret;
     }
 
@@ -1487,21 +1487,21 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
         // Write one audio frame from the temporary packet to the output file.
         if (*data_present)
         {
-            output_packet.stream_index = m_out.m_nAudio_stream_idx;
+            pkt.stream_index = m_out.m_nAudio_stream_idx;
 
-            produce_audio_dts(&output_packet, &m_out.m_nAudio_pts);
+            produce_audio_dts(&pkt, &m_out.m_nAudio_pts);
 
-            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &pkt);
 
             if (ret < 0)
             {
                 ffmpegfs_error("Could not write audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-                av_packet_unref(&output_packet);
+                av_packet_unref(&pkt);
                 return ret;
             }
         }
 
-        av_packet_unref(&output_packet);
+        av_packet_unref(&pkt);
     }
 
     return 0;
@@ -1511,9 +1511,9 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
-    AVPacket output_packet;
+    AVPacket pkt;
     int ret;
-    init_packet(&output_packet);
+    init_packet(&pkt);
 
     if (frame != NULL)
     {
@@ -1550,12 +1550,12 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
     // Encode the video frame and store it in the temporary packet.
     // The output video stream encoder is used to do this.
 
-    ret = avcodec_encode_video2(m_out.m_pVideo_codec_ctx, &output_packet, frame, data_present);
+    ret = avcodec_encode_video2(m_out.m_pVideo_codec_ctx, &pkt, frame, data_present);
 
     if (ret < 0)
     {
         ffmpegfs_error("Could not encode video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-        av_packet_unref(&output_packet);
+        av_packet_unref(&pkt);
         return ret;
     }
 
@@ -1564,61 +1564,61 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
         // Write one video frame from the temporary packet to the output file.
         if (*data_present)
         {
-            if (output_packet.pts != (int64_t)AV_NOPTS_VALUE)
+            if (pkt.pts != (int64_t)AV_NOPTS_VALUE)
             {
-                output_packet.pts -=  m_out.m_video_start_pts;
+                pkt.pts -=  m_out.m_video_start_pts;
             }
 
-            if (output_packet.dts != (int64_t)AV_NOPTS_VALUE)
+            if (pkt.dts != (int64_t)AV_NOPTS_VALUE)
             {
-                output_packet.dts -=  m_out.m_video_start_pts;
+                pkt.dts -=  m_out.m_video_start_pts;
             }
 
             if (!(m_out.m_pFormat_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
             {
-                if (output_packet.dts != (int64_t)AV_NOPTS_VALUE &&
-                        output_packet.pts != (int64_t)AV_NOPTS_VALUE &&
-                        output_packet.dts > output_packet.pts)
+                if (pkt.dts != (int64_t)AV_NOPTS_VALUE &&
+                        pkt.pts != (int64_t)AV_NOPTS_VALUE &&
+                        pkt.dts > pkt.pts)
                 {
 
-                    ffmpegfs_warning("Invalid DTS: %" PRId64 " PTS: %" PRId64 " in video output, replacing by guess for '%s'.", output_packet.dts, output_packet.pts, m_in.m_pszFileName);
+                    ffmpegfs_warning("Invalid DTS: %" PRId64 " PTS: %" PRId64 " in video output, replacing by guess for '%s'.", pkt.dts, pkt.pts, m_in.m_pszFileName);
 
-                    output_packet.pts =
-                            output_packet.dts = output_packet.pts + output_packet.dts + m_out.m_last_mux_dts + 1
-                            - FFMIN3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1)
-                            - FFMAX3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1);
+                    pkt.pts =
+                            pkt.dts = pkt.pts + pkt.dts + m_out.m_last_mux_dts + 1
+                            - FFMIN3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1)
+                            - FFMAX3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1);
                 }
 
-                if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
+                if (pkt.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
                 {
                     int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
 
-                    if (output_packet.dts < max)
+                    if (pkt.dts < max)
                     {
-                        ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pszFileName);
+                        ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, pkt.dts, max, m_in.m_pszFileName);
 
-                        if (output_packet.pts >= output_packet.dts)
+                        if (pkt.pts >= pkt.dts)
                         {
-                            output_packet.pts = FFMAX(output_packet.pts, max);
+                            pkt.pts = FFMAX(pkt.pts, max);
                         }
-                        output_packet.dts = max;
+                        pkt.dts = max;
                     }
                 }
             }
 
-            m_out.m_last_mux_dts = output_packet.dts;
+            m_out.m_last_mux_dts = pkt.dts;
 
-            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &pkt);
 
             if (ret < 0)
             {
                 ffmpegfs_error("Could not write video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-                av_packet_unref(&output_packet);
+                av_packet_unref(&pkt);
                 return ret;
             }
         }
 
-        av_packet_unref(&output_packet);
+        av_packet_unref(&pkt);
     }
 
     return 0;
@@ -1681,7 +1681,9 @@ int FFMPEG_Transcoder::load_encode_and_write(int frame_size)
 int FFMPEG_Transcoder::write_output_file_trailer()
 {
     int ret;
-    if ((ret = av_write_trailer(m_out.m_pFormat_ctx)) < 0)
+
+    ret = av_write_trailer(m_out.m_pFormat_ctx);
+    if (ret < 0)
     {
         ffmpegfs_error("Could not write output file trailer (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
         return ret;

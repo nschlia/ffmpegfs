@@ -1,5 +1,27 @@
 ffmpegfs NEWS
 
+Important changes in 1.3 (2018-04-XX)
+
+Changes in this release:
+FFMpeg has evolved, many API parts have been deprecated and will be dropped
+soon. This release adopts these changes by conditionally using the new
+APIs from the FFMpeg version on that they are available.
+
+* Fix deprecation: 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
+    Deprecate AVFormatContext filename field which had limited length, use the
+    new dynamically allocated url field instead.
+* Fix deprecation: 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
+    Add a new audio/video encoding and decoding API with decoupled input
+    and output -- avcodec_send_packet(), avcodec_receive_frame(),
+    avcodec_send_frame() and avcodec_receive_packet().
+* Fix deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
+    Deprecate use of av_register_input_format(), av_register_output_format(),
+    av_register_all(), av_iformat_next(), av_oformat_next().
+* Feature:
+* Bugfix:
+
+nschlia@oblivion-software.de
+
 Important changes in 1.2 (2018-04-03)
 
 Changes in this release:

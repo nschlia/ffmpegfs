@@ -847,9 +847,13 @@ int main(int argc, char *argv[])
            "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
 
     // Configure FFmpeg
+#if !LAVC_NO_AV_CODEC_REGISTER
     // register all the codecs
     avcodec_register_all();
+#endif // !LAVC_NO_AV_CODEC_REGISTER
+#if !LAVC_NO_AV_REGISTER
     av_register_all();
+#endif // !LAVC_NO_AV_REGISTER
     //show_formats_devices(0);
 #ifndef USING_LIBAV
     // Redirect FFmpeg logs

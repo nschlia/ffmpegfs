@@ -58,11 +58,12 @@ protected:
     int init_resampler();
     int init_fifo();
     int write_output_file_header();
-    int decode_frame(AVPacket *input_packet, int *data_present);
+    int decode_frame(AVPacket *pkt, int *decoded);
     int init_converted_samples(uint8_t ***converted_input_samples, int frame_size);
     int convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples);
     int add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size);
-    int flush_frames(int stream_index, int *data_present);
+    int decode_frame(AVPacket *pkt);
+    int flush_frames(int stream_index);
     int read_decode_convert_and_store(int *finished);
     int init_audio_output_frame(AVFrame **frame, int frame_size);
     AVFrame *alloc_picture(AVPixelFormat pix_fmt, int width, int height);

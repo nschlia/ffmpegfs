@@ -316,7 +316,11 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
 bool FFMPEG_Transcoder::get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const
 {
+#if LAVC_USE_CODECPAR
+    *sample_rate = stream->codecpar->sample_rate;
+#else
     *sample_rate = stream->codec->sample_rate;
+#endif
 
     if (*sample_rate > max_sample_rate)
     {
@@ -333,7 +337,11 @@ bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int64_t max_bit_ra
 bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int max_bit_rate, int * bit_rate) const
 #endif
 {
+#if LAVC_USE_CODECPAR
+    *bit_rate = stream->codecpar->bit_rate != 0 ? stream->codecpar->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+#else
     *bit_rate = stream->codec->bit_rate != 0 ? stream->codec->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+#endif
 
     if (*bit_rate > max_bit_rate)
     {
@@ -475,8 +483,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //codec_ctx->bit_rate_tolerance   = 0;
         // Resolution must be a multiple of two.
 
+#if LAVC_USE_CODECPAR
+        output_codec_ctx->width                = m_in.m_pVideo_stream->codecpar->width;
+        output_codec_ctx->height               = m_in.m_pVideo_stream->codecpar->height;
+#else
         output_codec_ctx->width                = m_in.m_pVideo_stream->codec->width;
         output_codec_ctx->height               = m_in.m_pVideo_stream->codec->height;
+#endif
 
         if (params.m_videowidth || params.m_videoheight)
         {
@@ -541,8 +554,12 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // tbn
         if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
         {
-            // Strange: Theora seems to need it this way...
+            // Strange, but Theora seems to need it this way...
+#if LAVC_USE_CODECPAR
+            output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->avg_frame_rate);
+#else
             output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->codec->framerate);
+#endif
         }
         else
         {
@@ -553,11 +570,31 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->time_base             = output_stream->time_base;
 
         // tbc
-        output_stream->codec->time_base         = output_stream->time_base;
+#if LAVC_USE_CODECPAR
+        //        output_stream->codecpar->time_base          = output_stream->time_base;
+        //output_stream->codecpar->time_base        = m_in.m_pVideo_stream->codec->time_base;
+        //output_stream->codecpar->time_base.den    *= output_stream->codec->ticks_per_frame;
+#else
+        output_stream->codec->time_base             = output_stream->time_base;
+        //output_stream->codec->time_base           = m_in.m_pVideo_stream->codec->time_base;
+        //output_stream->codec->time_base.den       *= output_stream->codec->ticks_per_frame;
+#endif
 
 #ifndef USING_LIBAV
+        // tbr
+        // output_stream->r_frame_rate             = m_in.m_pVideo_stream->r_frame_rate;
+        // output_stream->r_frame_rate          = { .num = 25, .den = 1 };
+
         // fps
+#if LAVC_USE_CODECPAR
+        output_stream->avg_frame_rate           = m_in.m_pVideo_stream->avg_frame_rate;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        assert(output_stream->avg_frame_rate.num == m_in.m_pVideo_stream->codec->framerate.num && output_stream->avg_frame_rate.den == m_in.m_pVideo_stream->codec->framerate.den);
+#pragma GCC diagnostic pop
+#else
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
+#endif
         if (!output_stream->avg_frame_rate.num)
         {
             output_stream->avg_frame_rate       = { .num = 25, .den = 1 };
@@ -569,7 +606,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
 
+#if LAVC_USE_CODECPAR
+        output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codecpar->sample_aspect_ratio;
+#else
         output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
+#endif
 
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
         output_codec_ctx->pix_fmt               = AV_PIX_FMT_YUV420P;
@@ -604,23 +645,43 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             //}
         }
 
+#if LAVC_USE_CODECPAR
+        if (m_in.m_pVideo_stream->codecpar->format != output_codec_ctx->pix_fmt ||
+                m_in.m_pVideo_stream->codecpar->width != output_codec_ctx->width ||
+                m_in.m_pVideo_stream->codecpar->height != output_codec_ctx->height)
+#else
         if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt ||
                 m_in.m_pVideo_stream->codec->width != output_codec_ctx->width ||
                 m_in.m_pVideo_stream->codec->height != output_codec_ctx->height)
+#endif
         {
             // Rescale image if required
+#if LAVC_USE_CODECPAR
+            const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)m_in.m_pVideo_stream->codecpar->format);
+#else
             const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get((AVPixelFormat)m_in.m_pVideo_stream->codec->pix_fmt);
+#endif
             const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(output_codec_ctx->pix_fmt);
+#if LAVC_USE_CODECPAR
+            if (m_in.m_pVideo_stream->codecpar->format != output_codec_ctx->pix_fmt)
+#else
             if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt)
+#endif
             {
                 ffmpegfs_info("Initialising pixel format conversion from %s to %s for '%s'.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-", m_in.m_pszFileName);
             }
             assert(m_pSws_ctx == NULL);
             m_pSws_ctx = sws_getContext(
                         // Source settings
+            #if LAVC_USE_CODECPAR
+                        m_in.m_pVideo_stream->codecpar->width,                  // width
+                        m_in.m_pVideo_stream->codecpar->height,                 // height
+                        (AVPixelFormat)m_in.m_pVideo_stream->codecpar->format,  // format
+            #else
                         m_in.m_pVideo_stream->codec->width,         // width
                         m_in.m_pVideo_stream->codec->height,        // height
                         m_in.m_pVideo_stream->codec->pix_fmt,       // format
+            #endif
                         // Target settings
                         output_codec_ctx->width,                    // width
                         output_codec_ctx->height,                   // height
@@ -769,7 +830,8 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 // Initialise the audio resampler based on the input and output codec settings.
 // If the input and output sample formats differ, a conversion is required
 // libavresample takes care of this, but requires initialisation.
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
 int FFMPEG_Transcoder::init_resampler()
 {
     // Only initialise the resampler if it is necessary, i.e.,
@@ -811,6 +873,7 @@ int FFMPEG_Transcoder::init_resampler()
     }
     return 0;
 }
+#pragma GCC diagnostic pop
 
 // Initialise a FIFO buffer for the audio samples to be encoded.
 int FFMPEG_Transcoder::init_fifo()
@@ -887,14 +950,15 @@ AVFrame *FFMPEG_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
 }
 
 // Decode one audio frame from the input file.
-int FFMPEG_Transcoder::decode_frame(AVPacket *input_packet, int *data_present)
+int FFMPEG_Transcoder::decode_frame(AVPacket *pkt, int *decoded)
 {
-    int decoded = 0;
+    int data_present = 0;
+    int ret = 0;
 
-    if (input_packet->stream_index == m_in.m_nAudio_stream_idx && m_out.m_nAudio_stream_idx > -1)
+    *decoded = 0;
+
+    if (pkt->stream_index == m_in.m_nAudio_stream_idx && m_out.m_nAudio_stream_idx > -1)
     {
-        int ret = 0;
-
         // Decode the audio frame stored in the temporary packet.
         // The input audio stream decoder is used to do this.
         // If we are at the end of the file, pass an empty packet to the decoder
@@ -902,6 +966,7 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *input_packet, int *data_present)
 
         // Temporary storage of the input samples of the frame read from the file.
         AVFrame *input_frame = NULL;
+
         // Initialise temporary storage for one input frame.
         ret = init_frame(&input_frame, m_in.m_pszFileName);
         if (ret < 0)
@@ -909,75 +974,66 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *input_packet, int *data_present)
             return ret;
         }
 
-        // Decode the audio frame stored in the temporary packet.
-        // The input audio stream decoder is used to do this.
-        // If we are at the end of the file, pass an empty packet to the decoder
-        // to flush it.
-
-        ret = avcodec_decode_audio4(m_in.m_pAudio_codec_ctx, input_frame, data_present, input_packet);
+        ret = avcodec_decode_audio4(m_in.m_pAudio_codec_ctx, input_frame, &data_present, pkt);
 
         if (ret < 0 && ret != AVERROR(EINVAL))
         {
-            av_frame_free(&input_frame);
             ffmpegfs_error("Could not decode audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
+            // unused frame
+            av_frame_free(&input_frame);
             return ret;
         }
 
-        if (ret != AVERROR_INVALIDDATA)
+        *decoded = ret;
+        ret = 0;
+
         {
-            decoded = ret;
-        }
-        else
-        {
-            decoded = input_packet->size;
-        }
-
-        // If there is decoded data, convert and store it
-        if (data_present && input_frame->nb_samples)
-        {
-            // Temporary storage for the converted input samples.
-            uint8_t **converted_input_samples = NULL;
-            int nb_output_samples = (m_pAudio_resample_ctx != NULL) ? avresample_get_out_samples(m_pAudio_resample_ctx, input_frame->nb_samples) : input_frame->nb_samples;
-            // Store audio frame
-            // Initialize the temporary storage for the converted input samples.
-            ret = init_converted_samples(&converted_input_samples, nb_output_samples);
-            if (ret < 0)
+            // If there is decoded data, convert and store it
+            if (data_present && input_frame->nb_samples)
             {
-                goto cleanup2;
-            }
+                // Temporary storage for the converted input samples.
+                uint8_t **converted_input_samples = NULL;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
+                int nb_output_samples = (m_pAudio_resample_ctx != NULL) ? avresample_get_out_samples(m_pAudio_resample_ctx, input_frame->nb_samples) : input_frame->nb_samples;
+#pragma GCC diagnostic pop
+                // Store audio frame
+                // Initialise the temporary storage for the converted input samples.
+                ret = init_converted_samples(&converted_input_samples, nb_output_samples);
+                if (ret < 0)
+                {
+                    goto cleanup2;
+                }
 
-            // Convert the input samples to the desired output sample format.
-            // This requires a temporary storage provided by converted_input_samples.
+                // Convert the input samples to the desired output sample format.
+                // This requires a temporary storage provided by converted_input_samples.
 
-            ret = convert_samples(input_frame->extended_data, input_frame->nb_samples, converted_input_samples, &nb_output_samples);
-            if (ret < 0)
-            {
-                goto cleanup2;
-            }
+                ret = convert_samples(input_frame->extended_data, input_frame->nb_samples, converted_input_samples, &nb_output_samples);
+                if (ret < 0)
+                {
+                    goto cleanup2;
+                }
 
-            // Add the converted input samples to the FIFO buffer for later processing.
-            ret = add_samples_to_fifo(converted_input_samples, nb_output_samples);
-            if (ret < 0)
-            {
-                goto cleanup2;
-            }
-            ret = 0;
+                // Add the converted input samples to the FIFO buffer for later processing.
+                ret = add_samples_to_fifo(converted_input_samples, nb_output_samples);
+                if (ret < 0)
+                {
+                    goto cleanup2;
+                }
+                ret = 0;
 cleanup2:
-            if (converted_input_samples)
-            {
-                av_freep(&converted_input_samples[0]);
-                free(converted_input_samples);
+                if (converted_input_samples)
+                {
+                    av_freep(&converted_input_samples[0]);
+                    free(converted_input_samples);
+                }
             }
+            av_frame_free(&input_frame);
         }
 
-        //cleanup:
-
-        av_frame_free(&input_frame);
     }
-    else if (input_packet->stream_index == m_in.m_nVideo_stream_idx && m_out.m_nVideo_stream_idx > -1)
+    else if (pkt->stream_index == m_in.m_nVideo_stream_idx && m_out.m_nVideo_stream_idx > -1)
     {
-        int ret = 0;
-
         // NOTE1: some codecs are stream based (mpegvideo, mpegaudio)
         // and this is the only method to use them because you cannot
         // know the compressed data size before analysing it.
@@ -991,6 +1047,7 @@ cleanup2:
         // sample rate) to be changed at any frame. We handle this, so
         // you should also take care of it
 
+        // Temporary storage of the input samples of the frame read from the file.
         AVFrame *input_frame = NULL;
 
         // Initialise temporary storage for one input frame.
@@ -1000,9 +1057,9 @@ cleanup2:
             return ret;
         }
 
-        ret = avcodec_decode_video2(m_in.m_pVideo_codec_ctx, input_frame, data_present, input_packet);
+        ret = avcodec_decode_video2(m_in.m_pVideo_codec_ctx, input_frame, &data_present, pkt);
 
-        if (ret < 0)
+        if (ret < 0 && ret != AVERROR(EINVAL))
         {
             ffmpegfs_error("Could not decode video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
             // unused frame
@@ -1010,94 +1067,101 @@ cleanup2:
             return ret;
         }
 
-        decoded = ret;
+        *decoded = ret;
+        ret = 0;
 
-        // Sometimes only a few packets contain valid dts/pts/pos data, so we keep it
-        if (input_packet->dts != (int64_t)AV_NOPTS_VALUE)
         {
-            int64_t pts = input_packet->dts;
-            if (pts > m_pts)
+
+            // Sometimes only a few packets contain valid dts/pts/pos data, so we keep it
+            if (pkt->dts != (int64_t)AV_NOPTS_VALUE)
             {
-                m_pts = pts;
-            }
-        }
-        else if (input_packet->pts != (int64_t)AV_NOPTS_VALUE)
-        {
-            int64_t pts = input_packet->pts;
-            if (pts > m_pts)
-            {
-                m_pts = pts;
-            }
-        }
-
-        if (input_packet->pos > -1)
-        {
-            m_pos = input_packet->pos;
-        }
-
-        if (*data_present)
-        {
-            if (m_pSws_ctx != NULL)
-            {
-                AVCodecContext *codec_ctx = m_out.m_pVideo_codec_ctx;
-
-                //AVFrame * tmp_frame = alloc_picture(AV_PIX_FMT_YUV420P, codec_ctx->width, codec_ctx->height);
-                AVFrame * tmp_frame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
-                if (!tmp_frame)
+                int64_t pts = pkt->dts;
+                if (pts > m_pts)
                 {
-                    return AVERROR(ENOMEM);
+                    m_pts = pts;
+                }
+            }
+            else if (pkt->pts != (int64_t)AV_NOPTS_VALUE)
+            {
+                int64_t pts = pkt->pts;
+                if (pts > m_pts)
+                {
+                    m_pts = pts;
+                }
+            }
+
+            if (pkt->pos > -1)
+            {
+                m_pos = pkt->pos;
+            }
+
+            if (data_present)
+            {
+                if (m_pSws_ctx != NULL)
+                {
+                    AVCodecContext *codec_ctx = m_out.m_pVideo_codec_ctx;
+
+                    AVFrame * tmp_frame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
+                    if (!tmp_frame)
+                    {
+                        return AVERROR(ENOMEM);
+                    }
+
+                    sws_scale(m_pSws_ctx,
+                              (const uint8_t * const *)input_frame->data, input_frame->linesize,
+                              0, input_frame->height,
+                              tmp_frame->data, tmp_frame->linesize);
+
+                    tmp_frame->pts = input_frame->pts;
+#ifndef USING_LIBAV
+                    tmp_frame->best_effort_timestamp = input_frame->best_effort_timestamp;
+#endif
+
+                    av_frame_free(&input_frame);
+
+                    input_frame = tmp_frame;
                 }
 
-                sws_scale(m_pSws_ctx,
-                          (const uint8_t * const *)input_frame->data, input_frame->linesize,
-                          0, input_frame->height,
-                          tmp_frame->data, tmp_frame->linesize);
-
-                tmp_frame->pts = input_frame->pts;
 #ifndef USING_LIBAV
-                tmp_frame->best_effort_timestamp = input_frame->best_effort_timestamp;
+#if LAVC_USE_CODECPAR
+                int64_t best_effort_timestamp = input_frame->best_effort_timestamp;
+#else
+                int64_t best_effort_timestamp = ::av_frame_get_best_effort_timestamp(input_frame);
 #endif
 
+                if (best_effort_timestamp != (int64_t)AV_NOPTS_VALUE)
+                {
+                    input_frame->pts = best_effort_timestamp;
+                }
+#endif
+
+                if (input_frame->pts == (int64_t)AV_NOPTS_VALUE)
+                {
+                    input_frame->pts = m_pts;
+                }
+
+                // Rescale to our time base, but only of nessessary
+                if (input_frame->pts != (int64_t)AV_NOPTS_VALUE && (m_in.m_pVideo_stream->time_base.den != m_out.m_pVideo_stream->time_base.den || m_in.m_pVideo_stream->time_base.num != m_out.m_pVideo_stream->time_base.num))
+                {
+                    input_frame->pts = av_rescale_q_rnd(input_frame->pts, m_in.m_pVideo_stream->time_base, m_out.m_pVideo_stream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+                }
+
+                m_VideoFifo.push(input_frame);
+            }
+            else
+            {
+                // unused frame
                 av_frame_free(&input_frame);
-
-                input_frame = tmp_frame;
             }
-
-#ifndef USING_LIBAV
-            int64_t best_effort_timestamp = ::av_frame_get_best_effort_timestamp(input_frame);
-
-            if (best_effort_timestamp != (int64_t)AV_NOPTS_VALUE)
-            {
-                input_frame->pts = best_effort_timestamp;
-            }
-#endif
-
-            if (input_frame->pts == (int64_t)AV_NOPTS_VALUE)
-            {
-                input_frame->pts = m_pts;
-            }
-
-            // Rescale to our time base, but only of nessessary
-            if (input_frame->pts != (int64_t)AV_NOPTS_VALUE && (m_in.m_pVideo_stream->time_base.den != m_out.m_pVideo_stream->time_base.den || m_in.m_pVideo_stream->time_base.num != m_out.m_pVideo_stream->time_base.num))
-            {
-                input_frame->pts = av_rescale_q_rnd(input_frame->pts, m_in.m_pVideo_stream->time_base, m_out.m_pVideo_stream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
-            }
-
-            m_VideoFifo.push(input_frame);
-        }
-        else
-        {
-            // unused frame
-            av_frame_free(&input_frame);
         }
     }
     else
     {
-        *data_present = 0;
-        decoded = input_packet->size;    // Ignore
+        data_present = 0;
+        *decoded = pkt->size;    // Ignore
     }
 
-    return decoded;
+    return ret;
 }
 
 // Initialise a temporary storage for the specified number of audio samples.
@@ -1137,7 +1201,8 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 // Convert the input audio samples into the output sample format.
 // The conversion happens on a per-frame basis, the size of which is specified
 // by frame_size.
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
 int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_pAudio_resample_ctx != NULL)
@@ -1180,6 +1245,7 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
     }
     return 0;
 }
+#pragma GCC diagnostic pop
 
 // Add converted input audio samples to the FIFO buffer for later processing.
 int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size)
@@ -1214,14 +1280,39 @@ int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, co
     return 0;
 }
 
+int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
+{
+    int decoded = 0;
+    int ret = 0;
+
+    do
+    {
+        // Decode one frame.
+        ret = decode_frame(pkt, &decoded);
+
+        if (ret < 0)
+        {
+            ffmpegfs_error("Could not decode frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
+            return ret;
+        }
+
+        pkt->data += decoded;
+        pkt->size -= decoded;
+    }
+    while (pkt->size > 0);
+
+    return 0;
+}
+
 // Flush the remaining frames
-int FFMPEG_Transcoder::flush_frames(int stream_index, int *data_present)
+int FFMPEG_Transcoder::flush_frames(int stream_index)
 {
     int ret = 0;
 
     if (stream_index > INVALID_STREAM)
     {
         AVPacket flush_packet;
+        int decoded = 0;
 
         init_packet(&flush_packet);
 
@@ -1231,13 +1322,14 @@ int FFMPEG_Transcoder::flush_frames(int stream_index, int *data_present)
 
         do
         {
-            ret = decode_frame(&flush_packet, data_present);
+            ret = decode_frame(&flush_packet, &decoded);
+
             if (ret < 0)
             {
                 break;
             }
         }
-        while (*data_present);
+        while (decoded);
 
         av_packet_unref(&flush_packet);
     }
@@ -1248,64 +1340,62 @@ int FFMPEG_Transcoder::flush_frames(int stream_index, int *data_present)
 int FFMPEG_Transcoder::read_decode_convert_and_store(int *finished)
 {
     // Packet used for temporary storage.
-    AVPacket input_packet;
-    int data_present;
-    int ret = AVERROR_EXIT;
+    AVPacket pkt;
+    int ret = 0;
 
     try
     {
         // Read one audio frame from the input file into a temporary packet.
-        if ((ret = av_read_frame(m_in.m_pFormat_ctx, &input_packet)) < 0)
+        ret = av_read_frame(m_in.m_pFormat_ctx, &pkt);
+
+        if (ret < 0)
         {
-            // If we are the the end of the file, flush the decoder below.
             if (ret == AVERROR_EOF)
             {
+                // If we are the the end of the file, flush the decoder below.
                 *finished = 1;
             }
             else
             {
                 ffmpegfs_error("Could not read frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-                throw false;
+                throw ret;
             }
         }
 
         if (!*finished)
         {
-            do
+            // Decode one packet, at least with the old API (!LAV_NEW_PACKET_INTERFACE)
+            // it seems a packet can contain more than one frame so loop around it
+            // if necessary...
+            ret = decode_frame(&pkt);
+
+            if (ret < 0)
             {
-                // Decode one frame.
-                ret = decode_frame(&input_packet, &data_present);
-                if (ret < 0)
-                {
-                    throw false;
-                }
-                input_packet.data += ret;
-                input_packet.size -= ret;
+                throw ret;
             }
-            while (input_packet.size > 0);
         }
         else
         {
             // Flush cached frames, ignoring any errors
-            if (m_in.m_pAudio_codec_ctx != NULL /*&& m_in.m_pAudio_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY*/)
+            if (m_in.m_pAudio_codec_ctx != NULL)
             {
-                flush_frames(m_in.m_nAudio_stream_idx, &data_present);
-            }
-            if (m_in.m_pVideo_codec_ctx != NULL /*&& m_in.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_DELAY*/)
-            {
-                flush_frames(m_in.m_nVideo_stream_idx, &data_present);
+                flush_frames(m_in.m_nAudio_stream_idx);
             }
 
-            data_present = 0;
+            if (m_in.m_pVideo_codec_ctx != NULL)
+            {
+                flush_frames(m_in.m_nVideo_stream_idx);
+            }
         }
 
-        ret = 0;
+        ret = 0;    // Errors will be reported by exception
     }
-    catch (bool)
+    catch (int _ret)
     {
+        ret = _ret;
     }
 
-    av_packet_unref(&input_packet);
+    av_packet_unref(&pkt);
 
     return ret;
 }
@@ -1385,27 +1475,30 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
     // Encode the audio frame and store it in the temporary packet.
     // The output audio stream encoder is used to do this.
     ret = avcodec_encode_audio2(m_out.m_pAudio_codec_ctx, &output_packet, frame, data_present);
-    if (ret < 0 && ret != AVERROR_EOF)
+
+    if (ret < 0)
     {
         ffmpegfs_error("Could not encode audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
         av_packet_unref(&output_packet);
         return ret;
     }
 
-    // Write one audio frame from the temporary packet to the output file.
-    if (*data_present)
     {
-        output_packet.stream_index = m_out.m_nAudio_stream_idx;
-
-        produce_audio_dts(&output_packet, &m_out.m_nAudio_pts);
-
-        ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
-
-        if (ret < 0)
+        // Write one audio frame from the temporary packet to the output file.
+        if (*data_present)
         {
-            ffmpegfs_error("Could not write audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-            av_packet_unref(&output_packet);
-            return ret;
+            output_packet.stream_index = m_out.m_nAudio_stream_idx;
+
+            produce_audio_dts(&output_packet, &m_out.m_nAudio_pts);
+
+            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+
+            if (ret < 0)
+            {
+                ffmpegfs_error("Could not write audio frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
+                av_packet_unref(&output_packet);
+                return ret;
+            }
         }
 
         av_packet_unref(&output_packet);
@@ -1458,6 +1551,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
     // The output video stream encoder is used to do this.
 
     ret = avcodec_encode_video2(m_out.m_pVideo_codec_ctx, &output_packet, frame, data_present);
+
     if (ret < 0)
     {
         ffmpegfs_error("Could not encode video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
@@ -1465,60 +1559,63 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
         return ret;
     }
 
-    // Write one video frame from the temporary packet to the output file.
-    if (*data_present)
     {
-        if (output_packet.pts != (int64_t)AV_NOPTS_VALUE)
-        {
-            output_packet.pts -=  m_out.m_video_start_pts;
-        }
 
-        if (output_packet.dts != (int64_t)AV_NOPTS_VALUE)
+        // Write one video frame from the temporary packet to the output file.
+        if (*data_present)
         {
-            output_packet.dts -=  m_out.m_video_start_pts;
-        }
-
-        if (!(m_out.m_pFormat_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
-        {
-            if (output_packet.dts != (int64_t)AV_NOPTS_VALUE &&
-                    output_packet.pts != (int64_t)AV_NOPTS_VALUE &&
-                    output_packet.dts > output_packet.pts)
+            if (output_packet.pts != (int64_t)AV_NOPTS_VALUE)
             {
-
-                ffmpegfs_warning("Invalid DTS: %" PRId64 " PTS: %" PRId64 " in video output, replacing by guess for '%s'.", output_packet.dts, output_packet.pts, m_in.m_pszFileName);
-
-                output_packet.pts =
-                        output_packet.dts = output_packet.pts + output_packet.dts + m_out.m_last_mux_dts + 1
-                        - FFMIN3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1)
-                        - FFMAX3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1);
+                output_packet.pts -=  m_out.m_video_start_pts;
             }
 
-            if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
+            if (output_packet.dts != (int64_t)AV_NOPTS_VALUE)
             {
-                int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                output_packet.dts -=  m_out.m_video_start_pts;
+            }
 
-                if (output_packet.dts < max)
+            if (!(m_out.m_pFormat_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
+            {
+                if (output_packet.dts != (int64_t)AV_NOPTS_VALUE &&
+                        output_packet.pts != (int64_t)AV_NOPTS_VALUE &&
+                        output_packet.dts > output_packet.pts)
                 {
-                    ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pszFileName);
 
-                    if (output_packet.pts >= output_packet.dts)
+                    ffmpegfs_warning("Invalid DTS: %" PRId64 " PTS: %" PRId64 " in video output, replacing by guess for '%s'.", output_packet.dts, output_packet.pts, m_in.m_pszFileName);
+
+                    output_packet.pts =
+                            output_packet.dts = output_packet.pts + output_packet.dts + m_out.m_last_mux_dts + 1
+                            - FFMIN3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1)
+                            - FFMAX3(output_packet.pts, output_packet.dts, m_out.m_last_mux_dts + 1);
+                }
+
+                if (output_packet.dts != (int64_t)AV_NOPTS_VALUE && m_out.m_last_mux_dts != (int64_t)AV_NOPTS_VALUE)
+                {
+                    int64_t max = m_out.m_last_mux_dts + !(m_out.m_pFormat_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+
+                    if (output_packet.dts < max)
                     {
-                        output_packet.pts = FFMAX(output_packet.pts, max);
+                        ffmpegfs_warning("Non-monotonous DTS in video output stream; previous: %" PRId64 ", current: %" PRId64 "; changing to %" PRId64 ". This may result in incorrect timestamps in the output for '%s'.", m_out.m_last_mux_dts, output_packet.dts, max, m_in.m_pszFileName);
+
+                        if (output_packet.pts >= output_packet.dts)
+                        {
+                            output_packet.pts = FFMAX(output_packet.pts, max);
+                        }
+                        output_packet.dts = max;
                     }
-                    output_packet.dts = max;
                 }
             }
-        }
 
-        m_out.m_last_mux_dts = output_packet.dts;
+            m_out.m_last_mux_dts = output_packet.dts;
 
-        ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
+            ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &output_packet);
 
-        if (ret < 0)
-        {
-            ffmpegfs_error("Could not write video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
-            av_packet_unref(&output_packet);
-            return ret;
+            if (ret < 0)
+            {
+                ffmpegfs_error("Could not write video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
+                av_packet_unref(&output_packet);
+                return ret;
+            }
         }
 
         av_packet_unref(&output_packet);
@@ -2058,7 +2155,6 @@ int64_t FFMPEG_Transcoder::seek(void * pOpaque, int64_t i4Offset, int nWhence)
 }
 
 // Close the open FFmpeg file
-
 void FFMPEG_Transcoder::close()
 {
     int nAudioSamplesLeft = 0;
@@ -2085,8 +2181,11 @@ void FFMPEG_Transcoder::close()
 
     if (m_pAudio_resample_ctx)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
         avresample_close(m_pAudio_resample_ctx);
         avresample_free(&m_pAudio_resample_ctx);
+#pragma GCC diagnostic pop
         m_pAudio_resample_ctx = NULL;
         bClosed = true;
     }

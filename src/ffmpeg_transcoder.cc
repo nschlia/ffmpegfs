@@ -481,11 +481,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Resolution must be a multiple of two.
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        output_codec_ctx->width                = m_in.m_pVideo_stream->codecpar->width;
-        output_codec_ctx->height               = m_in.m_pVideo_stream->codecpar->height;
+        output_codec_ctx->width                     = m_in.m_pVideo_stream->codecpar->width;
+        output_codec_ctx->height                    = m_in.m_pVideo_stream->codecpar->height;
 #else
-        output_codec_ctx->width                = m_in.m_pVideo_stream->codec->width;
-        output_codec_ctx->height               = m_in.m_pVideo_stream->codec->height;
+        output_codec_ctx->width                     = m_in.m_pVideo_stream->codec->width;
+        output_codec_ctx->height                    = m_in.m_pVideo_stream->codec->height;
 #endif
 
         if (params.m_videowidth || params.m_videoheight)
@@ -497,23 +497,23 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             if (params.m_videowidth && params.m_videoheight)
             {
                 // Both width/source set. May look strange, but this is an order...
-                width                   = params.m_videowidth;
-                height                  = params.m_videoheight;
+                width                               = params.m_videowidth;
+                height                              = params.m_videoheight;
             }
             else if (params.m_videowidth)
             {
                 // Only video width
                 double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
 
-                width                   = params.m_videowidth;
+                width                               = params.m_videowidth;
 
                 if (!ratio)
                 {
-                    height              = output_codec_ctx->height;
+                    height                          = output_codec_ctx->height;
                 }
                 else
                 {
-                    height              = (int)(params.m_videowidth / ratio);
+                    height                          = (int)(params.m_videowidth / ratio);
                     height &= ~((int)0x1);
                 }
             }
@@ -524,21 +524,21 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
                 if (!ratio)
                 {
-                    width               = output_codec_ctx->width;
+                    width                           = output_codec_ctx->width;
                 }
                 else
                 {
-                    width               = (int)(params.m_videoheight * ratio);
+                    width                           = (int)(params.m_videoheight * ratio);
                     width &= ~((int)0x1);
                 }
-                height                  = params.m_videoheight;
+                height                              = params.m_videoheight;
             }
 
             if (output_codec_ctx->width > width || output_codec_ctx->height > height)
             {
                 ffmpegfs_info("Changing video size from %i/%i to %i/%i for '%s'.", output_codec_ctx->width, output_codec_ctx->height, width, height, m_in.m_pszFileName);
-                output_codec_ctx->width        = width;
-                output_codec_ctx->height       = height;
+                output_codec_ctx->width             = width;
+                output_codec_ctx->height            = height;
             }
         }
 
@@ -546,29 +546,38 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // of which frame timestamps are represented. For fixed-fps content,
         // timebase should be 1/framerate and timestamp increments should be
         // identical to 1.
-        //output_stream->time_base               = m_in.m_pVideo_stream->time_base;
+        //output_stream->time_base                  = m_in.m_pVideo_stream->time_base;
+
+        AVRational frame_rate;
+#if LAVF_DEP_AVSTREAM_CODEC
+        frame_rate                                  = m_in.m_pVideo_stream->avg_frame_rate;
+#else
+        frame_rate                                  = m_in.m_pVideo_stream->codec->framerate;
+#endif
+
+        if (!frame_rate.num)
+        {
+            frame_rate                              = { .num = 25, .den = 1 };
+            ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        }
 
         // tbn
         if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
         {
             // Strange, but Theora seems to need it this way...
-#if LAVF_DEP_AVSTREAM_CODEC
-            output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->avg_frame_rate);
-#else
-            output_stream->time_base            = av_inv_q(m_in.m_pVideo_stream->codec->framerate);
-#endif
+            output_stream->time_base                = av_inv_q(frame_rate);
         }
         else
         {
-            output_stream->time_base        = { .num = 1, .den = 90000 };
+            output_stream->time_base                = { .num = 1, .den = 90000 };
         }
 
         // tbc
-        output_codec_ctx->time_base             = output_stream->time_base;
+        output_codec_ctx->time_base                 = output_stream->time_base;
 
         // tbc
 #if LAVF_DEP_AVSTREAM_CODEC
-        //        output_stream->codecpar->time_base          = output_stream->time_base;
+        //output_stream->codecpar->time_base        = output_stream->time_base;
         //output_stream->codecpar->time_base        = m_in.m_pVideo_stream->codec->time_base;
         //output_stream->codecpar->time_base.den    *= output_stream->codec->ticks_per_frame;
 #else
@@ -579,34 +588,24 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
 #ifndef USING_LIBAV
         // tbr
-        // output_stream->r_frame_rate             = m_in.m_pVideo_stream->r_frame_rate;
-        // output_stream->r_frame_rate          = { .num = 25, .den = 1 };
+        // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
+        // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
 
         // fps
-#if LAVF_DEP_AVSTREAM_CODEC
-        output_stream->avg_frame_rate           = m_in.m_pVideo_stream->avg_frame_rate;
-#else
-        output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
-#endif
-        if (!output_stream->avg_frame_rate.num)
-        {
-            output_stream->avg_frame_rate       = { .num = 25, .den = 1 };
-            ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
-        }
-
-        output_codec_ctx->framerate             = output_stream->avg_frame_rate;
+        output_stream->avg_frame_rate               = frame_rate;
+        output_codec_ctx->framerate                 = output_stream->avg_frame_rate;
 #endif
 
-        output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
+        output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codecpar->sample_aspect_ratio;
+        output_codec_ctx->sample_aspect_ratio       = m_in.m_pVideo_stream->codecpar->sample_aspect_ratio;
 #else
-        output_codec_ctx->sample_aspect_ratio   = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
+        output_codec_ctx->sample_aspect_ratio       = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
 #endif
 
         // At this moment the output format must be AV_PIX_FMT_YUV420P;
-        output_codec_ctx->pix_fmt               = AV_PIX_FMT_YUV420P;
+        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
 
         if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
         {
@@ -1601,7 +1600,6 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
             m_out.m_last_mux_dts = pkt.dts;
 
             ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &pkt);
-
             if (ret < 0)
             {
                 ffmpegfs_error("Could not write video frame (error '%s') for '%s'.", ffmpeg_geterror(ret).c_str(), m_in.m_pszFileName);
@@ -1847,8 +1845,8 @@ int FFMPEG_Transcoder::process_single_fr()
         {
             if (m_out.m_pAudio_codec_ctx != NULL)
             {
-                int data_written = 0;
                 // Flush the encoder as it may have delayed frames.
+                int data_written = 0;
                 do
                 {
                     ret = encode_audio_frame(NULL, &data_written);

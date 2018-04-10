@@ -21,8 +21,6 @@
 #include "ffmpeg_base.h"
 #include "transcode.h"
 
-#include <assert.h>
-
 FFMPEG_Base::FFMPEG_Base()
 {
 }

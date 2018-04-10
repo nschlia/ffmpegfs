@@ -22,8 +22,6 @@
 #include "transcode.h"
 #include "buffer.h"
 
-#include <assert.h>
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
@@ -168,14 +166,13 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
     }
 
     // Open the input file to read from it.
-    assert(m_in.m_pFormat_ctx == NULL);
     ret = avformat_open_input(&m_in.m_pFormat_ctx, filename, NULL, &opt);
     if (ret < 0)
     {
         ffmpegfs_error("Could not open input file (error '%s') '%s'.", ffmpeg_geterror(ret).c_str(), filename);
         return ret;
     }
-    assert(m_in.m_pFormat_ctx != NULL);
+
 #if LAVF_DEP_FILENAME
     m_in.m_pszFileName = m_in.m_pFormat_ctx->url;
 #else
@@ -588,10 +585,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // fps
 #if LAVF_DEP_AVSTREAM_CODEC
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->avg_frame_rate;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        assert(output_stream->avg_frame_rate.num == m_in.m_pVideo_stream->codec->framerate.num && output_stream->avg_frame_rate.den == m_in.m_pVideo_stream->codec->framerate.den);
-#pragma GCC diagnostic pop
 #else
         output_stream->avg_frame_rate           = m_in.m_pVideo_stream->codec->framerate;
 #endif
@@ -670,7 +663,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             {
                 ffmpegfs_info("Initialising pixel format conversion from %s to %s for '%s'.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-", m_in.m_pszFileName);
             }
-            assert(m_pSws_ctx == NULL);
+
             m_pSws_ctx = sws_getContext(
                         // Source settings
             #if LAVF_DEP_AVSTREAM_CODEC
@@ -1446,7 +1439,6 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
         int64_t duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
-        assert(pkt->duration > 0);
         if (pkt->duration)
         {
             duration = pkt->duration;

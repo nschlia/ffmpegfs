@@ -198,6 +198,8 @@ void format_samplerate(char *output, size_t size, unsigned int value);
 void format_time(char *output, size_t size, time_t value);
 void format_size(char *output, size_t size, size_t value);
 
+int print_info(AVStream* stream);
+
 #ifdef __cplusplus
 }
 #endif

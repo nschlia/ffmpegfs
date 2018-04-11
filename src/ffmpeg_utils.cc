@@ -584,3 +584,73 @@ string format_size(size_t value)
 
     return buffer;
 }
+
+static void print_fps(double d, const char *postfix)
+{
+    uint64_t v = lrint(d * 100);
+    if (!v)
+        printf("%1.4f %s\n", d, postfix);
+    else if (v % 100)
+        printf("%3.2f %s\n", d, postfix);
+    else if (v % (100 * 1000))
+        printf("%1.0f %s\n", d, postfix);
+    else
+        printf("%1.0fk %s\n", d / 1000, postfix);
+}
+
+int print_info(AVStream* stream)
+{
+    int ret = 0;
+
+#if LAVF_DEP_AVSTREAM_CODEC
+    AVCodecContext *avctx = avcodec_alloc_context3(NULL);
+    if (!avctx)
+    {
+        return AVERROR(ENOMEM);
+    }
+
+    ret = avcodec_parameters_to_context(avctx, stream->codecpar);
+    if (ret < 0) {
+        avcodec_free_context(&avctx);
+        return ret;
+    }
+
+    // Fields which are missing from AVCodecParameters need to be taken from the AVCodecContext
+    //            avctx->properties   = output_stream->codec->properties;
+    //            avctx->codec        = output_stream->codec->codec;
+    //            avctx->qmin         = output_stream->codec->qmin;
+    //            avctx->qmax         = output_stream->codec->qmax;
+    //            avctx->coded_width  = output_stream->codec->coded_width;
+    //            avctx->coded_height = output_stream->codec->coded_height;
+#else
+    AVCodecContext *avctx = stream->codec;
+#endif
+    int fps = stream->avg_frame_rate.den && stream->avg_frame_rate.num;
+#ifndef USING_LIBAV
+    int tbr = stream->r_frame_rate.den && stream->r_frame_rate.num;
+#endif
+    int tbn = stream->time_base.den && stream->time_base.num;
+#if LAVF_DEP_AVSTREAM_CODEC
+    int tbc = avctx->time_base.den && avctx->time_base.num; // Even the currently latest (lavf 58.10.100) refers to AVStream codec->time_base member... (See dump.c dump_stream_format)
+#else
+    int tbc = avctx->time_base.den && avctx->time_base.num;
+#endif
+
+    if (fps)
+        print_fps(av_q2d(stream->avg_frame_rate), "avg fps");
+#ifndef USING_LIBAV
+    if (tbr)
+        print_fps(av_q2d(stream->r_frame_rate), "Real base framerate (tbr)");
+#endif
+    if (tbn)
+        print_fps(1 / av_q2d(stream->time_base), "stream timebase (tbn)");
+    if (tbc)
+        print_fps(1 / av_q2d(avctx->time_base), "codec timebase (tbc)");
+
+#if LAVF_DEP_AVSTREAM_CODEC
+    avcodec_free_context(&avctx);
+#endif
+
+    return ret;
+}
+

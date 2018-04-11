@@ -381,7 +381,6 @@ double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRation
     return dblAspectRatio;
 }
 
-
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
     AVCodecContext *output_codec_ctx    = NULL;

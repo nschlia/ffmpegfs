@@ -89,10 +89,17 @@ bool Cache::load_index()
             ffmpegfs_error("Failed to initialise SQLite3 library: %d, %s", ret, sqlite3_errstr(ret));
             throw false;
         }
+
         // open connection to a DB
         if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         {
             ffmpegfs_error("Failed to initialise SQLite3 connection: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
+            throw false;
+        }
+
+        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 500)))
+        {
+            ffmpegfs_error("Failed to set SQLite3 busy timeout: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 

@@ -23,6 +23,7 @@ APIs from the FFMpeg version on that they are available.
     Add AVStream.codecpar, deprecate AVStream.codec.
 * Feature:
 * Bugfix: Fix lost frames at end of files (files where cut short)
+* Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 
 nschlia@oblivion-software.de
 

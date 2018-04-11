@@ -451,6 +451,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 #endif
 
+        output_stream->duration                     = m_in.m_pAudio_stream->duration;
+
         // Save the encoder context for easier access later.
         m_out.m_pAudio_codec_ctx            = output_codec_ctx;
         // Save the stream index
@@ -685,6 +687,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 return AVERROR(ENOMEM);
             }
         }
+
+        output_stream->duration                     = m_in.m_pVideo_stream->duration;
 
         // TODO: ALBUM ARTS
         // mp4 album arts do not work with ipod profile. Set mp4.

@@ -265,7 +265,7 @@ bool Cache::read_info(t_cache_info & cache_info)
         }
         else if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) insert stmt: %d, %s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error("Sqlite 3 could not step (execute) select stmt: %d, %s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }

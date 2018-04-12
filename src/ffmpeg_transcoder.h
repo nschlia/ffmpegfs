@@ -25,6 +25,7 @@
 
 #include "ffmpeg_base.h"
 #include "id3v1tag.h"
+#include "wave.h"
 
 #include <queue>
 

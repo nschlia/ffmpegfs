@@ -8,7 +8,7 @@ soon. This release adopts these changes by conditionally using the new
 APIs from the FFMpeg version on that they are available.
 
 * Feature: Set stream duration from source file as hint for encoder.
-* Feature: Enhanced debug output for better readability.
+* Feature: Enhanced logging output for better readability.
 * Fix deprecation: 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
     Deprecate AVFormatContext filename field which had limited length, use the
     new dynamically allocated url field instead.

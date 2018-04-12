@@ -30,10 +30,24 @@
 #include <dirent.h>
 #include <unistd.h>
 
+static char* translate_path(const char* path);
+static void transcoded_name(char* path);
+static void find_original(char* path);
+static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
+static int ffmpegfs_getattr(const char *path, struct stat *stbuf);
+static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi);
+static int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
+static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
+static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
+static int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+static void *ffmpegfs_init(struct fuse_conn_info *conn);
+static void ffmpegfs_destroy(__attribute__((unused)) void * p);
+
 // Translate file names from FUSE to the original absolute path. A buffer
 // is allocated using malloc for the translated path. It is the caller's
 // responsibility to free it.
-char* translate_path(const char* path)
+static char* translate_path(const char* path)
 {
     char* result;
     // Allocate buffer. The +2 is for the terminating '\0' and to
@@ -52,7 +66,7 @@ char* translate_path(const char* path)
 // Convert file name from source to destination name. The new extension will
 // be copied in place, and the passed path must be large enough to hold the
 // new name.
-void transcoded_name(char* path)
+static void transcoded_name(char* path)
 {
     char* ext = strrchr(path, '.');
 
@@ -65,7 +79,7 @@ void transcoded_name(char* path)
 // Given the destination (post-transcode) file name, determine the name of
 // the original file to be transcoded. The new extension will be copied in
 // place, and the passed path must be large enough to hold the new name.
-void find_original(char* path)
+static void find_original(char* path)
 {
     char* ext = strrchr(path, '.');
 
@@ -259,7 +273,7 @@ translate_fail:
     return -errno;
 }
 
-int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
+static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
 {
     char* origpath;
 

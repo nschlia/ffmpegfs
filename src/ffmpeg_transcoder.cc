@@ -652,7 +652,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
             //if (!av_dict_get((AVDictionary*)output_codec_ctx->priv_data, "threads", NULL, 0))
             //{
-            //  ffmpegfs_error("Setting threads to auto for codec %s for '%s'.", get_codec_name(codec_id), m_in.m_pszFileName);
+            //  ffmpegfs_error("%s * Setting threads to auto for codec %s.", destname(), get_codec_name(codec_id));
             //  av_dict_set_with_check((AVDictionary**)&output_codec_ctx->priv_data, "threads", "auto", 0, destname());
             //}
         }
@@ -2002,7 +2002,9 @@ size_t FFMPEG_Transcoder::calculate_size()
 
                 // File size:
                 // file duration * sample rate (HZ) * channels * bytes per sample
-                size += (size_t)(duration * nSampleRate * nChannels * nBytesPerSample);
+                // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+                // The real size of the list header is unkown as we don't know the contents (meta tags)
+                size += (size_t)(duration * nSampleRate * nChannels * nBytesPerSample) + sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER);
                 break;
             }
             case AV_CODEC_ID_VORBIS:

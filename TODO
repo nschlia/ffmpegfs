@@ -1,5 +1,6 @@
 ffmpegfs TODOs
 
+* Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 * Fix deprecation: 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
     Add a new audio/video encoding and decoding API with decoupled input
     and output -- avcodec_send_packet(), avcodec_receive_frame(),

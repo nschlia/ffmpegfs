@@ -96,13 +96,13 @@ bool Cache::load_index()
             ffmpegfs_error("Failed to initialise SQLite3 connection: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
-
+/*
         if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 500)))
         {
             ffmpegfs_error("Failed to set SQLite3 busy timeout: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
-
+*/
         // Create cache_entry table not already existing
         sql =
                 "CREATE TABLE IF NOT EXISTS `cache_entry` (\n"

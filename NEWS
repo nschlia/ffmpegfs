@@ -24,7 +24,6 @@ APIs from the FFMpeg version on that they are available.
 * Fix deprecation: 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
     Add AVStream.codecpar, deprecate AVStream.codec.
 * Bugfix: Fix lost frames at end of files (files where cut short)
-* Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)
 * Bugfix: Make WAV size prediction more accurate
 * Bugfix: Recode existing cache files if not found in database (handle database inconsistencies).

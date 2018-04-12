@@ -27,6 +27,7 @@ APIs from the FFMpeg version on that they are available.
 * Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)
 * Bugfix: Make WAV size prediction more accurate
+* Bugfix: Recode existing cache files if not found in database (handle database inconsistencies).
 
 nschlia@oblivion-software.de
 

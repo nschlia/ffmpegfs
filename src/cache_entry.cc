@@ -162,6 +162,16 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         return true;
     }
 
+    if (!m_cache_info.m_finished)
+    {
+        // If no database entry found (database is not consistent),
+        // or file was not completely transcoded last time,
+        // simply create a new file.
+        erase_cache = true;
+    }
+
+    ffmpegfs_trace("%s * Last transcode finished: %i Erase cache: %i.", m_cache_info.m_filename.c_str(), m_cache_info.m_finished, erase_cache);
+
     // Store access time
     update_access(true);
 

@@ -356,8 +356,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
             if (!oformat)
             {
                 ret = AVERROR(EINVAL);
-                av_log(s, AV_LOG_ERROR, "Unable to find a suitable output format for '%s'\n",
-                       filename);
+                av_log(s, AV_LOG_ERROR, "%s * Unable to find a suitable output format\n", filename);
                 goto error;
             }
         }
@@ -507,7 +506,6 @@ void format_time(char *output, size_t size, time_t value)
     {
         pos += snprintf(output + pos, size - pos, "%is ", secs);
     }
-
 }
 
 void format_size(char *output, size_t size, size_t value)

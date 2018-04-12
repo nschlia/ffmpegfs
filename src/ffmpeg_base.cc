@@ -39,7 +39,7 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            ffmpegfs_error("Could not find %s stream in input file '%s' (error '%s').", get_media_type_string(type), filename, ffmpeg_geterror(ret).c_str());
+            ffmpegfs_error("%s * Could not find %s stream in input file (error '%s').", filename, get_media_type_string(type), ffmpeg_geterror(ret).c_str());
         }
         return ret;
     }
@@ -63,7 +63,7 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
         dec_ctx = avcodec_alloc_context3(dec);
         if (!dec_ctx)
         {
-            ffmpegfs_error("Could not allocate a decoding context.");
+            ffmpegfs_error("%s * Could not allocate a decoding context.", filename);
             return AVERROR(ENOMEM);
         }
 
@@ -85,7 +85,7 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
         dec = avcodec_find_decoder(codec_id);
         if (!dec)
         {
-            ffmpegfs_error("Failed to find %s input codec.", get_media_type_string(type));
+            ffmpegfs_error("%s * Failed to find %s input codec.", filename, get_media_type_string(type));
             return AVERROR(EINVAL);
         }
 
@@ -97,11 +97,11 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
 
         if (ret < 0)
         {
-            ffmpegfs_error("Failed to open %s input codec (error '%s').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
+            ffmpegfs_error("%s * Failed to open %s input codec (error '%s').", filename, get_media_type_string(type), ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
-        ffmpegfs_debug("Successfully opened %s input codec.", get_codec_name(codec_id));
+        ffmpegfs_debug("%s * Successfully opened %s input codec.", filename, get_codec_name(codec_id));
 
         *stream_idx = stream_index;
 
@@ -125,7 +125,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
 {
     if (!(*frame = av_frame_alloc()))
     {
-        ffmpegfs_error("Could not allocate frame for '%s'.", filename);
+        ffmpegfs_error("%s * Could not allocate frame.", filename);
         return AVERROR(ENOMEM);
     }
     return 0;

@@ -40,7 +40,7 @@ Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
 
     clear();
 
-    ffmpegfs_trace("Created new cache entry.");
+    ffmpegfs_trace("%s * Created new cache entry.", m_cache_info.m_filename.c_str());
 }
 
 Cache_Entry::~Cache_Entry()
@@ -48,21 +48,22 @@ Cache_Entry::~Cache_Entry()
     if (m_thread_id && m_thread_id != pthread_self())
     {
         // If not same thread, wait for other to finish
-        ffmpegfs_warning("Waiting for thread id %" FFMPEGFS_FORMAT_PTHREAD_T " to terminate.", m_thread_id);
+        ffmpegfs_warning("%s * Waiting for thread id %" FFMPEGFS_FORMAT_PTHREAD_T " to terminate.", m_cache_info.m_filename.c_str(), m_thread_id);
 
         int s = pthread_join(m_thread_id, NULL);
         if (s != 0)
         {
-            ffmpegfs_error("Error joining thread id %" FFMPEGFS_FORMAT_PTHREAD_T " : %s", m_thread_id, strerror(s));
+            ffmpegfs_error("%s * Error joining thread id %" FFMPEGFS_FORMAT_PTHREAD_T " : %s", m_cache_info.m_filename.c_str(), m_thread_id, strerror(s));
         }
         else
         {
-            ffmpegfs_info("Thread id %" FFMPEGFS_FORMAT_PTHREAD_T " has terminated.", m_thread_id);
+            ffmpegfs_info("%s * Thread id %" FFMPEGFS_FORMAT_PTHREAD_T " has terminated.", m_cache_info.m_filename.c_str(), m_thread_id);
         }
     }
 
     delete m_buffer;
-    ffmpegfs_trace("Deleted buffer.");
+
+    ffmpegfs_trace("%s * Deleted buffer.", m_cache_info.m_filename.c_str());
 }
 
 void Cache_Entry::clear(int fetch_file_time)

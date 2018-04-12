@@ -92,19 +92,19 @@ bool Buffer::open(bool erase_cache)
         m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, (mode_t)0644);
         if (m_fd == -1)
         {
-            ffmpegfs_error("Error opening cache file '%s': %s", m_cachefile.c_str(), strerror(errno));
+            ffmpegfs_error("%s * Error opening cache file: %s", m_cachefile.c_str(), strerror(errno));
             throw false;
         }
 
         if (fstat(m_fd, &sb) == -1)
         {
-            ffmpegfs_error("fstat failed for '%s': %s", m_cachefile.c_str(), strerror(errno));
+            ffmpegfs_error("%s * fstat failed: %s", m_cachefile.c_str(), strerror(errno));
             throw false;
         }
 
         if (!S_ISREG(sb.st_mode))
         {
-            ffmpegfs_error("'%s' is not a file.", m_cachefile.c_str());
+            ffmpegfs_error("%s * Not a file.", m_cachefile.c_str());
             throw false;
         }
 
@@ -129,7 +129,7 @@ bool Buffer::open(bool erase_cache)
         p = mmap(0, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
         if (p == MAP_FAILED)
         {
-            ffmpegfs_error("File mapping failed for '%s': %s", m_cachefile.c_str(), strerror(errno));
+            ffmpegfs_error("%s * File mapping failed: %s", m_cachefile.c_str(), strerror(errno));
             throw false;
         }
 
@@ -412,7 +412,7 @@ bool Buffer::reallocate(size_t newsize)
             return false;
         }
 
-        ffmpegfs_trace("Buffer reallocate: %zu -> %zu.", oldsize, newsize);
+        ffmpegfs_trace("%s * Buffer reallocate: %zu -> %zu.", m_filename.c_str(), oldsize, newsize);
     }
     return true;
 }

@@ -88,11 +88,11 @@ const map<Logging::level,int> Logging::Logger::syslog_level_map_ =
 
 const map<Logging::level,string> Logging::Logger::level_name_map_ =
 {
-    {ERROR,     "ERROR"},
+    {ERROR,     "ERROR  "},
     {WARNING,   "WARNING"},
-    {INFO,      "INFO"},
-    {DEBUG,     "DEBUG"},
-    {TRACE,     "TRACE"},
+    {INFO,      "INFO   "},
+    {DEBUG,     "DEBUG  "},
+    {TRACE,     "TRACE  "},
 };
 
 Logging::Logger Log(Logging::level lev)

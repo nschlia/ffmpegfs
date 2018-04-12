@@ -441,7 +441,7 @@ Cache_Entry* Cache::create_entry(const string & filename, const string & desttyp
     Cache_Entry* cache_entry = new Cache_Entry(this, filename);
     if (cache_entry == NULL)
     {
-        ffmpegfs_error("Out of memory for '%s'.", filename.c_str());
+        ffmpegfs_error("%s * Out of memory.", filename.c_str());
         return NULL;
     }
     m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
@@ -490,12 +490,12 @@ Cache_Entry* Cache::open(const char *filename)
     cache_t::iterator p = m_cache.find(make_pair(sanitised_name, params.m_desttype));
     if (p == m_cache.end())
     {
-        ffmpegfs_trace("Created new transcoder for '%s'.", sanitised_name.c_str());
+        ffmpegfs_trace("%s * Created new transcoder.", sanitised_name.c_str());
         cache_entry = create_entry(sanitised_name, params.m_desttype);
     }
     else
     {
-        ffmpegfs_trace("Reusing cached transcoder for '%s'.", sanitised_name.c_str());
+        ffmpegfs_trace("%s * Reusing cached transcoder.", sanitised_name.c_str());
         cache_entry = p->second;
     }
 
@@ -512,12 +512,12 @@ bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
     string filename((*cache_entry)->filename());
     if (delete_entry(cache_entry, flags))
     {
-        ffmpegfs_trace("Freed cache entry for '%s'.", filename.c_str());
+        ffmpegfs_trace("%s * Freed cache entry.", filename.c_str());
         return true;
     }
     else
     {
-        ffmpegfs_trace("Keeping cache entry for '%s'.", filename.c_str());
+        ffmpegfs_trace("%s * Keeping cache entry.", filename.c_str());
         return false;
     }
 }
@@ -549,7 +549,7 @@ bool Cache::prune_expired()
 
         keys.push_back(make_pair(filename, desttype));
 
-        ffmpegfs_trace("Found %s old entry: %s", format_time(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str(), filename);
+        ffmpegfs_trace("%s * Found %s old entry.", filename, format_time(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str());
     }
 
     ffmpegfs_trace("%zu expired cache entries found.", keys.size());
@@ -559,7 +559,7 @@ bool Cache::prune_expired()
         for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
         {
             const cache_key_t & key = *it;
-            ffmpegfs_trace("Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
+            ffmpegfs_trace("%s * Pruning - Type: %s", key.first.c_str(), key.second.c_str());
 
             cache_t::iterator p = m_cache.find(key);
             if (p != m_cache.end())

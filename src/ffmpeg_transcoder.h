@@ -49,6 +49,9 @@ public:
 
     const ID3v1 * id3v1tag() const;
 
+    const char *filename() const;
+    const char *destname() const;
+
 protected:
     bool is_video() const;
     int add_stream(AVCodecID codec_id);
@@ -84,7 +87,7 @@ protected:
 #endif
     double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio);
 
-    int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags);
+    int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *fileName);
 
 private:
     time_t                      m_mtime;
@@ -114,7 +117,7 @@ private:
         AVStream *              m_pVideo_stream;
         int                     m_nAudio_stream_idx;
         int                     m_nVideo_stream_idx;
-        const char *            m_pszFileName;
+        string                  m_filename;
     } m_in;
 
     // Output file
@@ -129,6 +132,7 @@ private:
         AVStream *              m_pVideo_stream;
         int                     m_nAudio_stream_idx;
         int                     m_nVideo_stream_idx;
+        string                  m_filename;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
         int64_t                 m_audio_start_pts;      // Audio start PTS

@@ -777,7 +777,7 @@ static void print_params()
     }
     format_number(max_threads, sizeof(max_threads), params.m_max_threads);
 
-    ffmpegfs_info(PACKAGE_NAME " options:\n\n"
+    ffmpegfs_trace(PACKAGE_NAME " options:\n\n"
                                "Base Path         : %s\n"
                                "Mount Path        : %s\n\n"
                                "Destination Type  : %s\n"

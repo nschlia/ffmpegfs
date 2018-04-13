@@ -53,6 +53,8 @@ public:
     const char *filename() const;
     const char *destname() const;
 
+    static const string & getDestname(string *destname, const string & filename);
+
 protected:
     bool is_video() const;
     int add_stream(AVCodecID codec_id);

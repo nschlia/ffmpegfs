@@ -2340,3 +2340,27 @@ const char *FFMPEG_Transcoder::destname() const
 {
     return m_out.m_filename.c_str();
 }
+
+const string & FFMPEG_Transcoder::getDestname(string *destname, const string & filename)
+{
+    size_t len = strlen(params.m_basepath);
+    size_t found;
+
+    *destname = params.m_mountpath;
+    *destname += filename.substr(len);
+
+    found = destname->rfind('.');
+
+    if (found == string::npos)
+    {
+        *destname += '.';
+    }
+    else
+    {
+        *destname = destname->substr(0, found + 1);
+    }
+
+    *destname += params.m_desttype;
+
+    return *destname;
+}

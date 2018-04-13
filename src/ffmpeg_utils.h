@@ -107,7 +107,7 @@ extern "C" {
 //   Add a new audio/video encoding and decoding API with decoupled input
 //   and output -- avcodec_send_packet(), avcodec_receive_frame(),
 //   avcodec_send_frame() and avcodec_receive_packet().
-#define LAVC_NEW_PACKET_INTERFACE           (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 0))
+#define LAVC_NEW_PACKET_INTERFACE           0 // (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 0))
 // 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
 //   Add AVStream.codecpar, deprecate AVStream.codec.
 #define LAVF_DEP_AVSTREAM_CODEC             (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 33, 0))

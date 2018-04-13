@@ -91,18 +91,28 @@ bool Cache::load_index()
         }
 
         // open connection to a DB
+        //if (SQLITE_OK != (ret = sqlite3_open_v2("file::memory:" /*m_cacheidx_file.c_str()*/, &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
+		//if (SQLITE_OK != (ret = sqlite3_open_v2("file::memory:?cache=shared" /*m_cacheidx_file.c_str()*/, &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         {
             ffmpegfs_error("Failed to initialise SQLite3 connection: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
-/*
-        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 500)))
+
+        // Beginning with version 3.7.0 (2010-07-21), a new "Write-Ahead Log" option
+        // We support Sqlite from 3.7.13 anyway
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", NULL, NULL, NULL)))
+        {
+            ffmpegfs_error("Failed to set SQLite3 WAL mode: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
+            throw false;
+        }
+
+        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
         {
             ffmpegfs_error("Failed to set SQLite3 busy timeout: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
-*/
+
         // Create cache_entry table not already existing
         sql =
                 "CREATE TABLE IF NOT EXISTS `cache_entry` (\n"
@@ -265,7 +275,7 @@ bool Cache::read_info(t_cache_info & cache_info)
         }
         else if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) select stmt: %d, %s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error("Sqlite 3 could not step (execute) select statement: %d, %s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -344,7 +354,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
         if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) select statement: %d, %s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error("Sqlite 3 could not step (execute) insert statement: %d, %s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -539,6 +549,8 @@ bool Cache::prune_expired()
     
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
+    lock();
+
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
 
     int ret = 0;
@@ -580,6 +592,8 @@ bool Cache::prune_expired()
 
     sqlite3_finalize(stmt);
 
+    unlock();
+
     return true;
 }
 
@@ -599,6 +613,8 @@ bool Cache::prune_cache_size()
     ffmpegfs_trace("Pruning oldest cache entries exceeding %s cache size...", format_size(params.m_max_cache_size).c_str());
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
+
+    lock();
 
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
 
@@ -658,6 +674,8 @@ bool Cache::prune_cache_size()
 
     sqlite3_finalize(stmt);
 
+    unlock();
+
     return true;
 }
 
@@ -673,6 +691,8 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         ffmpegfs_trace("prune_disk_space() cannot determine free disk space: %s", strerror(errno));
         return false;
     }
+
+    lock();
 
     size_t free_bytes = buf.f_bfree * buf.f_bsize;
 
@@ -738,14 +758,14 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         sqlite3_finalize(stmt);
     }
 
+    unlock();
+
     return true;
 }
 
 bool Cache::maintenance(size_t predicted_filesize)
 {
     bool bSuccess = true;
-
-    lock();
 
     // Find and remove expired cache entries
     bSuccess &= prune_expired();
@@ -755,8 +775,6 @@ bool Cache::maintenance(size_t predicted_filesize)
 
     // Check min. diskspace required for cache
     bSuccess &= prune_disk_space(predicted_filesize);
-
-    unlock();
 
     return bSuccess;
 }

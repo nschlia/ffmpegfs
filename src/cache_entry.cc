@@ -209,13 +209,11 @@ bool Cache_Entry::close(int flags)
         return false;
     }
 
-    //lock();
-
     if (!m_ref_count)
     {
-        close_buffer(flags);
+//        write_info();
 
-        //unlock();
+        close_buffer(flags);
 
         return true;
     }
@@ -227,9 +225,9 @@ bool Cache_Entry::close(int flags)
         return false;
     }
 
-    close_buffer(flags);
+//    write_info();
 
-    //unlock();
+    close_buffer(flags);
 
     return true;
 }
@@ -243,7 +241,7 @@ bool Cache_Entry::flush()
     }
 
     m_buffer->flush();
-    write_info();
+//    write_info();
 
     return true;
 }

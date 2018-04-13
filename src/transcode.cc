@@ -44,6 +44,7 @@ static volatile unsigned int thread_count;
 extern "C" {
 static void *decoder_thread(void *arg);
 }
+
 static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Transcoder *transcoder);
 
 // Transcode the buffer until the buffer has enough or until an error occurs.

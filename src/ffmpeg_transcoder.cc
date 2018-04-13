@@ -262,24 +262,8 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
 int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 {
     int res = 0;
-    size_t len = strlen(params.m_basepath);
-    size_t found;
 
-    m_out.m_filename = params.m_mountpath;
-    m_out.m_filename += m_in.m_filename.substr(len);
-
-    found = m_out.m_filename.rfind('.');
-
-    if (found == string::npos)
-    {
-        m_out.m_filename += '.';
-    }
-    else
-    {
-        m_out.m_filename = m_out.m_filename.substr(0, found + 1);
-    }
-
-    m_out.m_filename += params.m_desttype;
+    getDestname(&m_out.m_filename, m_in.m_filename);
 
     // Pre-allocate the predicted file size to reduce memory reallocations
     if (!buffer->reserve(calculate_size()))

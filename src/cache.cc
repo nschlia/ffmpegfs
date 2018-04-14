@@ -91,8 +91,6 @@ bool Cache::load_index()
         }
 
         // open connection to a DB
-        //if (SQLITE_OK != (ret = sqlite3_open_v2("file::memory:" /*m_cacheidx_file.c_str()*/, &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
-		//if (SQLITE_OK != (ret = sqlite3_open_v2("file::memory:?cache=shared" /*m_cacheidx_file.c_str()*/, &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         {
             ffmpegfs_error("Failed to initialise SQLite3 connection: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));

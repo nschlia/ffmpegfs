@@ -79,7 +79,7 @@ protected:
     int load_encode_and_write(int frame_size);
     int write_output_file_trailer();
 
-    static int writePacket(void * pOpaque, unsigned char * pBuffer, int nBufSize);
+    static int write_packet(void * pOpaque, unsigned char * pBuffer, int nBufSize);
     static int64_t seek(void * pOpaque, int64_t i4Offset, int nWhence);
 
     bool get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const;
@@ -138,7 +138,7 @@ private:
         string                  m_filename;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
-        int64_t                 m_audio_start_pts;      // Audio start PTS
+        //int64_t                 m_audio_start_pts;      // Audio start PTS
         int64_t                 m_video_start_pts;      // Video start PTS
 
         int64_t                 m_last_mux_dts;         // Last muxed DTS

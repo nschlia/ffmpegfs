@@ -55,7 +55,7 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
           .m_nVideo_stream_idx = INVALID_STREAM,
           .m_filename = "unset",
           .m_nAudio_pts = 0,
-          .m_audio_start_pts = 0,
+          //.m_audio_start_pts = 0,
           .m_video_start_pts = 0,
           .m_last_mux_dts = (int64_t)AV_NOPTS_VALUE,
           })
@@ -453,7 +453,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 #endif
 
-        output_stream->duration                     = m_in.m_pAudio_stream->duration;
+        // Set duration as hint for muxer
+        output_stream->duration             = av_rescale_q(m_in.m_pAudio_stream->duration, m_in.m_pAudio_stream->time_base, output_stream->time_base);
 
         // Save the encoder context for easier access later.
         m_out.m_pAudio_codec_ctx            = output_codec_ctx;
@@ -694,7 +695,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             }
         }
 
-        output_stream->duration                     = m_in.m_pVideo_stream->duration;
+        // Set duration as hint for muxer
+        output_stream->duration             = av_rescale_q(m_in.m_pVideo_stream->duration, m_in.m_pVideo_stream->time_base, output_stream->time_base);
 
         // TODO: ALBUM ARTS
         // mp4 album arts do not work with ipod profile. Set mp4.
@@ -705,11 +707,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         //    }
 
         // Save the encoder context for easier access later.
-        m_out.m_pVideo_codec_ctx    	= output_codec_ctx;
+        m_out.m_pVideo_codec_ctx            = output_codec_ctx;
         // Save the stream index
-        m_out.m_nVideo_stream_idx   	= output_stream->index;
+        m_out.m_nVideo_stream_idx           = output_stream->index;
         // Save output video stream for faster reference
-        m_out.m_pVideo_stream       	= output_stream;
+        m_out.m_pVideo_stream               = output_stream;
 
         break;
     }
@@ -812,7 +814,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
                 1,
                 (void *)buffer,
                 NULL /*readPacket*/,
-                writePacket,
+                write_packet,
                 seek);
 
     // Associate the output file (pointer) with the container format context.
@@ -1638,7 +1640,6 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
             produce_audio_dts(&pkt, &m_out.m_nAudio_pts);
 
             ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, &pkt);
-
             if (ret < 0)
             {
                 ffmpegfs_error("%s * Could not write audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
@@ -2322,7 +2323,7 @@ const ID3v1 * FFMPEG_Transcoder::id3v1tag() const
     return &m_out.m_id3v1;
 }
 
-int FFMPEG_Transcoder::writePacket(void * pOpaque, unsigned char * pBuffer, int nBufSize)
+int FFMPEG_Transcoder::write_packet(void * pOpaque, unsigned char * pBuffer, int nBufSize)
 {
     Buffer * buffer = (Buffer *)pOpaque;
 

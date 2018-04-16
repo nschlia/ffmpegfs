@@ -64,16 +64,20 @@ protected:
     int init_resampler();
     int init_fifo();
     int write_output_file_header();
-    int decode_frame(AVPacket *pkt, int *decoded);
+    int decode_audio_frame(AVPacket *pkt, int *decoded);
+    int decode_video_frame(AVPacket *pkt, int *decoded);
+    int decode_frame(AVPacket *pkt);
     int init_converted_samples(uint8_t ***converted_input_samples, int frame_size);
     int convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples);
     int add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size);
-    int decode_frame(AVPacket *pkt);
     int flush_input_frames(int stream_index);
     int read_decode_convert_and_store(int *finished);
     int init_audio_output_frame(AVFrame **frame, int frame_size);
     AVFrame *alloc_picture(AVPixelFormat pix_fmt, int width, int height);
     void produce_audio_dts(AVPacket * pkt, int64_t *pts);
+#if LAVC_NEW_PACKET_INTERFACE
+    int decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, AVPacket *pkt) const;
+#endif
     int encode_audio_frame(AVFrame *frame, int *data_present);
     int encode_video_frame(AVFrame *frame, int *data_present);
     int load_encode_and_write(int frame_size);

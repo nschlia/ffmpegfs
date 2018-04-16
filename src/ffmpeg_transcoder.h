@@ -138,7 +138,6 @@ private:
         string                  m_filename;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
-        //int64_t                 m_audio_start_pts;      // Audio start PTS
         int64_t                 m_video_start_pts;      // Video start PTS
 
         int64_t                 m_last_mux_dts;         // Last muxed DTS

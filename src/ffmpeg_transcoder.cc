@@ -55,7 +55,6 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
           .m_nVideo_stream_idx = INVALID_STREAM,
           .m_filename = "unset",
           .m_nAudio_pts = 0,
-          //.m_audio_start_pts = 0,
           .m_video_start_pts = 0,
           .m_last_mux_dts = (int64_t)AV_NOPTS_VALUE,
           })

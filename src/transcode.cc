@@ -149,6 +149,7 @@ void transcoder_free(void)
 {
     Cache *p1 = cache;
     cache = NULL;
+
     if (p1 != NULL)
     {
         ffmpegfs_debug("Deleting media file cache.");
@@ -527,20 +528,23 @@ static void *decoder_thread(void *arg)
         memcpy(&cache_entry->m_id3v1, transcoder->id3v1tag(), sizeof(ID3v1));
 
         thread_data->m_initialised = true;
-        pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+        if (!params.m_prebuffer_size)
+        {
+            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+        }
+        else
+        {
+            ffmpegfs_info("%s * Pre-buffering up to %zu bytes.", cache_entry->filename().c_str(), params.m_prebuffer_size);
+        }
 
-        //size_t pos = 0;
-        //size_t size = transcoder->calculate_size() + 1;
+        bool unlocked = false;
 
         while (!cache_entry->m_cache_info.m_finished && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
             int stat = transcoder->process_single_fr();
 
-            //pos = cache_entry->m_buffer->tell();
-            //printf("Progress %3zu%%\r", pos * 100/ size);
             if (stat < 0)
             {
-                //averror = stat;
                 success = false;
                 break;
             }
@@ -551,8 +555,22 @@ static void *decoder_thread(void *arg)
                 break;
             }
 
+            if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
+            {
+                unlocked = true;
+                ffmpegfs_debug("%s * Pre-buffer limit reached.", cache_entry->filename().c_str());
+                pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+            }
+
+
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
             {
+                if (!unlocked && params.m_prebuffer_size)
+                {
+                    unlocked = true;
+                    pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+                }
+
                 ffmpegfs_debug("%s * Suspend timeout. Transcoding suspended.", cache_entry->filename().c_str());
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
@@ -567,6 +585,12 @@ static void *decoder_thread(void *arg)
 
                 ffmpegfs_debug("%s * Transcoding resumed.", cache_entry->filename().c_str());
             }
+        }
+
+        if (!unlocked && params.m_prebuffer_size)
+        {
+            ffmpegfs_debug("%s * File transcode complete, releasing buffer early: Size %zu.", cache_entry->filename().c_str(), cache_entry->m_buffer->buffer_watermark());
+            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
         }
     }
     catch (bool _success)

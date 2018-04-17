@@ -9,6 +9,8 @@ APIs from the FFMpeg version on that they are available.
 
 * Feature: Set stream duration from source file as hint for encoder.
 * Feature: Enhanced logging output for better readability.
+* Feature: Add pre-buffer option. Files will be decoded up to this limit first
+    before made accessible. This ensures smoot startup.
 * Fix deprecation: 2017-xx-xx - xxxxxxx - lavr 4.0.0 - avresample.h
     Deprecate the entire library. Merged years ago to provide compatibility
     with Libav, it remained unmaintained by the FFmpeg project and duplicated

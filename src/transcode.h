@@ -56,6 +56,7 @@ extern struct ffmpegfs_params
     time_t          m_expiry_time;              // Time (seconds) after which an cache entry is deleted
     time_t          m_max_inactive_suspend;     // Time (seconds) that must elapse without access until transcoding is suspended
     time_t          m_max_inactive_abort;       // Time (seconds) that must elapse without access until transcoding is aborted
+    size_t          m_prebuffer_size;           // Number of bytes that will be decoded before it can be accessed
     size_t          m_max_cache_size;           // Max. cache size in MB. When exceeded, oldest entries will be pruned
     size_t          m_min_diskspace;            // Min. diskspace required for cache
     const char*     m_cachepath;                // Disk cache path, defaults to /tmp

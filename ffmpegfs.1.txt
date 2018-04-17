@@ -111,6 +111,11 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     in the background. When the client quits transcoding will continue
     until this time out, and the transcoder thread quits
     Default: 5 minutes
+ *--prebuffer_size*=SIZE, *-o prebuffer_size*=SIZE::
+    Files will be decoded until the buffer contains this much bytes
+    allowing playback to start smoothly without lags.
+    Set to 0 to disable pre-buffering.
+    Default: 100 KB
  *--max_cache_size*=SIZE, *-o max_cache_size*=SIZE::
     Set the maximum diskspace used by the cache. If the cache would grow
     beyond this limit when a file is transcoded, old entries will be deleted

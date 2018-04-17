@@ -73,6 +73,7 @@ struct ffmpegfs_params params =
     .m_expiry_time          = (60*60*24 /* d */) * 7,	// default: 1 week
     .m_max_inactive_suspend = (60 /* m */) * 2,         // default: 2 minutes
     .m_max_inactive_abort   = (60 /* m */) * 5,         // default: 5 minutes
+    .m_prebuffer_size       = 100 /* KB */ * 1024,      // default: 100 KB
     .m_max_cache_size       = 0,                        // default: no limit
     .m_min_diskspace        = 0,                        // default: no minimum
     .m_cachepath            = NULL,                     // default: /tmp
@@ -95,6 +96,7 @@ enum
     KEY_EXPIRY_TIME,
     KEY_MAX_INACTIVE_SUSPEND_TIME,
     KEY_MAX_INACTIVE_ABORT_TIME,
+    KEY_PREBUFFER_SIZE,
     KEY_MAX_CACHE_SIZE,
     KEY_MIN_DISKSPACE_SIZE,
     KEY_CACHE_MAINTENANCE
@@ -256,6 +258,11 @@ static void usage(char *name)
           "                           in the background. When the client quits transcoding will continue\n"
           "                           until this time out, and the transcoder thread quits\n"
           "                           Default: 5 minutes\n"
+          "     --prebuffer_size=SIZE, -o prebuffer_size*=SIZE\n"
+          "                           Files will be decoded until the buffer contains this much bytes\n"
+          "                           allowing playback to start smoothly without lags.\n"
+          "                           Set to 0 to disable pre-buffering.\n"
+          "                           Default: 100 KB\n"
           "     --max_cache_size=SIZE, -o max_cache_size=SIZE\n"
           "                           Set the maximum diskspace used by the cache. If the cache would grow\n"
           "                           beyond this limit when a file is transcoded, old entries will be deleted\n"
@@ -718,6 +725,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_time(arg, &params.m_max_inactive_abort);
     }
+    case KEY_PREBUFFER_SIZE:
+    {
+        return get_size(arg, &params.m_prebuffer_size);
+    }
     case KEY_MAX_CACHE_SIZE:
     {
         return get_size(arg, &params.m_max_cache_size);
@@ -749,6 +760,7 @@ static void print_params()
     char max_inactive_suspend[100];
     char max_inactive_abort[100];
     char max_cache_size[100];
+    char prebuffer_size[100];
     char min_diskspace[100];
     char cache_maintenance[100];
     char max_threads[100];
@@ -765,6 +777,7 @@ static void print_params()
     format_time(expiry_time, sizeof(expiry_time), params.m_expiry_time);
     format_time(max_inactive_suspend, sizeof(expiry_time), params.m_max_inactive_suspend);
     format_time(max_inactive_abort, sizeof(max_inactive_abort), params.m_max_inactive_abort);
+    format_size(prebuffer_size, sizeof(prebuffer_size), params.m_prebuffer_size);
     format_size(max_cache_size, sizeof(max_cache_size), params.m_max_cache_size);
     format_size(min_diskspace, sizeof(min_diskspace), params.m_min_diskspace);
     if (params.m_cache_maintenance)
@@ -778,61 +791,62 @@ static void print_params()
     format_number(max_threads, sizeof(max_threads), params.m_max_threads);
 
     ffmpegfs_trace(PACKAGE_NAME " options:\n\n"
-                               "Base Path         : %s\n"
-                               "Mount Path        : %s\n\n"
-                               "Destination Type  : %s\n"
-                               "\nAudio\n\n"
-                               "Audio Format      : %s\n"
-                               "Audio Bitrate     : %s\n"
-                               "Audio Sample Rate : %s\n"
-                               "\nVideo\n\n"
-                               "Video Size/Pixels : width=%s height=%s\n"
-                               "Deinterlace       : %s\n"
-                               "Video Format      : %s\n"
-                               "Video Bitrate     : %s\n"
-                               "\nLogging\n\n"
-                               "Max. Log Level    : %s\n"
-                               "Log to stderr     : %s\n"
-                               "Log to syslog     : %s\n"
-                               "Logfile           : %s\n"
-                               "\nCache Settings\n\n"
-                               "Expiry Time       : %s\n"
-                               "Inactivity Suspend: %s\n"
-                               "Inactivity Abort  : %s\n"
-                               "Max. Cache Size   : %s\n"
-                               "Min. Disk Space   : %s\n"
-                               "Cache Path        : %s\n"
-                               "Disable Cache     : %s\n"
-                               "Maintenance Timer : %s\n"
-                               "Clear Cache       : %s\n"
-                               "\nVarious Options\n\n"
-                               "Max. Threads      : %s\n"
-                  ,
-                  params.m_basepath,
-                  params.m_mountpath,
-                  params.m_desttype,
-                  get_codec_name(audio_codecid),
-                  audiobitrate,
-                  audiosamplerate,
-                  width, height,
-                  params.m_deinterlace ? "yes" : "no",
-                  get_codec_name(video_codecid),
-                  videobitrate,
-                  params.m_log_maxlevel,
-                  params.m_log_stderr ? "yes" : "no",
-                  params.m_log_syslog ? "yes" : "no",
-                  *params.m_logfile ? params.m_logfile : "none",
-                  expiry_time,
-                  max_inactive_suspend,
-                  max_inactive_abort,
-                  max_cache_size,
-                  min_diskspace,
-                  cachepath,
-                  params.m_disable_cache ? "yes" : "no",
-                  cache_maintenance,
-                  params.m_clear_cache ? "yes" : "no",
-                  max_threads
-                  );
+                                "Base Path         : %s\n"
+                                "Mount Path        : %s\n\n"
+                                "Destination Type  : %s\n"
+                                "\nAudio\n\n"
+                                "Audio Format      : %s\n"
+                                "Audio Bitrate     : %s\n"
+                                "Audio Sample Rate : %s\n"
+                                "\nVideo\n\n"
+                                "Video Size/Pixels : width=%s height=%s\n"
+                                "Deinterlace       : %s\n"
+                                "Video Format      : %s\n"
+                                "Video Bitrate     : %s\n"
+                                "\nLogging\n\n"
+                                "Max. Log Level    : %s\n"
+                                "Log to stderr     : %s\n"
+                                "Log to syslog     : %s\n"
+                                "Logfile           : %s\n"
+                                "\nCache Settings\n\n"
+                                "Expiry Time       : %s\n"
+                                "Inactivity Suspend: %s\n"
+                                "Inactivity Abort  : %s\n"
+                                "Pre-buffer size   : %s\n"
+                                "Max. Cache Size   : %s\n"
+                                "Min. Disk Space   : %s\n"
+                                "Cache Path        : %s\n"
+                                "Disable Cache     : %s\n"
+                                "Maintenance Timer : %s\n"
+                                "Clear Cache       : %s\n"
+                                "\nVarious Options\n\n"
+                                "Max. Threads      : %s\n",
+                   params.m_basepath,
+                   params.m_mountpath,
+                   params.m_desttype,
+                   get_codec_name(audio_codecid),
+                   audiobitrate,
+                   audiosamplerate,
+                   width, height,
+                   params.m_deinterlace ? "yes" : "no",
+                   get_codec_name(video_codecid),
+                   videobitrate,
+                   params.m_log_maxlevel,
+                   params.m_log_stderr ? "yes" : "no",
+                   params.m_log_syslog ? "yes" : "no",
+                   *params.m_logfile ? params.m_logfile : "none",
+                   expiry_time,
+                   max_inactive_suspend,
+                   max_inactive_abort,
+                   prebuffer_size,
+                   max_cache_size,
+                   min_diskspace,
+                   cachepath,
+                   params.m_disable_cache ? "yes" : "no",
+                   cache_maintenance,
+                   params.m_clear_cache ? "yes" : "no",
+                   max_threads
+                   );
 }
 
 int main(int argc, char *argv[])

@@ -91,7 +91,7 @@ static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Trans
 
     if (!cache_entry->m_buffer->reserve(cache_entry->m_cache_info.m_encoded_filesize))
     {
-        ffmpegfs_warning("Unable to truncate buffer.");
+        ffmpegfs_debug("%s * Unable to truncate buffer.", transcoder->destname());
     }
 
     ffmpegfs_debug("%s * Finishing file. Predicted size: %zu, final size: %zu, diff: %zi (%.1f%%).", transcoder->destname(), cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)(long)((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
@@ -253,7 +253,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("Error creating thread attributes: %s", strerror(s));
+                    ffmpegfs_error("%s * Error creating thread attributes: %s", filename, strerror(s));
                     throw false;
                 }
 
@@ -263,7 +263,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                     if (s != 0)
                     {
                         _errno = s;
-                        ffmpegfs_error("Error setting stack size: %s", strerror(s));
+                        ffmpegfs_error("%s * Error setting stack size: %s", filename, strerror(s));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
@@ -285,12 +285,14 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 }
                 pthread_mutex_unlock(&thread_data->m_mutex);
 
+                ffmpegfs_debug("%s * Decoder thread is running.", filename);
+
                 free(thread_data); // can safely be done here, will not be used in thread from now on
 
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("Error creating thread: %s", strerror(s));
+                    ffmpegfs_error("%s * Error creating thread: %s", filename, strerror(s));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -300,12 +302,12 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 s = pthread_attr_destroy(&attr);
                 if (s != 0)
                 {
-                    ffmpegfs_warning("Error destroying thread attributes: %s", strerror(s));
+                    ffmpegfs_warning("%s * Error destroying thread attributes: %s", filename, strerror(s));
                 }
 
                 if (cache_entry->m_cache_info.m_error)
                 {
-                    ffmpegfs_debug("Decoder error for file '%s'.", cache_entry->filename().c_str());
+                    ffmpegfs_debug("%s * Decoder error!", cache_entry->filename().c_str());
                     _errno = cache_entry->m_cache_info.m_errno;
                     if (!_errno)
                     {

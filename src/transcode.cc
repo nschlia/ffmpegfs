@@ -394,13 +394,13 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
         }
 
         // truncate if we didn't actually get len
-        if (cache_entry->m_buffer->tell() < (size_t) offset)
+        if (cache_entry->m_buffer->buffer_watermark() < (size_t) offset)
         {
             len = 0;
         }
-        else if (cache_entry->m_buffer->tell() < offset + len)
+        else if (cache_entry->m_buffer->buffer_watermark() < offset + len)
         {
-            len = cache_entry->m_buffer->tell() - offset;
+            len = cache_entry->m_buffer->buffer_watermark() - offset;
         }
 
         if (!cache_entry->m_buffer->copy((uint8_t*)buff, offset, len))

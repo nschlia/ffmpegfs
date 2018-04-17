@@ -293,7 +293,6 @@ bool Buffer::reserve(size_t size)
 // will be updated.
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
-
     lock();
 
     uint8_t* write_ptr = write_prepare(length);

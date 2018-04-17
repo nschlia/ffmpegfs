@@ -22,6 +22,8 @@
 #include "transcode.h"
 #include "buffer.h"
 
+#include <assert.h>
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
@@ -830,11 +832,54 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     return 0;
 }
 
+#if LAVR_DEPRECATE
+// Initialize the audio resampler based on the input and output codec settings.
+// If the input and output sample formats differ, a conversion is required
+// libswresample takes care of this, but requires initialization.
+int FFMPEG_Transcoder::init_resampler()
+{
+    // Only initialise the resampler if it is necessary, i.e.,
+    // if and only if the sample formats differ.
+    if (m_in.m_pAudio_codec_ctx->sample_fmt != m_out.m_pAudio_codec_ctx->sample_fmt ||
+            m_in.m_pAudio_codec_ctx->sample_rate != m_out.m_pAudio_codec_ctx->sample_rate ||
+            m_in.m_pAudio_codec_ctx->channels != m_out.m_pAudio_codec_ctx->channels)
+    {
+        int ret;
+        // Create a resampler context for the conversion.
+        // Set the conversion parameters.
+        // Default channel layouts based on the number of channels
+        // are assumed for simplicity (they are sometimes not detected
+        // properly by the demuxer and/or decoder).
+        m_pAudio_resample_ctx = swr_alloc_set_opts(NULL,
+                                                   av_get_default_channel_layout(m_out.m_pAudio_codec_ctx->channels),
+                                                   m_out.m_pAudio_codec_ctx->sample_fmt,
+                                                   m_out.m_pAudio_codec_ctx->sample_rate,
+                                                   av_get_default_channel_layout(m_in.m_pAudio_codec_ctx->channels),
+                                                   m_in.m_pAudio_codec_ctx->sample_fmt,
+                                                   m_in.m_pAudio_codec_ctx->sample_rate,
+                                                   0, NULL);
+        if (!m_pAudio_resample_ctx)
+        {
+            ffmpegfs_error("%s * Could not allocate resample context.", destname());
+            return AVERROR(ENOMEM);
+        }
+
+        // Open the resampler with the specified parameters.
+        ret = swr_init(m_pAudio_resample_ctx);
+        if (ret < 0)
+        {
+            ffmpegfs_error("%s * Could not open resampler context (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            swr_free(&m_pAudio_resample_ctx);
+            m_pAudio_resample_ctx = NULL;
+            return ret;
+        }
+    }
+    return 0;
+}
+#else
 // Initialise the audio resampler based on the input and output codec settings.
 // If the input and output sample formats differ, a conversion is required
 // libavresample takes care of this, but requires initialisation.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
 int FFMPEG_Transcoder::init_resampler()
 {
     // Only initialise the resampler if it is necessary, i.e.,
@@ -847,7 +892,8 @@ int FFMPEG_Transcoder::init_resampler()
         int ret;
 
         // Create a resampler context for the conversion.
-        if (!(m_pAudio_resample_ctx = avresample_alloc_context()))
+        m_pAudio_resample_ctx = avresample_alloc_context();
+        if (!m_pAudio_resample_ctx)
         {
             ffmpegfs_error("%s * Could not allocate resample context.", destname());
             return AVERROR(ENOMEM);
@@ -866,7 +912,8 @@ int FFMPEG_Transcoder::init_resampler()
         av_opt_set_int(m_pAudio_resample_ctx, "out_sample_fmt", m_out.m_pAudio_codec_ctx->sample_fmt, 0);
 
         // Open the resampler with the specified parameters.
-        if ((ret = avresample_open(m_pAudio_resample_ctx)) < 0)
+        ret = avresample_open(m_pAudio_resample_ctx);
+        if (ret < 0)
         {
             ffmpegfs_error("%s * Could not open resampler context (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
             avresample_free(&m_pAudio_resample_ctx);
@@ -876,7 +923,7 @@ int FFMPEG_Transcoder::init_resampler()
     }
     return 0;
 }
-#pragma GCC diagnostic pop
+#endif
 
 // Initialise a FIFO buffer for the audio samples to be encoded.
 int FFMPEG_Transcoder::init_fifo()
@@ -1060,10 +1107,13 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         {
             // Temporary storage for the converted input samples.
             uint8_t **converted_input_samples = NULL;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
-            int nb_output_samples = (m_pAudio_resample_ctx != NULL) ? avresample_get_out_samples(m_pAudio_resample_ctx, input_frame->nb_samples) : input_frame->nb_samples;
-#pragma GCC diagnostic pop
+            int nb_output_samples;
+#if LAVR_DEPRECATE
+            nb_output_samples = (m_pAudio_resample_ctx != NULL) ? swr_get_out_samples(m_pAudio_resample_ctx, input_frame->nb_samples) : input_frame->nb_samples;
+#else
+            nb_output_samples = (m_pAudio_resample_ctx != NULL) ? avresample_get_out_samples(m_pAudio_resample_ctx, input_frame->nb_samples) : input_frame->nb_samples;
+#endif
+
             // Store audio frame
             // Initialise the temporary storage for the converted input samples.
             ret = init_converted_samples(&converted_input_samples, nb_output_samples);
@@ -1365,11 +1415,11 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     return 0;
 }
 
+#if LAVR_DEPRECATE
 // Convert the input audio samples into the output sample format.
-// The conversion happens on a per-frame basis, the size of which is specified
-// by frame_size.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
+// The conversion happens on a per-frame basis, the size of which is
+// specified by frame_size.
+//static int convert_samples(const uint8_t **input_data, uint8_t **converted_data, const int frame_size, SwrContext *resample_context)
 int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_pAudio_resample_ctx != NULL)
@@ -1377,7 +1427,54 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         int ret;
 
         // Convert the samples using the resampler.
-        if ((ret = avresample_convert(m_pAudio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples)) < 0)
+        ret = swr_convert(m_pAudio_resample_ctx, converted_data, *out_samples, (const uint8_t **)input_data, in_samples);
+        if (ret  < 0)
+        {
+            ffmpegfs_error("%s * Could not convert input samples (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+
+        *out_samples = ret;
+
+//        // Perform a sanity check so that the number of converted samples is
+//        // not greater than the number of samples to be converted.
+//        // If the sample rates differ, this case has to be handled differently
+//        if (avresample_available(m_pAudio_resample_ctx))
+//        {
+//            ffmpegfs_error("%s * Converted samples left over.", destname());
+//            return AVERROR_EXIT;
+//        }
+    }
+    else
+    {
+        // No resampling, just copy samples
+        if (!av_sample_fmt_is_planar(m_in.m_pAudio_codec_ctx->sample_fmt))
+        {
+            memcpy(converted_data[0], input_data[0], in_samples * av_get_bytes_per_sample(m_out.m_pAudio_codec_ctx->sample_fmt) * m_in.m_pAudio_codec_ctx->channels);
+        }
+        else
+        {
+            for (int n = 0; n < m_in.m_pAudio_codec_ctx->channels; n++)
+            {
+                memcpy(converted_data[n], input_data[n], in_samples * av_get_bytes_per_sample(m_out.m_pAudio_codec_ctx->sample_fmt));
+            }
+        }
+    }
+    return 0;
+}
+#else
+// Convert the input audio samples into the output sample format.
+// The conversion happens on a per-frame basis, the size of which is specified
+// by frame_size.
+int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
+{
+    if (m_pAudio_resample_ctx != NULL)
+    {
+        int ret;
+
+        // Convert the samples using the resampler.
+        ret = avresample_convert(m_pAudio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples);
+        if (ret < 0)
         {
             ffmpegfs_error("%s * Could not convert input samples (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
             return ret;
@@ -1412,7 +1509,7 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
     }
     return 0;
 }
-#pragma GCC diagnostic pop
+#endif
 
 // Add converted input audio samples to the FIFO buffer for later processing.
 int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size)
@@ -1704,8 +1801,7 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 
     if (frame != NULL)
     {
-#if (LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ) )
-
+#if LAVF_DEP_AVSTREAM_CODEC
         //if (m_out.m_pVideo_codec_ctx->flags & (AV_CODEC_FLAG_INTERLACED_DCT | AV_CODEC_FLAG_INTERLACED_ME) && ost->top_field_first >= 0)
         //      frame->top_field_first = !!ost->top_field_first;
 
@@ -1972,7 +2068,7 @@ int FFMPEG_Transcoder::process_metadata()
 {
     ffmpegfs_trace("%s * Processing metadata.", destname());
 
-#if (LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ) )
+#if LAVF_DEP_AVSTREAM_CODEC
     if (m_in.m_pAudio_stream != NULL && m_in.m_pAudio_stream->codecpar->codec_id == AV_CODEC_ID_VORBIS)
 #else
     if (m_in.m_pAudio_stream != NULL && m_in.m_pAudio_stream->codec->codec_id == AV_CODEC_ID_VORBIS)
@@ -2442,11 +2538,12 @@ void FFMPEG_Transcoder::close()
 
     if (m_pAudio_resample_ctx)
     {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
+#if LAVR_DEPRECATE
+        swr_free(&m_pAudio_resample_ctx);
+#else
         avresample_close(m_pAudio_resample_ctx);
         avresample_free(&m_pAudio_resample_ctx);
-#pragma GCC diagnostic pop
+#endif
         m_pAudio_resample_ctx = NULL;
         bClosed = true;
     }

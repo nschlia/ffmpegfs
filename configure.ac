@@ -54,10 +54,6 @@ AC_RUN_IFELSE(
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["x"], [format string for pthread_t])])
 
 # FFMPEG support checks
-AC_ARG_WITH([ffmpeg],
-    [AS_HELP_STRING([--without-ffmpeg],
-        [disable support for FFMPEG libraries])],
-    [], [with_ffmpeg=yes])
 
 # Tested with...
 #
@@ -73,17 +69,11 @@ AC_ARG_WITH([ffmpeg],
 #
 # May work with older versions but this is not guaranteed.
 
-AS_IF([test "x$with_ffmpeg" != xno],
-    [PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
-		[PKG_CHECK_MODULES([libavcodec], [libavcodec >= 56.1.0],
-			[PKG_CHECK_MODULES([libavformat], [libavformat >= 56.1.0],
-				[PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0],
-						[PKG_CHECK_MODULES([libswscale], [libswscale >= 3.0.0],
-							[AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
-						)
-						]
-				)
-				]
+PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
+    [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 56.1.0],
+        [PKG_CHECK_MODULES([libavformat], [libavformat >= 56.1.0],
+            [PKG_CHECK_MODULES([libswscale], [libswscale >= 3.0.0],
+                [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
 			)
 			]
         )
@@ -92,7 +82,44 @@ AS_IF([test "x$with_ffmpeg" != xno],
 	]
 )
 
-AM_CONDITIONAL([HAVE_FFMPEG], [test "x$with_ffmpeg" != xno])
+# AM_CONDITIONAL([HAVE_FFMPEG], [test "x$with_ffmpeg" != xno])
+
+# This is because the first PKG_CHECK_MODULES call is inside a conditional.
+PKG_PROG_PKG_CONFIG
+
+# Check for libswresample
+AC_ARG_WITH([libswresample],
+  [AS_HELP_STRING([--with-libswresample],
+    [support using libswresample @<:@default=check@:>@])],
+  [],
+  [with_libswresample=check])
+AS_CASE(["$with_libswresample"],
+  [yes], [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1])],
+  [no], [],
+  [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
+AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
+
+#[PKG_CHECK_MODULES([libswresample], [libswresample >= 2.0.0],
+#    [AC_DEFINE([HAVE_LIBSWRESAMPLE], [1], [Use libswresample.])]
+#)
+#]
+#AC_MSG_NOTICE([checking if stack overflow is detectable])
+
+# Check for libavresample
+AC_ARG_WITH([libavresample],
+  [AS_HELP_STRING([--with-libavresample],
+    [support using libavresample @<:@default=check@:>@])],
+  [],
+  [with_libavresample=check])
+AS_CASE(["$with_libavresample"],
+  [yes], [PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0], [HAVE_LIBAVRESAMPLE=1])],
+  [no], [],
+  [PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0], [HAVE_LIBAVRESAMPLE=1], [HAVE_LIBAVRESAMPLE=0])])
+AM_CONDITIONAL([USE_LIBAVRESAMPLE], [test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1])
+
+# Use libswresample in favour of libavresample
+
+# TODO!
 
 # Error checks
 AS_IF([test "x$with_flac" = no],

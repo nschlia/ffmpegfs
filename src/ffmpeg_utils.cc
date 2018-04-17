@@ -113,11 +113,11 @@ void ffmpeg_libinfo(char * buffer, size_t maxsize)
     info += PRINT_LIB_INFO(avformat,    AVFORMAT);
     // info += PRINT_LIB_INFO(avdevice,    AVDEVICE);
     // info += PRINT_LIB_INFO(avfilter,    AVFILTER);
-    // info += PRINT_LIB_INFO(swresample,  SWRESAMPLE);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations" // Will replace libavresample soon, cross my heart and hope to die...
+#if LAVR_DEPRECATE
+    info += PRINT_LIB_INFO(swresample,  SWRESAMPLE);
+#else
     info += PRINT_LIB_INFO(avresample,  AVRESAMPLE);
-#pragma GCC diagnostic pop
+#endif
     info += PRINT_LIB_INFO(swscale,     SWSCALE);
     // info += PRINT_LIB_INFO(postproc,    POSTPROC);
 

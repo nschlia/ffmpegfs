@@ -58,7 +58,7 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
         // Init the decoders, with or without reference counting
         // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
 
-#if (LIBAVCODEC_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ) )
+#if LAVF_DEP_AVSTREAM_CODEC
         // allocate a new decoding context
         dec_ctx = avcodec_alloc_context3(dec);
         if (!dec_ctx)

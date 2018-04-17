@@ -102,7 +102,11 @@ private:
     bool                        m_bIsVideo;
 
     // Audio conversion and buffering
+#if LAVR_DEPRECATE
+    SwrContext *                m_pAudio_resample_ctx;
+#else
     AVAudioResampleContext *    m_pAudio_resample_ctx;
+#endif
     AVAudioFifo *               m_pAudioFifo;
 
     // Video conversion and buffering

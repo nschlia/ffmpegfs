@@ -32,6 +32,8 @@ APIs from the FFMpeg version on that they are available.
 * Bugfix: Make WAV size prediction more accurate
 * Bugfix: Recode existing cache files if not found in database (handle database inconsistencies).
 * Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
+* Bugfix: Files were truncated (mostly mp3) when cp'ed directly while transcoding. Now files
+  will have the final size as expected.
 
 nschlia@oblivion-software.de
 

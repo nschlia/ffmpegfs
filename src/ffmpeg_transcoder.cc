@@ -960,7 +960,8 @@ int FFMPEG_Transcoder::write_output_file_header()
     if (avformat_init_output(m_out.m_pFormat_ctx, &dict) == AVSTREAM_INIT_IN_WRITE_HEADER)
     {
 #endif // AVSTREAM_INIT_IN_WRITE_HEADER
-        if ((ret = avformat_write_header(m_out.m_pFormat_ctx, &dict)) < 0)
+        ret = avformat_write_header(m_out.m_pFormat_ctx, &dict);
+        if (ret < 0)
         {
             ffmpegfs_error("%s * Could not write output file header (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
             return ret;
@@ -968,6 +969,30 @@ int FFMPEG_Transcoder::write_output_file_header()
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER
     }
 #endif // AVSTREAM_INIT_IN_WRITE_HEADER
+
+    if (m_out.m_output_type == TYPE_WAV)
+    {
+        AVIOContext * output_io_context = (AVIOContext *)m_out.m_pFormat_ctx->pb;
+        Buffer *buffer = (Buffer *)output_io_context->opaque;
+        size_t pos = buffer->tell();
+        WAV_HEADER wav_header;
+        LIST_HEADER list_header;
+        DATA_HEADER data_header;
+
+        buffer->copy((uint8_t*)&wav_header, 0, sizeof(WAV_HEADER));
+        buffer->copy((uint8_t*)&list_header, sizeof(WAV_HEADER), sizeof(LIST_HEADER));
+        buffer->copy((uint8_t*)&data_header, sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + list_header.data_bytes - 4, sizeof(DATA_HEADER));
+
+        wav_header.wav_size = (int)(m_nCalculated_size - 8);
+        data_header.data_bytes = (int)(m_nCalculated_size - (sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER) + list_header.data_bytes - 4));
+
+        buffer->seek(0);
+        buffer->write((uint8_t*)&wav_header, sizeof(WAV_HEADER));
+        buffer->seek(sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + list_header.data_bytes - 4);
+        buffer->write((uint8_t*)&data_header, sizeof(DATA_HEADER));
+
+        buffer->seek(pos);
+    }
 
     return 0;
 }
@@ -1436,14 +1461,14 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
 
         *out_samples = ret;
 
-//        // Perform a sanity check so that the number of converted samples is
-//        // not greater than the number of samples to be converted.
-//        // If the sample rates differ, this case has to be handled differently
-//        if (avresample_available(m_pAudio_resample_ctx))
-//        {
-//            ffmpegfs_error("%s * Converted samples left over.", destname());
-//            return AVERROR_EXIT;
-//        }
+        //        // Perform a sanity check so that the number of converted samples is
+        //        // not greater than the number of samples to be converted.
+        //        // If the sample rates differ, this case has to be handled differently
+        //        if (avresample_available(m_pAudio_resample_ctx))
+        //        {
+        //            ffmpegfs_error("%s * Converted samples left over.", destname());
+        //            return AVERROR_EXIT;
+        //        }
     }
     else
     {

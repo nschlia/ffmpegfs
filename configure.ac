@@ -82,8 +82,6 @@ PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
 	]
 )
 
-# AM_CONDITIONAL([HAVE_FFMPEG], [test "x$with_ffmpeg" != xno])
-
 # This is because the first PKG_CHECK_MODULES call is inside a conditional.
 PKG_PROG_PKG_CONFIG
 
@@ -99,12 +97,6 @@ AS_CASE(["$with_libswresample"],
   [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
 AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
 
-#[PKG_CHECK_MODULES([libswresample], [libswresample >= 2.0.0],
-#    [AC_DEFINE([HAVE_LIBSWRESAMPLE], [1], [Use libswresample.])]
-#)
-#]
-#AC_MSG_NOTICE([checking if stack overflow is detectable])
-
 # Check for libavresample
 AC_ARG_WITH([libavresample],
   [AS_HELP_STRING([--with-libavresample],
@@ -117,13 +109,17 @@ AS_CASE(["$with_libavresample"],
   [PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0], [HAVE_LIBAVRESAMPLE=1], [HAVE_LIBAVRESAMPLE=0])])
 AM_CONDITIONAL([USE_LIBAVRESAMPLE], [test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1])
 
-# Use libswresample in favour of libavresample
-
-# TODO!
-
 # Error checks
-AS_IF([test "x$with_flac" = no],
-    AC_MSG_ERROR([FFmpeg library not enabled or not found. Please make sure its development modules are installed.]))
+# Need either libswresample or libavresample
+#AS_IF([test "$with_libavresample" !== "no" -o "0$HAVE_LIBAVRESAMPLE" -ne 1],
+#    AS_IF([test "$with_libswresample" == "no" -o "0$HAVE_LIBSWRESAMPLE" -ne 1],
+#    AC_MSG_ERROR([FFmpeg library not enabled or not found. Please make sure its development modules are installed.])))
+
+AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
+    AS_IF([test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1], [],
+        AC_MSG_ERROR([Either libswresample or libavresample must be present and enabled. Please make sure its development modules are installed. Do not use --without-libswresample and --without-libavresample at once.])
+    )
+)
 
 # Checks for sqlite3
 PKG_CHECK_MODULES([sqlite3], [sqlite3 >= 3.7.13])

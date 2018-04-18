@@ -43,6 +43,8 @@ APIs from the FFMpeg version on that they are available.
 * Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 * Bugfix: Files were truncated (mostly mp3) when cp'ed directly while transcoding. Now files
   will have the final size as expected.
+* Bugfix: Create valid WAV header for files transcoded on-the-fly.
+* Feature: Enhanced configure that checks whether libavresample or libswresample is present.
 
 nschlia@oblivion-software.de
 

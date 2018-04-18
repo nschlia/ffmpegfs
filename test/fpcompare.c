@@ -135,11 +135,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 
     remaining = max_length * codec_ctx->channels * codec_ctx->sample_rate;
     chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, codec_ctx->channels);
-#if LAVF_DEP_AVSTREAM_CODEC
+//#if LAVF_DEP_AVSTREAM_CODEC
     frame = av_frame_alloc();
-#else
-    frame = avcodec_alloc_frame();
-#endif	
+//#else
+//    frame = avcodec_alloc_frame();
+//#endif	
 
     while (1) {
         if (av_read_frame(format_ctx, &packet) < 0) {
@@ -206,7 +206,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                 }
             }
 #else
-            avcodec_get_frame_defaults(frame);
+            //avcodec_get_frame_defaults(frame);
 
             got_frame = 0;
             consumed = avcodec_decode_audio4(codec_ctx, frame, &got_frame, &packet);
@@ -284,11 +284,11 @@ finish:
 
 done:
     if (frame) {
-#if LAVF_DEP_AVSTREAM_CODEC
+//#if LAVF_DEP_AVSTREAM_CODEC
         av_frame_unref(frame);
-#else
-        avcodec_free_frame(&frame);
-#endif	
+//#else
+//        avcodec_free_frame(&frame);
+//#endif	
     }
     if (dst_data) {
         av_freep(&dst_data);

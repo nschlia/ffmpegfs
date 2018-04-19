@@ -106,6 +106,7 @@ enum
 
 static struct fuse_opt ffmpegfs_opts[] =
 {
+    // Output type
     FFMPEGFS_OPT("--desttype=%s",               m_desttype, 0),
     FFMPEGFS_OPT("desttype=%s",                 m_desttype, 0),
 
@@ -124,7 +125,7 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("videowidth=%u",               m_videowidth, 0),
     FFMPEGFS_OPT("--deinterlace",               m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                 m_deinterlace, 1),
-
+    // Background recoding/caching
     // Cache
     FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
     FUSE_OPT_KEY("expiry_time=%s",              KEY_EXPIRY_TIME),
@@ -132,6 +133,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("max_inactive_suspend=%s",     KEY_MAX_INACTIVE_SUSPEND_TIME),
     FUSE_OPT_KEY("--max_inactive_abort=%s",     KEY_MAX_INACTIVE_ABORT_TIME),
     FUSE_OPT_KEY("max_inactive_abort=%s",       KEY_MAX_INACTIVE_ABORT_TIME),
+    FUSE_OPT_KEY("--prebuffer_size=%s",         KEY_PREBUFFER_SIZE),
+    FUSE_OPT_KEY("prebuffer_size=%s",           KEY_PREBUFFER_SIZE),
     FUSE_OPT_KEY("--max_cache_size=%s",         KEY_MAX_CACHE_SIZE),
     FUSE_OPT_KEY("max_cache_size=%s",           KEY_MAX_CACHE_SIZE),
     FUSE_OPT_KEY("--min_diskspace=%s",          KEY_MIN_DISKSPACE_SIZE),
@@ -150,6 +153,7 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("--max_threads=%u",            m_max_threads, 0),
     FFMPEGFS_OPT("max_threads=%u",              m_max_threads, 0),
 
+    // ffmpegfs options
     FFMPEGFS_OPT("-d",                          m_debug, 1),
     FFMPEGFS_OPT("debug",                       m_debug, 1),
     FFMPEGFS_OPT("--log_maxlevel=%s",           m_log_maxlevel, 0),

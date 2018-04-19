@@ -30,7 +30,7 @@
 #include <fuse.h>
 #include <stdarg.h>
 
-/* Global program parameters */
+// Global program parameters
 extern struct ffmpegfs_params
 {
     // Paths
@@ -67,13 +67,12 @@ extern struct ffmpegfs_params
     unsigned int    m_max_threads;              // Max. number of recoder threads
 } params;
 
-/* Fuse operations struct */
+// Fuse operations struct
 extern struct fuse_operations ffmpegfs_ops;
 
-/*
- * Forward declare transcoder struct. Don't actually define it here, to avoid
- * including coders.h and turning into C++.
- */
+// Forward declare transcoder struct. Don't actually define it here, to avoid
+// including coders.h and turning into C++.
+
 struct Cache_Entry;
 
 #ifdef __cplusplus
@@ -87,7 +86,7 @@ void transcoder_free(void);
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 int transcoder_cached_filesize(const char *filename, struct stat *stbuf);
 
-/* Functions for doing transcoding, called by main program body */
+// Functions for doing transcoding, called by main program body */
 struct Cache_Entry* transcoder_new(const char *filename, int begin_transcode);
 ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offset, size_t len);
 void transcoder_delete(struct Cache_Entry* cache_entry);
@@ -98,7 +97,7 @@ void transcoder_exit(void);
 int transcoder_cache_maintenance(void);
 int transcoder_cache_clear(void);
 
-/* Functions to print output until C++ conversion is done. */
+// Functions to print output until C++ conversion is done.
 void ffmpegfs_trace(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
 void ffmpegfs_debug(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
 void ffmpegfs_warning(const char* f, ...) __attribute__ ((format(printf, 1, 2)));

@@ -159,8 +159,8 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
 
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE, filename);
 
-    //    av_dict_set_with_check(&opt, "analyzeduration", "8000000", 0, destname());  	// <<== honored
-    //    av_dict_set_with_check(&opt, "probesize", "8000000", 0, destname());    		//<<== honored
+    //av_dict_set_with_check(&opt, "analyzeduration", "8000000", 0, destname());    // <<== honored
+    //av_dict_set_with_check(&opt, "probesize", "8000000", 0, destname());          // <<== honored
 
     if (ret < 0)
     {
@@ -207,7 +207,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         return ret;
     }
 
-    //     av_dump_format(m_in.m_pFormat_ctx, 0, filename, 0);
+    //av_dump_format(m_in.m_pFormat_ctx, 0, filename, 0);
 
     // Open best match video codec
     ret = open_codec_context(&m_in.m_nVideo_stream_idx, &m_in.m_pVideo_codec_ctx, m_in.m_pFormat_ctx, AVMEDIA_TYPE_VIDEO, filename);
@@ -225,7 +225,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         m_bIsVideo = is_video();
 
 #ifdef AV_CODEC_CAP_TRUNCATED
-        if(m_in.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+        if (m_in.m_pVideo_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
         {
             m_in.m_pVideo_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
         }
@@ -240,8 +240,6 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
     {
         ffmpegfs_error("%s * Failed to open audio codec (error '%s').", filename, ffmpeg_geterror(ret).c_str());
-        //        avformat_close_input(&m_in.m_pFormat_ctx);
-        //        m_in.m_pFormat_ctx = NULL;
         return ret;
     }
 
@@ -469,23 +467,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     {
         output_codec_ctx->codec_id = codec_id;
 
-        // Set the basic encoder parameters.
-        // The input file's sample rate is used to avoid a sample rate conversion.
-
-        //        ret = avcodec_parameters_from_context(stream->codecpar, m_in.m_pVideo_codec_ctx);
-        //        if (ret < 0) {
-        //            return ret;
-        //        }
-
         if (get_output_bit_rate(m_in.m_pVideo_stream, params.m_videobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
             ffmpegfs_info("%s * Limiting video bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
-        //codec_ctx->bit_rate_tolerance   = 0;
         // Resolution must be a multiple of two.
-
 #if LAVF_DEP_AVSTREAM_CODEC
         output_codec_ctx->width                     = m_in.m_pVideo_stream->codecpar->width;
         output_codec_ctx->height                    = m_in.m_pVideo_stream->codecpar->height;
@@ -680,14 +668,14 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         m_in.m_pVideo_stream->codecpar->height,                 // height
                         (AVPixelFormat)m_in.m_pVideo_stream->codecpar->format,  // format
             #else
-                        m_in.m_pVideo_stream->codec->width,         // width
-                        m_in.m_pVideo_stream->codec->height,        // height
-                        m_in.m_pVideo_stream->codec->pix_fmt,       // format
+                        m_in.m_pVideo_stream->codec->width,                     // width
+                        m_in.m_pVideo_stream->codec->height,                    // height
+                        m_in.m_pVideo_stream->codec->pix_fmt,                   // format
             #endif
                         // Target settings
-                        output_codec_ctx->width,                    // width
-                        output_codec_ctx->height,                   // height
-                        output_codec_ctx->pix_fmt,                  // format
+                        output_codec_ctx->width,                                // width
+                        output_codec_ctx->height,                               // height
+                        output_codec_ctx->pix_fmt,                              // format
                         SWS_FAST_BILINEAR, NULL, NULL, NULL);
             if (!m_pSws_ctx)
             {
@@ -730,7 +718,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     if ((ret = avcodec_open2(output_codec_ctx, output_codec, &opt)) < 0)
     {
         ffmpegfs_error("%s * Could not open %s output codec %s (error '%s').", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-        //        avcodec_free_context(&output_codec_ctx);
         return ret;
     }
 
@@ -794,8 +781,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    //    m_in.m_nAudio_stream_idx = INVALID_STREAM;
-
+    //m_in.m_nAudio_stream_idx = INVALID_STREAM;
     //audio_codec_id = m_out.m_pFormat_ctx->oformat->audio_codec;
 
     if (m_in.m_nAudio_stream_idx != INVALID_STREAM && audio_codec_id != AV_CODEC_ID_NONE)

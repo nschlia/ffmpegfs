@@ -214,6 +214,7 @@ void format_time(char *output, size_t size, time_t value);
 void format_size(char *output, size_t size, size_t value);
 
 int print_info(AVStream* stream);
+void exepath(char * path);
 
 #ifdef __cplusplus
 }

@@ -21,6 +21,9 @@
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
 
+#include <libgen.h>
+#include <unistd.h>
+
 static int is_device(const AVClass *avclass);
 
 #ifndef AV_ERROR_MAX_STRING_SIZE
@@ -652,3 +655,16 @@ int print_info(AVStream* stream)
     return ret;
 }
 
+void exepath(char * path)
+{
+    char result[PATH_MAX + 1];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    if (count != -1)
+    {
+        strcpy(path, dirname(result));
+    }
+    else
+    {
+        *path = '\0';
+    }
+}

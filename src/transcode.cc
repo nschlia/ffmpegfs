@@ -131,7 +131,7 @@ int transcoder_init(void)
         cache = new Cache;
         if (cache == NULL)
         {
-            ffmpegfs_error("ERROR: creating media file cache. Out of memory.");
+            ffmpegfs_error("Unable to create media file cache. Out of memory.");
             fprintf(stderr, "ERROR: creating media file cache. Out of memory.\n");
             return -1;
         }

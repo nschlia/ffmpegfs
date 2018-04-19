@@ -45,6 +45,7 @@ APIs from the FFMpeg version on that they are available.
   will have the final size as expected.
 * Bugfix: Create valid WAV header for files transcoded on-the-fly.
 * Feature: Enhanced configure that checks whether libavresample or libswresample is present.
+* Bugfix: Ensure a file gets recoded when the last attempt failed.
 
 nschlia@oblivion-software.de
 

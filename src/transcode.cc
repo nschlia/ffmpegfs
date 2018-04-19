@@ -596,6 +596,7 @@ static void *decoder_thread(void *arg)
     catch (bool _success)
     {
         success = _success;
+        cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_error = !success;
         cache_entry->m_cache_info.m_errno = success ? 0 : errno;        // Preserve errno
         cache_entry->m_cache_info.m_averror = success ? 0 : averror;    // Preserve averror
@@ -627,6 +628,7 @@ static void *decoder_thread(void *arg)
     }
     else
     {
+        cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_error = !success;
         cache_entry->m_cache_info.m_errno = success ? 0 : errno;        // Preserve errno
         cache_entry->m_cache_info.m_averror = success ? 0 : averror;    // Preserve averror

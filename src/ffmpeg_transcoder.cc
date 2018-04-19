@@ -383,6 +383,59 @@ double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRation
     return dblAspectRatio;
 }
 
+void FFMPEG_Transcoder::limitVideoSize(AVCodecContext *output_codec_ctx)
+{
+    int width;
+    int height;
+
+    if (params.m_videowidth && params.m_videoheight)
+    {
+        // Both width/source set. May look strange, but this is an order...
+        width                               = params.m_videowidth;
+        height                              = params.m_videoheight;
+    }
+    else if (params.m_videowidth)
+    {
+        // Only video width
+        double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
+
+        width                               = params.m_videowidth;
+
+        if (!ratio)
+        {
+            height                          = output_codec_ctx->height;
+        }
+        else
+        {
+            height                          = (int)(params.m_videowidth / ratio);
+            height &= ~((int)0x1);
+        }
+    }
+    else //if (params.m_videoheight)
+    {
+        // Only video height
+        double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
+
+        if (!ratio)
+        {
+            width                           = output_codec_ctx->width;
+        }
+        else
+        {
+            width                           = (int)(params.m_videoheight * ratio);
+            width &= ~((int)0x1);
+        }
+        height                              = params.m_videoheight;
+    }
+
+    if (output_codec_ctx->width > width || output_codec_ctx->height > height)
+    {
+        ffmpegfs_info("%s * Changing video size from %i/%i to %i/%i.", destname(), output_codec_ctx->width, output_codec_ctx->height, width, height);
+        output_codec_ctx->width             = width;
+        output_codec_ctx->height            = height;
+    }
+}
+
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
     AVCodecContext *output_codec_ctx    = NULL;
@@ -485,55 +538,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (params.m_videowidth || params.m_videoheight)
         {
             // Use command line argument(s)
-            int width;
-            int height;
-
-            if (params.m_videowidth && params.m_videoheight)
-            {
-                // Both width/source set. May look strange, but this is an order...
-                width                               = params.m_videowidth;
-                height                              = params.m_videoheight;
-            }
-            else if (params.m_videowidth)
-            {
-                // Only video width
-                double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
-
-                width                               = params.m_videowidth;
-
-                if (!ratio)
-                {
-                    height                          = output_codec_ctx->height;
-                }
-                else
-                {
-                    height                          = (int)(params.m_videowidth / ratio);
-                    height &= ~((int)0x1);
-                }
-            }
-            else //if (params.m_videoheight)
-            {
-                // Only video height
-                double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
-
-                if (!ratio)
-                {
-                    width                           = output_codec_ctx->width;
-                }
-                else
-                {
-                    width                           = (int)(params.m_videoheight * ratio);
-                    width &= ~((int)0x1);
-                }
-                height                              = params.m_videoheight;
-            }
-
-            if (output_codec_ctx->width > width || output_codec_ctx->height > height)
-            {
-                ffmpegfs_info("%s * Changing video size from %i/%i to %i/%i.", destname(), output_codec_ctx->width, output_codec_ctx->height, width, height);
-                output_codec_ctx->width             = width;
-                output_codec_ctx->height            = height;
-            }
+            limitVideoSize(output_codec_ctx);
         }
 
         // timebase: This is the fundamental unit of time (in seconds) in terms

@@ -57,6 +57,7 @@ public:
 
 protected:
     bool is_video() const;
+    void limitVideoSize(AVCodecContext *output_codec_ctx);
     int add_stream(AVCodecID codec_id);
     int open_output_filestreams(Buffer *buffer);
     void copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);

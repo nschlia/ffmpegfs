@@ -430,7 +430,7 @@ void FFMPEG_Transcoder::limitVideoSize(AVCodecContext *output_codec_ctx)
 
     if (output_codec_ctx->width > width || output_codec_ctx->height > height)
     {
-        ffmpegfs_info("%s * Changing video size from %i/%i to %i/%i.", destname(), output_codec_ctx->width, output_codec_ctx->height, width, height);
+        ffmpegfs_trace("%s * Changing video size from %i/%i to %i/%i.", destname(), output_codec_ctx->width, output_codec_ctx->height, width, height);
         output_codec_ctx->width             = width;
         output_codec_ctx->height            = height;
     }
@@ -478,7 +478,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_bit_rate(m_in.m_pAudio_stream, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("%s * Limiting audio bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
+            ffmpegfs_trace("%s * Limiting audio bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         output_codec_ctx->channels                 = 2;
@@ -487,7 +487,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_sample_rate(m_in.m_pAudio_stream, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("%s * Limiting audio sample rate to %s.", destname(), format_samplerate(output_codec_ctx->sample_rate).c_str());
+            ffmpegfs_trace("%s * Limiting audio sample rate to %s.", destname(), format_samplerate(output_codec_ctx->sample_rate).c_str());
         }
         output_codec_ctx->sample_fmt               = output_codec->sample_fmts[0];
 
@@ -523,7 +523,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_bit_rate(m_in.m_pVideo_stream, params.m_videobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            ffmpegfs_info("%s * Limiting video bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
+            ffmpegfs_trace("%s * Limiting video bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         // Resolution must be a multiple of two.
@@ -663,7 +663,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             if (m_in.m_pVideo_stream->codec->pix_fmt != output_codec_ctx->pix_fmt)
 #endif
             {
-                ffmpegfs_info("%s * Initialising pixel format conversion from %s to %s.", destname(), fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-");
+                ffmpegfs_trace("%s * Initialising pixel format conversion from %s to %s.", destname(), fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-");
             }
 
             m_pSws_ctx = sws_getContext(

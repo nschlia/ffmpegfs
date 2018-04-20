@@ -46,6 +46,8 @@ APIs from the FFMpeg version on that they are available.
 * Bugfix: Create valid WAV header for files transcoded on-the-fly.
 * Feature: Enhanced configure that checks whether libavresample or libswresample is present.
 * Bugfix: Ensure a file gets recoded when the last attempt failed.
+* Bugfix: Ensure that transcoding errors get passed on to calling process, e.g. cp or rsync.
+    Otherwise copy operations might not notice that the file is invalid.
 
 nschlia@oblivion-software.de
 

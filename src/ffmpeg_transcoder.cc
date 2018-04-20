@@ -2120,10 +2120,11 @@ int FFMPEG_Transcoder::process_metadata()
 //  1   if EOF reached
 //  -1  error
 
-int FFMPEG_Transcoder::process_single_fr()
+int FFMPEG_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
     int ret = 0;
+    status = 0;
 
     if (m_out.m_nAudio_stream_idx > -1)
     {
@@ -2216,7 +2217,7 @@ int FFMPEG_Transcoder::process_single_fr()
                 while (data_written);
             }
 
-            ret = 1;
+            status = 1;
         }
     }
     else
@@ -2229,7 +2230,7 @@ int FFMPEG_Transcoder::process_single_fr()
 
         if (finished)
         {
-            ret = 1;
+            status = 1;
         }
     }
 
@@ -2291,13 +2292,14 @@ int FFMPEG_Transcoder::process_single_fr()
             while (data_written);
         }
 
-        ret = 1;
+        status = 1;
     }
 
-    return ret;
+    return 0;
 
 cleanup:
-    return -1;
+    status = -1;
+    return ret;
 }
 
 // Try to predict final file size.

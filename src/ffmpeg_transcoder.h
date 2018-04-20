@@ -41,7 +41,7 @@ public:
     bool is_open() const;
     int open_input_file(const char* filename);
     int open_output_file(Buffer* buffer);
-    int process_single_fr();
+    int process_single_fr(int & status);
     int encode_finish();
     void close();
 

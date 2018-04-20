@@ -17,5 +17,6 @@ ffmpegfs TODOs
   as separate files. Currently VOB files will be transcodes as is not
   allowing to access anything reasonable without seeking the stream.
 * Bluray support: Similar to DVD support - split into chapters or programs.
+* Allow WEBM output format.
 * Many more ideas I'll have when I wake up and find them nice to have.
 * Any features that you may request.

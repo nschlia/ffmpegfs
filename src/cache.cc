@@ -97,17 +97,17 @@ bool Cache::load_index()
             throw false;
         }
 
+        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
+        {
+            ffmpegfs_error("Failed to set SQLite3 busy timeout: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
+            throw false;
+        }
+
         // Beginning with version 3.7.0 (2010-07-21), a new "Write-Ahead Log" option
         // We support Sqlite from 3.7.13 anyway
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", NULL, NULL, NULL)))
         {
             ffmpegfs_error("Failed to set SQLite3 WAL mode: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
-            throw false;
-        }
-
-        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
-        {
-            ffmpegfs_error("Failed to set SQLite3 busy timeout: %d, %s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 

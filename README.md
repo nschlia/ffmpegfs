@@ -20,12 +20,13 @@ Supported output formats:
 
 * MP4 (audio & video)
 * OGG (audio & video)
+* WEBM (audio & video) *planned for future release*
 * MP3 (audio only)
 * WAV (audio only)
 
 This can let you use a multi media file collection with software 
-and/or hardware which only understands the MP3, MP4, OGG or WAV
-format, or transcode files through simple drag-and-drop in a file 
+and/or hardware which only understands one of the supported output
+formats, or transcode files through simple drag-and-drop in a file 
 browser.
 
 For live streaming select MP4 for best results. If video transcoding
@@ -158,17 +159,16 @@ applications.
 SUPPORTED OUTPUT FORMATS
 ------------------------
 
-A few words to the supported output formats which are MP3 and MP4 
-currently. There is not much to say about the MP3 output as these 
-are regular MP3 files with no strings attached. They should play 
-well in any modern player.
+A few words to the supported output formats. There is not much to say 
+about the MP3 output as these are regular MP3 files with no strings 
+attached. They should play well in any modern player.
 
 The MP4 files created are special, though, as MP4 is not quite suited
 for live streaming. Reason being that the start block of an MP4 
 contains a field with the size of the compressed data section. Suffice
 to say that this field cannot be filled in until the size is known,
-which means compression must be completed first, a seek done to the
-beginning, and the size atom updated.
+which means compression must be completed first, a file seek done to
+the beginning, and the size atom updated.
 
 Alas, for a continous live stream, that size will never be known or
 for our transcoded files one would have to wait for the whole file
@@ -187,23 +187,24 @@ data from the end to the beginning of the MP4. Additonally, the size field
 can be left empty (0). isml (smooth live streaming) is another extension.
 
 For direct to stream transcoding several new features in MP4 need to
-be used (ISMV, faststart, separate_moof/empty_moov to name them) 
-which are not implemented in older versions (or if available, not 
-working properly). 
+be active (ISMV, faststart, separate_moof/empty_moov to name them) 
+which are not implemented in older versions of FFMpeg (or if available,
+not working properly). 
 
 By default faststart files will be created with an empty size field so 
 that the file can be started to be written out at once instead of 
-decoding it as a whole before this is possible. That would mean it would 
+encoding it as a whole before this is possible. That would mean it would 
 take some time before playback can start.
 
-The data part is divided into chunks of about 5 seconds length each, 
-this allowing to fill in the size fields early enough.
+The data part is divided into chunks of about 5 seconds length, each 
+with its own header, thus to fill in the size fields early enough.
 
 As a draw back not all players support the format, or play back with 
 strange side effects. VLC plays the file, but updates the time display 
-every 5 seconds only. When streamed over HTML5 video tags, there will be no
-total time shown, but that is OK, as it is yet unknown. The playback
-cannot be positioned past the current playback position, only backwards.
+every 5 seconds only. When streamed over HTML5 video tags, sometimes there 
+will be no total time shown, but that is OK, as long as the file plays.
+Playback cannot be positioned past the current playback position, only 
+backwards.
 
 But that's the price of starting playback, fast.
 
@@ -232,7 +233,8 @@ Future Plans
 ------------
 
 * Create a windows version
-* Add DVD/Bluray support
+* Add DVD/Bluray/Video CD support
+* and more, see TODO
 
 AUTHORS
 -------
@@ -243,7 +245,7 @@ This fork with FFmpeg support is maintained by Norbert Schlia
 Based on work by K. Henriksson (from 2008 to 2017) and the original author 
 David Collett (from 2006 to 2008).
 
-Much thanks to them for the original work!
+Much thanks to them for the original work and giving me a good head start!
 
 LICENSE
 -------
@@ -275,8 +277,6 @@ This fork with FFmpeg support copyright \(C) 2017-2018 Norbert Schlia
 
 Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 
 K. Henriksson.
-
-Much thanks to them for the original work!
 
 This is free software: you are free to change and redistribute it under
 the terms of the GNU General Public License (GPL) version 3 or later.

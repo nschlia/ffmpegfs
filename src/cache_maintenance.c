@@ -84,7 +84,7 @@ static int start_timer(time_t interval)
 
     freq_nanosecs = interval * 1000000000LL;
 
-    ffmpegfs_info("Starting maintenance timer with %speriod.", cache_maintenance);
+    ffmpegfs_trace("Starting maintenance timer with %speriod.", cache_maintenance);
 
     // Establish maintenance_handler for timer signal
     sa.sa_flags = SA_SIGINFO;
@@ -154,7 +154,7 @@ static int link_up()
 {
     key_t shmkey;
 
-    ffmpegfs_info("Activating " PACKAGE " inter-process link.");
+    ffmpegfs_debug("Activating " PACKAGE " inter-process link.");
 
     // initialise a shared variable in shared memory
     shmkey = ftok ("/dev/null", 5);     // valid directory name and a number

@@ -130,3 +130,85 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
     }
     return 0;
 }
+
+void FFMPEG_Base::streamSetup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
+{
+    AVRational time_base;
+
+    if (!frame_rate.num || !frame_rate.den)
+    {
+        frame_rate                              = { .num = 25, .den = 1 };
+        ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+    }
+
+    // timebase: This is the fundamental unit of time (in seconds) in terms
+    // of which frame timestamps are represented. For fixed-fps content,
+    // timebase should be 1/framerate and timestamp increments should be
+    // identical to 1.
+    //time_base                                 = m_in.m_pVideo_stream->time_base;
+
+    // tbn
+    if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
+    {
+        // Strange, but Theora seems to need it this way...
+        time_base                               = av_inv_q(frame_rate);
+    }
+    else
+    {
+        time_base                               = { .num = 1, .den = 90000 };
+    }
+
+    // tbc
+    output_stream->time_base                    = time_base;
+    output_codec_ctx->time_base                 = time_base;
+
+    // tbc
+#if LAVF_DEP_AVSTREAM_CODEC
+    //output_stream->codecpar->time_base        = time_base;
+#else
+    output_stream->codec->time_base             = time_base;
+#endif
+
+#ifndef USING_LIBAV
+    // tbr
+    // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
+    // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
+
+    // fps
+    output_stream->avg_frame_rate               = frame_rate;
+    output_codec_ctx->framerate                 = frame_rate;
+#endif
+
+    // At this moment the output format must be AV_PIX_FMT_YUV420P;
+    output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
+
+    if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
+    {
+        // Ignore missing width/height
+        //m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
+
+        //output_codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
+        //output_codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
+        //output_codec_ctx->profile = FF_PROFILE_H264_HIGH;
+        //output_codec_ctx->level = 31;
+
+        // -profile:v baseline -level 3.0
+        //av_opt_set(output_codec_ctx->priv_data, "profile", "baseline", 0);
+        //av_opt_set(output_codec_ctx->priv_data, "level", "3.0", 0);
+
+        // -profile:v high -level 3.1
+        //av_opt_set(output_codec_ctx->priv_data, "profile", "high", 0);
+        //av_opt_set(output_codec_ctx->priv_data, "level", "3.1", 0);
+
+        // Set speed (changes profile!)
+        av_opt_set(output_codec_ctx->priv_data, "preset", "ultrafast", 0);
+        //av_opt_set(output_codec_ctx->priv_data, "preset", "veryfast", 0);
+        //av_opt_set(output_codec_ctx->priv_data, "tune", "zerolatency", 0);
+
+        //if (!av_dict_get((AVDictionary*)output_codec_ctx->priv_data, "threads", NULL, 0))
+        //{
+        //  ffmpegfs_error("%s * Setting threads to auto for codec %s.", destname(), get_codec_name(codec_id));
+        //  av_dict_set_with_check((AVDictionary**)&output_codec_ctx->priv_data, "threads", "auto", 0, destname());
+        //}
+    }
+}

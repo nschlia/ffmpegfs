@@ -541,58 +541,10 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             limitVideoSize(output_codec_ctx);
         }
 
-        // timebase: This is the fundamental unit of time (in seconds) in terms
-        // of which frame timestamps are represented. For fixed-fps content,
-        // timebase should be 1/framerate and timestamp increments should be
-        // identical to 1.
-        //output_stream->time_base                  = m_in.m_pVideo_stream->time_base;
-
-        AVRational frame_rate;
 #if LAVF_DEP_AVSTREAM_CODEC
-        frame_rate                                  = m_in.m_pVideo_stream->avg_frame_rate;
+        streamSetup(output_codec_ctx, output_stream, m_in.m_pVideo_stream->avg_frame_rate);
 #else
-        frame_rate                                  = m_in.m_pVideo_stream->codec->framerate;
-#endif
-
-        if (!frame_rate.num)
-        {
-            frame_rate                              = { .num = 25, .den = 1 };
-            ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
-        }
-
-        // tbn
-        if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
-        {
-            // Strange, but Theora seems to need it this way...
-            output_stream->time_base                = av_inv_q(frame_rate);
-        }
-        else
-        {
-            output_stream->time_base                = { .num = 1, .den = 90000 };
-        }
-
-        // tbc
-        output_codec_ctx->time_base                 = output_stream->time_base;
-
-        // tbc
-#if LAVF_DEP_AVSTREAM_CODEC
-        //output_stream->codecpar->time_base        = output_stream->time_base;
-        //output_stream->codecpar->time_base        = m_in.m_pVideo_stream->codec->time_base;
-        //output_stream->codecpar->time_base.den    *= output_stream->codec->ticks_per_frame;
-#else
-        output_stream->codec->time_base             = output_stream->time_base;
-        //output_stream->codec->time_base           = m_in.m_pVideo_stream->codec->time_base;
-        //output_stream->codec->time_base.den       *= output_stream->codec->ticks_per_frame;
-#endif
-
-#ifndef USING_LIBAV
-        // tbr
-        // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
-        // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
-
-        // fps
-        output_stream->avg_frame_rate               = frame_rate;
-        output_codec_ctx->framerate                 = output_stream->avg_frame_rate;
+        streamSetup(output_codec_ctx, output_stream, m_in.m_pVideo_stream->codec->framerate);
 #endif
 
 #ifdef _DEBUG
@@ -606,39 +558,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #else
         output_codec_ctx->sample_aspect_ratio       = m_in.m_pVideo_stream->codec->sample_aspect_ratio;
 #endif
-
-        // At this moment the output format must be AV_PIX_FMT_YUV420P;
-        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
-
-        if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
-        {
-            // Ignore missing width/height
-            //m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
-
-            //output_codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
-            //output_codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
-            //output_codec_ctx->profile = FF_PROFILE_H264_HIGH;
-            //output_codec_ctx->level = 31;
-
-            // -profile:v baseline -level 3.0
-            //av_opt_set(output_codec_ctx->priv_data, "profile", "baseline", 0);
-            //av_opt_set(output_codec_ctx->priv_data, "level", "3.0", 0);
-
-            // -profile:v high -level 3.1
-            //av_opt_set(output_codec_ctx->priv_data, "profile", "high", 0);
-            //av_opt_set(output_codec_ctx->priv_data, "level", "3.1", 0);
-
-            // Set speed (changes profile!)
-            av_opt_set(output_codec_ctx->priv_data, "preset", "ultrafast", 0);
-            //av_opt_set(output_codec_ctx->priv_data, "preset", "veryfast", 0);
-            //av_opt_set(output_codec_ctx->priv_data, "tune", "zerolatency", 0);
-
-            //if (!av_dict_get((AVDictionary*)output_codec_ctx->priv_data, "threads", NULL, 0))
-            //{
-            //  ffmpegfs_error("%s * Setting threads to auto for codec %s.", destname(), get_codec_name(codec_id));
-            //  av_dict_set_with_check((AVDictionary**)&output_codec_ctx->priv_data, "threads", "auto", 0, destname());
-            //}
-        }
 
 #if LAVF_DEP_AVSTREAM_CODEC
         if (m_in.m_pVideo_stream->codecpar->format != output_codec_ctx->pix_fmt ||
@@ -733,7 +652,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     if (ret < 0)
     {
         ffmpegfs_error("%s * Could not initialise stream parameters (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
-        //        avcodec_free_context(&output_codec_ctx);
         return ret;
     }
 #endif
@@ -1323,6 +1241,13 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_pVideo_stream->time_base, m_out.m_pVideo_stream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
             }
 
+            frame->quality = m_out.m_pVideo_codec_ctx->global_quality;
+#ifndef USING_LIBAV
+            frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+#else
+            frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
+#endif
+
             m_VideoFifo.push(frame);
         }
         else
@@ -1836,13 +1761,6 @@ int FFMPEG_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
         {
             m_out.m_pVideo_stream->codecpar->field_order = AV_FIELD_PROGRESSIVE;
         }
-#endif
-
-        frame->quality = m_out.m_pVideo_codec_ctx->global_quality;
-#ifndef USING_LIBAV
-        frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-#else
-        frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
 #endif
     }
 

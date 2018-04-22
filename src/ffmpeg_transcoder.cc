@@ -1086,7 +1086,7 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
     bool again = false;
 
     data_present = 0;
-    
+
     // read all the output frames (in general there may be any number of them)
     while (ret >= 0)
     {
@@ -1356,7 +1356,7 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
         {
             // Decode one frame.
             ret = decode_video_frame(pkt, &decoded);
-            
+
 #if LAVC_NEW_PACKET_INTERFACE
             if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
             {
@@ -1382,9 +1382,9 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
 #endif
             pkt->data += decoded;
             pkt->size -= decoded;
-            
+
             //fprintf(stderr, "ret = %6i lastret = %6i decoded = %9i  pkt->size = %i\n", ret,lastret, decoded, pkt->size);
-            
+
         }
 #if LAVC_NEW_PACKET_INTERFACE
         while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
@@ -2124,6 +2124,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
     int ret = 0;
+
     status = 0;
 
     if (m_out.m_nAudio_stream_idx > -1)

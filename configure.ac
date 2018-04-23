@@ -61,7 +61,7 @@ AC_RUN_IFELSE(
 # libavcodec     57. 64.101		56.1.0 (required)
 # libavformat    57. 56.101		56.1.0 (required)
 # libavdevice    57.  6.100
-# libavfilter     6. 82.100
+# libavfilter     6. 82.100     	5.40.0 (required)
 # libavresample   3.  5.  0		2.1.0 (required)
 # libswscale      4.  2.100		3.0.0 (required)
 # libswresample   2.  3.100
@@ -73,8 +73,11 @@ PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
     [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 56.1.0],
         [PKG_CHECK_MODULES([libavformat], [libavformat >= 56.1.0],
             [PKG_CHECK_MODULES([libswscale], [libswscale >= 3.0.0],
-                [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
-			)
+                [PKG_CHECK_MODULES([libavfilter], [libavfilter >= 5.40.0],
+                    [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
+                )
+                ]
+            )
 			]
         )
 		]

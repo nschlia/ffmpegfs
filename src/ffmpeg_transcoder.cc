@@ -67,6 +67,9 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     , m_pAudio_resample_ctx(NULL)
     , m_pAudioFifo(NULL)
     , m_pSws_ctx(NULL)
+    , m_pBufferSinkContext(NULL)
+    , m_pBufferSourceContext(NULL)
+    , m_pFilterGraph(NULL)
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
     , m_in(
@@ -737,6 +740,16 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             return ret;
         }
+
+        if (params.m_deinterlace)
+        {
+            // Init deinterlace filters
+            ret = initFilters(m_out.m_pVideo_codec_ctx, m_out.m_pVideo_stream);
+            if (ret < 0)
+            {
+                return ret;
+            }
+        }
     }
 
     //m_in.m_nAudio_stream_idx = INVALID_STREAM;
@@ -1282,8 +1295,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
 #endif
-
-            m_VideoFifo.push(frame);
+            m_VideoFifo.push(sendFilters(frame, ret));
         }
         else
         {
@@ -2616,6 +2628,8 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 
+    freeFilters();
+
     if (bClosed)
     {
         if (nAudioSamplesLeft)
@@ -2678,3 +2692,252 @@ const string & FFMPEG_Transcoder::getDestname(string *destname, const string & f
 
     return *destname;
 }
+
+// create
+int FFMPEG_Transcoder::initFilters(AVCodecContext *pCodecContext, AVStream * pStream)
+{
+    const char * filters;
+    char args[1024];
+    const AVFilter * pBufferSrc     = avfilter_get_by_name("buffer");
+    const AVFilter * pBufferSink    = avfilter_get_by_name("buffersink");
+    AVFilterInOut * pOutputs        = avfilter_inout_alloc();
+    AVFilterInOut * pInputs         = avfilter_inout_alloc();
+    //enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_GRAY8, AV_PIX_FMT_NONE };
+    int ret = 0;
+
+    m_pBufferSinkContext = NULL;
+    m_pBufferSourceContext = NULL;
+    m_pFilterGraph = NULL;
+
+    try
+    {
+        if (pStream == NULL)
+        {
+            throw (int)AVERROR(EINVAL);
+        }
+
+        if (!pStream->avg_frame_rate.den && !pStream->avg_frame_rate.num)
+        {
+            // No framerate, so this video "stream" has only one picture
+            throw (int)AVERROR(EINVAL);
+        }
+
+        m_pFilterGraph = avfilter_graph_alloc();
+
+        AVBufferSinkParams bufferSinkParams;
+        enum AVPixelFormat aePixelFormat[3];
+#if LAVF_DEP_AVSTREAM_CODEC
+        AVPixelFormat ePixelFormat = (AVPixelFormat)pStream->codecpar->format;
+#else
+        AVPixelFormat ePixelFormat = (AVPixelFormat)pStream->codec->pix_fmt;
+#endif
+
+        if (pOutputs == NULL || pInputs == NULL || m_pFilterGraph == NULL)
+        {
+            throw (int)AVERROR(ENOMEM);
+        }
+
+        // buffer video source: the decoded frames from the decoder will be inserted here.
+        sprintf(args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+                pCodecContext->width, pCodecContext->height, pCodecContext->pix_fmt,
+                pStream->time_base.num, pStream->time_base.den,
+                pCodecContext->sample_aspect_ratio.num, FFMAX(pCodecContext->sample_aspect_ratio.den, 1));
+
+        //AVRational fr = av_guess_frame_rate(m_pFormatContext, m_pVideoStream, NULL);
+        //if (fr.num && fr.den)
+        //{
+        //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":frame_rate=%d/%d", fr.num, fr.den);
+        //}
+        //
+        //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
+
+        ret = avfilter_graph_create_filter(&m_pBufferSourceContext, pBufferSrc, "in", args, NULL, m_pFilterGraph);
+
+        if (ret < 0)
+        {
+            ffmpegfs_error("%s * Cannot create buffer source (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            throw  ret;
+        }
+
+        //av_opt_set(m_pBufferSourceContext, "thread_type", "slice", AV_OPT_SEARCH_CHILDREN);
+        //av_opt_set_int(m_pBufferSourceContext, "threads", FFMAX(1, av_cpu_count()), AV_OPT_SEARCH_CHILDREN);
+        //av_opt_set_int(m_pBufferSourceContext, "threads", 16, AV_OPT_SEARCH_CHILDREN);
+
+        // buffer video sink: to terminate the filter chain.
+
+        if (ePixelFormat == AV_PIX_FMT_NV12)
+        {
+            aePixelFormat[0] = AV_PIX_FMT_NV12;
+            aePixelFormat[1] = AV_PIX_FMT_YUV420P;
+        }
+
+        else
+        {
+            aePixelFormat[0] = ePixelFormat;
+            aePixelFormat[1] = AV_PIX_FMT_NONE;
+        }
+
+        aePixelFormat[2] = AV_PIX_FMT_NONE;
+
+        bufferSinkParams.pixel_fmts = aePixelFormat;
+        ret = avfilter_graph_create_filter(&m_pBufferSinkContext, pBufferSink, "out", NULL, &bufferSinkParams, m_pFilterGraph);
+
+        if (ret < 0)
+        {
+            ffmpegfs_error("%s * Cannot create buffer sink (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            throw  ret;
+        }
+
+        //ret = av_opt_set_int_list(m_pBufferSinkContext, "pix_fmts", pix_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
+        //if (ret < 0)
+        //{
+        //    ffmpegfs_error("%s * Cannot set output pixel format (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+        //    throw  ret;
+        //}
+
+        //ret = av_opt_set_bin(m_pBufferSinkContext, "pix_fmts", (uint8_t*)&pCodecContext->pix_fmt, sizeof(pCodecContext->pix_fmt), AV_OPT_SEARCH_CHILDREN);
+        //if (ret < 0)
+        //{
+        //    ffmpegfs_error("%s * Cannot set output pixel format (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+        //    throw  ret;
+        //}
+
+        // Endpoints for the filter graph.
+        pOutputs->name          = av_strdup("in");
+        pOutputs->filter_ctx    = m_pBufferSourceContext;
+        pOutputs->pad_idx       = 0;
+        pOutputs->next          = NULL;
+        pInputs->name           = av_strdup("out");
+        pInputs->filter_ctx     = m_pBufferSinkContext;
+        pInputs->pad_idx        = 0;
+        pInputs->next           = NULL;
+
+        // args "null"      passthrough (dummy) filter for video
+        // args "anull"     passthrough (dummy) filter for audio
+
+        // https://stackoverflow.com/questions/31163120/c-applying-filter-in-ffmpeg
+        //filters = "yadif=mode=send_frame:parity=auto:deint=interlaced";
+        filters = "yadif=mode=send_frame:parity=auto:deint=all";
+        //filters = "yadif=0:-1:0";
+        //filters = "bwdif=mode=send_frame:parity=auto:deint=all";
+        //filters = "kerndeint=thresh=10:map=0:order=0:sharp=1:twoway=1";
+
+        ret = avfilter_graph_parse_ptr(m_pFilterGraph, filters, &pInputs, &pOutputs, NULL);
+        if (ret < 0)
+        {
+            ffmpegfs_error("%s * avfilter_graph_parse_ptr failed (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            throw  ret;
+        }
+
+        ret = avfilter_graph_config(m_pFilterGraph, NULL);
+        if (ret < 0)
+        {
+            ffmpegfs_error("%s * avfilter_graph_config failed (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+            throw  ret;
+        }
+
+        ffmpegfs_debug("%s * Deinterlacing initialised with filters '%s'.", destname(), filters);
+    }
+    catch (int _ret)
+    {
+        ret = _ret;
+    }
+
+    if (pInputs != NULL)
+    {
+        avfilter_inout_free(&pInputs);
+    }
+    if (pOutputs != NULL)
+    {
+        avfilter_inout_free(&pOutputs);
+    }
+
+    return ret;
+}
+
+AVFrame *FFMPEG_Transcoder::sendFilters(AVFrame * srcframe, int & ret)
+{
+    AVFrame *tgtframe = srcframe;
+
+    ret = 0;
+
+    if (m_pBufferSourceContext != NULL && srcframe->interlaced_frame)
+    {
+        try
+        {
+            AVFrame * filterframe   = NULL;
+
+            //pFrame->pts = ::av_frame_get_best_effort_timestamp(pFrame);
+            // push the decoded frame into the filtergraph
+
+            if ((ret = ::av_buffersrc_add_frame_flags(m_pBufferSourceContext, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
+            {
+                ffmpegfs_warning("%s * Error while feeding the frame to filtergraph (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            filterframe = ::av_frame_alloc();
+            if (filterframe == NULL)
+            {
+                ret = AVERROR(ENOMEM);
+                ffmpegfs_error("%s * Unable to allocate filter frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            // pull filtered frames from the filtergraph
+            ret = ::av_buffersink_get_frame(m_pBufferSinkContext, filterframe);
+            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            {
+                // Not an error, go on
+                ::av_frame_unref(filterframe);
+                ret = 0;
+            }
+            else if (ret < 0)
+            {
+                ffmpegfs_error("%s * Error while getting frame from filtergraph (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                ::av_frame_unref(filterframe);
+                throw ret;
+            }
+            else
+            {
+                // All OK; copy filtered frame and unref original
+                tgtframe = filterframe;
+
+                ::av_frame_unref(srcframe);
+            }
+        }
+        catch (int _ret)
+        {
+            ret = _ret;
+        }
+    }
+
+    return tgtframe;
+}
+
+
+// free
+
+void FFMPEG_Transcoder::freeFilters()
+{
+    if (m_pBufferSinkContext != NULL)
+    {
+        ::avfilter_free(m_pBufferSinkContext);
+        m_pBufferSinkContext = NULL;
+    }
+
+    if (m_pBufferSourceContext != NULL)
+    {
+        ::avfilter_free(m_pBufferSourceContext);
+        m_pBufferSourceContext = NULL;
+    }
+
+    if (m_pFilterGraph != NULL)
+    {
+        ::avfilter_graph_free(&m_pFilterGraph);
+        m_pFilterGraph = NULL;
+    }
+}
+
+
+

@@ -41,7 +41,9 @@ LIBS+=-lavformat -lavcodec -lavutil
 LIBS+=-lswscale
 LIBS+=-lswresample
 LIBS+=-lavresample
-#-lavdevice -lavfilter
+LIBS+=-lavfilter
+LIBS+=-lpostproc
+#-lavdevice
 LIBS+=-lsqlite3
 LIBS+=-lrt
 

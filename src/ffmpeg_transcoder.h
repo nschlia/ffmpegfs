@@ -107,6 +107,10 @@ protected:
 
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *fileName);
 
+    int initFilters(AVCodecContext *pCodecContext, AVStream *pStream);
+    AVFrame *sendFilters(AVFrame *srcframe, int &ret);
+    void freeFilters();
+
 private:
     time_t                      m_mtime;
     size_t                      m_nCalculated_size;         // Use this as the size instead of computing it.
@@ -122,9 +126,9 @@ private:
 
     // Video conversion and buffering
     SwsContext *                m_pSws_ctx;
-    //    AVFilterContext *           m_pBufferSinkContext;
-    //    AVFilterContext *           m_pBufferSourceContext;
-    //    AVFilterGraph *             m_pFilterGraph;
+    AVFilterContext *           m_pBufferSinkContext;
+    AVFilterContext *           m_pBufferSourceContext;
+    AVFilterGraph *             m_pFilterGraph;
     queue<AVFrame*>             m_VideoFifo;
     int64_t                     m_pts;
     int64_t                     m_pos;

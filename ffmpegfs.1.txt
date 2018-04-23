@@ -86,7 +86,7 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     Default: keep source video width
 *--deinterlace*, -o *deinterlace*
     Deinterlace video if necessary while transcoding.
-    May need higher bit rate, but will increase picture qualitiy
+    May need higher bit rate, but will increase picture quality
     when streaming via HTML5.
     Default: no deinterlace
 

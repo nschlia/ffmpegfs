@@ -45,6 +45,7 @@
 #endif
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavfilter/avfilter.h>
 #pragma GCC diagnostic pop
 
 #include "ffmpeg_utils.h"
@@ -236,7 +237,7 @@ static void usage(char *name)
           "                           Default: keep source video width\n"
           "    --deinterlace, -o deinterlace\n"
           "                           Deinterlace video if necessary while transcoding.\n"
-          "                           May need higher bit rate, but will increase picture qualitiy\n"
+          "                           May need higher bit rate, but will increase picture quality\n"
           "                           when streaming via HTML5.\n"
           "                           Default: no deinterlace\n"
           "\n"
@@ -872,6 +873,7 @@ int main(int argc, char *argv[])
 #if !LAVF_DEP_AV_REGISTER
     av_register_all();
 #endif // !LAVF_DEP_AV_REGISTER
+    avfilter_register_all();
     //show_formats_devices(0);
 #ifndef USING_LIBAV
     // Redirect FFmpeg logs

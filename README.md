@@ -118,6 +118,10 @@ are under the current user's home directory.
 Same as above, but also limit video with to 640 pixels. Larger videos will be 
 scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
+
+Enable deinterlacing to enhance image quality.
+
 HOW IT WORKS
 ------------
 

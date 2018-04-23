@@ -7,6 +7,8 @@ FFMpeg has evolved, many API parts have been deprecated and will be dropped
 soon. This release adopts these changes by conditionally using the new
 APIs from the FFMpeg version on that they are available.
 
+* Feature: Add option to deinterlace video if required (will improve picture
+  quality when viewed in browsers via HTML5.
 * Feature: Set stream duration from source file as hint for encoder.
 * Feature: Enhanced logging output for better readability.
 * Feature: Add pre-buffer option. Files will be decoded up to this limit first

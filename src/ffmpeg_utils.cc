@@ -24,6 +24,39 @@
 #include <libgen.h>
 #include <unistd.h>
 
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#ifdef __GNUC__
+#  include <features.h>
+#  if __GNUC_PREREQ(5,0) || defined(__clang__)
+// GCC >= 5.0
+#     pragma GCC diagnostic ignored "-Wfloat-conversion"
+#  elif __GNUC_PREREQ(4,8)
+// GCC >= 4.8
+#  else
+#     error("GCC < 4.8 not supported");
+#  endif
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <libswscale/swscale.h>
+#if LAVR_DEPRECATE
+#include <libswresample/swresample.h>
+#else
+#include <libavresample/avresample.h>
+#endif
+#if LIBAVUTIL_VERSION_MICRO >= 100
+// Does not exist in Libav
+#include "libavutil/ffversion.h"
+#endif
+#ifdef __cplusplus
+}
+#endif
+#pragma GCC diagnostic pop
+
 static int is_device(const AVClass *avclass);
 
 #ifndef AV_ERROR_MAX_STRING_SIZE

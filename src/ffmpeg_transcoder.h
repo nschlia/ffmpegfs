@@ -32,6 +32,16 @@
 using namespace std;
 
 class Buffer;
+#if LAVR_DEPRECATE
+struct SwrContext;
+#else
+struct AVAudioResampleContext;
+#endif
+struct SwsContext;
+struct AVFilterContext;
+struct AVFilterContext;
+struct AVFilterGraph;
+struct AVAudioFifo;
 
 class FFMPEG_Transcoder : public FFMPEG_Base
 {

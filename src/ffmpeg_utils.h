@@ -77,39 +77,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-#if LAVR_DEPRECATE
-#include <libswresample/swresample.h>
-#else
-#include <libavresample/avresample.h>
-#endif
-#include <libavutil/imgutils.h>
-#include <libavutil/opt.h>
-#include <libavutil/error.h>
-#include <libavutil/audio_fifo.h>
-#include "libavutil/avstring.h"
-#if LIBAVUTIL_VERSION_MICRO >= 100
-// Does not exist in Libav
-#include "libavutil/ffversion.h"
-#endif
-#include <libavutil/rational.h>
-
-//#include "libavdevice/avdevice.h"
-//#include <libavformat/avio.h>
-//#include <libavutil/audio_fifo.h>
-//#include <libavutil/avstring.h>
-//#include <libavutil/channel_layout.h>
-//#include <libavutil/common.h>
-//#include <libavutil/error.h>
-//#include <libavutil/frame.h>
-//#include <libavutil/imgutils.h>
-//#include <libavutil/mathematics.h>
-//#include <libavutil/mem.h>
-//#include <libavutil/samplefmt.h>
-//#include <libavutil/timestamp.h>
-//#include <libswscale/swscale.h>
 #ifdef __cplusplus
 }
 #endif

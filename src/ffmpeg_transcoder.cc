@@ -24,6 +24,41 @@
 
 #include <assert.h>
 
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#ifdef __GNUC__
+#  include <features.h>
+#  if __GNUC_PREREQ(5,0) || defined(__clang__)
+// GCC >= 5.0
+#     pragma GCC diagnostic ignored "-Wfloat-conversion"
+#  elif __GNUC_PREREQ(4,8)
+// GCC >= 4.8
+#  else
+#     error("GCC < 4.8 not supported");
+#  endif
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <libswscale/swscale.h>
+#if LAVR_DEPRECATE
+#include <libswresample/swresample.h>
+#else
+#include <libavresample/avresample.h>
+#endif
+#include <libavutil/imgutils.h>
+#include <libavutil/opt.h>
+#include <libavutil/audio_fifo.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/buffersink.h>
+#include <libavfilter/buffersrc.h>
+#ifdef __cplusplus
+}
+#endif
+#pragma GCC diagnostic pop
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()

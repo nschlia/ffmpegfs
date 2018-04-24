@@ -48,13 +48,16 @@ public:
     bool expired() const;
     bool suspend_timeout() const;
     bool decode_timeout() const;
-    const string & filename();
+    const string & filename() const;
     bool update_access(bool bUpdateDB = false);
 
     void lock();
     void unlock();
 
     int ref_count() const;
+
+    // Check if cache entry needs to be recoded
+    bool outdated() const;
 
 protected:
     bool close(int flags);

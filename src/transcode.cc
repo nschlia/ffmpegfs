@@ -210,6 +210,10 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
             // Disable cache
             cache_entry->clear();
         }
+        else if (!cache_entry->m_is_decoding && cache_entry->outdated())
+        {
+            cache_entry->clear();
+        }
 
         if (!cache_entry->m_is_decoding && !cache_entry->m_cache_info.m_finished)
         {

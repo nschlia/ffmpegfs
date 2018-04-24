@@ -2903,6 +2903,9 @@ AVFrame *FFMPEG_Transcoder::sendFilters(AVFrame * srcframe, int & ret)
                 // All OK; copy filtered frame and unref original
                 tgtframe = filterframe;
 
+                tgtframe->pts = srcframe->pts;
+                tgtframe->best_effort_timestamp = srcframe->best_effort_timestamp;
+
                 ::av_frame_unref(srcframe);
             }
         }

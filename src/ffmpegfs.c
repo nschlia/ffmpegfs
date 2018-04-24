@@ -873,12 +873,15 @@ int main(int argc, char *argv[])
 #if !LAVF_DEP_AV_REGISTER
     av_register_all();
 #endif // !LAVF_DEP_AV_REGISTER
+#if !LAVC_DEP_AV_FILTER_REGISTER
     avfilter_register_all();
-    //show_formats_devices(0);
+#endif // LAVC_DEP_AV_FILTER_REGISTER
 #ifndef USING_LIBAV
     // Redirect FFmpeg logs
     av_log_set_callback(ffmpeg_log);
 #endif
+
+    //show_formats_devices(0);
 
     // Set default
     params.m_max_threads = (unsigned)get_nprocs() * 16;

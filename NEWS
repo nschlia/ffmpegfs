@@ -53,6 +53,9 @@ APIs from the FFMpeg version on that they are available.
     Add av_codec_iterate() and av_parser_iterate().
 * Fix deprecation: 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
     Add AVStream.codecpar, deprecate AVStream.codec.
+* Fix deprecation: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
+    Deprecate use of avfilter_register(), avfilter_register_all(),
+    avfilter_next(). Add av_filter_iterate().
 
 nschlia@oblivion-software.de
 

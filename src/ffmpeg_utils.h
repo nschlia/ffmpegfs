@@ -47,6 +47,10 @@
 //   av_codec_next(), av_register_codec_parser(), and av_parser_next().
 //   Add av_codec_iterate() and av_parser_iterate().
 #define LAVC_DEP_AV_CODEC_REGISTER          (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 10, 0))
+// 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
+//   Deprecate use of avfilter_register(), avfilter_register_all(),
+//   avfilter_next(). Add av_filter_iterate().
+#define LAVC_DEP_AV_FILTER_REGISTER         (LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(7, 14, 0))
 
 #if !defined(USE_LIBSWRESAMPLE) && !defined(USE_LIBAVRESAMPLE)
 #error "Must have either libswresample (preferred choice for FFMpeg) or libavresample (with libav)."

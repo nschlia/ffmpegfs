@@ -10,6 +10,7 @@ Changes in this release:
 * Feature: Enhanced logging output for better readability.
 * Feature: Add pre-buffer option. Files will be decoded up to this limit first
     before made accessible. This ensures smoot startup.
+* Feature: Enhanced configure that checks whether libavresample or libswresample is present.
 
 * Bugfix: Fix lost frames at end of files (files where cut short)
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)

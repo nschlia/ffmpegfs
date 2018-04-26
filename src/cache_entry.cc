@@ -360,12 +360,3 @@ bool Cache_Entry::outdated() const
 
     return false;
 }
-
-
-
-//m_cache_info.m_finished             = false;
-//m_cache_info.m_error                = false;
-//m_cache_info.m_errno                = 0;
-//m_cache_info.m_averror              = 0;
-//m_cache_info.m_access_time = m_cache_info.m_creation_time = time(NULL);
-

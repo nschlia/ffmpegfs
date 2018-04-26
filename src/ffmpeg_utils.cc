@@ -316,52 +316,102 @@ void tempdir(char *dir, size_t size)
     strncpy(dir, "/tmp", size);
 }
 
-const char * get_codecs(const char * type, OUTPUTTYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
+FILETYPE get_filetype(const char * type)
 {
     if (!strcasecmp(type, "mp3"))
+    {
+        return FILETYPE_MP3;
+    }
+    else if (!strcasecmp(type, "mp4"))
+    {
+        return FILETYPE_MP4;
+    }
+    else if (!strcasecmp(type, "wav"))
+    {
+        return FILETYPE_WAV;
+    }
+    else if (!strcasecmp(type, "ogg"))
+    {
+        return FILETYPE_OGG;
+    }
+    else if (!strcasecmp(type, "flac"))
+    {
+        return FILETYPE_FLAC;
+    }
+    else
+    {
+        return FILETYPE_UNKNOWN;
+    }
+}
+
+const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
+{
+    const char * ext = NULL;
+
+    switch (get_filetype(type))
+    {
+    case FILETYPE_MP3:
     {
         *audio_codecid = AV_CODEC_ID_MP3;
         *video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
         if (output_type != NULL)
         {
-            *output_type = TYPE_MP3;
+            *output_type = FILETYPE_MP3;
         }
-        return "mp3";
+        ext = "mp3";
+        break;
     }
-    else if (!strcasecmp(type, "mp4"))
+    case FILETYPE_MP4:
     {
         *audio_codecid = AV_CODEC_ID_AAC;
         *video_codecid = AV_CODEC_ID_H264;
         if (output_type != NULL)
         {
-            *output_type = TYPE_MP4;
+            *output_type = FILETYPE_MP4;
         }
-        return "mp4";
+        ext = "mp4";
+        break;
     }
-    else if (!strcasecmp(type, "wav"))
+    case FILETYPE_WAV:
     {
         *audio_codecid = AV_CODEC_ID_PCM_S16LE;
         *video_codecid = AV_CODEC_ID_NONE;
         if (output_type != NULL)
         {
-            *output_type = TYPE_WAV;
+            *output_type = FILETYPE_WAV;
         }
-        return "wav";
+        ext = "wav";
+        break;
     }
-    else if (!strcasecmp(type, "ogg"))
+    case FILETYPE_OGG:
     {
         *audio_codecid = AV_CODEC_ID_VORBIS;
         *video_codecid = AV_CODEC_ID_THEORA;
         if (output_type != NULL)
         {
-            *output_type = TYPE_OGG;
+            *output_type = FILETYPE_OGG;
         }
-        return "ogg";
+        ext = "ogg";
+        break;
     }
-    else
+    case FILETYPE_FLAC:
     {
-        return NULL;
+        *audio_codecid = AV_CODEC_ID_FLAC;
+        *video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        if (output_type != NULL)
+        {
+            *output_type = FILETYPE_FLAC;
+        }
+        ext = "flac";
+        break;
     }
+    case FILETYPE_UNKNOWN:
+    {
+        break;
+    }
+    }
+
+    return ext;
 }
 
 #ifdef USING_LIBAV

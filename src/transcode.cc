@@ -344,7 +344,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
         else if (begin_transcode)
         {
             string destname;
-            ffmpegfs_debug("%s * Reading file from cache.", FFMPEG_Transcoder::getDestname(&destname, cache_entry->filename()).c_str());
+            ffmpegfs_debug("%s * Reading file from cache.", FFMPEG_Transcoder::get_destname(&destname, cache_entry->filename()).c_str());
         }
 
         cache_entry->unlock();
@@ -569,7 +569,6 @@ static void *decoder_thread(void *arg)
                 ffmpegfs_debug("%s * Pre-buffer limit reached.", cache_entry->filename().c_str());
                 pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
             }
-
 
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
             {

@@ -54,7 +54,7 @@ FFMPEG_Base::~FFMPEG_Base()
 }
 
 // Open codec context for desired media type
-int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
+int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     int ret;
 
@@ -67,70 +67,72 @@ int FFMPEG_Base::open_codec_context(int *stream_idx, AVCodecContext **avctx, AVF
         }
         return ret;
     }
-    else
-    {
-        int stream_index;
-        AVCodecContext *dec_ctx = NULL;
-        AVCodec *dec = NULL;
-        AVDictionary *opts = NULL;
-        AVStream *in_stream;
-        AVCodecID codec_id = AV_CODEC_ID_NONE;
 
-        stream_index = ret;
-        in_stream = fmt_ctx->streams[stream_index];
+    *stream_idx = ret;
 
-        // Init the decoders, with or without reference counting
-        // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
+    return open_codec_context(avctx, *stream_idx, fmt_ctx, type, filename);
+}
+
+int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
+{
+    AVCodecContext *dec_ctx = NULL;
+    AVCodec *dec = NULL;
+    AVDictionary *opts = NULL;
+    AVStream *in_stream;
+    AVCodecID codec_id = AV_CODEC_ID_NONE;
+    int ret;
+
+    in_stream = fmt_ctx->streams[stream_idx];
+
+    // Init the decoders, with or without reference counting
+    // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        // allocate a new decoding context
-        dec_ctx = avcodec_alloc_context3(dec);
-        if (!dec_ctx)
-        {
-            ffmpegfs_error("%s * Could not allocate a decoding context.", filename);
-            return AVERROR(ENOMEM);
-        }
+    // allocate a new decoding context
+    dec_ctx = avcodec_alloc_context3(dec);
+    if (!dec_ctx)
+    {
+        ffmpegfs_error("%s * Could not allocate a decoding context.", filename);
+        return AVERROR(ENOMEM);
+    }
 
-        // initialise the stream parameters with demuxer information
-        ret = avcodec_parameters_to_context(dec_ctx, in_stream->codecpar);
-        if (ret < 0)
-        {
-            return ret;
-        }
+    // initialise the stream parameters with demuxer information
+    ret = avcodec_parameters_to_context(dec_ctx, in_stream->codecpar);
+    if (ret < 0)
+    {
+        return ret;
+    }
 
-        codec_id = in_stream->codecpar->codec_id;
+    codec_id = in_stream->codecpar->codec_id;
 #else
-        dec_ctx = in_stream->codec;
+    dec_ctx = in_stream->codec;
 
-        codec_id = dec_ctx->codec_id;
+    codec_id = dec_ctx->codec_id;
 #endif
 
-        // Find a decoder for the stream.
-        dec = avcodec_find_decoder(codec_id);
-        if (!dec)
-        {
-            ffmpegfs_error("%s * Failed to find %s input codec.", filename, get_media_type_string(type));
-            return AVERROR(EINVAL);
-        }
-
-        dec_ctx->codec_id = dec->id;
-
-        ret = avcodec_open2(dec_ctx, dec, &opts);
-
-        av_dict_free(&opts);
-
-        if (ret < 0)
-        {
-            ffmpegfs_error("%s * Failed to open %s input codec (error '%s').", filename, get_media_type_string(type), ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-
-        ffmpegfs_debug("%s * Successfully opened %s input codec.", filename, get_codec_name(codec_id));
-
-        *stream_idx = stream_index;
-
-        *avctx = dec_ctx;
+    // Find a decoder for the stream.
+    dec = avcodec_find_decoder(codec_id);
+    if (!dec)
+    {
+        ffmpegfs_error("%s * Failed to find %s input codec.", filename, get_media_type_string(type));
+        return AVERROR(EINVAL);
     }
+
+    dec_ctx->codec_id = dec->id;
+
+    ret = avcodec_open2(dec_ctx, dec, &opts);
+
+    av_dict_free(&opts);
+
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Failed to open %s input codec (error '%s').", filename, get_media_type_string(type), ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    ffmpegfs_debug("%s * Successfully opened %s input codec.", filename, get_codec_name(codec_id));
+
+    *avctx = dec_ctx;
 
     return 0;
 }

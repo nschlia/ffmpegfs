@@ -63,7 +63,7 @@ public:
     const char *filename() const;
     const char *destname() const;
 
-    static const string & getDestname(string *destname, const string & filename);
+    static const string & get_destname(string *destname, const string & filename);
 
 protected:
     bool is_video() const;
@@ -133,39 +133,63 @@ private:
     int64_t                     m_pts;
     int64_t                     m_pos;
 
-    // Input file
-    struct _tagINPUTFILE
+    // Streams
+    struct STREAMREF
     {
-        AVFormatContext *       m_pFormat_ctx;
-        AVCodecContext *        m_pAudio_codec_ctx;
-        AVCodecContext *        m_pVideo_codec_ctx;
-        AVStream *              m_pAudio_stream;
-        AVStream *              m_pVideo_stream;
-        int                     m_nAudio_stream_idx;
-        int                     m_nVideo_stream_idx;
+        STREAMREF() :
+            m_pCodec_ctx(NULL),
+            m_pStream(NULL),
+            m_nStream_idx(INVALID_STREAM)
+        {}
+
+        AVCodecContext *        m_pCodec_ctx;
+        AVStream *              m_pStream;
+        int                     m_nStream_idx;
+    };
+
+    // Input file
+    struct INPUTFILE
+    {
+        INPUTFILE() :
+            m_file_type(FILETYPE_UNKNOWN),
+            m_filename("unset"),
+            m_pFormat_ctx(NULL)
+        {}
+
+        FILETYPE                m_file_type;
         string                  m_filename;
+
+        AVFormatContext *       m_pFormat_ctx;
+
+        STREAMREF               m_audio;
+        STREAMREF               m_video;
     } m_in;
 
     // Output file
-    struct _tagOUTPUTFILE
+    struct OUTPUTFILE
     {
-        OUTPUTTYPE              m_output_type;
+        OUTPUTFILE() :
+            m_file_type(FILETYPE_UNKNOWN),
+            m_filename("unset"),
+            m_pFormat_ctx(NULL),
+            m_nAudio_pts(0),
+            m_video_start_pts(0),
+            m_last_mux_dts((int64_t)AV_NOPTS_VALUE)
+        {}
+
+        FILETYPE                m_file_type;
+        string                  m_filename;
 
         AVFormatContext *       m_pFormat_ctx;
-        AVCodecContext *        m_pAudio_codec_ctx;
-        AVCodecContext *        m_pVideo_codec_ctx;
-        AVStream *              m_pAudio_stream;
-        AVStream *              m_pVideo_stream;
-        int                     m_nAudio_stream_idx;
-        int                     m_nVideo_stream_idx;
-        string                  m_filename;
+
+        STREAMREF               m_audio;
+        STREAMREF               m_video;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
         int64_t                 m_video_start_pts;      // Video start PTS
-
         int64_t                 m_last_mux_dts;         // Last muxed DTS
 
-        ID3v1                   m_id3v1;
+        ID3v1                   m_id3v1;                // mp3 only, can be referenced at any time
     } m_out;
 
 };

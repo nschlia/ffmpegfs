@@ -140,19 +140,19 @@ const char *get_media_type_string(enum 		AVMediaType media_type);
 #define FF_INPUT_BUFFER_PADDING_SIZE    	256
 #endif
 
-
 #ifndef AV_CODEC_CAP_VARIABLE_FRAME_SIZE
 #define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE
 #endif
 
-typedef enum _tagOUTPUTTYPE
+typedef enum _tagFILETYPE
 {
-    TYPE_UNKNOWN,
-    TYPE_MP3,
-    TYPE_MP4,
-    TYPE_WAV,
-    TYPE_OGG
-} OUTPUTTYPE;
+    FILETYPE_UNKNOWN,
+    FILETYPE_MP3,
+    FILETYPE_MP4,
+    FILETYPE_WAV,
+    FILETYPE_OGG,
+    FILETYPE_FLAC
+} FILETYPE;
 
 #include <sys/stat.h>
 
@@ -177,7 +177,8 @@ extern "C" {
 void ffmpeg_libinfo(char * buffer, size_t maxsize);
 int show_formats_devices(int device_only);
 const char * get_codec_name(enum AVCodecID codec_id);
-const char * get_codecs(const char * type, OUTPUTTYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid);
+FILETYPE get_filetype(const char * type);
+const char * get_codecs(const char * type, FILETYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid);
 
 void format_number(char *output, size_t size, uint64_t value);
 void format_bitrate(char *output, size_t size, uint64_t value);

@@ -36,7 +36,8 @@ public:
     ~FFMPEG_Base();
 
 protected:
-    int open_codec_context(int *stream_idx, AVCodecContext **avctx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;
+    int open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;
+    int open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;
     void init_packet(AVPacket *packet) const;
     int init_frame(AVFrame **frame, const char *filename) const;
     void streamSetup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const;

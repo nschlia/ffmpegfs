@@ -57,10 +57,10 @@ struct ffmpegfs_params params =
 
     .m_desttype           	= "mp4",                    // default: encode to mp4
 
-    .m_audiobitrate       	= 128000,                   // default: 128 kBit
+    .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
 
-    .m_videobitrate       	= 2000000,                  // default: 2 MBit
+    .m_videobitrate       	= 2*1024*1024,              // default: 2 MBit
     .m_videowidth           = 0,                        // default: do not change width
     .m_videoheight          = 0,                        // default: do not change height
     .m_deinterlace          = 0,                        // default: do not interlace video

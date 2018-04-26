@@ -93,10 +93,13 @@ For example,
 In recent versions of FUSE and ffmpegfs, the same can be achieved with the
 following entry in `/etc/fstab`:
 
-    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256,videobitrate=2000000 0 0
+    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256,videobitrate=1.5M 0 0
 
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.
+
+Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source
+bitrate is less it will not be scaled up but rather left at the lower value.
 
 Note that the "allow_other" option by default can only be used by root.
 You must either run ffmpegfs as root or better add a "user_allow_other" key

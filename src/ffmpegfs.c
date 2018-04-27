@@ -56,6 +56,7 @@ struct ffmpegfs_params params =
     .m_mountpath          	= NULL,                     // required parameter
 
     .m_desttype           	= "mp4",                    // default: encode to mp4
+    .m_target               = TARGET_UNSPECIFIC,        // default: no specific target
 
     .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
@@ -100,7 +101,8 @@ enum
     KEY_PREBUFFER_SIZE,
     KEY_MAX_CACHE_SIZE,
     KEY_MIN_DISKSPACE_SIZE,
-    KEY_CACHE_MAINTENANCE
+    KEY_CACHE_MAINTENANCE,
+    KEY_TARGET
 };
 
 #define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(struct ffmpegfs_params, param), value }
@@ -110,6 +112,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Output type
     FFMPEGFS_OPT("--desttype=%s",               m_desttype, 0),
     FFMPEGFS_OPT("desttype=%s",                 m_desttype, 0),
+    FUSE_OPT_KEY("--target=%s",                 KEY_TARGET),
+    FUSE_OPT_KEY("target=%s",                   KEY_TARGET),
 
     // Audio
     FUSE_OPT_KEY("--audiobitrate=%s",           KEY_AUDIO_BITRATE),
@@ -197,6 +201,11 @@ static void usage(char *name)
           "                           either MP4, MP3, OGG or WAV. To stream videos,\n"
           "                           MP4 or OGG must be selected.\n"
           "                           Default: mp4\n"
+          "    --target=NAME, -o target=NAME\n"
+          "                           Set optimisations for target browsers. Currently selectable:\n"
+          "                           UNSPECIFIC no specific optimisations\n"
+          "                           EDGE       optimise for MS Edge and Internet Explorer\n"
+          "                           Default: UNSPECIFIC\n"
           "\n"
           "Audio Options:\n"
           "\n"
@@ -706,6 +715,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
         exit(0);
     }
+    case KEY_TARGET:
+    {
+        return get_target(arg, &params.m_target);
+    }
     case KEY_AUDIO_BITRATE:
     {
         return get_bitrate(arg, &params.m_audiobitrate);
@@ -799,6 +812,7 @@ static void print_params()
                                 "Base Path         : %s\n"
                                 "Mount Path        : %s\n\n"
                                 "Destination Type  : %s\n"
+                                "Target            : %s\n"
                                 "\nAudio\n\n"
                                 "Audio Format      : %s\n"
                                 "Audio Bitrate     : %s\n"
@@ -829,6 +843,7 @@ static void print_params()
                    params.m_basepath,
                    params.m_mountpath,
                    params.m_desttype,
+                   get_target_text(params.m_target),
                    get_codec_name(audio_codecid),
                    audiobitrate,
                    audiosamplerate,

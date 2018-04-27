@@ -30,6 +30,14 @@
 #include <fuse.h>
 #include <stdarg.h>
 
+typedef enum _tagTARGET
+{
+    TARGET_UNSPECIFIC,
+    TARGET_EDGE,
+    //TARGET_CHROME,
+    //TARGET_XXX,
+} TARGET;
+
 // Global program parameters
 extern struct ffmpegfs_params
 {
@@ -37,7 +45,8 @@ extern struct ffmpegfs_params
     const char *    m_basepath;
     const char *    m_mountpath;
     // Output type
-    const char*     m_desttype;
+    const char *    m_desttype;
+    TARGET          m_target;					// Target type: MS Egde/IE or other
     // Audio
     unsigned int    m_audiobitrate;
     unsigned int    m_audiosamplerate;
@@ -108,6 +117,9 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 #endif
 
 int init_logging(const char* logfile, const char* max_level, int to_stderr, int to_syslog);
+
+int get_target(const char * arg, TARGET *value);
+const char * get_target_text(TARGET value);
 
 #ifdef __cplusplus
 }

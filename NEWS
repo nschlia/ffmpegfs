@@ -11,6 +11,13 @@ Changes in this release:
 * Feature: Add pre-buffer option. Files will be decoded up to this limit first
     before made accessible. This ensures smoot startup.
 * Feature: Enhanced configure that checks whether libavresample or libswresample is present.
+* Feature: Improved recoding detection. Files are recoded if the source
+  file size or timestamp changes, or different encoding options  are selected 
+  (e.g. a different bitrate, vidoe size etc.).
+* Feature: Allow optimisations for target browsers. Currently selectable:
+    UNSPECIFIC no optimisations
+    EDGE       optimise for MS Edge and Internet Explorer
+    Defaults to UNSPECIFIC
 
 * Bugfix: Fix lost frames at end of files (files where cut short)
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)

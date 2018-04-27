@@ -883,7 +883,11 @@ int FFMPEG_Transcoder::write_output_file_header()
         av_dict_set_with_check(&dict, "frag_duration", "1000000", 0, destname()); // 1 sec
 
         av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0, destname());
-        //av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
+        if (params.m_target == TARGET_EDGE)
+        {
+            // MS IE and Edge optimisation
+            av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
+        }
 
         av_dict_set_with_check(&dict, "flags:a", "+global_header", 0, destname());
         av_dict_set_with_check(&dict, "flags:v", "+global_header", 0, destname());
@@ -1977,7 +1981,6 @@ time_t FFMPEG_Transcoder::mtime() const
 // metadata, with results going into the given Buffer. This function will also
 // read the actual PCM stream parameters.
 
-
 #define tagcpy(dst, src)    \
     for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
     *p1 = *p2;
@@ -2020,6 +2023,12 @@ void FFMPEG_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
         }
     }
 }
+
+// Copy metadata from source to target
+//
+// Returns:
+//  0   if OK
+//  <0  ffmepg error
 
 int FFMPEG_Transcoder::process_metadata()
 {

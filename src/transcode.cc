@@ -755,11 +755,11 @@ int init_logging(const char* logfile, const char* max_level, int to_stderr, int 
 {
     static const map<string, Logging::level> level_map =
     {
-        {"ERROR", ERROR},
-        {"WARNING", WARNING},
-        {"INFO", INFO},
-        {"DEBUG", DEBUG},
-        {"TRACE", TRACE},
+        { "ERROR", ERROR },
+        { "WARNING", WARNING },
+        { "INFO", INFO },
+        { "DEBUG", DEBUG },
+        { "TRACE", TRACE },
     };
 
     auto it = level_map.find(max_level);
@@ -771,6 +771,63 @@ int init_logging(const char* logfile, const char* max_level, int to_stderr, int 
     }
 
     return InitLogging(logfile, it->second, to_stderr, to_syslog);
+}
+
+static const map<string, TARGET> target_map =
+{
+    { "UNSPECIFIC", TARGET_UNSPECIFIC },
+    { "EDGE", TARGET_EDGE }
+};
+
+int get_target(const char * arg, TARGET *value)
+{
+    const char * ptr = strchr(arg, '=');
+
+    if (ptr)
+    {
+        ptr++;
+
+        auto it = target_map.find(ptr);
+
+        if (it == target_map.end())
+        {
+            fprintf(stderr, "Invalid target type: %s\n", ptr);
+            return -1;
+        }
+
+        *value = it->second;
+
+        return 0;
+    }
+
+    fprintf(stderr, "Missing target string\n");
+
+    return -1;
+}
+
+static std::map<string, TARGET>::const_iterator searchByValue(const map<string, TARGET> & mapOfWords, TARGET value)
+{
+    // Iterate through all elements in std::map and search for the passed element
+    std::map<string, TARGET>::const_iterator it = mapOfWords.begin();
+    while (it != mapOfWords.end())
+    {
+        if(it->second == value)
+        {
+            return it;
+        }
+        it++;
+    }
+    return mapOfWords.end();
+}
+
+const char * get_target_text(TARGET value)
+{
+    map<string, TARGET>::const_iterator it = searchByValue(target_map, value);
+    if (it != target_map.end())
+    {
+        return it->first.c_str();
+    }
+    return "INVALID";
 }
 
 }

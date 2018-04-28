@@ -97,6 +97,8 @@ protected:
 
     void close_index();
 
+    string expanded_sql(sqlite3_stmt *pStmt);
+
 private:
     pthread_mutex_t m_mutex;
     string          m_cacheidx_file;

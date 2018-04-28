@@ -125,9 +125,11 @@ AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
 )
 
 # Checks for sqlite3
+# API misses a lot of functionality if not fairly recent
 PKG_CHECK_MODULES([sqlite3], [sqlite3 >= 3.7.13])
 AC_SEARCH_LIBS([sqlite3_errstr], [sqlite3], [AC_DEFINE([HAVE_SQLITE_ERRSTR], [1], [libsqlite3 has sqlite3_errstr() function.])], [])
 AC_SEARCH_LIBS([sqlite3_db_cacheflush], [sqlite3], [AC_DEFINE([HAVE_SQLITE_CACHEFLUSH], [1], [libsqlite3 has sqlite3_db_cacheflush() function.])], [])
+AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPANDED_SQL], [1], [libsqlite3 has sqlite3_expanded_sql() function.])], [])
 
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])

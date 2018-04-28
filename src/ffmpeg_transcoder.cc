@@ -964,21 +964,27 @@ int FFMPEG_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
 
     *got_frame = 0;
 
-    if (pkt) {
+    if (pkt)
+    {
         ret = avcodec_send_packet(avctx, pkt);
         // In particular, we don't expect AVERROR(EAGAIN), because we read all
         // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
+        {
+            ffmpegfs_error("%s * Could not send packet to decoder (error '%s').", filename(), ffmpeg_geterror(ret).c_str());
             return ret;
+        }
     }
 
     ret = avcodec_receive_frame(avctx, frame);
-    if (ret < 0 /* && ret != AVERROR(EAGAIN)*/)
-        return ret;
-    if (ret >= 0)
-        *got_frame = 1;
+    if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+    {
+        ffmpegfs_error("%s * Could not receive packet from decoder (error '%s').", filename(), ffmpeg_geterror(ret).c_str());
+    }
 
-    return 0;
+    *got_frame = (ret >= 0) ? 1 : 0;
+
+    return ret;
 }
 #endif
 

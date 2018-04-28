@@ -316,7 +316,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                     _errno = cache_entry->m_cache_info.m_errno;
                     if (!_errno)
                     {
-                        _errno = ECANCELED; // Must return anything...
+                        _errno = EIO; // Must return anything...
                     }
                     throw false;
                 }
@@ -397,7 +397,7 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
 
         if (!success)
         {
-            errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : ECANCELED;
+            errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
             throw (ssize_t)-1;
         }
 
@@ -419,7 +419,7 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
 
         if (cache_entry->m_cache_info.m_error)
         {
-            errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : ECANCELED;
+            errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
             throw (ssize_t)-1;
         }
 
@@ -551,14 +551,14 @@ static void *decoder_thread(void *arg)
             averror = transcoder->process_single_fr(status);
             if (status < 0)
             {
-                syserror = ECANCELED;
+                syserror = EIO;
                 success = false;
                 break;
             }
 
             if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
             {
-                syserror = ECANCELED;
+                syserror = EIO;
                 success = false;
                 break;
             }
@@ -606,7 +606,7 @@ static void *decoder_thread(void *arg)
         syserror = _syserror;
         cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_error = !success;
-        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : ECANCELED);  // Preserve errno
+        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : EIO);  // Preserve errno
         cache_entry->m_cache_info.m_averror = success ? 0 : averror;                    // Preserve averror
 
         pthread_cond_signal(&thread_data->m_cond);  // unlock main thread
@@ -622,7 +622,7 @@ static void *decoder_thread(void *arg)
         cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_finished = false;
         cache_entry->m_cache_info.m_error = true;
-        cache_entry->m_cache_info.m_errno = ECANCELED;        // Report I/O error
+        cache_entry->m_cache_info.m_errno = EIO;        // Report I/O error
         cache_entry->m_cache_info.m_averror = averror;  // Preserve averror
 
         if (timeout)
@@ -638,7 +638,7 @@ static void *decoder_thread(void *arg)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_error = !success;
-        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : ECANCELED);  // Preserve errno
+        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : EIO);  // Preserve errno
         cache_entry->m_cache_info.m_averror = success ? 0 : averror;                    // Preserve averror
 
         if (success)
@@ -647,7 +647,7 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            ffmpegfs_error("%s * Transcoding exited with errno = %i (%s) averror = %i (%s)", cache_entry->filename().c_str(), syserror, strerror(syserror), averror, ffmpeg_geterror(averror).c_str());
+            ffmpegfs_error("%s * Transcoding exited with error.\nSystem error: %s (%i)\naFFMpeg error: %s (%i)", cache_entry->filename().c_str(), strerror(syserror), syserror, ffmpeg_geterror(averror).c_str(), averror);
         }
     }
 

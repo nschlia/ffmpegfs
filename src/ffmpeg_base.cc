@@ -130,7 +130,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
         return ret;
     }
 
-    ffmpegfs_debug("%s * Successfully opened %s input codec.", filename, get_codec_name(codec_id));
+    ffmpegfs_debug("%s * Opened %s input codec.", filename, get_codec_name(codec_id));
 
     *avctx = dec_ctx;
 
@@ -210,9 +210,6 @@ void FFMPEG_Base::streamSetup(AVCodecContext *output_codec_ctx, AVStream* output
 
     if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
     {
-        // Ignore missing width/height
-        //m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
-
         //output_codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
         //output_codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
         //output_codec_ctx->profile = FF_PROFILE_H264_HIGH;

@@ -396,7 +396,7 @@ double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRation
     return dblAspectRatio;
 }
 
-void FFMPEG_Transcoder::limitVideoSize(AVCodecContext *output_codec_ctx)
+void FFMPEG_Transcoder::limit_video_size(AVCodecContext *output_codec_ctx)
 {
     int width;
     int height;
@@ -552,7 +552,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (params.m_videowidth || params.m_videoheight)
         {
             // Use command line argument(s)
-            limitVideoSize(output_codec_ctx);
+            limit_video_size(output_codec_ctx);
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
@@ -625,14 +625,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Set duration as hint for muxer
         output_stream->duration             = av_rescale_q(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, output_stream->time_base);
 
-        // TODO: ALBUM ARTS
-        // mp4 album arts do not work with ipod profile. Set mp4.
-        //    if (pFormatContext->oformat->mime_type != NULL && (!strcmp(pFormatContext->oformat->mime_type, "application/mp4") || !strcmp(pFormatContext->oformat->mime_type, "video/mp4")))
-        //    {
-        //        pFormatContext->oformat->name = "mp4";
-        //        pFormatContext->oformat->mime_type = "application/mp4";
-        //    }
-
         // Save the encoder context for easier access later.
         m_out.m_video.m_pCodec_ctx            = output_codec_ctx;
         // Save the stream index
@@ -704,7 +696,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (!m_bIsVideo)
     {
-        m_in.m_video.m_nStream_idx = INVALID_STREAM;  // TEST
+        m_in.m_video.m_nStream_idx = INVALID_STREAM;
     }
 
     //video_codecid = m_out.m_pFormat_ctx->oformat->video_codec;
@@ -720,7 +712,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         if (params.m_deinterlace)
         {
             // Init deinterlace filters
-            ret = initFilters(m_out.m_video.m_pCodec_ctx, m_out.m_video.m_pStream);
+            ret = init_filters(m_out.m_video.m_pCodec_ctx, m_out.m_video.m_pStream);
             if (ret < 0)
             {
                 return ret;
@@ -728,7 +720,6 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    //m_in.m_audio.m_nStream_idx = INVALID_STREAM;
     //audio_codec_id = m_out.m_pFormat_ctx->oformat->audio_codec;
 
     if (m_in.m_audio.m_nStream_idx != INVALID_STREAM && audio_codec_id != AV_CODEC_ID_NONE)
@@ -909,6 +900,7 @@ int FFMPEG_Transcoder::write_output_file_header()
 
     if (m_out.m_file_type == FILETYPE_WAV)
     {
+        // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
         AVIOContext * output_io_context = (AVIOContext *)m_out.m_pFormat_ctx->pb;
         Buffer *buffer = (Buffer *)output_io_context->opaque;
         size_t pos = buffer->tell();
@@ -1052,7 +1044,8 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             break;
         }
-        if (ret < 0)            {
+        if (ret < 0)
+        {
             // Anything else is an error, report it!
             ffmpegfs_error("%s * Could not decode audio frame (error '%s').", filename(), ffmpeg_geterror(ret).c_str());
             // unused frame
@@ -1275,7 +1268,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
 #endif
-            m_VideoFifo.push(sendFilters(frame, ret));
+            m_VideoFifo.push(send_filters(frame, ret));
         }
         else
         {
@@ -2613,7 +2606,7 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 
-    freeFilters();
+    free_filters();
 
     if (bClosed)
     {
@@ -2679,7 +2672,7 @@ const string & FFMPEG_Transcoder::get_destname(string *destname, const string & 
 }
 
 // create
-int FFMPEG_Transcoder::initFilters(AVCodecContext *pCodecContext, AVStream * pStream)
+int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pStream)
 {
     const char * filters;
     char args[1024];
@@ -2728,7 +2721,7 @@ int FFMPEG_Transcoder::initFilters(AVCodecContext *pCodecContext, AVStream * pSt
                 pStream->time_base.num, pStream->time_base.den,
                 pCodecContext->sample_aspect_ratio.num, FFMAX(pCodecContext->sample_aspect_ratio.den, 1));
 
-        //AVRational fr = av_guess_frame_rate(m_pFormatContext, m_pVideoStream, NULL);
+        //AVRational fr = av_guess_frame_rate(m_m_out.m_pFormat_ctx, m_pVideoStream, NULL);
         //if (fr.num && fr.den)
         //{
         //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":frame_rate=%d/%d", fr.num, fr.den);
@@ -2840,7 +2833,7 @@ int FFMPEG_Transcoder::initFilters(AVCodecContext *pCodecContext, AVStream * pSt
     return ret;
 }
 
-AVFrame *FFMPEG_Transcoder::sendFilters(AVFrame * srcframe, int & ret)
+AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 {
     AVFrame *tgtframe = srcframe;
 
@@ -2906,7 +2899,7 @@ AVFrame *FFMPEG_Transcoder::sendFilters(AVFrame * srcframe, int & ret)
 
 // free
 
-void FFMPEG_Transcoder::freeFilters()
+void FFMPEG_Transcoder::free_filters()
 {
     if (m_pBufferSinkContext != NULL)
     {

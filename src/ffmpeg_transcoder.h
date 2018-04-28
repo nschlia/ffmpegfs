@@ -67,7 +67,7 @@ public:
 
 protected:
     bool is_video() const;
-    void limitVideoSize(AVCodecContext *output_codec_ctx);
+    void limit_video_size(AVCodecContext *output_codec_ctx);
     int add_stream(AVCodecID codec_id);
     int open_output_filestreams(Buffer *buffer);
     void copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
@@ -107,9 +107,9 @@ protected:
 
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *fileName);
 
-    int initFilters(AVCodecContext *pCodecContext, AVStream *pStream);
-    AVFrame *sendFilters(AVFrame *srcframe, int &ret);
-    void freeFilters();
+    int init_filters(AVCodecContext *pCodecContext, AVStream *pStream);
+    AVFrame *send_filters(AVFrame *srcframe, int &ret);
+    void free_filters();
 
 private:
     time_t                      m_mtime;

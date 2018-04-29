@@ -66,6 +66,8 @@ struct ffmpegfs_params params =
     .m_videoheight          = 0,                        // default: do not change height
     .m_deinterlace          = 0,                        // default: do not interlace video
 
+    .m_noalbumarts          = 0,                        // default: copy album arts
+
     .m_debug              	= 0,                        // default: no debug messages
     .m_log_maxlevel       	= "INFO",                   // default: INFO level
     .m_log_stderr         	= 0,                        // default: do not log to stderr
@@ -130,6 +132,9 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("videowidth=%u",               m_videowidth, 0),
     FFMPEGFS_OPT("--deinterlace",               m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                 m_deinterlace, 1),
+    // Album arts
+    FFMPEGFS_OPT("--noalbumarts",               m_noalbumarts, 1),
+    FFMPEGFS_OPT("noalbumarts",                 m_noalbumarts, 1),
     // Background recoding/caching
     // Cache
     FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
@@ -254,6 +259,14 @@ static void usage(char *name)
           " * n bit/s:  #  or #bps\n"
           " * n kbit/s: #M or #Mbps\n"
           " * n Mbit/s: #M or #Mbps\n"
+          "\n"
+          "Album Arts:\n"
+          "\n"
+          "    --noalbumarts, -o noalbumarts\n"
+          "                           Do not copy album arts into output file.\n"
+          "                           This will reduce the file size, may be useful when streaming via\n"
+          "                           HTML5 when album arts are not used anyway."
+          "                           Default: add album arts\n"
           "\n"
           "Cache Options:\n"
           "\n"
@@ -820,6 +833,7 @@ static void print_params()
                                 "\nVideo\n\n"
                                 "Video Size/Pixels : width=%s height=%s\n"
                                 "Deinterlace       : %s\n"
+                                "Remove Album Arts : %s\n"
                                 "Video Format      : %s\n"
                                 "Video Bitrate     : %s\n"
                                 "\nLogging\n\n"
@@ -849,6 +863,7 @@ static void print_params()
                    audiosamplerate,
                    width, height,
                    params.m_deinterlace ? "yes" : "no",
+				   params.m_noalbumarts ? "yes" : "no",
                    get_codec_name(video_codecid),
                    videobitrate,
                    params.m_log_maxlevel,

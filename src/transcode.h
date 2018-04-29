@@ -55,6 +55,8 @@ extern struct ffmpegfs_params
     unsigned int    m_videowidth;               // set video width
     unsigned int    m_videoheight;              // set video height
     int             m_deinterlace;              // deinterlace video
+    // Album arts
+    int             m_noalbumarts;              // skip album arts
     // ffmpegfs options
     int             m_debug;
     const char*     m_log_maxlevel;

@@ -69,9 +69,12 @@ protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
     int add_stream(AVCodecID codec_id);
+    int add_albumart_stream(const AVCodecContext *input_codec_ctx);
+    int add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
     int open_output_filestreams(Buffer *buffer);
     void copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
     int process_metadata();
+    int process_albumarts();
     int init_resampler();
     int init_fifo();
     int write_output_file_header();
@@ -163,6 +166,8 @@ private:
 
         STREAMREF               m_audio;
         STREAMREF               m_video;
+
+        vector<STREAMREF>       m_aAlbumArt;
     } m_in;
 
     // Output file
@@ -184,6 +189,8 @@ private:
 
         STREAMREF               m_audio;
         STREAMREF               m_video;
+
+        vector<STREAMREF>       m_aAlbumArt;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
         int64_t                 m_video_start_pts;      // Video start PTS

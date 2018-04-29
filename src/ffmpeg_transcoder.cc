@@ -266,6 +266,43 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         return AVERROR(EINVAL);
     }
 
+    // Open album art streams if present and supported by both source and target
+    if (!params.m_noalbumarts && m_in.m_audio.m_pStream != NULL &&
+            supports_albumart(m_in.m_file_type) && supports_albumart(get_filetype(params.m_desttype)))
+    {
+        ffmpegfs_trace("%s * Processing album arts.", destname());
+
+        for (unsigned int stream_idx = 0; stream_idx < m_in.m_pFormat_ctx->nb_streams; stream_idx++)
+        {
+            AVStream *input_stream = m_in.m_pFormat_ctx->streams[stream_idx];
+            AVCodecID codec_id;
+
+#if LAVF_DEP_AVSTREAM_CODEC
+            codec_id = input_stream->codecpar->codec_id;
+#else
+            codec_id = input_stream->codec->codec_id;
+#endif
+            if (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP)
+            {
+                STREAMREF streamref;
+                AVCodecContext * input_codec_ctx;
+
+                ret = open_codec_context(&input_codec_ctx, stream_idx, m_in.m_pFormat_ctx, AVMEDIA_TYPE_VIDEO, filename);
+                if (ret < 0)
+                {
+                    ffmpegfs_error("%s * Failed to open album art codec (error '%s').", filename, ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+
+                streamref.m_pCodec_ctx  = input_codec_ctx;
+                streamref.m_pStream     = input_stream;
+                streamref.m_nStream_idx = input_stream->index;
+
+                m_in.m_aAlbumArt.push_back(streamref);
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -316,6 +353,13 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
     // Write the header of the output file container.
     res = write_output_file_header();
+    if (res)
+    {
+        return res;
+    }
+
+    // Process album arts: copy all from source file to target.
+    res = process_albumarts();
     if (res)
     {
         return res;
@@ -663,6 +707,169 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     return 0;
 }
 
+int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ctx)
+{
+    AVCodecContext * output_codec_ctx = NULL;
+    AVStream * output_stream        = NULL;
+    const AVCodec * input_codec     = input_codec_ctx->codec;
+    const AVCodec * output_codec    = NULL;
+    AVDictionary *  opt             = NULL;
+    int ret;
+
+    // find the encoder
+#if 0
+    output_codec = input_codec;
+#else
+    output_codec = avcodec_find_encoder(input_codec->id);
+    if (!output_codec)
+    {
+        ffmpegfs_error("%s * Could not find encoder '%s'.", destname(), avcodec_get_name(input_codec->id));
+        return AVERROR(EINVAL);
+    }
+#endif
+
+    // Must be a video codec
+    if (output_codec->type != AVMEDIA_TYPE_VIDEO)
+    {
+        ffmpegfs_error("%s * INTERNAL TROUBLE! Encoder '%s' is not a video codec.", destname(), avcodec_get_name(input_codec->id));
+        return AVERROR(EINVAL);
+    }
+
+    output_stream = avformat_new_stream(m_out.m_pFormat_ctx, output_codec);
+    if (!output_stream)
+    {
+        ffmpegfs_error("%s * Could not allocate stream for encoder '%s'.", destname(), avcodec_get_name(input_codec->id));
+        return AVERROR(ENOMEM);
+    }
+    output_stream->id = m_out.m_pFormat_ctx->nb_streams - 1;
+
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+    output_codec_ctx = avcodec_alloc_context3(output_codec);
+    if (!output_codec_ctx)
+    {
+        ffmpegfs_error("%s * Could not alloc an encoding context.", destname());
+        return AVERROR(ENOMEM);
+    }
+#else
+    output_codec_ctx = output_stream->codec;
+#endif
+
+    // Ignore missing width/height when adding album arts
+    m_out.m_pFormat_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
+
+    // This is required for some reason (let encoder decide?)
+    // If not set, write header will fail!
+    //    output_codec_ctx->codec_tag = 0; //av_codec_get_tag(of->codec_tag, codec->codec_id);
+
+    //    output_stream->codec->framerate = { 1, 0 };
+
+    // TODO: ALBUM ARTS
+    // mp4 album arts do not work with ipod profile. Set mp4.
+    //    if (m_out.m_pFormat_ctx->oformat->mime_type != NULL && (!strcmp(m_out.m_pFormat_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_pFormat_ctx->oformat->mime_type, "video/mp4")))
+    //    {
+    //        m_out.m_pFormat_ctx->oformat->name = "mp4";
+    //        m_out.m_pFormat_ctx->oformat->mime_type = "application/mp4";
+    //    }
+
+    // copy disposition
+    // output_stream->disposition = input_stream->disposition;
+    output_stream->disposition = AV_DISPOSITION_ATTACHED_PIC;
+
+    // copy estimated duration as a hint to the muxer
+    if (output_stream->duration <= 0 && m_in.m_audio.m_pStream->duration > 0)
+    {
+        output_stream->duration = av_rescale_q(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, output_stream->time_base);
+    }
+
+    output_codec_ctx->time_base = { 1, 90000 };
+
+    output_codec_ctx->pix_fmt   = input_codec_ctx->pix_fmt;
+    output_codec_ctx->width     = input_codec_ctx->width;
+    output_codec_ctx->height    = input_codec_ctx->height;
+
+    // Open the encoder for the audio stream to use it later.
+    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Could not open %s output codec %s for stream #%u (error '%s').", destname(), get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    ffmpegfs_debug("%s * Opened album art output codec %s for stream #%u (dimensions %ix%i).", destname(), get_codec_name(input_codec->id), output_stream->index, output_codec_ctx->width, output_codec_ctx->height);
+
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+    ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Could not initialise stream parameters stream #%u (error '%s').", destname(), output_stream->index, ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+#endif
+
+    STREAMREF stream;
+
+    stream.m_pCodec_ctx     = output_codec_ctx;
+    stream.m_pStream        = output_stream;
+    stream.m_nStream_idx    = output_stream->index;
+
+    m_out.m_aAlbumArt.push_back(stream);
+
+    return 0;
+}
+
+int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt_in)
+{
+    AVPacket *tmp_pkt;
+    int ret = 0;
+
+#if LAVF_DEP_AV_COPY_PACKET
+    tmp_pkt = av_packet_clone(pkt_in);
+    if (tmp_pkt == NULL)
+    {
+        ret = AVERROR(ENOMEM);
+        ffmpegfs_error("%s * Could not write album art packet (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+#else
+    tmp_pkt = av_packet_alloc();
+    if (tmp_pkt == NULL)
+    {
+        ret = AVERROR(ENOMEM);
+        ffmpegfs_error("%s * Could not write album art packet (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    ret = av_copy_packet(tmp_pkt, pkt_in);
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Could not write album art packet (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+#endif
+
+    /*ffmpegfs_trace*/fprintf(stderr, "XXXXXXXXXXXXXXXXXXX %s * Adding album art stream #%u.\n", destname(), output_stream->index);
+
+    tmp_pkt->stream_index = output_stream->index;
+    tmp_pkt->flags |= AV_PKT_FLAG_KEY;
+    tmp_pkt->pos = 0;
+    tmp_pkt->dts = 0;
+
+    ret = av_interleaved_write_frame(m_out.m_pFormat_ctx, tmp_pkt);
+
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Could not write album art packet (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+    }
+
+#if LAVF_DEP_AV_COPY_PACKET
+    av_packet_unref(tmp_pkt);
+#else
+    av_free_packet(tmp_pkt);
+#endif
+
+    return ret;
+}
+
 // Open an output file and the required encoder.
 // Also set some basic encoder parameters.
 // Some of these parameters are based on the input file's parameters.
@@ -726,6 +933,19 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         if (ret < 0)
         {
             return ret;
+        }
+    }
+
+    if (!params.m_noalbumarts)
+    {
+        for (size_t n = 0; n < m_in.m_aAlbumArt.size(); n++)
+        {
+            //ret = add_albumart_stream(codec_id, m_in.m_aAlbumArt.at(n).m_pCodec_ctx->pix_fmt);
+            ret = add_albumart_stream(m_in.m_aAlbumArt.at(n).m_pCodec_ctx);
+            if (ret < 0)
+            {
+                return ret;
+            }
         }
     }
 
@@ -1341,6 +1561,22 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
         while (pkt->size > 0);
 #endif
         ret = 0;
+    }
+    else
+    {
+        for (size_t n = 0; n < m_in.m_aAlbumArt.size(); n++)
+        {
+            AVStream *input_stream = m_in.m_aAlbumArt.at(n).m_pStream;
+
+            // AV_DISPOSITION_ATTACHED_PIC streams already processed in process_albumarts()
+            if (pkt->stream_index == input_stream->index && !(input_stream->disposition & AV_DISPOSITION_ATTACHED_PIC))
+            {
+                AVStream *output_stream = m_out.m_aAlbumArt.at(n).m_pStream;
+
+                ret = add_albumart_frame(output_stream, pkt);
+                break;
+            }
+        }
     }
 
     return ret;
@@ -2054,8 +2290,39 @@ int FFMPEG_Transcoder::process_metadata()
         copy_metadata(&m_out.m_video.m_pStream->metadata, m_in.m_video.m_pStream->metadata);
     }
 
+    // Also copy album art meta tags
+    for (size_t n = 0; n < m_in.m_aAlbumArt.size(); n++)
+    {
+        AVStream *input_stream = m_in.m_aAlbumArt.at(n).m_pStream;
+        AVStream *output_stream = m_out.m_aAlbumArt.at(n).m_pStream;
+
+        copy_metadata(&output_stream->metadata, input_stream->metadata);
+    }
 
     return 0;
+}
+
+int FFMPEG_Transcoder::process_albumarts()
+{
+    int ret = 0;
+
+    for (size_t n = 0; n < m_in.m_aAlbumArt.size(); n++)
+    {
+        AVStream *input_stream = m_in.m_aAlbumArt.at(n).m_pStream;
+
+        if (input_stream->disposition & AV_DISPOSITION_ATTACHED_PIC)
+        {
+            AVStream *output_stream = m_out.m_aAlbumArt.at(n).m_pStream;
+
+            ret = add_albumart_frame(output_stream, &input_stream->attached_pic);
+            if (ret < 0)
+            {
+                break;
+            }
+        }
+    }
+
+    return ret;
 }
 
 // Process a single frame of audio data. The encode_pcm_data() method
@@ -2552,6 +2819,21 @@ void FFMPEG_Transcoder::close()
     }
 #endif
 
+    while (m_out.m_aAlbumArt.size())
+    {
+        AVCodecContext *codec_ctx = m_out.m_aAlbumArt.back().m_pCodec_ctx;
+        m_out.m_aAlbumArt.pop_back();
+        if (codec_ctx != NULL)
+        {
+#if (AV_VERSION_MAJOR < 57)
+            avcodec_close(codec_ctx);
+#else
+            avcodec_free_context(&codec_ctx);
+#endif
+            bClosed = true;
+        }
+    }
+
     if (m_out.m_pFormat_ctx != NULL)
     {
         AVIOContext *output_io_context  = (AVIOContext *)m_out.m_pFormat_ctx->pb;
@@ -2602,6 +2884,21 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 #endif
+
+    while (m_in.m_aAlbumArt.size())
+    {
+        AVCodecContext *codec_ctx = m_in.m_aAlbumArt.back().m_pCodec_ctx;
+        m_in.m_aAlbumArt.pop_back();
+        if (codec_ctx != NULL)
+        {
+#if (AV_VERSION_MAJOR < 57)
+            avcodec_close(codec_ctx);
+#else
+            avcodec_free_context(&codec_ctx);
+#endif
+            bClosed = true;
+        }
+    }
 
     if (m_in.m_pFormat_ctx != NULL)
     {
@@ -2923,6 +3220,3 @@ void FFMPEG_Transcoder::free_filters()
         m_pFilterGraph = NULL;
     }
 }
-
-
-

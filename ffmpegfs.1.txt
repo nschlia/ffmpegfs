@@ -100,6 +100,13 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
  * n kbit/s: #M or #Mbps
  * n Mbit/s: #M or #Mbps
 
+=== Album Arts ===
+--*noalbumarts*, -o *noalbumarts*
+    Do not copy album arts into output file.
+    This will reduce the file size, may be useful when streaming via
+    HTML5 when album arts are not used anyway.
+    Default: add album arts
+
 === Cache Options ===
  *--expiry_time*=TIME, *-o expiry_time*=TIME::
     Cache entries expire after 'TIME' and will be deleted

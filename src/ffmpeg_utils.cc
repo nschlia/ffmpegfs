@@ -316,6 +316,11 @@ void tempdir(char *dir, size_t size)
     strncpy(dir, "/tmp", size);
 }
 
+int supports_albumart(FILETYPE filetype)
+{
+    return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4 || filetype == FILETYPE_FLAC);
+}
+
 FILETYPE get_filetype(const char * type)
 {
     if (strcasestr(type, "mp3") != NULL)

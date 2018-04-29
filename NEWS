@@ -19,6 +19,8 @@ Changes in this release:
     EDGE       optimise for MS Edge and Internet Explorer
     Defaults to UNSPECIFIC
 * Feature: enhanced error output for SQLite (if supported by library version)
+* Feature: copy album arts from source if supported by target format (MP3/4).
+  Use --noalbumarts parameter to disable, e.g., for streaming files.
 
 * Bugfix: Fix lost frames at end of files (files where cut short)
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)

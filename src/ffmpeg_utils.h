@@ -51,6 +51,14 @@
 //   Deprecate use of avfilter_register(), avfilter_register_all(),
 //   avfilter_next(). Add av_filter_iterate().
 #define LAVC_DEP_AV_FILTER_REGISTER         (LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(7, 14, 0))
+// 2015-10-29 - lavc 57.12.100 / 57.8.0 - avcodec.h
+//   xxxxxx - Deprecate av_free_packet(). Use av_packet_unref() as replacement,
+//            it resets the packet in a more consistent way.
+//   xxxxxx - Deprecate av_dup_packet(), it is a no-op for most cases.
+//            Use av_packet_ref() to make a non-refcounted AVPacket refcounted.
+//   xxxxxx - Add av_packet_alloc(), av_packet_clone(), av_packet_free().
+//            They match the AVFrame functions with the same name.
+#define LAVF_DEP_AV_COPY_PACKET             (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 8, 0))
 
 // Check for FFMPEG version 3+
 #define FFMPEG_VERSION3                     (LIBAVCODEC_VERSION_MAJOR > 56)
@@ -176,6 +184,7 @@ extern "C" {
 void ffmpeg_libinfo(char * buffer, size_t maxsize);
 int show_formats_devices(int device_only);
 const char * get_codec_name(enum AVCodecID codec_id);
+int supports_albumart(FILETYPE filetype);
 FILETYPE get_filetype(const char * type);
 const char * get_codecs(const char * type, FILETYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid);
 

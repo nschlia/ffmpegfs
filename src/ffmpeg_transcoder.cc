@@ -209,7 +209,7 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         return -1; // Couldn't open file
     }
 
-#if (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= LIBAVCODEC_MIN_VERSION_INT )
+#if HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA
     av_format_inject_global_side_data(m_in.m_pFormat_ctx);
 #endif
 
@@ -220,8 +220,6 @@ int FFMPEG_Transcoder::open_input_file(const char* filename)
         ffmpegfs_error("%s * Could not open find stream info (error '%s').", filename, ffmpeg_geterror(ret).c_str());
         return ret;
     }
-
-    //av_dump_format(m_in.m_pFormat_ctx, 0, filename, 0);
 
     // Open best match video codec
     ret = open_bestmatch_codec_context(&m_in.m_video.m_pCodec_ctx, &m_in.m_video.m_nStream_idx, m_in.m_pFormat_ctx, AVMEDIA_TYPE_VIDEO, filename);
@@ -473,7 +471,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
     output_stream->id = m_out.m_pFormat_ctx->nb_streams - 1;
 
-#if (LIBAVCODEC_VERSION_MAJOR > 56) // Check for FFmpeg 3
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (!output_codec_ctx)
     {
@@ -512,7 +510,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_stream->time_base.den     = output_codec_ctx->sample_rate;
         output_stream->time_base.num     = 1;
 
-#if (LIBAVCODEC_VERSION_MAJOR <= 56) // Check for FFmpeg 3
+#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         av_dict_set_with_check(&opt, "strict", "-2", 0, destname());
         // Allow the use of the experimental AAC encoder
@@ -653,7 +651,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
     ffmpegfs_debug("%s * Opened %s output codec %s for stream #%u.", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index);
 
-#if (LIBAVCODEC_VERSION_MAJOR > 56) // Check for FFmpeg 3
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
     if (ret < 0)
     {
@@ -1966,6 +1964,7 @@ int FFMPEG_Transcoder::write_output_file_trailer()
         ffmpegfs_error("%s * Could not write output file trailer (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
         return ret;
     }
+
     return 0;
 }
 
@@ -2055,7 +2054,6 @@ int FFMPEG_Transcoder::process_metadata()
         copy_metadata(&m_out.m_video.m_pStream->metadata, m_in.m_video.m_pStream->metadata);
     }
 
-    // TODO: Auch die Album Arts metadaten...
 
     return 0;
 }

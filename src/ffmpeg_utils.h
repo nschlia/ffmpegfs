@@ -52,6 +52,9 @@
 //   avfilter_next(). Add av_filter_iterate().
 #define LAVC_DEP_AV_FILTER_REGISTER         (LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(7, 14, 0))
 
+// Check for FFMPEG version 3+
+#define FFMPEG_VERSION3                     (LIBAVCODEC_VERSION_MAJOR > 56)
+
 #if !defined(USE_LIBSWRESAMPLE) && !defined(USE_LIBAVRESAMPLE)
 #error "Must have either libswresample (preferred choice for FFMpeg) or libavresample (with libav)."
 #endif
@@ -99,16 +102,12 @@ extern "C" {
 #define USING_LIBAV
 #endif
 
-// Minumum version required for special functionality
-// Please note that I am not 100% sure from which FFmpeg version on this works, so lower
-// versions may also work.
-// Also as this was not 100% tested with Libav this only applies to FFmpeg. With Libav
-// none of the extensions will be used.
-#define LIBAVCODEC_MIN_VERSION_INT      	AV_VERSION_INT( 57, 64, 101 )
-#define LIBAVFORMAT_MIN_VERSION_INT     	AV_VERSION_INT( 57, 25, 100 )
-#define LIBAVUTIL_MIN_VERSION_INT       	AV_VERSION_INT( 55, 34, 101 )
+// Allow use of av_format_inject_global_side_data when available
+#define HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ))
 
-#if (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= LIBAVUTIL_MIN_VERSION_INT )
+// Add av_get_media_type_string function if missing
+#define HAVE_MEDIA_TYPE_STRING                  (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT( 55, 34, 101 ))
+#if HAVE_MEDIA_TYPE_STRING
 #define get_media_type_string               av_get_media_type_string
 #else
 const char *get_media_type_string(enum 		AVMediaType media_type);

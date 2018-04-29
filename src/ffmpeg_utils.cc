@@ -82,7 +82,7 @@ double ffmpeg_cvttime(int64_t ts, const AVRational & time_base)
     }
 }
 
-#if !(LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= LIBAVUTIL_MIN_VERSION_INT )
+#if !HAVE_MEDIA_TYPE_STRING
 const char *get_media_type_string(enum AVMediaType media_type)
 {
     switch (media_type)

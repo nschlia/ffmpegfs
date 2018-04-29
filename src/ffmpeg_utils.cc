@@ -318,23 +318,23 @@ void tempdir(char *dir, size_t size)
 
 FILETYPE get_filetype(const char * type)
 {
-    if (!strcasecmp(type, "mp3"))
+    if (strcasestr(type, "mp3") != NULL)
     {
         return FILETYPE_MP3;
     }
-    else if (!strcasecmp(type, "mp4"))
+    else if (strcasestr(type, "mp4") != NULL)
     {
         return FILETYPE_MP4;
     }
-    else if (!strcasecmp(type, "wav"))
+    else if (strcasestr(type, "wav") != NULL)
     {
         return FILETYPE_WAV;
     }
-    else if (!strcasecmp(type, "ogg"))
+    else if (strcasestr(type, "ogg") != NULL)
     {
         return FILETYPE_OGG;
     }
-    else if (!strcasecmp(type, "flac"))
+    else if (strcasestr(type, "flac") != NULL)
     {
         return FILETYPE_FLAC;
     }

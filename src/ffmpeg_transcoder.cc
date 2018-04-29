@@ -847,7 +847,7 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
     }
 #endif
 
-    /*ffmpegfs_trace*/fprintf(stderr, "XXXXXXXXXXXXXXXXXXX %s * Adding album art stream #%u.\n", destname(), output_stream->index);
+    ffmpegfs_trace("%s * Adding album art stream #%u.", destname(), output_stream->index);
 
     tmp_pkt->stream_index = output_stream->index;
     tmp_pkt->flags |= AV_PKT_FLAG_KEY;

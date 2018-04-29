@@ -651,7 +651,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         return ret;
     }
 
-    ffmpegfs_debug("%s * Opened %s output codec %s.", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id));
+    ffmpegfs_debug("%s * Opened %s output codec %s for stream #%u.", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index);
 
 #if (LIBAVCODEC_VERSION_MAJOR > 56) // Check for FFmpeg 3
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);

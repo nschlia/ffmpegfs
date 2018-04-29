@@ -855,15 +855,24 @@ bool Cache::remove_cachefile(const string & filename)
 
 string Cache::expanded_sql(sqlite3_stmt *pStmt)
 {
-#ifdef HAVE_SQLITE_EXPANDED_SQL
     string sql;
+#ifdef HAVE_SQLITE_EXPANDED_SQL
     char * p = sqlite3_expanded_sql(pStmt);
     sql = p;
     free(p);
     return sql;
 #else
-    return sqlite3_sql(pStmt);
+    const char *p = sqlite3_sql(pStmt);
+    if (p != NULL)
+    {
+       sql=p;
+    }
+    else
+    {
+      sql="(NULL)";
+    }
 #endif
+    return sql;
 }
 
 

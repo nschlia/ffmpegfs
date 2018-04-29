@@ -25,6 +25,7 @@ cmp -s - <(echo "$TAGS")<<END
 
 trkn=(1, 0)
 END
+
 echo "Pass"
 
 get_metadata "$DIRNAME/raven.mp4" TAGS
@@ -50,6 +51,7 @@ get_metadata "$DIRNAME/obama.mp3" TAGS
 echo Tags found: 
 echo "$TAGS"
 cmp -s - <(echo "$TAGS")<<END
+APIC=cover front,  (image/jpeg, 9833 bytes)
 TALB=US State of the Union 2011
 TCON=Spoken
 TCOP=Public Domain

@@ -782,10 +782,17 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     output_codec_ctx->time_base = { 1, 90000 };
+    output_stream->time_base = { 1, 90000 };
 
     output_codec_ctx->pix_fmt   = input_codec_ctx->pix_fmt;
     output_codec_ctx->width     = input_codec_ctx->width;
     output_codec_ctx->height    = input_codec_ctx->height;
+
+    // Some formats want stream headers to be separate.
+    if (m_out.m_pFormat_ctx->oformat->flags & AVFMT_GLOBALHEADER)
+    {
+        output_codec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
 
     // Open the encoder for the audio stream to use it later.
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
@@ -831,13 +838,9 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
         return ret;
     }
 #else
-    tmp_pkt = av_packet_alloc();
-    if (tmp_pkt == NULL)
-    {
-        ret = AVERROR(ENOMEM);
-        ffmpegfs_error("%s * Could not write album art packet (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
+    AVPacket pkt;
+
+    tmp_pkt = &pkt;
 
     ret = av_copy_packet(tmp_pkt, pkt_in);
     if (ret < 0)

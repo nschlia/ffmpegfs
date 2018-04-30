@@ -1095,7 +1095,7 @@ int FFMPEG_Transcoder::write_output_file_header()
         av_dict_set_with_check(&dict, "frag_duration", "1000000", 0, destname()); // 1 sec
 
         av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0, destname());
-        if (params.m_target == TARGET_EDGE)
+        if (params.m_target == TARGET_EDGE || params.m_target == TARGET_IE)
         {
             // MS IE and Edge optimisation
             av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0, destname()); // MS Edge

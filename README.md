@@ -125,6 +125,25 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
 Enable deinterlacing to enhance image quality.
 
+MP4 FORMAT OPTIMISATIONS
+------------------------
+
+The MP4 format has several derivative formats that are not compatible with
+all target audiences. To feed the resulting files into for example MS Edge,
+the subformat must be different as for Firefox, unfortunately.
+
+The --target option allows to select the format:
+
+|FF|Firefox|
+|IE|Microsoft Internet Explorer|
+|EDGE|Microsoft Edge|
+|CHROME|Google Chrome|
+|SAFARI|Google Safari|
+|OPERA|Opera|
+|MAXTHON|Maxthon|
+
+In most cases the files will not play if not correctly optimised.
+
 HOW IT WORKS
 ------------
 

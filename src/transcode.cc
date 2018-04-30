@@ -776,7 +776,13 @@ int init_logging(const char* logfile, const char* max_level, int to_stderr, int 
 static const map<string, TARGET> target_map =
 {
     { "UNSPECIFIC", TARGET_UNSPECIFIC },
-    { "EDGE", TARGET_EDGE }
+    { "FF", TARGET_FF },
+    { "IE", TARGET_IE },
+    { "EDGE", TARGET_EDGE },
+    { "CHROME", TARGET_CHROME },
+    { "SAFARI", TARGET_SAFARI },
+    { "OPERA", TARGET_OPERA },
+    { "MAXTHON", TARGET_MAXTHON }
 };
 
 int get_target(const char * arg, TARGET *value)

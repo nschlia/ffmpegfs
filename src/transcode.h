@@ -32,10 +32,15 @@
 
 typedef enum _tagTARGET
 {
-    TARGET_UNSPECIFIC,
-    TARGET_EDGE,
-    //TARGET_CHROME,
-    //TARGET_XXX,
+    TARGET_UNSPECIFIC,		// no specific optimisations
+    TARGET_FF,				// Firefox
+    TARGET_IE,				// MS Internet Explorer
+    TARGET_EDGE,			// MS Edge
+    TARGET_CHROME,			// Google Chrome
+    TARGET_SAFARI,			// Apple Safari
+    TARGET_OPERA,			// Opera
+    TARGET_MAXTHON, 		// Maxthon
+    TARGET_COUNT
 } TARGET;
 
 // Global program parameters

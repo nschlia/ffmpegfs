@@ -217,7 +217,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         goto translate_fail;
     }
 
-    /* pass-through for regular files */
+    // pass-through for regular files 
     if (lstat(origpath, stbuf) == 0)
     {
         errno = 0;
@@ -225,7 +225,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     else
     {
-        /* Not really an error. */
+        // Not really an error. 
         errno = 0;
     }
 
@@ -236,12 +236,9 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         goto stat_fail;
     }
 
-    /*
-     * Get size for resulting output file from regular file, otherwise it's a
-     * symbolic link. */
+    // Get size for resulting output file from regular file, otherwise it's a symbolic link.
     if (S_ISREG(stbuf->st_mode))
     {
-
         if (!transcoder_cached_filesize(origpath, stbuf))
         {
             struct Cache_Entry* cache_entry;
@@ -287,14 +284,14 @@ static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct f
         goto translate_fail;
     }
 
-    /* pass-through for regular files */
+    // pass-through for regular files 
     if (lstat(origpath, stbuf) == 0)
     {
         goto passthrough;
     }
     else
     {
-        /* Not really an error. */
+        // Not really an error. 
         errno = 0;
     }
 
@@ -305,9 +302,7 @@ static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct f
         goto stat_fail;
     }
 
-    /*
-     * Get size for resulting output file from regular file, otherwise it's a
-     * symbolic link. */
+    // Get size for resulting output file from regular file, otherwise it's a symbolic link.
     if (S_ISREG(stbuf->st_mode))
     {
 

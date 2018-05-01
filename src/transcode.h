@@ -39,8 +39,7 @@ typedef enum _tagTARGET
     TARGET_CHROME,			// Google Chrome
     TARGET_SAFARI,			// Apple Safari
     TARGET_OPERA,			// Opera
-    TARGET_MAXTHON, 		// Maxthon
-    TARGET_COUNT
+    TARGET_MAXTHON          // Maxthon
 } TARGET;
 
 // Global program parameters

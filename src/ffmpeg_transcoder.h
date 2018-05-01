@@ -64,7 +64,7 @@ public:
     const char *destname() const;
 
     static const string & get_destname(string *destname, const string & filename);
-
+    
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
@@ -77,6 +77,7 @@ protected:
     int process_albumarts();
     int init_resampler();
     int init_fifo();
+    int prepare_mp4_optimisations(AVDictionary **dict);
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
     int decode_video_frame(AVPacket *pkt, int *decoded);

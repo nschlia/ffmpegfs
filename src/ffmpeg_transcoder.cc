@@ -1083,27 +1083,118 @@ int FFMPEG_Transcoder::init_fifo()
     return 0;
 }
 
+// Prepare format and browser optimisations
+int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict)
+{
+    if (m_out.m_file_type != FILETYPE_MP4)
+    {
+        return 0;
+    }
+
+    // Settings for fast playback start in HTML5
+    switch (params.m_target)
+    {
+    case TARGET_FF:
+    {
+
+        ffmpegfs_trace("%s * Targetting on Firefox.", destname());
+
+//        av_dict_set_with_check(dict, "movflags", "+faststart", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+empty_moov", 0, destname());
+        if (m_out.m_video.m_nStream_idx == INVALID_STREAM)
+        {
+            // only for audio files
+            av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
+        }
+        break;
+    }
+    case TARGET_EDGE:
+    {
+        ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
+
+        av_dict_set_with_check(dict, "movflags", "+faststart", 0, destname());
+        av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
+        av_dict_set_with_check(dict, "movflags", "+empty_moov", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
+
+/*
+	//av_dict_set_with_check(dict, "movflags", "+faststart", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+empty_moov", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
+        av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
+*/        
+        break;       
+    }    
+    case TARGET_IE:
+    {
+        ffmpegfs_trace("%s * Targetting on MS IE <= 11.", destname());
+
+	//av_dict_set_with_check(dict, "movflags", "+faststart", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+empty_moov", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
+        av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
+        break;
+    }
+    case TARGET_CHROME:
+    {
+        ffmpegfs_trace("%s * Targetting on Google Chrome.", destname());
+
+        break;
+    }
+    case TARGET_SAFARI:
+    {
+        ffmpegfs_trace("%s * Targetting on Apple Safari.", destname());
+
+        // empty_moov mager nicht...
+        // prinzipiell aber keine Optimierung nötig, da eh nichts unterstützt -> muss komplett decodieren
+        //av_dict_set_with_check(dict, "movflags", "+faststart", 0, destname());
+/*		
+        av_dict_set_with_check(dict, "frag_size", "1000000", 0, destname());
+        av_dict_set_with_check(dict, "moov_size", "1024000", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
+		av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
+        av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
+*/
+        break;
+    }
+    case TARGET_OPERA:
+    {
+        ffmpegfs_trace("%s * Targetting on Opera.", destname());
+
+        break;
+    }
+    case TARGET_MAXTHON:
+    {
+        ffmpegfs_trace("%s * Targetting on Maxthon.", destname());
+
+        break;
+    }
+    case TARGET_UNSPECIFIC:
+    {
+        ffmpegfs_trace("%s * No specific target selected.", destname());
+
+        break;
+    }
+    }
+
+    // All
+    av_dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
+    av_dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
+
+    return 0;
+}
+
 // Write the header of the output file container.
 int FFMPEG_Transcoder::write_output_file_header()
 {
-    int ret;
     AVDictionary* dict = NULL;
+    int ret;
 
-    if (m_out.m_file_type == FILETYPE_MP4)
+    ret = prepare_mp4_optimisations(&dict);
+    if (ret < 0)
     {
-        // Settings for fast playback start in HTML5
-        av_dict_set_with_check(&dict, "movflags", "+faststart", 0, destname());
-        av_dict_set_with_check(&dict, "frag_duration", "1000000", 0, destname()); // 1 sec
-
-        av_dict_set_with_check(&dict, "movflags", "+empty_moov", 0, destname());
-        if (params.m_target == TARGET_EDGE || params.m_target == TARGET_IE)
-        {
-            // MS IE and Edge optimisation
-            av_dict_set_with_check(&dict, "movflags", "+separate_moof", 0, destname()); // MS Edge
-        }
-
-        av_dict_set_with_check(&dict, "flags:a", "+global_header", 0, destname());
-        av_dict_set_with_check(&dict, "flags:v", "+global_header", 0, destname());
+        return ret;
     }
 
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER

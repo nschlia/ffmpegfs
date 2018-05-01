@@ -2,26 +2,26 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
-check() {
-    FILE="$1"
+check_filesize() {
+    FILE="$1.${DESTTYPE}"
     MIN="$2"
     MAX="$3"
 
-    if [ -z $MAX  ]
+    if [ -z ${MAX}  ]
     then
-        MAX=$MIN
+        MAX=${MIN}
     fi
 
-    SIZE=$(stat -c %s "$DIRNAME/$FILE")
-    echo "File: $FILE"
-    if [ $MIN -eq $MAX ]
+    SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
+    echo "File: ${FILE}"
+    if [ ${MIN} -eq ${MAX} ]
     then
-        echo "Size: $SIZE (expected $MIN)"
+        echo "Size: ${SIZE} (expected ${MIN})"
     else
-        echo "Size: $SIZE (expected $MIN...$MAX)"
+        echo "Size: ${SIZE} (expected ${MIN}...${MAX})"
     fi
 
-    if [ $SIZE -ge $MIN -a $SIZE -le $MAX ]
+    if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]
     then
         echo "Pass"
     else
@@ -31,30 +31,30 @@ check() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-cat "$DIRNAME/obama.$DESTTYPE" > /dev/null
-cat "$DIRNAME/raven.$DESTTYPE" > /dev/null
+cat "${DIRNAME}/obama.${DESTTYPE}" > /dev/null
+cat "${DIRNAME}/raven.${DESTTYPE}" > /dev/null
 
-if [ "$DESTTYPE" == "mp4" ];
+if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check "obama.mp4" 99151 113048
-    check "raven.mp4" 133661 137986
-elif [ "$DESTTYPE" == "mp3" ];
+    check_filesize "obama" 99151 113048
+    check_filesize "raven" 130792 137986
+elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check "obama.mp3" 107101
-    check "raven.mp3" 126456
-elif [ "$DESTTYPE" == "wav" ];
+    check_filesize "obama" 107101
+    check_filesize "raven" 126456
+elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
-    check "obama.wav" 1058636
-    check "raven.wav" 3699406
-elif [ "$DESTTYPE" == "ogg" ];
+    check_filesize "obama" 1058636
+    check_filesize "raven" 3699406
+elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check "obama.ogg" 66181
-    check "raven.ogg" 141211
+    check_filesize "obama" 66181
+    check_filesize "raven" 141211
 else
-echo "Internal error, unknown type $DESTTYPE. Fix script!"
+echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99
 fi

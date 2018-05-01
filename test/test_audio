@@ -2,69 +2,48 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+check_audio() {
+    TGTFILE="$1.${DESTTYPE}"
+    SRCFILE="$1.$2"
+    EXPECTED="$3"
+
+    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}" 2>&-)"
+    SIZE=$(stat -c %s "$DIRNAME/${TGTFILE}")
+    echo "File  : ${TGTFILE}"
+    echo "Result: ${RESULT} (expected ${EXPECTED})"
+
+    if [ $(echo "${RESULT} <= ${EXPECTED}" | bc) -eq 1 ]
+    then
+        echo "Pass"
+    else
+        echo "FAIL!"
+        exit 1
+    fi
+}
+
 if [ "$DESTTYPE" == "mp4" ];
 then
-# mp4
-echo Checking $DIRNAME/obama.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ "$RESULT" \< 0.08 ]
-echo "Pass"
-
-echo Checking $DIRNAME/raven.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ "$RESULT" \< 0.08 ]
-echo "Pass"
-
+	# mp4
+	check_audio "obama" "flac" 0.08
+	check_audio "raven" "ogg" 0.08
 elif [ "$DESTTYPE" == "mp3" ];
 then
-# mp3
-echo Checking $DIRNAME/obama.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ "$RESULT" \< 0.6 ]
-echo "Pass"
-
-echo Checking $DIRNAME/raven.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ "$RESULT" \< 0.4 ]
-echo "Pass"
-
+	# mp3
+	check_audio "obama" "flac" 0.6
+	check_audio "raven" "ogg" 0.4
 elif [ "$DESTTYPE" == "wav" ];
 then
-# wav
-echo Checking $DIRNAME/obama.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
-echo "Pass"
-
-echo Checking $DIRNAME/raven.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
-echo "Pass"
-
+	# wav
+	check_audio "obama" "flac" 0.0
+	check_audio "raven" "ogg" 0.0
 elif [ "$DESTTYPE" == "ogg" ];
 then
-# ogg
-echo Checking $DIRNAME/obama.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/obama.flac" "$DIRNAME/obama.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ "$RESULT" \< 0.2 ]
-echo "Pass"
-
-echo Checking $DIRNAME/raven.$DESTTYPE
-RESULT="$(./fpcompare "$SRCDIR/raven.ogg" "$DIRNAME/raven.$DESTTYPE" 2>&-)"
-echo "Result: $RESULT"
-[ $(echo "$RESULT == 0.0" | bc) -eq 1 ]
-echo "Pass"
-
+	# ogg
+	check_audio "obama" "flac" 0.2
+	check_audio "raven" "ogg" 0.0
 else
-echo "Internal error, unknown type $DESTTYPE. Fix script!"
-exit 99
+	echo "Internal error, unknown type $DESTTYPE. Fix script!"
+	exit 99
 fi
 
 echo OK

@@ -687,7 +687,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
 
     // Open the encoder for the audio stream to use it later.
-    if ((ret = avcodec_open2(output_codec_ctx, output_codec, &opt)) < 0)
+    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    if (ret < 0)
     {
         ffmpegfs_error("%s * Could not open %s output codec %s (error '%s').", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
         return ret;

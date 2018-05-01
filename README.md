@@ -140,10 +140,10 @@ the subformat must be different as for Firefox, unfortunately.
 The --target option allows to select the format:
 
 |FF|Firefox|
-|IE|Microsoft Internet Explorer|
-|EDGE|Microsoft Edge|
+|IE|Microsoft Internet Explorer <= 11|
+|EDGE|Microsoft Edge or IE > 11|
 |CHROME|Google Chrome|
-|SAFARI|Google Safari|
+|SAFARI|Apple Safari|
 |OPERA|Opera|
 |MAXTHON|Maxthon|
 

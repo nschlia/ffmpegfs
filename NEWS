@@ -15,24 +15,27 @@ Changes in this release:
   file size or timestamp changes, or different encoding options  are selected 
   (e.g. a different bitrate, vidoe size etc.).
 * Feature: Allow optimisations for target browsers. Currently selectable:
-    UNSPECIFIC no optimisations
-    EDGE       optimise for MS Edge and Internet Explorer
-    Defaults to UNSPECIFIC
+          UNSPECIFIC no optimisations
+    	  EDGE       optimise for MS Edge and Internet Explorer
+    	  Defaults to UNSPECIFIC
 * Feature: enhanced error output for SQLite (if supported by library version)
 * Feature: copy album arts from source if supported by target format (MP3/4).
   Use --noalbumarts parameter to disable, e.g., for streaming files.
 
+* Bugfix: Only four lines of code: Avoid locking other clients when trying to get
+        the size of a file currently being decoded. Also speeds up directory 
+	access quite significantly-
 * Bugfix: Fix lost frames at end of files (files where cut short)
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)
 * Bugfix: Make WAV size prediction more accurate
 * Bugfix: Recode existing cache files if not found in database (handle database inconsistencies).
 * Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
 * Bugfix: Files were truncated (mostly mp3) when cp'ed directly while transcoding. Now files
-  will have the final size as expected.
+	will have the final size as expected.
 * Bugfix: Create valid WAV header for files transcoded on-the-fly.
 * Bugfix: Ensure a file gets recoded when the last attempt failed.
 * Bugfix: Ensure that transcoding errors get passed on to calling process, e.g. cp or rsync.
-    Otherwise copy operations might not notice that the file is invalid.
+    	Otherwise copy operations might not notice that the file is invalid.
 
 FFMpeg has evolved, many API parts have been deprecated and will be dropped
 soon. This release adopts these changes by conditionally using the new

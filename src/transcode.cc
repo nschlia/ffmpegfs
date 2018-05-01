@@ -168,6 +168,12 @@ int transcoder_cached_filesize(const char* filename, struct stat *stbuf)
     }
 
     size_t encoded_filesize = cache_entry->m_cache_info.m_encoded_filesize;
+	
+	if (!encoded_filesize)
+	{
+		// If not yet encoded, return predicted file size
+		encoded_filesize = cache_entry->m_cache_info.m_predicted_filesize;
+	}
 
     if (encoded_filesize)
     {

@@ -144,6 +144,12 @@ The --target option allows to select the format:
 
 In most cases the files will not play if not correctly optimised.
 
+Currently playback is OK only with Firefox and MS Edge if running under Windows 10.
+Under Linux Firefox works smoothly while under Windows 7 it sometimes has problems.
+Why this works under some Windows 7 systems, but under others not is yet unclear.
+
+See TODO for details.
+
 HOW IT WORKS
 ------------
 

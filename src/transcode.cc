@@ -783,12 +783,7 @@ static const map<string, TARGET> target_map =
 {
     { "UNSPECIFIC", TARGET_UNSPECIFIC },
     { "FF", TARGET_FF },
-    { "IE", TARGET_IE },
     { "EDGE", TARGET_EDGE },
-    { "CHROME", TARGET_CHROME },
-    { "SAFARI", TARGET_SAFARI },
-    { "OPERA", TARGET_OPERA },
-    { "MAXTHON", TARGET_MAXTHON }
 };
 
 int get_target(const char * arg, TARGET *value)

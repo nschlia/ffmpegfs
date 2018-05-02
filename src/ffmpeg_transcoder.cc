@@ -406,7 +406,7 @@ bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int max_bit_rate, 
     return false;
 }
 
-double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio)
+double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const
 {
     double dblAspectRatio = 0;
 
@@ -598,9 +598,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        streamSetup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
+        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
 #else
-        streamSetup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
+        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
 
 #ifdef _DEBUG
@@ -1085,120 +1085,39 @@ int FFMPEG_Transcoder::init_fifo()
 
 // Prepare format and browser optimisations
 
-/*
- * https://www.ffmpeg.org/ffmpeg-formats.html#mov_002c-mp4_002c-ismv
- *
- * mov, mp4, ismv
- * ==============
- *
- * MOV/MP4/ISMV (Smooth Streaming) muxer.
- *
- * The mov/mp4/ismv muxer supports fragmentation. Normally, a MOV/MP4 file has all the metadata about all packets
- * stored in one location (written at the end of the file, it can be moved to the start for better playback by
- * adding faststart to the movflags, or using the qt-faststart tool). A fragmented file consists of a number of
- * fragments, where packets and metadata about these packets are stored together. Writing a fragmented file has
- * the advantage that the file is decodable even if the writing is interrupted (while a normal MOV/MP4 is undecodable
- * if it is not properly finished), and it requires less memory when writing very long files (since writing normal
- * MOV/MP4 files stores info about every single packet in memory until the file is closed). The downside is that it
- * is less compatible with other applications.
- *
- * Options
- * =======
- *
- *      Fragmentation is enabled by setting one of the AVOptions that define how to cut the file into fragments:
- *
- *          -moov_size bytes
- *
- *      Reserves space for the moov atom at the beginning of the file instead of placing the moov atom at the end.
- *      If the space reserved is insufficient, muxing will fail.
- *
- *          -movflags frag_keyframe
- *
- *      Start a new fragment at each video keyframe.
- *
- *          -frag_duration duration
- *
- *      Create fragments that are duration microseconds long.
- *
- *          -frag_size size
- *
- *      Create fragments that contain up to size bytes of payload data.
- *
- *          -movflags frag_custom
- *
- *      Allow the caller to manually choose when to cut fragments, by calling av_write_frame(ctx, NULL) to write a
- *      fragment with the packets written so far. (This is only useful with other applications integrating libavformat,
- *      not from ffmpeg.)
- *
- *          -min_frag_duration duration
- *
- *      Don’t create fragments that are shorter than duration microseconds long.
- *
- *      If more than one condition is specified, fragments are cut when one of the specified conditions is fulfilled.
- *      The exception to this is -min_frag_duration, which has to be fulfilled for any of the other conditions to apply.
- *
- *      Additionally, the way the output file is written can be adjusted through a few other options:
- *
- *          -movflags empty_moov
- *
- *      Write an initial moov atom directly at the start of the file, without describing any samples in it. Generally,
- *      an mdat/moov pair is written at the start of the file, as a normal MOV/MP4 file, containing only a short portion
- *      of the file. With this option set, there is no initial mdat atom, and the moov atom only describes the tracks
- *      but has a zero duration.
- *
- *      This option is implicitly set when writing ismv (Smooth Streaming) files.
- *
- *          -movflags separate_moof
- *
- *      Write a separate moof (movie fragment) atom for each track. Normally, packets for all tracks are written in a
- *      moof atom (which is slightly more efficient), but with this option set, the muxer writes one moof/mdat pair for
- *      each track, making it easier to separate tracks.
- *
- *      This option is implicitly set when writing ismv (Smooth Streaming) files.
- *
- *          -movflags faststart
- *
- *      Run a second pass moving the index (moov atom) to the beginning of the file. This operation can take a while,
- *      and will not work in various situations such as fragmented output, thus it is not enabled by default.
- *
- *          -movflags rtphint
- *
- *      Add RTP hinting tracks to the output file.
- *
- *          -movflags disable_chpl
- *
- *      Disable Nero chapter markers (chpl atom). Normally, both Nero chapters and a QuickTime chapter track are written
- *      to the file. With this option set, only the QuickTime chapter track will be written. Nero chapters can cause
- *      failures when the file is reprocessed with certain tagging programs, like mp3Tag 2.61a and iTunes 11.3, most likely
- *      other versions are affected as well.
- *
- *          -movflags omit_tfhd_offset
- *
- *      Do not write any absolute base_data_offset in tfhd atoms. This avoids tying fragments to absolute byte positions
- *      in the file/streams.
- *
- *          -movflags default_base_moof
- *
- *      Similarly to the omit_tfhd_offset, this flag avoids writing the absolute base_data_offset field in tfhd atoms, but
- *      does so by using the new default-base-is-moof flag instead. This flag is new from 14496-12:2012. This may make the
- *      fragments easier to parse in certain circumstances (avoiding basing track fragment location calculations on the
- *      implicit end of the previous track fragment).
- *
- *          -write_tmcd
- *
- *      Specify on to force writing a timecode track, off to disable it and auto to write a timecode track only for mov and
- *      mp4 output (default).
- *
- *          -movflags negative_cts_offsets
- *
- *      Enables utilization of version 1 of the CTTS box, in which the CTS offsets can be negative. This enables the initial
- *      sample to have DTS/CTS of zero, and reduces the need for edit lists for some cases such as video tracks with B-frames.
- *      Additionally, eases conformance with the DASH-IF interoperability guidelines.
- *
- */
 
-int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict)
+int FFMPEG_Transcoder::update_dict(AVDictionary** dict, LPCMP4_OPTIMISATIONS opt) const
 {
+    int ret = 0;
+    for (LPCMP4_OPTIMISATIONS p = opt; p->key != NULL; p++)
+    {
+        if ((p->options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
+        {
+            // Option for audio only, but file contains video stream
+            continue;
+        }
+
+        if ((p->options & OPT_VIDEO) && m_out.m_video.m_nStream_idx == INVALID_STREAM)
+        {
+            // Option for video, but file contains no video stream
+            continue;
+        }
+
+printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXX %s * MP4 optimisation -%s%s%s.\n", destname(),  p->key, *p->value ? " " : "", p->value);
+
+        ret = av_dict_set_with_check(dict, p->key, p->value, p->flags, destname());
+        if (ret < 0)
+        {
+            break;
+        }
+    }
+    return ret;
+}
+
+int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict) const
+{
+    int ret = 0;
+
     if (m_out.m_file_type != FILETYPE_MP4)
     {
         return 0;
@@ -1209,189 +1128,20 @@ int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict)
     {
     case TARGET_FF:
     {
-        // Use: -movflags +empty_moov
-        //      -frag_duration 1000000  (for audio files only)
-
         ffmpegfs_trace("%s * Targetting on Firefox.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        if (m_out.m_video.m_nStream_idx == INVALID_STREAM)
-        {
-            // only for audio files
-            av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
-        }
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-        av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        //av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
+        ret = update_dict(dict, m_opt_target_ff);
         break;
     }
     case TARGET_EDGE:
     {
-        // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-
         ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-        av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-        av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname()); // MS Edge
-        av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        //av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
-        break;       
-    }    
-    case TARGET_IE:
-    {
-        // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-
-        ffmpegfs_trace("%s * Targetting on MS IE <= 11.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        av_dict_set_with_check(dict, "frag_duration", "1000000", 0, destname()); // 1 sec
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-        av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-        av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname()); // MS Edge
-        av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        //av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
-        break;
-    }
-    case TARGET_CHROME:
-    {
-        ffmpegfs_trace("%s * Targetting on Google Chrome.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        //av_dict_set_with_check(dict, "frag_duration", "1000", 0, destname()); // duration
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-       	//av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        //av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
-        break;
-    }
-    case TARGET_SAFARI:
-    {
-        ffmpegfs_trace("%s * Targetting on Apple Safari.", destname());
-
-        // Does not like empty_moov 
-        // Maybe optimisations not possible?
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        //av_dict_set_with_check(dict, "frag_duration", "1000", 0, destname()); // duration
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-       	//av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        //av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
-/*		
-        av_dict_set_with_check(dict, "frag_size", "1000000", 0, destname());
-        av_dict_set_with_check(dict, "moov_size", "1024000", 0, destname());
-        av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-		av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-        av_dict_set_with_check(dict, "movflags", "+isml", 0, destname());
-*/
-        break;
-    }
-    case TARGET_OPERA:
-    {
-        ffmpegfs_trace("%s * Targetting on Opera.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        //av_dict_set_with_check(dict, "frag_duration", "1000", 0, destname()); // duration
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-       	//av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
-        break;
-    }
-    case TARGET_MAXTHON:
-    {
-        ffmpegfs_trace("%s * Targetting on Maxthon.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        //av_dict_set_with_check(dict, "frag_duration", "1000", 0, destname()); // duration
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-       	//av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
+        ret = update_dict(dict, m_opt_target_edge);
         break;
     }
     case TARGET_UNSPECIFIC:
     {
         ffmpegfs_trace("%s * No specific target selected.", destname());
-
-       	//av_dict_set_with_check(dict, "moov_size", "1000000", 0, destname()); // bytes
-       	//av_dict_set_with_check(dict, "movflags", "frag_keyframe", 0, destname());
-        //av_dict_set_with_check(dict, "frag_duration", "1000", 0, destname()); // duration
-        //av_dict_set_with_check(dict, "frag_size", "100000", 0, destname()); // size
-        //av_dict_set_with_check(dict, "min_frag_duration", "1000", 0, destname()); // duration
-       	//av_dict_set_with_check(dict, "movflags", "empty_moov", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "separate_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "faststart", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "rtphint", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "disable_chpl", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "omit_tfhd_offset", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "default_base_moof", 0, destname());
-       	//av_dict_set_with_check(dict, "write_tmcd", "", 0, destname());
-       	//av_dict_set_with_check(dict, "movflags", "negative_cts_offsets", 0, destname());
+        ret = update_dict(dict, m_opt_target_unspecific);
         break;
     }
     }
@@ -1400,7 +1150,7 @@ int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict)
     av_dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
     av_dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
 
-    return 0;
+    return ret;
 }
 
 // Write the header of the output file container.
@@ -3237,18 +2987,6 @@ void FFMPEG_Transcoder::close()
         // Closed anything...
         ffmpegfs_debug("FFmpeg transcoder closed.");
     }
-}
-
-int FFMPEG_Transcoder::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * fileName)
-{
-    int ret = ::av_dict_set(pm, key, value, flags);
-
-    if (ret < 0)
-    {
-        ffmpegfs_error("%s * Error setting dictionary option key(%s)='%s' (error '%s').", fileName, key, value, ffmpeg_geterror(ret).c_str());
-    }
-
-    return ret;
 }
 
 const char *FFMPEG_Transcoder::filename() const

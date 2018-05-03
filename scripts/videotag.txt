@@ -1,0 +1,5 @@
+videotag.php is a small script that allows testing the video tag easily. Just put it into the base path directory, mount it to a folder that is accessible to your (PHP enabled) web server.
+
+When the page is opened, all transcoded files are listed on the right and playback can be started by clicking on the link.
+
+Very handy to test browser capabilities...

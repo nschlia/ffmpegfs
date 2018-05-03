@@ -744,6 +744,12 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 
+    if (!av_dict_get(opt, "threads", NULL, 0))
+    {
+        ffmpegfs_error("%s * Setting threads to auto for codec %s.", destname(), get_codec_name(output_codec_ctx->codec_id));
+        av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
+    }
+
     // Open the encoder for the audio stream to use it later.
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)

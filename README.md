@@ -138,9 +138,11 @@ the subformat must be different as for Firefox, unfortunately.
 
 The --profile option allows to select the format:
 
-|NONE|No profile (this is the default)|
-|FF|Firefox|
-|EDGE|Microsoft Edge or IE > 11|
+|**Profile**|**OS** |**Target**|**Remarks**|
+|NONE|all|VLC, Windows Media Player etc.|Playback (default)|
+|FF|Linux, Win10|Firefox|Playback while transcoding|
+|FF|Win7|Firefox|Playback while transcoding, audio only|
+|EDGE|Win10|MS Edge, IE > 11|Playback while transcoding|
 
 In most cases files will not play if not correctly optimised.
 

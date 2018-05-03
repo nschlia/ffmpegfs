@@ -6,12 +6,19 @@ check_audio() {
     TGTFILE="$1.${DESTTYPE}"
     SRCFILE="$1.$2"
     EXPECTED="$3"
-
-    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}" 2>&-)"
+    
+    cp "$DIRNAME/${TGTFILE}" /tmp/2>&-
+    
+#    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}" 2>&-)"
+    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}")"
+    
+    rm -f "/tmp/${TGTFILE}" 
+    
     SIZE=$(stat -c %s "$DIRNAME/${TGTFILE}")
     echo "File  : ${TGTFILE}"
     echo "Result: ${RESULT} (expected ${EXPECTED})"
 
+    
     if [ $(echo "${RESULT} <= ${EXPECTED}" | bc) -eq 1 ]
     then
         echo "Pass"

@@ -38,7 +38,7 @@ if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
     check_filesize "obama" 99151 113048
-    check_filesize "raven" 130792 137986
+    check_filesize "raven" 130730 137986
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3

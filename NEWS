@@ -19,7 +19,6 @@ Changes in this release:
            UNSPECIFIC no optimisations
            FF         optimise for Firefox
            EDGE       optimise for MS Edge and Internet Explorer > 11
-           IE         optimise for MS Edge and Internet Explorer <= 11
            Defaults to UNSPECIFIC
 * Feature: enhanced error output for SQLite (if supported by library version)
 * Feature: copy album arts from source if supported by target format (MP3/4).

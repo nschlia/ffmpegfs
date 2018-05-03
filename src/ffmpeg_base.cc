@@ -238,7 +238,11 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
 
 int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
+<<<<<<< HEAD
     int ret = av_dict_set(pm, key, value, flags);
+=======
+    int ret = ::av_dict_set(pm, key, value, flags);
+>>>>>>> d87822d3e4ddca93d14fa895f1ab8ebb244e27d9
 
     if (ret < 0)
     {

@@ -11,12 +11,12 @@ ffmpegfs
 Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
-*Work Release 1.3 in progress:
+**Work Release 1.3 in progress:
 
 Currently I am trying to complete the target browser optimisations (quite a
 hassle, though). Then the usual stabilisation phase will take place.
 
-V1.3 will be ready soon!*
+V1.3 will be ready soon!**
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.
@@ -25,7 +25,6 @@ Supported output formats:
 
 * MP4 (audio & video)
 * OGG (audio & video)
-* WEBM (audio & video) *planned for future release*
 * MP3 (audio only)
 * WAV (audio only)
 
@@ -139,15 +138,17 @@ the subformat must be different as for Firefox, unfortunately.
 
 The --target option allows to select the format:
 
+|UNSPECIFIC|No optimisations (the default)|
 |FF|Firefox|
-|IE|Microsoft Internet Explorer <= 11|
 |EDGE|Microsoft Edge or IE > 11|
-|CHROME|Google Chrome|
-|SAFARI|Apple Safari|
-|OPERA|Opera|
-|MAXTHON|Maxthon|
 
 In most cases the files will not play if not correctly optimised.
+
+Currently playback is OK only with Firefox and MS Edge if running under Windows 10.
+Under Linux Firefox works smoothly while under Windows 7 it sometimes has problems.
+Why this works under some Windows 7 systems, but under others not is yet unclear.
+
+See TODO for details.
 
 HOW IT WORKS
 ------------

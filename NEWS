@@ -15,11 +15,11 @@ Changes in this release:
 * Feature: Improved recoding detection. Files are recoded if the source file size 
            or timestamp changes, or different encoding options are selected 
            (e.g. a different bitrate, vidoe size etc.).
-* Feature: Allow optimisations for target browsers. Currently selectable:
-           UNSPECIFIC no optimisations
-           FF         optimise for Firefox
-           EDGE       optimise for MS Edge and Internet Explorer > 11
-           Defaults to UNSPECIFIC
+* Feature: Allow profiles for target browsers or players. Currently selectable:
+           NONE     no profile
+           FF       optimise for Firefox
+           EDGE     optimise for MS Edge and Internet Explorer > 11
+           Defaults to NONE
 * Feature: enhanced error output for SQLite (if supported by library version)
 * Feature: copy album arts from source if supported by target format (MP3/4).
            Use --noalbumarts parameter to disable, e.g., for streaming files.

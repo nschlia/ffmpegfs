@@ -42,6 +42,7 @@ protected:
     int init_frame(AVFrame **frame, const char *filename) const;
     void stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const;
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename) const;
+    int av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename) const;
 
 private:
 };

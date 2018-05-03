@@ -133,8 +133,26 @@
  *
  */
 
+// ****************************************************************************************************************
+
 // No opimisations, just plain mp4.
-const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_unspecific[] =
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_none[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+};
+
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_none[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -154,10 +172,28 @@ const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_unspe
     { NULL, NULL, 0, 0 }
 };
 
+// ****************************************************************************************************************
+
 // Use: -movflags +empty_moov
 //      -frag_duration 1000000  (for audio files only)
 // GOOD: Starts immediately while still decoding.
-const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_ff[] =
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_ff[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+};
+
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_ff[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -177,9 +213,27 @@ const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_ff[] 
     { NULL, NULL, 0, 0 }
 };
 
+// ****************************************************************************************************************
+
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
 // GOOD: Starts immediately while still decoding.
-const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_edge[] =
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_edge[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+};
+
+const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_edge[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
@@ -198,3 +252,5 @@ const FFMPEG_Transcoder::MP4_OPTIMISATIONS FFMPEG_Transcoder::m_opt_target_edge[
     //{ "movflags",               "+isml",                   0, OPT_ALL },
     { NULL, NULL, 0, 0 }
 };
+
+// ****************************************************************************************************************

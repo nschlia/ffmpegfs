@@ -46,18 +46,20 @@ struct AVAudioFifo;
 class FFMPEG_Transcoder : public FFMPEG_Base
 {
 private:
-#define OPT_ALL         0x0000  // All files
-#define OPT_AUDIO       0x0001  // For audio only files
-#define OPT_VIDEO       0x0002  // For videos (not audio only)
+#define OPT_CODEC       0x80000000
 
-    typedef struct _tagMP4_OPTIMISATIONS
+#define OPT_ALL         0x00000000  // All files
+#define OPT_AUDIO       0x00000001  // For audio only files
+#define OPT_VIDEO       0x00000002  // For videos (not audio only)
+
+    typedef struct _tagMP4_PROFILE
     {
         const char *key;
         const char *value;
         const int flags;
         const int options;
-    } MP4_OPTIMISATIONS, *LPMP4_OPTIMISATIONS;
-    typedef MP4_OPTIMISATIONS const * LPCMP4_OPTIMISATIONS;
+    } MP4_PROFILE, *LPMP4_PROFILE;
+    typedef MP4_PROFILE const * LPCMP4_PROFILE;
 
 public:
     FFMPEG_Transcoder();
@@ -82,7 +84,9 @@ public:
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
-    int add_stream(AVCodecID codec_id);
+    int update_codec(void *opt, LPCMP4_PROFILE mp4_opt) const;
+    int prepare_mp4_codec(void *opt) const;
+    int add_stream(AVCodecID codec_id);    
     int add_albumart_stream(const AVCodecContext *input_codec_ctx);
     int add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
     int open_output_filestreams(Buffer *buffer);
@@ -91,8 +95,8 @@ protected:
     int process_albumarts();
     int init_resampler();
     int init_fifo();
-    int update_dict(AVDictionary** dict, LPCMP4_OPTIMISATIONS opt) const;
-    int prepare_mp4_optimisations(AVDictionary **dict) const;
+    int update_format(AVDictionary** dict, LPCMP4_PROFILE opt) const;
+    int prepare_mp4_format(AVDictionary **dict) const;
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
     int decode_video_frame(AVPacket *pkt, int *decoded);
@@ -213,9 +217,12 @@ private:
         ID3v1                   m_id3v1;                // mp3 only, can be referenced at any time
     } m_out;
 
-    static const MP4_OPTIMISATIONS m_opt_target_ff[];
-    static const MP4_OPTIMISATIONS m_opt_target_edge[];
-    static const MP4_OPTIMISATIONS m_opt_target_unspecific[];
+    static const MP4_PROFILE m_opt_codec_none[];
+    static const MP4_PROFILE m_opt_format_none[];
+    static const MP4_PROFILE m_opt_codec_ff[];
+    static const MP4_PROFILE m_opt_format_ff[];
+    static const MP4_PROFILE m_opt_codec_edge[];
+    static const MP4_PROFILE m_opt_format_edge[];
 };
 
 #endif // FFMPEG_TRANSCODER_H

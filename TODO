@@ -16,7 +16,7 @@ ffmpegfs TODOs
 * Many more ideas I'll have when I wake up and find them nice to have.
 * Any features that you may request.
 
-Optimisations
+Optimisation Profiles
 
 Currently playback is OK only with Firefox and MS Edge if running under Windows 10.
 Under Linux Firefox works smoothly while under Windows 7 it sometimes has problems.
@@ -27,12 +27,12 @@ Details:
 Firefox OK for Linux and Windows 10. Audio plays fine under Windows 7, but videos
 have sound and black picture or video does not play at all.
 
-MS Edge is OK but of course under Windows 10 only.
+MS Edge is OK but of course under Windows 10 only (also Windows 10 mobile).
 
 MS Internet Explorer 11 works when switched to profile baseline 3.0 or high 3.1,
 but video must be decoded as a whole first. No immediate start. If video is
 fragmented, Internet Explorer plays the first segment and stops. If the ultrafast
-option is not turned off (this implies constrained baseline profile)the video
+option is not turned off (this implies constrained baseline profile) the video
 won't play at all ("unsupported format").
 
 Chrome works but the video must be decoded as a whole first.

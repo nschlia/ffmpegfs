@@ -779,14 +779,14 @@ int init_logging(const char* logfile, const char* max_level, int to_stderr, int 
     return InitLogging(logfile, it->second, to_stderr, to_syslog);
 }
 
-static const map<string, TARGET> target_map =
+static const map<string, PROFILE> profile_map =
 {
-    { "UNSPECIFIC", TARGET_UNSPECIFIC },
-    { "FF", TARGET_FF },
-    { "EDGE", TARGET_EDGE },
+    { "NONE", PROFILE_NONE },
+    { "FF", PROFILE_FF },
+    { "EDGE", PROFILE_EDGE },
 };
 
-int get_target(const char * arg, TARGET *value)
+int get_profile(const char * arg, PROFILE *value)
 {
     const char * ptr = strchr(arg, '=');
 
@@ -794,11 +794,11 @@ int get_target(const char * arg, TARGET *value)
     {
         ptr++;
 
-        auto it = target_map.find(ptr);
+        auto it = profile_map.find(ptr);
 
-        if (it == target_map.end())
+        if (it == profile_map.end())
         {
-            fprintf(stderr, "Invalid target type: %s\n", ptr);
+            fprintf(stderr, "Invalid profile: %s\n", ptr);
             return -1;
         }
 
@@ -807,15 +807,15 @@ int get_target(const char * arg, TARGET *value)
         return 0;
     }
 
-    fprintf(stderr, "Missing target string\n");
+    fprintf(stderr, "Missing profile string\n");
 
     return -1;
 }
 
-static std::map<string, TARGET>::const_iterator searchByValue(const map<string, TARGET> & mapOfWords, TARGET value)
+static std::map<string, PROFILE>::const_iterator search_by_value(const map<string, PROFILE> & mapOfWords, PROFILE value)
 {
     // Iterate through all elements in std::map and search for the passed element
-    std::map<string, TARGET>::const_iterator it = mapOfWords.begin();
+    std::map<string, PROFILE>::const_iterator it = mapOfWords.begin();
     while (it != mapOfWords.end())
     {
         if(it->second == value)
@@ -827,10 +827,10 @@ static std::map<string, TARGET>::const_iterator searchByValue(const map<string, 
     return mapOfWords.end();
 }
 
-const char * get_target_text(TARGET value)
+const char * get_profile_text(PROFILE value)
 {
-    map<string, TARGET>::const_iterator it = searchByValue(target_map, value);
-    if (it != target_map.end())
+    map<string, PROFILE>::const_iterator it = search_by_value(profile_map, value);
+    if (it != profile_map.end())
     {
         return it->first.c_str();
     }

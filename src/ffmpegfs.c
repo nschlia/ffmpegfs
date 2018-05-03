@@ -56,7 +56,7 @@ struct ffmpegfs_params params =
     .m_mountpath          	= NULL,                     // required parameter
 
     .m_desttype           	= "mp4",                    // default: encode to mp4
-    .m_target               = TARGET_UNSPECIFIC,        // default: no specific target
+    .m_profile              = PROFILE_NONE,       		// default: no profile
 
     .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
@@ -104,7 +104,7 @@ enum
     KEY_MAX_CACHE_SIZE,
     KEY_MIN_DISKSPACE_SIZE,
     KEY_CACHE_MAINTENANCE,
-    KEY_TARGET
+    KEY_PROFILE
 };
 
 #define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(struct ffmpegfs_params, param), value }
@@ -114,8 +114,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Output type
     FFMPEGFS_OPT("--desttype=%s",               m_desttype, 0),
     FFMPEGFS_OPT("desttype=%s",                 m_desttype, 0),
-    FUSE_OPT_KEY("--target=%s",                 KEY_TARGET),
-    FUSE_OPT_KEY("target=%s",                   KEY_TARGET),
+    FUSE_OPT_KEY("--profile=%s",                KEY_PROFILE),
+    FUSE_OPT_KEY("profile=%s",                  KEY_PROFILE),
 
     // Audio
     FUSE_OPT_KEY("--audiobitrate=%s",           KEY_AUDIO_BITRATE),
@@ -206,12 +206,12 @@ static void usage(char *name)
           "                           either MP4, MP3, OGG or WAV. To stream videos,\n"
           "                           MP4 or OGG must be selected.\n"
           "                           Default: mp4\n"
-          "    --target=NAME, -o target=NAME\n"
-          "                           Set optimisations for target browsers. Currently selectable:\n"
-          "                           UNSPECIFIC no specific optimisations\n"
-          "                           FF         Firefox\n"
-          "                           EDGE       Microsoft Edge or Internet Explorer > 11\n"
-          "                           Default: UNSPECIFIC\n"
+          "    --profile=NAME, -o profile=NAME\n"
+          "                           Set profile for target audience. Currently selectable:\n"
+          "                           NONE     no profile\n"
+          "                           FF       Firefox\n"
+          "                           EDGE     Microsoft Edge or Internet Explorer > 11\n"
+          "                           Default: NONE\n"
           "\n"
           "Audio Options:\n"
           "\n"
@@ -241,12 +241,12 @@ static void usage(char *name)
           "                           cause transcoding to fail.\n"
           "                           Default: 2 Mbit\n"
           "    --videoheight=HEIGHT, -o videoheight=HEIGHT\n"
-          "                           Sets the height of the target video.\n"
+          "                           Sets the height of the transcoded video.\n"
           "                           When the video is rescaled the aspect ratio is\n"
           "                           preserved if --width is not set at the same time.\n"
           "                           Default: keep source video height\n"
           "    --videowidth=WIDTH, -o videowidth=WIDTH\n"
-          "                           Sets the width of the target video.\n"
+          "                           Sets the width of the transcoded video.\n"
           "                           When the video is rescaled the aspect ratio is\n"
           "                           preserved if --height is not set at the same time.\n"
           "                           Default: keep source video width\n"
@@ -729,9 +729,9 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
         exit(0);
     }
-    case KEY_TARGET:
+    case KEY_PROFILE:
     {
-        return get_target(arg, &params.m_target);
+        return get_profile(arg, &params.m_profile);
     }
     case KEY_AUDIO_BITRATE:
     {
@@ -826,7 +826,7 @@ static void print_params()
                                 "Base Path         : %s\n"
                                 "Mount Path        : %s\n\n"
                                 "Destination Type  : %s\n"
-                                "Target            : %s\n"
+                                "Profile           : %s\n"
                                 "\nAudio\n\n"
                                 "Audio Format      : %s\n"
                                 "Audio Bitrate     : %s\n"
@@ -858,7 +858,7 @@ static void print_params()
                    params.m_basepath,
                    params.m_mountpath,
                    params.m_desttype,
-                   get_target_text(params.m_target),
+                   get_profile_text(params.m_profile),
                    get_codec_name(audio_codecid),
                    audiobitrate,
                    audiosamplerate,

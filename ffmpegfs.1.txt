@@ -31,12 +31,12 @@ Mount IN_DIR on OUT_DIR, converting audio/video files to *mp4*, *mp3*, *ogg* or 
     *mp4*, *mp3*, *ogg* or *wav*. To stream videos, 
     *mp4* or *ogg* must be selected.
     Default: *mp4*
-*--target*=NAME, *-otarget*=NAME::
-    Set optimisations for target browsers. Currently selectable:
-    UNSPECIFIC no specific optimisations
-    FF         Firefox
-    EDGE       Microsoft Edge or Internet Explorer > 11
-    Default: UNSPECIFIC
+*--profile*=NAME, *-oprofile*=NAME::
+    Set profile for target audience. Currently selectable:
+    NONE     no profile
+    FF       optimise for Firefox
+    EDGE     optimise for MS Edge and Internet Explorer > 11
+    Defaults to NONE
 
 === Audio Options ===
 *--audiobitrate*=BITRATE, *-o audiobitrate*=BITRATE::

@@ -207,42 +207,23 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
 
     // At this moment the output format must be AV_PIX_FMT_YUV420P;
     output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
-
-    if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
-    {
-        //output_codec_ctx->flags2 |= AV_CODEC_FLAG2_FAST;
-        //output_codec_ctx->flags2 = AV_CODEC_FLAG2_FASTPSKIP;
-        //output_codec_ctx->profile = FF_PROFILE_H264_HIGH;
-        //output_codec_ctx->level = 31;
-
-        // -profile:v baseline -level 3.0
-        //av_opt_set(output_codec_ctx->priv_data, "profile", "baseline", 0);
-        //av_opt_set(output_codec_ctx->priv_data, "level", "3.0", 0);
-
-        // -profile:v high -level 3.1
-        //av_opt_set(output_codec_ctx->priv_data, "profile", "high", 0);
-        //av_opt_set(output_codec_ctx->priv_data, "level", "3.1", 0);
-
-        // Set speed (changes profile!)
-        av_opt_set(output_codec_ctx->priv_data, "preset", "ultrafast", 0);
-        //av_opt_set(output_codec_ctx->priv_data, "preset", "veryfast", 0);
-        //av_opt_set(output_codec_ctx->priv_data, "tune", "zerolatency", 0);
-
-        //if (!av_dict_get((AVDictionary*)output_codec_ctx->priv_data, "threads", NULL, 0))
-        //{
-        //  ffmpegfs_error("%s * Setting threads to auto for codec %s.", destname(), get_codec_name(codec_id));
-        //  av_dict_set_with_check((AVDictionary**)&output_codec_ctx->priv_data, "threads", "auto", 0, destname());
-        //}
-    }
 }
 
 int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
-<<<<<<< HEAD
     int ret = av_dict_set(pm, key, value, flags);
-=======
-    int ret = ::av_dict_set(pm, key, value, flags);
->>>>>>> d87822d3e4ddca93d14fa895f1ab8ebb244e27d9
+
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Error setting dictionary option key(%s)='%s' (error '%s').", filename, key, value, ffmpeg_geterror(ret).c_str());
+    }
+
+    return ret;
+}
+
+int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
+{
+    int ret = av_opt_set(obj, key, value, flags);
 
     if (ret < 0)
     {

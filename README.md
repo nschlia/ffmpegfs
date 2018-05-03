@@ -129,24 +129,21 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
 Enable deinterlacing to enhance image quality.
 
-MP4 FORMAT OPTIMISATIONS
+MP4 FORMAT PROFILE
 ------------------------
 
-The MP4 format has several derivative formats that are not compatible with
+The MP4 container has several derivative formats that are not compatible with
 all target audiences. To feed the resulting files into for example MS Edge,
 the subformat must be different as for Firefox, unfortunately.
 
-The --target option allows to select the format:
+The --profile option allows to select the format:
 
-|UNSPECIFIC|No optimisations (the default)|
+|NONE|No profile (this is the default)|
 |FF|Firefox|
 |EDGE|Microsoft Edge or IE > 11|
 
-In most cases the files will not play if not correctly optimised.
+In most cases files will not play if not correctly optimised.
 
-Currently playback is OK only with Firefox and MS Edge if running under Windows 10.
-Under Linux Firefox works smoothly while under Windows 7 it sometimes has problems.
-Why this works under some Windows 7 systems, but under others not is yet unclear.
 
 See TODO for details.
 

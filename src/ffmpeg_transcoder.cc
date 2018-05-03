@@ -491,6 +491,54 @@ void FFMPEG_Transcoder::limit_video_size(AVCodecContext *output_codec_ctx)
     }
 }
 
+// Prepare codec optimisations
+int FFMPEG_Transcoder::update_codec(void *opt, LPCMP4_PROFILE mp4_opt) const
+{
+    int ret = 0;
+
+    for (LPCMP4_PROFILE p = mp4_opt; p->key != NULL; p++)
+    {
+        ffmpegfs_trace("%s * MP4 codec optimisation -%s%s%s.", destname(),  p->key, *p->value ? " " : "", p->value);
+
+        ret = av_opt_set_with_check(opt, p->key, p->value, p->flags, destname());
+        if (ret < 0)
+        {
+            break;
+        }
+    }
+    return ret;
+}
+
+int FFMPEG_Transcoder::prepare_mp4_codec(void *opt) const
+{
+    int ret = 0;
+
+    // Settings for fast playback start in HTML5
+    switch (params.m_profile)
+    {
+    case PROFILE_FF:
+    {
+        ffmpegfs_trace("%s * Targetting on Firefox.", destname());
+        ret = update_codec(opt, m_opt_codec_ff);
+        break;
+    }
+    case PROFILE_EDGE:
+    {
+        ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
+        ret = update_codec(opt, m_opt_codec_edge);
+        break;
+    }
+    case PROFILE_NONE:
+    {
+        ffmpegfs_trace("%s * No profile selected.", destname());
+        ret = update_codec(opt, m_opt_codec_none);
+        break;
+    }
+    }
+
+    return ret;
+}
+
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
     AVCodecContext *output_codec_ctx    = NULL;
@@ -602,6 +650,16 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #else
         stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
+
+        if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
+        {
+            ret = prepare_mp4_codec(output_codec_ctx->priv_data);
+            if (ret < 0)
+            {
+                ffmpegfs_error("%s * Could not set profile for %s output codec %s (error '%s').", destname(), get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+        }
 
 #ifdef _DEBUG
         print_info(output_stream);
@@ -1083,13 +1141,12 @@ int FFMPEG_Transcoder::init_fifo()
     return 0;
 }
 
-// Prepare format and browser optimisations
-
-
-int FFMPEG_Transcoder::update_dict(AVDictionary** dict, LPCMP4_OPTIMISATIONS opt) const
+// Prepare format optimisations
+int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_PROFILE mp4_opt) const
 {
     int ret = 0;
-    for (LPCMP4_OPTIMISATIONS p = opt; p->key != NULL; p++)
+
+    for (LPCMP4_PROFILE p = mp4_opt; p->key != NULL; p++)
     {
         if ((p->options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
         {
@@ -1103,6 +1160,7 @@ int FFMPEG_Transcoder::update_dict(AVDictionary** dict, LPCMP4_OPTIMISATIONS opt
             continue;
         }
 
+        ffmpegfs_trace("%s * MP4 format optimisation -%s%s%s.", destname(),  p->key, *p->value ? " " : "", p->value);
 printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXX %s * MP4 optimisation -%s%s%s.\n", destname(),  p->key, *p->value ? " " : "", p->value);
 
         ret = av_dict_set_with_check(dict, p->key, p->value, p->flags, destname());
@@ -1114,34 +1172,29 @@ printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXX %s * MP4 optimisation -%s%s%s.\n", destname
     return ret;
 }
 
-int FFMPEG_Transcoder::prepare_mp4_optimisations(AVDictionary** dict) const
+int FFMPEG_Transcoder::prepare_mp4_format(AVDictionary** dict) const
 {
     int ret = 0;
 
-    if (m_out.m_file_type != FILETYPE_MP4)
-    {
-        return 0;
-    }
-
     // Settings for fast playback start in HTML5
-    switch (params.m_target)
+    switch (params.m_profile)
     {
-    case TARGET_FF:
+    case PROFILE_FF:
     {
         ffmpegfs_trace("%s * Targetting on Firefox.", destname());
-        ret = update_dict(dict, m_opt_target_ff);
+        ret = update_format(dict, m_opt_format_ff);
         break;
     }
-    case TARGET_EDGE:
+    case PROFILE_EDGE:
     {
         ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
-        ret = update_dict(dict, m_opt_target_edge);
+        ret = update_format(dict, m_opt_format_edge);
         break;
     }
-    case TARGET_UNSPECIFIC:
+    case PROFILE_NONE:
     {
-        ffmpegfs_trace("%s * No specific target selected.", destname());
-        ret = update_dict(dict, m_opt_target_unspecific);
+        ffmpegfs_trace("%s * No profile selected.", destname());
+        ret = update_format(dict, m_opt_format_none);
         break;
     }
     }
@@ -1159,10 +1212,13 @@ int FFMPEG_Transcoder::write_output_file_header()
     AVDictionary* dict = NULL;
     int ret;
 
-    ret = prepare_mp4_optimisations(&dict);
-    if (ret < 0)
+    if (m_out.m_file_type == FILETYPE_MP4)
     {
-        return ret;
+        ret = prepare_mp4_format(&dict);
+        if (ret < 0)
+        {
+            return ret;
+        }
     }
 
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER

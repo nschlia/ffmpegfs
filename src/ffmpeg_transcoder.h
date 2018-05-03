@@ -26,6 +26,7 @@
 #include "ffmpeg_base.h"
 #include "id3v1tag.h"
 #include "wave.h"
+#include "transcode.h"
 
 #include <queue>
 
@@ -45,21 +46,92 @@ struct AVAudioFifo;
 
 class FFMPEG_Transcoder : public FFMPEG_Base
 {
-private:
+public:
 #define OPT_CODEC       0x80000000
 
 #define OPT_ALL         0x00000000  // All files
 #define OPT_AUDIO       0x00000001  // For audio only files
 #define OPT_VIDEO       0x00000002  // For videos (not audio only)
 
-    typedef struct _tagMP4_PROFILE
+    typedef struct _tagMP4_OPTION
     {
         const char *key;
         const char *value;
         const int flags;
         const int options;
+    } MP4_OPTION, *LPMP4_OPTION;
+    typedef MP4_OPTION const * LPCMP4_OPTION;
+
+    typedef struct _tagMP4_PROFILE
+    {
+        PROFILE                 m_profile;
+        LPCMP4_OPTION           m_opt_codec;
+        LPCMP4_OPTION           m_opt_format;
+
     } MP4_PROFILE, *LPMP4_PROFILE;
     typedef MP4_PROFILE const * LPCMP4_PROFILE;
+
+    struct STREAMREF
+    {
+        STREAMREF() :
+            m_pCodec_ctx(NULL),
+            m_pStream(NULL),
+            m_nStream_idx(INVALID_STREAM)
+        {}
+
+        AVCodecContext *        m_pCodec_ctx;
+        AVStream *              m_pStream;
+        int                     m_nStream_idx;
+    };
+
+    // Input file
+    struct INPUTFILE
+    {
+        INPUTFILE() :
+            m_file_type(FILETYPE_UNKNOWN),
+            m_filename("unset"),
+            m_pFormat_ctx(NULL)
+        {}
+
+        FILETYPE                m_file_type;
+        string                  m_filename;
+
+        AVFormatContext *       m_pFormat_ctx;
+
+        STREAMREF               m_audio;
+        STREAMREF               m_video;
+
+        vector<STREAMREF>       m_aAlbumArt;
+    };
+
+    // Output file
+    struct OUTPUTFILE
+    {
+        OUTPUTFILE() :
+            m_file_type(FILETYPE_UNKNOWN),
+            m_filename("unset"),
+            m_pFormat_ctx(NULL),
+            m_nAudio_pts(0),
+            m_video_start_pts(0),
+            m_last_mux_dts((int64_t)AV_NOPTS_VALUE)
+        {}
+
+        FILETYPE                m_file_type;
+        string                  m_filename;
+
+        AVFormatContext *       m_pFormat_ctx;
+
+        STREAMREF               m_audio;
+        STREAMREF               m_video;
+
+        vector<STREAMREF>       m_aAlbumArt;
+
+        int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
+        int64_t                 m_video_start_pts;      // Video start PTS
+        int64_t                 m_last_mux_dts;         // Last muxed DTS
+
+        ID3v1                   m_id3v1;                // mp3 only, can be referenced at any time
+    };
 
 public:
     FFMPEG_Transcoder();
@@ -84,7 +156,7 @@ public:
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
-    int update_codec(void *opt, LPCMP4_PROFILE mp4_opt) const;
+    int update_codec(void *opt, LPCMP4_OPTION mp4_opt) const;
     int prepare_mp4_codec(void *opt) const;
     int add_stream(AVCodecID codec_id);    
     int add_albumart_stream(const AVCodecContext *input_codec_ctx);
@@ -95,7 +167,7 @@ protected:
     int process_albumarts();
     int init_resampler();
     int init_fifo();
-    int update_format(AVDictionary** dict, LPCMP4_PROFILE opt) const;
+    int update_format(AVDictionary** dict, LPCMP4_OPTION opt) const;
     int prepare_mp4_format(AVDictionary **dict) const;
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
@@ -154,75 +226,10 @@ private:
     int64_t                     m_pts;
     int64_t                     m_pos;
 
-    // Streams
-    struct STREAMREF
-    {
-        STREAMREF() :
-            m_pCodec_ctx(NULL),
-            m_pStream(NULL),
-            m_nStream_idx(INVALID_STREAM)
-        {}
+    INPUTFILE                   m_in;
+    OUTPUTFILE                  m_out;
 
-        AVCodecContext *        m_pCodec_ctx;
-        AVStream *              m_pStream;
-        int                     m_nStream_idx;
-    };
-
-    // Input file
-    struct INPUTFILE
-    {
-        INPUTFILE() :
-            m_file_type(FILETYPE_UNKNOWN),
-            m_filename("unset"),
-            m_pFormat_ctx(NULL)
-        {}
-
-        FILETYPE                m_file_type;
-        string                  m_filename;
-
-        AVFormatContext *       m_pFormat_ctx;
-
-        STREAMREF               m_audio;
-        STREAMREF               m_video;
-
-        vector<STREAMREF>       m_aAlbumArt;
-    } m_in;
-
-    // Output file
-    struct OUTPUTFILE
-    {
-        OUTPUTFILE() :
-            m_file_type(FILETYPE_UNKNOWN),
-            m_filename("unset"),
-            m_pFormat_ctx(NULL),
-            m_nAudio_pts(0),
-            m_video_start_pts(0),
-            m_last_mux_dts((int64_t)AV_NOPTS_VALUE)
-        {}
-
-        FILETYPE                m_file_type;
-        string                  m_filename;
-
-        AVFormatContext *       m_pFormat_ctx;
-
-        STREAMREF               m_audio;
-        STREAMREF               m_video;
-
-        vector<STREAMREF>       m_aAlbumArt;
-
-        int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
-        int64_t                 m_video_start_pts;      // Video start PTS
-        int64_t                 m_last_mux_dts;         // Last muxed DTS
-
-        ID3v1                   m_id3v1;                // mp3 only, can be referenced at any time
-    } m_out;
-
-    static const MP4_PROFILE m_opt_codec_none[];
-    static const MP4_PROFILE m_opt_format_none[];
-    static const MP4_PROFILE m_opt_codec_ff[];
-    static const MP4_PROFILE m_opt_format_ff[];
-    static const MP4_PROFILE m_opt_codec_edge[];
-    static const MP4_PROFILE m_opt_format_edge[];
+    static const MP4_PROFILE    m_profile[];
 };
 
 #endif // FFMPEG_TRANSCODER_H

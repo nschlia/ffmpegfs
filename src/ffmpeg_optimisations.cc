@@ -1,5 +1,5 @@
 /*
- * FFmpeg target browser opmimisations source for ffmpegfs
+ * FFmpeg audience browser opmimisations source for ffmpegfs
  *
  * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -20,7 +20,7 @@
 
 #include "ffmpeg_transcoder.h"
 /*
- * Make target audience specific optimisations, see:
+ * Make audience audience specific optimisations, see:
  *
  * https://www.ffmpeg.org/ffmpeg-formats.html#mov_002c-mp4_002c-ismv
  *
@@ -136,7 +136,7 @@
 // ****************************************************************************************************************
 
 // No opimisations, just plain mp4.
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_none[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_none[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -150,9 +150,10 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_none[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
 };
 
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_none[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_none[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -177,7 +178,7 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_none[] =
 // Use: -movflags +empty_moov
 //      -frag_duration 1000000  (for audio files only)
 // GOOD: Starts immediately while still decoding.
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_ff[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ff[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -191,9 +192,10 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_ff[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
 };
 
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_ff[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ff[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -217,7 +219,7 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_ff[] =
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
 // GOOD: Starts immediately while still decoding.
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_edge[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_edge[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -231,11 +233,12 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_codec_edge[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
 };
 
-const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_edge[] =
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_edge[] =
 {
-    //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
+    //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
     { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
     //{ "frag_size",              "100000",                  0, OPT_ALL },       // bytes
@@ -254,3 +257,72 @@ const FFMPEG_Transcoder::MP4_PROFILE FFMPEG_Transcoder::m_opt_format_edge[] =
 };
 
 // ****************************************************************************************************************
+
+// Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ie[] =
+{
+    // -profile:v baseline -level 3.0
+    { "profile",              "baseline",                 0,  0 },
+    { "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //    { "profile",              "high",                     0,  0 },
+    //    { "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    //{ "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ie[] =
+{
+    //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
+    //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
+    //{ "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+    //{ "frag_size",              "100000",                  0, OPT_ALL },       // bytes
+    //{ "min_frag_duration",      "1000",                    0, OPT_ALL },       // microsenconds
+    //{ "movflags",               "+empty_moov",              0, OPT_ALL },
+    //{ "movflags",               "+separate_moof",           0, OPT_ALL },
+    //{ "movflags",               "+faststart",               0, OPT_ALL },
+    //{ "movflags",               "+rtphint",                0, OPT_ALL },
+    //{ "movflags",               "+disable_chpl",           0, OPT_ALL },
+    //{ "movflags",               "+omit_tfhd_offset",       0, OPT_ALL },
+    //{ "movflags",               "+default_base_moof",      0, OPT_ALL },
+    //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
+    //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
+    //{ "movflags",               "+isml",                   0, OPT_ALL },
+    { NULL, NULL, 0, 0 }
+};
+
+// ****************************************************************************************************************
+const FFMPEG_Transcoder::MP4_PROFILE  FFMPEG_Transcoder::m_profile[] =
+{
+    {
+        .m_profile = PROFILE_NONE,
+        .m_opt_codec = m_opt_codec_none,
+        .m_opt_format = m_opt_format_none
+    },
+    {
+        .m_profile = PROFILE_FF,
+        .m_opt_codec = m_opt_codec_ff,
+        .m_opt_format = m_opt_format_ff
+    },
+    {
+        .m_profile = PROFILE_EDGE,
+        .m_opt_codec = m_opt_codec_edge,
+        .m_opt_format = m_opt_format_edge
+    },
+    {
+        .m_profile = PROFILE_IE,
+        .m_opt_codec = m_opt_codec_ie,
+        .m_opt_format = m_opt_format_ie
+    },
+    // Must be last entry
+    {
+        .m_profile = PROFILE_INVALID,
+        .m_opt_codec = NULL,
+        .m_opt_format = NULL
+    }
+};

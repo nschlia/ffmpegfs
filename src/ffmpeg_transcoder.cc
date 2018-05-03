@@ -492,11 +492,16 @@ void FFMPEG_Transcoder::limit_video_size(AVCodecContext *output_codec_ctx)
 }
 
 // Prepare codec optimisations
-int FFMPEG_Transcoder::update_codec(void *opt, LPCMP4_PROFILE mp4_opt) const
+int FFMPEG_Transcoder::update_codec(void *opt, LPCMP4_OPTION mp4_opt) const
 {
     int ret = 0;
 
-    for (LPCMP4_PROFILE p = mp4_opt; p->key != NULL; p++)
+    if (mp4_opt == NULL)
+    {
+        return 0;
+    }
+
+    for (LPCMP4_OPTION p = mp4_opt; p->key != NULL; p++)
     {
         ffmpegfs_trace("%s * MP4 codec optimisation -%s%s%s.", destname(),  p->key, *p->value ? " " : "", p->value);
 
@@ -513,27 +518,13 @@ int FFMPEG_Transcoder::prepare_mp4_codec(void *opt) const
 {
     int ret = 0;
 
-    // Settings for fast playback start in HTML5
-    switch (params.m_profile)
+    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
     {
-    case PROFILE_FF:
-    {
-        ffmpegfs_trace("%s * Targetting on Firefox.", destname());
-        ret = update_codec(opt, m_opt_codec_ff);
-        break;
-    }
-    case PROFILE_EDGE:
-    {
-        ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
-        ret = update_codec(opt, m_opt_codec_edge);
-        break;
-    }
-    case PROFILE_NONE:
-    {
-        ffmpegfs_trace("%s * No profile selected.", destname());
-        ret = update_codec(opt, m_opt_codec_none);
-        break;
-    }
+        if (m_profile[n].m_profile == params.m_profile)
+        {
+            ret = update_codec(opt, m_profile[n].m_opt_codec);
+            break;
+        }
     }
 
     return ret;
@@ -723,7 +714,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Set duration as hint for muxer
-        output_stream->duration             = av_rescale_q(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, output_stream->time_base);
+        output_stream->duration               = av_rescale_q(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, output_stream->time_base);
 
         // Save the encoder context for easier access later.
         m_out.m_video.m_pCodec_ctx            = output_codec_ctx;
@@ -1148,11 +1139,16 @@ int FFMPEG_Transcoder::init_fifo()
 }
 
 // Prepare format optimisations
-int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_PROFILE mp4_opt) const
+int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_OPTION mp4_opt) const
 {
     int ret = 0;
 
-    for (LPCMP4_PROFILE p = mp4_opt; p->key != NULL; p++)
+    if (mp4_opt == NULL)
+    {
+        return 0;
+    }
+
+    for (LPCMP4_OPTION p = mp4_opt; p->key != NULL; p++)
     {
         if ((p->options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
         {
@@ -1167,7 +1163,6 @@ int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_PROFILE mp4_opt
         }
 
         ffmpegfs_trace("%s * MP4 format optimisation -%s%s%s.", destname(),  p->key, *p->value ? " " : "", p->value);
-printf("XXXXXXXXXXXXXXXXXXXXXXXXXXXX %s * MP4 optimisation -%s%s%s.\n", destname(),  p->key, *p->value ? " " : "", p->value);
 
         ret = av_dict_set_with_check(dict, p->key, p->value, p->flags, destname());
         if (ret < 0)
@@ -1182,27 +1177,13 @@ int FFMPEG_Transcoder::prepare_mp4_format(AVDictionary** dict) const
 {
     int ret = 0;
 
-    // Settings for fast playback start in HTML5
-    switch (params.m_profile)
+    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
     {
-    case PROFILE_FF:
-    {
-        ffmpegfs_trace("%s * Targetting on Firefox.", destname());
-        ret = update_format(dict, m_opt_format_ff);
-        break;
-    }
-    case PROFILE_EDGE:
-    {
-        ffmpegfs_trace("%s * Targetting on MS Edge or IE > 11.", destname());
-        ret = update_format(dict, m_opt_format_edge);
-        break;
-    }
-    case PROFILE_NONE:
-    {
-        ffmpegfs_trace("%s * No profile selected.", destname());
-        ret = update_format(dict, m_opt_format_none);
-        break;
-    }
+        if (m_profile[n].m_profile == params.m_profile)
+        {
+            ret = update_format(dict, m_profile[n].m_opt_format);
+            break;
+        }
     }
 
     // All

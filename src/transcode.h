@@ -30,11 +30,13 @@
 #include <fuse.h>
 #include <stdarg.h>
 
-typedef enum _tagTARGET
+typedef enum _tagPROFILE
 {
+    PROFILE_INVALID = -1,
     PROFILE_NONE,			// no specific profile
     PROFILE_FF,				// Firefox
     PROFILE_EDGE,			// MS Edge
+    PROFILE_IE,				// MS Internet Explorer
 } PROFILE;
 
 // Global program parameters

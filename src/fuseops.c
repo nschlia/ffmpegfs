@@ -506,7 +506,8 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
-    ffmpegfs_info("%s V%s initialising with target type %s.", PACKAGE_NAME, PACKAGE_VERSION, params.m_desttype);
+    ffmpegfs_info("%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
+    ffmpegfs_info("Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
     ffmpegfs_info("Mapping '%s' to '%s'.", params.m_basepath, params.m_mountpath);
 
     // We need synchronous reads.

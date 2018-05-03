@@ -211,6 +211,7 @@ static void usage(char *name)
           "                           NONE     no profile\n"
           "                           FF       Firefox\n"
           "                           EDGE     Microsoft Edge or Internet Explorer > 11\n"
+          "                           IE       Microsoft Internet Explorer <= 11\n"
           "                           Default: NONE\n"
           "\n"
           "Audio Options:\n"

@@ -21,7 +21,6 @@
 #include "cache_entry.h"
 #include "ffmpeg_transcoder.h"
 #include "buffer.h"
-#include "transcode.h"
 
 using namespace std;
 

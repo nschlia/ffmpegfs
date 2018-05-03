@@ -784,6 +784,7 @@ static const map<string, PROFILE> profile_map =
     { "NONE", PROFILE_NONE },
     { "FF", PROFILE_FF },
     { "EDGE", PROFILE_EDGE },
+    { "IE", PROFILE_IE },
 };
 
 int get_profile(const char * arg, PROFILE *value)

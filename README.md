@@ -41,7 +41,6 @@ For installation instructions see the [install](INSTALL.md) file.
 
 RESTRICTIONS:
 
-* Cover arts are not yet supported.
 * The current version input formats are limited to:
   avi, flac, flv, m2ts, mkv, mov, mpg, oga, ogg, ogv, rm, ts, vob, 
   webm, wma and wmv.

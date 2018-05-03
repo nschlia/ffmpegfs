@@ -406,7 +406,7 @@ bool FFMPEG_Transcoder::get_output_bit_rate(AVStream *stream, int max_bit_rate, 
     return false;
 }
 
-double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio)
+double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const
 {
     double dblAspectRatio = 0;
 
@@ -598,9 +598,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        streamSetup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
+        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
 #else
-        streamSetup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
+        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
 
 #ifdef _DEBUG
@@ -3237,18 +3237,6 @@ void FFMPEG_Transcoder::close()
         // Closed anything...
         ffmpegfs_debug("FFmpeg transcoder closed.");
     }
-}
-
-int FFMPEG_Transcoder::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * fileName)
-{
-    int ret = ::av_dict_set(pm, key, value, flags);
-
-    if (ret < 0)
-    {
-        ffmpegfs_error("%s * Error setting dictionary option key(%s)='%s' (error '%s').", fileName, key, value, ffmpeg_geterror(ret).c_str());
-    }
-
-    return ret;
 }
 
 const char *FFMPEG_Transcoder::filename() const

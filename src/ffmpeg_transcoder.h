@@ -107,9 +107,7 @@ protected:
 #else // USING_LIBAV
     bool get_output_bit_rate(AVStream *stream, int max_bit_rate, int * bit_rate) const;
 #endif
-    double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio);
-
-    int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *fileName);
+    double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;
 
     int init_filters(AVCodecContext *pCodecContext, AVStream *pStream);
     AVFrame *send_filters(AVFrame *srcframe, int &ret);

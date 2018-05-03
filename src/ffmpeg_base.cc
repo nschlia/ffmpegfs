@@ -157,7 +157,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFMPEG_Base::streamSetup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
+void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
 {
     AVRational time_base;
 
@@ -235,6 +235,19 @@ void FFMPEG_Base::streamSetup(AVCodecContext *output_codec_ctx, AVStream* output
         //}
     }
 }
+
+int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
+{
+    int ret = av_dict_set(pm, key, value, flags);
+
+    if (ret < 0)
+    {
+        ffmpegfs_error("%s * Error setting dictionary option key(%s)='%s' (error '%s').", filename, key, value, ffmpeg_geterror(ret).c_str());
+    }
+
+    return ret;
+}
+
 /*
 static int init_output_stream_streamcopy(AVStream *output_stream, AVStream *input_stream, AVCodecContext *output_codec_ctx, AVCodecParameters *par_src)
 {

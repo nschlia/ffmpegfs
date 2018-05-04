@@ -145,13 +145,17 @@ The --profile option allows to select the format:
 | EDGE | Win10 | MS Edge, IE > 11 | OK: Playback while transcoding |
 | | Win10 Mobile | | OK: Playback while transcoding |
 | IE | Win10 | MS IE <= 11 | OK: Playback while transcoding |
-| | Win7 | | Must decode first
+| | Win7 | | Must decode first (1) |
+| SAFARI | Win | Apple Safari | Must decode first (2) |
+
+(1)
 * error message when opened while transcoding
 * must start again when file was transcoded
-* Plays fine when file comes directly from buffer |
-| SAFARI | Win | Apple Safari | Must decode first
+* Plays fine when file comes directly from buffer
+
+(2)
 * must start again when file was transcoded
-* Plays fine when file comes directly from buffer |
+* Plays fine when file comes directly from buffer
 
 This all boils down to the fact than Firefox and Edge are the
 only browsers that support the necessary extensions to start

@@ -37,6 +37,7 @@ Mount IN_DIR on OUT_DIR, converting audio/video files to *mp4*, *mp3*, *ogg* or 
     FF       optimise for Firefox
     EDGE     optimise for MS Edge and Internet Explorer > 11
     IE       optimise for MS Edge and Internet Explorer <= 11
+    SAFARI   Apple Safari
     Defaults to NONE
 
 === Audio Options ===

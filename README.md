@@ -140,11 +140,22 @@ The --profile option allows to select the format:
 | Profile | OS | Target | Remarks |
 | ------------- | ------------- | ------------- | ------------- |
 | NONE | all | VLC, Windows Media Player etc. | Playback (default) |
-| FF | Linux, Win10 | Firefox| Playback while transcoding |
-| | Win7 | Firefox | Playback while transcoding, audio only |
-| EDGE | Win10 | MS Edge, IE > 11 | Playback while transcoding |
-| IE | Win10 | MS IE <= 11 | Playback while transcoding |
-| | Win7 | MS IE <= 11| Must decode first, audio only |
+| FF | Linux, Win10 | Firefox| OK: Playback while transcoding |
+| | Win7 | Firefox | Playback while transcoding, but audio files only |
+| EDGE | Win10 | MS Edge, IE > 11 | OK: Playback while transcoding |
+| | Win10 Mobile | | OK: Playback while transcoding |
+| IE | Win10 | MS IE <= 11 | OK: Playback while transcoding |
+| | Win7 | | Must decode first
+* error message when opened while transcoding
+* must start again when file was transcoded
+* Plays fine when file comes directly from buffer |
+| SAFARI | Win | Apple Safari | Must decode first
+* must start again when file was transcoded
+* Plays fine when file comes directly from buffer |
+
+This all boils down to the fact than Firefox and Edge are the
+only browsers that support the necessary extensions to start
+playback while still transcoding.
 
 In most cases files will not play if not properly optimised.
 
@@ -165,21 +176,21 @@ file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should
 access the same file they will share the same transcoded data, saving
-CPU time. If the first process abandons the file before its end,
-transconding will continue for some time. If the file is accessed
-again before the timeout, transcoding will go on, if not it stops 
-and the chunk created so far discarded to save disk space.
+CPU time. If all processes the file before its end, transconding will
+continue for some time. If the file is accessed again before timeout,
+transcoding will go on, if not it stops and the chunk created so far
+discarded to save disk space.
 
 Seeking within a file will cause the file to be transcoded up to the
 seek point (if not already done). This is not usually a problem
 since most programs will read a file from start to finish. Future
-enhancements may provide true random seeking (But if this is feasible
+enhancements may provide true random seeking (but if this is feasible
 is yet unclear due to restrictions to positioning inside compressed
 streams).
 
 MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the 
 source file. They are located at the start and end of the file 
-respectively. 
+respectively.
 
 MP4: Same applies to meta atoms in MP4 containers.
 
@@ -187,6 +198,11 @@ MP3 target only: A special optimisation is made so that applications
 which scan for id3v1 tags do not have to wait for the whole file to be 
 transcoded before reading the tag. This *dramatically* speeds up such
 applications.
+
+WAV: A pro forma WAV header will be created with estimates of the WAV
+file size. This header will be replaced when the file is finished. It
+does not seem necessary, though, as most modern players obviously
+ignore this information an play the file anyway.
 
 SUPPORTED OUTPUT FORMATS
 ------------------------

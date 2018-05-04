@@ -787,6 +787,8 @@ static const map<string, PROFILE> profile_map =
     { "IE", PROFILE_IE },
     { "CHROME", PROFILE_CHROME },
     { "SAFARI", PROFILE_SAFARI },
+    { "OPERA", PROFILE_OPERA },
+    { "MAXTHON", PROFILE_MAXTHON }
 };
 
 int get_profile(const char * arg, PROFILE *value)

@@ -39,6 +39,8 @@ typedef enum _tagPROFILE
     PROFILE_IE,				// MS Internet Explorer
     PROFILE_CHROME,			// Google Chrome
     PROFILE_SAFARI,			// Apple Safari
+    PROFILE_OPERA,			// Opera
+    PROFILE_MAXTHON        	// Maxthon
 } PROFILE;
 
 // Global program parameters

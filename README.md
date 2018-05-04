@@ -148,6 +148,8 @@ The --profile option allows to select the format:
 | | Win7 | | Must decode first (1) |
 | CHROME | all | Google Chrome| Must decode first (2) |
 | SAFARI | Win | Apple Safari | Must decode first (2) |
+| OPERA|All | Opera | Must decode first |
+| MAXTHON | Win | Maxthon|Must decode first |
 
 (1)
 * error message when opened while transcoding
@@ -157,7 +159,6 @@ The --profile option allows to select the format:
 (2)
 * must start again when file was transcoded
 * Plays fine when file comes directly from buffer
-
 
 This all boils down to the fact than Firefox and Edge are the
 only browsers that support the necessary extensions to start

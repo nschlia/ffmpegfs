@@ -37,7 +37,10 @@ Mount IN_DIR on OUT_DIR, converting audio/video files to *mp4*, *mp3*, *ogg* or 
     FF       optimise for Firefox
     EDGE     optimise for MS Edge and Internet Explorer > 11
     IE       optimise for MS Edge and Internet Explorer <= 11
+    CHROME   Google Chrome
     SAFARI   Apple Safari
+    OPERA    Opera
+    MAXTHON  Maxthon
     Defaults to NONE
 
 === Audio Options ===
@@ -83,12 +86,12 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
 *mp4:* May be specfied as 500 to 25000 kbit.
 +
 *--videoheight*=HEIGHT, -o *videoheight*=HEIGHT
-    Sets the height of the target video.
+    Sets the height of the transcoded video.
     When the video is rescaled the aspect ratio is
     preserved if --width is not set at the same time.
     Default: keep source video height
 *--videowidth*=WIDTH, -o *videowidth*=WIDTH
-    Sets the width of the target video.
+    Sets the width of the transcoded video.
     When the video is rescaled the aspect ratio is
     preserved if --height is not set at the same time.
     Default: keep source video width

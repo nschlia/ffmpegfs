@@ -270,7 +270,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ie[] =
     { "level",                "3.1",                      0,  0 },
 
     // Set speed (changes profile!)
-    //{ "preset",               "ultrafast",                0,  0 },
+    { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
     { NULL, NULL, 0, 0 }
@@ -377,6 +377,86 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_safari[] =
 };
 
 // ****************************************************************************************************************
+
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_opera[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_opera[] =
+{
+    //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
+    //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
+    //{ "frag_duration",          "1000000",                 0, OPT_ALL },     // microsenconds
+    //{ "frag_size",              "100000",                  0, OPT_ALL },     // bytes
+    //{ "min_frag_duration",      "1000",                    0, OPT_ALL },     // microsenconds
+    //{ "movflags",               "+empty_moov",             0, OPT_ALL },
+    //{ "movflags",               "+separate_moof",          0, OPT_ALL },
+    //{ "movflags",               "+faststart",              0, OPT_ALL },
+    //{ "movflags",               "+rtphint",                0, OPT_ALL },
+    //{ "movflags",               "+disable_chpl",           0, OPT_ALL },
+    //{ "movflags",               "+omit_tfhd_offset",       0, OPT_ALL },
+    //{ "movflags",               "+default_base_moof",      0, OPT_ALL },
+    //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
+    //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
+    //{ "movflags",               "+isml",                   0, OPT_ALL },
+    { NULL, NULL, 0, 0 }
+};
+
+// ****************************************************************************************************************
+
+// TODO - maybe same as Chrome
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_maxthon[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    { "profile",              "high",                     0,  0 },
+    { "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+    { NULL, NULL, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_maxthon[] =
+{
+    //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
+    //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
+    //{ "frag_duration",          "1000000",                 0, OPT_ALL },     // microsenconds
+    //{ "frag_size",              "100000",                  0, OPT_ALL },     // bytes
+    //{ "min_frag_duration",      "1000",                    0, OPT_ALL },     // microsenconds
+    //{ "movflags",               "+empty_moov",             0, OPT_ALL },
+    //{ "movflags",               "+separate_moof",          0, OPT_ALL },
+    //{ "movflags",               "+faststart",              0, OPT_ALL },
+    //{ "movflags",               "+rtphint",                0, OPT_ALL },
+    //{ "movflags",               "+disable_chpl",           0, OPT_ALL },
+    //{ "movflags",               "+omit_tfhd_offset",       0, OPT_ALL },
+    //{ "movflags",               "+default_base_moof",      0, OPT_ALL },
+    //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
+    //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
+    //{ "movflags",               "+isml",                   0, OPT_ALL },
+    { NULL, NULL, 0, 0 }
+};
+
+// ****************************************************************************************************************
+
 const FFMPEG_Transcoder::MP4_PROFILE  FFMPEG_Transcoder::m_profile[] =
 {
     {
@@ -408,6 +488,16 @@ const FFMPEG_Transcoder::MP4_PROFILE  FFMPEG_Transcoder::m_profile[] =
         .m_profile = PROFILE_SAFARI,
         .m_opt_codec = m_opt_codec_safari,
         .m_opt_format = m_opt_format_safari
+    },
+    {
+        .m_profile = PROFILE_OPERA,
+        .m_opt_codec = m_opt_codec_opera,
+        .m_opt_format = m_opt_format_opera
+    },
+    {
+        .m_profile = PROFILE_MAXTHON,
+        .m_opt_codec = m_opt_codec_maxthon,
+        .m_opt_format = m_opt_format_maxthon
     },
     // Must be last entry
     {

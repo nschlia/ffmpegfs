@@ -214,6 +214,8 @@ static void usage(char *name)
           "                           IE       Microsoft Internet Explorer <= 11\n"
           "                           CHROME   Google Chrome\n"
           "                           SAFARI   Apple Safari\n"
+          "                           OPERA    Opera\n"
+          "                           MAXTHON  Maxthon\n"
           "                           Default: NONE\n"
           "\n"
           "Audio Options:\n"

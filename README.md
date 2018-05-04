@@ -11,12 +11,8 @@ ffmpegfs
 Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
-**Work Release 1.3 in progress:
-
-Currently I am trying to complete the target browser optimisations (quite a
-hassle, though). Then the usual stabilisation phase will take place.
-
-V1.3 will be ready soon!**
+**There you have it: Release 1.3 is out! See NEWS for which overwhelming 
+new features it has.**
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.

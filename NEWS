@@ -20,6 +20,7 @@ Changes in this release:
            FF       optimise for Firefox
            EDGE     optimise for MS Edge and Internet Explorer > 11
            IE       optimise for MS Edge and Internet Explorer <= 11
+           CHROME   Google Chrome
            SAFARI   Apple Safari
            Defaults to NONE
 * Feature: enhanced error output for SQLite (if supported by library version)

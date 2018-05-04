@@ -37,6 +37,7 @@ typedef enum _tagPROFILE
     PROFILE_FF,				// Firefox
     PROFILE_EDGE,			// MS Edge
     PROFILE_IE,				// MS Internet Explorer
+    PROFILE_CHROME,			// Google Chrome
     PROFILE_SAFARI,			// Apple Safari
 } PROFILE;
 

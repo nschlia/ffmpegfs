@@ -785,6 +785,7 @@ static const map<string, PROFILE> profile_map =
     { "FF", PROFILE_FF },
     { "EDGE", PROFILE_EDGE },
     { "IE", PROFILE_IE },
+    { "CHROME", PROFILE_CHROME },
     { "SAFARI", PROFILE_SAFARI },
 };
 

@@ -61,11 +61,13 @@ AC_RUN_IFELSE(
 # libavcodec     57. 64.101		56.1.0 (required)
 # libavformat    57. 56.101		56.1.0 (required)
 # libavdevice    57.  6.100
-# libavfilter     6. 82.100     	5.40.0 (required)
-# libavresample   3.  5.  0		2.1.0 (required)
+# libavfilter     6. 82.100     5.40.0 (required)
+# libavresample   3.  5.  0		2.1.0 (optional)
 # libswscale      4.  2.100		3.0.0 (required)
-# libswresample   2.  3.100
+# libswresample   2.  3.100     1.0.0 (optional)
 # libpostproc    54.  5.10
+#
+# Either libswresample or libavresample must be present.
 #
 # May work with older versions but this is not guaranteed.
 

@@ -22,6 +22,8 @@ Changes in this release:
            IE       optimise for MS Edge and Internet Explorer <= 11
            CHROME   Google Chrome
            SAFARI   Apple Safari
+           OPERA    Opera
+           MAXTHON  Maxthon
            Defaults to NONE
 * Feature: enhanced error output for SQLite (if supported by library version)
 * Feature: copy album arts from source if supported by target format (MP3/4).

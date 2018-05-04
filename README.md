@@ -148,8 +148,8 @@ The --profile option allows to select the format:
 | | Win7 | | Must decode first (1) |
 | CHROME | all | Google Chrome| Must decode first (2) |
 | SAFARI | Win | Apple Safari | Must decode first (2) |
-| OPERA|All | Opera | Must decode first |
-| MAXTHON | Win | Maxthon|Must decode first |
+| OPERA | All | Opera | Must decode first (2) |
+| MAXTHON | Win | Maxthon| Must decode first (2) |
 
 (1)
 * error message when opened while transcoding

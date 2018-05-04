@@ -21,9 +21,10 @@ libraries:
 * libavutil      (>= 54.3.0)
 * libavcodec     (>= 56.1.0)
 * libavformat    (>= 56.1.0)
-* libavfilter     6. 82.100
+* libavfilter    (>= 5.40.0)
 * libavresample  (>= 2.1.0)
 * libswscale     (>= 3.0.0)
+* libswresample  (>= 1.0.0)
 
 If building from git, you'll also need:
 

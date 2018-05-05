@@ -27,6 +27,7 @@
 
 #include <regex.h>
 #include <sys/sysinfo.h>
+#include <sqlite3.h>
 
 // TODO: Move this elsewehere, so this file can be library agnostic
 #pragma GCC diagnostic push
@@ -730,8 +731,15 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         ffmpeg_libinfo(buffer, sizeof(buffer));
         printf("%s", buffer);
 
+        printf("%-20s: %s\n", "SQLite Version", sqlite3_version);
+
         fuse_opt_add_arg(outargs, "--version");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
+
+#ifdef USE_LIBDVDNAV
+        printf("Built with DVD support using libdvdnav.\n");
+#endif
+
         exit(0);
     }
     case KEY_PROFILE:

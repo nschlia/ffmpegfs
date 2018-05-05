@@ -174,14 +174,24 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
     //time_base                                 = m_in.m_pVideo_stream->time_base;
 
     // tbn
-    if (output_codec_ctx->codec_id == AV_CODEC_ID_THEORA)
+    switch (output_codec_ctx->codec_id)
     {
-        // Strange, but Theora seems to need it this way...
+    case AV_CODEC_ID_THEORA:
+    {
         time_base                               = av_inv_q(frame_rate);
+        break;
     }
-    else
+    case AV_CODEC_ID_MPEG1VIDEO:
+    case AV_CODEC_ID_MPEG2VIDEO:
+    {
+        time_base                               = av_inv_q(frame_rate);
+        break;
+    }
+    default:
     {
         time_base                               = { .num = 1, .den = 90000 };
+        break;
+    }
     }
 
     // tbc

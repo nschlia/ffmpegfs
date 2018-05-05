@@ -715,6 +715,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     case KEY_VERSION:
     {
         // TODO: Also output this information in debug mode
+        printf("-------------------------------------------------------------------------------------------\n");
 
 #ifdef __GNUC__
 #ifndef __clang_version__
@@ -739,6 +740,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 #ifdef USE_LIBDVDNAV
         printf("Built with DVD support using libdvdnav.\n");
 #endif
+        printf("-------------------------------------------------------------------------------------------\n\n");
+        printf("FFMpeg capabilities\n\n");
+
+        show_formats_devices(0);
 
         exit(0);
     }
@@ -924,8 +929,6 @@ int main(int argc, char *argv[])
     // Redirect FFmpeg logs
     av_log_set_callback(ffmpeg_log);
 #endif
-
-    //show_formats_devices(0);
 
     // Set default
     params.m_max_threads = (unsigned)get_nprocs() * 16;

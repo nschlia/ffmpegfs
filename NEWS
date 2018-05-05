@@ -1,6 +1,14 @@
 ffmpegfs NEWS
 
-Important changes in 1.3 (2018-05-XX)
+Important changes in 1.4 (2018-05-XX)
+
+* Feature:
+
+* Bugfix: 
+
+* Fix deprecation: 
+
+Important changes in 1.3 (2018-05-04)
 
 Changes in this release:
 
@@ -31,7 +39,7 @@ Changes in this release:
 
 * Bugfix: Only four lines of code: Avoid locking other clients when trying to get
           the size of a file currently being decoded. Also speeds up directory 
-          access quite significantly-
+          access quite significantly.
 * Bugfix: Fix lost frames at end of files (files where cut short)
 * Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)
 * Bugfix: Make WAV size prediction more accurate

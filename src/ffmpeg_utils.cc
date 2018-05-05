@@ -172,8 +172,8 @@ static int is_device(const AVClass *avclass)
 
 int show_formats_devices(int device_only)
 {
-    AVInputFormat *ifmt  = NULL;
-    //    AVOutputFormat *ofmt = NULL;
+    const AVInputFormat *ifmt  = NULL;
+    const AVOutputFormat *ofmt = NULL;
     const char *last_name;
     int is_dev;
 
@@ -190,38 +190,66 @@ int show_formats_devices(int device_only)
         const char *long_name = NULL;
         const char *extensions = NULL;
 
-        //        while ((ofmt = av_oformat_next(ofmt))) {
-        //            is_dev = is_device(ofmt->priv_class);
-        //            if (!is_dev && device_only)
-        //                continue;
-        //            if ((!name || strcmp(ofmt->name, name) < 0) &&
-        //                    strcmp(ofmt->name, last_name) > 0) {
-        //                name      = ofmt->name;
-        //                long_name = ofmt->long_name;
-        //                encode    = 1;
-        //            }
-        //        }
-        while ((ifmt = av_iformat_next(ifmt))) // TODO: Deprecated since lavf 58.9.100, but still used in tools/probetest.c "static void probe"
+#if LAVF_DEP_AV_REGISTER
+        void *ofmt_opaque = NULL;
+        ofmt_opaque = NULL;
+        while ((ofmt = av_muxer_iterate(&ofmt_opaque)))
+#else
+        while ((ofmt = av_oformat_next(ofmt)))
+#endif
+        {
+            is_dev = is_device(ofmt->priv_class);
+            if (!is_dev && device_only)
+            {
+                continue;
+            }
+
+            if ((!name || strcmp(ofmt->name, name) < 0) &&
+                    strcmp(ofmt->name, last_name) > 0)
+            {
+                name        = ofmt->name;
+                long_name   = ofmt->long_name;
+                encode      = 1;
+            }
+        }
+#if LAVF_DEP_AV_REGISTER
+        void *ifmt_opaque = NULL;
+        ifmt_opaque = NULL;
+        while ((ifmt = av_demuxer_iterate(&ifmt_opaque)))
+#else
+        while ((ifmt = av_iformat_next(ifmt)))
+#endif
         {
             is_dev = is_device(ifmt->priv_class);
             if (!is_dev && device_only)
+            {
                 continue;
+            }
+
             if ((!name || strcmp(ifmt->name, name) < 0) &&
                     strcmp(ifmt->name, last_name) > 0)
             {
-                name      = ifmt->name;
-                long_name = ifmt->long_name;
-                extensions = ifmt->extensions;
-                encode    = 0;
+                name        = ifmt->name;
+                long_name   = ifmt->long_name;
+                extensions  = ifmt->extensions;
+                encode      = 0;
             }
             if (name && strcmp(ifmt->name, name) == 0)
-                decode = 1;
+            {
+                decode      = 1;
+            }
         }
+
         if (!name)
+        {
             break;
+        }
+
         last_name = name;
         if (!extensions)
+        {
             continue;
+        }
 
         printf(" %s%s %-15s %-15s %s\n",
                decode ? "D" : " ",

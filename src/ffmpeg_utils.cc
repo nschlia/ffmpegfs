@@ -318,7 +318,7 @@ void tempdir(char *dir, size_t size)
 
 int supports_albumart(FILETYPE filetype)
 {
-    return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4 || filetype == FILETYPE_FLAC);
+    return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4);
 }
 
 FILETYPE get_filetype(const char * type)
@@ -339,10 +339,6 @@ FILETYPE get_filetype(const char * type)
     {
         return FILETYPE_OGG;
     }
-    else if (strcasestr(type, "flac") != NULL)
-    {
-        return FILETYPE_FLAC;
-    }
     else
     {
         return FILETYPE_UNKNOWN;
@@ -351,7 +347,7 @@ FILETYPE get_filetype(const char * type)
 
 const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
 {
-    const char * ext = NULL;
+    const char * format = NULL;
 
     switch (get_filetype(type))
     {
@@ -363,7 +359,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
         {
             *output_type = FILETYPE_MP3;
         }
-        ext = "mp3";
+        format = "mp3";
         break;
     }
     case FILETYPE_MP4:
@@ -374,7 +370,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
         {
             *output_type = FILETYPE_MP4;
         }
-        ext = "mp4";
+        format = "mp4";
         break;
     }
     case FILETYPE_WAV:
@@ -385,7 +381,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
         {
             *output_type = FILETYPE_WAV;
         }
-        ext = "wav";
+        format = "wav";
         break;
     }
     case FILETYPE_OGG:
@@ -396,18 +392,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
         {
             *output_type = FILETYPE_OGG;
         }
-        ext = "ogg";
-        break;
-    }
-    case FILETYPE_FLAC:
-    {
-        *audio_codecid = AV_CODEC_ID_FLAC;
-        *video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
-        if (output_type != NULL)
-        {
-            *output_type = FILETYPE_FLAC;
-        }
-        ext = "flac";
+        format = "ogg";
         break;
     }
     case FILETYPE_UNKNOWN:
@@ -416,7 +401,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     }
     }
 
-    return ext;
+    return format;
 }
 
 #ifdef USING_LIBAV

@@ -157,8 +157,7 @@ typedef enum _tagFILETYPE
     FILETYPE_MP3,
     FILETYPE_MP4,
     FILETYPE_WAV,
-    FILETYPE_OGG,
-    FILETYPE_FLAC
+    FILETYPE_OGG
 } FILETYPE;
 
 #include <sys/stat.h>

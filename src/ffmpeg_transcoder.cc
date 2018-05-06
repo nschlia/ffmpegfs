@@ -1401,31 +1401,38 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             nb_output_samples = (m_pAudio_resample_ctx != NULL) ? avresample_get_out_samples(m_pAudio_resample_ctx, frame->nb_samples) : frame->nb_samples;
 #endif
 
-            // Store audio frame
-            // Initialise the temporary storage for the converted input samples.
-            ret = init_converted_samples(&converted_input_samples, nb_output_samples);
-            if (ret < 0)
+            try
             {
-                goto cleanup2;
+                // Store audio frame
+                // Initialise the temporary storage for the converted input samples.
+                ret = init_converted_samples(&converted_input_samples, nb_output_samples);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
+                // Convert the input samples to the desired output sample format.
+                // This requires a temporary storage provided by converted_input_samples.
+
+                ret = convert_samples(frame->extended_data, frame->nb_samples, converted_input_samples, &nb_output_samples);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
+                // Add the converted input samples to the FIFO buffer for later processing.
+                ret = add_samples_to_fifo(converted_input_samples, nb_output_samples);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+                ret = 0;
+            }
+            catch (int _ret)
+            {
+                ret = _ret;
             }
 
-            // Convert the input samples to the desired output sample format.
-            // This requires a temporary storage provided by converted_input_samples.
-
-            ret = convert_samples(frame->extended_data, frame->nb_samples, converted_input_samples, &nb_output_samples);
-            if (ret < 0)
-            {
-                goto cleanup2;
-            }
-
-            // Add the converted input samples to the FIFO buffer for later processing.
-            ret = add_samples_to_fifo(converted_input_samples, nb_output_samples);
-            if (ret < 0)
-            {
-                goto cleanup2;
-            }
-            ret = 0;
-cleanup2:
             if (converted_input_samples)
             {
                 av_freep(&converted_input_samples[0]);
@@ -2450,92 +2457,169 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 
     status = 0;
 
-    if (m_out.m_audio.m_nStream_idx > -1)
+    try
     {
-        int output_frame_size;
-
-        if (m_out.m_audio.m_pCodec_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+        if (m_out.m_audio.m_nStream_idx > -1)
         {
-            // Encode supports variable frame size, use an arbitrary value
-            output_frame_size =  10000;
-        }
-        else
-        {
-            // Use the encoder's desired frame size for processing.
-            output_frame_size = m_out.m_audio.m_pCodec_ctx->frame_size;
-        }
+            int output_frame_size;
 
-        // Make sure that there is one frame worth of samples in the FIFO
-        // buffer so that the encoder can do its work.
-        // Since the decoder's and the encoder's frame size may differ, we
-        // need to FIFO buffer to store as many frames worth of input samples
-        // that they make up at least one frame worth of output samples.
-
-        while (av_audio_fifo_size(m_pAudioFifo) < output_frame_size)
-        {
-            // Decode one frame worth of audio samples, convert it to the
-            // output sample format and put it into the FIFO buffer.
-
-            ret = read_decode_convert_and_store(&finished);
-            if (ret < 0)
+            if (m_out.m_audio.m_pCodec_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
             {
-                goto cleanup;
+                // Encode supports variable frame size, use an arbitrary value
+                output_frame_size =  10000;
+            }
+            else
+            {
+                // Use the encoder's desired frame size for processing.
+                output_frame_size = m_out.m_audio.m_pCodec_ctx->frame_size;
             }
 
-            // If we are at the end of the input file, we continue
-            // encoding the remaining audio samples to the output file.
+            // Make sure that there is one frame worth of samples in the FIFO
+            // buffer so that the encoder can do its work.
+            // Since the decoder's and the encoder's frame size may differ, we
+            // need to FIFO buffer to store as many frames worth of input samples
+            // that they make up at least one frame worth of output samples.
+
+            while (av_audio_fifo_size(m_pAudioFifo) < output_frame_size)
+            {
+                // Decode one frame worth of audio samples, convert it to the
+                // output sample format and put it into the FIFO buffer.
+
+                ret = read_decode_convert_and_store(&finished);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
+                // If we are at the end of the input file, we continue
+                // encoding the remaining audio samples to the output file.
+
+                if (finished)
+                {
+                    break;
+                }
+            }
+
+            // If we have enough samples for the encoder, we encode them.
+            // At the end of the file, we pass the remaining samples to
+            // the encoder.
+
+            while (av_audio_fifo_size(m_pAudioFifo) >= output_frame_size || (finished && av_audio_fifo_size(m_pAudioFifo) > 0))
+            {
+                // Take one frame worth of audio samples from the FIFO buffer,
+                // encode it and write it to the output file.
+
+                ret = load_encode_and_write(output_frame_size);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+            }
+
+            // If we are at the end of the input file and have encoded
+            // all remaining samples, we can exit this loop and finish.
 
             if (finished)
             {
-                break;
+                if (m_out.m_audio.m_pCodec_ctx != NULL)
+                {
+                    // Flush the encoder as it may have delayed frames.
+                    int data_written = 0;
+                    do
+                    {
+                        ret = encode_audio_frame(NULL, &data_written);
+#if LAVC_NEW_PACKET_INTERFACE
+                        if (ret == AVERROR_EOF)
+                        {
+                            // Not an error
+                            break;
+                        }
+
+                        if (ret < 0 && ret != AVERROR(EAGAIN))
+                        {
+                            ffmpegfs_error("%s * Could not encode audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                            throw ret;
+                        }
+#else
+                        if (ret < 0)
+                        {
+                            ffmpegfs_error("%s * Could not encode audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                            throw ret;
+                        }
+#endif
+                    }
+                    while (data_written);
+                }
+
+                status = 1;
             }
         }
-
-        // If we have enough samples for the encoder, we encode them.
-        // At the end of the file, we pass the remaining samples to
-        // the encoder.
-
-        while (av_audio_fifo_size(m_pAudioFifo) >= output_frame_size || (finished && av_audio_fifo_size(m_pAudioFifo) > 0))
+        else
         {
-            // Take one frame worth of audio samples from the FIFO buffer,
-            // encode it and write it to the output file.
-
-            ret = load_encode_and_write(output_frame_size);
+            ret = read_decode_convert_and_store(&finished);
             if (ret < 0)
             {
-                goto cleanup;
+                throw ret;
+            }
+
+            if (finished)
+            {
+                status = 1;
             }
         }
+
+        while (!m_VideoFifo.empty())
+        {
+            AVFrame *output_frame = m_VideoFifo.front();
+            m_VideoFifo.pop();
+
+            // Encode one video frame.
+            int data_written = 0;
+            output_frame->key_frame = 0;    // Leave that decision to decoder
+            ret = encode_video_frame(output_frame, &data_written);
+#if !LAVC_NEW_PACKET_INTERFACE
+            if (ret < 0)
+#else
+            if (ret < 0 && ret != AVERROR(EAGAIN))
+#endif
+            {
+                av_frame_free(&output_frame);
+                throw ret;
+            }
+            av_frame_free(&output_frame);
+        }
+
+#if LAVC_NEW_PACKET_INTERFACE
+        ret = 0;    // May be AVERROR(EAGAIN)
+#endif
 
         // If we are at the end of the input file and have encoded
         // all remaining samples, we can exit this loop and finish.
 
         if (finished)
         {
-            if (m_out.m_audio.m_pCodec_ctx != NULL)
+            if (m_out.m_video.m_pCodec_ctx != NULL)
             {
                 // Flush the encoder as it may have delayed frames.
                 int data_written = 0;
                 do
                 {
-                    ret = encode_audio_frame(NULL, &data_written);
+                    ret = encode_video_frame(NULL, &data_written);
 #if LAVC_NEW_PACKET_INTERFACE
                     if (ret == AVERROR_EOF)
                     {
                         // Not an error
                         break;
                     }
-
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
-                        ffmpegfs_error("%s * Could not encode audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
-                        goto cleanup;
+                        ffmpegfs_error("%s * Could not encode video frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
+                        throw ret;
                     }
 #else
                     if (ret < 0)
                     {
-                        ffmpegfs_error("%s * Could not encode audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
-                        goto cleanup;
+                        throw ret;
                     }
 #endif
                 }
@@ -2545,86 +2629,13 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
             status = 1;
         }
     }
-    else
+    catch (int _ret)
     {
-        ret = read_decode_convert_and_store(&finished);
-        if (ret < 0)
-        {
-            goto cleanup;
-        }
-
-        if (finished)
-        {
-            status = 1;
-        }
-    }
-
-    while (!m_VideoFifo.empty())
-    {
-        AVFrame *output_frame = m_VideoFifo.front();
-        m_VideoFifo.pop();
-
-        // Encode one video frame.
-        int data_written = 0;
-        output_frame->key_frame = 0;    // Leave that decision to decoder
-        ret = encode_video_frame(output_frame, &data_written);
-#if !LAVC_NEW_PACKET_INTERFACE
-        if (ret < 0)
-#else
-        if (ret < 0 && ret != AVERROR(EAGAIN))
-#endif
-        {
-            av_frame_free(&output_frame);
-            goto cleanup;
-        }
-        av_frame_free(&output_frame);
-    }
-
-#if LAVC_NEW_PACKET_INTERFACE
-    ret = 0;    // May be AVERROR(EAGAIN)
-#endif
-
-    // If we are at the end of the input file and have encoded
-    // all remaining samples, we can exit this loop and finish.
-
-    if (finished)
-    {
-        if (m_out.m_video.m_pCodec_ctx != NULL)
-        {
-            // Flush the encoder as it may have delayed frames.
-            int data_written = 0;
-            do
-            {
-                ret = encode_video_frame(NULL, &data_written);
-#if LAVC_NEW_PACKET_INTERFACE
-                if (ret == AVERROR_EOF)
-                {
-                    // Not an error
-                    break;
-                }
-                if (ret < 0 && ret != AVERROR(EAGAIN))
-                {
-                    ffmpegfs_error("%s * Could not encode video frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
-                    goto cleanup;
-                }
-#else
-                if (ret < 0)
-                {
-                    goto cleanup;
-                }
-#endif
-            }
-            while (data_written);
-        }
-
-        status = 1;
+        status = -1;
+        return _ret;
     }
 
     return 0;
-
-cleanup:
-    status = -1;
-    return ret;
 }
 
 // Try to predict final file size.

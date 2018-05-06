@@ -88,29 +88,24 @@ int ffmpegfs_readlink(const char *path, char *buf, size_t size)
     find_original(&origpath);
 
     len = readlink(origpath.c_str(), buf, size - 2);
-    if (len == -1)
+    if (len != -1)
     {
-        goto readlink_fail;
+        buf[len] = '\0';
+
+        transcoded = buf;
+        transcoded_name(&transcoded);
+
+        buf[0] = '\0';
+        strncat(buf, transcoded.c_str(), size);
+
+        errno = 0;  // Just to make sure - reset any error
     }
 
-    buf[len] = '\0';
-
-    transcoded = buf;
-    transcoded_name(&transcoded);
-
-    buf[0] = '\0';
-    strncat(buf, transcoded.c_str(), size);
-
-    errno = 0;  // Just to make sure - reset any error
-
-readlink_fail:
     return -errno;
 }
 
-int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
+int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
-    (void)offset;
-    (void)fi;
     string origpath;
     DIR *dp;
     struct dirent *de;
@@ -121,42 +116,47 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     append_sep(&origpath);
 
     dp = opendir(origpath.c_str());
-    if (!dp)
+    if (dp)
     {
-        goto opendir_fail;
-    }
-
-    while ((de = readdir(dp)))
-    {
-        string filename(de->d_name);
-        string origfile;
-        struct stat st;
-
-        origfile = origpath + filename;
-
-        if (lstat(origfile.c_str(), &st) == -1)
+        try
         {
-            goto stat_fail;
-        }
-        else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
-        {
-            if (transcoded_name(&filename))
+            while ((de = readdir(dp)))
             {
-                filenames.insert(make_pair(origpath + filename, origfile));
+                string filename(de->d_name);
+                string origfile;
+                struct stat st;
+
+                origfile = origpath + filename;
+
+                if (lstat(origfile.c_str(), &st) == -1)
+                {
+                    throw false;
+                }
+
+                if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
+                {
+                    if (transcoded_name(&filename))
+                    {
+                        filenames.insert(make_pair(origpath + filename, origfile));
+                    }
+                }
+
+                if (filler(buf, filename.c_str(), &st, 0))
+                {
+                    break;
+                }
             }
+
+            errno = 0;  // Just to make sure - reset any error
+        }
+        catch (bool)
+        {
+
         }
 
-        if (filler(buf, filename.c_str(), &st, 0))
-        {
-            break;
-        }
+        closedir(dp);
     }
 
-    errno = 0;  // Just to make sure - reset any error
-
-stat_fail:
-    closedir(dp);
-opendir_fail:
     return -errno;
 }
 
@@ -168,11 +168,11 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     translate_path(&origpath, path);
 
-    // pass-through for regular files
     if (lstat(origpath.c_str(), stbuf) == 0)
     {
+        // pass-through for regular files
         errno = 0;
-        goto passthrough;
+        return 0;
     }
     else
     {
@@ -184,7 +184,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     if (lstat(origpath.c_str(), stbuf) == -1)
     {
-        goto stat_fail;
+        return -errno;
     }
 
     // Get size for resulting output file from regular file, otherwise it's a symbolic link.
@@ -197,7 +197,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             cache_entry = transcoder_new(origpath.c_str(), 0);
             if (!cache_entry)
             {
-                goto transcoder_fail;
+                return -errno;
             }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
@@ -213,10 +213,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     errno = 0;  // Just to make sure - reset any error
 
-transcoder_fail:
-stat_fail:
-passthrough:
-    return -errno;
+    return 0;
 }
 
 int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
@@ -229,10 +226,11 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 
     translate_path(&origpath, filename);
 
-    // pass-through for regular files
     if (lstat(origpath.c_str(), stbuf) == 0)
     {
-        goto passthrough;
+        // pass-through for regular files
+        errno = 0;
+        return 0;
     }
     else
     {
@@ -244,7 +242,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 
     if (lstat(origpath.c_str(), stbuf) == -1)
     {
-        goto stat_fail;
+        return -errno;
     }
 
     // Get size for resulting output file from regular file, otherwise it's a symbolic link.
@@ -258,7 +256,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
         {
             ffmpegfs_error("Tried to stat unopen file: %s.", filename);
             errno = EBADF;
-            goto transcoder_fail;
+            return -errno;
         }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
@@ -271,10 +269,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 
     errno = 0;  // Just to make sure - reset any error
 
-transcoder_fail:
-stat_fail:
-passthrough:
-    return -errno;
+    return 0;
 }
 
 int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
@@ -289,10 +284,10 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
     fd = open(origpath.c_str(), fi->flags);
 
-    // File does exist, but can't be opened.
     if (fd == -1 && errno != ENOENT)
     {
-        goto open_fail;
+        // File does exist, but can't be opened.
+        return -errno;
     }
     else
     {
@@ -300,11 +295,12 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
     }
 
-    // File is real and can be opened.
     if (fd != -1)
     {
         close(fd);
-        goto passthrough;
+        // File is real and can be opened.
+        errno = 0;
+        return 0;
     }
 
     find_original(&origpath);
@@ -312,7 +308,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     cache_entry = transcoder_new(origpath.c_str(), 1);
     if (!cache_entry)
     {
-        goto transcoder_fail;
+        return -errno;
     }
 
     // Store transcoder in the fuse_file_info structure.
@@ -323,10 +319,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     // Clear errors
     errno = 0;
 
-transcoder_fail:
-passthrough:
-open_fail:
-    return -errno;
+    return 0;
 }
 
 int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
@@ -340,18 +333,25 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
     translate_path(&origpath, path);
 
-    // If this is a real file, pass the call through.
     fd = open(origpath.c_str(), O_RDONLY);
     if (fd != -1)
     {
+        // If this is a real file, pass the call through.
         read = pread(fd, buf, size, offset);
         close(fd);
-        goto passthrough;
+        if (read >= 0)
+        {
+            return (int)read;
+        }
+        else
+        {
+            return -errno;
+        }
     }
     else if (errno != ENOENT)
     {
         // File does exist, but can't be opened.
-        goto open_fail;
+        return -errno;
     }
     else
     {
@@ -364,14 +364,11 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
     if (!cache_entry)
     {
         ffmpegfs_error("Tried to read from unopen file: %s.", origpath.c_str());
-        goto transcoder_fail;
+        return -errno;
     }
 
     read = transcoder_read(cache_entry, buf, offset, size);
 
-transcoder_fail:
-passthrough:
-open_fail:
     if (read >= 0)
     {
         return (int)read;
@@ -395,7 +392,7 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
     // pass-through for regular files
     if (statvfs(origpath.c_str(), stbuf) == 0)
     {
-        goto passthrough;
+        return -errno;
     }
     else
     {
@@ -409,8 +406,7 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
     errno = 0;  // Just to make sure - reset any error
 
-passthrough:
-    return -errno;
+    return 0;
 }
 
 int ffmpegfs_release(const char *path, struct fuse_file_info *fi)

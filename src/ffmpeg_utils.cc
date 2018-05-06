@@ -64,6 +64,31 @@ static int is_device(const AVClass *avclass);
 #define AV_ERROR_MAX_STRING_SIZE 128
 #endif // AV_ERROR_MAX_STRING_SIZE
 
+// Add / to the path if required
+// Returns: Constant reference to path
+const string & append_sep(string * path)
+{
+    if (path->back() != '/')
+    {
+        *path += '/';
+    }
+
+    return *path;
+}
+
+// Add filename to path, adding a / to the path if required
+// Returns: Constant reference to path
+const string & append_filename(string * path, const string & filename)
+{
+    append_sep(path);
+
+    *path += filename;
+
+    return *path;
+}
+
+// Find extension in filename, if any
+// Returns: Constant true if extension was found, false if there was none
 bool find_ext(string * ext, const string & filename)
 {
     size_t found;
@@ -84,7 +109,10 @@ bool find_ext(string * ext, const string & filename)
     }
 }
 
-const string & replace_ext(string * filename, string ext)
+// Replace extension in filename. Take into account that there might
+// not be an extension already.
+// Returns: Constant reference to filename
+const string & replace_ext(string * filename, const string & ext)
 {
     size_t found;
 

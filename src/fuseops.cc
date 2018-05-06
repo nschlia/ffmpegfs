@@ -29,10 +29,13 @@
 
 #include <dirent.h>
 #include <unistd.h>
+#include <map>
 
 static void translate_path(string *origpath, const char* path);
-static void transcoded_name(string *path);
+static bool transcoded_name(string *path);
 static void find_original(string *path);
+
+static map<string, string> filenames;
 
 // Translate file names from FUSE to the original absolute path.
 static void translate_path(string *origpath, const char* path)
@@ -42,13 +45,19 @@ static void translate_path(string *origpath, const char* path)
 }
 
 // Convert file name from source to destination name.
-static void transcoded_name(string * path)
+// Returns true if filename has been changed
+static bool transcoded_name(string * path)
 {
     string ext;
 
     if (find_ext(&ext, *path) && check_decoder(ext.c_str()))
     {
         replace_ext(path, params.m_desttype);
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -56,29 +65,14 @@ static void transcoded_name(string * path)
 // the original file to be transcoded.
 static void find_original(string * path)
 {
-    string ext;
-
-    if (find_ext(&ext, *path) && strcasecmp(ext.c_str(), params.m_desttype) == 0)
+    map<string, string>::iterator p = filenames.find(*path);
+    if (p != filenames.end())
     {
-        string tmppath(*path);
-
-        for (size_t i=0; decoder_list[i]; ++i)
-        {
-            replace_ext(&tmppath, decoder_list[i]);
-            if (access(tmppath.c_str(), F_OK) == 0)
-            {
-                // File exists with this extension
-                *path = tmppath;
-                return;
-            }
-            else
-            {
-                // File does not exist; not an error
-                errno = 0;
-            }
-        }
-        // Source file exists with no supported extension, keep path
+        *path = p->second;
+        return;
     }
+
+    // Source file exists with no supported extension, keep path
 }
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)
@@ -124,6 +118,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     ffmpegfs_trace("readdir %s", path);
 
     translate_path(&origpath, path);
+    append_sep(&origpath);
 
     dp = opendir(origpath.c_str());
     if (!dp)
@@ -137,7 +132,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
         string origfile;
         struct stat st;
 
-        origfile = origpath + "/" + filename;
+        origfile = origpath + filename;
 
         if (lstat(origfile.c_str(), &st) == -1)
         {
@@ -145,7 +140,10 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
         }
         else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
         {
-            transcoded_name(&filename);
+            if (transcoded_name(&filename))
+            {
+                filenames.insert(make_pair(origpath + filename, origfile));
+            }
         }
 
         if (filler(buf, filename.c_str(), &st, 0))

@@ -167,8 +167,10 @@ typedef enum _tagFILETYPE
 
 using namespace std;
 
+const string & append_sep(string * path);
+const string & append_filename(string * path, const string & filename);
 bool find_ext(string * ext, const string & filename);
-const string & replace_ext(string * filename, string ext);
+const string & replace_ext(string * filename, const string & ext);
 const string & get_destname(string *destname, const string & filename);
 string ffmpeg_geterror(int errnum);
 double ffmpeg_cvttime(int64_t ts, const AVRational & time_base);

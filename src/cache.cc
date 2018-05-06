@@ -74,8 +74,7 @@ bool Cache::load_index()
         transcoder_cache_path(cachepath, sizeof(cachepath));
 
         m_cacheidx_file = cachepath;
-        m_cacheidx_file += "/";
-        m_cacheidx_file += "cacheidx.sqlite";
+        append_filename(&m_cacheidx_file, "cacheidx.sqlite");
 
         if (mktree(cachepath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {

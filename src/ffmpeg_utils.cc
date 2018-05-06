@@ -20,6 +20,7 @@
 
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
+#include "transcode.h"
 
 #include <libgen.h>
 #include <unistd.h>
@@ -62,6 +63,30 @@ static int is_device(const AVClass *avclass);
 #ifndef AV_ERROR_MAX_STRING_SIZE
 #define AV_ERROR_MAX_STRING_SIZE 128
 #endif // AV_ERROR_MAX_STRING_SIZE
+
+const string & get_destname(string *destname, const string & filename)
+{
+    size_t len = strlen(params.m_basepath);
+    size_t found;
+
+    *destname = params.m_mountpath;
+    *destname += filename.substr(len);
+
+    found = destname->rfind('.');
+
+    if (found == string::npos)
+    {
+        *destname += '.';
+    }
+    else
+    {
+        *destname = destname->substr(0, found + 1);
+    }
+
+    *destname += params.m_desttype;
+
+    return *destname;
+}
 
 string ffmpeg_geterror(int errnum)
 {

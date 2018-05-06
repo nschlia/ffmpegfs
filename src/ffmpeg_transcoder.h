@@ -151,8 +151,6 @@ public:
     const char *filename() const;
     const char *destname() const;
 
-    static const string & get_destname(string *destname, const string & filename);
-    
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);

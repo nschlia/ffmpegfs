@@ -350,7 +350,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
         else if (begin_transcode)
         {
             string destname;
-            ffmpegfs_debug("%s * Reading file from cache.", FFMPEG_Transcoder::get_destname(&destname, cache_entry->filename()).c_str());
+            ffmpegfs_debug("%s * Reading file from cache.", get_destname(&destname, cache_entry->filename()).c_str());
         }
 
         cache_entry->unlock();

@@ -221,15 +221,15 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
 
-int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
+int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
 {
     string origpath;
 
-    ffmpegfs_trace("fgetattr %s", filename);
+    ffmpegfs_trace("fgetattr %s", path);
 
     errno = 0;
 
-    translate_path(&origpath, filename);
+    translate_path(&origpath, path);
 
     if (lstat(origpath.c_str(), stbuf) == 0)
     {
@@ -260,7 +260,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 
         if (!cache_entry)
         {
-            ffmpegfs_error("Tried to stat unopen file: %s.", filename);
+            ffmpegfs_error("Tried to stat unopen file: %s.", path);
             errno = EBADF;
             return -errno;
         }

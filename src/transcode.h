@@ -100,7 +100,7 @@ extern struct fuse_operations ffmpegfs_ops;
 int ffmpegfs_readlink(const char *path, char *buf, size_t size);
 int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
 int ffmpegfs_getattr(const char *path, struct stat *stbuf);
-int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi);
+int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
 int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
 int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);

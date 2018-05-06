@@ -190,7 +190,10 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             }
         }
 
-        if (filler(buf, de->d_name, &st, 0)) break;
+        if (filler(buf, de->d_name, &st, 0))
+        {
+            break;
+        }
     }
 
     errno = 0;  // Just to make sure - reset any error

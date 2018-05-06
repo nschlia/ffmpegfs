@@ -3,6 +3,7 @@
    <head>
       <meta charset="utf-8">
       <title>Transcoder Test</title>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <style>
          body {
          font-family: Arial, Helvetica, sans-serif;

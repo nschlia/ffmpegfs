@@ -30,23 +30,44 @@
          }
          
          function get_filesize(url, callback) {
-         var xhr = new XMLHttpRequest();
-         xhr.open("HEAD", url, true); // Notice "HEAD" instead of "GET",
-                                      //  to get only the header
-         xhr.onreadystatechange = function() {
-             if (this.readyState == this.DONE) {
-                 callback(parseInt(xhr.getResponseHeader("Content-Length")));
-             }
+             var xhr = new XMLHttpRequest();
+             xhr.open("HEAD", url, true); // Notice "HEAD" instead of "GET",
+                                          //  to get only the header
+             xhr.onreadystatechange = function() {
+                 if (this.readyState == this.DONE) {
+                     callback(parseInt(xhr.getResponseHeader("Content-Length")));
+                 }
+             };
+             xhr.send();
+         }
+         
+         function dopreload(url) {
+         	get_filesize(url, function(size) {
+             		alert("The size is: " + size + " bytes.");
+         	});
+         }
+         
+         function canplay(type) {
+         
+         	var video = document.getElementById('video');
+         	var opt = document.createElement("option");
+         	opt.text = type + ": " + video.canPlayType(type);
+         	//opt.value = 
+         	document.getElementById("ListBox1").options.add(opt); 	
+         }
+         
+         window.onload = function() 
+         {
+         	canplay('video/mp4');
+         	canplay('audio/mp4');
+         	canplay('video/ogg');
+         	canplay('audio/ogg');
+         	canplay('video/webm');
+         	canplay('video/mpeg');
+         	canplay('audio/mp3');
+         	canplay('audio/flac');
          };
-         xhr.send();
-         }
-         
-         function test(url) {
-         get_filesize(url, function(size) {
-         		alert("The size is: " + size + " bytes.");
-         });
-         }
-         
+             
       </script>
    </head>
    <body>
@@ -76,14 +97,24 @@
                          echo "<tr><td>";
                          echo "<a href=\"javascript:doplay('" . $value . "')\">" . $value . "</a>&nbsp;";
                          echo "</td><td>";
-                         echo "<a href=\"javascript:test('" . $value . "')\">Preload</a>";
+                         echo "<a href=\"javascript:dopreload('" . $value . "')\">Preload</a>";
                          echo "</td></tr>";
                      }
                      
                      ?>
+                  <tr>
+                     <td>
+                        <br />
+                        <b>Supported file types</b>
+                        <br />
+                        <select id="ListBox1" size="8" style="width: 100%; height: 50%">
+                        </select>    
+                     </td>
+                  </tr>
                </table>
             </td>
          </tr>
       </table>
    </body>
 </html>
+

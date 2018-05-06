@@ -19,16 +19,14 @@
       </style>
       <script language="javascript">
          function doplay(url) {
-         var video = document.getElementById('video');
-         	var mp4_src = document.getElementById("mp4_src");
-         	var ogg_src = document.getElementById("ogg_src");
+         	var video = document.getElementById('video');
          
-         d = new Date();
+         	d = new Date();
          
-         mp4_src.src = url + "?" + d.getTime();
+         	video.src =  url + "?" + d.getTime();
          
-         video.load();
-         video.play();
+         	video.load();
+         	video.play();
          }
          
          function get_filesize(url, callback) {
@@ -60,8 +58,6 @@
                   -->
                <video id="video" class="videowindow" controls width="720" height="560">
                   Your browser does not support the video tag.
-                  <source id="mp4_src" src="" type="video/mp4">
-                  <source id="ogg_src" src="" type="video/ogg">
                </video>
             </td>
             <td>

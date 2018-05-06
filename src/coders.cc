@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-/* Define list of available encoder extensions. */
+// Define list of available encoder extensions.
 const char* encoder_list[] =
 {
     "mp3",  // TYPE_MP3
@@ -33,7 +33,7 @@ const char* encoder_list[] =
     NULL
 };
 
-/* Define list of available decoder extensions. */
+// Define list of available decoder extensions.
 const char* decoder_list[] =
 {
     "avi",
@@ -59,10 +59,10 @@ const char* decoder_list[] =
     NULL
 };
 
-/* Use "C" linkage to allow access from C code. */
+// Use "C" linkage to allow access from C code.
 extern "C" {
 
-/* Check if an encoder is available to encode to the specified type. */
+// Check if an encoder is available to encode to the specified type.
 int check_encoder(const char* type)
 {
     int found = 0;
@@ -78,7 +78,7 @@ int check_encoder(const char* type)
     return found;
 }
 
-/* Check if a decoder is available to decode from the specified type. */
+// Check if a decoder is available to decode from the specified type.
 int check_decoder(const char* type)
 {
     int found = 0;

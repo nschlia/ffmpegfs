@@ -185,6 +185,20 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
+struct fuse_operations ffmpegfs_ops =
+{
+    .getattr  = ffmpegfs_getattr,
+    .fgetattr = ffmpegfs_fgetattr,
+    .readlink = ffmpegfs_readlink,
+    .readdir  = ffmpegfs_readdir,
+    .open     = ffmpegfs_open,
+    .read     = ffmpegfs_read,
+    .statfs   = ffmpegfs_statfs,
+    .release  = ffmpegfs_release,
+    .init     = ffmpegfs_init,
+    .destroy  = ffmpegfs_destroy,
+};
+
 static int compare(const char *value, const char *pattern);
 static int get_bitrate(const char * arg, unsigned int *value);
 static int get_samplerate(const char * arg, unsigned int *value);

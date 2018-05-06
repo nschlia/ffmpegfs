@@ -28,6 +28,7 @@
 #define FUSE_USE_VERSION 26
 
 #include <fuse.h>
+
 #include <stdarg.h>
 
 typedef enum _tagPROFILE
@@ -83,9 +84,6 @@ extern struct ffmpegfs_params
     unsigned int    m_max_threads;              // Max. number of recoder threads
 } params;
 
-// Fuse operations struct
-extern struct fuse_operations ffmpegfs_ops;
-
 // Forward declare transcoder struct. Don't actually define it here, to avoid
 // including coders.h and turning into C++.
 
@@ -94,6 +92,19 @@ struct Cache_Entry;
 #ifdef __cplusplus
 extern "C" {
 #endif
+// Fuse operations struct
+extern struct fuse_operations ffmpegfs_ops;
+
+int ffmpegfs_readlink(const char *path, char *buf, size_t size);
+int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
+int ffmpegfs_getattr(const char *path, struct stat *stbuf);
+int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi);
+int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
+int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
+int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
+int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+void *ffmpegfs_init(struct fuse_conn_info *conn);
+void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 void transcoder_cache_path(char *dir, size_t size);
 int transcoder_init(void);

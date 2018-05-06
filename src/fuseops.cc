@@ -33,16 +33,6 @@
 static char* translate_path(const char* path);
 static void transcoded_name(char* path);
 static void find_original(char* path);
-static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
-static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
-static int ffmpegfs_getattr(const char *path, struct stat *stbuf);
-static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi);
-static int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
-static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
-static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
-static int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
-static void *ffmpegfs_init(struct fuse_conn_info *conn);
-static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 // Translate file names from FUSE to the original absolute path. A buffer
 // is allocated using malloc for the translated path. It is the caller's
@@ -52,7 +42,7 @@ static char* translate_path(const char* path)
     char* result;
     // Allocate buffer. The +2 is for the terminating '\0' and to
     // accomodate possibly translating .mp3 to .flac later.
-    result = malloc(strlen(params.m_basepath) + strlen(path) + 2);
+    result = (char*)malloc(strlen(params.m_basepath) + strlen(path) + 2);
 
     if (result)
     {
@@ -104,7 +94,7 @@ static void find_original(char* path)
     }
 }
 
-static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
+int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
     char* origpath;
     ssize_t len;
@@ -139,7 +129,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
+int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
 {
     (void)offset;
     (void)fi;
@@ -159,7 +149,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
 
     // 2 for directory separator and NULL byte
-    origfile = malloc(strlen(origpath) + NAME_MAX + 2);
+    origfile = (char*)malloc(strlen(origpath) + NAME_MAX + 2);
     if (!origfile)
     {
         goto origfile_fail;
@@ -196,6 +186,19 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         }
     }
 
+    {
+        struct stat st;
+
+        memset(&st, 0, sizeof(st));
+
+        st.st_mode = S_IFREG;
+        st.st_size = 1;
+        //        st.st_ctim = st.st_mtim = st.st_atim = time(NULL);
+
+
+        filler(buf, "HALLO", &st, 0);
+    }
+
     errno = 0;  // Just to make sure - reset any error
 
 stat_fail:
@@ -208,7 +211,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
+int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     char* origpath;
 
@@ -220,7 +223,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         goto translate_fail;
     }
 
-    // pass-through for regular files 
+    // pass-through for regular files
     if (lstat(origpath, stbuf) == 0)
     {
         errno = 0;
@@ -228,7 +231,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     else
     {
-        // Not really an error. 
+        // Not really an error.
         errno = 0;
     }
 
@@ -273,7 +276,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
+int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
 {
     char* origpath;
 
@@ -287,14 +290,14 @@ static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct f
         goto translate_fail;
     }
 
-    // pass-through for regular files 
+    // pass-through for regular files
     if (lstat(origpath, stbuf) == 0)
     {
         goto passthrough;
     }
     else
     {
-        // Not really an error. 
+        // Not really an error.
         errno = 0;
     }
 
@@ -308,7 +311,6 @@ static int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct f
     // Get size for resulting output file from regular file, otherwise it's a symbolic link.
     if (S_ISREG(stbuf->st_mode))
     {
-
         struct Cache_Entry* cache_entry;
 
         cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
@@ -338,7 +340,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
+int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     char* origpath;
     struct Cache_Entry* cache_entry;
@@ -396,7 +398,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
     char* origpath;
     int fd;
@@ -455,7 +457,7 @@ translate_fail:
     }
 }
 
-static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
+int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
     char* origpath;
 
@@ -492,7 +494,7 @@ translate_fail:
     return -errno;
 }
 
-static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
+int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
     struct Cache_Entry* cache_entry;
 
@@ -507,7 +509,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
-static void *ffmpegfs_init(struct fuse_conn_info *conn)
+void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     ffmpegfs_info("%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
     ffmpegfs_info("Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
@@ -527,7 +529,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
     return NULL;
 }
 
-static void ffmpegfs_destroy(__attribute__((unused)) void * p)
+void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
     ffmpegfs_info("%s V%s terminating", PACKAGE_NAME, PACKAGE_VERSION);
     printf("%s V%s terminating\n", PACKAGE_NAME, PACKAGE_VERSION);
@@ -539,17 +541,3 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     ffmpegfs_debug("%s V%s terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }
-
-struct fuse_operations ffmpegfs_ops =
-{
-    .getattr  = ffmpegfs_getattr,
-    .fgetattr = ffmpegfs_fgetattr,
-    .readlink = ffmpegfs_readlink,
-    .readdir  = ffmpegfs_readdir,
-    .open     = ffmpegfs_open,
-    .read     = ffmpegfs_read,
-    .statfs   = ffmpegfs_statfs,
-    .release  = ffmpegfs_release,
-    .init     = ffmpegfs_init,
-    .destroy  = ffmpegfs_destroy,
-};

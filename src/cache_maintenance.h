@@ -23,7 +23,13 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 int start_cache_maintenance(time_t interval);
 int stop_cache_maintenance();
+#ifdef __cplusplus
+}
+#endif
 
 #endif // CACHE_MAINTENANCE_H

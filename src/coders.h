@@ -23,7 +23,7 @@
 
 #pragma once
 
-/* Define lists of available encoder and decoder extensions. */
+// Define lists of available encoder and decoder extensions.
 extern const char* encoder_list[];
 extern const char* decoder_list[];
 
@@ -31,7 +31,7 @@ extern const char* decoder_list[];
 extern "C" {
 #endif
 
-/* Check for availability of audio types. */
+// Check for availability of audio types.
 int check_encoder(const char* type);
 int check_decoder(const char* type);
 

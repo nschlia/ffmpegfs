@@ -198,9 +198,11 @@ protected:
 #endif
     double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;
 
+#ifndef USING_LIBAV
     int init_filters(AVCodecContext *pCodecContext, AVStream *pStream);
     AVFrame *send_filters(AVFrame *srcframe, int &ret);
     void free_filters();
+#endif // !USING_LIBAV
 
 private:
     time_t                      m_mtime;

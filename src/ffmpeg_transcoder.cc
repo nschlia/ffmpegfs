@@ -885,7 +885,7 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
     AVPacket *tmp_pkt;
     int ret = 0;
 
-#if LAVF_DEP_AV_COPY_PACKET
+#if LAVF_DEP_AV_COPY_PACKET || defined(USING_LIBAV)
     tmp_pkt = av_packet_clone(pkt_in);
     if (tmp_pkt == NULL)
     {
@@ -973,6 +973,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
             return ret;
         }
 
+#ifndef USING_LIBAV
         if (params.m_deinterlace)
         {
             // Init deinterlace filters
@@ -982,6 +983,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
                 return ret;
             }
         }
+#endif // !USING_LIBAV
     }
 
     //audio_codec_id = m_out.m_pFormat_ctx->oformat->audio_codec;
@@ -1572,7 +1574,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 #if LAVF_DEP_AVSTREAM_CODEC
             int64_t best_effort_timestamp = frame->best_effort_timestamp;
 #else
-            int64_t best_effort_timestamp = ::av_frame_get_best_effort_timestamp(frame);
+            int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
 #endif
 
             if (best_effort_timestamp != (int64_t)AV_NOPTS_VALUE)
@@ -1595,10 +1597,11 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             frame->quality = m_out.m_video.m_pCodec_ctx->global_quality;
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+            m_VideoFifo.push(send_filters(frame, ret));
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
+            m_VideoFifo.push(frame);
 #endif
-            m_VideoFifo.push(send_filters(frame, ret));
         }
         else
         {
@@ -2522,6 +2525,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
                         // Not an error
                         break;
                     }
+
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
                         ffmpegfs_error("%s * Could not encode audio frame (error '%s').", destname(), ffmpeg_geterror(ret).c_str());
@@ -3013,7 +3017,9 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 
+#ifndef USING_LIBAV
     free_filters();
+#endif  // !USING_LIBAV
 
     if (bClosed)
     {
@@ -3042,6 +3048,7 @@ const char *FFMPEG_Transcoder::destname() const
     return m_out.m_filename.c_str();
 }
 
+#ifndef USING_LIBAV
 // create
 int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pStream)
 {
@@ -3216,7 +3223,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
         {
             AVFrame * filterframe   = NULL;
 
-            //pFrame->pts = ::av_frame_get_best_effort_timestamp(pFrame);
+            //pFrame->pts = av_frame_get_best_effort_timestamp(pFrame);
             // push the decoded frame into the filtergraph
 
             if ((ret = ::av_buffersrc_add_frame_flags(m_pBufferSourceContext, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
@@ -3253,8 +3260,11 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
                 tgtframe = filterframe;
 
                 tgtframe->pts = srcframe->pts;
+#if LAVF_DEP_AVSTREAM_CODEC
                 tgtframe->best_effort_timestamp = srcframe->best_effort_timestamp;
-
+#else
+                tgtframe->best_effort_timestamp = av_frame_get_best_effort_timestamp(srcframe);
+#endif
                 ::av_frame_unref(srcframe);
             }
         }
@@ -3290,3 +3300,4 @@ void FFMPEG_Transcoder::free_filters()
         m_pFilterGraph = NULL;
     }
 }
+#endif  // !USING_LIBAV

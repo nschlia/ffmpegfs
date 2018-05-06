@@ -60,7 +60,9 @@ extern struct ffmpegfs_params
     unsigned int    m_videobitrate;
     unsigned int    m_videowidth;               // set video width
     unsigned int    m_videoheight;              // set video height
+#ifndef USING_LIBAV
     int             m_deinterlace;              // deinterlace video
+#endif // !USING_LIBAV
     // Album arts
     int             m_noalbumarts;              // skip album arts
     // ffmpegfs options

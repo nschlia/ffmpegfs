@@ -49,9 +49,12 @@ extern "C" {
 #else
 #include <libavresample/avresample.h>
 #endif
-#if LIBAVUTIL_VERSION_MICRO >= 100
+#ifndef USING_LIBAV
 // Does not exist in Libav
 #include "libavutil/ffversion.h"
+#else
+#include "libavutil/avstring.h"
+#include "libavutil/opt.h"
 #endif
 #ifdef __cplusplus
 }

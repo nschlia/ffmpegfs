@@ -65,7 +65,9 @@ struct ffmpegfs_params params =
     .m_videobitrate       	= 2*1024*1024,              // default: 2 MBit
     .m_videowidth           = 0,                        // default: do not change width
     .m_videoheight          = 0,                        // default: do not change height
+#ifndef USING_LIBAV
     .m_deinterlace          = 0,                        // default: do not interlace video
+#endif  // !USING_LIBAV
 
     .m_noalbumarts          = 0,                        // default: copy album arts
 
@@ -131,8 +133,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("videoheight=%u",              m_videoheight, 0),
     FFMPEGFS_OPT("--videowidth=%u",             m_videowidth, 0),
     FFMPEGFS_OPT("videowidth=%u",               m_videowidth, 0),
+#ifndef USING_LIBAV
     FFMPEGFS_OPT("--deinterlace",               m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                 m_deinterlace, 1),
+#endif  // !USING_LIBAV
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",               m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                 m_noalbumarts, 1),
@@ -865,7 +869,9 @@ static void print_params()
                                 "Audio Sample Rate : %s\n"
                                 "\nVideo\n\n"
                                 "Video Size/Pixels : width=%s height=%s\n"
+               #ifndef USING_LIBAV
                                 "Deinterlace       : %s\n"
+               #endif  // !USING_LIBAV
                                 "Remove Album Arts : %s\n"
                                 "Video Format      : %s\n"
                                 "Video Bitrate     : %s\n"
@@ -895,7 +901,9 @@ static void print_params()
                    audiobitrate,
                    audiosamplerate,
                    width, height,
+               #ifndef USING_LIBAV
                    params.m_deinterlace ? "yes" : "no",
+               #endif  // !USING_LIBAV
 				   params.m_noalbumarts ? "yes" : "no",
                    get_codec_name(video_codecid),
                    videobitrate,

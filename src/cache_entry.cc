@@ -81,7 +81,11 @@ void Cache_Entry::clear(int fetch_file_time)
     m_cache_info.m_videobitrate         = params.m_videobitrate;
     m_cache_info.m_videowidth           = params.m_videowidth;
     m_cache_info.m_videoheight          = params.m_videoheight;
+#ifndef USING_LIBAV
     m_cache_info.m_deinterlace          = params.m_deinterlace;
+#else   // !USING_LIBAV
+    m_cache_info.m_deinterlace          = 0;
+#endif  // USING_LIBAV
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
     m_cache_info.m_finished             = false;
@@ -335,11 +339,13 @@ bool Cache_Entry::outdated() const
         return true;
     }
 
+#ifndef USING_LIBAV
     if (m_cache_info.m_deinterlace != params.m_deinterlace)
     {
         ffmpegfs_debug("%s * Triggering re-transcode: Selected video deinterlace changed from %u to %u.", m_cache_info.m_filename.c_str(), m_cache_info.m_deinterlace, params.m_deinterlace);
         return true;
     }
+#endif  // !USING_LIBAV
 
     if (stat(filename().c_str(), &sb) != -1)
     {

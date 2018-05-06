@@ -4,9 +4,14 @@ Important changes in 1.4 (2018-05-XX)
 
 * Feature:
 * Feature: Changed the fuse operations code module to c++ (minimise danger of 
-          memory leaks or buffer overruns)	   
+           memory leaks or buffer overruns)	   
 
 * Bugfix: 
+
+* Workaround: Fixed Libav support: Deinterlace code did not compile. Should be possible
+              to get it working, but for now it is simply disabled.
+              But honestly I don't want to get it working. I am thinking of dropping
+              Libav completely.
 
 * Fix deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
     Deprecate use of  av_iformat_next(), av_oformat_next().

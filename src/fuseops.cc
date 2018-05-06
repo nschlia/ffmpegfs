@@ -33,7 +33,7 @@
 
 static void translate_path(string *origpath, const char* path);
 static bool transcoded_name(string *path);
-static void find_original(string *path);
+static bool find_original(string *path);
 
 static map<string, string> filenames;
 
@@ -63,16 +63,20 @@ static bool transcoded_name(string * path)
 
 // Given the destination (post-transcode) file name, determine the name of
 // the original file to be transcoded.
-static void find_original(string * path)
+// Returns true if filename has been changed
+static bool find_original(string * path)
 {
     map<string, string>::iterator p = filenames.find(*path);
     if (p != filenames.end())
     {
         *path = p->second;
-        return;
+        return true;
     }
-
-    // Source file exists with no supported extension, keep path
+    else
+    {
+        // Source file exists with no supported extension, keep path
+        return false;
+    }
 }
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)
@@ -180,6 +184,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;
     }
 
+    // This is a virtual file
     find_original(&origpath);
 
     if (lstat(origpath.c_str(), stbuf) == -1)
@@ -238,6 +243,7 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
         errno = 0;
     }
 
+    // This is a virtual file
     find_original(&origpath);
 
     if (lstat(origpath.c_str(), stbuf) == -1)

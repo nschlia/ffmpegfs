@@ -8,7 +8,7 @@ SOURCES += \
     src/coders.cc \
     src/ffmpeg_transcoder.cc \
     src/ffmpeg_utils.cc \
-    src/fuseops.c \
+    src/fuseops.cc \
     src/logging.cc \
     src/ffmpegfs.c \
     src/transcode.cc \

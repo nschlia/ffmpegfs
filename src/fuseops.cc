@@ -30,57 +30,45 @@
 #include <dirent.h>
 #include <unistd.h>
 
-static char* translate_path(const char* path);
-static void transcoded_name(char* path);
-static void find_original(char* path);
+static void translate_path(string *origpath, const char* path);
+static void transcoded_name(string *path);
+static void find_original(string *path);
 
-// Translate file names from FUSE to the original absolute path. A buffer
-// is allocated using malloc for the translated path. It is the caller's
-// responsibility to free it.
-static char* translate_path(const char* path)
+// Translate file names from FUSE to the original absolute path.
+static void translate_path(string *origpath, const char* path)
 {
-    char* result;
-    // Allocate buffer. The +2 is for the terminating '\0' and to
-    // accomodate possibly translating .mp3 to .flac later.
-    result = (char*)malloc(strlen(params.m_basepath) + strlen(path) + 2);
-
-    if (result)
-    {
-        strcpy(result, params.m_basepath);
-        strcat(result, path);
-    }
-
-    return result;
+    *origpath = params.m_basepath;
+    *origpath += path;
 }
 
-// Convert file name from source to destination name. The new extension will
-// be copied in place, and the passed path must be large enough to hold the
-// new name.
-static void transcoded_name(char* path)
+// Convert file name from source to destination name.
+static void transcoded_name(string * path)
 {
-    char* ext = strrchr(path, '.');
+    string ext;
 
-    if (ext && check_decoder(ext + 1))
+    if (find_ext(&ext, *path) && check_decoder(ext.c_str()))
     {
-        strcpy(ext + 1, params.m_desttype);
+        replace_ext(path, params.m_desttype);
     }
 }
 
 // Given the destination (post-transcode) file name, determine the name of
-// the original file to be transcoded. The new extension will be copied in
-// place, and the passed path must be large enough to hold the new name.
-static void find_original(char* path)
+// the original file to be transcoded.
+static void find_original(string * path)
 {
-    char* ext = strrchr(path, '.');
+    string ext;
 
-    if (ext && strcmp(ext + 1, params.m_desttype) == 0)
+    if (find_ext(&ext, *path) && strcasecmp(ext.c_str(), params.m_desttype) == 0)
     {
+        string tmppath(*path);
+
         for (size_t i=0; decoder_list[i]; ++i)
         {
-            strcpy(ext + 1, decoder_list[i]);
-            if (access(path, F_OK) == 0)
+            replace_ext(&tmppath, decoder_list[i]);
+            if (access(tmppath.c_str(), F_OK) == 0)
             {
                 // File exists with this extension
+                *path = tmppath;
                 return;
             }
             else
@@ -89,29 +77,23 @@ static void find_original(char* path)
                 errno = 0;
             }
         }
-        // Source file exists with no supported extension, restore path
-        strcpy(ext + 1, params.m_desttype);
+        // Source file exists with no supported extension, keep path
     }
 }
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
-    char* origpath;
+    string origpath;
+    string transcoded;
     ssize_t len;
 
     ffmpegfs_trace("readlink %s", path);
 
-    //errno = 0;
+    translate_path(&origpath, path);
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    find_original(&origpath);
 
-    find_original(origpath);
-
-    len = readlink(origpath, buf, size - 2);
+    len = readlink(origpath.c_str(), buf, size - 2);
     if (len == -1)
     {
         goto readlink_fail;
@@ -119,13 +101,15 @@ int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 
     buf[len] = '\0';
 
-    transcoded_name(buf);
+    transcoded = buf;
+    transcoded_name(&transcoded);
+
+    buf[0] = '\0';
+    strncat(buf, transcoded.c_str(), size);
 
     errno = 0;  // Just to make sure - reset any error
 
 readlink_fail:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 
@@ -133,29 +117,15 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 {
     (void)offset;
     (void)fi;
-    char* origpath;
-    char* origfile;
+    string origpath;
     DIR *dp;
     struct dirent *de;
 
     ffmpegfs_trace("readdir %s", path);
 
-    //errno = 0;
+    translate_path(&origpath, path);
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
-
-    // 2 for directory separator and NULL byte
-    origfile = (char*)malloc(strlen(origpath) + NAME_MAX + 2);
-    if (!origfile)
-    {
-        goto origfile_fail;
-    }
-
-    dp = opendir(origpath);
+    dp = opendir(origpath.c_str());
     if (!dp)
     {
         goto opendir_fail;
@@ -163,40 +133,25 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 
     while ((de = readdir(dp)))
     {
+        string filename(de->d_name);
+        string origfile;
         struct stat st;
 
-        snprintf(origfile, strlen(origpath) + NAME_MAX + 2, "%s/%s", origpath, de->d_name);
+        origfile = origpath + "/" + filename;
 
-        if (lstat(origfile, &st) == -1)
+        if (lstat(origfile.c_str(), &st) == -1)
         {
             goto stat_fail;
         }
-        else
+        else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
         {
-            if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
-            {
-                // TODO: Make this safe if converting from short to long ext.
-                transcoded_name(de->d_name);
-            }
+            transcoded_name(&filename);
         }
 
-        if (filler(buf, de->d_name, &st, 0))
+        if (filler(buf, filename.c_str(), &st, 0))
         {
             break;
         }
-    }
-
-    {
-        struct stat st;
-
-        memset(&st, 0, sizeof(st));
-
-        st.st_mode = S_IFREG;
-        st.st_size = 1;
-        //        st.st_ctim = st.st_mtim = st.st_atim = time(NULL);
-
-
-        filler(buf, "HALLO", &st, 0);
     }
 
     errno = 0;  // Just to make sure - reset any error
@@ -204,27 +159,19 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 stat_fail:
     closedir(dp);
 opendir_fail:
-    free(origfile);
-origfile_fail:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 
 int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
-    char* origpath;
+    string origpath;
 
     ffmpegfs_trace("getattr %s", path);
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    translate_path(&origpath, path);
 
     // pass-through for regular files
-    if (lstat(origpath, stbuf) == 0)
+    if (lstat(origpath.c_str(), stbuf) == 0)
     {
         errno = 0;
         goto passthrough;
@@ -235,9 +182,9 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;
     }
 
-    find_original(origpath);
+    find_original(&origpath);
 
-    if (lstat(origpath, stbuf) == -1)
+    if (lstat(origpath.c_str(), stbuf) == -1)
     {
         goto stat_fail;
     }
@@ -245,11 +192,11 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     // Get size for resulting output file from regular file, otherwise it's a symbolic link.
     if (S_ISREG(stbuf->st_mode))
     {
-        if (!transcoder_cached_filesize(origpath, stbuf))
+        if (!transcoder_cached_filesize(origpath.c_str(), stbuf))
         {
             struct Cache_Entry* cache_entry;
 
-            cache_entry = transcoder_new(origpath, 0);
+            cache_entry = transcoder_new(origpath.c_str(), 0);
             if (!cache_entry)
             {
                 goto transcoder_fail;
@@ -271,27 +218,21 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 transcoder_fail:
 stat_fail:
 passthrough:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 
 int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_file_info *fi)
 {
-    char* origpath;
+    string origpath;
 
     ffmpegfs_trace("fgetattr %s", filename);
 
     errno = 0;
 
-    origpath = translate_path(filename);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    translate_path(&origpath, filename);
 
     // pass-through for regular files
-    if (lstat(origpath, stbuf) == 0)
+    if (lstat(origpath.c_str(), stbuf) == 0)
     {
         goto passthrough;
     }
@@ -301,9 +242,9 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
         errno = 0;
     }
 
-    find_original(origpath);
+    find_original(&origpath);
 
-    if (lstat(origpath, stbuf) == -1)
+    if (lstat(origpath.c_str(), stbuf) == -1)
     {
         goto stat_fail;
     }
@@ -335,26 +276,20 @@ int ffmpegfs_fgetattr(const char *filename, struct stat * stbuf, struct fuse_fil
 transcoder_fail:
 stat_fail:
 passthrough:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 
 int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
-    char* origpath;
+    string origpath;
     struct Cache_Entry* cache_entry;
     int fd;
 
     ffmpegfs_trace("open %s", path);
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    translate_path(&origpath, path);
 
-    fd = open(origpath, fi->flags);
+    fd = open(origpath.c_str(), fi->flags);
 
     // File does exist, but can't be opened.
     if (fd == -1 && errno != ENOENT)
@@ -374,9 +309,9 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         goto passthrough;
     }
 
-    find_original(origpath);
+    find_original(&origpath);
 
-    cache_entry = transcoder_new(origpath, 1);
+    cache_entry = transcoder_new(origpath.c_str(), 1);
     if (!cache_entry)
     {
         goto transcoder_fail;
@@ -393,28 +328,22 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 transcoder_fail:
 passthrough:
 open_fail:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 
 int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
-    char* origpath;
+    string origpath;
     int fd;
     ssize_t read = 0;
     struct Cache_Entry* cache_entry;
 
     ffmpegfs_trace("read %s: %zu bytes from %jd.", path, size, (intmax_t)offset);
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    translate_path(&origpath, path);
 
     // If this is a real file, pass the call through.
-    fd = open(origpath, O_RDONLY);
+    fd = open(origpath.c_str(), O_RDONLY);
     if (fd != -1)
     {
         read = pread(fd, buf, size, offset);
@@ -436,7 +365,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
     if (!cache_entry)
     {
-        ffmpegfs_error("Tried to read from unopen file: %s.", origpath);
+        ffmpegfs_error("Tried to read from unopen file: %s.", origpath.c_str());
         goto transcoder_fail;
     }
 
@@ -445,8 +374,6 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 transcoder_fail:
 passthrough:
 open_fail:
-    free(origpath);
-translate_fail:
     if (read >= 0)
     {
         return (int)read;
@@ -459,20 +386,16 @@ translate_fail:
 
 int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
-    char* origpath;
+    string origpath;
 
     ffmpegfs_trace("statfs %s", path);
 
     errno = 0;
 
-    origpath = translate_path(path);
-    if (!origpath)
-    {
-        goto translate_fail;
-    }
+    translate_path(&origpath, path);
 
     // pass-through for regular files
-    if (statvfs(origpath, stbuf) == 0)
+    if (statvfs(origpath.c_str(), stbuf) == 0)
     {
         goto passthrough;
     }
@@ -482,15 +405,13 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
         errno = 0;
     }
 
-    find_original(origpath);
+    find_original(&origpath);
 
-    statvfs(origpath, stbuf);
+    statvfs(origpath.c_str(), stbuf);
 
     errno = 0;  // Just to make sure - reset any error
 
 passthrough:
-    free(origpath);
-translate_fail:
     return -errno;
 }
 

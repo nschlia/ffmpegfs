@@ -3,6 +3,8 @@ ffmpegfs NEWS
 Important changes in 1.4 (2018-05-XX)
 
 * Feature:
+* Feature: Changed the fuse operations code module to c++ (minimise danger of 
+          memory leaks or buffer overruns)	   
 
 * Bugfix: 
 

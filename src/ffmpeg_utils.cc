@@ -64,26 +64,56 @@ static int is_device(const AVClass *avclass);
 #define AV_ERROR_MAX_STRING_SIZE 128
 #endif // AV_ERROR_MAX_STRING_SIZE
 
+bool find_ext(string * ext, const string & filename)
+{
+    size_t found;
+
+    found = filename.rfind('.');
+
+    if (found == string::npos)
+    {
+        // No extension
+        ext->clear();
+        return false;
+    }
+    else
+    {
+        // Have extension
+        *ext = filename.substr(found + 1);
+        return true;
+    }
+}
+
+const string & replace_ext(string * filename, string ext)
+{
+    size_t found;
+
+    found = filename->rfind('.');
+
+    if (found == string::npos)
+    {
+        // No extension, just add
+        *filename += '.';
+    }
+    else
+    {
+        // Have extension, so replace
+        *filename = filename->substr(0, found + 1);
+    }
+
+    *filename += ext;
+
+    return *filename;
+}
+
 const string & get_destname(string *destname, const string & filename)
 {
     size_t len = strlen(params.m_basepath);
-    size_t found;
 
     *destname = params.m_mountpath;
     *destname += filename.substr(len);
 
-    found = destname->rfind('.');
-
-    if (found == string::npos)
-    {
-        *destname += '.';
-    }
-    else
-    {
-        *destname = destname->substr(0, found + 1);
-    }
-
-    *destname += params.m_desttype;
+    replace_ext(destname, params.m_desttype);
 
     return *destname;
 }

@@ -136,22 +136,18 @@ The --profile option allows to select the format:
 | ------------- | ------------- | ------------- | ------------- |
 | NONE | all | VLC, Windows Media Player etc. | Playback (default) |
 | FF | Linux, Win10 | Firefox| OK: Playback while transcoding |
-| | Win7 | Firefox | Playback while transcoding, but audio files only |
+| | Win7 | Firefox | OK: Playback while transcoding |
 | EDGE | Win10 | MS Edge, IE > 11 | OK: Playback while transcoding |
 | | Win10 Mobile | | OK: Playback while transcoding |
 | IE | Win10 | MS IE <= 11 | OK: Playback while transcoding |
 | | Win7 | | Must decode first (1) |
-| CHROME | all | Google Chrome| Must decode first (2) |
-| SAFARI | Win | Apple Safari | Must decode first (2) |
-| OPERA | All | Opera | Must decode first (2) |
-| MAXTHON | Win | Maxthon| Must decode first (2) |
+| CHROME | all | Google Chrome| Must decode first (1) |
+| SAFARI | Win | Apple Safari | Must decode first (1) |
+| OPERA | All | Opera | Must decode first (1) |
+| MAXTHON | Win | Maxthon| Must decode first (1) |
 
 (1)
 * error message when opened while transcoding
-* must start again when file was transcoded
-* Plays fine when file comes directly from buffer
-
-(2)
 * must start again when file was transcoded
 * Plays fine when file comes directly from buffer
 

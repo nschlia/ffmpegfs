@@ -66,7 +66,11 @@ static bool transcoded_name(string * path)
 // Returns true if filename has been changed
 static bool find_original(string * path)
 {
+    // 1st do fast map lookup
     map<string, string>::iterator p = filenames.find(*path);
+
+    errno = 0;
+
     if (p != filenames.end())
     {
         *path = p->second;
@@ -74,9 +78,33 @@ static bool find_original(string * path)
     }
     else
     {
-        // Source file exists with no supported extension, keep path
-        return false;
+        // Fallback to old method (required if file accessed directly)
+        string ext;
+        if (find_ext(&ext, *path) && strcasecmp(ext.c_str(), params.m_desttype) == 0)
+        {
+            string tmppath(*path);
+
+            for (size_t i=0; decoder_list[i]; ++i)
+            {
+                replace_ext(&tmppath, decoder_list[i]);
+                if (access(tmppath.c_str(), F_OK) == 0)
+                {
+                    // File exists with this extension
+                    filenames.insert(make_pair(*path, tmppath));
+
+                    *path = tmppath;
+                    return true;
+                }
+                else
+                {
+                    // File does not exist; not an error
+                    errno = 0;
+                }
+            }
+        }
     }
+    // Source file exists with no supported extension, keep path
+    return false;
 }
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)

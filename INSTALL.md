@@ -43,7 +43,7 @@ On Debian:
 
     aptitude install gcc g++
 
-    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libavresample-dev libavutil-dev libswscale-dev
+    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
@@ -51,11 +51,11 @@ On Suse (please read notes before continuing):
 
     zypper install gcc gcc-c++
 
-    zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libavresample-devel libavutil-devel libswscale-devel
+    zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 
-Suse includes non-proprietary codecs with FFmpeg, namely mp3, AAC and H264 
-are *not* avaibable which renders this library usesless. But FFmpeg can be
-built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
+Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
+are *not* available which renders this library next to usesless. But FFmpeg can 
+be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
 "FFmpeg compile notes" below.
 
 On Red Hat:
@@ -77,9 +77,6 @@ FFmpeg compile notes:
 FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. 
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
-
-libavresample will not be built by default. Add "--enable-avresample" to the configure
-command line to include it.
 
 If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built 
 and installed libmp3lame you may find a solution here: 

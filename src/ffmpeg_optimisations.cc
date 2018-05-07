@@ -142,9 +142,9 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_none[] =
     //{ "profile",              "baseline",                 0,  0 },
     //{ "level",                "3.0",                      0,  0 },
 
-    // -profile:v high -level 3.1
-    //{ "profile",              "high",                     0,  0 },
-    //{ "level",                "3.1",                      0,  0 },
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
+    { "profile",              "high",                     0,  0 },
+    { "level",                "3.1",                      0,  0 },
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                0,  0 },
@@ -184,9 +184,9 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ff[] =
     //{ "profile",              "baseline",                 0,  0 },
     //{ "level",                "3.0",                      0,  0 },
 
-    // -profile:v high -level 3.1
-    //{ "profile",              "high",                     0,  0 },
-    //{ "level",                "3.1",                      0,  0 },
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
+    { "profile",              "high",                     0,  0 },
+    { "level",                "3.1",                      0,  0 },
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                0,  0 },
@@ -265,7 +265,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ie[] =
     //{ "profile",              "baseline",                 0,  0 },
     //{ "level",                "3.0",                      0,  0 },
 
-    // -profile:v high -level 3.1
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
     { "profile",              "high",                     0,  0 },
     { "level",                "3.1",                      0,  0 },
 

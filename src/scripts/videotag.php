@@ -92,6 +92,22 @@
                      	}
                          	return !is_dir($dir . $item);
                      });
+
+                     $dirs = array_filter(scandir($dir), function($item) {
+                     	global $dir;
+                     	if ($item == "." || $item == "..") {
+                     		return 0;
+                     	}			
+			return is_dir($dir . $item);
+                     });
+
+                     foreach ($dirs as &$value) {
+                         echo "<tr><td>";
+                         echo "<a href=\"" . $value . "\">" . $value . "</a>&nbsp;";
+                         echo "</td><td>";
+                         echo "</td></tr>";
+                     }
+                     
                      
                      foreach ($files as &$value) {
                          echo "<tr><td>";
@@ -100,7 +116,7 @@
                          echo "<a href=\"javascript:dopreload('" . $value . "')\">Preload</a>";
                          echo "</td></tr>";
                      }
-                     
+
                      ?>
                   <tr>
                      <td>

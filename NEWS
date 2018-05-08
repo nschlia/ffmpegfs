@@ -6,8 +6,9 @@ Important changes in 1.4 (2018-05-XX)
 * Feature: Changed the fuse operations code module to c++ (minimise danger of 
            memory leaks or buffer overruns)	   
 
-* Bugfix: Set mp4 profile to high/3.1 to enable plqayback under enable playback under 
+* Bugfix: Set mp4 profile to high/3.1 to enable plqayback under enable playback under
           Win 7.
+* Bugfix: Fix formatting of help text.
 
 * Workaround: Fixed Libav support: Deinterlace code did not compile. Should be possible
               to get it working, but for now it is simply disabled.

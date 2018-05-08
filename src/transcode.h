@@ -52,7 +52,7 @@ extern struct ffmpegfs_params
     const char *    m_mountpath;
     // Output type
     const char *    m_desttype;
-    PROFILE         m_profile;					// Target type: MS Egde/IE or other
+    PROFILE         m_profile;					// Target type: Firefox, MS Edge/IE or other
     // Audio
     unsigned int    m_audiobitrate;
     unsigned int    m_audiosamplerate;

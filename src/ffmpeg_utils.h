@@ -180,6 +180,8 @@ string format_bitrate(uint64_t value);
 string format_samplerate(unsigned int value);
 string format_time(time_t value);
 string format_size(size_t value);
+
+void exepath(string *path);
 #endif
 
 #ifdef __cplusplus
@@ -199,7 +201,6 @@ void format_time(char *output, size_t size, time_t value);
 void format_size(char *output, size_t size, size_t value);
 
 int print_info(AVStream* stream);
-void exepath(char * path);
 
 #ifdef __cplusplus
 }

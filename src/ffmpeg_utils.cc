@@ -842,16 +842,17 @@ int print_info(AVStream* stream)
     return ret;
 }
 
-void exepath(char * path)
+void exepath(string * path)
 {
     char result[PATH_MAX + 1];
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
     if (count != -1)
     {
-        strcpy(path, dirname(result));
+        *path = dirname(result);
+        append_sep(path);
     }
     else
     {
-        *path = '\0';
+        path->clear();
     }
 }

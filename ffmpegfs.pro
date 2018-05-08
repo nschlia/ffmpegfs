@@ -14,7 +14,7 @@ SOURCES += \
     src/transcode.cc \
     src/cache.cc \
     src/cache_entry.cc \
-    src/cache_maintenance.c \
+    src/cache_maintenance.cc \
     src/ffmpeg_base.cc \
     src/ffmpeg_optimisations.cc
 
@@ -72,4 +72,6 @@ DISTFILES += \
     test/test_picture \
     test/test_tags \
     test/funcs.sh \
-    TODO
+    TODO \
+    src/scripts/videotag.php \
+    src/scripts/videotag.txt

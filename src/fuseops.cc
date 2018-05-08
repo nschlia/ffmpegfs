@@ -405,10 +405,6 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    default:
-    {
-        break;
-    }
     case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
     {
         break;
@@ -492,10 +488,6 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    default:
-    {
-        break;
-    }
     case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
     {
         break;
@@ -563,10 +555,6 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
         // Clear errors
         errno = 0;
-        break;
-    }
-    default:
-    {
         break;
     }
     case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
@@ -649,10 +637,6 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
         read = transcoder_read(cache_entry, buf, offset, size);
 
-        break;
-    }
-    default:
-    {
         break;
     }
     case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning

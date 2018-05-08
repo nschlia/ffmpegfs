@@ -68,9 +68,9 @@ struct ffmpegfs_params params =
 #ifndef USING_LIBAV
     .m_deinterlace          = 0,                        // default: do not interlace video
 #endif  // !USING_LIBAV
-
+	// Album arts
     .m_noalbumarts          = 0,                        // default: copy album arts
-
+	// Other
     .m_debug              	= 0,                        // default: no debug messages
     .m_log_maxlevel       	= "INFO",                   // default: INFO level
     .m_log_stderr         	= 0,                        // default: do not log to stderr

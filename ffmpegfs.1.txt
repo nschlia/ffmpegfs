@@ -112,6 +112,21 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     This will reduce the file size, may be useful when streaming via
     HTML5 when album arts are not used anyway.
     Default: add album arts
+    
+=== Virtual Script ===
+    
+--enablescript, -o enablescript
+    Added --enablescript option that will add virtual index.php to every
+    directory. It reads scripts/videotag.php from the ffmpegs binary directory.
+    This can be very handy to test video playback. Of course, feel free to
+    replace videotag.php with your own script.
+    Default: Do not generate script file
+--scriptfile, -o scriptfile
+    Set the name of the virtual script created in each directory.
+    Default: index.php
+--scriptsource, -o scriptsource
+    Take a different source file.
+    Default: scripts/videotag.php
 
 === Cache Options ===
  *--expiry_time*=TIME, *-o expiry_time*=TIME::

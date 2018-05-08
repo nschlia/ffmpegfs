@@ -101,14 +101,29 @@
 			return is_dir($dir . $item);
                      });
 
+                     $back = dirname($_SERVER['PHP_SELF'], 2);
+                     if ($back != "") {
+                        echo "<tr><td>";
+                        echo "<a href=\"" . $back . "\">Go back</a>";
+                        echo "</td><td>";
+                        echo "</td></tr>";
+
+                        echo "<tr><td height=20>";
+                        echo "</td><td>";
+                        echo "</td></tr>";
+                     }
+
                      foreach ($dirs as &$value) {
                          echo "<tr><td>";
                          echo "<a href=\"" . $value . "\">" . $value . "</a>&nbsp;";
                          echo "</td><td>";
                          echo "</td></tr>";
-                     }
-                     
-                     
+                     }                    
+
+                     echo "<tr><td height=20>";
+                     echo "</td><td>";
+                     echo "</td></tr>";
+
                      foreach ($files as &$value) {
                          echo "<tr><td>";
                          echo "<a href=\"javascript:doplay('" . $value . "')\">" . $value . "</a>&nbsp;";

@@ -65,6 +65,10 @@ extern struct ffmpegfs_params
 #endif // !USING_LIBAV
     // Album arts
     int             m_noalbumarts;              // skip album arts
+    // Virtual Script
+    int             m_enablescript;             // Enable virtual script
+    const char*     m_scriptfile;               // Script name
+    const char*     m_scriptsource;             // Source script
     // ffmpegfs options
     int             m_debug;
     const char*     m_log_maxlevel;

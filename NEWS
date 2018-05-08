@@ -2,9 +2,12 @@ ffmpegfs NEWS
 
 Important changes in 1.4 (2018-05-XX)
 
-* Feature:
 * Feature: Changed the fuse operations code module to c++ (minimise danger of 
            memory leaks or buffer overruns)	   
+* Feature: Added --enablescript option that will add virtual index.php to every
+           directory. It reads scripts/videotag.php from the ffmpegs binary directory.
+           This can be very handy to test video playback. Of course, feel free to
+           replace videotag.php with your own script.
 
 * Bugfix: Set mp4 profile to high/3.1 to enable plqayback under enable playback under
           Win 7.

@@ -70,6 +70,10 @@ struct ffmpegfs_params params =
 #endif  // !USING_LIBAV
 	// Album arts
     .m_noalbumarts          = 0,                        // default: copy album arts
+	// Virtual Script
+    .m_enablescript         = 0,                        // default: no virtual script
+    .m_scriptfile           = "index.php",              // default name
+    .m_scriptsource         = "scripts/videotag.php",   // default name
 	// Other
     .m_debug              	= 0,                        // default: no debug messages
     .m_log_maxlevel       	= "INFO",                   // default: INFO level
@@ -140,6 +144,13 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",               m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                 m_noalbumarts, 1),
+	// Virtual script
+    FFMPEGFS_OPT("--enablescript",              m_enablescript, 1),
+    FFMPEGFS_OPT("enablescript",                m_enablescript, 1),
+    FFMPEGFS_OPT("--scriptfile=%s",             m_scriptfile, 0),
+    FFMPEGFS_OPT("scriptfile=%s",               m_scriptfile, 0),
+    FFMPEGFS_OPT("--scriptsource=%s",           m_scriptsource, 0),
+    FFMPEGFS_OPT("scriptsource=%s",             m_scriptsource, 0),
     // Background recoding/caching
     // Cache
     FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
@@ -292,6 +303,21 @@ static void usage(char *name)
           "                           This will reduce the file size, may be useful when streaming via\n"
           "                           HTML5 when album arts are not used anyway.\n"
           "                           Default: add album arts\n"
+          "\n"
+          "Virtual Script:\n"
+          "\n"
+          "     --enablescript, -o enablescript\n"
+          "                           Added --enablescript option that will add virtual index.php to every\n"
+          "                           directory. It reads scripts/videotag.php from the ffmpegs binary directory.\n"
+          "                           This can be very handy to test video playback. Of course, feel free to\n"
+          "                           replace videotag.php with your own script.\n"
+          "                           Default: Do not generate script file\n"
+          "     --scriptfile, -o scriptfile\n"
+          "                           Set the name of the virtual script created in each directory.\n"
+          "                           Default: index.php\n"
+          "     --scriptsource, -o scriptsource\n"
+          "                           Take a different source file.\n"
+          "                           Default: scripts/videotag.php\n"
           "\n"
           "Cache Options:\n"
           "\n"
@@ -875,6 +901,10 @@ static void print_params()
                                 "Remove Album Arts : %s\n"
                                 "Video Format      : %s\n"
                                 "Video Bitrate     : %s\n"
+                                "\nVirtual Script\n\n"
+                                "Create script     : %s\n"
+                                "Script file name  : %s\n"
+                                "Input file        : %s\n"							
                                 "\nLogging\n\n"
                                 "Max. Log Level    : %s\n"
                                 "Log to stderr     : %s\n"
@@ -907,6 +937,9 @@ static void print_params()
 				   params.m_noalbumarts ? "yes" : "no",
                    get_codec_name(video_codecid),
                    videobitrate,
+                   params.m_enablescript ? "yes" : "no",
+                   params.m_scriptfile,
+                   params.m_scriptsource,
                    params.m_log_maxlevel,
                    params.m_log_stderr ? "yes" : "no",
                    params.m_log_syslog ? "yes" : "no",

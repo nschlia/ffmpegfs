@@ -139,9 +139,18 @@ Check the Apache2 error.log, you migh see this:
 "PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"
 
 This is because for some reason utf8_encode() has been moved to the XML
-library. Just do:
+library. Just do (or similar):
 
     apt-get install php7.0-xml
     systemctl restart apache2
 
 And your troubles should be gone.
+
+*"make check": all audio checks fail*
+
+Logfiles contain "bc: command not found", so the command line communicator is
+missing.
+
+Fix by installing it (or similar):
+
+     apt-get install bc

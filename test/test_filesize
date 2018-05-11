@@ -42,7 +42,7 @@ then
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "obama" 107101
+    check_filesize "obama" 97244 107101
     check_filesize "raven" 126456
 elif [ "${DESTTYPE}" == "wav" ];
 then

@@ -291,9 +291,6 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
                     }
                 }
 
-                // Remove write permissions, make no sense
-                st.st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
-
                 if (filler(buf, filename.c_str(), &st, 0))
                 {
                     break;
@@ -342,9 +339,6 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     if (lstat(origpath.c_str(), stbuf) == 0)
     {
-        // Remove write permissions, make no sense
-        stbuf->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
-
         // pass-through for regular files
         errno = 0;
         return 0;
@@ -374,9 +368,6 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         {
             return -errno;
         }
-
-        // Remove write permissions, make no sense
-        stbuf->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
@@ -426,9 +417,6 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
 
     if (lstat(origpath.c_str(), stbuf) == 0)
     {
-        // Remove write permissions, make no sense
-        stbuf->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
-
         // pass-through for regular files
         errno = 0;
         return 0;
@@ -459,9 +447,6 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         {
             return -errno;
         }
-
-        // Remove write permissions, make no sense
-        stbuf->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))

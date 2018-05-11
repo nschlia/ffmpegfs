@@ -33,7 +33,7 @@ class FFMPEG_Base
 {
 public:
     FFMPEG_Base();
-    ~FFMPEG_Base();
+    virtual ~FFMPEG_Base();
 
 protected:
     int open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;

@@ -65,7 +65,7 @@ class Cache
 
 public:
     Cache();
-    ~Cache();
+    virtual ~Cache();
 
     Cache_Entry *open(const char *filename);
     bool close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);

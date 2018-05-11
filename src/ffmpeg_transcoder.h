@@ -135,7 +135,7 @@ public:
 
 public:
     FFMPEG_Transcoder();
-    ~FFMPEG_Transcoder();
+    virtual ~FFMPEG_Transcoder();
     bool is_open() const;
     int open_input_file(const char* filename);
     int open_output_file(Buffer* buffer);

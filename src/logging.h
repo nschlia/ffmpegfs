@@ -63,7 +63,7 @@ private:
         Logger(level loglevel, Logging* logging) :
             loglevel_(loglevel), logging_(logging) {}
         Logger() : loglevel_(level::DEBUG) {}
-        ~Logger();
+        virtual ~Logger();
 
     private:
         const level loglevel_;

@@ -2798,44 +2798,44 @@ const ID3v1 * FFMPEG_Transcoder::id3v1tag() const
     return &m_out.m_id3v1;
 }
 
-int FFMPEG_Transcoder::output_write(void * pOpaque, unsigned char * pBuffer, int nBufSize)
+int FFMPEG_Transcoder::output_write(void * opaque, unsigned char * data, int size)
 {
-    Buffer * buffer = (Buffer *)pOpaque;
+    Buffer * buffer = (Buffer *)opaque;
 
     if (buffer == NULL)
     {
         return -1;
     }
 
-    return (int)buffer->write((const uint8_t*)pBuffer, nBufSize);
+    return (int)buffer->write((const uint8_t*)data, size);
 }
 
-int64_t FFMPEG_Transcoder::output_seek(void * pOpaque, int64_t i4Offset, int nWhence)
+int64_t FFMPEG_Transcoder::output_seek(void * opaque, int64_t offset, int whence)
 {
-    Buffer * buffer = (Buffer *)pOpaque;
-    int64_t i64ResOffset = 0;
+    Buffer * buffer = (Buffer *)opaque;
+    int64_t res_offset = 0;
 
     if (buffer != NULL)
     {
-        if (nWhence & AVSEEK_SIZE)
+        if (whence & AVSEEK_SIZE)
         {
-            i64ResOffset = buffer->tell();
+            res_offset = buffer->tell();
         }
         else
         {
-            nWhence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
+            whence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
 
-            switch (nWhence)
+            switch (whence)
             {
             case SEEK_CUR:
             {
-                i4Offset = buffer->tell() + i4Offset;
+                offset = buffer->tell() + offset;
                 break;
             }
 
             case SEEK_END:
             {
-                i4Offset = buffer->size() - i4Offset;
+                offset = buffer->size() - offset;
                 break;
             }
 
@@ -2845,24 +2845,24 @@ int64_t FFMPEG_Transcoder::output_seek(void * pOpaque, int64_t i4Offset, int nWh
             }
             }
 
-            if (i4Offset < 0)
+            if (offset < 0)
             {
-                i4Offset = 0;
+                offset = 0;
             }
 
-            if (buffer->seek(i4Offset))
+            if (buffer->seek(offset))
             {
-                i64ResOffset = i4Offset;
+                res_offset = offset;
             }
 
             else
             {
-                i64ResOffset = 0;
+                res_offset = 0;
             }
         }
     }
 
-    return i64ResOffset;
+    return res_offset;
 }
 
 // Close the open FFmpeg file

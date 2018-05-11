@@ -7,7 +7,7 @@ check_audio() {
     SRCFILE="$1.$2"
     EXPECTED="$3"
     
-    cp "$DIRNAME/${TGTFILE}" /tmp/2>&-
+    cp "$DIRNAME/${TGTFILE}" /tmp/ 2>&-
     
 #    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}" 2>&-)"
     RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "$DIRNAME/${TGTFILE}")"

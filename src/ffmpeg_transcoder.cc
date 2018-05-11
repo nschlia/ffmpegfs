@@ -1012,14 +1012,14 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     // open the output file
     int nBufSize = 1024*1024;
-    output_io_context = ::avio_alloc_context(
-                (unsigned char *) ::av_malloc(nBufSize + FF_INPUT_BUFFER_PADDING_SIZE),
+    output_io_context = avio_alloc_context(
+                (unsigned char *) av_malloc(nBufSize + FF_INPUT_BUFFER_PADDING_SIZE),
                 nBufSize,
                 1,
                 (void *)buffer,
                 NULL /*readPacket*/,
-                write_packet,
-                seek);
+                output_write,   // write
+                output_seek);   // seek
 
     // Associate the output file (pointer) with the container format context.
     m_out.m_pFormat_ctx->pb = output_io_context;
@@ -2798,7 +2798,7 @@ const ID3v1 * FFMPEG_Transcoder::id3v1tag() const
     return &m_out.m_id3v1;
 }
 
-int FFMPEG_Transcoder::write_packet(void * pOpaque, unsigned char * pBuffer, int nBufSize)
+int FFMPEG_Transcoder::output_write(void * pOpaque, unsigned char * pBuffer, int nBufSize)
 {
     Buffer * buffer = (Buffer *)pOpaque;
 
@@ -2810,7 +2810,7 @@ int FFMPEG_Transcoder::write_packet(void * pOpaque, unsigned char * pBuffer, int
     return (int)buffer->write((const uint8_t*)pBuffer, nBufSize);
 }
 
-int64_t FFMPEG_Transcoder::seek(void * pOpaque, int64_t i4Offset, int nWhence)
+int64_t FFMPEG_Transcoder::output_seek(void * pOpaque, int64_t i4Offset, int nWhence)
 {
     Buffer * buffer = (Buffer *)pOpaque;
     int64_t i64ResOffset = 0;

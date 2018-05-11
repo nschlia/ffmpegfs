@@ -187,8 +187,8 @@ protected:
     int load_encode_and_write(int frame_size);
     int write_output_file_trailer();
 
-    static int write_packet(void * pOpaque, unsigned char * pBuffer, int nBufSize);
-    static int64_t seek(void * pOpaque, int64_t i4Offset, int nWhence);
+    static int output_write(void * opaque, unsigned char * data, int size);
+    static int64_t output_seek(void * opaque, int64_t offset, int whence);
 
     bool get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const;
 #if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)

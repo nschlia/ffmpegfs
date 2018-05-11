@@ -115,11 +115,6 @@ AS_CASE(["$with_libavresample"],
 AM_CONDITIONAL([USE_LIBAVRESAMPLE], [test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1])
 
 # Error checks
-# Need either libswresample or libavresample
-#AS_IF([test "$with_libavresample" !== "no" -o "0$HAVE_LIBAVRESAMPLE" -ne 1],
-#    AS_IF([test "$with_libswresample" == "no" -o "0$HAVE_LIBSWRESAMPLE" -ne 1],
-#    AC_MSG_ERROR([FFmpeg library not enabled or not found. Please make sure its development modules are installed.])))
-
 AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
     AS_IF([test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1], [],
         AC_MSG_ERROR([Either libswresample or libavresample must be present and enabled. Please make sure its development modules are installed. Do not use --without-libswresample and --without-libavresample at once.])

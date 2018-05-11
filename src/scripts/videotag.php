@@ -85,64 +85,66 @@
             </td>
             <td>
                <table>
-                  <?php
-                     function reverse_strrchr($haystack, $needle)
-                     {
-                     $pos = strrpos($haystack, $needle);
-                     if($pos === false) {
-                     return $haystack;
-                     }
-                     return substr($haystack, 0, $pos);
-                     }
+                  <?php		  
+function reverse_strrchr($haystack, $needle)
+{
+    $pos = strrpos($haystack, $needle);
+    if ($pos === false) {
+        return $haystack;
+    }
+    return substr($haystack, 0, $pos);
+}
 
-                     $dir    = './';
-                     $files = array_filter(scandir($dir), function($item) {
-                     global $dir;
-                     if (!preg_match("/\.mp[34]|\.ogg/i", $item)) {
-                     return 0;
-                     }
-                     return !is_dir($dir . $item);
-                     });
+$dir = './';
+$files = array_filter(scandir($dir), function($item)
+{
+    global $dir;
+    if (!preg_match("/\.mp[34]|\.ogg/i", $item)) {
+        return 0;
+    }
+    return !is_dir($dir . $item);
+});
 
-                     $dirs = array_filter(scandir($dir), function($item) {
-                     global $dir;
-                     if ($item == "." || $item == "..") {
-                     return 0;
-                     }
-                     return is_dir($dir . $item);
-                     });
+$dirs = array_filter(scandir($dir), function($item)
+{
+    global $dir;
+    if ($item == "." || $item == "..") {
+        return 0;
+    }
+    return is_dir($dir . $item);
+});
 
-                     $dir = dirname($_SERVER['PHP_SELF']);
-                     $back = reverse_strrchr($dir, "/", 1);
-                     if ($back != "") {
-                     echo "<tr><td>";
-                     echo "<a href=\"" . utf8_encode($back) . "\">Go back</a>";
-                     echo "</td>\n<td>";
-                     echo "</td></tr>\n";
+$dir  = dirname($_SERVER['PHP_SELF']);
+$back = reverse_strrchr($dir, "/", 1);
+if ($back != "") {
+    echo "<tr><td>";
+    echo "<a href=\"" . utf8_encode($back) . "\">Go back</a>";
+    echo "</td>\n<td>";
+    echo "</td></tr>\n";
+    
+    echo "<tr><td height=20>";
+    echo "</td>\n<td>";
+    echo "</td></tr>\n";
+}
 
-                     echo "<tr><td height=20>";
-                     echo "</td>\n<td>";
-                     echo "</td></tr>\n";
-                     }
+foreach ($dirs as &$value) {
+    echo "<tr><td>";
+    echo "<a href=\"" . rawurlencode($value) . "\">" . utf8_encode($value) . "</a>&nbsp;";
+    echo "</td>\n<td>\n";
+    echo "</td></tr>\n";
+}
 
-                     foreach ($dirs as &$value) {
-                     echo "<tr><td>";
-                     echo "<a href=\"" . rawurlencode($value) . "\">" . utf8_encode($value) . "</a>&nbsp;";
-                     echo "</td>\n<td>\n";
-                     echo "</td></tr>\n";
-                     }
+echo "<tr><td height=20>";
+echo "</td><td>";
+echo "</td></tr>";
 
-                     echo "<tr><td height=20>";
-                     echo "</td><td>";
-                     echo "</td></tr>";
-
-                     foreach ($files as &$value) {
-                     echo "<tr><td>";
-                     echo "<a href=\"javascript:doplay('" . rawurlencode($value) . "')\">" . utf8_encode($value) . "</a>&nbsp;";
-                     echo "</td>\n<td>";
-                     echo "<a href=\"javascript:dopreload('" . rawurlencode($value) . "')\">Preload</a>";
-                     echo "</td></tr>\n";
-                     }
+foreach ($files as &$value) {
+    echo "<tr><td>";
+    echo "<a href=\"javascript:doplay('" . rawurlencode($value) . "')\">" . utf8_encode($value) . "</a>&nbsp;";
+    echo "</td>\n<td>";
+    echo "<a href=\"javascript:dopreload('" . rawurlencode($value) . "')\">Preload</a>";
+    echo "</td></tr>\n";
+}
                      ?>
                   <tr>
                      <td>

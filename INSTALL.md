@@ -64,7 +64,7 @@ On Red Hat:
 
     yum install fuse-devel sqlite-devel
 
-Red Hat does not provide FFmpeg from its repositories. It must be built 
+Red Hat does not provide FFmpeg from its repositories. It must be built
 from source code, see this guide: https://trac.ffmpeg.org/wiki/CompilationGuide/Centos
 
 If you want to build the documentation you will find "asciidoc" missing from
@@ -109,7 +109,8 @@ disabled at the moment.
 Trouble Shooting
 ----------------
 
-*If test_tags fails* you may be missing the python-mutagen package, then do
+*If test_tags fails* you may be missing the python-mutagen package (log
+contains "mutagen-inspect: command not found"), then do
 
 On Debian:
 
@@ -141,10 +142,12 @@ Check the Apache2 error.log, you migh see this:
 This is because for some reason utf8_encode() has been moved to the XML
 library. Just do (or similar):
 
-    apt-get install php7.0-xml
+    aptitude install php7.0-xml
     systemctl restart apache2
 
 And your troubles should be gone.
+
+On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
 *"make check": all audio checks fail*
 
@@ -153,4 +156,6 @@ missing.
 
 Fix by installing it (or similar):
 
-     apt-get install bc
+     aptitude install bc
+
+On Ubuntu use the same command with `apt-get` in place of `aptitude`.

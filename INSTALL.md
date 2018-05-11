@@ -128,3 +128,20 @@ On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 You are probably missing out on pkg-config, either it is not installed or
 not in path. "apt-get install pkg-config" (on Debian or equivalent on other
 Linux distributions) should help.
+
+*If the videotag.php script does not work under PHP7*
+
+The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7)
+it suddenly stops showing the list of files.
+
+Check the Apache2 error.log, you migh see this:
+
+"PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"
+
+This is because for some reason utf8_encode() has been moved to the XML
+library. Just do:
+
+    apt-get install php7.0-xml
+    systemctl restart apache2
+
+And your troubles should be gone.

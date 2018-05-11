@@ -172,7 +172,7 @@ static LPCVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, con
     filenames.insert(make_pair(filename, virtualfile));
 
     map<string, VIRTUALFILE>::iterator p = filenames.end();
-
+    --p;
     return &p->second;
 }
 

@@ -37,18 +37,18 @@ cat "${DIRNAME}/raven.${DESTTYPE}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "obama" 99151 113048
-    check_filesize "raven" 130730 137986
+    check_filesize "obama" 100547 101906
+    check_filesize "raven" 130730 135525
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "obama" 97244 107101
-    check_filesize "raven" 126456
+    check_filesize "obama" 97231 97244
+    check_filesize "raven" 126447 126456
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
     check_filesize "obama" 1058636
-    check_filesize "raven" 3699406
+    check_filesize "raven" 3699380 3699406
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg

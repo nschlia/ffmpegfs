@@ -31,13 +31,13 @@ check_audio() {
 if [ "$DESTTYPE" == "mp4" ];
 then
 	# mp4
-	check_audio "obama" "flac" 0.08
-	check_audio "raven" "ogg" 0.08
+        check_audio "obama" "flac" 0.04
+        check_audio "raven" "ogg" 0.05
 elif [ "$DESTTYPE" == "mp3" ];
 then
 	# mp3
-	check_audio "obama" "flac" 0.6
-	check_audio "raven" "ogg" 0.4
+        check_audio "obama" "flac" 0.04
+        check_audio "raven" "ogg" 0.05
 elif [ "$DESTTYPE" == "wav" ];
 then
 	# wav

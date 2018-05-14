@@ -5,7 +5,7 @@
 get_metadata() {
 	local -n outvar=$2    # -n makes it a nameref.
 	echo Checking $1
-	outvar=`mutagen-inspect "$1" | fgrep = | sort | sed -r 's/^.*=Lavf.*//'`
+        outvar=`mutagen-inspect "$1" | fgrep = | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
 }
 
 if [ "$DESTTYPE" == "mp4" ];
@@ -15,7 +15,7 @@ then
 get_metadata "$DIRNAME/obama.mp4" TAGS
 echo Tags found: 
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 ?ART=Barack Obama
 ?alb=US State of the Union 2011
 ?cpy=Public Domain
@@ -31,7 +31,7 @@ echo "Pass"
 get_metadata "$DIRNAME/raven.mp4" TAGS
 echo Tags found: 
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 ?ART=Edgar Allen Poe
 ?alb=The Raven
 ?cmt=www.librivox.org
@@ -48,9 +48,9 @@ then
 
 # mp3
 get_metadata "$DIRNAME/obama.mp3" TAGS
-echo Tags found: 
+echo Tags found:
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 TALB=US State of the Union 2011
 TCON=Spoken
 TCOP=Public Domain
@@ -68,7 +68,7 @@ echo "Pass"
 get_metadata "$DIRNAME/raven.mp3" TAGS
 echo Tags found: 
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 TALB=The Raven
 TCON=Speech
 TDRC=2007
@@ -93,7 +93,7 @@ then
 get_metadata "$DIRNAME/obama.ogg" TAGS
 echo Tags found:
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 ALBUM=US State of the Union 2011
 ARTIST=Barack Obama
 COPYRIGHT=Public Domain
@@ -110,7 +110,7 @@ echo "Pass"
 get_metadata "$DIRNAME/raven.ogg" TAGS
 echo Tags found:
 echo "$TAGS"
-cmp -s - <(echo "$TAGS")<<END
+cmp -b - <(echo "$TAGS")<<END
 album=The Raven
 artist=Edgar Allen Poe
 date=2007

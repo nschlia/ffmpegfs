@@ -23,8 +23,7 @@
 
 #pragma once
 
-#include <stdint.h>
-#include <string>
+#include "fileio.h"
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))
 
@@ -34,21 +33,33 @@
 
 using namespace std;
 
-class Buffer
+class Buffer : public fileio
 {
 public:
-    explicit Buffer(const string & filename);
+    explicit Buffer();
     virtual ~Buffer();
 
-    bool open(bool erase_cache = false);                // Open cache, if erase_cache = true delete old file before opening
-    bool close(int flags = CLOSE_CACHE_NOOPT);
+    virtual VIRTUALTYPE type() const;
+
+    bool init(bool erase_cache = false);                // Initialise cache, if erase_cache = true delete old file before opening
+    bool release(int flags = CLOSE_CACHE_NOOPT);
+
+    virtual int bufsize() const;
+    virtual int open(LPCVIRTUALFILE virtualfile);
+    virtual int open(const string & filename);
+    virtual int read(void *data, int maxlen);
+    virtual int error() const;
+    virtual int duration() const;
+    virtual size_t size() const;
+    virtual size_t tell() const;
+    virtual int seek(long offset, int whence);
+    virtual bool eof() const;
+    virtual void close();
+
+    size_t write(const uint8_t* data, size_t length);
     bool flush();
     bool clear();
     bool reserve(size_t size);
-    size_t write(const uint8_t* data, size_t length);
-    bool seek(size_t pos);
-    size_t tell() const;
-    size_t size() const;
     size_t buffer_watermark() const;
     bool copy(uint8_t* out_data, size_t offset, size_t bufsize);
 
@@ -71,7 +82,7 @@ private:
 
 private:
     pthread_mutex_t m_mutex;
-    const string &  m_filename;
+    string          m_filename;
     string          m_cachefile;
     size_t          m_buffer_pos;           // Read/write position
     size_t          m_buffer_watermark;     // Number of bytes in buffer

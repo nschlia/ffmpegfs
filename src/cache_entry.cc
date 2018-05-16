@@ -19,8 +19,10 @@
  */
 
 #include "cache_entry.h"
-#include "ffmpeg_transcoder.h"
+#include "ffmpegfs.h"
 #include "buffer.h"
+
+#include <string.h>
 
 using namespace std;
 
@@ -28,6 +30,7 @@ Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
     : m_owner(owner)
     , m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
     , m_ref_count(0)
+    , m_virtualfile(NULL)
     , m_thread_id(0)
 {
     m_cache_info.m_filename = filename;
@@ -35,7 +38,8 @@ Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
     m_cache_info.m_desttype[0] = '\0';
     strncat(m_cache_info.m_desttype, params.m_desttype, sizeof(m_cache_info.m_desttype) - 1);
 
-    m_buffer = new Buffer(m_cache_info.m_filename);
+    m_buffer = new Buffer;
+    m_buffer->open(m_cache_info.m_filename);
 
     clear();
 
@@ -179,7 +183,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
     update_access(true);
 
     // Open the cache
-    if (m_buffer->open(erase_cache))
+    if (m_buffer->init(erase_cache))
     {
         return true;
     }
@@ -192,7 +196,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
 
 void Cache_Entry::close_buffer(int flags)
 {
-    if (m_buffer->close(flags))
+    if (m_buffer->release(flags))
     {
         if (flags)
         {
@@ -364,4 +368,9 @@ bool Cache_Entry::outdated() const
     }
 
     return false;
+}
+
+LPCVIRTUALFILE Cache_Entry::virtualfile() const
+{
+    return m_virtualfile;
 }

@@ -20,7 +20,7 @@
 
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
-#include "transcode.h"
+#include "ffmpegfs.h"
 
 #include <libgen.h>
 #include <unistd.h>
@@ -87,6 +87,16 @@ const string & append_filename(string * path, const string & filename)
 
     *path += filename;
 
+    return *path;
+}
+
+// Remove filename from path. Handy dirname alternative.
+const string & remove_filename(string * path)
+{
+    char *p = strdup(path->c_str());
+    *path = dirname(p);
+    free(p);
+    append_sep(path);
     return *path;
 }
 
@@ -818,11 +828,7 @@ int print_info(AVStream* stream)
     int tbr = stream->r_frame_rate.den && stream->r_frame_rate.num;
 #endif
     int tbn = stream->time_base.den && stream->time_base.num;
-#if LAVF_DEP_AVSTREAM_CODEC
     int tbc = avctx->time_base.den && avctx->time_base.num; // Even the currently latest (lavf 58.10.100) refers to AVStream codec->time_base member... (See dump.c dump_stream_format)
-#else
-    int tbc = avctx->time_base.den && avctx->time_base.num;
-#endif
 
     if (fps)
         print_fps(av_q2d(stream->avg_frame_rate), "avg fps");

@@ -196,6 +196,11 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     Limit concurrent transcoder threads. Set to 0 for unlimited threads.
     Recommended values are up to 16 times number of CPU cores.
     Default: 16 times number of detected cpu cores
+*--decoding_errors*, *-o decoding_errors*
+    Decoding errors are normally ignored, leaving bloopers and hiccups in
+    encoded audio or video but yet creating a valid file. When this option
+    is set, transcoding will stop with an error.
+    Default: Ignore errors
 
 === Logging ===
 *--log_maxlevel*=LEVEL, *-o log_maxlevel*=LEVEL::

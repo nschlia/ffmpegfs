@@ -25,8 +25,8 @@
 
 #include "ffmpeg_base.h"
 #include "id3v1tag.h"
-#include "wave.h"
-#include "transcode.h"
+#include "ffmpegfs.h"
+#include "fileio.h"
 
 #include <queue>
 
@@ -137,14 +137,14 @@ public:
     FFMPEG_Transcoder();
     virtual ~FFMPEG_Transcoder();
     bool is_open() const;
-    int open_input_file(const char* filename);
+    int open_input_file(LPCVIRTUALFILE virtualfile);
     int open_output_file(Buffer* buffer);
     int process_single_fr(int & status);
     int encode_finish();
     void close();
 
     time_t mtime() const;
-    size_t calculate_size();
+    size_t predict_filesize();
 
     const ID3v1 * id3v1tag() const;
 
@@ -187,15 +187,13 @@ protected:
     int load_encode_and_write(int frame_size);
     int write_output_file_trailer();
 
+    static int input_read(void * opaque, unsigned char * data, int size);
     static int output_write(void * opaque, unsigned char * data, int size);
-    static int64_t output_seek(void * opaque, int64_t offset, int whence);
+    static int64_t seek(void * opaque, int64_t offset, int whence);
 
-    bool get_output_sample_rate(AVStream *stream, int max_sample_rate, int *sample_rate) const;
-#if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)
-    bool get_output_bit_rate(AVStream *stream, int64_t max_bit_rate, int64_t * bit_rate) const;
-#else // USING_LIBAV
-    bool get_output_bit_rate(AVStream *stream, int max_bit_rate, int * bit_rate) const;
-#endif
+    size_t predict_filesize(const char * filename, double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const;
+    bool get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate) const;
+    bool get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate) const;
     double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;
 
 #ifndef USING_LIBAV
@@ -205,9 +203,10 @@ protected:
 #endif // !USING_LIBAV
 
 private:
+    fileio *                    m_fileio;
     time_t                      m_mtime;
-    size_t                      m_nCalculated_size;         // Use this as the size instead of computing it.
-    bool                        m_bIsVideo;
+    size_t                      m_predicted_size;         // Use this as the size instead of computing it.
+    bool                        m_is_video;
 
     // Audio conversion and buffering
 #if LAVR_DEPRECATE

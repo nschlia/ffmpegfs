@@ -26,9 +26,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "ffmpeg_utils.h"
 #include "cache_maintenance.h"
-#include "transcode.h"
+#include "ffmpegfs.h"
+#include "ffmpeg_utils.h"
 
 #include <signal.h>
 #include <unistd.h>

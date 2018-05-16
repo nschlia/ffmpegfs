@@ -26,10 +26,10 @@
 // Force PRId64 defines
 #define __STDC_FORMAT_MACROS
 
-// 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
-//  Deprecate AVFormatContext filename field which had limited length, use the
-//   new dynamically allocated url field instead.
-#define LAVF_DEP_FILENAME                   (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
+//// 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
+////  Deprecate AVFormatContext filename field which had limited length, use the
+////   new dynamically allocated url field instead.
+//#define LAVF_DEP_FILENAME                   (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
 // 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
 //   Add a new audio/video encoding and decoding API with decoupled input
 //   and output -- avcodec_send_packet(), avcodec_receive_frame(),
@@ -151,6 +151,19 @@ const char *get_media_type_string(enum 		AVMediaType media_type);
 #define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE
 #endif
 
+#if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)
+#define BITRATE int64_t
+#else // USING_LIBAV
+#define BITRATE int
+#endif
+
+// Make access possible over codecpar if available
+#if LAVF_DEP_AVSTREAM_CODEC
+#define CODECPAR(s)     ((s)->codecpar)
+#else
+#define CODECPAR(s)     ((s)->codec)
+#endif
+
 typedef enum _tagFILETYPE
 {
     FILETYPE_UNKNOWN,
@@ -160,8 +173,6 @@ typedef enum _tagFILETYPE
     FILETYPE_OGG
 } FILETYPE;
 
-#include <sys/stat.h>
-
 #ifdef __cplusplus
 #include <string>
 
@@ -169,6 +180,7 @@ using namespace std;
 
 const string & append_sep(string * path);
 const string & append_filename(string * path, const string & filename);
+const string & remove_filename(string *path);
 bool find_ext(string * ext, const string & filename);
 const string & replace_ext(string * filename, const string & ext);
 const string & get_destname(string *destname, const string & filename);

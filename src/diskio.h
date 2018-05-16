@@ -1,5 +1,5 @@
 /*
- * FFmpeg transcoder class header for ffmpegfs
+ * diskio class header for ffmpegfs
  *
  * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -18,14 +18,35 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef CACHE_MAINTENANCE_H
-#define CACHE_MAINTENANCE_H
+#ifndef DISKIO_H
+#define DISKIO_H
 
 #pragma once
 
-#include <time.h>
+#include "fileio.h"
 
-int start_cache_maintenance(time_t interval);
-int stop_cache_maintenance();
+class diskio : public fileio
+{
+public:
+    diskio();
+    virtual ~diskio();
 
-#endif // CACHE_MAINTENANCE_H
+    virtual VIRTUALTYPE type() const;
+
+    virtual int bufsize() const;
+    virtual int open(LPCVIRTUALFILE virtualfile);
+    virtual int open(const string & filename);
+    virtual int read(void *data, int maxlen);
+    virtual int error() const;
+    virtual int duration() const;
+    virtual size_t size() const;
+    virtual size_t tell() const;
+    virtual int seek(long offset, int whence);
+    virtual bool eof() const;
+    virtual void close();
+
+protected:
+    FILE *m_fpi;
+};
+
+#endif // DISKIO_H

@@ -17,6 +17,8 @@ SOURCES += \
     src/cache_maintenance.cc \
     src/ffmpeg_base.cc \
     src/ffmpeg_optimisations.cc
+    src/diskio.cc \
+    src/fileio.cc
 
 HEADERS += \
     src/buffer.h \
@@ -31,7 +33,9 @@ HEADERS += \
     src/cache_maintenance.h \
     src/ffmpeg_base.h \
     src/wave.h \
-    configure.ac
+    configure.ac \
+    src/fileio.h \
+    src/diskio.h
 
 DEFINES+=_DEBUGencoder_list
 DEFINES+=PACKAGE_NAME='"\\\"FFMPEGFS\\\""' HOST_OS='"\\\"My OS\\\""' CONFIGURE_ARGS='"\\\"\\\""' PACKAGE_TARNAME='"\\\"ffmpegfs"'\\\" PACKAGE_VERSION='"\\\"1.3"'\\\" PACKAGE_STRING='"\\\"FFMPEGFS\ 1.3"'\\\" PACKAGE_BUGREPORT='"\\\""'\\\" PACKAGE_URL='"\\\""'\\\" PACKAGE='"\\\"ffmpegfs"'\\\" VERSION='"\\\"0.91"'\\\"
@@ -74,4 +78,7 @@ DISTFILES += \
     test/funcs.sh \
     TODO \
     src/scripts/videotag.php \
-    src/scripts/videotag.txt
+    src/scripts/videotag.txt \
+    Makefile.am \
+    src/Makefile.am \
+    test/Makefile.am

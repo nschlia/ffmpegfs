@@ -20,12 +20,11 @@
 
 #include "cache.h"
 #include "cache_entry.h"
-#include "transcode.h"
+#include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
 
-#include <assert.h>
 #include <vector>
-#include <unistd.h>
+#include <assert.h>
 
 #ifndef HAVE_SQLITE_ERRSTR
 #define sqlite3_errstr(rc)  ""
@@ -479,13 +478,22 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
     return false;   // Kept entry
 }
 
-Cache_Entry* Cache::open(const char *filename)
+Cache_Entry *Cache::open(LPCVIRTUALFILE virtualfile)
+{
+    Cache_Entry* cache_entry = open(virtualfile->m_origfile);
+
+    cache_entry->m_virtualfile = virtualfile;
+
+    return cache_entry;
+}
+
+Cache_Entry * Cache::open(const string & filename)
 {
     Cache_Entry* cache_entry = NULL;
-    char resolved_name[PATH_MAX];
+    char resolved_name[PATH_MAX + 1];
     string sanitised_name;
 
-    if (realpath(filename, resolved_name) == NULL)
+    if (realpath(filename.c_str(), resolved_name) == NULL)
     {
         sanitised_name = filename;
     }
@@ -864,11 +872,11 @@ string Cache::expanded_sql(sqlite3_stmt *pStmt)
     const char *p = sqlite3_sql(pStmt);
     if (p != NULL)
     {
-       sql=p;
+        sql=p;
     }
     else
     {
-      sql="(NULL)";
+        sql="(NULL)";
     }
 #endif
     return sql;

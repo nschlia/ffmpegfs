@@ -20,35 +20,58 @@
  */
 
 #include "buffer.h"
-#include "transcode.h"
+#include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
+#include <assert.h>
 
 using namespace std;
 
 // Initially Buffer is empty. It will be allocated as needed.
-Buffer::Buffer(const string &filename)
+Buffer::Buffer()
     : m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
-    , m_filename(filename)
     , m_buffer_pos(0)
     , m_buffer_watermark(0)
     , m_is_open(false)
     , m_buffer(NULL)
     , m_fd(-1)
 {
-    make_cachefile_name(m_cachefile, filename);
 }
 
 // If buffer_data was never allocated, this is a no-op.
 Buffer::~Buffer()
 {
-    close();
+    release();
 }
 
-bool Buffer::open(bool erase_cache)
+VIRTUALTYPE Buffer::type() const
+{
+    return VIRTUALTYPE_BUFFER;
+}
+
+int Buffer::bufsize() const
+{
+    return 0;   // Not applicable
+}
+
+int Buffer::open(LPCVIRTUALFILE virtualfile)
+{
+    assert(virtualfile->m_type == type());
+
+    return open(virtualfile->m_origfile);
+}
+
+int Buffer::open(const string & filename)
+{
+    m_filename = filename;
+    make_cachefile_name(m_cachefile, m_filename);
+    return 0;
+}
+
+bool Buffer::init(bool erase_cache)
 {
     if (m_is_open)
     {
@@ -155,7 +178,7 @@ bool Buffer::open(bool erase_cache)
     return success;
 }
 
-bool Buffer::close(int flags /*= CLOSE_CACHE_NOOPT*/)
+bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 {
     bool success = true;
 
@@ -338,17 +361,45 @@ void Buffer::increment_pos(ptrdiff_t increment)
     m_buffer_pos += increment;
 }
 
-bool Buffer::seek(size_t pos)
+int Buffer::seek(long offset, int whence)
 {
+    size_t pos;
+
+    switch (whence)
+    {
+    case SEEK_CUR:
+    {
+        pos = tell() + offset;
+        break;
+    }
+    case SEEK_END:
+    {
+        if (size() > (size_t)offset)
+        {
+            pos = size() - offset;
+        }
+        else
+        {
+            pos = 0;
+        }
+        break;
+    }
+    default: // SEEK_SET
+    {
+        pos = offset;
+        break;
+    }
+    }
+
     if (pos <= size())
     {
         m_buffer_pos = pos;
-        return true;
+        return 0;
     }
     else
     {
         m_buffer_pos = size();
-        return false;
+        return -1;
     }
 }
 
@@ -356,6 +407,11 @@ bool Buffer::seek(size_t pos)
 size_t Buffer::tell() const
 {
     return m_buffer_pos;
+}
+
+int Buffer::duration() const
+{
+    return -1;  // not applicable
 }
 
 // Give the value of the internal buffer size pointer.
@@ -465,3 +521,26 @@ bool Buffer::remove_file(const string & filename)
         return true;
     }
 }
+
+int Buffer::read(void * /*data*/, int /*maxlen*/)
+{
+    // Not implemented
+    errno = EPERM;
+    return -1;
+}
+
+int Buffer::error() const
+{
+    return errno;
+}
+
+bool Buffer::eof() const
+{
+    return (tell() == size());
+}
+
+void Buffer::close()
+{
+    release();
+}
+

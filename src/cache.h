@@ -26,7 +26,6 @@
 #include "buffer.h"
 
 #include <map>
-
 #include <sqlite3.h>
 
 using namespace std;
@@ -67,7 +66,8 @@ public:
     Cache();
     virtual ~Cache();
 
-    Cache_Entry *open(const char *filename);
+    Cache_Entry *open(LPCVIRTUALFILE virtualfile);
+    Cache_Entry *open(const string & filename);
     bool close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
 
     bool load_index();

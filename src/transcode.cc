@@ -45,12 +45,12 @@ extern "C" {
 static void *decoder_thread(void *arg);
 }
 
-static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Transcoder *transcoder);
+static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transcoder);
 
 // Transcode the buffer until the buffer has enough or until an error occurs.
 // The buffer needs at least 'end' bytes before transcoding stops. Returns true
 // if no errors and false otherwise.
-static bool transcode_until(struct Cache_Entry* cache_entry, off_t offset, size_t len)
+static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 {
     size_t end = offset + len;
     bool success = true;
@@ -74,7 +74,7 @@ static bool transcode_until(struct Cache_Entry* cache_entry, off_t offset, size_
 
 // Close the input file and free everything but the initial buffer.
 
-static int transcode_finish(struct Cache_Entry* cache_entry, struct FFMPEG_Transcoder *transcoder)
+static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transcoder)
 {
     int res = transcoder->encode_finish();
     if (res < 0)
@@ -145,6 +145,8 @@ int transcoder_init(void)
     return 0;
 }
 
+}
+
 void transcoder_free(void)
 {
     Cache *p1 = cache;
@@ -157,9 +159,9 @@ void transcoder_free(void)
     }
 }
 
-int transcoder_cached_filesize(const char* filename, struct stat *stbuf)
+int transcoder_cached_filesize(const string & filename, struct stat *stbuf)
 {
-    ffmpegfs_trace("%s * Retrieving encoded size.", filename);
+    ffmpegfs_trace("%s * Retrieving encoded size.", filename.c_str());
 
     Cache_Entry* cache_entry = cache->open(filename);
     if (!cache_entry)
@@ -188,14 +190,15 @@ int transcoder_cached_filesize(const char* filename, struct stat *stbuf)
 }
 
 // Allocate and initialize the transcoder
-struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
+
+Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 {
     int _errno = 0;
 
     // Allocate transcoder structure
-    ffmpegfs_trace("%s * Creating transcoder object.", filename);
+    ffmpegfs_trace("%s * Creating transcoder object.", virtualfile->m_origfile.c_str());
 
-    Cache_Entry* cache_entry = cache->open(filename);
+    Cache_Entry* cache_entry = cache->open(virtualfile);
     if (!cache_entry)
     {
         return NULL;
@@ -227,7 +230,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
             {
                 if (params.m_max_threads && thread_count >= params.m_max_threads)
                 {
-                    ffmpegfs_warning("%s * Too many active threads. Deferring transcoder start until threads become available.", filename);
+                    ffmpegfs_warning("%s * Too many active threads. Deferring transcoder start until threads become available.", virtualfile->m_origfile.c_str());
 
                     while (!thread_exit && thread_count >= params.m_max_threads)
                     {
@@ -236,19 +239,19 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
 
                     if (thread_count >= params.m_max_threads)
                     {
-                        ffmpegfs_error("%s * Unable to start new thread. Cancelling transcode.", filename);
+                        ffmpegfs_error("%s * Unable to start new thread. Cancelling transcode.", virtualfile->m_origfile.c_str());
                         _errno = EBUSY; // Report resource busy
                         throw false;
                     }
 
-                    ffmpegfs_info("%s * Threads available again. Continuing now.", filename);
+                    ffmpegfs_info("%s * Threads available again. Continuing now.", virtualfile->m_origfile.c_str());
                 }
 
                 pthread_attr_t attr;
                 int stack_size = 0;
                 int s;
 
-                ffmpegfs_debug("%s * Starting decoder thread.", filename);
+                ffmpegfs_debug("%s * Starting decoder thread.", virtualfile->m_origfile.c_str());
 
                 if (cache_entry->m_cache_info.m_error)
                 {
@@ -264,7 +267,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("%s * Error creating thread attributes: %s", filename, strerror(s));
+                    ffmpegfs_error("%s * Error creating thread attributes: %s", virtualfile->m_origfile.c_str(), strerror(s));
                     throw false;
                 }
 
@@ -274,7 +277,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                     if (s != 0)
                     {
                         _errno = s;
-                        ffmpegfs_error("%s * Error setting stack size: %s", filename, strerror(s));
+                        ffmpegfs_error("%s * Error setting stack size: %s", virtualfile->m_origfile.c_str(), strerror(s));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
@@ -296,14 +299,14 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 }
                 pthread_mutex_unlock(&thread_data->m_mutex);
 
-                ffmpegfs_debug("%s * Decoder thread is running.", filename);
+                ffmpegfs_debug("%s * Decoder thread is running.", virtualfile->m_origfile.c_str());
 
                 free(thread_data); // can safely be done here, will not be used in thread from now on
 
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("%s * Error creating thread: %s", filename, strerror(s));
+                    ffmpegfs_error("%s * Error creating thread: %s", virtualfile->m_origfile.c_str(), strerror(s));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -313,7 +316,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
                 s = pthread_attr_destroy(&attr);
                 if (s != 0)
                 {
-                    ffmpegfs_warning("%s * Error destroying thread attributes: %s", filename, strerror(s));
+                    ffmpegfs_warning("%s * Error destroying thread attributes: %s", virtualfile->m_origfile.c_str(), strerror(s));
                 }
 
                 if (cache_entry->m_cache_info.m_error)
@@ -331,18 +334,18 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
             {
                 FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
 
-                if (transcoder->open_input_file(cache_entry->filename().c_str()) < 0)
+                if (transcoder->open_input_file(virtualfile) < 0)
                 {
                     _errno = errno;
                     delete transcoder;
                     throw false;
                 }
 
-                cache_entry->m_cache_info.m_predicted_filesize = transcoder->calculate_size();
+                cache_entry->m_cache_info.m_predicted_filesize = transcoder->predict_filesize();
 
                 transcoder->close();
 
-                ffmpegfs_debug("%s * Predicted transcoded size of %zu bytes.", filename, cache_entry->m_cache_info.m_predicted_filesize);
+                ffmpegfs_debug("%s * Predicted transcoded size of %zu bytes.", virtualfile->m_origfile.c_str(), cache_entry->m_cache_info.m_predicted_filesize);
 
                 delete transcoder;
             }
@@ -368,7 +371,7 @@ struct Cache_Entry* transcoder_new(const char* filename, int begin_transcode)
 
 // Read some bytes into the internal buffer and into the given buffer.
 
-ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
+ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
     ffmpegfs_trace("%s * Reading %zu bytes from offset %jd.", cache_entry->filename().c_str(), len, (intmax_t)offset);
 
@@ -443,23 +446,23 @@ ssize_t transcoder_read(struct Cache_Entry* cache_entry, char* buff, off_t offse
 
 // Free the transcoder structure.
 
-void transcoder_delete(struct Cache_Entry* cache_entry)
+void transcoder_delete(Cache_Entry* cache_entry)
 {
     cache->close(&cache_entry);
 }
 
 // Return size of output file, as computed by Encoder.
-size_t transcoder_get_size(struct Cache_Entry* cache_entry)
+size_t transcoder_get_size(Cache_Entry* cache_entry)
 {
     return cache_entry->size();
 }
 
-size_t transcoder_buffer_watermark(struct Cache_Entry* cache_entry)
+size_t transcoder_buffer_watermark(Cache_Entry* cache_entry)
 {
     return cache_entry->m_buffer->buffer_watermark();
 }
 
-size_t transcoder_buffer_tell(struct Cache_Entry* cache_entry)
+size_t transcoder_buffer_tell(Cache_Entry* cache_entry)
 {
     return cache_entry->m_buffer->tell();
 }
@@ -520,13 +523,13 @@ static void *decoder_thread(void *arg)
             throw ((int)errno);
         }
 
-        averror = transcoder->open_input_file(cache_entry->filename().c_str());
+        averror = transcoder->open_input_file(cache_entry->virtualfile());
         if (averror < 0)
         {
             throw ((int)errno);
         }
 
-        if (!cache->maintenance(transcoder->calculate_size()))
+        if (!cache->maintenance(transcoder->predict_filesize()))
         {
             throw ((int)errno);
         }
@@ -653,7 +656,7 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            ffmpegfs_error("%s * Transcoding exited with error.\nSystem error: %s (%i)\naFFMpeg error: %s (%i)", cache_entry->filename().c_str(), strerror(syserror), syserror, ffmpeg_geterror(averror).c_str(), averror);
+            ffmpegfs_error("%s * Transcoding exited with error.\nSystem error: %s (%i)\nFFMpeg error: %s (%i)", cache_entry->filename().c_str(), strerror(syserror), syserror, ffmpeg_geterror(averror).c_str(), averror);
         }
     }
 
@@ -817,10 +820,10 @@ int get_profile(const char * arg, PROFILE *value)
     return -1;
 }
 
-static std::map<string, PROFILE>::const_iterator search_by_value(const map<string, PROFILE> & mapOfWords, PROFILE value)
+static map<string, PROFILE>::const_iterator search_by_value(const map<string, PROFILE> & mapOfWords, PROFILE value)
 {
-    // Iterate through all elements in std::map and search for the passed element
-    std::map<string, PROFILE>::const_iterator it = mapOfWords.begin();
+    // Iterate through all elements in map and search for the passed element
+    map<string, PROFILE>::const_iterator it = mapOfWords.begin();
     while (it != mapOfWords.end())
     {
         if(it->second == value)
@@ -840,6 +843,4 @@ const char * get_profile_text(PROFILE value)
         return it->first.c_str();
     }
     return "INVALID";
-}
-
 }

@@ -26,8 +26,6 @@
 #include "cache.h"
 #include "id3v1tag.h"
 
-#include <string>
-
 class Buffer;
 
 struct Cache_Entry
@@ -59,6 +57,8 @@ public:
     // Check if cache entry needs to be recoded
     bool outdated() const;
 
+    LPCVIRTUALFILE virtualfile() const;
+
 protected:
     bool close(int flags);
     void close_buffer(int flags);
@@ -72,6 +72,8 @@ protected:
     pthread_mutex_t m_mutex;
 
     int             m_ref_count;
+
+    LPCVIRTUALFILE  m_virtualfile;
 
 public:
     Buffer *        m_buffer;

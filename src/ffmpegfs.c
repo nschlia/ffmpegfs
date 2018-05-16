@@ -22,7 +22,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "transcode.h"
+#include "ffmpegfs.h"
 #include "coders.h"
 
 #include <regex.h>
@@ -68,13 +68,13 @@ struct ffmpegfs_params params =
 #ifndef USING_LIBAV
     .m_deinterlace          = 0,                        // default: do not interlace video
 #endif  // !USING_LIBAV
-	// Album arts
+    // Album arts
     .m_noalbumarts          = 0,                        // default: copy album arts
-	// Virtual Script
+    // Virtual Script
     .m_enablescript         = 0,                        // default: no virtual script
     .m_scriptfile           = "index.php",              // default name
     .m_scriptsource         = "scripts/videotag.php",   // default name
-	// Other
+    // Other
     .m_debug              	= 0,                        // default: no debug messages
     .m_log_maxlevel       	= "INFO",                   // default: INFO level
     .m_log_stderr         	= 0,                        // default: do not log to stderr
@@ -93,6 +93,7 @@ struct ffmpegfs_params params =
     .m_prune_cache          = 0,                        // default: Do not prune cache immediately
     .m_clear_cache          = 0,                        // default: Do not clear cache on startup
     .m_max_threads          = 0,                        // default: 16 * CPU cores (this value here is overwritten later)
+    .m_decoding_errors      = 0,                        // default: ignore errors
 };
 
 enum
@@ -144,7 +145,7 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",               m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                 m_noalbumarts, 1),
-	// Virtual script
+    // Virtual script
     FFMPEGFS_OPT("--enablescript",              m_enablescript, 1),
     FFMPEGFS_OPT("enablescript",                m_enablescript, 1),
     FFMPEGFS_OPT("--scriptfile=%s",             m_scriptfile, 0),
@@ -178,7 +179,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Other
     FFMPEGFS_OPT("--max_threads=%u",            m_max_threads, 0),
     FFMPEGFS_OPT("max_threads=%u",              m_max_threads, 0),
-
+    FFMPEGFS_OPT("--decoding_errors=%u",        m_decoding_errors, 0),
+    FFMPEGFS_OPT("decoding_errors=%u",          m_decoding_errors, 0),
     // ffmpegfs options
     FFMPEGFS_OPT("-d",                          m_debug, 1),
     FFMPEGFS_OPT("debug",                       m_debug, 1),
@@ -389,6 +391,11 @@ static void usage(char *name)
           "                           Limit concurrent transcoder threads. Set to 0 for unlimited threads.\n"
           "                           Recommended values are up to 16 times number of CPU cores.\n"
           "                           Default: 16 times number of detected cpu cores\n"
+          "     --decoding_errors, -o decoding_errors\n"
+          "                           Decoding errors are normally ignored, leaving bloopers and hiccups in\n"
+          "                           encoded audio or video but yet creating a valid file. When this option\n"
+          "                           is set, transcoding will stop with an error.\n"
+          "                           Default: Ignore errors\n"
           "\n"
           "Logging:\n"
           "\n"
@@ -776,14 +783,9 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         ffmpeg_libinfo(buffer, sizeof(buffer));
         printf("%s", buffer);
 
-        printf("%-20s: %s\n", "SQLite Version", sqlite3_version);
-
         fuse_opt_add_arg(outargs, "--version");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
 
-#ifdef USE_LIBDVDNAV
-        printf("Built with DVD support using libdvdnav.\n");
-#endif
         printf("-------------------------------------------------------------------------------------------\n\n");
         printf("FFMpeg capabilities\n\n");
 
@@ -904,7 +906,7 @@ static void print_params()
                                 "\nVirtual Script\n\n"
                                 "Create script     : %s\n"
                                 "Script file name  : %s\n"
-                                "Input file        : %s\n"							
+                                "Input file        : %s\n"
                                 "\nLogging\n\n"
                                 "Max. Log Level    : %s\n"
                                 "Log to stderr     : %s\n"
@@ -922,7 +924,8 @@ static void print_params()
                                 "Maintenance Timer : %s\n"
                                 "Clear Cache       : %s\n"
                                 "\nVarious Options\n\n"
-                                "Max. Threads      : %s\n",
+                                "Max. Threads      : %s\n"
+                                "Consider Decoding Errors: %s\n",
                    params.m_basepath,
                    params.m_mountpath,
                    params.m_desttype,
@@ -934,7 +937,7 @@ static void print_params()
                #ifndef USING_LIBAV
                    params.m_deinterlace ? "yes" : "no",
                #endif  // !USING_LIBAV
-				   params.m_noalbumarts ? "yes" : "no",
+                   params.m_noalbumarts ? "yes" : "no",
                    get_codec_name(video_codecid),
                    videobitrate,
                    params.m_enablescript ? "yes" : "no",
@@ -954,7 +957,8 @@ static void print_params()
                    params.m_disable_cache ? "yes" : "no",
                    cache_maintenance,
                    params.m_clear_cache ? "yes" : "no",
-                   max_threads
+                   max_threads,
+                   params.m_decoding_errors ? "yes" : "no"
                    );
 }
 

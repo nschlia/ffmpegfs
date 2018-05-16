@@ -8,6 +8,9 @@ Important changes in 1.4 (2018-05-XX)
            directory. It reads scripts/videotag.php from the ffmpegs binary directory.
            This can be very handy to test video playback. Of course, feel free to
            replace videotag.php with your own script.
+* Feature: By default ignore decoding errors so that transcoding does not stop just
+           because a few frames are garbled. Can be disabled with the "decoding_errors"
+           option.
 
 * Bugfix: Set mp4 profile to high/3.1 to enable plqayback under enable playback under
           Win 7.

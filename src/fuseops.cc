@@ -33,27 +33,8 @@
 #include <vector>
 #include <assert.h>
 
-typedef enum _tagVIRTUALTYPE
-{
-    VIRTUALTYPE_PASSTHROUGH,        // passthrough file, not used
-    VIRTUALTYPE_REGULAR,            // Regular file to transcode
-    VIRTUALTYPE_SCRIPT,             // Virtual script
-} VIRTUALTYPE;
-typedef VIRTUALTYPE const *LPCVIRTUALTYPE;
-typedef VIRTUALTYPE LPVIRTUALTYPE;
-
-typedef struct _tagVIRTUALFILE
-{
-    VIRTUALTYPE m_type;
-    string      m_origfile;
-    struct stat m_st;
-
-} VIRTUALFILE;
-typedef VIRTUALFILE const *LPCVIRTUALFILE;
-typedef VIRTUALFILE *LPVIRTUALFILE;
-
-static LPCVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
-static void init_stat(struct stat *st, bool directory);
+static LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
+static void init_stat(struct stat *st, size_t size, bool directory);
 static void prepare_script();
 static void translate_path(string *origpath, const char* path);
 static bool transcoded_name(string *path);
@@ -62,7 +43,7 @@ static LPCVIRTUALFILE find_original(string *path);
 static vector<char> index_buffer;
 static map<string, VIRTUALFILE> filenames;
 
-static void init_stat(struct stat * st, bool directory)
+static void init_stat(struct stat * st, size_t size, bool directory)
 {
     memset(st, 0, sizeof(struct stat));
 
@@ -78,11 +59,7 @@ static void init_stat(struct stat * st, bool directory)
         st->st_nlink = 1;
     }
 
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-    st->st_size = index_buffer.size();
-#else
-    st->st_size = index_text.size();
-#endif
+    st->st_size = size;
     st->st_blocks = (st->st_size + 512 - 1) / 512;
 
     // Set current user as owner
@@ -161,7 +138,7 @@ static bool transcoded_name(string * path)
 
 // Add new virtual file to internal list
 // Returns constant pointer to VIRTUALFILE object of file, NULL if not found
-static LPCVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, const string & origfile, const struct stat *st)
+static LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, const string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
 
@@ -171,9 +148,8 @@ static LPCVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, con
 
     filenames.insert(make_pair(filename, virtualfile));
 
-    map<string, VIRTUALFILE>::iterator p = filenames.end();
-    --p;
-    return &p->second;
+    map<string, VIRTUALFILE>::iterator it = filenames.find(filename);
+    return &it->second;
 }
 
 // Given the destination (post-transcode) file name, determine the name of
@@ -182,14 +158,14 @@ static LPCVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, con
 static LPCVIRTUALFILE find_original(string * path)
 {
     // 1st do fast map lookup
-    map<string, VIRTUALFILE>::iterator p = filenames.find(*path);
+    map<string, VIRTUALFILE>::iterator it = filenames.find(*path);
 
     errno = 0;
 
-    if (p != filenames.end())
+    if (it != filenames.end())
     {
-        *path = p->second.m_origfile;
-        return &p->second;
+        *path = it->second.m_origfile;
+        return &it->second;
     }
     else
     {
@@ -209,9 +185,9 @@ static LPCVIRTUALFILE find_original(string * path)
                 if (lstat(tmppath.c_str(), &st) == 0)
                 {
                     // File exists with this extension
-                    LPCVIRTUALFILE p = insert_file(VIRTUALTYPE_REGULAR, *path, tmppath, &st);
+                    LPCVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *path, tmppath, &st);
                     *path = tmppath;
-                    return p;
+                    return virtualfile;
                 }
                 else
                 {
@@ -224,6 +200,7 @@ static LPCVIRTUALFILE find_original(string * path)
     // Source file exists with no supported extension, keep path
     return NULL;
 }
+
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
@@ -265,6 +242,25 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     translate_path(&origpath, path);
     append_sep(&origpath);
 
+    // Add a virtual script if enabled
+    if (params.m_enablescript)
+    {
+        string filename(params.m_scriptfile);
+        string origfile;
+        struct stat st;
+
+        origfile = origpath + filename;
+
+        init_stat(&st, index_buffer.size(), false);
+
+        if (filler(buf, filename.c_str(), &st, 0))
+        {
+            // break;
+        }
+
+        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, origfile, &st);
+    }
+
     dp = opendir(origpath.c_str());
     if (dp)
     {
@@ -295,25 +291,6 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
                 {
                     break;
                 }
-            }
-
-            // Add a virtual script if enabled
-            if (params.m_enablescript)
-            {
-                string filename(params.m_scriptfile);
-                string origfile;
-                struct stat st;
-
-                origfile = origpath + filename;
-
-                init_stat(&st, false);
-
-                if (filler(buf, filename.c_str(), &st, 0))
-                {
-                    // break;
-                }
-
-                insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, origfile, &st);
             }
 
             errno = 0;  // Just to make sure - reset any error
@@ -353,6 +330,8 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != NULL) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
+    bool no_lstat = false;
+
     switch (type)
     {
     case VIRTUALTYPE_SCRIPT:
@@ -362,21 +341,30 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;
         break;
     }
+    {
+        // Use stored status
+        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+        no_lstat = true;
+    }
     case VIRTUALTYPE_REGULAR:
     {
-        if (lstat(origpath.c_str(), stbuf) == -1)
+        if (!no_lstat)
         {
-            return -errno;
+            if (lstat(origpath.c_str(), stbuf) == -1)
+            {
+                int error = -errno;
+                return error;
+            }
         }
 
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
         {
-            if (!transcoder_cached_filesize(origpath.c_str(), stbuf))
+            if (!transcoder_cached_filesize(origpath, stbuf))
             {
                 struct Cache_Entry* cache_entry;
 
-                cache_entry = transcoder_new(origpath.c_str(), 0);
+                cache_entry = transcoder_new(virtualfile, false);
                 if (!cache_entry)
                 {
                     return -errno;
@@ -396,8 +384,10 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_BUFFER:
     {
+        assert(false);
         break;
     }
     }
@@ -432,6 +422,8 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
 
     assert(virtualfile != NULL);
 
+    bool no_lstat = false;
+
     switch (virtualfile->m_type)
     {
     case VIRTUALTYPE_SCRIPT:
@@ -441,11 +433,19 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         errno = 0;
         break;
     }
+    {
+        // Use stored status
+        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+        no_lstat = true;
+    }
     case VIRTUALTYPE_REGULAR:
     {
-        if (lstat(origpath.c_str(), stbuf) == -1)
+        if (!no_lstat)
         {
-            return -errno;
+            if (lstat(origpath.c_str(), stbuf) == -1)
+            {
+                return -errno;
+            }
         }
 
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
@@ -473,8 +473,10 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_BUFFER:
     {
+        assert(false);
         break;
     }
     }
@@ -527,7 +529,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     }
     case VIRTUALTYPE_REGULAR:
     {
-        cache_entry = transcoder_new(origpath.c_str(), 1);
+        cache_entry = transcoder_new(virtualfile, true);
         if (!cache_entry)
         {
             return -errno;
@@ -542,8 +544,10 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_BUFFER:
     {
+        assert(false);
         break;
     }
     }
@@ -624,8 +628,10 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_BUFFER:
     {
+        assert(false);
         break;
     }
     }
@@ -646,8 +652,6 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
     ffmpegfs_trace("statfs %s", path);
 
-    errno = 0;
-
     translate_path(&origpath, path);
 
     // pass-through for regular files
@@ -661,32 +665,11 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
         errno = 0;
     }
 
-    // This is a virtual file
-    LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    find_original(&origpath);
 
-    assert(virtualfile != NULL);
+    statvfs(origpath.c_str(), stbuf);
 
-    switch (virtualfile->m_type)
-    {
-    case VIRTUALTYPE_SCRIPT:
-    {
-        // Use stored status
-        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        errno = 0;
-        break;
-    }
-    case VIRTUALTYPE_REGULAR:
-    {
-        statvfs(origpath.c_str(), stbuf);
-
-        errno = 0;  // Just to make sure - reset any error
-        break;
-    }
-    case VIRTUALTYPE_PASSTHROUGH: // We will never come here but this shuts up a warning
-    {
-        break;
-    }
-    }
+    errno = 0;  // Just to make sure - reset any error
 
     return 0;
 }

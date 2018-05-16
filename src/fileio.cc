@@ -1,5 +1,5 @@
 /*
- * FFmpeg transcoder class header for ffmpegfs
+ * File I/O for ffmpegfs
  *
  * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -18,14 +18,38 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef CACHE_MAINTENANCE_H
-#define CACHE_MAINTENANCE_H
+#include "fileio.h"
 
-#pragma once
+#include "buffer.h"
+#include "diskio.h"
 
-#include <time.h>
+fileio::fileio()
+{
 
-int start_cache_maintenance(time_t interval);
-int stop_cache_maintenance();
+}
 
-#endif // CACHE_MAINTENANCE_H
+fileio::~fileio()
+{
+
+}
+
+fileio * fileio::alloc(VIRTUALTYPE type)
+{
+    switch (type)
+    {
+    case VIRTUALTYPE_REGULAR:
+    {
+        return new diskio;
+    }
+    case VIRTUALTYPE_BUFFER:
+    {
+        return new Buffer;
+    }
+    //case VIRTUALTYPE_PASSTHROUGH:
+    //case VIRTUALTYPE_SCRIPT:
+    default:
+    {
+        return NULL;
+    }
+    }
+}

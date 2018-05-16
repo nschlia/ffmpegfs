@@ -48,7 +48,7 @@ Logging::Logging(string logfile, level max_level, bool to_stderr, bool to_syslog
 }
 
 // trim from end (in place)
-static inline void rtrim(std::string &s) {
+static inline void rtrim(string &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
         return !std::isspace(ch);
     }).base(), s.end());

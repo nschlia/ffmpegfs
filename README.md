@@ -13,6 +13,8 @@ https://nschlia.github.io/ffmpegfs/<br />
 
 **Work on release 1.4 now in progress**
 
+**DVD support is now available. See INSTALL.md on how to activate.**
+
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.
 

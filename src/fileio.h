@@ -34,6 +34,9 @@ typedef enum _tagVIRTUALTYPE
     VIRTUALTYPE_REGULAR,            // Regular file to transcode
     VIRTUALTYPE_SCRIPT,             // Virtual script
     VIRTUALTYPE_BUFFER,             // Buffer file
+#ifdef USE_LIBDVDNAV
+    VIRTUALTYPE_DVD,                // DVD file
+#endif // USE_LIBDVDNAV
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;
 typedef VIRTUALTYPE LPVIRTUALTYPE;

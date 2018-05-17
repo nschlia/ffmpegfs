@@ -128,6 +128,25 @@ AC_SEARCH_LIBS([sqlite3_errstr], [sqlite3], [AC_DEFINE([HAVE_SQLITE_ERRSTR], [1]
 AC_SEARCH_LIBS([sqlite3_db_cacheflush], [sqlite3], [AC_DEFINE([HAVE_SQLITE_CACHEFLUSH], [1], [libsqlite3 has sqlite3_db_cacheflush() function.])], [])
 AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPANDED_SQL], [1], [libsqlite3 has sqlite3_expanded_sql() function.])], [])
 
+# Optional libraries
+# Check for libdvdread and libdvdnav
+AC_ARG_WITH([libdvd],
+  [AS_HELP_STRING([--with-libdvd],
+    [support using libdvd @<:@default=check@:>@])],
+  [],
+  [with_libdvd=check])
+
+AS_CASE(["$with_libdvd"],
+  [yes], [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1])],
+  [no], [],
+  [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1], [HAVE_LIBDVDNAV=0])])
+AM_CONDITIONAL([USE_LIBDVDNAV], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 1])
+
+AS_CASE(["$with_libdvd"],
+  [yes], [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1])],
+  [no], [],
+  [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1], [HAVE_LIBDVDREAD=0])])
+AM_CONDITIONAL([USE_LIBDVDREAD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1])
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 

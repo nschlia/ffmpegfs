@@ -18,6 +18,8 @@ SOURCES += \
     src/ffmpeg_base.cc \
     src/ffmpeg_optimisations.cc
     src/diskio.cc \
+    src/dvdio.cc \
+    src/dvdparser.cc \
     src/fileio.cc
 
 HEADERS += \
@@ -26,6 +28,7 @@ HEADERS += \
     src/ffmpeg_transcoder.h \
     src/ffmpeg_utils.h \
     src/logging.h \
+    src/ffmpegfs.h \
     src/transcode.h \
     src/cache.h \
     src/cache_entry.h \
@@ -35,13 +38,16 @@ HEADERS += \
     src/wave.h \
     configure.ac \
     src/fileio.h \
-    src/diskio.h
+    src/diskio.h \
+    src/dvdio.h \
+    src/dvdparser.h
 
 DEFINES+=_DEBUGencoder_list
 DEFINES+=PACKAGE_NAME='"\\\"FFMPEGFS\\\""' HOST_OS='"\\\"My OS\\\""' CONFIGURE_ARGS='"\\\"\\\""' PACKAGE_TARNAME='"\\\"ffmpegfs"'\\\" PACKAGE_VERSION='"\\\"1.3"'\\\" PACKAGE_STRING='"\\\"FFMPEGFS\ 1.3"'\\\" PACKAGE_BUGREPORT='"\\\""'\\\" PACKAGE_URL='"\\\""'\\\" PACKAGE='"\\\"ffmpegfs"'\\\" VERSION='"\\\"0.91"'\\\"
 DEFINES+=STDC_HEADERS=1 HAVE_SYS_TYPES_H=1 HAVE_SYS_STAT_H=1 HAVE_STDLIB_H=1 HAVE_STRING_H=1 HAVE_MEMORY_H=1 HAVE_STRINGS_H=1 HAVE_INTTYPES_H=1 HAVE_STDINT_H=1 HAVE_UNISTD_H=1 HAVE_SQLITE_CACHEFLUSH=1 HAVE_SQLITE_ERRSTR=1 SIZEOF_INT=4 _POSIX_C_SOURCE=200809L _FILE_OFFSET_BITS=64 FFMPEGFS_FORMAT_TIME_T=\\\"ld\\\" FFMPEGFS_FORMAT_PTHREAD_T=\\\"lx\\\" USE_LIBSWRESAMPLE
 #DEFINES+=HAVE_SQLITE_EXPANDED_SQL=1
 DEFINES+=HAVE_FFMPEG=1 _GNU_SOURCE
+DEFINES+=USE_LIBDVDNAV USE_LIBDVDREAD
 INCLUDEPATH+=$$PWD/src /usr/include/fuse $$PWD/lib
 LIBS+=-lfuse -pthread
 LIBS+=-lavformat -lavcodec -lavutil
@@ -53,6 +59,7 @@ LIBS+=-lpostproc
 #-lavdevice
 LIBS+=-lsqlite3
 LIBS+=-lrt
+LIBS+=-ldvdnav -ldvdread
 
 QMAKE_CFLAGS += -std=c99 -Wall -Wextra -Wconversion
 QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -Wconversion

@@ -1663,9 +1663,6 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
 #endif
             pkt->data += decoded;
             pkt->size -= decoded;
-
-            //fprintf(stderr, "ret = %6i lastret = %6i decoded = %9i  pkt->size = %i\n", ret,lastret, decoded, pkt->size);
-
         }
 #if LAVC_NEW_PACKET_INTERFACE
         while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));

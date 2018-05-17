@@ -1,5 +1,5 @@
 /*
- * File I/O for ffmpegfs
+ * dvdparser header for ffmpegfs
  *
  * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -18,47 +18,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "fileio.h"
+#ifndef DVDPARSER_H
+#define DVDPARSER_H
 
-#include "buffer.h"
-#include "diskio.h"
+#pragma once
+
 #ifdef USE_LIBDVDNAV
-#include "dvdio.h"
+
+#include <string>
+
+using namespace std;
+
+int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+int check_dvd(const string & path, void *buf = NULL, fuse_fill_dir_t filler = NULL);
+
 #endif // USE_LIBDVDNAV
-
-fileio::fileio()
-{
-
-}
-
-fileio::~fileio()
-{
-
-}
-
-fileio * fileio::alloc(VIRTUALTYPE type)
-{
-    switch (type)
-    {
-    case VIRTUALTYPE_REGULAR:
-    {
-        return new diskio;
-    }
-    case VIRTUALTYPE_BUFFER:
-    {
-        return new Buffer;
-    }
-#ifdef USE_LIBDVDNAV
-    case VIRTUALTYPE_DVD:
-    {
-        return new dvdio;
-    }
-#endif // USE_LIBDVDNAV
-    //case VIRTUALTYPE_PASSTHROUGH:
-    //case VIRTUALTYPE_SCRIPT:
-    default:
-    {
-        return NULL;
-    }
-    }
-}
+#endif // DVDPARSER_H

@@ -26,6 +26,11 @@ libraries:
 * libswscale     (>= 3.0.0)
 * libswresample  (>= 1.0.0)
 
+For optional DVD support you need the following libraries
+
+* libdvdread      (>= 5.0.0)
+* libdvdnav       (>= 5.0.0)
+
 If building from git, you'll also need:
 
 * autoconf
@@ -44,6 +49,10 @@ On Debian:
     aptitude install gcc g++
 
     aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
+    
+To get DVD support:
+
+    aptitude install libdvdread-dev libdvdnav-dev
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
@@ -53,6 +62,10 @@ On Suse (please read notes before continuing):
 
     zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 
+To get DVD support:
+
+    zypper install libdvdread-devel libdvdnav-devel
+    
 Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
 are *not* available which renders this library next to usesless. But FFmpeg can 
 be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
@@ -63,6 +76,11 @@ On Red Hat:
     yum install gcc g++
 
     yum install fuse-devel sqlite-devel
+
+To get DVD support:
+
+    yum install libdvdread-devel libdvdnav-devel
+    
 
 Red Hat does not provide FFmpeg from its repositories. It must be built
 from source code, see this guide: https://trac.ffmpeg.org/wiki/CompilationGuide/Centos

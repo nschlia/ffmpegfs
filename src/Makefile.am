@@ -20,4 +20,16 @@ AM_CPPFLAGS += $(libavresample_CFLAGS)
 ffmpegfs_LDADD += $(libavresample_LIBS)
 endif
 
+if USE_LIBDVDNAV
+if USE_LIBDVDREAD
+AM_CPPFLAGS += -DUSE_LIBDVDNAV
+AM_CPPFLAGS += $(libdvdnav_CFLAGS)
+ffmpegfs_LDADD += $(libdvdnav_LIBS)
+
+AM_CPPFLAGS += -DUSE_LIBDVDREAD
+AM_CPPFLAGS += $(libdvdread_CFLAGS)
+ffmpegfs_SOURCES += dvdio.cc dvdio.h dvdparser.cc dvdparser.h
+ffmpegfs_LDADD += $(libdvdread_LIBS)
+endif
+endif
 ffmpegfs_LDADD += $(sqlite3_LIBS)

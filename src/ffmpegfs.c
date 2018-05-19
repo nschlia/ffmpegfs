@@ -28,9 +28,6 @@
 #include <regex.h>
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
-#ifdef USE_LIBVCDINFO
-#include <libvcd/version.h>
-#endif
 
 // TODO: Move this elsewehere, so this file can be library agnostic
 #pragma GCC diagnostic push
@@ -787,8 +784,8 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         printf("%s", buffer);
 
 #ifdef USE_LIBDVD
-        printf("%-20s: %s\n", "DVD Library", "");
-#endif
+        printf("%-20s: %s\n", "DVD Library", "enabled");
+#endif // USE_LIBDVD
         fuse_opt_add_arg(outargs, "--version");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
 

@@ -23,7 +23,7 @@
 
 #pragma once
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 
 #include <string>
 
@@ -32,5 +32,5 @@ using namespace std;
 int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 int check_dvd(const string & path, void *buf = NULL, fuse_fill_dir_t filler = NULL);
 
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 #endif // DVDPARSER_H

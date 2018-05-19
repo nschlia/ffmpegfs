@@ -32,9 +32,9 @@
 #include <map>
 #include <vector>
 #include <assert.h>
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 #include "dvdparser.h"
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
 
@@ -239,7 +239,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     string origpath;
     DIR *dp;
     struct dirent *de;
-#if defined(USE_LIBDVDNAV)
+#if defined(USE_LIBDVD)
     int res;
 #endif
 
@@ -267,14 +267,14 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
         insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, origfile, &st);
     }
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     res = check_dvd(origpath, buf, filler);
     if (res != 0)
     {
         // Found DVD or error reading DVD
         return (res >= 0 ?  0 : res);
     }
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 
     dp = opendir(origpath.c_str());
     if (dp)
@@ -324,7 +324,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     string origpath;
-#if defined(USE_LIBDVDNAV)
+#if defined(USE_LIBDVD)
     int res = 0;
 #endif
 
@@ -359,7 +359,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;
         break;
     }
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif
     {
@@ -374,17 +374,17 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
                 int error = -errno;
-#if defined(USE_LIBDVDNAV)
+#if defined(USE_LIBDVD)
                 // Returns -errno or number or titles on DVD
                 string path(origpath);
 
                 remove_filename(&path);
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
                 if (res <= 0)
                 {
                     res = check_dvd(path);
                 }
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
                 if (res <= 0)
                 {
                     // No Bluray/DVD/VCD found or error reading disk
@@ -482,7 +482,7 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         errno = 0;
         break;
     }
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif
     {
@@ -579,7 +579,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
         break;
     }
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif
     case VIRTUALTYPE_REGULAR:
@@ -669,7 +669,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
         read = (ssize_t)bytes;
         break;
     }
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif
     case VIRTUALTYPE_REGULAR:

@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 
 #include "ffmpegfs.h"
 #include "dvdparser.h"
@@ -166,4 +166,4 @@ int check_dvd(const string & _path, void *buf, fuse_fill_dir_t filler)
     return res;
 }
 
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD

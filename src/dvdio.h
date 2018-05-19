@@ -23,7 +23,7 @@
 
 #pragma once
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 
 #include "fileio.h"
 
@@ -78,6 +78,6 @@ protected:
 
     int             m_duration;
 };
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 
 #endif // DVDIO_H

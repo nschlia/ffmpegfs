@@ -18,7 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 
 #include "dvdio.h"
 #include "ffmpegfs.h"
@@ -493,5 +493,5 @@ bool dvdio::is_nav_pack(const unsigned char *buffer) const
     return (buffer[ 41 ] == 0xbf && buffer[ 1027 ] == 0xbf);
 }
 
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 

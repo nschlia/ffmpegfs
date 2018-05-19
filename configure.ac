@@ -1,6 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 # Sets up package and initializes build system.
+AC_PREREQ(2.57)
 AC_INIT([FFMPEGFS], [1.4])
 AC_CONFIG_SRCDIR([src/ffmpegfs.c])
 AC_CONFIG_AUX_DIR([config])
@@ -9,7 +10,7 @@ AC_CONFIG_AUX_DIR([config])
 configure_args="$*"
 AC_DEFINE_UNQUOTED([CONFIGURE_ARGS], ["$configure_args"], [Arguments passed to configure])
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 # AC_CANONICAL_HOST is needed to access the 'host_os' variable
@@ -140,13 +141,12 @@ AS_CASE(["$with_libdvd"],
   [yes], [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1])],
   [no], [],
   [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1], [HAVE_LIBDVDNAV=0])])
-AM_CONDITIONAL([USE_LIBDVDNAV], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 1])
 
 AS_CASE(["$with_libdvd"],
   [yes], [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1])],
   [no], [],
   [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1], [HAVE_LIBDVDREAD=0])])
-AM_CONDITIONAL([USE_LIBDVDREAD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1])
+AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1 -a "0$HAVE_LIBDVDNAV" -eq 1])
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 

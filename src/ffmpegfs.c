@@ -786,7 +786,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         ffmpeg_libinfo(buffer, sizeof(buffer));
         printf("%s", buffer);
 
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
         printf("%-20s: %s\n", "DVD Library", "");
 #endif
         fuse_opt_add_arg(outargs, "--version");

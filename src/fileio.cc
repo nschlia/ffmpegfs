@@ -22,9 +22,9 @@
 
 #include "buffer.h"
 #include "diskio.h"
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
 #include "dvdio.h"
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
 
 fileio::fileio()
 {
@@ -48,12 +48,12 @@ fileio * fileio::alloc(VIRTUALTYPE type)
     {
         return new Buffer;
     }
-#ifdef USE_LIBDVDNAV
+#ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
     {
         return new dvdio;
     }
-#endif // USE_LIBDVDNAV
+#endif // USE_LIBDVD
     //case VIRTUALTYPE_PASSTHROUGH:
     //case VIRTUALTYPE_SCRIPT:
     default:

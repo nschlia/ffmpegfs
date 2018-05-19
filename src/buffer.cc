@@ -263,7 +263,7 @@ bool Buffer::clear()
         return false;
     }
 
-    bool bSuccess = true;
+    bool success = true;
 
     lock();
 
@@ -276,11 +276,11 @@ bool Buffer::clear()
     if (ftruncate(m_fd, filesize) == -1)
     {
         ffmpegfs_error("Error calling ftruncate() to clear the file '%s': %s", m_cachefile.c_str(), strerror(errno));
-        bSuccess = false;
+        success = false;
     }
     unlock();
 
-    return bSuccess;
+    return success;
 }
 
 // Reserve memory without changing size to reduce re-allocations
@@ -429,7 +429,7 @@ size_t Buffer::buffer_watermark() const
 // Copy buffered data into output buffer.
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
-    bool bSuccess = true;
+    bool success = true;
 
     lock();
 
@@ -445,12 +445,12 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     else
     {
         errno = ENOMEM;
-        bSuccess = false;
+        success = false;
     }
 
     unlock();
 
-    return bSuccess;
+    return success;
 }
 
 // Ensure the allocation has at least size bytes available. If not,

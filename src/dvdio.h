@@ -53,7 +53,7 @@ private:
 
 protected:
     dvd_reader_t *  m_dvd;
-    dvd_file_t *    m_title;
+    dvd_file_t *    m_dvd_title;
     ifo_handle_t *  m_vmg_file;
     ifo_handle_t *  m_vts_file;
     pgc_t *         m_cur_pgc;
@@ -69,9 +69,9 @@ protected:
     size_t          m_rest_pos;
     size_t          m_cur_pos;
 
-    int             m_titleid;
-    int             m_chapid;
-    int             m_angle;
+    int             m_title_no;
+    int             m_chapter_no;
+    int             m_angle_no;
 
     unsigned char   m_data[ 1024 * DVD_VIDEO_LB_LEN ];
 

@@ -615,10 +615,10 @@ void init_id3v1(ID3v1 *id3v1)
 {
     // Initialise ID3v1.1 tag structure
     memset(id3v1, ' ', sizeof(ID3v1));
-    memcpy(&id3v1->m_sTAG, "TAG", 3);
-    id3v1->m_bPad = '\0';
-    id3v1->m_bTitleNo = 0;
-    id3v1->m_bGenre = 0;
+    memcpy(&id3v1->m_tag, "TAG", 3);
+    id3v1->m_padding = '\0';
+    id3v1->m_title_no = 0;
+    id3v1->m_genre = 0;
 }
 
 void format_number(char *output, size_t size, uint64_t value)

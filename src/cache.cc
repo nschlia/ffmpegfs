@@ -770,23 +770,23 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
 bool Cache::maintenance(size_t predicted_filesize)
 {
-    bool bSuccess = true;
+    bool success = true;
 
     // Find and remove expired cache entries
-    bSuccess &= prune_expired();
+    success &= prune_expired();
 
     // Check max. cache size
-    bSuccess &= prune_cache_size();
+    success &= prune_cache_size();
 
     // Check min. diskspace required for cache
-    bSuccess &= prune_disk_space(predicted_filesize);
+    success &= prune_disk_space(predicted_filesize);
 
-    return bSuccess;
+    return success;
 }
 
 bool Cache::clear()
 {
-    bool bSuccess = true;
+    bool success = true;
 
     lock();
 
@@ -838,7 +838,7 @@ bool Cache::clear()
 
     unlock();
 
-    return bSuccess;
+    return success;
 }
 
 void Cache::lock()

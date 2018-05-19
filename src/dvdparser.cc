@@ -131,9 +131,9 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &st);
 
                 // Mark title/chapter/angle
-                virtualfile->title    = title;
-                virtualfile->chapter  = chapter;
-                virtualfile->angle    = 1;
+                virtualfile->dvd.m_title_no    = title;
+                virtualfile->dvd.m_chapter_no  = chapter;
+                virtualfile->dvd.m_angle_no    = 1;            // TODO
             }
         }
 

@@ -47,9 +47,14 @@ typedef struct _tagVIRTUALFILE
     string      m_origfile;
     struct stat m_st;
 
-    int title;
-    int chapter;
-    int angle;
+#ifdef USE_LIBDVD
+    struct DVD
+    {
+        int         m_title_no;
+        int         m_chapter_no;
+        int         m_angle_no;
+    } dvd;
+#endif // USE_LIBDVD
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;

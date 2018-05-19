@@ -2343,27 +2343,27 @@ void FFMPEG_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
             // For MP3 fill in ID3v1 structure
             if (!strcasecmp(tag->key, "ARTIST"))
             {
-                tagcpy(m_out.m_id3v1.m_sSongArtist, tag->value);
+                tagcpy(m_out.m_id3v1.m_artist, tag->value);
             }
             else if (!strcasecmp(tag->key, "TITLE"))
             {
-                tagcpy(m_out.m_id3v1.m_sSongTitle, tag->value);
+                tagcpy(m_out.m_id3v1.m_title, tag->value);
             }
             else if (!strcasecmp(tag->key, "ALBUM"))
             {
-                tagcpy(m_out.m_id3v1.m_sAlbumName, tag->value);
+                tagcpy(m_out.m_id3v1.m_album, tag->value);
             }
             else if (!strcasecmp(tag->key, "COMMENT"))
             {
-                tagcpy(m_out.m_id3v1.m_sComment, tag->value);
+                tagcpy(m_out.m_id3v1.m_comment, tag->value);
             }
             else if (!strcasecmp(tag->key, "YEAR") || !strcasecmp(tag->key, "DATE"))
             {
-                tagcpy(m_out.m_id3v1.m_sYear, tag->value);
+                tagcpy(m_out.m_id3v1.m_year, tag->value);
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                m_out.m_id3v1.m_bTitleNo = (char)atoi(tag->value);
+                m_out.m_id3v1.m_title_no = (char)atoi(tag->value);
             }
         }
     }

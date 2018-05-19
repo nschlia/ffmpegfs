@@ -25,15 +25,15 @@
 
 struct ID3v1
 {
-    char m_sTAG[3];         // Contains "TAG"
-    char m_sSongTitle[30];  // Title of sound track
-    char m_sSongArtist[30]; // Artist Name
-    char m_sAlbumName[30];  // Album Name
-    char m_sYear[4];        // Year of publishing
-    char m_sComment[28];    // Any user comments
-    char m_bPad;            // Must be '\0'
-    char m_bTitleNo;
-    char m_bGenre;          // Type of music
+    char m_tag[3];          // Contains "TAG"
+    char m_title[30];       // Title of sound track
+    char m_artist[30];      // Artist Name
+    char m_album[30];       // Album Name
+    char m_year[4];         // Year of publishing
+    char m_comment[28];     // Any user comments
+    char m_padding;         // Must be '\0'
+    char m_title_no;
+    char m_genre;           // Type of music
 };
 
 extern void init_id3v1(ID3v1 *id3v1);

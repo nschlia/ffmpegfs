@@ -147,6 +147,9 @@ AS_CASE(["$with_libdvd"],
   [no], [],
   [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1], [HAVE_LIBDVDREAD=0])])
 AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1 -a "0$HAVE_LIBDVDNAV" -eq 1])
+AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
+AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 0])
+
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 
@@ -161,3 +164,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  test/Makefile])
 AC_OUTPUT
+
+# Hints on options
+AM_COND_IF([HINT_LIBDVD],
+           [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdnav and libdvdread development packages. See INSTALL.md for details.])])

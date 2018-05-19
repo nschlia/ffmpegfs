@@ -51,7 +51,7 @@ static void init_stat(struct stat * st, size_t size, bool directory)
 {
     memset(st, 0, sizeof(struct stat));
 
-    st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    st->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
     if (directory)
     {
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;

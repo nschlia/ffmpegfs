@@ -44,13 +44,6 @@ int diskio::bufsize() const
     return (100 /* KB */ * 1024);
 }
 
-int diskio::open(LPCVIRTUALFILE virtualfile)
-{
-    assert(virtualfile->m_type == type());
-
-    return open(virtualfile->m_origfile);
-}
-
 int diskio::open(const string & filename)
 {
     m_fpi = fopen(filename.c_str(), "rb");

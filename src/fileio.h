@@ -68,7 +68,7 @@ public:
     // Ideal buffer size, may be 0 if no recommendation.
     virtual int bufsize() const = 0;
     // Open virtual file
-    virtual int open(LPCVIRTUALFILE virtualfile) = 0;
+    virtual int open(LPCVIRTUALFILE virtualfile);
     // Open with file name
     virtual int open(const string & filename) = 0;
     // Read data
@@ -89,6 +89,12 @@ public:
     virtual bool eof() const = 0;
     // Close virtual file
     virtual void close() = 0;
+
+protected:
+    LPCVIRTUALFILE get_virtualfile() const;
+
+private:
+    LPCVIRTUALFILE m_virtualfile;
 };
 
 #endif // FILEIO_H

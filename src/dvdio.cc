@@ -74,17 +74,6 @@ int dvdio::bufsize() const
     return (1024 * DVD_VIDEO_LB_LEN);
 }
 
-LPCVIRTUALFILE _virtualfile;
-
-int dvdio::open(LPCVIRTUALFILE virtualfile)
-{
-    assert(virtualfile->m_type == type());
-
-    _virtualfile = virtualfile;
-
-    return open(virtualfile->m_origfile);
-}
-
 int dvdio::open(const string & _filename)
 {
     int pgc_id; //, start_cell; //, cur_cell;

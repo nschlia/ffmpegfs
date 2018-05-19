@@ -34,7 +34,6 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual int bufsize() const;
-    virtual int open(LPCVIRTUALFILE virtualfile);
     virtual int open(const string & filename);
     virtual int read(void *data, int maxlen);
     virtual int error() const;
@@ -46,7 +45,7 @@ public:
     virtual void close();
 
 protected:
-    FILE *m_fpi;
+    FILE *  m_fpi;
 };
 
 #endif // DISKIO_H

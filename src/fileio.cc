@@ -26,7 +26,10 @@
 #include "dvdio.h"
 #endif // USE_LIBDVD
 
+#include <assert.h>
+
 fileio::fileio()
+    : m_virtualfile(NULL)
 {
 
 }
@@ -61,4 +64,18 @@ fileio * fileio::alloc(VIRTUALTYPE type)
         return NULL;
     }
     }
+}
+
+int fileio::open(LPCVIRTUALFILE virtualfile)
+{
+    assert(virtualfile->m_type == type());
+
+    m_virtualfile = virtualfile;
+
+    return open(virtualfile->m_origfile);
+}
+
+LPCVIRTUALFILE fileio::get_virtualfile() const
+{
+    return m_virtualfile;
 }

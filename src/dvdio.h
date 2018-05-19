@@ -38,7 +38,6 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual int bufsize() const;
-    virtual int open(LPCVIRTUALFILE virtualfile);
     virtual int open(const string & filename);
     virtual int read(void *m_data, int size);
     virtual int error() const;

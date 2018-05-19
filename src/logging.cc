@@ -20,11 +20,11 @@
  */
 
 #include "logging.h"
+#include "ffmpeg_utils.h"
 
 #include <cstdarg>
 #include <iostream>
 #include <syslog.h>
-#include <algorithm>
 #include <ostream>
 
 namespace
@@ -45,13 +45,6 @@ Logging::Logging(string logfile, level max_level, bool to_stderr, bool to_syslog
     {
         openlog(PACKAGE, 0, LOG_USER);
     }
-}
-
-// trim from end (in place)
-static inline void rtrim(string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
 }
 
 Logging::Logger::~Logger()

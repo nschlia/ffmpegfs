@@ -194,6 +194,11 @@ string format_time(time_t value);
 string format_size(size_t value);
 
 void exepath(string *path);
+
+std::string &ltrim(std::string &s);
+std::string &rtrim(std::string &s);
+std::string &trim(std::string &s);
+
 #endif
 
 #ifdef __cplusplus

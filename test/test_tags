@@ -2,10 +2,18 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+# Fixes to make these checks work with Libav 12
+#
+# Change...
+# ^TXXX=DESCRIPTION -> TXXX=comment
+# ^TDRL             -> TDRC
+# ^desc             -> ?cmt (but keep ^description=)
+#
+
 get_metadata() {
 	local -n outvar=$2    # -n makes it a nameref.
 	echo Checking $1
-        outvar=`mutagen-inspect "$1" | fgrep = | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
+        outvar=`mutagen-inspect "$1" | fgrep = | sed -r 's/^TXXX=DESCRIPTION/TXXX=comment/' | sed -r 's/^TDRL/TDRC/' | sed -r 's/^desc/?cmt/' | sed -r 's/^\?cmtription/description/' | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
 }
 
 if [ "$DESTTYPE" == "mp4" ];

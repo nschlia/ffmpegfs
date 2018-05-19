@@ -13,7 +13,7 @@ https://nschlia.github.io/ffmpegfs/<br />
 
 **Work on release 1.4 now in progress**
 
-**DVD support is now available. See INSTALL.md on how to activate.**
+**DVD support is now available. See [install](INSTALL.md) file on how to activate.**
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.
@@ -202,7 +202,7 @@ applications.
 WAV: A pro forma WAV header will be created with estimates of the WAV
 file size. This header will be replaced when the file is finished. It
 does not seem necessary, though, as most modern players obviously
-ignore this information an play the file anyway.
+ignore this information and play the file anyway.
 
 SUPPORTED OUTPUT FORMATS
 ------------------------
@@ -249,12 +249,12 @@ with its own header, thus to fill in the size fields early enough.
 
 As a draw back not all players support the format, or play back with 
 strange side effects. VLC plays the file, but updates the time display 
-every 5 seconds only. When streamed over HTML5 video tags, sometimes there 
+every few seconds only. When streamed over HTML5 video tags, sometimes there 
 will be no total time shown, but that is OK, as long as the file plays.
 Playback cannot be positioned past the current playback position, only 
 backwards.
 
-But that's the price of starting playback, fast.
+But that's the price of starting playback fast.
 
 So there is a lot of work to be put into MP4 support, still.
 
@@ -276,6 +276,14 @@ ffmpegfs is written in a mixture of C and C++ and uses the following libraries:
 If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
 
 * [FFmpeg](https://www.FFmpeg.org/) or [Libav](https://www.Libav.org/)
+
+Please note that ffmpegfs is in active development, so the main branch may
+be unstable (but offer nice gimmicks, though). If you need a stable version
+please get one (preferrably the latest) release.
+
+Feel free to clone this project and add your own features. If they are
+interesting for others they might be pushed back into this project. Same
+applies to bug fixes, if you discover a bug your welcome to fix it!
 
 Future Plans
 ------------

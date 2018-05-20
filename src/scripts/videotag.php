@@ -114,11 +114,12 @@ $dirs = array_filter(scandir($dir), function($item)
     return is_dir($dir . $item);
 });
 
-$dir  = dirname($_SERVER['PHP_SELF']);
-$back = reverse_strrchr($dir, "/", 1);
+$protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$back  = dirname($url);
 if ($back != "") {
     echo "<tr><td>";
-    echo "<a href=\"" . utf8_encode($back) . "\">Go back</a>";
+    echo "<a href=\"" . $back . "\">Go back</a>";
     echo "</td>\n<td>";
     echo "</td></tr>\n";
     

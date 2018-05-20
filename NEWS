@@ -37,7 +37,7 @@ Changes in this release:
 * Feature: Set stream duration from source file as hint for encoder.
 * Feature: Enhanced logging output for better readability.
 * Feature: Add pre-buffer option. Files will be decoded up to this limit first
-           before made accessible. This ensures smoot startup.
+           before made accessible. This ensures smooth startup.
 * Feature: Enhanced configure that checks whether libavresample or libswresample 
            is present.
 * Feature: Improved recoding detection. Files are recoded if the source file size 

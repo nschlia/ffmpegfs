@@ -32,6 +32,9 @@
 #include <map>
 #include <vector>
 #include <assert.h>
+#ifdef USE_LIBVCD
+#include "vcdparser.h"
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
 #include "dvdparser.h"
 #endif // USE_LIBDVD
@@ -239,7 +242,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     string origpath;
     DIR *dp;
     struct dirent *de;
-#if defined(USE_LIBDVD)
+#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res;
 #endif
 
@@ -267,6 +270,14 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
         insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, origfile, &st);
     }
 
+#ifdef USE_LIBVCD
+    res = check_vcd(origpath, buf, filler);
+    if (res != 0)
+    {
+        // Found VCD or error reading VCD
+        return (res >= 0 ?  0 : res);
+    }
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     res = check_dvd(origpath, buf, filler);
     if (res != 0)
@@ -324,7 +335,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     string origpath;
-#if defined(USE_LIBDVD)
+#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res = 0;
 #endif
 
@@ -359,9 +370,12 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;
         break;
     }
+#ifdef USE_LIBVCD
+    case VIRTUALTYPE_VCD:
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
-#endif
+#endif // USE_LIBDVD
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -374,11 +388,17 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
                 int error = -errno;
-#if defined(USE_LIBDVD)
+#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 // Returns -errno or number or titles on DVD
                 string path(origpath);
 
                 remove_filename(&path);
+#ifdef USE_LIBVCD
+                if (res <= 0)
+                {
+                    res = check_vcd(path);
+                }
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
                 if (res <= 0)
                 {
@@ -482,9 +502,12 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         errno = 0;
         break;
     }
+#ifdef USE_LIBVCD
+    case VIRTUALTYPE_VCD:
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
-#endif
+#endif // USE_LIBDVD
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -579,9 +602,12 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
         break;
     }
+#ifdef USE_LIBVCD
+    case VIRTUALTYPE_VCD:
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
-#endif
+#endif // USE_LIBDVD
     case VIRTUALTYPE_REGULAR:
     {
         cache_entry = transcoder_new(virtualfile, true);
@@ -669,9 +695,12 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
         read = (ssize_t)bytes;
         break;
     }
+#ifdef USE_LIBVCD
+    case VIRTUALTYPE_VCD:
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
-#endif
+#endif // USE_LIBDVD
     case VIRTUALTYPE_REGULAR:
     {
         cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;

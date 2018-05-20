@@ -14,6 +14,9 @@ https://nschlia.github.io/ffmpegfs/<br />
 **Work on release 1.4 now in progress**
 
 **DVD support is now available. See [install](INSTALL.md) file on how to activate.**
+**Video CD and Super Video CD support is now available.**
+
+DVD and VCD directories will show all titles and chapters as virtual files.
 
 ffmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.

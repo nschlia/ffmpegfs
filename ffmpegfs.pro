@@ -20,7 +20,13 @@ SOURCES += \
     src/diskio.cc \
     src/dvdio.cc \
     src/dvdparser.cc \
-    src/fileio.cc
+    src/fileio.cc \
+    src/vcdio.cc \
+    src/vcdparser.cc \
+    src/vcd/vcdchapter.cc \
+    src/vcd/vcdentries.cc \
+    src/vcd/vcdinfo.cc \
+    src/vcd/vcdutils.cc
 
 HEADERS += \
     src/buffer.h \
@@ -40,7 +46,13 @@ HEADERS += \
     src/fileio.h \
     src/diskio.h \
     src/dvdio.h \
-    src/dvdparser.h
+    src/dvdparser.h \
+    src/vcdio.h \
+    src/vcdparser.h \
+    src/vcd/vcdchapter.h \
+    src/vcd/vcdentries.h \
+    src/vcd/vcdinfo.h \
+    src/vcd/vcdutils.h
 
 DEFINES+=_DEBUGencoder_list
 DEFINES+=PACKAGE_NAME='"\\\"FFMPEGFS\\\""' HOST_OS='"\\\"My OS\\\""' CONFIGURE_ARGS='"\\\"\\\""' PACKAGE_TARNAME='"\\\"ffmpegfs"'\\\" PACKAGE_VERSION='"\\\"1.3"'\\\" PACKAGE_STRING='"\\\"FFMPEGFS\ 1.3"'\\\" PACKAGE_BUGREPORT='"\\\""'\\\" PACKAGE_URL='"\\\""'\\\" PACKAGE='"\\\"ffmpegfs"'\\\" VERSION='"\\\"0.91"'\\\"
@@ -48,6 +60,7 @@ DEFINES+=STDC_HEADERS=1 HAVE_SYS_TYPES_H=1 HAVE_SYS_STAT_H=1 HAVE_STDLIB_H=1 HAV
 #DEFINES+=HAVE_SQLITE_EXPANDED_SQL=1
 DEFINES+=HAVE_FFMPEG=1 _GNU_SOURCE
 DEFINES+=USE_LIBDVD
+DEFINES+=USE_LIBVCD
 INCLUDEPATH+=$$PWD/src /usr/include/fuse $$PWD/lib
 LIBS+=-lfuse -pthread
 LIBS+=-lavformat -lavcodec -lavutil

@@ -150,6 +150,17 @@ AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD"
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 0])
 
+# libvcd
+AC_ARG_WITH([libvcd],
+  [AS_HELP_STRING([--with-libvcd],
+    [support using libvcd @<:@default=check@:>@])],
+  [],
+  [with_libvcd=check])
+AM_CONDITIONAL([USE_LIBVCD], [test "$with_libvcd" != "no"])
+AM_COND_IF([USE_LIBVCD],
+           [AC_MSG_RESULT([Internal S/VCD support enabled... yes])],
+           [AC_MSG_RESULT([Internal S/VCD support enabled... no])])
+
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 

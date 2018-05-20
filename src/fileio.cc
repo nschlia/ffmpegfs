@@ -22,6 +22,9 @@
 
 #include "buffer.h"
 #include "diskio.h"
+#ifdef USE_LIBVCD
+#include "vcdio.h"
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
 #include "dvdio.h"
 #endif // USE_LIBDVD
@@ -51,6 +54,12 @@ fileio * fileio::alloc(VIRTUALTYPE type)
     {
         return new Buffer;
     }
+#ifdef USE_LIBVCD
+    case VIRTUALTYPE_VCD:
+    {
+        return new vcdio;
+    }
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
     {

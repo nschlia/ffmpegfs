@@ -91,8 +91,8 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
             pgc_t *cur_pgc;
             int start_cell;
             int pgn;
-            int title = i + 1;
-            int chapter = j + 1;
+            int title_no = i + 1;
+            int chapter_no = j + 1;
 
             pgcnum = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgcn;
             pgn = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgn;
@@ -110,7 +110,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
 
-                sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title, vtsnum, ttnnum, chapter, pgcnum, pgn, params.m_desttype);
+                sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.m_desttype);
 
                 string filename(title_buf);
 
@@ -131,8 +131,8 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &st);
 
                 // Mark title/chapter/angle
-                virtualfile->dvd.m_title_no    = title;
-                virtualfile->dvd.m_chapter_no  = chapter;
+                virtualfile->dvd.m_title_no    = title_no;
+                virtualfile->dvd.m_chapter_no  = chapter_no;
                 virtualfile->dvd.m_angle_no    = 1;            // TODO
             }
         }

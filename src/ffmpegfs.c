@@ -783,6 +783,9 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         ffmpeg_libinfo(buffer, sizeof(buffer));
         printf("%s", buffer);
 
+#ifdef USE_LIBVCD
+        printf("%-20s: %s\n", "Video CD Library", "enabled");
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
         printf("%-20s: %s\n", "DVD Library", "enabled");
 #endif // USE_LIBDVD

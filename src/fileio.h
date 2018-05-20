@@ -34,6 +34,9 @@ typedef enum _tagVIRTUALTYPE
     VIRTUALTYPE_REGULAR,            // Regular file to transcode
     VIRTUALTYPE_SCRIPT,             // Virtual script
     VIRTUALTYPE_BUFFER,             // Buffer file
+#ifdef USE_LIBVCD
+    VIRTUALTYPE_VCD,                // Video CD file
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     VIRTUALTYPE_DVD,                // DVD file
 #endif // USE_LIBDVD
@@ -43,10 +46,20 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;
 
 typedef struct _tagVIRTUALFILE
 {
-    VIRTUALTYPE m_type;
-    string      m_origfile;
-    struct stat m_st;
+    VIRTUALTYPE     m_type;
+    string          m_origfile;
+    struct stat     m_st;
 
+#ifdef USE_LIBVCD
+    struct VCD
+    {
+        int         m_track_no;
+        int         m_chapter_no;
+        uint64_t    m_start_pos;
+        uint64_t    m_end_pos;
+
+    } vcd;
+#endif //USE_LIBVCD
 #ifdef USE_LIBDVD
     struct DVD
     {

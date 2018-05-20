@@ -28,4 +28,11 @@ ffmpegfs_SOURCES += dvdio.cc dvdio.h dvdparser.cc dvdparser.h
 ffmpegfs_LDADD += $(libdvdnav_LIBS) $(libdvdread_LIBS)
 endif
 
+# VCD support: uses internal code
+if USE_LIBVCD
+AM_CPPFLAGS += -DUSE_LIBVCD
+AM_CPPFLAGS += $(libvcd_CFLAGS)
+ffmpegfs_SOURCES += vcdio.cc vcdio.h vcdparser.cc vcdparser.h vcd/vcdchapter.cc vcd/vcdchapter.h vcd/vcdentries.cc vcd/vcdentries.h vcd/vcdinfo.cc vcd/vcdinfo.h vcd/vcdutils.cc vcd/vcdutils.h
+endif
+
 ffmpegfs_LDADD += $(sqlite3_LIBS)

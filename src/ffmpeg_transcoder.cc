@@ -154,13 +154,13 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 
     ffmpegfs_trace("%s * Opening input file.", filename());
 
-//    struct stat s;
-//    if (stat(filename(), &s) < 0)
-//    {
-//        ffmpegfs_error("%s * File stat failed.", filename());
-//        return -1;
-//    }
-//    m_mtime = s.st_mtime;
+    //    struct stat s;
+    //    if (stat(filename(), &s) < 0)
+    //    {
+    //        ffmpegfs_error("%s * File stat failed.", filename());
+    //        return -1;
+    //    }
+    //    m_mtime = s.st_mtime;
 
     m_mtime = virtualfile->m_st.st_mtime;
 
@@ -219,12 +219,12 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 
     m_in.m_file_type = get_filetype(m_in.m_pFormat_ctx->iformat->name);
 
-//#if LAVF_DEP_FILENAME
-//    m_in.m_filename = m_in.m_pFormat_ctx->url;
-//#else
-//    // lavf 58.7.100 - avformat.h - deprecated
-//    m_in.m_filename = m_in.m_pFormat_ctx->filename;
-//#endif
+    //#if LAVF_DEP_FILENAME
+    //    m_in.m_filename = m_in.m_pFormat_ctx->url;
+    //#else
+    //    // lavf 58.7.100 - avformat.h - deprecated
+    //    m_in.m_filename = m_in.m_pFormat_ctx->filename;
+    //#endif
 
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE, filename());
     if (ret < 0)

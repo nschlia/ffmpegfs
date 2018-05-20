@@ -4,6 +4,8 @@ Important changes in 1.4 (2018-05-XX)
 
 * Feature: DVD support: Detect IFO files and list separate DVD chapters or programs
            as separate files. 
+* Feature: S/VCD support: Detect Video CDs in directories and list chapters 
+           as separate files. 
 * Feature: Changed the fuse operations code module to c++ (minimise danger of 
            memory leaks or buffer overruns)	   
 * Feature: Added --enablescript option that will add virtual index.php to every

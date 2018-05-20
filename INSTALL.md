@@ -66,7 +66,7 @@ To get DVD support:
 
     zypper install libdvdread-devel libdvdnav-devel
     
-Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
+Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264
 are *not* available which renders this library next to usesless. But FFmpeg can 
 be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
 "FFmpeg compile notes" below.

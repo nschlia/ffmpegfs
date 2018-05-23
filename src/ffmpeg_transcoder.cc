@@ -154,14 +154,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 
     ffmpegfs_trace("%s * Opening input file.", filename());
 
-    //    struct stat s;
-    //    if (stat(filename(), &s) < 0)
-    //    {
-    //        ffmpegfs_error("%s * File stat failed.", filename());
-    //        return -1;
-    //    }
-    //    m_mtime = s.st_mtime;
-
     m_mtime = virtualfile->m_st.st_mtime;
 
     if (is_open())
@@ -591,7 +583,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Set the basic encoder parameters
         if (get_output_bit_rate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
-            // Limit sample rate
+            // Limit bit rate
             ffmpegfs_trace("%s * Limiting audio bit rate to %s.", destname(), format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 

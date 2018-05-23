@@ -71,25 +71,18 @@ VIRTUALTYPE dvdio::type() const
 
 int dvdio::bufsize() const
 {
-    return (1024 * DVD_VIDEO_LB_LEN);
+    return sizeof(m_data);
 }
 
 int dvdio::open(const string & _filename)
 {
-    int pgc_id; //, start_cell; //, cur_cell;
-    //    ssize_t len;
-    //    unsigned int cur_pack;
-    int ttn, pgn; //, next_cell, last_cell;
-    //    unsigned char data[ 1024 * DVD_VIDEO_LB_LEN ];
-    //    dvd_reader_t *dvd;
-    //    dvd_file_t *title;
-    //    ifo_handle_t *vmg_file;
+    int pgc_id;
+    int ttn, pgn;
     tt_srpt_t *tt_srpt;
-    //    ifo_handle_t *vts_file;
     vts_ptt_srpt_t *vts_ptt_srpt;
-    //    pgc_t *cur_pgc;
-
     string filename(_filename);
+
+    remove_filename(&filename);
 
     if (get_virtualfile() != NULL)
     {
@@ -104,8 +97,6 @@ int dvdio::open(const string & _filename)
         m_angle_no     = 0;
     }
 
-    remove_filename(&filename);
-
     /**
      * Open the disc.
      */
@@ -116,11 +107,7 @@ int dvdio::open(const string & _filename)
         return EINVAL;
     }
 
-
-    /**
-     * Load the video manager to find out the information about the titles on
-     * this disc.
-     */
+    // Load the video manager to find out the information about the titles on this disc.
     m_vmg_file = ifoOpen( m_dvd, 0 );
     if ( !m_vmg_file )
     {
@@ -130,10 +117,7 @@ int dvdio::open(const string & _filename)
     }
     tt_srpt = m_vmg_file->tt_srpt;
 
-
-    /**
-     * Make sure our title number is valid.
-     */
+     // Make sure our title number is valid.
     ffmpegfs_debug("There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
     if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
     {
@@ -144,9 +128,7 @@ int dvdio::open(const string & _filename)
     }
 
 
-    /**
-     * Make sure the chapter number is valid for this title.
-     */
+    // Make sure the chapter number is valid for this title.
     ffmpegfs_debug("There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );
 
     if ( m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[ m_title_no ].nr_of_ptts )
@@ -158,9 +140,7 @@ int dvdio::open(const string & _filename)
     }
 
 
-    /**
-     * Make sure the angle number is valid for this title.
-     */
+    // Make sure the angle number is valid for this title.
     ffmpegfs_debug("There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
     if ( m_angle_no < 0 || m_angle_no >= tt_srpt->title[ m_title_no ].nr_of_angles )
     {
@@ -171,9 +151,7 @@ int dvdio::open(const string & _filename)
     }
 
 
-    /**
-     * Load the VTS information for the title set our title is in.
-     */
+    // Load the VTS information for the title set our title is in.
     m_vts_file = ifoOpen( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr );
     if ( !m_vts_file )
     {
@@ -184,10 +162,7 @@ int dvdio::open(const string & _filename)
     }
 
 
-    /**
-     * Determine which program chain we want to watch.  This is based on the
-     * chapter number.
-     */
+    // Determine which program chain we want to watch.  This is based on the chapter number.
     ttn = tt_srpt->title[ m_title_no ].vts_ttn;
     vts_ptt_srpt = m_vts_file->vts_ptt_srpt;
     pgc_id = vts_ptt_srpt->title[ ttn - 1 ].ptt[ m_chapter_no ].pgcn;
@@ -196,9 +171,7 @@ int dvdio::open(const string & _filename)
     m_start_cell = m_cur_pgc->program_map[ pgn - 1 ] - 1;
 
 
-    /**
-     * We've got enough info, time to open the title set data.
-     */
+    // We've got enough info, time to open the title set data.
     m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );
     if ( !m_dvd_title )
     {
@@ -216,7 +189,7 @@ int dvdio::open(const string & _filename)
     {
         int first_cell = m_next_cell;
 
-        /* Check if we're entering an angle block. */
+        // Check if we're entering an angle block.
         if ( m_cur_pgc->cell_playback[ first_cell ].block_type == BLOCK_TYPE_ANGLE_BLOCK )
         {
             first_cell += m_angle_no;
@@ -237,12 +210,6 @@ int dvdio::open(const string & _filename)
 
 int dvdio::read(void * dataX, int size)
 {
-    //    int pgc_id; //, start_cell; //, cur_cell;
-    //    unsigned int cur_pack;
-    //    dvd_reader_t *dvd;
-    //    dvd_file_t *title;
-    //    ifo_handle_t *vmg_file;
-    //    ifo_handle_t *vts_file;
     unsigned int cur_output_size;
     ssize_t maxlen;
     int result_len = 0;
@@ -260,9 +227,7 @@ int dvdio::read(void * dataX, int size)
         return result_len;
     }
 
-    /**
-     * Playback by cell in this pgc, starting at the cell for our chapter.
-     */
+    // Playback by cell in this pgc, starting at the cell for our chapter.
     //while (next_cell < last_cell)
     {
         if (m_goto_next_cell)
@@ -300,9 +265,7 @@ int dvdio::read(void * dataX, int size)
             return 0;
         }
 
-        /**
-         * We loop until we're out of this cell.
-         */
+        // We loop until we're out of this cell.
         //        for( cur_pack = cur_pgc->cell_playback[ cur_cell ].first_sector;
         //             cur_pack < cur_pgc->cell_playback[ cur_cell ].last_sector; )
         {
@@ -326,18 +289,12 @@ int dvdio::read(void * dataX, int size)
             }
             //assert( is_nav_pack( m_data ) );
 
-
-            /**
-             * Parse the contained dsi packet.
-             */
+            // Parse the contained dsi packet.
             navRead_DSI( &dsi_pack, &(m_data[ DSI_START_BYTE ]) );
             assert( m_cur_pack == dsi_pack.dsi_gi.nv_pck_lbn );
 
 
-            /**
-             * Determine where we go next.  These values are the ones we mostly
-             * care about.
-             */
+            // Determine where we go next.  These values are the ones we mostly care about.
 #if 0
             next_ilvu_start = cur_pack + dsi_pack.sml_agli.data[ angle ].address;
 #endif
@@ -404,7 +361,7 @@ int dvdio::read(void * dataX, int size)
 
     m_cur_pos += result_len;
 
-    return result_len; //(cur_output_size * DVD_VIDEO_LB_LEN);
+    return result_len;
 }
 
 int dvdio::error() const

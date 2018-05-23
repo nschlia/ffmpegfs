@@ -57,17 +57,17 @@ int vcdio::open(const string & _path)
 
     if (get_virtualfile() != NULL)
     {
-        m_track_no  = get_virtualfile()->vcd.m_track_no;
-        m_chapter_no  = get_virtualfile()->vcd.m_chapter_no;
-        m_start_pos = get_virtualfile()->vcd.m_start_pos;
-        m_end_pos   = get_virtualfile()->vcd.m_end_pos;
+        m_track_no      = get_virtualfile()->vcd.m_track_no;
+        m_chapter_no    = get_virtualfile()->vcd.m_chapter_no;
+        m_start_pos     = get_virtualfile()->vcd.m_start_pos;
+        m_end_pos       = get_virtualfile()->vcd.m_end_pos;
     }
     else
     {
-        m_track_no  = 1;
-        m_chapter_no  = 0;
-        m_start_pos = 0;
-        m_end_pos   = size();
+        m_track_no      = 1;
+        m_chapter_no    = 0;
+        m_start_pos     = 0;
+        m_end_pos       = size();
     }
 
     remove_filename(&path);

@@ -39,7 +39,7 @@ public:
 
     virtual int bufsize() const;
     virtual int open(const string & filename);
-    virtual int read(void *m_data, int size);
+    virtual int read(void *data, int maxlen);
     virtual int error() const;
     virtual int duration() const;
     virtual size_t size() const;
@@ -73,7 +73,7 @@ protected:
     int             m_chapter_no;
     int             m_angle_no;
 
-    unsigned char   m_data[ 1024 * DVD_VIDEO_LB_LEN ];
+    unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];
 
     int             m_duration;
 };

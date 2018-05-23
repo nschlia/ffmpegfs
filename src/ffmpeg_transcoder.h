@@ -191,7 +191,7 @@ protected:
     static int output_write(void * opaque, unsigned char * data, int size);
     static int64_t seek(void * opaque, int64_t offset, int whence);
 
-    size_t predict_filesize(const char * filename, double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const;
+    size_t predict_filesize(double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const;
     bool get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate) const;
     bool get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate) const;
     double get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;

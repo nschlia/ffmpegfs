@@ -84,12 +84,12 @@ static void prepare_script()
     exepath(&scriptsource);
     scriptsource += params.m_scriptsource;
 
-    ffmpegfs_debug("%s * Reading virtual script source.", scriptsource.c_str());
+    ffmpegfs_debug("Reading virtual script source: '%s'.", scriptsource.c_str());
 
     FILE *fpi = fopen(scriptsource.c_str(), "rt");
     if (fpi == NULL)
     {
-        ffmpegfs_warning("%s * File open failed. Disabling script: %s", scriptsource.c_str(), strerror(errno));
+        ffmpegfs_warning("File open failed. Disabling script: %s", strerror(errno));
         params.m_enablescript = false;
     }
     else
@@ -111,7 +111,7 @@ static void prepare_script()
             }
             else
             {
-                ffmpegfs_debug("%s * Read %zu bytes of script file.", scriptsource.c_str(), index_buffer.size());
+                ffmpegfs_debug("Read %zu bytes of script file.", index_buffer.size());
             }
         }
 

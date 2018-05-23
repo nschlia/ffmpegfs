@@ -134,22 +134,22 @@ size_t vcdio::tell() const
 
 int vcdio::seek(long offset, int whence)
 {
-    long int pos = ftell(m_fpi);
+    long int seek_pos;
     switch (whence)
     {
     case SEEK_SET:
     {
-        pos = m_start_pos + offset;
+        seek_pos = m_start_pos + offset;
         break;
     }
     case SEEK_CUR:
     {
-        pos += m_start_pos + offset;
+        seek_pos = m_start_pos + offset + ftell(m_fpi);
         break;
     }
     case SEEK_END:
-    {
-        pos = m_end_pos - offset;
+    {        
+        seek_pos = m_end_pos - offset;
         break;
     }
     default:
@@ -159,7 +159,7 @@ int vcdio::seek(long offset, int whence)
     }
     }
 
-    return fseek(m_fpi, pos, SEEK_SET);
+    return fseek(m_fpi, seek_pos, SEEK_SET);
 }
 
 bool vcdio::eof() const

@@ -36,13 +36,13 @@ public:
     virtual ~FFMPEG_Base();
 
 protected:
-    int open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;
-    int open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const;
+    int open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type) const;
+    int open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type) const;
     void init_packet(AVPacket *packet) const;
-    int init_frame(AVFrame **frame, const char *filename) const;
+    int init_frame(AVFrame **frame) const;
     void stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const;
-    int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename) const;
-    int av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename) const;
+    int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags) const;
+    int av_opt_set_with_check(void *obj, const char *key, const char *value, int flags) const;
 
 private:
 };

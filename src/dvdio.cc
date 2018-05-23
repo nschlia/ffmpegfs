@@ -118,7 +118,8 @@ int dvdio::open(const string & _filename)
     tt_srpt = m_vmg_file->tt_srpt;
 
      // Make sure our title number is valid.
-    ffmpegfs_debug("There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
+    ffmpegfs_trace("There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
+
     if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
     {
         ffmpegfs_error("Invalid title %d.", m_title_no + 1 );
@@ -129,7 +130,7 @@ int dvdio::open(const string & _filename)
 
 
     // Make sure the chapter number is valid for this title.
-    ffmpegfs_debug("There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );
+    ffmpegfs_trace("There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );
 
     if ( m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[ m_title_no ].nr_of_ptts )
     {
@@ -141,7 +142,8 @@ int dvdio::open(const string & _filename)
 
 
     // Make sure the angle number is valid for this title.
-    ffmpegfs_debug("There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
+    ffmpegfs_trace("There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
+
     if ( m_angle_no < 0 || m_angle_no >= tt_srpt->title[ m_title_no ].nr_of_angles )
     {
         ffmpegfs_error("Invalid angle %d", m_angle_no + 1 );

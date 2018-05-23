@@ -166,7 +166,7 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     //    found after the first PMT and add further streams during decoding or if it rather
     //    should scan all that are within the analyze-duration and other limits
 
-    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE, filename());
+    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;

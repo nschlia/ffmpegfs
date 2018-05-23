@@ -39,7 +39,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
     {
         const VcdChapter & chapter = vcd.get_chapter(chapter_no);
 
-        printf("Title %02d Chapter %03d [%02i:%02i:%02i] %9" PRId64 " - %9" PRId64 "\n", chapter.get_track_no(), chapter_no + 1, chapter.get_min(), chapter.get_sec(), chapter.get_frame(), chapter.get_start_pos(), chapter.get_end_pos());
+        //printf("Title %02d Chapter %03d [%02i:%02i:%02i] %9" PRId64 " - %9" PRId64 "\n", chapter.get_track_no(), chapter_no + 1, chapter.get_min(), chapter.get_sec(), chapter.get_frame(), chapter.get_start_pos(), chapter.get_end_pos());
 
         {
             char title_buf[PATH_MAX + 1];
@@ -47,7 +47,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
             struct stat st;
             size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
-            sprintf(title_buf, "Title %02d Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype);
+            sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype);
 
             string filename(title_buf);
 

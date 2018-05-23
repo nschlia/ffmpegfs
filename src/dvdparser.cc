@@ -100,9 +100,10 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
             start_cell = cur_pgc->program_map[ pgn - 1 ] - 1;
 
             ffmpegfs_trace("Chapter %3d [PGC %2d, PG %2d] starts at Cell %2d [sector %x-%x]",
-                  j, pgcnum, pgn, start_cell,
-                  cur_pgc->cell_playback[ start_cell ].first_sector,
-                  cur_pgc->cell_playback[ start_cell ].last_sector );
+                           j, pgcnum, pgn, start_cell,
+                           cur_pgc->cell_playback[ start_cell ].first_sector,
+                           cur_pgc->cell_playback[ start_cell ].last_sector );
+
             {
                 char title_buf[PATH_MAX + 1];
                 string origfile;
@@ -110,7 +111,8 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
 
-                sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.m_desttype);
+                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.m_desttype);
+                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_desttype);
 
                 string filename(title_buf);
 

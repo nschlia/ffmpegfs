@@ -97,9 +97,9 @@ int dvdio::open(const string & _filename)
         m_angle_no     = 0;
     }
 
-    /**
-     * Open the disc.
-     */
+    ffmpegfs_info("Opening input DVD '%s'.", filename.c_str());
+
+    // Open the disc.
     m_dvd = DVDOpen(filename.c_str());
     if ( !m_dvd )
     {
@@ -117,7 +117,7 @@ int dvdio::open(const string & _filename)
     }
     tt_srpt = m_vmg_file->tt_srpt;
 
-     // Make sure our title number is valid.
+    // Make sure our title number is valid.
     ffmpegfs_trace("There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
 
     if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
@@ -139,7 +139,6 @@ int dvdio::open(const string & _filename)
         DVDClose( m_dvd );
         return EINVAL;
     }
-
 
     // Make sure the angle number is valid for this title.
     ffmpegfs_trace("There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );

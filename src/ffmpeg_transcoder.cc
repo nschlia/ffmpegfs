@@ -152,8 +152,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 
     m_in.m_filename = virtualfile->m_origfile;
 
-    ffmpegfs_trace("Opening input file.");
-
     m_mtime = virtualfile->m_st.st_mtime;
 
     if (is_open())
@@ -274,9 +272,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
-        ffmpegfs_debug("Video: Bit Rate: %s Duration: %s",
-                       format_bitrate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
-                       format_time(av_rescale(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base.den, m_in.m_video.m_pStream->time_base.num) / AV_TIME_BASE).c_str());
     }
 
     // Open best match audio codec
@@ -291,12 +286,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     {
         // We have an audio stream
         m_in.m_audio.m_pStream = m_in.m_pFormat_ctx->streams[m_in.m_audio.m_nStream_idx];
-
-        ffmpegfs_debug("Audio: Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
-                       format_bitrate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
-                       m_in.m_audio.m_pCodec_ctx->channels,
-                       format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate).c_str(),
-                       format_time(av_rescale(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base.den, m_in.m_audio.m_pStream->time_base.num) / AV_TIME_BASE).c_str());
     }
 
     if (m_in.m_audio.m_nStream_idx == -1 && m_in.m_video.m_nStream_idx == -1)
@@ -347,6 +336,8 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     int res = 0;
 
     get_destname(&m_out.m_filename, m_in.m_filename);
+
+    ffmpegfs_info("Opening output file '%s'.", m_out.m_filename.c_str());
 
     // Pre-allocate the predicted file size to reduce memory reallocations
     if (!buffer->reserve(predict_filesize()))
@@ -2765,7 +2756,7 @@ size_t FFMPEG_Transcoder::predict_filesize()
 {
     if (m_predicted_size == 0 && m_in.m_pFormat_ctx != NULL)
     {
-        double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, AV_TIME_BASE_Q);
+        double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, av_get_time_base_q());
         BITRATE input_audio_bit_rate = 0;
         int input_sample_rate = 0;
         BITRATE input_video_bit_rate = 0;

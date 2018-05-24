@@ -876,15 +876,15 @@ static void print_params()
     format_number(width, sizeof(width), params.m_videowidth);
     format_number(height, sizeof(height), params.m_videoheight);
     format_bitrate(videobitrate, sizeof(videobitrate), params.m_videobitrate);
-    format_time(expiry_time, sizeof(expiry_time), params.m_expiry_time);
-    format_time(max_inactive_suspend, sizeof(expiry_time), params.m_max_inactive_suspend);
-    format_time(max_inactive_abort, sizeof(max_inactive_abort), params.m_max_inactive_abort);
+    format_time_explicit(expiry_time, sizeof(expiry_time), params.m_expiry_time);
+    format_time_explicit(max_inactive_suspend, sizeof(expiry_time), params.m_max_inactive_suspend);
+    format_time_explicit(max_inactive_abort, sizeof(max_inactive_abort), params.m_max_inactive_abort);
     format_size(prebuffer_size, sizeof(prebuffer_size), params.m_prebuffer_size);
     format_size(max_cache_size, sizeof(max_cache_size), params.m_max_cache_size);
     format_size(min_diskspace, sizeof(min_diskspace), params.m_min_diskspace);
     if (params.m_cache_maintenance)
     {
-        format_time(cache_maintenance, sizeof(cache_maintenance), params.m_cache_maintenance);
+        format_time_explicit(cache_maintenance, sizeof(cache_maintenance), params.m_cache_maintenance);
     }
     else
     {

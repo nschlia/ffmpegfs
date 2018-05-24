@@ -550,7 +550,7 @@ bool Cache::prune_expired()
     time_t now = time(NULL);
     char sql[1024];
 
-    ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning expired cache entries older than %s...", format_time(params.m_expiry_time).c_str());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning expired cache entries older than %s...", format_time_explicit(params.m_expiry_time).c_str());
     
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
@@ -566,7 +566,7 @@ bool Cache::prune_expired()
 
         keys.push_back(make_pair(filename, desttype));
 
-        ffmpegfs_trace(filename, "Found %s old entry.", format_time(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str());
+        ffmpegfs_trace(filename, "Found %s old entry.", format_time_explicit(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str());
     }
 
     ffmpegfs_trace(m_cacheidx_file.c_str(), "%zu expired cache entries found.", keys.size());

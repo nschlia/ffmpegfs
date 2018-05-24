@@ -668,6 +668,34 @@ void format_time(char *output, size_t size, time_t value)
         return;
     }
 
+    int hours;
+    int mins;
+    int secs;
+    int pos;
+
+    hours = (int)(value / (60*60));
+    value -= hours * (60*60);
+    mins = (int)(value / (60));
+    value -= mins * (60);
+    secs = (int)(value);
+
+    *output = '0';
+    pos = 0;
+    if (hours)
+    {
+        pos += snprintf(output + pos, size - pos, "%02i:", hours);
+    }
+    snprintf(output + pos, size - pos, "%02i:%02i", mins, secs);
+}
+
+void format_time_explicit(char *output, size_t size, time_t value)
+{
+    if (!value)
+    {
+        strncpy(output, "unlimited", size);
+        return;
+    }
+
     int weeks;
     int days;
     int hours;
@@ -771,6 +799,14 @@ string format_time(time_t value)
     char buffer[100];
 
     format_time(buffer, sizeof(buffer), value);
+
+    return buffer;
+}
+string format_time_explicit(time_t value)
+{
+    char buffer[100];
+
+    format_time_explicit(buffer, sizeof(buffer), value);
 
     return buffer;
 }

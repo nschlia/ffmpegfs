@@ -274,6 +274,9 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
+        ffmpegfs_debug(filename(), "Video: Bit Rate: %s Duration: %s",
+                       format_bitrate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
+                       format_time(av_rescale_q_rnd(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE).c_str());
     }
 
     // Open best match audio codec
@@ -288,6 +291,12 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     {
         // We have an audio stream
         m_in.m_audio.m_pStream = m_in.m_pFormat_ctx->streams[m_in.m_audio.m_nStream_idx];
+
+        ffmpegfs_debug(filename(), "Audio: Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
+                       format_bitrate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
+                       m_in.m_audio.m_pCodec_ctx->channels,
+                       format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate).c_str(),
+                       format_time((av_rescale_q_rnd(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX))) / AV_TIME_BASE).c_str());
     }
 
     if (m_in.m_audio.m_nStream_idx == -1 && m_in.m_video.m_nStream_idx == -1)
@@ -1596,7 +1605,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             // Rescale to our time base, but only of nessessary
             if (frame->pts != (int64_t)AV_NOPTS_VALUE && (m_in.m_video.m_pStream->time_base.den != m_out.m_video.m_pStream->time_base.den || m_in.m_video.m_pStream->time_base.num != m_out.m_video.m_pStream->time_base.num))
             {
-                frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_pStream->time_base, m_out.m_video.m_pStream->time_base, (AVRounding)(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+                frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_pStream->time_base, m_out.m_video.m_pStream->time_base, (AVRounding)(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
             }
 
             frame->quality = m_out.m_video.m_pCodec_ctx->global_quality;

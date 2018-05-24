@@ -89,12 +89,14 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
     cache_entry->m_cache_info.m_errno = 0;
     cache_entry->m_cache_info.m_averror = 0;
 
+    ffmpegfs_debug(transcoder->destname(), "Finishing file.");
+
     if (!cache_entry->m_buffer->reserve(cache_entry->m_cache_info.m_encoded_filesize))
     {
-        ffmpegfs_debug("Unable to truncate buffer.");
+        ffmpegfs_debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    ffmpegfs_debug("Finishing file.\nPredicted/final size: %zu/%zu bytes, diff: %zi (%.1f%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)(long)((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    ffmpegfs_debug(transcoder->destname(), "Predicted/final size: %zu/%zu bytes, diff: %zi (%.1f%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)(long)((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 
@@ -127,11 +129,11 @@ int transcoder_init(void)
 {
     if (cache == NULL)
     {
-        ffmpegfs_debug("Creating media file cache.");
+        ffmpegfs_debug(NULL, "Creating media file cache.");
         cache = new Cache;
         if (cache == NULL)
         {
-            ffmpegfs_error("Unable to create media file cache. Out of memory.");
+            ffmpegfs_error(NULL, "Unable to create media file cache. Out of memory.");
             fprintf(stderr, "ERROR: creating media file cache. Out of memory.\n");
             return -1;
         }
@@ -154,14 +156,14 @@ void transcoder_free(void)
 
     if (p1 != NULL)
     {
-        ffmpegfs_debug("Deleting media file cache.");
+        ffmpegfs_debug(NULL, "Deleting media file cache.");
         delete p1;
     }
 }
 
 int transcoder_cached_filesize(const string & filename, struct stat *stbuf)
 {
-    ffmpegfs_trace("Retrieving encoded size.");
+    ffmpegfs_trace(filename.c_str(), "Retrieving encoded size.");
 
     Cache_Entry* cache_entry = cache->open(filename);
     if (!cache_entry)
@@ -196,7 +198,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
     int _errno = 0;
 
     // Allocate transcoder structure
-    ffmpegfs_trace("Creating transcoder object.");
+    ffmpegfs_trace(virtualfile->m_origfile.c_str(), "Creating transcoder object.");
 
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (!cache_entry)
@@ -230,7 +232,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
             {
                 if (params.m_max_threads && thread_count >= params.m_max_threads)
                 {
-                    ffmpegfs_warning("Too many active threads. Deferring transcoder start until threads become available.");
+                    ffmpegfs_warning(virtualfile->m_origfile.c_str(), "Too many active threads. Deferring transcoder start until threads become available.");
 
                     while (!thread_exit && thread_count >= params.m_max_threads)
                     {
@@ -239,19 +241,19 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 
                     if (thread_count >= params.m_max_threads)
                     {
-                        ffmpegfs_error("Unable to start new thread. Cancelling transcode.");
+                        ffmpegfs_error(virtualfile->m_origfile.c_str(), "Unable to start new thread. Cancelling transcode.");
                         _errno = EBUSY; // Report resource busy
                         throw false;
                     }
 
-                    ffmpegfs_info("Threads available again. Continuing now.");
+                    ffmpegfs_info(virtualfile->m_origfile.c_str(), "Threads available again. Continuing now.");
                 }
 
                 pthread_attr_t attr;
                 int stack_size = 0;
                 int s;
 
-                ffmpegfs_debug("Starting decoder thread.");
+                ffmpegfs_debug(virtualfile->m_origfile.c_str(), "Starting decoder thread.");
 
                 if (cache_entry->m_cache_info.m_error)
                 {
@@ -267,7 +269,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("Error creating thread attributes: %s", strerror(s));
+                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread attributes: %s", strerror(s));
                     throw false;
                 }
 
@@ -277,7 +279,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                     if (s != 0)
                     {
                         _errno = s;
-                        ffmpegfs_error("Error setting stack size: %s", strerror(s));
+                        ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error setting stack size: %s", strerror(s));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
@@ -299,14 +301,14 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                 }
                 pthread_mutex_unlock(&thread_data->m_mutex);
 
-                ffmpegfs_debug("Decoder thread is running.");
+                ffmpegfs_debug(virtualfile->m_origfile.c_str(), "Decoder thread is running.");
 
                 free(thread_data); // can safely be done here, will not be used in thread from now on
 
                 if (s != 0)
                 {
                     _errno = s;
-                    ffmpegfs_error("Error creating thread: %s", strerror(s));
+                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread: %s", strerror(s));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -316,12 +318,12 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                 s = pthread_attr_destroy(&attr);
                 if (s != 0)
                 {
-                    ffmpegfs_warning("Error destroying thread attributes: %s", strerror(s));
+                    ffmpegfs_warning(virtualfile->m_origfile.c_str(), "Error destroying thread attributes: %s", strerror(s));
                 }
 
                 if (cache_entry->m_cache_info.m_error)
                 {
-                    ffmpegfs_debug("Decoder error!");
+                    ffmpegfs_debug(virtualfile->m_origfile.c_str(), "Decoder error!");
                     _errno = cache_entry->m_cache_info.m_errno;
                     if (!_errno)
                     {
@@ -345,14 +347,15 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 
                 transcoder->close();
 
-                ffmpegfs_debug("Predicted transcoded size of %zu bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+                ffmpegfs_debug(virtualfile->m_origfile.c_str(), "Predicted transcoded size of %zu bytes.", cache_entry->m_cache_info.m_predicted_filesize);
 
                 delete transcoder;
             }
         }
         else if (begin_transcode)
         {
-            ffmpegfs_debug("Reading file from cache.");
+            string destname;
+            ffmpegfs_debug(get_destname(&destname, cache_entry->filename()).c_str(), "Reading file from cache.");
         }
 
         cache_entry->unlock();
@@ -372,7 +375,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 
 ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
-    ffmpegfs_trace("Reading %zu bytes from offset %jd.", len, (intmax_t)offset);
+    ffmpegfs_trace(cache_entry->filename().c_str(), "Reading %zu bytes from offset %jd.", len, (intmax_t)offset);
 
     cache_entry->lock();
 
@@ -509,11 +512,11 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        ffmpegfs_info("Transcoding to %s.", params.m_desttype);
+        ffmpegfs_info(cache_entry->filename().c_str(), "Transcoding to %s.", params.m_desttype);
 
         if (transcoder == NULL)
         {
-            ffmpegfs_error("Out of memory creating transcoder.");
+            ffmpegfs_error(cache_entry->filename().c_str(), "Out of memory creating transcoder.");
             throw ((int)ENOMEM);
         }
 
@@ -548,7 +551,7 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            ffmpegfs_debug("Pre-buffering up to %zu bytes.", params.m_prebuffer_size);
+            ffmpegfs_debug(cache_entry->filename().c_str(), "Pre-buffering up to %zu bytes.", params.m_prebuffer_size);
         }
 
         bool unlocked = false;
@@ -574,7 +577,7 @@ static void *decoder_thread(void *arg)
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
             {
                 unlocked = true;
-                ffmpegfs_debug("Pre-buffer limit reached.");
+                ffmpegfs_debug(cache_entry->filename().c_str(), "Pre-buffer limit reached.");
                 pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
             }
 
@@ -586,7 +589,7 @@ static void *decoder_thread(void *arg)
                     pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
                 }
 
-                ffmpegfs_debug("Suspend timeout. Transcoding suspended.");
+                ffmpegfs_debug(cache_entry->filename().c_str(), "Suspend timeout. Transcoding suspended.");
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
@@ -598,13 +601,13 @@ static void *decoder_thread(void *arg)
                     break;
                 }
 
-                ffmpegfs_debug("Transcoding resumed.");
+                ffmpegfs_debug(cache_entry->filename().c_str(), "Transcoding resumed.");
             }
         }
 
         if (!unlocked && params.m_prebuffer_size)
         {
-            ffmpegfs_debug("File transcode complete, releasing buffer early: Size %zu.", cache_entry->m_buffer->buffer_watermark());
+            ffmpegfs_debug(cache_entry->filename().c_str(), "File transcode complete, releasing buffer early: Size %zu.", cache_entry->m_buffer->buffer_watermark());
             pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
         }
     }
@@ -635,11 +638,11 @@ static void *decoder_thread(void *arg)
 
         if (timeout)
         {
-            ffmpegfs_info("Timeout! Transcoding aborted.");
+            ffmpegfs_info(cache_entry->filename().c_str(), "Timeout! Transcoding aborted.");
         }
         else
         {
-            ffmpegfs_error("Thread exit! Transcoding aborted.");
+            ffmpegfs_error(cache_entry->filename().c_str(), "Thread exit! Transcoding aborted.");
         }
     }
     else
@@ -651,11 +654,11 @@ static void *decoder_thread(void *arg)
 
         if (success)
         {
-            ffmpegfs_info("Transcoding completed successfully.");
+            ffmpegfs_info(cache_entry->filename().c_str(), "Transcoding completed successfully.");
         }
         else
         {
-            ffmpegfs_error("Transcoding exited with error.\nSystem error: %s (%i)\nFFMpeg error: %s (%i)", strerror(syserror), syserror, ffmpeg_geterror(averror).c_str(), averror);
+            ffmpegfs_error(cache_entry->filename().c_str(), "Transcoding exited with error.\nSystem error: %s (%i)\nFFMpeg error: %s (%i)", strerror(syserror), syserror, ffmpeg_geterror(averror).c_str(), averror);
         }
     }
 
@@ -668,43 +671,43 @@ static void *decoder_thread(void *arg)
     return NULL;
 }
 
-void ffmpegfs_trace(const char* format, ...)
+void ffmpegfs_trace(const char *filename, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_with_level(TRACE, format, args);
+    log_with_level(TRACE, filename, format, args);
     va_end(args);
 }
 
-void ffmpegfs_debug(const char* format, ...)
+void ffmpegfs_debug(const char * filename, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_with_level(DEBUG, format, args);
+    log_with_level(DEBUG, filename, format, args);
     va_end(args);
 }
 
-void ffmpegfs_info(const char* format, ...)
+void ffmpegfs_info(const char *filename, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_with_level(INFO, format, args);
+    log_with_level(INFO, filename, format, args);
     va_end(args);
 }
 
-void ffmpegfs_warning(const char* format, ...)
+void ffmpegfs_warning(const char *filename, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_with_level(WARNING, format, args);
+    log_with_level(WARNING, filename, format, args);
     va_end(args);
 }
 
-void ffmpegfs_error(const char* format, ...)
+void ffmpegfs_error(const char *filename, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_with_level(ERROR, format, args);
+    log_with_level(ERROR, filename, format, args);
     va_end(args);
 }
 
@@ -755,7 +758,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     }
 #endif
 
-    log_with_level(ffmpegfs_level, "", line);
+    log_with_level(ffmpegfs_level, "", NULL, line);
 }
 #endif
 

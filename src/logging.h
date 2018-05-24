@@ -91,8 +91,8 @@ constexpr auto INFO = Logging::level::INFO;
 constexpr auto DEBUG = Logging::level::DEBUG;
 constexpr auto TRACE = Logging::level::TRACE;
 
-void log_with_level(Logging::level level, const char* format, va_list ap);
-void log_with_level(Logging::level level, const char* prefix, const char* format, va_list ap);
-void log_with_level(Logging::level level, const char* prefix, const char* message);
+void log_with_level(Logging::level level, const char *filename, const char* format, va_list ap);
+void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* format, va_list ap);
+void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* message);
 
 #endif

@@ -113,11 +113,11 @@ void *ffmpegfs_init(struct fuse_conn_info *conn);
 void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 // Functions to print output until C++ conversion is done.
-void ffmpegfs_trace(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
-void ffmpegfs_debug(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
-void ffmpegfs_warning(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
-void ffmpegfs_info(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
-void ffmpegfs_error(const char* f, ...) __attribute__ ((format(printf, 1, 2)));
+void ffmpegfs_trace(const char *filename, const char* f, ...) __attribute__ ((format(printf, 2, 3)));
+void ffmpegfs_debug(const char *filename, const char* f, ...) __attribute__ ((format(printf, 2, 3)));
+void ffmpegfs_warning(const char *filename, const char* f, ...) __attribute__ ((format(printf, 2, 3)));
+void ffmpegfs_info(const char *filename, const char* f, ...) __attribute__ ((format(printf, 2, 3)));
+void ffmpegfs_error(const char *filename, const char* f, ...) __attribute__ ((format(printf, 2, 3)));
 #ifndef USING_LIBAV
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 #endif

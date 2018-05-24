@@ -99,12 +99,12 @@ bool InitLogging(string logfile, Logging::level max_level, bool to_stderr, bool 
     return !logging->GetFail();
 }
 
-void log_with_level(Logging::level level, const char* format, va_list ap)
+void log_with_level(Logging::level level, const char *filename, const char* format, va_list ap)
 {
-    log_with_level(level, "", format, ap);
+    log_with_level(level, "", filename, format, ap);
 }
 
-void log_with_level(Logging::level level, const char* prefix, const char* format, va_list ap)
+void log_with_level(Logging::level level, const char* prefix, const char* filename, const char* format, va_list ap)
 {
     // This copy is because we call vsnprintf twice, and ap is undefined after
     // the first call.
@@ -117,33 +117,24 @@ void log_with_level(Logging::level level, const char* prefix, const char* format
 
     va_end(ap2);
 
-//#ifndef NDEBUG
-//    if (level == Logging::level::TRACE)
-//    {
-//        cerr << "TRACE: " << buffer << endl;
-//    }
-//    if (level == Logging::level::DEBUG)
-//    {
-//        cerr << "DEBUG: " << buffer << endl;
-//    }
-//    if (level == Logging::level::INFO)
-//    {
-//        cerr << "INFO: " << buffer << endl;
-//    }
-//    if (level == Logging::level::WARNING)
-//    {
-//        cerr << "WARNING: " << buffer << endl;
-//    }
-//    if (level == Logging::level::ERROR)
-//    {
-//        cerr << "ERROR: " << buffer << endl;
-//    }
-//#endif
-
-    Log(level) << prefix << buffer;
+    if (filename == NULL)
+    {
+        Log(level) << prefix << buffer;
+    }
+    else
+    {
+        Log(level) << prefix << buffer << " [" << filename << "]";
+    }
 }
 
-void log_with_level(Logging::level level, const char* prefix, const char* message)
+void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* message)
 {
-    Log(level) << prefix << message;
+    if (filename == NULL)
+    {
+        Log(level) << prefix << message;
+    }
+    else
+    {
+        Log(level) << prefix << message << " [" << filename << "]";
+    }
 }

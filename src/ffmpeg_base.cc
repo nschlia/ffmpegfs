@@ -54,7 +54,7 @@ FFMPEG_Base::~FFMPEG_Base()
 }
 
 // Open codec context for desired media type
-int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type) const
+int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     int ret;
 
@@ -63,17 +63,17 @@ int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            ffmpegfs_error("Could not find %s stream in input file (error '%s').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
+            ffmpegfs_error(filename, "Could not find %s stream in input file (error '%s').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
         }
         return ret;
     }
 
     *stream_idx = ret;
 
-    return open_codec_context(avctx, *stream_idx, fmt_ctx, type);
+    return open_codec_context(avctx, *stream_idx, fmt_ctx, type, filename);
 }
 
-int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type) const
+int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     AVCodecContext *dec_ctx = NULL;
     AVCodec *dec = NULL;
@@ -92,7 +92,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     dec_ctx = avcodec_alloc_context3(dec);
     if (!dec_ctx)
     {
-        ffmpegfs_error("Could not allocate a decoding context.");
+        ffmpegfs_error(filename, "Could not allocate a decoding context.");
         return AVERROR(ENOMEM);
     }
 
@@ -114,7 +114,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     dec = avcodec_find_decoder(codec_id);
     if (!dec)
     {
-        ffmpegfs_error("Failed to find %s input codec.", get_media_type_string(type));
+        ffmpegfs_error(filename, "Failed to find %s input codec.", get_media_type_string(type));
         return AVERROR(EINVAL);
     }
 
@@ -126,11 +126,11 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
     if (ret < 0)
     {
-        ffmpegfs_error("Failed to open %s input codec for stream #%u (error '%s').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(filename, "Failed to open %s input codec for stream #%u (error '%s').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
-    ffmpegfs_debug("Opened %s input codec for stream #%u.", get_codec_name(codec_id), input_stream->index);
+    ffmpegfs_debug(filename, "Opened %s input codec for stream #%u.", get_codec_name(codec_id), input_stream->index);
 
     *avctx = dec_ctx;
 
@@ -147,11 +147,11 @@ void FFMPEG_Base::init_packet(AVPacket *packet) const
 }
 
 // Initialise one frame for reading from the input file
-int FFMPEG_Base::init_frame(AVFrame **frame) const
+int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
 {
     if (!(*frame = av_frame_alloc()))
     {
-        ffmpegfs_error("Could not allocate frame.");
+        ffmpegfs_error(filename, "Could not allocate frame.");
         return AVERROR(ENOMEM);
     }
     return 0;
@@ -164,7 +164,7 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
     if (!frame_rate.num || !frame_rate.den)
     {
         frame_rate                              = { .num = 25, .den = 1 };
-        ffmpegfs_warning("No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        ffmpegfs_warning(NULL, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
     }
 
     // timebase: This is the fundamental unit of time (in seconds) in terms
@@ -219,25 +219,25 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
     output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
 }
 
-int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags) const
+int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_dict_set(pm, key, value, flags);
 
     if (ret < 0)
     {
-        ffmpegfs_error("Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(filename, "Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
 }
 
-int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags) const
+int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_opt_set(obj, key, value, flags);
 
     if (ret < 0)
     {
-        ffmpegfs_error("Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(filename, "Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;

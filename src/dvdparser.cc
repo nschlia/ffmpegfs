@@ -43,17 +43,19 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
     int titles;
     int i, j;
 
+    ffmpegfs_debug(path.c_str(), "Parsing DVD.");
+
     dvd = DVDOpen(path.c_str());
     if ( !dvd )
     {
-        ffmpegfs_error("Couldn't open DVD: %s\n", path.c_str());
+        ffmpegfs_error(path.c_str(), "Couldn't open DVD: %s", path.c_str());
         return ENOENT;
     }
 
     ifo_file = ifoOpen( dvd, 0 );
     if ( !ifo_file )
     {
-        ffmpegfs_error("Can't open VMG info." );
+        ffmpegfs_error(path.c_str(), "Can't open VMG info." );
         DVDClose( dvd );
         return EINVAL;
     }
@@ -61,7 +63,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 
     titles = tt_srpt->nr_of_srpts;
 
-    ffmpegfs_debug( "There are %d titles.", titles );
+    ffmpegfs_debug(path.c_str(), "There are %d titles.", titles );
 
     for( i = 0; i < titles; ++i )
     {
@@ -73,14 +75,14 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
         ttnnum = tt_srpt->title[ i ].vts_ttn;
         chapts = tt_srpt->title[ i ].nr_of_ptts;
 
-        ffmpegfs_trace( "Title : %d", i + 1 );
-        ffmpegfs_trace( "In VTS: %d [TTN %d]", vtsnum, ttnnum );
-        ffmpegfs_trace( "Title has %d chapters and %d angles", chapts, tt_srpt->title[ i ].nr_of_angles );
+        ffmpegfs_trace(path.c_str(), "Title : %d", i + 1 );
+        ffmpegfs_trace(path.c_str(), "In VTS: %d [TTN %d]", vtsnum, ttnnum );
+        ffmpegfs_trace(path.c_str(), "Title has %d chapters and %d angles", chapts, tt_srpt->title[ i ].nr_of_angles );
 
         vts_file = ifoOpen( dvd, vtsnum );
         if ( !vts_file )
         {
-            ffmpegfs_error("Can't open info file for title %d.", vtsnum );
+            ffmpegfs_error(path.c_str(), "Can't open info file for title %d.", vtsnum );
             DVDClose( dvd );
             return EINVAL;
         }
@@ -99,7 +101,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
             cur_pgc = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
             start_cell = cur_pgc->program_map[ pgn - 1 ] - 1;
 
-            ffmpegfs_trace("Chapter %3d [PGC %2d, PG %2d] starts at Cell %2d [sector %x-%x]",
+            ffmpegfs_trace(path.c_str(), "Chapter %3d [PGC %2d, PG %2d] starts at Cell %2d [sector %x-%x]",
                            j, pgcnum, pgn, start_cell,
                            cur_pgc->cell_playback[ start_cell ].first_sector,
                            cur_pgc->cell_playback[ start_cell ].last_sector );
@@ -159,11 +161,9 @@ int check_dvd(const string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "VIDEO_TS.IFO").c_str(), &st) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &st) == 0)
     {
-        ffmpegfs_debug("DVD detected: %s", path.c_str());
-
+        ffmpegfs_trace(path.c_str(), "DVD detected.");
         res = parse_dvd(path, &st, buf, filler);
-
-        ffmpegfs_debug("Found %i titles", res);
+        ffmpegfs_trace(path.c_str(), "Found %i titles.", res);
     }
     return res;
 }

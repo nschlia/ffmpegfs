@@ -77,27 +77,27 @@ bool Cache::load_index()
 
         if (mktree(cachepath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            ffmpegfs_error("Error creating cache directory '%s': %s", cachepath, strerror(errno));
+            ffmpegfs_error(cachepath, "Error creating cache directory: %s", strerror(errno));
             throw false;
         }
 
         // initialise engine
         if (SQLITE_OK != (ret = sqlite3_initialize()))
         {
-            ffmpegfs_error("Failed to initialise SQLite3 library: %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to initialise SQLite3 library: %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         // open connection to a DB
         if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
         {
-            ffmpegfs_error("Failed to initialise SQLite3 connection: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to initialise SQLite3 connection: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
         {
-            ffmpegfs_error("Failed to set SQLite3 busy timeout: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to set SQLite3 busy timeout: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -105,7 +105,7 @@ bool Cache::load_index()
         // We support Sqlite from 3.7.13 anyway
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", NULL, NULL, NULL)))
         {
-            ffmpegfs_error("Failed to set SQLite3 WAL mode: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to set SQLite3 WAL mode: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -146,7 +146,7 @@ bool Cache::load_index()
 
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, callback, 0, &errmsg)))
         {
-            ffmpegfs_error("SQLite3 exec error: %d\n%s", ret, errmsg);
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 exec error: %d\n%s", ret, errmsg);
             throw false;
         }
 
@@ -165,7 +165,7 @@ bool Cache::load_index()
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, NULL)))
         {
-            ffmpegfs_error("Failed to prepare insert: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare insert: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -173,7 +173,7 @@ bool Cache::load_index()
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, NULL)))
         {
-            ffmpegfs_error("Failed to prepare select: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare select: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -181,7 +181,7 @@ bool Cache::load_index()
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, NULL)))
         {
-            ffmpegfs_error("Failed to prepare delete: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare delete: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
     }
@@ -203,7 +203,7 @@ bool Cache::flush_index()
         // Flush cache to disk
         if (SQLITE_OK != (ret = sqlite3_db_cacheflush(m_cacheidx_db)))
         {
-            ffmpegfs_error("SQLite3 cache flush error: %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 cache flush error: %d\n%s", ret, sqlite3_errstr(ret));
             return false;
         }
     }
@@ -218,7 +218,7 @@ bool Cache::read_info(t_cache_info & cache_info)
 
     if (m_cacheidx_select_stmt == NULL)
     {
-        ffmpegfs_error("SQLite3 select statement not open");
+        ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select statement not open");
         return false;
     }
 
@@ -230,13 +230,13 @@ bool Cache::read_info(t_cache_info & cache_info)
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info.m_filename.c_str(), -1, NULL)))
         {
-            ffmpegfs_error("SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info.m_desttype, -1, NULL)))
         {
-            ffmpegfs_error("SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
@@ -271,7 +271,7 @@ bool Cache::read_info(t_cache_info & cache_info)
         }
         else if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) select statement: %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Sqlite 3 could not step (execute) select statement: %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -295,14 +295,14 @@ bool Cache::read_info(t_cache_info & cache_info)
 #define SQLBINDTXT(idx, var) \
     if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, NULL))) \
 { \
-    ffmpegfs_error("SQLite3 select column #%i error: %d\n%s", idx, ret, sqlite3_errstr(ret)); \
+    ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select column #%i error: %d\n%s", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
     }
 
 #define SQLBINDNUM(func, idx, var) \
     if (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \
 { \
-    ffmpegfs_error("SQLite3 select column #%i error: %d\n%s", idx, ret, sqlite3_errstr(ret)); \
+    ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select column #%i error: %d\n%s", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
     }
 
@@ -313,7 +313,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
     if (m_cacheidx_insert_stmt == NULL)
     {
-        ffmpegfs_error("SQLite3 select statement not open.");
+        ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select statement not open.");
         return false;
     }
 
@@ -350,7 +350,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
         if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) insert statement: %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Sqlite 3 could not step (execute) insert statement: %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -378,7 +378,7 @@ bool Cache::delete_info(const string & filename, const string & desttype)
 
     if (m_cacheidx_delete_stmt == NULL)
     {
-        ffmpegfs_error("SQLite3 delete statement not open.");
+        ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 delete statement not open.");
         return false;
     }
 
@@ -390,13 +390,13 @@ bool Cache::delete_info(const string & filename, const string & desttype)
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 1, filename.c_str(), -1, NULL)))
         {
-            ffmpegfs_error("SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 2, desttype.c_str(), -1, NULL)))
         {
-            ffmpegfs_error("SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
@@ -404,7 +404,7 @@ bool Cache::delete_info(const string & filename, const string & desttype)
 
         if (ret != SQLITE_DONE)
         {
-            ffmpegfs_error("Sqlite 3 could not step (execute) delete statement: %d\n%s", ret, sqlite3_errstr(ret));
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Sqlite 3 could not step (execute) delete statement: %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -447,7 +447,7 @@ Cache_Entry* Cache::create_entry(const string & filename, const string & desttyp
     Cache_Entry* cache_entry = new Cache_Entry(this, filename);
     if (cache_entry == NULL)
     {
-        ffmpegfs_error("Out of memory.");
+        ffmpegfs_error(m_cacheidx_file.c_str(), "Out of memory.");
         return NULL;
     }
     m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
@@ -505,12 +505,12 @@ Cache_Entry * Cache::open(const string & filename)
     cache_t::iterator p = m_cache.find(make_pair(sanitised_name, params.m_desttype));
     if (p == m_cache.end())
     {
-        ffmpegfs_trace("Created new transcoder.");
+        ffmpegfs_trace(sanitised_name.c_str(), "Created new transcoder.");
         cache_entry = create_entry(sanitised_name, params.m_desttype);
     }
     else
     {
-        ffmpegfs_trace("Reusing cached transcoder.");
+        ffmpegfs_trace(sanitised_name.c_str(), "Reusing cached transcoder.");
         cache_entry = p->second;
     }
 
@@ -527,12 +527,12 @@ bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
     string filename((*cache_entry)->filename());
     if (delete_entry(cache_entry, flags))
     {
-        ffmpegfs_trace("Freed cache entry.");
+        ffmpegfs_trace(filename.c_str(), "Freed cache entry.");
         return true;
     }
     else
     {
-        ffmpegfs_trace("Keeping cache entry.");
+        ffmpegfs_trace(filename.c_str(), "Keeping cache entry.");
         return false;
     }
 }
@@ -550,7 +550,7 @@ bool Cache::prune_expired()
     time_t now = time(NULL);
     char sql[1024];
 
-    ffmpegfs_trace("Pruning expired cache entries older than %s...", format_time(params.m_expiry_time).c_str());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning expired cache entries older than %s...", format_time(params.m_expiry_time).c_str());
     
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
@@ -566,17 +566,17 @@ bool Cache::prune_expired()
 
         keys.push_back(make_pair(filename, desttype));
 
-        ffmpegfs_trace("Found %s old entry.", format_time(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str());
+        ffmpegfs_trace(filename, "Found %s old entry.", format_time(now - (time_t)sqlite3_column_int64(stmt, 2)).c_str());
     }
 
-    ffmpegfs_trace("%zu expired cache entries found.", keys.size());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "%zu expired cache entries found.", keys.size());
 
     if (ret == SQLITE_DONE)
     {
         for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
         {
             const cache_key_t & key = *it;
-            ffmpegfs_trace("Pruning '%s' - Type: %s", key.first.c_str(), key.second.c_str());
+            ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning '%s' - Type: %s", key.first.c_str(), key.second.c_str());
 
             cache_t::iterator p = m_cache.find(key);
             if (p != m_cache.end())
@@ -592,7 +592,7 @@ bool Cache::prune_expired()
     }
     else
     {
-        ffmpegfs_error("Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -615,7 +615,7 @@ bool Cache::prune_cache_size()
     sqlite3_stmt * stmt;
     const char * sql;
 
-    ffmpegfs_trace("Pruning oldest cache entries exceeding %s cache size...", format_size(params.m_max_cache_size).c_str());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning oldest cache entries exceeding %s cache size...", format_size(params.m_max_cache_size).c_str());
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
@@ -636,11 +636,11 @@ bool Cache::prune_cache_size()
         total_size += size;
     }
 
-    ffmpegfs_trace("%s in cache.", format_size(total_size).c_str());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "%s in cache.", format_size(total_size).c_str());
 
     if (total_size > params.m_max_cache_size)
     {
-        ffmpegfs_trace("Pruning %s of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size).c_str());
+        ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning %s of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size).c_str());
         if (ret == SQLITE_DONE)
         {
             int n = 0;
@@ -648,7 +648,7 @@ bool Cache::prune_cache_size()
             {
                 const cache_key_t & key = *it;
 
-                ffmpegfs_trace("Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
+                ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
 
                 cache_t::iterator p = m_cache.find(key);
                 if (p != m_cache.end())
@@ -669,11 +669,11 @@ bool Cache::prune_cache_size()
                 }
             }
 
-            ffmpegfs_trace("%s left in cache.", format_size(total_size).c_str());
+            ffmpegfs_trace(m_cacheidx_file.c_str(), "%s left in cache.", format_size(total_size).c_str());
         }
         else
         {
-            ffmpegfs_error("Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
     }
 
@@ -693,7 +693,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     if (statvfs(cachepath, &buf))
     {
-        ffmpegfs_trace("prune_disk_space() cannot determine free disk space: %s", strerror(errno));
+        ffmpegfs_trace(m_cacheidx_file.c_str(), "prune_disk_space() cannot determine free disk space: %s", strerror(errno));
         return false;
     }
 
@@ -701,7 +701,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     size_t free_bytes = buf.f_bfree * buf.f_bsize;
 
-    ffmpegfs_trace("%s disk space before prune.", format_size(free_bytes).c_str());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "%s disk space before prune.", format_size(free_bytes).c_str());
     if (free_bytes < params.m_min_diskspace + predicted_filesize)
     {
         vector<cache_key_t> keys;
@@ -724,7 +724,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             filesizes.push_back(size);
         }
 
-        ffmpegfs_trace("Pruning %s of oldest cache entries to keep disk space above %s limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes).c_str(), format_size(params.m_min_diskspace).c_str());
+        ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning %s of oldest cache entries to keep disk space above %s limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes).c_str(), format_size(params.m_min_diskspace).c_str());
 
         if (ret == SQLITE_DONE)
         {
@@ -733,7 +733,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             {
                 const cache_key_t & key = *it;
 
-                ffmpegfs_trace("Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
+                ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
 
                 cache_t::iterator p = m_cache.find(key);
                 if (p != m_cache.end())
@@ -753,11 +753,11 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
                     break;
                 }
             }
-            ffmpegfs_trace("Disk space after prune: %s", format_size(free_bytes).c_str());
+            ffmpegfs_trace(m_cacheidx_file.c_str(), "Disk space after prune: %s", format_size(free_bytes).c_str());
         }
         else
         {
-            ffmpegfs_error("Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
 
         sqlite3_finalize(stmt);
@@ -807,7 +807,7 @@ bool Cache::clear()
         keys.push_back(make_pair(filename, desttype));
     }
 
-    ffmpegfs_trace("Clearing all %zd entries from cache...", keys.size());
+    ffmpegfs_trace(m_cacheidx_file.c_str(), "Clearing all %zd entries from cache...", keys.size());
 
     if (ret == SQLITE_DONE)
     {
@@ -815,7 +815,7 @@ bool Cache::clear()
         {
             const cache_key_t & key = *it;
 
-            ffmpegfs_trace("Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
+            ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning: %s Type: %s", key.first.c_str(), key.second.c_str());
 
             cache_t::iterator p = m_cache.find(key);
             if (p != m_cache.end())
@@ -831,7 +831,7 @@ bool Cache::clear()
     }
     else
     {
-        ffmpegfs_error("Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to execute select: %d\n%s\n%s", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -881,5 +881,3 @@ string Cache::expanded_sql(sqlite3_stmt *pStmt)
 #endif
     return sql;
 }
-
-

@@ -47,7 +47,7 @@ int diskio::bufsize() const
 
 int diskio::open(const string & filename)
 {
-    ffmpegfs_info("Opening input file '%s'.", filename.c_str());
+    ffmpegfs_info(filename.c_str(), "Opening input file.");
 
     m_fpi = fopen(filename.c_str(), "rb");
 

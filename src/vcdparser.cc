@@ -34,45 +34,42 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
     VcdEntries vcd;
 
     vcd.load_file(path);
+	
+    ffmpegfs_debug(path.c_str(), "Parsing Video CD.");
 
     for (int chapter_no = 0; chapter_no < vcd.get_number_of_chapters(); chapter_no++)
     {
         const VcdChapter & chapter = vcd.get_chapter(chapter_no);
+        char title_buf[PATH_MAX + 1];
+        string origfile;
+        struct stat st;
+        size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
-        //printf("Title %02d Chapter %03d [%02i:%02i:%02i] %9" PRId64 " - %9" PRId64 "\n", chapter.get_track_no(), chapter_no + 1, chapter.get_min(), chapter.get_sec(), chapter.get_frame(), chapter.get_start_pos(), chapter.get_end_pos());
+        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype);
 
+        string filename(title_buf);
+
+        origfile = path + filename;
+
+        memcpy(&st, statbuf, sizeof(struct stat));
+
+        st.st_size = size;
+        st.st_blocks = (st.st_size + 512 - 1) / 512;
+
+        //init_stat(&st, size, false);
+
+        if (buf != NULL && filler(buf, filename.c_str(), &st, 0))
         {
-            char title_buf[PATH_MAX + 1];
-            string origfile;
-            struct stat st;
-            size_t size = chapter.get_end_pos() - chapter.get_start_pos();
-
-            sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype);
-
-            string filename(title_buf);
-
-            origfile = path + filename;
-
-            memcpy(&st, statbuf, sizeof(struct stat));
-
-            st.st_size = size;
-            st.st_blocks = (st.st_size + 512 - 1) / 512;
-
-            //init_stat(&st, size, false);
-
-            if (buf != NULL && filler(buf, filename.c_str(), &st, 0))
-            {
-                // break;
-            }
-
-            LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, path + filename, origfile, &st);
-
-            // Mark title/chapter/angle
-            virtualfile->vcd.m_track_no     = chapter.get_track_no();
-            virtualfile->vcd.m_chapter_no   = chapter_no;
-            virtualfile->vcd.m_start_pos    = chapter.get_start_pos();
-            virtualfile->vcd.m_end_pos      = chapter.get_end_pos();
+            // break;
         }
+
+        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, path + filename, origfile, &st);
+
+        // Mark title/chapter/angle
+        virtualfile->vcd.m_track_no     = chapter.get_track_no();
+        virtualfile->vcd.m_chapter_no   = chapter_no;
+        virtualfile->vcd.m_start_pos    = chapter.get_start_pos();
+        virtualfile->vcd.m_end_pos      = chapter.get_end_pos();
     }
 
     return vcd.get_number_of_chapters();
@@ -89,19 +86,15 @@ int check_vcd(const string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "SVCD/INFO.SVD").c_str(), &st) == 0)
     {
-        ffmpegfs_debug("SVCD detected: %s", path.c_str());
-
+        ffmpegfs_trace(path.c_str(), "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-
-        ffmpegfs_debug("Found %i titles", res);
+        ffmpegfs_trace(NULL, "Found %i titles.", res);
     }
     else if (stat((path + "VCD/INFO.VCD").c_str(), &st) == 0)
     {
-        ffmpegfs_debug("VCD detected: %s", path.c_str());
-
+        ffmpegfs_trace(path.c_str(), "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-
-        ffmpegfs_debug("Found %i titles", res);
+        ffmpegfs_trace(NULL, "Found %i titles.", res);
     }
     return res;
 }

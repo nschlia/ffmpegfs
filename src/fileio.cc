@@ -28,6 +28,9 @@
 #ifdef USE_LIBDVD
 #include "dvdio.h"
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+#include "blurayio.h"
+#endif // USE_LIBBLURAY
 
 #include <assert.h>
 
@@ -66,6 +69,12 @@ fileio * fileio::alloc(VIRTUALTYPE type)
         return new dvdio;
     }
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    case VIRTUALTYPE_BLURAY:
+    {
+        return new blurayio;
+    }
+#endif // USE_LIBBLURAY
     //case VIRTUALTYPE_PASSTHROUGH:
     //case VIRTUALTYPE_SCRIPT:
     default:

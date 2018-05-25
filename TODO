@@ -6,10 +6,6 @@ ffmpegfs TODOs
 * Improve Libav compatibility (maybe it is possible to use Libav 11+?).
 * Feature: mpeg video output to support on-the-fly streaming to older browsers that
            do not support the necessary mp4 extensions.
-* Bluray support: Similar to DVD support - split into chapters or programs.
-* Video CD support: Similar to DVD support - split into chapters or programs.
 * Add WEBM output format.
-* Add mpeg output format (better support for older browsers that do not
-  support the necessary MP4 extensions.
 * Many more ideas I'll have when I wake up and find them nice to have.
 * Any features that you may request.

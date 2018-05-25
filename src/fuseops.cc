@@ -38,6 +38,9 @@
 #ifdef USE_LIBDVD
 #include "dvdparser.h"
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+#include "blurayparser.h"
+#endif // USE_LIBBLURAY
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
 
@@ -242,7 +245,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     string origpath;
     DIR *dp;
     struct dirent *de;
-#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
+#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res;
 #endif
 
@@ -286,6 +289,14 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
         return (res >= 0 ?  0 : res);
     }
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    res = check_bluray(origpath, buf, filler);
+    if (res != 0)
+    {
+        // Found Bluray or error reading Bluray
+        return (res >= 0 ?  0 : res);
+    }
+#endif // USE_LIBBLURAY
 
     dp = opendir(origpath.c_str());
     if (dp)
@@ -335,7 +346,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     string origpath;
-#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
+#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res = 0;
 #endif
 
@@ -376,6 +387,9 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    case VIRTUALTYPE_BLURAY:
+#endif // USE_LIBBLURAY
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -388,7 +402,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
                 int error = -errno;
-#if defined(USE_LIBDVD) || defined(USE_LIBVCD)
+#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 // Returns -errno or number or titles on DVD
                 string path(origpath);
 
@@ -405,6 +419,12 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     res = check_dvd(path);
                 }
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+                if (res <= 0)
+                {
+                    res = check_bluray(path);
+                }
+#endif // USE_LIBBLURAY
                 if (res <= 0)
                 {
                     // No Bluray/DVD/VCD found or error reading disk
@@ -508,6 +528,9 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    case VIRTUALTYPE_BLURAY:
+#endif // USE_LIBBLURAY
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -608,6 +631,9 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    case VIRTUALTYPE_BLURAY:
+#endif // USE_LIBBLURAY
     case VIRTUALTYPE_REGULAR:
     {
         cache_entry = transcoder_new(virtualfile, true);
@@ -701,6 +727,9 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    case VIRTUALTYPE_BLURAY:
+#endif // USE_LIBBLURAY
     case VIRTUALTYPE_REGULAR:
     {
         cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;

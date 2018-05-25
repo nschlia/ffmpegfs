@@ -40,6 +40,9 @@ typedef enum _tagVIRTUALTYPE
 #ifdef USE_LIBDVD
     VIRTUALTYPE_DVD,                // DVD file
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    VIRTUALTYPE_BLURAY,             // Bluray disk file
+#endif // USE_LIBBLURAY
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;
 typedef VIRTUALTYPE LPVIRTUALTYPE;
@@ -68,6 +71,15 @@ typedef struct _tagVIRTUALFILE
         int         m_angle_no;
     } dvd;
 #endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    struct BLURAY
+    {
+        uint32_t    m_title_no;
+        uint32_t    m_playlist_no;
+        unsigned    m_chapter_no;
+        unsigned    m_angle_no;
+    } bluray;
+#endif // USE_LIBBLURAY
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;

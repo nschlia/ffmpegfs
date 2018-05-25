@@ -150,6 +150,20 @@ AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD"
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 0])
 
+# libbluray
+AC_ARG_WITH([libbluray],
+  [AS_HELP_STRING([--with-libbluray],
+    [support using libbluray @<:@default=check@:>@])],
+  [],
+  [with_libbluray=check])
+
+AS_CASE(["$with_libbluray"],
+  [yes], [PKG_CHECK_MODULES([libbluray], [libbluray >= 0.6.2], [HAVE_LIBBLURAY=1])],
+  [no], [],
+  [PKG_CHECK_MODULES([libbluray], [libbluray >= 0.6.2], [HAVE_LIBBLURAY=1], [HAVE_LIBBLURAY=0])])
+AM_CONDITIONAL([USE_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 1])
+AM_CONDITIONAL([HINT_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 0])
+
 # libvcd
 AC_ARG_WITH([libvcd],
   [AS_HELP_STRING([--with-libvcd],
@@ -179,3 +193,5 @@ AC_OUTPUT
 # Hints on options
 AM_COND_IF([HINT_LIBDVD],
            [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdnav and libdvdread development packages. See INSTALL.md for details.])])
+AM_COND_IF([HINT_LIBBLURAY],
+           [AC_MSG_NOTICE([HINT: To enable bluray suport install the libbluray development package. See INSTALL.md for details.])])

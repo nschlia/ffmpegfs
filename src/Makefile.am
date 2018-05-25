@@ -28,6 +28,14 @@ ffmpegfs_SOURCES += dvdio.cc dvdio.h dvdparser.cc dvdparser.h
 ffmpegfs_LDADD += $(libdvdnav_LIBS) $(libdvdread_LIBS)
 endif
 
+# Bluray support: requires libbluray
+if USE_LIBBLURAY
+AM_CPPFLAGS += -DUSE_LIBBLURAY
+AM_CPPFLAGS += $(libbluray_CFLAGS)
+ffmpegfs_SOURCES += blurayio.cc blurayio.h blurayparser.cc blurayparser.h
+ffmpegfs_LDADD += $(libbluray_LIBS)
+endif
+
 # VCD support: uses internal code
 if USE_LIBVCD
 AM_CPPFLAGS += -DUSE_LIBVCD

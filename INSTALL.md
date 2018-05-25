@@ -31,6 +31,10 @@ For optional DVD support you need the following libraries
 * libdvdread      (>= 5.0.0)
 * libdvdnav       (>= 5.0.0)
 
+For optional Bluray support you need the following library
+
+* libbluray       (>= 0.6.2)
+
 If building from git, you'll also need:
 
 * autoconf
@@ -54,6 +58,10 @@ To get DVD support:
 
     aptitude install libdvdread-dev libdvdnav-dev
 
+To get Bluray support:
+
+    aptitude install libbluray-dev
+
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
 On Suse (please read notes before continuing):
@@ -66,6 +74,10 @@ To get DVD support:
 
     zypper install libdvdread-devel libdvdnav-devel
     
+To get Bluray support:
+
+    zypper install libbluray-devel
+
 Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264
 are *not* available which renders this library next to usesless. But FFmpeg can 
 be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
@@ -81,6 +93,9 @@ To get DVD support:
 
     yum install libdvdread-devel libdvdnav-devel
     
+To get Bluray support:
+
+    yum install libbluray-devel
 
 Red Hat does not provide FFmpeg from its repositories. It must be built
 from source code, see this guide: https://trac.ffmpeg.org/wiki/CompilationGuide/Centos

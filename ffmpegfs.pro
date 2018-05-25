@@ -16,7 +16,9 @@ SOURCES += \
     src/cache_entry.cc \
     src/cache_maintenance.cc \
     src/ffmpeg_base.cc \
-    src/ffmpeg_optimisations.cc
+    src/ffmpeg_optimisations.cc \
+    src/blurayio.cc \
+    src/blurayparser.cc \
     src/diskio.cc \
     src/dvdio.cc \
     src/dvdparser.cc \
@@ -49,6 +51,8 @@ HEADERS += \
     src/dvdparser.h \
     src/vcdio.h \
     src/vcdparser.h \
+    src/blurayio.h \
+    src/blurayparser.h \
     src/vcd/vcdchapter.h \
     src/vcd/vcdentries.h \
     src/vcd/vcdinfo.h \
@@ -61,6 +65,7 @@ DEFINES+=STDC_HEADERS=1 HAVE_SYS_TYPES_H=1 HAVE_SYS_STAT_H=1 HAVE_STDLIB_H=1 HAV
 DEFINES+=HAVE_FFMPEG=1 _GNU_SOURCE
 DEFINES+=USE_LIBDVD
 DEFINES+=USE_LIBVCD
+DEFINES+=USE_LIBBLURAY
 INCLUDEPATH+=$$PWD/src /usr/include/fuse $$PWD/lib
 LIBS+=-lfuse -pthread
 LIBS+=-lavformat -lavcodec -lavutil
@@ -73,11 +78,22 @@ LIBS+=-lpostproc
 LIBS+=-lsqlite3
 LIBS+=-lrt
 LIBS+=-ldvdnav -ldvdread
+LIBS+=-lbluray
 
 QMAKE_CFLAGS += -std=c99 -Wall -Wextra -Wconversion
 QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -Wconversion
 #QMAKE_CFLAGS += -O2 -MT -MD -MP -MF
 #QMAKE_CXXFLAGS += -O2 -MT -MD -MP -MF
+
+INCLUDEPATH += /home/norbert/dev/ffmpeg/include
+LIBS += \
+        -L/home/norbert/dev/ffmpeg/lib \
+        -L/home/norbert/dev/ffmpeg/bin
+
+#INCLUDEPATH += "/home/dev special/dev/ffmpeg/include"
+#LIBS += \
+#        -L"/home/schlia/dev special/ffmpeg/lib" \
+#        -L"/home/schlia/dev special/ffmpeg/bin"
 
 DISTFILES += \
     COPYING.DOC \

@@ -1,7 +1,9 @@
 ffmpegfs NEWS
 
-Important changes in 1.4 (2018-05-XX)
+Important changes in 1.4 (2018-05-25) NOT RELEASED
 
+* Feature: Bluray support: Detect IFO files and list separate DVD chapters or programs
+           as separate files. 
 * Feature: DVD support: Detect IFO files and list separate DVD chapters or programs
            as separate files. 
 * Feature: S/VCD support: Detect Video CDs in directories and list chapters 

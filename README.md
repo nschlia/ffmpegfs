@@ -13,7 +13,8 @@ News
 
 * **Work on release 1.4 now in progress**
 * **Bluray, DVD, Video CD and Super Video CD support is now available.** See [install](INSTALL.md) file on how to activate. Bluray, DVD and VCD directories will show all titles and chapters as virtual files.
-* Bluray support is still experimental and yield unexpected results but works for me so far. Needs some optimisations, though,
+* Bluray support is still experimental and may yield unexpected results but works for me so far. Needs some optimisations, though.
+* **Bug reports and feature requests are welcome!**
 
 About
 -----
@@ -47,7 +48,7 @@ RESTRICTIONS:
 * The current version input formats are limited to:
   avi, flac, flv, m2ts, mkv, mov, mpg, oga, ogg, ogv, rm, ts, vob,
   webm, wma and wmv.
-* See TODO file for details.
+* See [TODO](TODO) for details.
 
 Supported Linux Distributions
 -----------------------------
@@ -165,7 +166,7 @@ playback while still transcoding.
 
 In most cases files will not play if not properly optimised.
 
-See TODO for details.
+See [TODO](TODO) for details.
 
 HOW IT WORKS
 ------------
@@ -296,7 +297,7 @@ Future Plans
 
 * Create a windows version
 * Add DVD/Bluray/Video CD support
-* and more, see TODO
+* and more, see [TODO](TODO)
 
 AUTHORS
 -------

@@ -198,7 +198,7 @@ int blurayio::read(void * dataX, int size)
         int          XXsize;
 
         XXsize = (int)sizeof(m_data);
-        if (XXsize > (int)(m_end_pos - m_cur_pos))
+        if (XXsize > (m_end_pos - m_cur_pos))
         {
             XXsize = (int)(m_end_pos - m_cur_pos);
         }

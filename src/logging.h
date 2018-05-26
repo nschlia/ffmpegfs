@@ -60,21 +60,23 @@ private:
     class Logger : public ostringstream
     {
     public:
-        Logger(level loglevel, Logging* logging) :
-            loglevel_(loglevel), logging_(logging) {}
-        Logger() : loglevel_(level::DEBUG) {}
+        Logger(level loglevel, const char *filename, Logging* logging) :
+            loglevel_(loglevel), filename_(filename), logging_(logging) {}
+        Logger() : loglevel_(level::DEBUG), filename_(NULL) {}
         virtual ~Logger();
 
     private:
         const level loglevel_;
 
+        const char *filename_;
         Logging* logging_;
 
         static const map<level,int> syslog_level_map_;
         static const map<level,string> level_name_map_;
+        static const map<level,string> level_colour_map_;
     };
 
-    friend Logger Log(level lev);
+    friend Logger Log(level lev, const char * filename);
     friend Logger;
 
     ofstream logfile_;
@@ -85,11 +87,11 @@ private:
 
 bool InitLogging(string logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
 
-constexpr auto ERROR = Logging::level::ERROR;
-constexpr auto WARNING = Logging::level::WARNING;
-constexpr auto INFO = Logging::level::INFO;
-constexpr auto DEBUG = Logging::level::DEBUG;
-constexpr auto TRACE = Logging::level::TRACE;
+constexpr auto ERROR    = Logging::level::ERROR;
+constexpr auto WARNING  = Logging::level::WARNING;
+constexpr auto INFO     = Logging::level::INFO;
+constexpr auto DEBUG    = Logging::level::DEBUG;
+constexpr auto TRACE    = Logging::level::TRACE;
 
 void log_with_level(Logging::level level, const char *filename, const char* format, va_list ap);
 void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* format, va_list ap);

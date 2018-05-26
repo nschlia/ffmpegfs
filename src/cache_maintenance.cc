@@ -80,7 +80,7 @@ static int start_timer(time_t interval)
     struct sigaction sa;
     char cache_maintenance[100];
 
-    format_time_explicit(cache_maintenance, sizeof(cache_maintenance), interval);
+    format_time(cache_maintenance, sizeof(cache_maintenance), interval);
 
     freq_nanosecs = interval * 1000000000LL;
 

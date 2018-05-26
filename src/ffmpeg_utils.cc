@@ -660,14 +660,8 @@ void format_samplerate(char *output, size_t size, unsigned int value)
     }
 }
 
-void format_time(char *output, size_t size, time_t value)
+void format_duration(char *output, size_t size, time_t value)
 {
-    if (!value)
-    {
-        strncpy(output, "unlimited", size);
-        return;
-    }
-
     int hours;
     int mins;
     int secs;
@@ -688,7 +682,7 @@ void format_time(char *output, size_t size, time_t value)
     snprintf(output + pos, size - pos, "%02i:%02i", mins, secs);
 }
 
-void format_time_explicit(char *output, size_t size, time_t value)
+void format_time(char *output, size_t size, time_t value)
 {
     if (!value)
     {
@@ -794,19 +788,19 @@ string format_samplerate(unsigned int value)
     return buffer;
 }
 
+string format_duration(time_t value)
+{
+    char buffer[100];
+
+    format_duration(buffer, sizeof(buffer), value);
+
+    return buffer;
+}
 string format_time(time_t value)
 {
     char buffer[100];
 
     format_time(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-string format_time_explicit(time_t value)
-{
-    char buffer[100];
-
-    format_time_explicit(buffer, sizeof(buffer), value);
 
     return buffer;
 }

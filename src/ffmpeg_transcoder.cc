@@ -276,7 +276,7 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 #endif
         ffmpegfs_debug(filename(), "Video: Bit Rate: %s Duration: %s",
                        format_bitrate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
-                       format_time(av_rescale_q_rnd(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE).c_str());
+                       format_duration(av_rescale_q_rnd(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE).c_str());
     }
 
     // Open best match audio codec
@@ -296,7 +296,7 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
                        format_bitrate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
                        m_in.m_audio.m_pCodec_ctx->channels,
                        format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate).c_str(),
-                       format_time((av_rescale_q_rnd(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX))) / AV_TIME_BASE).c_str());
+                       format_duration((av_rescale_q_rnd(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX))) / AV_TIME_BASE).c_str());
     }
 
     if (m_in.m_audio.m_nStream_idx == -1 && m_in.m_video.m_nStream_idx == -1)
@@ -2892,6 +2892,7 @@ void FFMPEG_Transcoder::close()
 {
     int nAudioSamplesLeft = 0;
     size_t nVideoFramesLeft = 0;
+    string file;
     bool bClosed = false;
 
     if (m_pAudioFifo)
@@ -2981,6 +2982,8 @@ void FFMPEG_Transcoder::close()
     {
         AVIOContext *output_io_context  = (AVIOContext *)m_out.m_pFormat_ctx->pb;
 
+        file = m_out.m_pFormat_ctx->filename;
+
 #if (AV_VERSION_MAJOR >= 57)
         if (output_io_context != NULL)
         {
@@ -3045,6 +3048,11 @@ void FFMPEG_Transcoder::close()
 
     if (m_in.m_pFormat_ctx != NULL)
     {
+        if (file.empty())
+        {
+            file = m_in.m_pFormat_ctx->filename;
+        }
+
         //if (!(m_in.m_pFormat_ctx->oformat->flags & AVFMT_NOFILE))
         {
             if (m_fileio != NULL)
@@ -3078,18 +3086,19 @@ void FFMPEG_Transcoder::close()
 
     if (bClosed)
     {
+        const char *p = file.empty() ? NULL : file.c_str();
         if (nAudioSamplesLeft)
         {
-            ffmpegfs_warning(NULL, "%i audio samples left in buffer and not written to target file!", nAudioSamplesLeft);
+            ffmpegfs_warning(p, "%i audio samples left in buffer and not written to target file!", nAudioSamplesLeft);
         }
 
         if (nVideoFramesLeft)
         {
-            ffmpegfs_warning(NULL, "%zu video frames left in buffer and not written to target file!", nVideoFramesLeft);
+            ffmpegfs_warning(p, "%zu video frames left in buffer and not written to target file!", nVideoFramesLeft);
         }
 
         // Closed anything...
-        ffmpegfs_debug(NULL, "FFmpeg transcoder closed.");
+        ffmpegfs_debug(p, "FFmpeg transcoder closed.");
     }
 }
 

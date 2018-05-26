@@ -190,8 +190,8 @@ double ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
 string format_number(int64_t value);
 string format_bitrate(uint64_t value);
 string format_samplerate(unsigned int value);
+string format_duration(time_t value);
 string format_time(time_t value);
-string format_time_explicit(time_t value);
 string format_size(size_t value);
 
 void exepath(string *path);
@@ -215,8 +215,8 @@ const char * get_codecs(const char * type, FILETYPE * output_type, enum AVCodecI
 void format_number(char *output, size_t size, uint64_t value);
 void format_bitrate(char *output, size_t size, uint64_t value);
 void format_samplerate(char *output, size_t size, unsigned int value);
+void format_duration(char *output, size_t size, time_t value);
 void format_time(char *output, size_t size, time_t value);
-void format_time_explicit(char *output, size_t size, time_t value);
 void format_size(char *output, size_t size, size_t value);
 
 int print_info(AVStream* stream);

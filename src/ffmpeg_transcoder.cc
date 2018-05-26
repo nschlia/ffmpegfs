@@ -3115,7 +3115,7 @@ void FFMPEG_Transcoder::close()
         }
 
         // Closed anything...
-        ffmpegfs_debug(p, "FFmpeg transcoder closed.");
+        ffmpegfs_info(p, "FFmpeg transcoder closed.");
     }
 }
 

@@ -255,7 +255,14 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     if (m_in.m_video.m_nStream_idx >= 0)
     {
         // We have a video stream
+        time_t duration = AV_NOPTS_VALUE;
+
         m_in.m_video.m_pStream = m_in.m_pFormat_ctx->streams[m_in.m_video.m_nStream_idx];
+
+        if (m_in.m_video.m_pStream->duration != AV_NOPTS_VALUE)
+        {
+            duration = av_rescale_q_rnd(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+        }
 
         m_is_video = is_video();
 
@@ -267,9 +274,10 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
-        ffmpegfs_debug(filename(), "Video: Bit Rate: %s Duration: %s",
-                       format_bitrate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
-                       format_duration(av_rescale_q_rnd(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE).c_str());
+        ffmpegfs_info(filename(), "Video: %s Bit Rate: %s Duration: %s",
+                      get_codec_name(m_in.m_video.m_pCodec_ctx->codec_id, 0),
+                      format_bitrate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
+                      format_duration(duration).c_str());
     }
 
     // Open best match audio codec
@@ -283,13 +291,21 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     if (m_in.m_audio.m_nStream_idx >= 0)
     {
         // We have an audio stream
+        time_t duration = AV_NOPTS_VALUE;
+
         m_in.m_audio.m_pStream = m_in.m_pFormat_ctx->streams[m_in.m_audio.m_nStream_idx];
 
-        ffmpegfs_debug(filename(), "Audio: Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
-                       format_bitrate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
-                       m_in.m_audio.m_pCodec_ctx->channels,
-                       format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate).c_str(),
-                       format_duration((av_rescale_q_rnd(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX))) / AV_TIME_BASE).c_str());
+        if (m_in.m_audio.m_pStream->duration != AV_NOPTS_VALUE)
+        {
+            duration = av_rescale_q_rnd(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+        }
+
+        ffmpegfs_info(filename(), "Audio: %s Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
+                      get_codec_name(m_in.m_audio.m_pCodec_ctx->codec_id, 0),
+                      format_bitrate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate).c_str(),
+                      m_in.m_audio.m_pCodec_ctx->channels,
+                      format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate).c_str(),
+                      format_duration(duration).c_str());
     }
 
     if (m_in.m_audio.m_nStream_idx == -1 && m_in.m_video.m_nStream_idx == -1)
@@ -3051,7 +3067,7 @@ void FFMPEG_Transcoder::close()
 #if LAVF_DEP_FILENAME
             file = m_in.m_pFormat_ctx->url;
 #else
-    // lavf 58.7.100 - avformat.h - deprecated
+            // lavf 58.7.100 - avformat.h - deprecated
             file = m_in.m_pFormat_ctx->filename;
 #endif
         }

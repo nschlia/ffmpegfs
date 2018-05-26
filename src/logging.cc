@@ -84,7 +84,7 @@ Logging::Logger::~Logger()
 
     if (filename_ != NULL)
     {
-        msg += " [";
+        msg += "[";
         msg += filename_;
         msg += "] ";
     }
@@ -106,11 +106,10 @@ Logging::Logger::~Logger()
     {
         msg = COLOUR_DARK_GRAY + time_string + level_colour_map_.at(loglevel_) + level_name_map_.at(loglevel_) + COLOUR_RESET + ": ";
 
-
         if (filename_ != NULL)
         {
             msg += COLOUR_LIGHT_PURPLE;
-            msg += " [";
+            msg += "[";
             msg += filename_;
             msg += "] ";
             msg += COLOUR_RESET;

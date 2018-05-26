@@ -152,8 +152,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
 
     m_in.m_filename = virtualfile->m_origfile;
 
-    ffmpegfs_info(filename(), "Opening input file.");
-
     m_mtime = virtualfile->m_st.st_mtime;
 
     if (is_open())

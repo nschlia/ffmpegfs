@@ -36,7 +36,7 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual int bufsize() const;
-    virtual int open(const string & path);
+    virtual int open(const string & filename);
     virtual int read(void *data, int maxlen);
     virtual int error() const;
     virtual int duration() const;

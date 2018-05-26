@@ -21,7 +21,7 @@
 #ifdef USE_LIBVCD
 #include "vcdio.h"
 #include "vcd/vcdutils.h"
-#include "ffmpeg_utils.h"
+//#include "ffmpeg_utils.h"
 #include "ffmpegfs.h"
 
 #include <assert.h>
@@ -51,10 +51,11 @@ int vcdio::bufsize() const
     return (32 * 1024);
 }
 
-int vcdio::open(const string & _path)
+int vcdio::open(const string & filename)
 {
-    string path(_path);
-    string filename;
+    string src_filename;
+
+    set_path(filename);
 
     if (get_virtualfile() != NULL)
     {
@@ -71,13 +72,11 @@ int vcdio::open(const string & _path)
         m_end_pos       = size();
     }
 
-    remove_filename(&path);
+    VCDUTILS::locate_video(path, m_track_no, src_filename);
 
-    VCDUTILS::locate_video(path, m_track_no, filename);
+    ffmpegfs_info("Opening input VCD '%s'.", src_filename.c_str());
 
-    ffmpegfs_info("Opening input VCD '%s'.", filename.c_str());
-
-    m_fpi = fopen(filename.c_str(), "rb");
+    m_fpi = fopen(src_filename.c_str(), "rb");
 
     if (m_fpi == NULL)
     {

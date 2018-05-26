@@ -19,7 +19,7 @@
  */
 
 #include "fileio.h"
-
+#include "ffmpeg_utils.h"
 #include "buffer.h"
 #include "diskio.h"
 #ifdef USE_LIBVCD
@@ -97,3 +97,13 @@ LPCVIRTUALFILE fileio::get_virtualfile() const
 {
     return m_virtualfile;
 }
+
+const string & fileio::set_path(const string & _path)
+{
+    path = _path;
+
+    remove_filename(&path);
+
+    return path;
+}
+

@@ -49,6 +49,8 @@ int diskio::open(const string & filename)
 {
     ffmpegfs_info(filename.c_str(), "Opening input file.");
 
+    set_path(filename);
+
     m_fpi = fopen(filename.c_str(), "rb");
 
     if (m_fpi != NULL)

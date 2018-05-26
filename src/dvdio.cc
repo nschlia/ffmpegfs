@@ -80,9 +80,8 @@ int dvdio::open(const string & filename)
     int ttn, pgn;
     tt_srpt_t *tt_srpt;
     vts_ptt_srpt_t *vts_ptt_srpt;
-    string path(filename);
 
-    remove_filename(&path);
+    set_path(filename);
 
     if (get_virtualfile() != NULL)
     {

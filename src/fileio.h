@@ -122,6 +122,10 @@ public:
 
 protected:
     LPCVIRTUALFILE get_virtualfile() const;
+    const string &set_path(const string & path);
+
+protected:
+    string path;
 
 private:
     LPCVIRTUALFILE m_virtualfile;

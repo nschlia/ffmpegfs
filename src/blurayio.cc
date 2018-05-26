@@ -59,7 +59,7 @@ int blurayio::bufsize() const
     return sizeof(m_data);
 }
 
-int blurayio::open(const string & _filename)
+int blurayio::open(const string & filename)
 {
     const char *bdpath = NULL;
     int title_count;
@@ -67,11 +67,9 @@ int blurayio::open(const string & _filename)
     char *keyfile = NULL;
     BLURAY_TITLE_INFO *ti;
 
-    string filename(_filename);
+    set_path(filename);
 
-    remove_filename(&filename);
-
-    bdpath = filename.c_str();
+    bdpath = path.c_str();
 
     if (get_virtualfile() != NULL)
     {

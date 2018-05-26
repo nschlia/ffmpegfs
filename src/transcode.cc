@@ -589,7 +589,7 @@ static void *decoder_thread(void *arg)
                     pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
                 }
 
-                ffmpegfs_debug(cache_entry->filename().c_str(), "Suspend timeout. Transcoding suspended.");
+                ffmpegfs_info(cache_entry->filename().c_str(), "Suspend timeout. Transcoding suspended after %zu seconds inactivity.", params.m_max_inactive_suspend);
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
@@ -601,7 +601,7 @@ static void *decoder_thread(void *arg)
                     break;
                 }
 
-                ffmpegfs_debug(cache_entry->filename().c_str(), "Transcoding resumed.");
+                ffmpegfs_info(cache_entry->filename().c_str(), "Transcoding resumed.");
             }
         }
 
@@ -638,7 +638,7 @@ static void *decoder_thread(void *arg)
 
         if (timeout)
         {
-            ffmpegfs_info(cache_entry->filename().c_str(), "Timeout! Transcoding aborted.");
+            ffmpegfs_error(cache_entry->filename().c_str(), "Timeout! Transcoding aborted after %zu seconds inactivity.", params.m_max_inactive_abort);
         }
         else
         {

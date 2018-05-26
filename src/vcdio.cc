@@ -74,7 +74,7 @@ int vcdio::open(const string & filename)
 
     VCDUTILS::locate_video(path, m_track_no, src_filename);
 
-    ffmpegfs_info("Opening input VCD '%s'.", src_filename.c_str());
+    ffmpegfs_info(src_filename.c_str(), "Opening input VCD.");
 
     m_fpi = fopen(src_filename.c_str(), "rb");
 

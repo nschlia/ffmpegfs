@@ -629,11 +629,23 @@ void format_number(char *output, size_t size, uint64_t value)
         return;
     }
 
+    if (value == (uint64_t)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
+        return;
+    }
+
     snprintf(output, size, "%" PRId64, value);
 }
 
 void format_bitrate(char *output, size_t size, uint64_t value)
 {
+    if (value == (uint64_t)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
+        return;
+    }
+
     if (value > 1000000)
     {
         snprintf(output, size, "%.2f Mbps", (double)value / 1000000);
@@ -650,6 +662,12 @@ void format_bitrate(char *output, size_t size, uint64_t value)
 
 void format_samplerate(char *output, size_t size, unsigned int value)
 {
+    if (value == (unsigned int)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
+        return;
+    }
+
     if (value < 1000)
     {
         snprintf(output, size, "%u Hz", value);
@@ -662,6 +680,12 @@ void format_samplerate(char *output, size_t size, unsigned int value)
 
 void format_duration(char *output, size_t size, time_t value)
 {
+    if (value == (time_t)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
+        return;
+    }
+
     int hours;
     int mins;
     int secs;
@@ -687,6 +711,12 @@ void format_time(char *output, size_t size, time_t value)
     if (!value)
     {
         strncpy(output, "unlimited", size);
+        return;
+    }
+
+    if (value == (time_t)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
         return;
     }
 
@@ -736,6 +766,12 @@ void format_size(char *output, size_t size, size_t value)
     if (!value)
     {
         strncpy(output, "unlimited", size);
+        return;
+    }
+
+    if (value == (size_t)AV_NOPTS_VALUE)
+    {
+        strncpy(output, "unset", size);
         return;
     }
 

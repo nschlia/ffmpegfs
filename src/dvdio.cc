@@ -102,7 +102,7 @@ int dvdio::open(const string & filename)
     m_dvd = DVDOpen(path.c_str());
     if ( !m_dvd )
     {
-        ffmpegfs_error(NULL, "Couldn't open DVD: %s", path.c_str());
+        ffmpegfs_error(path.c_str(), "Couldn't open DVD.");
         return EINVAL;
     }
 
@@ -126,7 +126,6 @@ int dvdio::open(const string & filename)
         DVDClose( m_dvd );
         return EINVAL;
     }
-
 
     // Make sure the chapter number is valid for this title.
     ffmpegfs_trace(NULL, "There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );

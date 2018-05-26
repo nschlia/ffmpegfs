@@ -91,14 +91,14 @@ int blurayio::open(const string & filename)
     m_bd = bd_open(bdpath, keyfile);
     if (m_bd == NULL)
     {
-        fprintf(stderr, "Failed to open disc: %s\n", bdpath);
+        ffmpegfs_error(bdpath, "Failed to open disc.");
         return 1;
     }
 
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
     if (title_count <= 0)
     {
-        fprintf(stderr, "No titles found: %s\n", bdpath);
+        ffmpegfs_error(bdpath, "No titles found.");
         return 1;
     }
 
@@ -106,35 +106,16 @@ int blurayio::open(const string & filename)
     {
         if (!bd_select_title(m_bd, m_title_no))
         {
-            fprintf(stderr, "Failed to open title: %d\n", m_title_no);
+            ffmpegfs_error(bdpath, "Failed to open title: %d", m_title_no);
             return 1;
         }
         ti = bd_get_title_info(m_bd, m_title_no, m_angle_no);
 
     }
-//    else
-//    {
-//        if (!bd_select_playlist(m_bd, playlist))
-//        {
-//            fprintf(stderr, "Failed to open playlist: %d\n", playlist);
-//            return 1;
-//        }
-//        ti = bd_get_playlist_info(m_bd, playlist, m_angle_no);
-//    }
-
-    //    if (dest) {
-    //        out = fopen(dest, "wb");
-    //        if (out == NULL) {
-    //            fprintf(stderr, "Failed to open destination: %s\n", dest);
-    //            return 1;
-    //        }
-    //    } else {
-    //        out = stdout;
-    //    }
 
     if (m_angle_no >= ti->angle_count)
     {
-        fprintf(stderr, "Invalid angle %d > angle count %d. Using angle 1.\n", m_angle_no+1, ti->angle_count);
+        ffmpegfs_warning(bdpath, "Invalid angle %d > angle count %d. Using angle 1.", m_angle_no+1, ti->angle_count);
         m_angle_no = 0;
     }
 
@@ -142,7 +123,7 @@ int blurayio::open(const string & filename)
 
     if (m_chapter_no >= ti->chapter_count)
     {
-        fprintf(stderr, "First chapter %d > chapter count %d\n", m_chapter_no+1, ti->chapter_count);
+        ffmpegfs_error(bdpath, "First chapter %d > chapter count %d", m_chapter_no+1, ti->chapter_count);
         return 1;
     }
 
@@ -172,8 +153,6 @@ int blurayio::open(const string & filename)
 
 int blurayio::read(void * dataX, int size)
 {
-    //    unsigned int cur_output_size;
-    //    ssize_t maxlen;
     int result_len = 0;
 
     if (m_rest_size)
@@ -192,8 +171,8 @@ int blurayio::read(void * dataX, int size)
     m_cur_pos = bd_tell(m_bd);
     if (m_end_pos < 0 || m_cur_pos < m_end_pos)
     {
-        int             bytes;
-        int          XXsize;
+        int bytes;
+        int XXsize;
 
         XXsize = (int)sizeof(m_data);
         if (XXsize > (m_end_pos - m_cur_pos))
@@ -203,6 +182,7 @@ int blurayio::read(void * dataX, int size)
         bytes = bd_read(m_bd, m_data, XXsize);
         if (bytes <= 0)
         {
+            ffmpegfs_error(path.c_str(), "bd_read fail ret = %i", bytes);
             return 0;
         }
         m_cur_pos = bd_tell(m_bd);
@@ -220,17 +200,6 @@ int blurayio::read(void * dataX, int size)
             result_len = bytes;
             memcpy(dataX, m_data, result_len);
         }
-
-        //        wrote = fwrite(buf, 1, bytes, out);
-        //        if (wrote != (size_t)bytes) {
-        //            fprintf(stderr, "read/write sizes do not match: %d/%zu\n", bytes, wrote);
-        //        }
-        //        if (wrote == 0) {
-        //            if (ferror(out)) {
-        //                perror("Write error");
-        //            }
-        //            break;
-        //        }
     }
 
     return result_len;

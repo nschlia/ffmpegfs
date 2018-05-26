@@ -166,22 +166,22 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     //    found after the first PMT and add further streams during decoding or if it rather
     //    should scan all that are within the analyze-duration and other limits
 
-//    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
-//    if (ret < 0)
-//    {
-//        return ret;
-//    }
+    //    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+    //    if (ret < 0)
+    //    {
+    //        return ret;
+    //    }
 
-//    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
-//    if (ret < 0)
-//    {
-//        return ret;
-//    }
-//    ret = av_dict_set_with_check(&opt, "probesize", "100M", 0);          // <<== honored;
-//    if (ret < 0)
-//    {
-//        return ret;
-//    }
+    //    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
+    //    if (ret < 0)
+    //    {
+    //        return ret;
+    //    }
+    //    ret = av_dict_set_with_check(&opt, "probesize", "100M", 0);          // <<== honored;
+    //    if (ret < 0)
+    //    {
+    //        return ret;
+    //    }
 
     // using own I/O
     m_fileio = fileio::alloc(virtualfile->m_type);
@@ -218,13 +218,6 @@ int FFMPEG_Transcoder::open_input_file(LPCVIRTUALFILE virtualfile)
     }
 
     m_in.m_file_type = get_filetype(m_in.m_pFormat_ctx->iformat->name);
-
-    //#if LAVF_DEP_FILENAME
-    //    m_in.m_filename = m_in.m_pFormat_ctx->url;
-    //#else
-    //    // lavf 58.7.100 - avformat.h - deprecated
-    //    m_in.m_filename = m_in.m_pFormat_ctx->filename;
-    //#endif
 
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE, filename());
     if (ret < 0)
@@ -2982,7 +2975,12 @@ void FFMPEG_Transcoder::close()
     {
         AVIOContext *output_io_context  = (AVIOContext *)m_out.m_pFormat_ctx->pb;
 
+#if LAVF_DEP_FILENAME
+        file = m_out.m_pFormat_ctx->url;
+#else
+        // lavf 58.7.100 - avformat.h - deprecated
         file = m_out.m_pFormat_ctx->filename;
+#endif
 
 #if (AV_VERSION_MAJOR >= 57)
         if (output_io_context != NULL)
@@ -3050,7 +3048,12 @@ void FFMPEG_Transcoder::close()
     {
         if (file.empty())
         {
+#if LAVF_DEP_FILENAME
+            file = m_in.m_pFormat_ctx->url;
+#else
+    // lavf 58.7.100 - avformat.h - deprecated
             file = m_in.m_pFormat_ctx->filename;
+#endif
         }
 
         //if (!(m_in.m_pFormat_ctx->oformat->flags & AVFMT_NOFILE))

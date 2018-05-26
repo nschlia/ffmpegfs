@@ -26,10 +26,10 @@
 // Force PRId64 defines
 #define __STDC_FORMAT_MACROS
 
-//// 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
-////  Deprecate AVFormatContext filename field which had limited length, use the
-////   new dynamically allocated url field instead.
-//#define LAVF_DEP_FILENAME                   (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
+// 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
+//  Deprecate AVFormatContext filename field which had limited length, use the
+//   new dynamically allocated url field instead.
+#define LAVF_DEP_FILENAME                   (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
 // 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
 //   Add a new audio/video encoding and decoding API with decoupled input
 //   and output -- avcodec_send_packet(), avcodec_receive_frame(),

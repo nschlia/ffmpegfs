@@ -358,16 +358,16 @@ int show_formats_devices(int device_only)
     return 0;
 }
 
-const char * get_codec_name(enum AVCodecID codec_id)
+const char * get_codec_name(enum AVCodecID codec_id, int long_name)
 {
     const AVCodecDescriptor * pCodecDescriptor;
-    const char * psz = "";
+    const char * psz = "unknown";
 
     pCodecDescriptor = avcodec_descriptor_get(codec_id);
 
     if (pCodecDescriptor != NULL)
     {
-        if (pCodecDescriptor->long_name != NULL)
+        if (pCodecDescriptor->long_name != NULL && long_name)
         {
             psz = pCodecDescriptor->long_name;
         }

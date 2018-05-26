@@ -665,7 +665,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_mp4_codec(output_codec_ctx->priv_data);
             if (ret < 0)
             {
-                ffmpegfs_error(destname(), "Could not set profile for %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                ffmpegfs_error(destname(), "Could not set profile for %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id, 0), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
         }
@@ -738,7 +738,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
     if (!av_dict_get(opt, "threads", NULL, 0))
     {
-        ffmpegfs_error(destname(), "Setting threads to auto for codec %s.", get_codec_name(output_codec_ctx->codec_id));
+        ffmpegfs_error(destname(), "Setting threads to auto for codec %s.", get_codec_name(output_codec_ctx->codec_id, 0));
         av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
     }
 
@@ -746,11 +746,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        ffmpegfs_error(destname(), "Could not open %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(destname(), "Could not open %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id, 0), ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
-    ffmpegfs_debug(destname(), "Opened %s output codec %s for stream #%u.", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index);
+    ffmpegfs_debug(destname(), "Opened %s output codec %s for stream #%u.", get_media_type_string(output_codec->type), get_codec_name(codec_id, 1), output_stream->index);
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
@@ -855,11 +855,11 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        ffmpegfs_error(destname(), "Could not open %s output codec %s for stream #%u (error '%s').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(destname(), "Could not open %s output codec %s for stream #%u (error '%s').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id, 0), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
-    ffmpegfs_debug(destname(), "Opened album art output codec %s for stream #%u (dimensions %ix%i).", get_codec_name(input_codec->id), output_stream->index, output_codec_ctx->width, output_codec_ctx->height);
+    ffmpegfs_debug(destname(), "Opened album art output codec %s for stream #%u (dimensions %ix%i).", get_codec_name(input_codec->id, 1), output_stream->index, output_codec_ctx->width, output_codec_ctx->height);
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
@@ -2702,7 +2702,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
         }
         default:
         {
-            ffmpegfs_error(filename, "Internal error - unsupported audio codec '%s' for format %s.", get_codec_name(audio_codec_id), params.m_desttype);
+            ffmpegfs_error(filename, "Internal error - unsupported audio codec '%s' for format %s.", get_codec_name(audio_codec_id, 0), params.m_desttype);
             break;
         }
         }
@@ -2742,7 +2742,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             }
             default:
             {
-                ffmpegfs_warning(filename, "Unsupported video codec '%s' for format %s.", get_codec_name(video_codec_id), params.m_desttype);
+                ffmpegfs_warning(filename, "Unsupported video codec '%s' for format %s.", get_codec_name(video_codec_id, 0), params.m_desttype);
                 break;
             }
             }

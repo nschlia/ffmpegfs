@@ -207,7 +207,7 @@ extern "C" {
 #endif
 void ffmpeg_libinfo(char * buffer, size_t maxsize);
 int show_formats_devices(int device_only);
-const char * get_codec_name(enum AVCodecID codec_id);
+const char * get_codec_name(enum AVCodecID codec_id, int long_name);
 int supports_albumart(FILETYPE filetype);
 FILETYPE get_filetype(const char * type);
 const char * get_codecs(const char * type, FILETYPE * output_type, enum AVCodecID * audio_codecid, enum AVCodecID * video_codecid);

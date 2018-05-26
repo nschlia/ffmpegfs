@@ -130,7 +130,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
         return ret;
     }
 
-    ffmpegfs_debug(filename, "Opened %s input codec for stream #%u.", get_codec_name(codec_id), input_stream->index);
+    ffmpegfs_debug(filename, "Opened %s input codec for stream #%u.", get_codec_name(codec_id, true), input_stream->index);
 
     *avctx = dec_ctx;
 

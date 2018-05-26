@@ -943,7 +943,7 @@ static void print_params()
                    params.m_mountpath,
                    params.m_desttype,
                    get_profile_text(params.m_profile),
-                   get_codec_name(audio_codecid),
+                   get_codec_name(audio_codecid, 1),
                    audiobitrate,
                    audiosamplerate,
                    width, height,
@@ -951,7 +951,7 @@ static void print_params()
                    params.m_deinterlace ? "yes" : "no",
                #endif  // !USING_LIBAV
                    params.m_noalbumarts ? "yes" : "no",
-                   get_codec_name(video_codecid),
+                   get_codec_name(video_codecid, 1),
                    videobitrate,
                    params.m_enablescript ? "yes" : "no",
                    params.m_scriptfile,

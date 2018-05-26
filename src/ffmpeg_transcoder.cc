@@ -754,7 +754,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
     if (!av_dict_get(opt, "threads", NULL, 0))
     {
-        ffmpegfs_error(destname(), "Setting threads to auto for codec %s.", get_codec_name(output_codec_ctx->codec_id, 0));
+        ffmpegfs_trace(destname(), "Setting threads to auto for codec %s.", get_codec_name(output_codec_ctx->codec_id, 0));
         av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
     }
 

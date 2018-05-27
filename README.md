@@ -13,8 +13,6 @@ News
 
 * **Work on release 1.4 now in progress**
 * **Bluray, DVD, Video CD and Super Video CD support is now available.** See [install](INSTALL.md) file on how to activate. Bluray, DVD and VCD directories will show all titles and chapters as virtual files.
-* Bluray support is still experimental and may yield unexpected results but works for me so far. Needs some optimisations, though.
-* **A note on Bluray:** Format confusion fixed. Works now as desired. 
 * **Bug reports and feature requests are welcome!**
 
 About

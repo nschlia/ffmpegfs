@@ -1,9 +1,12 @@
 ffmpegfs NEWS
 
-Important changes in 1.4 (2018-05-25) NOT RELEASED
+Important changes in 1.4 (2018-05-27) NOT RELEASED
 
-* Feature: Bluray support: Detect IFO files and list separate DVD chapters or programs
-           as separate files. 
+* Feature: Enhanced logging, added a colour profile to screen logs and raised or lowered
+           some messages log levels appropriately. Also added a few informative log 
+           messages.
+* Feature: Bluray support: Detect bluray files in directories and list separate chapters 
+           and titles as separate files. 
 * Feature: DVD support: Detect IFO files and list separate DVD chapters or programs
            as separate files. 
 * Feature: S/VCD support: Detect Video CDs in directories and list chapters 
@@ -18,7 +21,11 @@ Important changes in 1.4 (2018-05-25) NOT RELEASED
            because a few frames are garbled. Can be disabled with the "decoding_errors"
            option.
 
-* Bugfix: Set mp4 profile to high/3.1 to enable plqayback under enable playback under
+* Bugfix: Sometimes the pixel format could not be detected, raising an assert/application
+          crash with newer FFmpeg API versions. Fixed by setting it to the output format.
+          This will mostly ever create defect encoder results, but at least the ffmpegfs
+          process will not be shut down writing a core file.
+* Bugfix: Set mp4 profile to high/3.1 to enable playback under enable playback under
           Win 7.
 * Bugfix: Fix formatting of help text.
 

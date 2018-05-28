@@ -142,7 +142,7 @@ disabled at the moment.
 Trouble Shooting
 ----------------
 
-*If test_tags fails* you may be missing the python-mutagen package (log
+**If test_tags fails** you may be missing the python-mutagen package (log
 contains "mutagen-inspect: command not found"), then do
 
 On Debian:
@@ -151,7 +151,7 @@ On Debian:
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
-*If you run into this error:*
+**If you run into this error:**
     
     Running autoreconf --install
     configure.ac:46: error: possibly undefined macro: AC_DEFINE
@@ -163,12 +163,12 @@ You are probably missing out on pkg-config, either it is not installed or
 not in path. "apt-get install pkg-config" (on Debian or equivalent on other
 Linux distributions) should help.
 
-*If the videotag.php script does not work under PHP7*
+**If the videotag.php script does not work under PHP7**
 
 The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7)
 it suddenly stops showing the list of files.
 
-Check the Apache2 error.log, you migh see this:
+Check the Apache2 error.log, you might see this:
 
 "PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"
 
@@ -182,7 +182,7 @@ And your troubles should be gone.
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
-*"make check": all audio checks fail*
+**"make check": all audio checks fail**
 
 Logfiles contain "bc: command not found", so the command line communicator is
 missing.
@@ -192,3 +192,20 @@ Fix by installing it (or similar):
      aptitude install bc
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
+
+**Songs get cut short**
+
+If songs do not play to the end and you are using SAMBA or NFS you're in trouble.
+
+Happens when the files are transcoded on the fly, but never when file comes from
+cache. This is because the result is never exactly what was predicted.
+
+SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the 
+file ist larger than predicted.
+
+NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA.
+This can be repeated as many times as one wants to - once the file is OK, once
+not.
+
+As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured
+to cope with that, but how to is unknown to me.

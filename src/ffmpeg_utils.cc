@@ -917,7 +917,7 @@ int print_info(AVStream* stream)
 
 void exepath(string * path)
 {
-    char result[PATH_MAX + 1];
+    char result[PATH_MAX + 1] = "";
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
     if (count != -1)
     {

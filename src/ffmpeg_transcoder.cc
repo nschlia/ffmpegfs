@@ -954,7 +954,6 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 // Some of these parameters are based on the input file's parameters.
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
-    AVIOContext *   output_io_context = NULL;
     AVCodecID       audio_codec_id = AV_CODEC_ID_NONE;
     AVCodecID       video_codec_id = AV_CODEC_ID_NONE;
     const char *    format;
@@ -1031,18 +1030,15 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     }
 
     // open the output file
-    int nBufSize = 1024*1024;
-    output_io_context = avio_alloc_context(
-                (unsigned char *) av_malloc(nBufSize + FF_INPUT_BUFFER_PADDING_SIZE),
-                nBufSize,
+    const size_t buf_size = 1024*1024;
+    m_out.m_pFormat_ctx->pb = avio_alloc_context(
+                (unsigned char *) av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE),
+                buf_size,
                 1,
                 (void *)buffer,
                 NULL,           // read
                 output_write,   // write
                 seek);          // seek
-
-    // Associate the output file (pointer) with the container format context.
-    m_out.m_pFormat_ctx->pb = output_io_context;
 
     // Some formats require the time stamps to start at 0, so if there is a difference between
     // the streams we need to drop audio or video until we are in sync.
@@ -2945,7 +2941,7 @@ void FFMPEG_Transcoder::close()
     }
 
     // Close output file
-#if (AV_VERSION_MAJOR < 57)
+#if !LAVF_DEP_AVSTREAM_CODEC
     if (m_out.m_audio.m_pCodec_ctx)
     {
         avcodec_close(m_out.m_audio.m_pCodec_ctx);
@@ -2981,7 +2977,7 @@ void FFMPEG_Transcoder::close()
         m_out.m_aAlbumArt.pop_back();
         if (codec_ctx != NULL)
         {
-#if (AV_VERSION_MAJOR < 57)
+#if !LAVF_DEP_AVSTREAM_CODEC
             avcodec_close(codec_ctx);
 #else
             avcodec_free_context(&codec_ctx);
@@ -2992,8 +2988,6 @@ void FFMPEG_Transcoder::close()
 
     if (m_out.m_pFormat_ctx != NULL)
     {
-        AVIOContext *output_io_context  = (AVIOContext *)m_out.m_pFormat_ctx->pb;
-
 #if LAVF_DEP_FILENAME
         file = m_out.m_pFormat_ctx->url;
 #else
@@ -3001,24 +2995,27 @@ void FFMPEG_Transcoder::close()
         file = m_out.m_pFormat_ctx->filename;
 #endif
 
-#if (AV_VERSION_MAJOR >= 57)
-        if (output_io_context != NULL)
+        if (m_out.m_pFormat_ctx->pb != NULL)
         {
-            av_freep(&output_io_context->buffer);
-        }
-#endif
-        //        if (!(m_out.m_pFormat_ctx->oformat->flags & AVFMT_NOFILE))
-        {
-            av_freep(&output_io_context);
+            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
+            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
+    #if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
+            av_freep(&m_out.m_pFormat_ctx->pb->buffer);
+            avio_context_free(&m_out.m_pFormat_ctx->pb);
+    #else
+            av_freep(m_out.m_pFormat_ctx->pb);
+    #endif
+            m_out.m_pFormat_ctx->pb = NULL;
         }
 
         avformat_free_context(m_out.m_pFormat_ctx);
+
         m_out.m_pFormat_ctx = NULL;
         bClosed = true;
     }
 
     // Close input file
-#if (AV_VERSION_MAJOR < 57)
+#if !LAVF_DEP_AVSTREAM_CODEC
     if (m_in.m_audio.m_pCodec_ctx)
     {
         avcodec_close(m_in.m_audio.m_pCodec_ctx);
@@ -3054,7 +3051,7 @@ void FFMPEG_Transcoder::close()
         m_in.m_aAlbumArt.pop_back();
         if (codec_ctx != NULL)
         {
-#if (AV_VERSION_MAJOR < 57)
+#if !LAVF_DEP_AVSTREAM_CODEC
             avcodec_close(codec_ctx);
 #else
             avcodec_free_context(&codec_ctx);

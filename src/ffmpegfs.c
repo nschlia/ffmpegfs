@@ -85,8 +85,8 @@ struct ffmpegfs_params params =
     .m_logfile            	= "",                       // default: none
     // Cache/recoding options
     .m_expiry_time          = (60*60*24 /* d */) * 7,	// default: 1 week
-    .m_max_inactive_suspend = (60 /* m */) * 2,         // default: 2 minutes
-    .m_max_inactive_abort   = (60 /* m */) * 5,         // default: 5 minutes
+    .m_max_inactive_suspend = 15,                       // default: 15 seconds
+    .m_max_inactive_abort   = 30,                       // default: 30 seconds
     .m_prebuffer_size       = 100 /* KB */ * 1024,      // default: 100 KB
     .m_max_cache_size       = 0,                        // default: no limit
     .m_min_diskspace        = 0,                        // default: no minimum

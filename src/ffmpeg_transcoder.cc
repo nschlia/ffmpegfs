@@ -697,6 +697,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #else
         AVPixelFormat pix_fmt = (AVPixelFormat)m_in.m_video.m_pStream->codec->pix_fmt;
 #endif
+        if (pix_fmt == AV_PIX_FMT_NONE)
+        {
+            // If input's stream pixel format is unknown, use same as output (may not work but will not crash)
+            pix_fmt = output_codec_ctx->pix_fmt;
+        }
 
         if (pix_fmt != output_codec_ctx->pix_fmt ||
                 CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||

@@ -11,7 +11,7 @@ ffmpegfs
 News
 ----
 
-* **Release 1.4 now available!**
+* **Work on release 1.5 now in progress.**
 
 About
 -----

@@ -1,6 +1,6 @@
 ffmpegfs NEWS
 
-Important changes in 1.4 (2018-05-27) NOT RELEASED
+Important changes in 1.4 (2018-05-30)
 
 * The timeout for suspend and abort have been changed. Decoding will now be suspended
   after 15 seconds (formerly 2 minutes). If no activity is detected after further 15 seconds

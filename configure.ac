@@ -2,7 +2,7 @@
 
 # Sets up package and initializes build system.
 AC_PREREQ(2.57)
-AC_INIT([FFMPEGFS], [1.4])
+AC_INIT([FFMPEGFS], [1.5])
 AC_CONFIG_SRCDIR([src/ffmpegfs.c])
 AC_CONFIG_AUX_DIR([config])
 

@@ -1,5 +1,11 @@
 ffmpegfs NEWS
 
+Important changes in 1.5 (2018-05-XX) UNRELEASED
+
+* Feature: 
+* Bugfix: 
+* Fix deprecation: 
+
 Important changes in 1.4 (2018-05-30)
 
 * The timeout for suspend and abort have been changed. Decoding will now be suspended

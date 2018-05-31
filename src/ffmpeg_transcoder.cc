@@ -2983,7 +2983,10 @@ void FFMPEG_Transcoder::close()
     if (m_out.m_pFormat_ctx != NULL)
     {
 #if LAVF_DEP_FILENAME
-        file = m_out.m_pFormat_ctx->url;
+        if (m_out.m_pFormat_ctx->url != NULL)
+        {
+            file = m_out.m_pFormat_ctx->url;
+        }
 #else
         // lavf 58.7.100 - avformat.h - deprecated
         file = m_out.m_pFormat_ctx->filename;

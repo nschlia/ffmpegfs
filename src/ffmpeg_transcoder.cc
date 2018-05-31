@@ -591,20 +591,29 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     {
     case AVMEDIA_TYPE_AUDIO:
     {
+        int64_t orig_bit_rate;
+        int orig_sample_rate;
+
         // Set the basic encoder parameters
-        if (get_output_bit_rate((CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
+        orig_bit_rate = (CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+        if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit bit rate
-            ffmpegfs_trace(destname(), "Limiting audio bit rate to %s.", format_bitrate(output_codec_ctx->bit_rate).c_str());
+            ffmpegfs_trace(destname(), "Limiting audio bit rate from %s to %s.",
+                           format_bitrate(orig_bit_rate).c_str(),
+                           format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         output_codec_ctx->channels              = 2;
         output_codec_ctx->channel_layout        = av_get_default_channel_layout(output_codec_ctx->channels);
         output_codec_ctx->sample_rate           = m_in.m_audio.m_pCodec_ctx->sample_rate;
+        orig_sample_rate                        = m_in.m_audio.m_pCodec_ctx->sample_rate;
         if (get_output_sample_rate(CODECPAR(m_in.m_audio.m_pStream)->sample_rate, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
         {
             // Limit sample rate
-            ffmpegfs_trace(destname(), "Limiting audio sample rate to %s.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+            ffmpegfs_trace(destname(), "Limiting audio sample rate from %s to %s.",
+                           format_samplerate(orig_sample_rate).c_str(),
+                           format_samplerate(output_codec_ctx->sample_rate).c_str());
         }
 
         if (output_codec->supported_samplerates != NULL)
@@ -671,7 +680,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                     return AVERROR(EINVAL);
                 }
 
-                ffmpegfs_warning(destname(), "Changed audio sample rate to %s because requested value is not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+                ffmpegfs_warning(destname(), "Changed audio sample rate from %s to %s because requested value is not supported by codec.",
+                                 format_samplerate(orig_sample_rate).c_str(),
+                                 format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
         }
 
@@ -724,12 +735,18 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
     case AVMEDIA_TYPE_VIDEO:
     {
+        int64_t orig_bit_rate;
+
         output_codec_ctx->codec_id = codec_id;
 
-        if (get_output_bit_rate((CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate, params.m_videobitrate, &output_codec_ctx->bit_rate))
+        // Set the basic encoder parameters
+        orig_bit_rate = (CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+        if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            ffmpegfs_trace(destname(), "Limiting video bit rate to %s.", format_bitrate(output_codec_ctx->bit_rate).c_str());
+            ffmpegfs_trace(destname(), "Limiting video bit rate FROM %s to %s.",
+                           format_bitrate(orig_bit_rate).c_str(),
+                           format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         // Resolution must be a multiple of two.

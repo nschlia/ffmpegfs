@@ -606,10 +606,99 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             // Limit sample rate
             ffmpegfs_trace(destname(), "Limiting audio sample rate to %s.", format_samplerate(output_codec_ctx->sample_rate).c_str());
         }
-        output_codec_ctx->sample_fmt            = output_codec->sample_fmts[0];
 
-        // Allow the use of the experimental AAC encoder
-        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+        if (output_codec->supported_samplerates != NULL)
+        {
+            // Go through supported sample rates and adjust if necessary
+            bool supported = false;
+
+            for (int n = 0; output_codec->supported_samplerates[n] !=0; n++)
+            {
+                if (output_codec->supported_samplerates[n] == output_codec_ctx->sample_rate)
+                {
+                    // Is supported
+                    supported = true;
+                    break;
+                }
+            }
+
+            if (!supported)
+            {
+                int min_samplerate = 0;
+                int max_samplerate = INT_MAX;
+
+                // Find next lower sample rate in probably unsorted list
+                for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+                {
+                    if (min_samplerate <= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate >= output_codec->supported_samplerates[n])
+                    {
+                        min_samplerate = output_codec->supported_samplerates[n];
+                    }
+                }
+
+                // Find next higher sample rate in probably unsorted list
+                for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+                {
+                    if (max_samplerate >= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate <= output_codec->supported_samplerates[n])
+                    {
+                        max_samplerate = output_codec->supported_samplerates[n];
+                    }
+                }
+
+                if (min_samplerate != 0 && max_samplerate != INT_MAX)
+                {
+                    // set to nearest value
+                    if (output_codec_ctx->sample_rate - min_samplerate < max_samplerate - output_codec_ctx->sample_rate)
+                    {
+                        output_codec_ctx->sample_rate = min_samplerate;
+                    }
+                    else
+                    {
+                        output_codec_ctx->sample_rate = max_samplerate;
+                    }
+                }
+                else if (min_samplerate != 0)
+                {
+                    output_codec_ctx->sample_rate = min_samplerate;
+                }
+                else if (max_samplerate != INT_MAX)
+                {
+                    output_codec_ctx->sample_rate = max_samplerate;
+                }
+                else
+                {
+                    ffmpegfs_error(destname(), "Audio sample rate to %s not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+                    return AVERROR(EINVAL);
+                }
+
+                ffmpegfs_warning(destname(), "Changed audio sample rate to %s because requested value is not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+            }
+        }
+
+        if (output_codec->sample_fmts != NULL)
+        {
+            // Check if input sample format is supported and if so, use it (avoiding resampling)
+            output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
+            for (int n = 0; output_codec->sample_fmts[n] != -1; n++)
+            {
+                if (output_codec->sample_fmts[n] == m_in.m_audio.m_pCodec_ctx->sample_fmt)
+                {
+                    output_codec_ctx->sample_fmt    = m_in.m_audio.m_pCodec_ctx->sample_fmt;
+                    break;
+                }
+            }
+
+            // If none of the supported formats match use the first supported
+            if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
+            {
+                output_codec_ctx->sample_fmt        = output_codec->sample_fmts[0];
+            }
+        }
+        else
+        {
+            // If suppported sample formats are unknown simply take input format and cross our fingers it works...
+            output_codec_ctx->sample_fmt        = m_in.m_audio.m_pCodec_ctx->sample_fmt;
+        }
 
         // Set the sample rate for the container.
         output_stream->time_base.den            = output_codec_ctx->sample_rate;

@@ -40,6 +40,7 @@
 extern "C" {
 #endif
 #include <libavutil/opt.h>
+#include <libavutil/mathematics.h>
 #ifdef __cplusplus
 }
 #endif
@@ -242,3 +243,38 @@ int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
     return ret;
 }
+
+void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
+{
+    time_t duration = AV_NOPTS_VALUE;
+
+    if (stream->duration != AV_NOPTS_VALUE)
+    {
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+    }
+
+    ffmpegfs_info(out_file ? destname() : filename(), "Video %s: %s Bit Rate: %s Duration: %s",
+                  out_file ? "out" : "in",
+                  get_codec_name(codec->codec_id, 0),
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                  format_duration(duration).c_str());
+}
+
+void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
+{
+    time_t duration = AV_NOPTS_VALUE;
+
+    if (stream->duration != AV_NOPTS_VALUE)
+    {
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+    }
+
+    ffmpegfs_info(out_file ? destname() : filename(), "Audio %s: %s Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
+                  out_file ? "out" : "in",
+                  get_codec_name(codec->codec_id, 0),
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                  codec->channels,
+                  format_samplerate(codec->sample_rate).c_str(),
+                  format_duration(duration).c_str());
+}
+

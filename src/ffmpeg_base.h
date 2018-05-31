@@ -42,7 +42,12 @@ protected:
     int init_frame(AVFrame **frame, const char *filename = NULL) const;
     void stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const;
     int av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = NULL) const;
-    int av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = NULL) const;
+    int av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = NULL) const;    
+    void video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
+    void audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
+
+    virtual const char *filename() const = 0;
+    virtual const char *destname() const = 0;
 
 private:
 };

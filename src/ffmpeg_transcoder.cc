@@ -525,7 +525,7 @@ int FFMPEG_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const
 
     for (LPCPROFILE_OPTION p = mp4_opt; p->m_key != NULL; p++)
     {
-        ffmpegfs_trace(destname(), "MP4 codec optimisation -%s%s%s.", p->m_key, *p->m_value ? " " : "", p->m_value);
+        ffmpegfs_trace(destname(), "Profile codec option -%s%s%s.", p->m_key, *p->m_value ? " " : "", p->m_value);
 
         ret = av_opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
@@ -542,7 +542,7 @@ int FFMPEG_Transcoder::prepare_mp4_codec(void *opt) const
 
     for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
     {
-        if (m_profile[n].m_profile == params.m_profile)
+        if (m_profile[n].m_filetype == FILETYPE_MP4 && m_profile[n].m_profile == params.m_profile)
         {
             ret = update_codec(opt, m_profile[n].m_option_codec);
             break;
@@ -765,7 +765,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
 
-        if (output_codec_ctx->codec_id == AV_CODEC_ID_H264)
+        switch (output_codec_ctx->codec_id)
+        {
+        case AV_CODEC_ID_H264:
         {
             ret = prepare_mp4_codec(output_codec_ctx->priv_data);
             if (ret < 0)
@@ -773,6 +775,12 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 ffmpegfs_error(destname(), "Could not set profile for %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id, 0), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
+            break;
+        }
+        default:
+        {
+            break;
+        }
         }
 
 #ifdef _DEBUG
@@ -1257,16 +1265,16 @@ int FFMPEG_Transcoder::init_fifo()
 }
 
 // Prepare format optimisations
-int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION mp4_opt) const
+int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const
 {
     int ret = 0;
 
-    if (mp4_opt == NULL)
+    if (option == NULL)
     {
         return 0;
     }
 
-    for (LPCPROFILE_OPTION p = mp4_opt; p->m_key != NULL; p++)
+    for (LPCPROFILE_OPTION p = option; p->m_key != NULL; p++)
     {
         if ((p->m_options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
         {
@@ -1280,7 +1288,7 @@ int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION mp4_
             continue;
         }
 
-        ffmpegfs_trace(destname(), "MP4 format optimisation -%s%s%s.",  p->m_key, *p->m_value ? " " : "", p->m_value);
+        ffmpegfs_trace(destname(), "Profile format option -%s%s%s.",  p->m_key, *p->m_value ? " " : "", p->m_value);
 
         ret = av_dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
@@ -1297,7 +1305,7 @@ int FFMPEG_Transcoder::prepare_mp4_format(AVDictionary** dict) const
 
     for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
     {
-        if (m_profile[n].m_profile == params.m_profile)
+        if (m_profile[n].m_filetype == FILETYPE_MP4 && m_profile[n].m_profile == params.m_profile)
         {
             ret = update_format(dict, m_profile[n].m_option_format);
             break;
@@ -1317,13 +1325,21 @@ int FFMPEG_Transcoder::write_output_file_header()
     AVDictionary* dict = NULL;
     int ret;
 
-    if (m_out.m_file_type == FILETYPE_MP4)
+    switch (m_out.m_file_type)
+    {
+    case FILETYPE_MP4:
     {
         ret = prepare_mp4_format(&dict);
         if (ret < 0)
         {
             return ret;
         }
+        break;
+    }
+    default:
+    {
+        break;
+    }
     }
 
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER
@@ -2122,7 +2138,8 @@ int FFMPEG_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.
 
-    if ((ret = av_frame_get_buffer(*frame, 0)) < 0)
+    ret = av_frame_get_buffer(*frame, 0);
+    if (ret < 0)
     {
         ffmpegfs_error(destname(), "Could allocate output frame samples (error '%s').", ffmpeg_geterror(ret).c_str());
         av_frame_free(frame);

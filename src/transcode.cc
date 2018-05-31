@@ -796,7 +796,9 @@ static const map<string, PROFILE> profile_map =
     { "CHROME", PROFILE_MP4_CHROME },
     { "SAFARI", PROFILE_MP4_SAFARI },
     { "OPERA", PROFILE_MP4_OPERA },
-    { "MAXTHON", PROFILE_MP4_MAXTHON }
+    { "MAXTHON", PROFILE_MP4_MAXTHON },
+	
+	// WEBM
 };
 
 int get_profile(const char * arg, PROFILE *value)

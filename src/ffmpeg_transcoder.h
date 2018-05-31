@@ -62,14 +62,14 @@ public:
     } PROFILE_OPTION, *LPPROFILE_OPTION;
     typedef PROFILE_OPTION const * LPCPROFILE_OPTION;
 
-    typedef struct _tagPROFILE
+    typedef struct _tagPROFILE_LIST
     {
+        FILETYPE                m_filetype;
         PROFILE                 m_profile;
         LPCPROFILE_OPTION       m_option_codec;
         LPCPROFILE_OPTION       m_option_format;
-
-    } PROFILE, *LPPROFILE;
-    typedef PROFILE const * LPCPROFILE;
+    } PROFILE_LIST, *LPPROFILE_LIST;
+    typedef PROFILE_LIST const * LPCPROFILE_LIST;
 
     struct STREAMREF
     {
@@ -148,9 +148,9 @@ public:
 
     const ID3v1 * id3v1tag() const;
 
-    const char *filename() const;
-    const char *destname() const;
-
+    virtual const char *filename() const;
+    virtual const char *destname() const;
+    
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
@@ -165,7 +165,7 @@ protected:
     int process_albumarts();
     int init_resampler();
     int init_fifo();
-    int update_format(AVDictionary** dict, LPCPROFILE_OPTION opt) const;
+    int update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
     int prepare_mp4_format(AVDictionary **dict) const;
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
@@ -228,7 +228,7 @@ private:
     INPUTFILE                   m_in;
     OUTPUTFILE                  m_out;
 
-    static const PROFILE    m_profile[];
+    static const PROFILE_LIST   m_profile[];
 };
 
 #endif // FFMPEG_TRANSCODER_H

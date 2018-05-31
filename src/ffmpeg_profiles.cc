@@ -494,56 +494,66 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_maxthon[] =
  *
  */
 
-
 // ****************************************************************************************************************
 
-const FFMPEG_Transcoder::PROFILE  FFMPEG_Transcoder::m_profile[] =
+const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
 {
     // MP4
 
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_NONE,
         .m_option_codec     = m_option_codec_none,
         .m_option_format    = m_option_format_none
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_FF,
         .m_option_codec     = m_option_codec_ff,
         .m_option_format    = m_option_format_ff
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_EDGE,
         .m_option_codec     = m_option_codec_edge,
         .m_option_format    = m_option_format_edge
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_IE,
         .m_option_codec     = m_option_codec_ie,
         .m_option_format    = m_option_format_ie
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_CHROME,
         .m_option_codec     = m_option_codec_chrome,
         .m_option_format    = m_option_format_chrome
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_SAFARI,
         .m_option_codec     = m_option_codec_safari,
         .m_option_format    = m_option_format_safari
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_OPERA,
         .m_option_codec     = m_option_codec_opera,
         .m_option_format    = m_option_format_opera
     },
     {
+        .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_MAXTHON,
         .m_option_codec     = m_option_codec_maxthon,
         .m_option_format    = m_option_format_maxthon
     },
 
+    // WEBM
+
     // Must be last entry
     {
+        .m_filetype         = FILETYPE_UNKNOWN,
         .m_profile          = PROFILE_INVALID,
         .m_option_codec     = NULL,
         .m_option_format    = NULL

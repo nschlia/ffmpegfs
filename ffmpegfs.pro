@@ -16,7 +16,6 @@ SOURCES += \
     src/cache_entry.cc \
     src/cache_maintenance.cc \
     src/ffmpeg_base.cc \
-    src/ffmpeg_optimisations.cc \
     src/blurayio.cc \
     src/blurayparser.cc \
     src/diskio.cc \
@@ -28,7 +27,8 @@ SOURCES += \
     src/vcd/vcdchapter.cc \
     src/vcd/vcdentries.cc \
     src/vcd/vcdinfo.cc \
-    src/vcd/vcdutils.cc
+    src/vcd/vcdutils.cc \
+    src/ffmpeg_profiles.cc
 
 HEADERS += \
     src/buffer.h \

@@ -136,7 +136,7 @@
 // ****************************************************************************************************************
 
 // No opimisations, just plain mp4.
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_none[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_none[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -153,7 +153,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_none[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_none[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_none[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -178,7 +178,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_none[] =
 // Use: -movflags +empty_moov
 //      -frag_duration 1000000  (for audio files only)
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ff[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ff[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -195,7 +195,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ff[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ff[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ff[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -219,7 +219,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ff[] =
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_edge[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_edge[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -236,7 +236,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_edge[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_edge[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_edge[] =
 {
     //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
@@ -259,7 +259,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_edge[] =
 // ****************************************************************************************************************
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ie[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ie[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -276,7 +276,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_ie[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ie[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ie[] =
 {
     //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
@@ -299,7 +299,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_ie[] =
 // ****************************************************************************************************************
 
 // NOT GOOD: Playback runs, but must wait until end of decode.
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_chrome[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_chrome[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -316,7 +316,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_chrome[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_chrome[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_chrome[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -339,7 +339,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_chrome[] =
 // ****************************************************************************************************************
 
 // Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_safari[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_safari[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -356,7 +356,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_safari[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_safari[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_safari[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -378,7 +378,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_safari[] =
 
 // ****************************************************************************************************************
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_opera[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_opera[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -395,7 +395,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_opera[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_opera[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_opera[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -418,7 +418,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_opera[] =
 // ****************************************************************************************************************
 
 // TODO - maybe same as Chrome
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_maxthon[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_maxthon[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -435,7 +435,7 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_codec_maxthon[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_maxthon[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_maxthon[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -455,54 +455,97 @@ static const FFMPEG_Transcoder::MP4_OPTION m_opt_format_maxthon[] =
     { NULL, NULL, 0, 0 }
 };
 
+/*
+ * *******************************************************************************************************************
+ *
+ * webm
+ * ====
+ *
+ * https://trac.ffmpeg.org/wiki/Encode/VP9
+ *
+ * Controlling Speed and Quality
+ * =============================
+ *
+ * libvpx-vp9 has two main control knobs for speed and quality:
+ *
+ * Deadline / Quality
+ *
+ *  -deadline can be set to realtime, good, or best. For legacy reasons, the option is also accessible with -quality in ffmpeg.
+ *
+ * good is the default and recommended for most applications.
+ * best is recommended if you have lots of time and want the best compression efficiency.
+ * realtime is recommended for live / fast encoding.
+ *
+ * CPU Utilization / Speed
+ * =======================
+ *
+ *  -cpu-used sets how efficient the compression will be. For legacy reasons, the option is also accessible with -speed in ffmpeg.
+ *
+ * When the deadline/quality parameter is good or best, values for -cpu-used can be set between 0 and 5. The default is 0.
+ * Using 1 or 2 will increase encoding speed at the expense of having some impact on quality and rate control accuracy.
+ * 4 or 5 will turn off rate distortion optimization, having even more of an impact on quality.
+ *
+ * When the deadline/quality is set to realtime, the encoder will try to hit a particular CPU utilization target, and encoding quality
+ * will depend on CPU speed and the complexity of the clip that you are encoding. See ​the vpx documentation for more info. In this case,
+ * the valid values for -cpu-used are between 0 and 15, where the CPU utilization target (in per cent) is calculated as
+ * (100*(16-cpu-used)/16)%.
+ *
+ * *******************************************************************************************************************
+ *
+ */
+
+
 // ****************************************************************************************************************
 
-const FFMPEG_Transcoder::MP4_PROFILE  FFMPEG_Transcoder::m_profile[] =
+const FFMPEG_Transcoder::PROFILE  FFMPEG_Transcoder::m_profile[] =
 {
+    // MP4
+
     {
-        .m_profile = PROFILE_NONE,
-        .m_opt_codec = m_opt_codec_none,
-        .m_opt_format = m_opt_format_none
+        .m_profile          = PROFILE_NONE,
+        .m_option_codec     = m_option_codec_none,
+        .m_option_format    = m_option_format_none
     },
     {
-        .m_profile = PROFILE_FF,
-        .m_opt_codec = m_opt_codec_ff,
-        .m_opt_format = m_opt_format_ff
+        .m_profile          = PROFILE_MP4_FF,
+        .m_option_codec     = m_option_codec_ff,
+        .m_option_format    = m_option_format_ff
     },
     {
-        .m_profile = PROFILE_EDGE,
-        .m_opt_codec = m_opt_codec_edge,
-        .m_opt_format = m_opt_format_edge
+        .m_profile          = PROFILE_MP4_EDGE,
+        .m_option_codec     = m_option_codec_edge,
+        .m_option_format    = m_option_format_edge
     },
     {
-        .m_profile = PROFILE_IE,
-        .m_opt_codec = m_opt_codec_ie,
-        .m_opt_format = m_opt_format_ie
+        .m_profile          = PROFILE_MP4_IE,
+        .m_option_codec     = m_option_codec_ie,
+        .m_option_format    = m_option_format_ie
     },
     {
-        .m_profile = PROFILE_CHROME,
-        .m_opt_codec = m_opt_codec_chrome,
-        .m_opt_format = m_opt_format_chrome
+        .m_profile          = PROFILE_MP4_CHROME,
+        .m_option_codec     = m_option_codec_chrome,
+        .m_option_format    = m_option_format_chrome
     },
     {
-        .m_profile = PROFILE_SAFARI,
-        .m_opt_codec = m_opt_codec_safari,
-        .m_opt_format = m_opt_format_safari
+        .m_profile          = PROFILE_MP4_SAFARI,
+        .m_option_codec     = m_option_codec_safari,
+        .m_option_format    = m_option_format_safari
     },
     {
-        .m_profile = PROFILE_OPERA,
-        .m_opt_codec = m_opt_codec_opera,
-        .m_opt_format = m_opt_format_opera
+        .m_profile          = PROFILE_MP4_OPERA,
+        .m_option_codec     = m_option_codec_opera,
+        .m_option_format    = m_option_format_opera
     },
     {
-        .m_profile = PROFILE_MAXTHON,
-        .m_opt_codec = m_opt_codec_maxthon,
-        .m_opt_format = m_opt_format_maxthon
+        .m_profile          = PROFILE_MP4_MAXTHON,
+        .m_option_codec     = m_option_codec_maxthon,
+        .m_option_format    = m_option_format_maxthon
     },
+
     // Must be last entry
     {
-        .m_profile = PROFILE_INVALID,
-        .m_opt_codec = NULL,
-        .m_opt_format = NULL
+        .m_profile          = PROFILE_INVALID,
+        .m_option_codec     = NULL,
+        .m_option_format    = NULL
     }
 };

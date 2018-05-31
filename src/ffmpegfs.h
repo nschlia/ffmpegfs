@@ -33,14 +33,19 @@
 typedef enum _tagPROFILE
 {
     PROFILE_INVALID = -1,
-    PROFILE_NONE,			// no specific profile
-    PROFILE_FF,				// Firefox
-    PROFILE_EDGE,			// MS Edge
-    PROFILE_IE,				// MS Internet Explorer
-    PROFILE_CHROME,			// Google Chrome
-    PROFILE_SAFARI,			// Apple Safari
-    PROFILE_OPERA,			// Opera
-    PROFILE_MAXTHON        	// Maxthon
+
+    PROFILE_NONE,               // no specific profile
+
+    // MP4
+
+    PROFILE_MP4_FF,				// Firefox
+    PROFILE_MP4_EDGE,			// MS Edge
+    PROFILE_MP4_IE,				// MS Internet Explorer
+    PROFILE_MP4_CHROME,			// Google Chrome
+    PROFILE_MP4_SAFARI,			// Apple Safari
+    PROFILE_MP4_OPERA,			// Opera
+    PROFILE_MP4_MAXTHON         // Maxthon
+
 } PROFILE;
 
 // Global program parameters

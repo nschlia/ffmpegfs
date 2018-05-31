@@ -529,7 +529,7 @@ void FFMPEG_Transcoder::limit_video_size(AVCodecContext *output_codec_ctx)
 }
 
 // Prepare codec optimisations
-int FFMPEG_Transcoder::update_codec(void *opt, LPCMP4_OPTION mp4_opt) const
+int FFMPEG_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const
 {
     int ret = 0;
 
@@ -538,11 +538,11 @@ int FFMPEG_Transcoder::update_codec(void *opt, LPCMP4_OPTION mp4_opt) const
         return 0;
     }
 
-    for (LPCMP4_OPTION p = mp4_opt; p->key != NULL; p++)
+    for (LPCPROFILE_OPTION p = mp4_opt; p->m_key != NULL; p++)
     {
-        ffmpegfs_trace(destname(), "MP4 codec optimisation -%s%s%s.", p->key, *p->value ? " " : "", p->value);
+        ffmpegfs_trace(destname(), "MP4 codec optimisation -%s%s%s.", p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_opt_set_with_check(opt, p->key, p->value, p->flags, destname());
+        ret = av_opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -559,7 +559,7 @@ int FFMPEG_Transcoder::prepare_mp4_codec(void *opt) const
     {
         if (m_profile[n].m_profile == params.m_profile)
         {
-            ret = update_codec(opt, m_profile[n].m_opt_codec);
+            ret = update_codec(opt, m_profile[n].m_option_codec);
             break;
         }
     }
@@ -1157,7 +1157,7 @@ int FFMPEG_Transcoder::init_fifo()
 }
 
 // Prepare format optimisations
-int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_OPTION mp4_opt) const
+int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION mp4_opt) const
 {
     int ret = 0;
 
@@ -1166,23 +1166,23 @@ int FFMPEG_Transcoder::update_format(AVDictionary** dict, LPCMP4_OPTION mp4_opt)
         return 0;
     }
 
-    for (LPCMP4_OPTION p = mp4_opt; p->key != NULL; p++)
+    for (LPCPROFILE_OPTION p = mp4_opt; p->m_key != NULL; p++)
     {
-        if ((p->options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
+        if ((p->m_options & OPT_AUDIO) && m_out.m_video.m_nStream_idx != INVALID_STREAM)
         {
             // Option for audio only, but file contains video stream
             continue;
         }
 
-        if ((p->options & OPT_VIDEO) && m_out.m_video.m_nStream_idx == INVALID_STREAM)
+        if ((p->m_options & OPT_VIDEO) && m_out.m_video.m_nStream_idx == INVALID_STREAM)
         {
             // Option for video, but file contains no video stream
             continue;
         }
 
-        ffmpegfs_trace(destname(), "MP4 format optimisation -%s%s%s.",  p->key, *p->value ? " " : "", p->value);
+        ffmpegfs_trace(destname(), "MP4 format optimisation -%s%s%s.",  p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_dict_set_with_check(dict, p->key, p->value, p->flags, destname());
+        ret = av_dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -1199,7 +1199,7 @@ int FFMPEG_Transcoder::prepare_mp4_format(AVDictionary** dict) const
     {
         if (m_profile[n].m_profile == params.m_profile)
         {
-            ret = update_format(dict, m_profile[n].m_opt_format);
+            ret = update_format(dict, m_profile[n].m_option_format);
             break;
         }
     }

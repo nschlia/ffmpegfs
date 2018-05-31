@@ -53,23 +53,23 @@ public:
 #define OPT_AUDIO       0x00000001  // For audio only files
 #define OPT_VIDEO       0x00000002  // For videos (not audio only)
 
-    typedef struct _tagMP4_OPTION
+    typedef struct _tagPROFILE_OPTION
     {
-        const char *key;
-        const char *value;
-        const int flags;
-        const int options;
-    } MP4_OPTION, *LPMP4_OPTION;
-    typedef MP4_OPTION const * LPCMP4_OPTION;
+        const char *            m_key;
+        const char *            m_value;
+        const int               m_flags;
+        const int               m_options;
+    } PROFILE_OPTION, *LPPROFILE_OPTION;
+    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;
 
-    typedef struct _tagMP4_PROFILE
+    typedef struct _tagPROFILE
     {
         PROFILE                 m_profile;
-        LPCMP4_OPTION           m_opt_codec;
-        LPCMP4_OPTION           m_opt_format;
+        LPCPROFILE_OPTION       m_option_codec;
+        LPCPROFILE_OPTION       m_option_format;
 
-    } MP4_PROFILE, *LPMP4_PROFILE;
-    typedef MP4_PROFILE const * LPCMP4_PROFILE;
+    } PROFILE, *LPPROFILE;
+    typedef PROFILE const * LPCPROFILE;
 
     struct STREAMREF
     {
@@ -154,7 +154,7 @@ public:
 protected:
     bool is_video() const;
     void limit_video_size(AVCodecContext *output_codec_ctx);
-    int update_codec(void *opt, LPCMP4_OPTION mp4_opt) const;
+    int update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const;
     int prepare_mp4_codec(void *opt) const;
     int add_stream(AVCodecID codec_id);    
     int add_albumart_stream(const AVCodecContext *input_codec_ctx);
@@ -165,7 +165,7 @@ protected:
     int process_albumarts();
     int init_resampler();
     int init_fifo();
-    int update_format(AVDictionary** dict, LPCMP4_OPTION opt) const;
+    int update_format(AVDictionary** dict, LPCPROFILE_OPTION opt) const;
     int prepare_mp4_format(AVDictionary **dict) const;
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
@@ -228,7 +228,7 @@ private:
     INPUTFILE                   m_in;
     OUTPUTFILE                  m_out;
 
-    static const MP4_PROFILE    m_profile[];
+    static const PROFILE    m_profile[];
 };
 
 #endif // FFMPEG_TRANSCODER_H

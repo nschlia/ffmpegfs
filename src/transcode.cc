@@ -787,13 +787,16 @@ int init_logging(const char* logfile, const char* max_level, int to_stderr, int 
 static const map<string, PROFILE> profile_map =
 {
     { "NONE", PROFILE_NONE },
-    { "FF", PROFILE_FF },
-    { "EDGE", PROFILE_EDGE },
-    { "IE", PROFILE_IE },
-    { "CHROME", PROFILE_CHROME },
-    { "SAFARI", PROFILE_SAFARI },
-    { "OPERA", PROFILE_OPERA },
-    { "MAXTHON", PROFILE_MAXTHON }
+	
+	// MP4
+	
+    { "FF", PROFILE_MP4_FF },
+    { "EDGE", PROFILE_MP4_EDGE },
+    { "IE", PROFILE_MP4_IE },
+    { "CHROME", PROFILE_MP4_CHROME },
+    { "SAFARI", PROFILE_MP4_SAFARI },
+    { "OPERA", PROFILE_MP4_OPERA },
+    { "MAXTHON", PROFILE_MP4_MAXTHON }
 };
 
 int get_profile(const char * arg, PROFILE *value)

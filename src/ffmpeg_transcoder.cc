@@ -1310,7 +1310,8 @@ int FFMPEG_Transcoder::write_output_file_header()
     }
 
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER
-    if (avformat_init_output(m_out.m_pFormat_ctx, &dict) == AVSTREAM_INIT_IN_WRITE_HEADER)
+    ret = avformat_init_output(m_out.m_pFormat_ctx, &dict);
+    if (ret == AVSTREAM_INIT_IN_WRITE_HEADER)
     {
 #endif // AVSTREAM_INIT_IN_WRITE_HEADER
         ret = avformat_write_header(m_out.m_pFormat_ctx, &dict);
@@ -1320,6 +1321,11 @@ int FFMPEG_Transcoder::write_output_file_header()
             return ret;
         }
 #ifdef AVSTREAM_INIT_IN_WRITE_HEADER
+    }
+    else if (ret < 0)
+    {
+        ffmpegfs_error(destname(), "Could not initialise output (error '%s').", ffmpeg_geterror(ret).c_str());
+        return ret;
     }
 #endif // AVSTREAM_INIT_IN_WRITE_HEADER
 

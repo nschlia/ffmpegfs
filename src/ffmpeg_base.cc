@@ -178,10 +178,6 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
     switch (output_codec_ctx->codec_id)
     {
     case AV_CODEC_ID_THEORA:
-    {
-        time_base                               = av_inv_q(frame_rate);
-        break;
-    }
     case AV_CODEC_ID_MPEG1VIDEO:
     case AV_CODEC_ID_MPEG2VIDEO:
     {

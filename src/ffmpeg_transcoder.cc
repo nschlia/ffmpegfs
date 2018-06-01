@@ -2118,7 +2118,6 @@ int FFMPEG_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     (*frame)->nb_samples     = frame_size;
     (*frame)->channel_layout = m_out.m_audio.m_pCodec_ctx->channel_layout;
     (*frame)->format         = m_out.m_audio.m_pCodec_ctx->sample_fmt;
-    (*frame)->sample_rate    = m_out.m_audio.m_pCodec_ctx->sample_rate;
 
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.

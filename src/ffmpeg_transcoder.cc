@@ -1152,7 +1152,6 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     return 0;
 }
 
-#if LAVR_DEPRECATE
 // Initialize the audio resampler based on the input and output codec settings.
 // If the input and output sample formats differ, a conversion is required
 // libswresample takes care of this, but requires initialization.
@@ -1176,9 +1175,7 @@ int FFMPEG_Transcoder::init_resampler()
 
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
-        // Default channel layouts based on the number of channels
-        // are assumed for simplicity (they are sometimes not detected
-        // properly by the demuxer and/or decoder).
+#if LAVR_DEPRECATE
         m_pAudio_resample_ctx = swr_alloc_set_opts(NULL,
                                                    av_get_default_channel_layout(m_out.m_audio.m_pCodec_ctx->channels),
                                                    m_out.m_audio.m_pCodec_ctx->sample_fmt,
@@ -1202,24 +1199,7 @@ int FFMPEG_Transcoder::init_resampler()
             m_pAudio_resample_ctx = NULL;
             return ret;
         }
-    }
-    return 0;
-}
 #else
-// Initialise the audio resampler based on the input and output codec settings.
-// If the input and output sample formats differ, a conversion is required
-// libavresample takes care of this, but requires initialisation.
-int FFMPEG_Transcoder::init_resampler()
-{
-    // Only initialise the resampler if it is necessary, i.e.,
-    // if and only if the sample formats differ.
-
-    if (m_in.m_audio.m_pCodec_ctx->sample_fmt != m_out.m_audio.m_pCodec_ctx->sample_fmt ||
-            m_in.m_audio.m_pCodec_ctx->sample_rate != m_out.m_audio.m_pCodec_ctx->sample_rate ||
-            m_in.m_audio.m_pCodec_ctx->channels != m_out.m_audio.m_pCodec_ctx->channels)
-    {
-        int ret;
-
         // Create a resampler context for the conversion.
         m_pAudio_resample_ctx = avresample_alloc_context();
         if (!m_pAudio_resample_ctx)
@@ -1249,10 +1229,10 @@ int FFMPEG_Transcoder::init_resampler()
             m_pAudio_resample_ctx = NULL;
             return ret;
         }
+#endif
     }
     return 0;
 }
-#endif
 
 // Initialise a FIFO buffer for the audio samples to be encoded.
 int FFMPEG_Transcoder::init_fifo()

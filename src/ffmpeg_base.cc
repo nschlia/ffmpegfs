@@ -158,7 +158,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
+void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
 {
     AVRational time_base;
 
@@ -214,6 +214,8 @@ void FFMPEG_Base::stream_setup(AVCodecContext *output_codec_ctx, AVStream* outpu
 
     // At this moment the output format must be AV_PIX_FMT_YUV420P;
     output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
+
+    output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 
 int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const

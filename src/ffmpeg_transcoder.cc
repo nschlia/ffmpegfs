@@ -762,10 +762,14 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
 #else
-        stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
+
+        output_codec_ctx->sample_aspect_ratio    = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
+
+        // Set up optimisations
 
         switch (output_codec_ctx->codec_id)
         {
@@ -785,13 +789,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
         }
 
-#ifdef _DEBUG
-        print_info(output_stream);
-#endif // _DEBUG
-
-        output_codec_ctx->gop_size              = 12;   // emit one intra frame every twelve frames at most
-
-        output_codec_ctx->sample_aspect_ratio   = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
+        // Initialise pixel format conversion and rescaling if necessary
 
 #if LAVF_DEP_AVSTREAM_CODEC
         AVPixelFormat pix_fmt = (AVPixelFormat)m_in.m_video.m_pStream->codecpar->format;
@@ -833,6 +831,10 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 return AVERROR(ENOMEM);
             }
         }
+
+#ifdef _DEBUG
+        print_info(output_stream);
+#endif // _DEBUG
 
         // Set duration as hint for muxer
         output_stream->duration                 = av_rescale_q(m_in.m_video.m_pStream->duration, m_in.m_video.m_pStream->time_base, output_stream->time_base);

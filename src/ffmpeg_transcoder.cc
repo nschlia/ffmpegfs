@@ -1859,11 +1859,11 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 
     // Allocate memory for the samples of all channels in one consecutive
     // block for convenience.
-
-    if ((ret = av_samples_alloc(*converted_input_samples, NULL,
-                                m_out.m_audio.m_pCodec_ctx->channels,
-                                frame_size,
-                                m_out.m_audio.m_pCodec_ctx->sample_fmt, 0)) < 0)
+    ret = av_samples_alloc(*converted_input_samples, NULL,
+                           m_out.m_audio.m_pCodec_ctx->channels,
+                           frame_size,
+                           m_out.m_audio.m_pCodec_ctx->sample_fmt, 0);
+    if (ret < 0)
     {
         ffmpegfs_error(destname(), "Could not allocate converted input samples (error '%s').", ffmpeg_geterror(ret).c_str());
         av_freep(&(*converted_input_samples)[0]);
@@ -1977,7 +1977,8 @@ int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, co
     // Make the FIFO as large as it needs to be to hold both,
     // the old and the new samples.
 
-    if ((ret = av_audio_fifo_realloc(m_pAudioFifo, av_audio_fifo_size(m_pAudioFifo) + frame_size)) < 0)
+    ret = av_audio_fifo_realloc(m_pAudioFifo, av_audio_fifo_size(m_pAudioFifo) + frame_size);
+    if (ret < 0)
     {
         ffmpegfs_error(destname(), "Could not reallocate FIFO.");
         return ret;

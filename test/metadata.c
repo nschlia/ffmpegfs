@@ -30,6 +30,7 @@
 
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
+#include <libavutil/ffversion.h>
 
 int main (int argc, char **argv)
 {
@@ -42,6 +43,11 @@ int main (int argc, char **argv)
                "example program to demonstrate the use of the libavformat metadata API.\n"
                "\n", argv[0]);
         return 1;
+    }
+
+    if (!strcmp(argv[1], "-v")) {
+        printf("FFmpeg Version " FFMPEG_VERSION "\n");
+        return 0;
     }
 
     av_register_all();

@@ -177,10 +177,52 @@ echo "*** PASS ***"
 elif [ "$DESTTYPE" == "webm" ];
 then
 
-# The folks who made up WebM actually forgot about tags. Yup. So we can only store
-# a title in the file, nothing else...
-
 # webm
+# FFmpeg versions prior to 3.2.x store a title in the file and the encoder version, nothing else...
+FFMPEGVERSION=`./metadata -v | sed 's/^FFmpeg Version[^0-9]\([0-9]*\.[0-9]*\).*$/\1/' | head -n 1`
+
+echo "FFmpeg Version is ${FFMPEGVERSION}"
+
+if (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
+echo "FFmpeg > 3.2.x"
+
+get_metadata "$DIRNAME/obama.webm" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+ALBUM=US State of the Union 2011
+ARTIST=Barack Obama
+COPYRIGHT=Public Domain
+DATE=2011-01-25
+DISC=0
+DISCTOTAL=0
+
+GENRE=Spoken
+TRACKTOTAL=1
+title=The Internet [excerpt]
+track=1
+END
+echo "*** PASS ***"
+
+get_metadata "$DIRNAME/raven.webm" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+ALBUM=The Raven
+ARTIST=Edgar Allen Poe
+COMMENT=www.librivox.org
+DATE=2007
+
+
+ENSEMBLE=Edgar Allen Poe
+GENRE=Speech
+title=the_raven
+track=01
+END
+echo "*** PASS ***"
+else
+echo "FFmpeg <= 3.2.x"
+
 get_metadata "$DIRNAME/obama.webm" TAGS
 echo Tags found:
 echo "$TAGS"
@@ -198,6 +240,7 @@ cmp -b - <(echo "$TAGS")<<END
 title=the_raven
 END
 echo "*** PASS ***"
+fi
 
 else
 echo "Internal error, unknown type $DESTTYPE. Fix script!"

@@ -37,6 +37,7 @@ int main (int argc, char **argv)
     AVFormatContext *fmt_ctx = NULL;
     AVDictionaryEntry *tag = NULL;
     int ret;
+    unsigned int streamno;
 
     if (argc != 2) {
         printf("usage: %s <input_file>\n"
@@ -59,7 +60,7 @@ int main (int argc, char **argv)
         return ret;
     }
 
-    for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
+    for (streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
     {
         while ((tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
         {

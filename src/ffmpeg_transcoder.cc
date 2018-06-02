@@ -896,16 +896,12 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     int ret;
 
     // find the encoder
-#if 0
-    output_codec = input_codec;
-#else
     output_codec = avcodec_find_encoder(input_codec->id);
     if (!output_codec)
     {
         ffmpegfs_error(destname(), "Could not find encoder '%s'.", avcodec_get_name(input_codec->id));
         return AVERROR(EINVAL);
     }
-#endif
 
     // Must be a video codec
     if (output_codec->type != AVMEDIA_TYPE_VIDEO)

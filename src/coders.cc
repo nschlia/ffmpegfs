@@ -30,6 +30,7 @@ const char* encoder_list[] =
     "mp4",  // TYPE_MP4
     "wav",  // TYPE_WAV
     "ogg",  // TYPE_OGG
+    "webm", // TYPE_WEBM
     NULL
 };
 

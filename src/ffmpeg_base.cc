@@ -174,17 +174,22 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // identical to 1.
     //time_base                                 = m_in.m_pVideo_stream->time_base;
 
-    // tbn
+    // tbn: must be set differently for the target format. Otherwise produces strange results.
     switch (output_codec_ctx->codec_id)
     {
-    case AV_CODEC_ID_THEORA:
+    case AV_CODEC_ID_THEORA:        // ogg
     case AV_CODEC_ID_MPEG1VIDEO:
     case AV_CODEC_ID_MPEG2VIDEO:
     {
         time_base                               = av_inv_q(frame_rate);
         break;
     }
-    default:
+    case AV_CODEC_ID_VP9:           // webm
+    {
+        time_base                               = { .num = 1, .den = 1000 };
+        break;
+    }
+    default:                        // mp4 and all others
     {
         time_base                               = { .num = 1, .den = 90000 };
         break;

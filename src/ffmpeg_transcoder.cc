@@ -552,6 +552,22 @@ int FFMPEG_Transcoder::prepare_mp4_codec(void *opt) const
     return ret;
 }
 
+int FFMPEG_Transcoder::prepare_webm_codec(void *opt) const
+{
+    int ret = 0;
+
+    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
+    {
+        if (m_profile[n].m_filetype == FILETYPE_WEBM && m_profile[n].m_profile == params.m_profile)
+        {
+            ret = update_codec(opt, m_profile[n].m_option_codec);
+            break;
+        }
+    }
+
+    return ret;
+}
+
 int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 {
     AVCodecContext *output_codec_ctx    = NULL;
@@ -668,14 +684,17 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 }
                 else if (min_samplerate != 0)
                 {
+                    // No higher sample rate, use next lower
                     output_codec_ctx->sample_rate = min_samplerate;
                 }
                 else if (max_samplerate != INT_MAX)
                 {
+                    // No lower sample rate, use higher lower
                     output_codec_ctx->sample_rate = max_samplerate;
                 }
                 else
                 {
+                    // Should never happen... There must at least be one.
                     ffmpegfs_error(destname(), "Audio sample rate to %s not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
                     return AVERROR(EINVAL);
                 }
@@ -690,6 +709,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         {
             // Check if input sample format is supported and if so, use it (avoiding resampling)
             output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
+
             for (int n = 0; output_codec->sample_fmts[n] != -1; n++)
             {
                 if (output_codec->sample_fmts[n] == m_in.m_audio.m_pCodec_ctx->sample_fmt)
@@ -712,9 +732,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Set the sample rate for the container.
-        output_stream->time_base.den            = output_codec_ctx->sample_rate;
-        output_stream->time_base.num            = 1;
-        output_codec_ctx->time_base             = output_stream->time_base;
+            output_stream->time_base.den        = output_codec_ctx->sample_rate;
+            output_stream->time_base.num        = 1;
+            output_codec_ctx->time_base         = output_stream->time_base;
 
 #if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
@@ -783,6 +803,16 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             }
             break;
         }
+        case AV_CODEC_ID_VP9:
+        {
+            ret = prepare_webm_codec(output_codec_ctx->priv_data);
+            if (ret < 0)
+            {
+                ffmpegfs_error(destname(), "Could not set profile for %s output codec %s (error '%s').", get_media_type_string(output_codec->type), get_codec_name(codec_id, 0), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+            break;
+        }
         default:
         {
             break;
@@ -798,7 +828,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #endif
         if (pix_fmt == AV_PIX_FMT_NONE)
         {
-            // If input's stream pixel format is unknown, use same as output (may not work but will not crash)
+            // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
             pix_fmt = output_codec_ctx->pix_fmt;
         }
 
@@ -882,6 +912,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         return ret;
     }
 #endif
+
+    //    output_stream->time_base = output_codec_ctx->time_base;
 
     return 0;
 }
@@ -1137,7 +1169,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
                 (void *)buffer,
                 NULL,           // read
                 output_write,   // write
-                seek);          // seek
+                (audio_codec_id != AV_CODEC_ID_OPUS) ? seek : NULL);          // seek
 
     // Some formats require the time stamps to start at 0, so if there is a difference between
     // the streams we need to drop audio or video until we are in sync.
@@ -1157,6 +1189,7 @@ int FFMPEG_Transcoder::init_resampler()
 {
     // Only initialise the resampler if it is necessary, i.e.,
     // if and only if the sample formats differ.
+
     if (m_in.m_audio.m_pCodec_ctx->sample_fmt != m_out.m_audio.m_pCodec_ctx->sample_fmt ||
             m_in.m_audio.m_pCodec_ctx->sample_rate != m_out.m_audio.m_pCodec_ctx->sample_rate ||
             m_in.m_audio.m_pCodec_ctx->channels != m_out.m_audio.m_pCodec_ctx->channels)
@@ -1299,6 +1332,22 @@ int FFMPEG_Transcoder::prepare_mp4_format(AVDictionary** dict) const
     return ret;
 }
 
+int FFMPEG_Transcoder::prepare_webm_format(AVDictionary **dict) const
+{
+    int ret = 0;
+
+    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
+    {
+        if (m_profile[n].m_filetype == FILETYPE_WEBM && m_profile[n].m_profile == params.m_profile)
+        {
+            ret = update_format(dict, m_profile[n].m_option_format);
+            break;
+        }
+    }
+
+    return ret;
+}
+
 // Write the header of the output file container.
 int FFMPEG_Transcoder::write_output_file_header()
 {
@@ -1316,13 +1365,24 @@ int FFMPEG_Transcoder::write_output_file_header()
         }
         break;
     }
+    case FILETYPE_WEBM:
+    {
+        ret = prepare_webm_format(&dict);
+        if (ret < 0)
+        {
+            return ret;
+        }
+        break;
+    }
     default:
     {
         break;
     }
     }
 
-#ifdef AVSTREAM_INIT_IN_WRITE_HEADER
+#if defined(AVSTREAM_INIT_IN_WRITE_HEADER) && (LIBAVFORMAT_VERSION_MAJOR < 58)
+    // NOTE: FFmpeg crashes in mastroscaenc.c in the mkv_write_packet() function if newer than 58.
+    // Maybe an FFmpeg bug? Problem with 58.16.100
     ret = avformat_init_output(m_out.m_pFormat_ctx, &dict);
     if (ret == AVSTREAM_INIT_IN_WRITE_HEADER)
     {
@@ -1333,7 +1393,7 @@ int FFMPEG_Transcoder::write_output_file_header()
             ffmpegfs_error(destname(), "Could not write output file header (error '%s').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
-#ifdef AVSTREAM_INIT_IN_WRITE_HEADER
+#if defined(AVSTREAM_INIT_IN_WRITE_HEADER) && (LIBAVFORMAT_VERSION_MAJOR < 58)
     }
     else if (ret < 0)
     {
@@ -1855,7 +1915,6 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 // Convert the input audio samples into the output sample format.
 // The conversion happens on a per-frame basis, the size of which is
 // specified by frame_size.
-//static int convert_samples(const uint8_t **input_data, uint8_t **converted_data, const int frame_size, SwrContext *resample_context)
 int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_pAudio_resample_ctx != NULL)
@@ -1871,15 +1930,6 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         }
 
         *out_samples = ret;
-
-        //        // Perform a sanity check so that the number of converted samples is
-        //        // not greater than the number of samples to be converted.
-        //        // If the sample rates differ, this case has to be handled differently
-        //        if (avresample_available(m_pAudio_resample_ctx))
-        //        {
-        //            ffmpegfs_error(NULL, "Converted samples left over.");
-        //            return AVERROR_EXIT;
-        //        }
     }
     else
     {
@@ -2139,6 +2189,19 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
         if (pkt->duration)
         {
             duration = pkt->duration;
+
+            if (m_out.m_audio.m_pCodec_ctx->codec_id == AV_CODEC_ID_OPUS)
+            {
+                // OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
+                // at 48 K sampling rate.
+                // For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
+                // TODO: Is this a FFmpeg bug or am I too stupid?
+                if (duration > 0 && m_out.m_audio.m_pStream->codecpar->sample_rate > 0)
+                {
+                    pkt->duration = duration = av_rescale(duration, (int64_t)m_out.m_audio.m_pStream->time_base.den * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, m_out.m_audio.m_pStream->codecpar->sample_rate * (int64_t)m_out.m_audio.m_pStream->time_base.num);
+                }
+            }
+
         }
         else
         {
@@ -2153,7 +2216,7 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 }
 
 // Encode one frame worth of audio to the output file.
-int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
+int FFMPEG_Transcoder:: encode_audio_frame(AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
     AVPacket pkt;
@@ -2186,7 +2249,7 @@ int FFMPEG_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
         return ret;
     }
 
-    // read all the available output packets (in general there may be any number of them
+    // read all the available output packets (in general there may be any number of them)
     while (ret >= 0)
     {
         *data_present = 0;
@@ -2814,6 +2877,12 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             size += (size_t)(duration * (double)output_audio_bit_rate / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
             break;
         }
+        case AV_CODEC_ID_OPUS:
+        {
+            // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
+            size += (size_t)(duration * (double)output_audio_bit_rate / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+            break;
+        }
         case AV_CODEC_ID_NONE:
         {
             break;
@@ -2850,6 +2919,11 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
                 break;
             }
             case AV_CODEC_ID_THEORA:
+            {
+                size += (size_t)(duration * 1.025  * (double)out_video_bit_rate / 8); // ??? // add 2.5% for overhead
+                break;
+            }
+            case AV_CODEC_ID_VP9:
             {
                 size += (size_t)(duration * 1.025  * (double)out_video_bit_rate / 8); // ??? // add 2.5% for overhead
                 break;
@@ -3105,12 +3179,12 @@ void FFMPEG_Transcoder::close()
         {
             // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
             //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
-    #if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
+#if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
             av_freep(&m_out.m_pFormat_ctx->pb->buffer);
             avio_context_free(&m_out.m_pFormat_ctx->pb);
-    #else
+#else
             av_freep(m_out.m_pFormat_ctx->pb);
-    #endif
+#endif
             m_out.m_pFormat_ctx->pb = NULL;
         }
 

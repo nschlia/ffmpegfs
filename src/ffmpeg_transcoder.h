@@ -156,6 +156,7 @@ protected:
     void limit_video_size(AVCodecContext *output_codec_ctx);
     int update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const;
     int prepare_mp4_codec(void *opt) const;
+    int prepare_webm_codec(void *opt) const;
     int add_stream(AVCodecID codec_id);    
     int add_albumart_stream(const AVCodecContext *input_codec_ctx);
     int add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
@@ -167,6 +168,7 @@ protected:
     int init_fifo();
     int update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
     int prepare_mp4_format(AVDictionary **dict) const;
+    int prepare_webm_format(AVDictionary **dict) const;
     int write_output_file_header();
     int decode_audio_frame(AVPacket *pkt, int *decoded);
     int decode_video_frame(AVPacket *pkt, int *decoded);

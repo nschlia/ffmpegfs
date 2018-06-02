@@ -2,6 +2,7 @@ ffmpegfs NEWS
 
 Important changes in 1.5 (2018-06-XX) UNRELEASED
 
+* Feature: Add WebM output format using VP9 video and Opus audio codec.
 * Feature: Check if sample rate or sample format is supported by audio codec and change if
            necessary. Avoid transcode fails e.g. if 44.1KHz sampling rate is requested but
            not supported (e.g. OPUS only supports 8K, 16K, 24K or 48K). Select nearest

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -99,7 +97,7 @@ $dir = './';
 $files = array_filter(scandir($dir), function($item)
 {
     global $dir;
-    if (!preg_match("/\.mp[34]|\.ogg/i", $item)) {
+    if (!preg_match("/\.mp[34]|\.ogg|\.webm/i", $item)) {
         return 0;
     }
     return !is_dir($dir . $item);

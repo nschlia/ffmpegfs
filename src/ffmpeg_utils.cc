@@ -464,6 +464,10 @@ FILETYPE get_filetype(const char * type)
     {
         return FILETYPE_OGG;
     }
+    else if (strcasestr(type, "webm") != NULL)
+    {
+        return FILETYPE_WEBM;
+    }
     else
     {
         return FILETYPE_UNKNOWN;
@@ -518,6 +522,17 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
             *output_type = FILETYPE_OGG;
         }
         format = "ogg";
+        break;
+    }
+    case FILETYPE_WEBM:
+    {
+        *audio_codecid = AV_CODEC_ID_OPUS;
+        *video_codecid = AV_CODEC_ID_VP9;
+        if (output_type != NULL)
+        {
+            *output_type = FILETYPE_WEBM;
+        }
+        format = "webm";
         break;
     }
     case FILETYPE_UNKNOWN:

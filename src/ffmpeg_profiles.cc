@@ -136,7 +136,7 @@
 // ****************************************************************************************************************
 
 // No opimisations, just plain mp4.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_none[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_none[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -153,7 +153,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_none[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_none[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_none[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -178,7 +178,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_none[] =
 // Use: -movflags +empty_moov
 //      -frag_duration 1000000  (for audio files only)
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ff[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ff[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -195,7 +195,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ff[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ff[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ff[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -219,7 +219,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ff[] =
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_edge[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_edge[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -236,7 +236,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_edge[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_edge[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_edge[] =
 {
     //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
@@ -259,7 +259,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_edge[] =
 // ****************************************************************************************************************
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ie[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ie[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -276,7 +276,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_ie[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ie[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ie[] =
 {
     //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
     //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
@@ -299,7 +299,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_ie[] =
 // ****************************************************************************************************************
 
 // NOT GOOD: Playback runs, but must wait until end of decode.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_chrome[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_chrome[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -316,7 +316,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_chrome[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_chrome[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_chrome[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -339,7 +339,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_chrome[] =
 // ****************************************************************************************************************
 
 // Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_safari[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_safari[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -356,7 +356,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_safari[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_safari[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_safari[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -378,7 +378,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_safari[] =
 
 // ****************************************************************************************************************
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_opera[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_opera[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -395,7 +395,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_opera[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_opera[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_opera[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -418,7 +418,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_opera[] =
 // ****************************************************************************************************************
 
 // TODO - maybe same as Chrome
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_maxthon[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
 {
     // -profile:v baseline -level 3.0
     //{ "profile",              "baseline",                 0,  0 },
@@ -435,7 +435,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_codec_maxthon[] =
     { NULL, NULL, 0, 0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_maxthon[] =
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_maxthon[] =
 {
     //{ "moov_size",              "1000000",                 0, OPT_ALL },     // bytes
     //{ "movflags",               "+frag_keyframe",          0, OPT_ALL },
@@ -494,6 +494,19 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_format_maxthon[] =
  *
  */
 
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_codec_none[] =
+{
+    { "deadline",               "realtime",                 0,  0 },
+    { "cpu-used",               "8",                        0,  0 },
+
+    { NULL, NULL, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_format_none[] =
+{
+    { NULL, NULL, 0, 0 }
+};
+
 // ****************************************************************************************************************
 
 const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
@@ -503,53 +516,60 @@ const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_NONE,
-        .m_option_codec     = m_option_codec_none,
-        .m_option_format    = m_option_format_none
+        .m_option_codec     = m_option_mp4_codec_none,
+        .m_option_format    = m_option_mp4_format_none
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_FF,
-        .m_option_codec     = m_option_codec_ff,
-        .m_option_format    = m_option_format_ff
+        .m_option_codec     = m_option_mp4_codec_ff,
+        .m_option_format    = m_option_mp4_format_ff
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_EDGE,
-        .m_option_codec     = m_option_codec_edge,
-        .m_option_format    = m_option_format_edge
+        .m_option_codec     = m_option_mp4_codec_edge,
+        .m_option_format    = m_option_mp4_format_edge
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_IE,
-        .m_option_codec     = m_option_codec_ie,
-        .m_option_format    = m_option_format_ie
+        .m_option_codec     = m_option_mp4_codec_ie,
+        .m_option_format    = m_option_mp4_format_ie
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_CHROME,
-        .m_option_codec     = m_option_codec_chrome,
-        .m_option_format    = m_option_format_chrome
+        .m_option_codec     = m_option_mp4_codec_chrome,
+        .m_option_format    = m_option_mp4_format_chrome
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_SAFARI,
-        .m_option_codec     = m_option_codec_safari,
-        .m_option_format    = m_option_format_safari
+        .m_option_codec     = m_option_mp4_codec_safari,
+        .m_option_format    = m_option_mp4_format_safari
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_OPERA,
-        .m_option_codec     = m_option_codec_opera,
-        .m_option_format    = m_option_format_opera
+        .m_option_codec     = m_option_mp4_codec_opera,
+        .m_option_format    = m_option_mp4_format_opera
     },
     {
         .m_filetype         = FILETYPE_MP4,
         .m_profile          = PROFILE_MP4_MAXTHON,
-        .m_option_codec     = m_option_codec_maxthon,
-        .m_option_format    = m_option_format_maxthon
+        .m_option_codec     = m_option_mp4_codec_maxthon,
+        .m_option_format    = m_option_mp4_format_maxthon
     },
 
-    // WEBM
+    // WebM
+
+    {
+        .m_filetype         = FILETYPE_WEBM,
+        .m_profile          = PROFILE_NONE,
+        .m_option_codec     = m_option_webm_codec_none,
+        .m_option_format    = m_option_webm_format_none
+    },
 
     // Must be last entry
     {

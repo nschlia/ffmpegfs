@@ -12,6 +12,8 @@ News
 ----
 
 * **Work on release 1.5 now in progress.**
+* WebM format has been added.
+* The 1.x releases are now feature complete (for me), if nobody comes up with a great idea.
 
 About
 -----
@@ -25,6 +27,7 @@ and video formats on the fly when opened and read.
 Supported output formats:
 
 * MP4 (audio & video)
+* WebM (audio & video)
 * OGG (audio & video)
 * MP3 (audio only)
 * WAV (audio only)

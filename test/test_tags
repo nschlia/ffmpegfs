@@ -9,11 +9,12 @@
 # ^TDRL             -> TDRC
 # ^desc             -> ?cmt (but keep ^description=)
 #
-
 get_metadata() {
-	local -n outvar=$2    # -n makes it a nameref.
-	echo Checking $1
-        outvar=`mutagen-inspect "$1" | fgrep = | sed -r 's/^TXXX=DESCRIPTION/TXXX=comment/' | sed -r 's/^TDRL/TDRC/' | sed -r 's/^desc/?cmt/' | sed -r 's/^\?cmtription/description/' | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
+        local -n outvar=$2    # -n makes it a nameref.
+        echo Checking $1
+        cat "$1" >/dev/null
+#        outvar=`./metadata "$1" | fgrep = | sed -r 's/^TXXX=DESCRIPTION/TXXX=comment/' | sed -r 's/^TDRL/TDRC/' | sed -r 's/^desc/?cmt/' | sed -r 's/^\?cmtription/description/' | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
+        outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^.*=Lavf.*//'`
 }
 
 if [ "$DESTTYPE" == "mp4" ];
@@ -24,32 +25,42 @@ get_metadata "$DIRNAME/obama.mp4" TAGS
 echo Tags found: 
 echo "$TAGS"
 cmp -b - <(echo "$TAGS")<<END
-?ART=Barack Obama
-?alb=US State of the Union 2011
-?cpy=Public Domain
-?day=2011-01-25
-?gen=Spoken
-?nam=The Internet [excerpt]
+album=US State of the Union 2011
+artist=Barack Obama
+compatible_brands=isomiso2mp41
+copyright=Public Domain
+date=2011-01-25
 
-trkn=(1, 0)
+genre=Spoken
+handler_name=SoundHandler
+language=und
+major_brand=isom
+minor_version=512
+title=The Internet [excerpt]
+track=1
 END
 
-echo "Pass"
+echo "*** PASS ***"
 
 get_metadata "$DIRNAME/raven.mp4" TAGS
 echo Tags found: 
 echo "$TAGS"
 cmp -b - <(echo "$TAGS")<<END
-?ART=Edgar Allen Poe
-?alb=The Raven
-?cmt=www.librivox.org
-?day=2007
-?gen=Speech
-?nam=the_raven
+album=The Raven
+artist=Edgar Allen Poe
+comment=www.librivox.org
+compatible_brands=isomiso2mp41
+date=2007
 
-trkn=(1, 0)
+genre=Speech
+handler_name=SoundHandler
+language=und
+major_brand=isom
+minor_version=512
+title=the_raven
+track=1
 END
-echo "Pass"
+echo "*** PASS ***"
 
 elif [ "$DESTTYPE" == "mp3" ];
 then
@@ -59,40 +70,70 @@ get_metadata "$DIRNAME/obama.mp3" TAGS
 echo Tags found:
 echo "$TAGS"
 cmp -b - <(echo "$TAGS")<<END
-TALB=US State of the Union 2011
-TCON=Spoken
-TCOP=Public Domain
-TDRC=2011-01-25
-TIT2=The Internet [excerpt]
-TPE1=Barack Obama
-TPOS=0
-TRCK=1
+DISCTOTAL=0
+TRACKTOTAL=1
+album=US State of the Union 2011
+artist=Barack Obama
+copyright=Public Domain
+date=2011-01-25
+disc=0
 
-TXXX=DISCTOTAL=0
-TXXX=TRACKTOTAL=1
+
+genre=Spoken
+title=The Internet [excerpt]
+track=1
 END
-echo "Pass"
+echo "*** PASS ***"
 
 get_metadata "$DIRNAME/raven.mp3" TAGS
 echo Tags found: 
 echo "$TAGS"
 cmp -b - <(echo "$TAGS")<<END
-TALB=The Raven
-TCON=Speech
-TDRC=2007
-TIT2=the_raven
-TPE1=Edgar Allen Poe
-TRCK=01
+ENSEMBLE=Edgar Allen Poe
+album=The Raven
+artist=Edgar Allen Poe
+comment=www.librivox.org
+date=2007
 
-TXXX=ENSEMBLE=Edgar Allen Poe
-TXXX=comment=www.librivox.org
+
+genre=Speech
+title=the_raven
+track=01
 END
-echo "Pass"
+echo "*** PASS ***"
 
 elif [ "$DESTTYPE" == "wav" ];
 then
 # wav
-echo WAVs have no tags.
+get_metadata "$DIRNAME/obama.wav" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+album=US State of the Union 2011
+artist=Barack Obama
+copyright=Public Domain
+date=2011-01-25
+
+genre=Spoken
+title=The Internet [excerpt]
+track=1
+END
+echo "*** PASS ***"
+
+get_metadata "$DIRNAME/raven.wav" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+album=The Raven
+artist=Edgar Allen Poe
+comment=www.librivox.org
+date=2007
+
+genre=Speech
+title=the_raven
+track=01
+END
+echo "*** PASS ***"
 
 elif [ "$DESTTYPE" == "ogg" ];
 then
@@ -106,31 +147,57 @@ ALBUM=US State of the Union 2011
 ARTIST=Barack Obama
 COPYRIGHT=Public Domain
 DATE=2011-01-25
-DISCNUMBER=0
 DISCTOTAL=0
+
 GENRE=Spoken
 TITLE=The Internet [excerpt]
-TRACKNUMBER=1
 TRACKTOTAL=1
+disc=0
+track=1
 END
-echo "Pass"
+echo "*** PASS ***"
 
 get_metadata "$DIRNAME/raven.ogg" TAGS
 echo Tags found:
 echo "$TAGS"
 cmp -b - <(echo "$TAGS")<<END
-album=The Raven
-artist=Edgar Allen Poe
-date=2007
-description=www.librivox.org
+ALBUM=The Raven
+ARTIST=Edgar Allen Poe
+DATE=2007
 
-ensemble=Edgar Allen Poe
-genre=Speech
-metadata_block_picture=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
-title=the_raven
-tracknumber=01
+ENSEMBLE=Edgar Allen Poe
+GENRE=Speech
+TITLE=the_raven
+comment=Cover (front)
+comment=www.librivox.org
+track=01
 END
-echo "Pass"
+echo "*** PASS ***"
+
+elif [ "$DESTTYPE" == "webm" ];
+then
+
+# The folks who made up WebM actually forgot about tags. Yup. So we can only store
+# a title in the file, nothing else...
+
+# webm
+get_metadata "$DIRNAME/obama.webm" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+
+title=The Internet [excerpt]
+END
+echo "*** PASS ***"
+
+get_metadata "$DIRNAME/raven.webm" TAGS
+echo Tags found:
+echo "$TAGS"
+cmp -b - <(echo "$TAGS")<<END
+
+title=the_raven
+END
+echo "*** PASS ***"
 
 else
 echo "Internal error, unknown type $DESTTYPE. Fix script!"

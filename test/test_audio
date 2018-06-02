@@ -48,6 +48,11 @@ then
 	# ogg
 	check_audio "obama" "flac" 0.2
 	check_audio "raven" "ogg" 0.0
+elif [ "$DESTTYPE" == "webm" ];
+then
+	# webm
+	check_audio "obama" "flac" 0.03
+	check_audio "raven" "ogg" 0.03
 else
 	echo "Internal error, unknown type $DESTTYPE. Fix script!"
 	exit 99

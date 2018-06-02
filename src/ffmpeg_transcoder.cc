@@ -2574,11 +2574,13 @@ int FFMPEG_Transcoder::process_metadata()
 
     if (m_out.m_audio.m_pStream != NULL && m_in.m_audio.m_pStream != NULL)
     {
+        // Copy audio stream meta data
         copy_metadata(&m_out.m_audio.m_pStream->metadata, m_in.m_audio.m_pStream->metadata);
     }
 
     if (m_out.m_video.m_pStream != NULL && m_in.m_video.m_pStream != NULL)
     {
+        // Copy video stream meta data
         copy_metadata(&m_out.m_video.m_pStream->metadata, m_in.m_video.m_pStream->metadata);
     }
 

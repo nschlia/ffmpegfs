@@ -142,15 +142,6 @@ disabled at the moment.
 Trouble Shooting
 ----------------
 
-**If test_tags fails** you may be missing the python-mutagen package (log
-contains "mutagen-inspect: command not found"), then do
-
-On Debian:
-
-    aptitude install python-mutagen
-
-On Ubuntu use the same command with `apt-get` in place of `aptitude`.
-
 **If you run into this error:**
     
     Running autoreconf --install

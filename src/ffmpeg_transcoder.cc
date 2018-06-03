@@ -736,7 +736,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             output_stream->time_base.num        = 1;
             output_codec_ctx->time_base         = output_stream->time_base;
 
-#if !FFMPEG_VERSION3 // Check for FFmpeg 3
+#if !FFMPEG_VERSION3 | defined(USING_LIBAV) // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         av_dict_set_with_check(&opt, "strict", "-2", 0);
 

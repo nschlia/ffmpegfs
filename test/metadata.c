@@ -30,7 +30,12 @@
 
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
+#if LIBAVFORMAT_VERSION_MICRO >= 100
 #include <libavutil/ffversion.h>
+#else
+#define LIBAV_VERSION   		"0.0.0"
+#define AV_ERROR_MAX_STRING_SIZE 	255
+#endif
 
 int main (int argc, char **argv)
 {
@@ -47,7 +52,11 @@ int main (int argc, char **argv)
     }
 
     if (!strcmp(argv[1], "-v")) {
-        printf("FFmpeg Version " FFMPEG_VERSION "\n");
+#if LIBAVFORMAT_VERSION_MICRO >= 100
+        printf("FFmpeg " FFMPEG_VERSION "\n");
+#else
+        printf("Libav " LIBAV_VERSION "\n");
+#endif
         return 0;
     }
 

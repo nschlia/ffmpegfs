@@ -12,239 +12,61 @@
 get_metadata() {
         local -n outvar=$2    # -n makes it a nameref.
         echo Checking $1
-        cat "$1" >/dev/null
-#        outvar=`./metadata "$1" | fgrep = | sed -r 's/^TXXX=DESCRIPTION/TXXX=comment/' | sed -r 's/^TDRL/TDRC/' | sed -r 's/^desc/?cmt/' | sed -r 's/^\?cmtription/description/' | sort | sed -r 's/^.*=Lavf.*//' | sed 's/[[:blank:]]*$//'`
-        outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^.*=Lavf.*//'`
+        cat "$1" > /dev/null
+        outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I'`
+
+#FILENAME=`basename "$1"`
+#echo FILE $FILENAME
+#./metadata "$1" | sort -u | sed -r 's/^encoder=.*//I' > tags/${FILENAME}.${LIBRARY}${VERSION}.tag
 }
 
-if [ "$DESTTYPE" == "mp4" ];
-then
-# mp4
-
-get_metadata "$DIRNAME/obama.mp4" TAGS
-echo Tags found: 
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-album=US State of the Union 2011
-artist=Barack Obama
-compatible_brands=isomiso2mp41
-copyright=Public Domain
-date=2011-01-25
-
-genre=Spoken
-handler_name=SoundHandler
-language=und
-major_brand=isom
-minor_version=512
-title=The Internet [excerpt]
-track=1
-END
-
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.mp4" TAGS
-echo Tags found: 
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-album=The Raven
-artist=Edgar Allen Poe
-comment=www.librivox.org
-compatible_brands=isomiso2mp41
-date=2007
-
-genre=Speech
-handler_name=SoundHandler
-language=und
-major_brand=isom
-minor_version=512
-title=the_raven
-track=1
-END
-echo "*** PASS ***"
-
-elif [ "$DESTTYPE" == "mp3" ];
-then
-
-# mp3
-get_metadata "$DIRNAME/obama.mp3" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-DISCTOTAL=0
-TRACKTOTAL=1
-album=US State of the Union 2011
-artist=Barack Obama
-copyright=Public Domain
-date=2011-01-25
-disc=0
-
-
-genre=Spoken
-title=The Internet [excerpt]
-track=1
-END
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.mp3" TAGS
-echo Tags found: 
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-ENSEMBLE=Edgar Allen Poe
-album=The Raven
-artist=Edgar Allen Poe
-comment=www.librivox.org
-date=2007
-
-
-genre=Speech
-title=the_raven
-track=01
-END
-echo "*** PASS ***"
-
-elif [ "$DESTTYPE" == "wav" ];
-then
-# wav
-get_metadata "$DIRNAME/obama.wav" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-album=US State of the Union 2011
-artist=Barack Obama
-copyright=Public Domain
-date=2011-01-25
-
-genre=Spoken
-title=The Internet [excerpt]
-track=1
-END
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.wav" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-album=The Raven
-artist=Edgar Allen Poe
-comment=www.librivox.org
-date=2007
-
-genre=Speech
-title=the_raven
-track=01
-END
-echo "*** PASS ***"
-
-elif [ "$DESTTYPE" == "ogg" ];
-then
-
-# ogg
-get_metadata "$DIRNAME/obama.ogg" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-ALBUM=US State of the Union 2011
-ARTIST=Barack Obama
-COPYRIGHT=Public Domain
-DATE=2011-01-25
-DISCTOTAL=0
-
-GENRE=Spoken
-TITLE=The Internet [excerpt]
-TRACKTOTAL=1
-disc=0
-track=1
-END
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.ogg" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-ALBUM=The Raven
-ARTIST=Edgar Allen Poe
-DATE=2007
-
-ENSEMBLE=Edgar Allen Poe
-GENRE=Speech
-TITLE=the_raven
-comment=Cover (front)
-comment=www.librivox.org
-track=01
-END
-echo "*** PASS ***"
-
-elif [ "$DESTTYPE" == "webm" ];
-then
-
-# webm
+# Detect FFmpeg or Libav version
 # FFmpeg versions prior to 3.2.x store a title in the file and the encoder version, nothing else...
-FFMPEGVERSION=`./metadata -v | sed 's/^FFmpeg Version[^0-9]\([0-9]*\.[0-9]*\).*$/\1/' | head -n 1`
+FFMPEGVERSION=`./metadata -v | sed -n 's/^FFmpeg[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
+LIBAVVERSION=`./metadata -v | sed -n 's/^Libav[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
 
-echo "FFmpeg Version is ${FFMPEGVERSION}"
+if [ ! -z "${FFMPEGVERSION}" ];
+then
+	echo "FFmpeg version is ${FFMPEGVERSION}"
 
-if (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
-echo "FFmpeg > 3.2.x"
+	LIBRARY=ffmpeg
+        if (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
+                echo "FFmpeg > 3.2.x"
+		VERSION=3.2+
+        else
+        	echo "FFmpeg <= 3.2.x"
+		VERSION=3.2-
+        fi
+elif [ ! -z "${LIBAVVERSION}" ];
+then
+	echo "Libav version is ${LIBAVVERSION}"
 
-get_metadata "$DIRNAME/obama.webm" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-ALBUM=US State of the Union 2011
-ARTIST=Barack Obama
-COPYRIGHT=Public Domain
-DATE=2011-01-25
-DISC=0
-DISCTOTAL=0
-
-GENRE=Spoken
-TRACKTOTAL=1
-title=The Internet [excerpt]
-track=1
-END
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.webm" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-ALBUM=The Raven
-ARTIST=Edgar Allen Poe
-COMMENT=www.librivox.org
-DATE=2007
-
-
-ENSEMBLE=Edgar Allen Poe
-GENRE=Speech
-title=the_raven
-track=01
-END
-echo "*** PASS ***"
+	# Using Libav, no known version differences
+	LIBRARY=libav
+	VERSION=
 else
-echo "FFmpeg <= 3.2.x"
-
-get_metadata "$DIRNAME/obama.webm" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-
-title=The Internet [excerpt]
-END
-echo "*** PASS ***"
-
-get_metadata "$DIRNAME/raven.webm" TAGS
-echo Tags found:
-echo "$TAGS"
-cmp -b - <(echo "$TAGS")<<END
-
-title=the_raven
-END
-echo "*** PASS ***"
+	echo "Internal error: FFmpeg/Libav version unknown."
+	exit 99
 fi
 
-else
-echo "Internal error, unknown type $DESTTYPE. Fix script!"
-exit 99
-fi
+#get_metadata "$DIRNAME/obama.$1" TAGS
+#get_metadata "$DIRNAME/raven.$1" TAGS
+#exit 0
+
+TAGFILE=tags/obama.$1.${LIBRARY}${VERSION}.tag
+get_metadata "$DIRNAME/obama.$1" TAGS
+echo "Compare file: ${TAGFILE}" 
+echo "Tags found:"
+echo "$TAGS"
+cmp -b ${TAGFILE} <(echo "$TAGS")
+printf "*** PASS ***\n\n"
+
+TAGFILE=tags/raven.$1.${LIBRARY}${VERSION}.tag
+get_metadata "$DIRNAME/raven.$1" TAGS
+echo "Compare file: ${TAGFILE}"
+echo "Tags found:"
+echo "${TAGS}"
+cmp -b ${TAGFILE} <(echo "$TAGS")
+printf "*** PASS ***\n\n"
 
 echo OK

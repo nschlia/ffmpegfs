@@ -15,7 +15,7 @@ check_PROGRAMS = fpcompare metadata
 fpcompare_SOURCES = fpcompare.c
 fpcompare_LDADD = -lchromaprint -lavcodec -lavformat -lavutil
 metadata_SOURCES = metadata.c
-metadata_LDADD = -lavformat -lavutil
+metadata_LDADD =  -lavcodec -lavformat -lavutil
 
 if USE_LIBSWRESAMPLE
 AM_CPPFLAGS += -DUSE_LIBSWRESAMPLE

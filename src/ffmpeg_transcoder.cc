@@ -2196,9 +2196,9 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
                 // at 48 K sampling rate.
                 // For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
                 // TODO: Is this a FFmpeg bug or am I too stupid?
-                if (duration > 0 && m_out.m_audio.m_pStream->codecpar->sample_rate > 0)
+                if (duration > 0 && CODECPAR(m_out.m_audio.m_pStream)->sample_rate > 0)
                 {
-                    pkt->duration = duration = av_rescale(duration, (int64_t)m_out.m_audio.m_pStream->time_base.den * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, m_out.m_audio.m_pStream->codecpar->sample_rate * (int64_t)m_out.m_audio.m_pStream->time_base.num);
+                    pkt->duration = duration = av_rescale(duration, (int64_t)m_out.m_audio.m_pStream->time_base.den * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_pStream)->sample_rate * (int64_t)m_out.m_audio.m_pStream->time_base.num);
                 }
             }
 

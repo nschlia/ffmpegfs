@@ -788,6 +788,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #endif
 
         output_codec_ctx->sample_aspect_ratio    = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
+        CODECPAR(output_stream)->sample_aspect_ratio    = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
 
         // Set up optimisations
 

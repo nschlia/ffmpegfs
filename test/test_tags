@@ -14,10 +14,6 @@ get_metadata() {
         echo Checking $1
         cat "$1" > /dev/null
         outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I'`
-
-#FILENAME=`basename "$1"`
-#echo FILE $FILENAME
-#./metadata "$1" | sort -u | sed -r 's/^encoder=.*//I' > tags/${FILENAME}.${LIBRARY}${VERSION}.tag
 }
 
 # Detect FFmpeg or Libav version
@@ -48,10 +44,6 @@ else
 	echo "Internal error: FFmpeg/Libav version unknown."
 	exit 99
 fi
-
-#get_metadata "$DIRNAME/obama.$1" TAGS
-#get_metadata "$DIRNAME/raven.$1" TAGS
-#exit 0
 
 TAGFILE=tags/obama.$1.${LIBRARY}${VERSION}.tag
 get_metadata "$DIRNAME/obama.$1" TAGS

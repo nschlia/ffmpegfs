@@ -46,6 +46,8 @@ typedef enum _tagPROFILE
     PROFILE_MP4_OPERA,			// Opera
     PROFILE_MP4_MAXTHON         // Maxthon
 
+    // WEBM
+
 } PROFILE;
 
 // Global program parameters

@@ -732,9 +732,9 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Set the sample rate for the container.
-            output_stream->time_base.den        = output_codec_ctx->sample_rate;
-            output_stream->time_base.num        = 1;
-            output_codec_ctx->time_base         = output_stream->time_base;
+        output_stream->time_base.den        = output_codec_ctx->sample_rate;
+        output_stream->time_base.num        = 1;
+        output_codec_ctx->time_base         = output_stream->time_base;
 
 #if !FFMPEG_VERSION3 | defined(USING_LIBAV) // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
@@ -787,8 +787,25 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
 #endif
 
-        output_codec_ctx->sample_aspect_ratio    = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
-        CODECPAR(output_stream)->sample_aspect_ratio    = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
+        AVRational sample_aspect_ratio                  = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
+
+        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9)
+        {
+            output_codec_ctx->sample_aspect_ratio           = sample_aspect_ratio;
+            CODECPAR(output_stream)->sample_aspect_ratio    = sample_aspect_ratio;
+        }
+
+        else
+        {
+            // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
+            // TODO: The ffmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here...
+
+            output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
+            CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
+
+            output_codec_ctx->width                         = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
+            //output_codec_ctx->height                        *= sample_aspect_ratio.den;
+        }
 
         // Set up optimisations
 
@@ -844,6 +861,15 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             if (pix_fmt != output_codec_ctx->pix_fmt)
             {
                 ffmpegfs_trace(destname(), "Initialising pixel format conversion from %s to %s.", fmtin != NULL ? fmtin->name : "-", fmtout != NULL ? fmtout->name : "-");
+            }
+
+            if (CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||
+                    CODECPAR(m_in.m_video.m_pStream)->height != output_codec_ctx->height)
+
+            {
+                ffmpegfs_debug(destname(), "Rescaling video size ffrom %i:%i to %i:%i.",
+                               CODECPAR(m_in.m_video.m_pStream)->width, CODECPAR(m_in.m_video.m_pStream)->height,
+                               output_codec_ctx->width, output_codec_ctx->height);
             }
 
             m_pSws_ctx = sws_getContext(

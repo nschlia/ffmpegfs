@@ -26,12 +26,6 @@
 #include "ffmpeg_utils.h"
 #include "cache_maintenance.h"
 #include "coders.h"
-
-#include <dirent.h>
-#include <unistd.h>
-#include <map>
-#include <vector>
-#include <assert.h>
 #ifdef USE_LIBVCD
 #include "vcdparser.h"
 #endif // USE_LIBVCD
@@ -41,6 +35,12 @@
 #ifdef USE_LIBBLURAY
 #include "blurayparser.h"
 #endif // USE_LIBBLURAY
+
+#include <dirent.h>
+#include <unistd.h>
+#include <map>
+#include <vector>
+#include <assert.h>
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
 

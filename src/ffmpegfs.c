@@ -25,7 +25,6 @@
 #include "ffmpegfs.h"
 #include "coders.h"
 
-#include <regex.h>
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
 #ifdef USE_LIBBLURAY
@@ -219,7 +218,6 @@ struct fuse_operations ffmpegfs_ops =
     .destroy  = ffmpegfs_destroy,
 };
 
-static int compare(const char *value, const char *pattern);
 static int get_bitrate(const char * arg, unsigned int *value);
 static int get_samplerate(const char * arg, unsigned int *value);
 static int get_time(const char * arg, time_t *value);
@@ -419,25 +417,6 @@ static void usage(char *name)
           "    -h, --help             display this help and exit\n"
           "    -V, --version          output version information and exit\n"
           "\n", stdout);
-}
-
-static int compare(const char *value, const char *pattern)
-{
-    regex_t regex;
-    int reti;
-
-    reti = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
-    if (reti)
-    {
-        fprintf(stderr, "Could not compile regex\n");
-        return -1;
-    }
-
-    reti = regexec(&regex, value, 0, NULL, 0);
-
-    regfree(&regex);
-
-    return reti;
 }
 
 // Get bitrate:

@@ -25,6 +25,7 @@
 #include <libgen.h>
 #include <unistd.h>
 #include <algorithm>
+#include <regex.h>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -98,6 +99,15 @@ const string & remove_filename(string * path)
     *path = dirname(p);
     free(p);
     append_sep(path);
+    return *path;
+}
+
+// Remove path from filename. Handy basename alternative.
+const string & remove_path(string *path)
+{
+    char *p = strdup(path->c_str());
+    *path = basename(p);
+    free(p);
     return *path;
 }
 
@@ -966,3 +976,29 @@ std::string &trim(std::string &s)
 {
     return ltrim(rtrim(s));
 }
+
+// Compare value with pattern
+// Returns:
+// -1 if pattern is no valid regex
+// 0 if pattern matches
+// 1 if not
+int compare(const char *value, const char *pattern)
+{
+    regex_t regex;
+    int reti;
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
+    if (reti)
+    {
+        fprintf(stderr, "Could not compile regex\n");
+        return -1;
+    }
+
+    reti = regexec(&regex, value, 0, NULL, 0);
+
+    regfree(&regex);
+
+    return reti;
+}
+
+

@@ -182,6 +182,7 @@ using namespace std;
 const string & append_sep(string * path);
 const string & append_filename(string * path, const string & filename);
 const string & remove_filename(string *path);
+const string & remove_path(string *path);
 bool find_ext(string * ext, const string & filename);
 const string & replace_ext(string * filename, const string & ext);
 const string & get_destname(string *destname, const string & filename);
@@ -221,6 +222,8 @@ void format_time(char *output, size_t size, time_t value);
 void format_size(char *output, size_t size, size_t value);
 
 int print_info(AVStream* stream);
+
+int compare(const char *value, const char *pattern);
 
 #ifdef __cplusplus
 }

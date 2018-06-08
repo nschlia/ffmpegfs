@@ -3,6 +3,9 @@ ffmpegfs NEWS
 Important changes in 1.5 (2018-06-XX) UNRELEASED
 
 * Feature: Add WebM output format using VP9 video and Opus audio codec.
+* Feature: Input format check is now done by FFmpeg, that means if the input file is
+           supported by FFmpeg, it will be transcoded. For performance, files are not
+           opened and scanned, the file's extension is checked only (e.g. mp3, wav, rm etc.).
 * Feature: Replaced mutagen-inspect with internal code which also works with WAV and WebM.
            test_tags works for all formats now. python-mutagen is no longer required.
 * Feature: Check if sample rate or sample format is supported by audio codec and change if

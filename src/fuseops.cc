@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include <map>
 #include <vector>
+#include <regex>
 #include <assert.h>
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
@@ -133,9 +134,9 @@ static void translate_path(string *origpath, const char* path)
 // Returns true if filename has been changed
 static bool transcoded_name(string * path)
 {
-    string ext;
+    AVOutputFormat* format = av_guess_format(NULL, path->c_str(),NULL);
 
-    if (find_ext(&ext, *path) && check_decoder(ext.c_str()))
+    if (format != NULL)
     {
         replace_ext(path, params.m_desttype);
         return true;
@@ -162,6 +163,29 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, const strin
     return &it->second;
 }
 
+static int selector(const struct dirent * de)
+{
+    if (de->d_type & (DT_REG | DT_LNK))
+    {
+        AVOutputFormat* format = av_guess_format(NULL, de->d_name, NULL);
+
+        return (format != NULL);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+}
+
 // Given the destination (post-transcode) file name, determine the name of
 // the original file to be transcoded.
 // Returns contstant pointer to VIRTUALFILE object of file, NULL if not found
@@ -183,27 +207,51 @@ static LPCVIRTUALFILE find_original(string * path)
         string ext;
         if (find_ext(&ext, *path) && strcasecmp(ext.c_str(), params.m_desttype) == 0)
         {
-            string tmppath(*path);
+            string dir(*path);
+            string filename(*path);
+            string tmppath;
+            struct dirent **namelist;
+            struct stat st;
+            int count;
+            int found = 0;
 
-            for (size_t i = 0; decoder_list[i]; ++i)
+            remove_filename(&dir);
+            tmppath = dir;
+
+            count = scandir(dir.c_str(), &namelist, selector, NULL);
+            if (count == -1)
             {
-                struct stat st;
+                perror("scandir");
+                return NULL;
+            }
 
-                replace_ext(&tmppath, decoder_list[i]);
+            remove_path(&filename);
+            std::regex specialChars { R"([-[\]{}()*+?.,\^$|#\s])" };
+            filename = std::regex_replace(filename, specialChars, R"(\$&)" );
+            replace_ext(&filename, "*");
 
-                //if (access(tmppath.c_str(), F_OK) == 0)
-                if (lstat(tmppath.c_str(), &st) == 0)
+            for (int n = 0; n < count; n++)
+            {
+                if (!found && !compare(namelist[n]->d_name, filename.c_str()))
                 {
-                    // File exists with this extension
-                    LPCVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *path, tmppath, &st);
-                    *path = tmppath;
-                    return virtualfile;
+                    append_filename(&tmppath, namelist[n]->d_name);
+                    found = 1;
                 }
-                else
-                {
-                    // File does not exist; not an error
-                    errno = 0;
-                }
+                free(namelist[n]);
+            }
+            free(namelist);
+
+            if (found && lstat(tmppath.c_str(), &st) == 0)
+            {
+                // File exists with this extension
+                LPCVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *path, tmppath, &st);
+                *path = tmppath;
+                return virtualfile;
+            }
+            else
+            {
+                // File does not exist; not an error
+                errno = 0;
             }
         }
     }

@@ -1407,27 +1407,12 @@ int FFMPEG_Transcoder::write_output_file_header()
     }
     }
 
-#if defined(AVSTREAM_INIT_IN_WRITE_HEADER) && (LIBAVFORMAT_VERSION_MAJOR < 58)
-    // NOTE: FFmpeg crashes in mastroscaenc.c in the mkv_write_packet() function if newer than 58.
-    // Maybe an FFmpeg bug? Problem with 58.16.100
-    ret = avformat_init_output(m_out.m_pFormat_ctx, &dict);
-    if (ret == AVSTREAM_INIT_IN_WRITE_HEADER)
+    ret = avformat_write_header(m_out.m_pFormat_ctx, &dict);
+    if (ret < 0)
     {
-#endif // AVSTREAM_INIT_IN_WRITE_HEADER
-        ret = avformat_write_header(m_out.m_pFormat_ctx, &dict);
-        if (ret < 0)
-        {
-            ffmpegfs_error(destname(), "Could not write output file header (error '%s').", ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-#if defined(AVSTREAM_INIT_IN_WRITE_HEADER) && (LIBAVFORMAT_VERSION_MAJOR < 58)
-    }
-    else if (ret < 0)
-    {
-        ffmpegfs_error(destname(), "Could not initialise output (error '%s').", ffmpeg_geterror(ret).c_str());
+        ffmpegfs_error(destname(), "Could not write output file header (error '%s').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
-#endif // AVSTREAM_INIT_IN_WRITE_HEADER
 
     if (m_out.m_file_type == FILETYPE_WAV)
     {

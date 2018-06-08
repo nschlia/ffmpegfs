@@ -11,9 +11,7 @@ ffmpegfs
 News
 ----
 
-* **Work on release 1.5 now in progress.**
-* WebM format has been added.
-* The 1.x releases are now feature complete (for me), if nobody comes up with a great idea.
+* **Work on release 1.6 now in progress.**
 
 About
 -----

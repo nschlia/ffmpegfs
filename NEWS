@@ -1,6 +1,6 @@
 ffmpegfs NEWS
 
-Important changes in 1.5 (2018-06-XX) UNRELEASED
+Important changes in 1.5 (2018-06-18)
 
 * Feature: Add WebM output format using VP9 video and Opus audio codec.
 * Feature: Input format check is now done by FFmpeg, that means if the input file is

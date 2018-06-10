@@ -287,12 +287,12 @@ bool Cache_Entry::expired() const
 
 bool Cache_Entry::suspend_timeout() const
 {
-    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_suspend) && !m_ref_count);
+    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_suspend) && m_ref_count <= 1);
 }
 
 bool Cache_Entry::decode_timeout() const
 {
-    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && !m_ref_count);
+    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && m_ref_count <= 1);
 }
 
 const string & Cache_Entry::filename() const

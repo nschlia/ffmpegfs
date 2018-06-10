@@ -3,7 +3,7 @@ ffmpegfs NEWS
 Important changes in 1.6 (2018-06-XX) UNRELEASED
 
 * Feature:
-* Bugfix:
+* Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-18)

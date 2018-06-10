@@ -6,7 +6,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
 * Fix deprecation:
 
-Important changes in 1.5 (2018-06-18)
+Important changes in 1.5 (2018-06-08)
 
 * Feature: Add WebM output format using VP9 video and Opus audio codec.
 * Feature: Input format check is now done by FFmpeg, that means if the input file is

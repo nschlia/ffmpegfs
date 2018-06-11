@@ -1384,6 +1384,7 @@ int FFMPEG_Transcoder::write_output_file_header()
     switch (m_out.m_file_type)
     {
     case FILETYPE_MP4:
+    case FILETYPE_MOV:
     {
         ret = prepare_mp4_format(&dict);
         if (ret < 0)
@@ -2872,6 +2873,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             break;
         }
         case AV_CODEC_ID_PCM_S16LE:
+        case AV_CODEC_ID_PCM_S16BE:
         {
             int channels = 2; //m_in.m_audio.m_pCodec_ctx->channels;
             int bytes_per_sample =  2; // av_get_bytes_per_sample(m_in.m_audio.m_pCodec_ctx->sample_fmt);

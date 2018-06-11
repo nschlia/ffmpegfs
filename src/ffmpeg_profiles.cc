@@ -514,49 +514,49 @@ const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
     // MP4
 
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_NONE,
         .m_option_codec     = m_option_mp4_codec_none,
         .m_option_format    = m_option_mp4_format_none
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_FF,
         .m_option_codec     = m_option_mp4_codec_ff,
         .m_option_format    = m_option_mp4_format_ff
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_EDGE,
         .m_option_codec     = m_option_mp4_codec_edge,
         .m_option_format    = m_option_mp4_format_edge
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_IE,
         .m_option_codec     = m_option_mp4_codec_ie,
         .m_option_format    = m_option_mp4_format_ie
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_CHROME,
         .m_option_codec     = m_option_mp4_codec_chrome,
         .m_option_format    = m_option_mp4_format_chrome
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_SAFARI,
         .m_option_codec     = m_option_mp4_codec_safari,
         .m_option_format    = m_option_mp4_format_safari
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_OPERA,
         .m_option_codec     = m_option_mp4_codec_opera,
         .m_option_format    = m_option_mp4_format_opera
     },
     {
-        .m_filetype         = FILETYPE_MP4,
+        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
         .m_profile          = PROFILE_MP4_MAXTHON,
         .m_option_codec     = m_option_mp4_codec_maxthon,
         .m_option_format    = m_option_mp4_format_maxthon

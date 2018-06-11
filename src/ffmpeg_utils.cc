@@ -478,6 +478,14 @@ FILETYPE get_filetype(const char * type)
     {
         return FILETYPE_WEBM;
     }
+    else if (strcasestr(type, "mov") != NULL)
+    {
+        return FILETYPE_MOV;
+    }
+    else if (strcasestr(type, "aiff") != NULL)
+    {
+        return FILETYPE_AIFF;
+    }
     else
     {
         return FILETYPE_UNKNOWN;
@@ -543,6 +551,28 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
             *output_type = FILETYPE_WEBM;
         }
         format = "webm";
+        break;
+    }
+    case FILETYPE_MOV:
+    {
+        *audio_codecid = AV_CODEC_ID_AAC;
+        *video_codecid = AV_CODEC_ID_H264;
+        if (output_type != NULL)
+        {
+            *output_type = FILETYPE_MOV;
+        }
+        format = "mov";
+        break;
+    }
+    case FILETYPE_AIFF:
+    {
+        *audio_codecid = AV_CODEC_ID_PCM_S16BE;
+        *video_codecid = AV_CODEC_ID_NONE;
+        if (output_type != NULL)
+        {
+            *output_type = FILETYPE_AIFF;
+        }
+        format = "aiff";
         break;
     }
     case FILETYPE_UNKNOWN:

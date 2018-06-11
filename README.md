@@ -12,6 +12,8 @@ News
 ----
 
 * **Work on release 1.6 now in progress.**
+* Added MOV target format.
+* Added AIFF target format.
 
 About
 -----

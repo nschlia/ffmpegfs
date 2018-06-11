@@ -171,7 +171,9 @@ typedef enum _tagFILETYPE
     FILETYPE_MP4,
     FILETYPE_WAV,
     FILETYPE_OGG,
-    FILETYPE_WEBM
+    FILETYPE_WEBM,
+    FILETYPE_MOV,
+    FILETYPE_AIFF
 } FILETYPE;
 
 #ifdef __cplusplus

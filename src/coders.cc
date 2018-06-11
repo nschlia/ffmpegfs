@@ -31,6 +31,8 @@ static const char* encoder_list[] =
     "wav",  // TYPE_WAV
     "ogg",  // TYPE_OGG
     "webm", // TYPE_WEBM
+    "mov",  // TYPE_MOV
+    "aiff", // TYPE_AIFF
     NULL
 };
 

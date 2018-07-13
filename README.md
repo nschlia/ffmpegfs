@@ -184,7 +184,7 @@ file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should
 access the same file they will share the same transcoded data, saving
-CPU time. If all processes the file before its end, transconding will
+CPU time. If all processes close the file before its end, transconding will
 continue for some time. If the file is accessed again before timeout,
 transcoding will go on, if not it stops and the chunk created so far
 discarded to save disk space.
@@ -249,13 +249,14 @@ not working properly).
 
 By default faststart files will be created with an empty size field so 
 that the file can be started to be written out at once instead of 
-encoding it as a whole before this is possible. That would mean it would 
-take some time before playback can start.
+encoding it as a whole before this is possible. Encodeing it completely
+would mean it would take some time before playback can start.
 
-The data part is divided into chunks of about 5 seconds length, each 
-with its own header, thus to fill in the size fields early enough.
+The data part is divided into chunks of about 1 second length, each 
+with its own header, thus it is possible to fill in the size fields 
+early enough.
 
-As a draw back not all players support the format, or play back with 
+As a draw back not all players support the format, or play it with 
 strange side effects. VLC plays the file, but updates the time display 
 every few seconds only. When streamed over HTML5 video tags, sometimes there 
 will be no total time shown, but that is OK, as long as the file plays.
@@ -297,14 +298,13 @@ Future Plans
 ------------
 
 * Create a windows version
-* Add DVD/Bluray/Video CD support
 * and more, see [TODO](TODO)
 
 AUTHORS
 -------
 
 This fork with FFmpeg support is maintained by Norbert Schlia 
-(nschlia@oblivion-software.de) since 2017.
+(nschlia@oblivion-software.de) since 2017 to date.
 
 Based on work by K. Henriksson (from 2008 to 2017) and the original author 
 David Collett (from 2006 to 2008).

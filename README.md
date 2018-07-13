@@ -90,14 +90,18 @@ Mount your filesystem like this:
 
     ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 
-For example,
+For example, to run ffmpegfs as daemon,
 
-    ffmpegfs --audiobitrate 256 -videobitrate 2000000 /mnt/music /mnt/ffmpegfs -o allow_other,ro
+    ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
+
+This will run ffmpegs in the foreground and print the log output to the screen:
+
+    ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
 
 In recent versions of FUSE and ffmpegfs, the same can be achieved with the
 following entry in `/etc/fstab`:
 
-    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256,videobitrate=1.5M 0 0
+    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=1.5M 0 0
 
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.

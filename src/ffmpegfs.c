@@ -230,13 +230,13 @@ static void usage(char *name);
 static void usage(char *name)
 {
     printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
-    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG or WAV upon access.\n"
+    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OPUS, OGG or WAV upon access.\n"
           "\n"
           "Encoding options:\n"
           "\n"
           "    --desttype=TYPE, -o desttype=TYPE\n"
           "                           Select destination format. Can currently be\n"
-          "                           either MP4, MP3, OGG or WAV. To stream videos,\n"
+          "                           either MP4, MP3, OGG, OPUS or WAV. To stream videos,\n"
           "                           MP4 or OGG must be selected.\n"
           "                           Default: mp4\n"
           "    --profile=NAME, -o profile=NAME\n"

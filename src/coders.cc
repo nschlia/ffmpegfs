@@ -33,6 +33,7 @@ static const char* encoder_list[] =
     "webm", // TYPE_WEBM
     "mov",  // TYPE_MOV
     "aiff", // TYPE_AIFF
+    "opus", // TYPE_OPUS
     NULL
 };
 

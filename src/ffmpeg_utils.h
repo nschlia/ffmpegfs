@@ -138,7 +138,8 @@ typedef enum _tagFILETYPE
     FILETYPE_OGG,
     FILETYPE_WEBM,
     FILETYPE_MOV,
-    FILETYPE_AIFF
+    FILETYPE_AIFF,
+    FILETYPE_OPUS
 } FILETYPE;
 
 #ifdef __cplusplus

@@ -249,7 +249,7 @@ not working properly).
 
 By default faststart files will be created with an empty size field so 
 that the file can be started to be written out at once instead of 
-encoding it as a whole before this is possible. Encodeing it completely
+encoding it as a whole before this is possible. Encoding it completely
 would mean it would take some time before playback can start.
 
 The data part is divided into chunks of about 1 second length, each 

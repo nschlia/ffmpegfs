@@ -1,7 +1,7 @@
 AM_CPPFLAGS = $(fuse_CFLAGS)
 
 bin_PROGRAMS = ffmpegfs
-ffmpegfs_SOURCES = ffmpegfs.c ffmpegfs.h fuseops.cc transcode.cc transcode.h cache.cc cache.h buffer.cc buffer.h coders.cc coders.h logging.cc logging.h cache_entry.cc cache_entry.h cache_maintenance.cc cache_maintenance.h id3v1tag.h wave.h diskio.cc diskio.h fileio.cc fileio.h
+ffmpegfs_SOURCES = ffmpegfs.c ffmpegfs.h fuseops.cc transcode.cc transcode.h cache.cc cache.h buffer.cc buffer.h coders.cc coders.h logging.cc logging.h cache_entry.cc cache_entry.h cache_maintenance.cc cache_maintenance.h id3v1tag.h wave.h diskio.cc diskio.h fileio.cc fileio.h ffmpeg_compat.h
 ffmpegfs_LDADD = $(fuse_LIBS) -lrt
 
 ffmpegfs_SOURCES += ffmpeg_base.cc ffmpeg_base.h ffmpeg_transcoder.cc ffmpeg_transcoder.h ffmpeg_utils.cc ffmpeg_utils.h ffmpeg_profiles.cc

@@ -35,6 +35,7 @@ HEADERS += \
     src/coders.h \
     src/ffmpeg_transcoder.h \
     src/ffmpeg_utils.h \
+    src/ffmpeg_compat.h \
     src/logging.h \
     src/ffmpegfs.h \
     src/transcode.h \

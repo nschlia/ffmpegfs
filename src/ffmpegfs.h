@@ -30,6 +30,8 @@
 #include <fuse.h>
 #include <stdarg.h>
 
+#include "ffmpeg_utils.h"
+
 typedef enum _tagPROFILE
 {
     PROFILE_INVALID = -1,
@@ -58,11 +60,15 @@ extern struct ffmpegfs_params
     const char *    m_mountpath;
     // Output type
     const char *    m_desttype;
+    const char *    m_format;
+    FILETYPE        m_filetype;
     PROFILE         m_profile;					// Target type: Firefox, MS Edge/IE or other
     // Audio
+    enum AVCodecID  m_audio_codecid;
     unsigned int    m_audiobitrate;
     unsigned int    m_audiosamplerate;
     // Video
+    enum AVCodecID  m_video_codecid;
     unsigned int    m_videobitrate;
     unsigned int    m_videowidth;               // set video width
     unsigned int    m_videoheight;              // set video height

@@ -1112,19 +1112,13 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 // Some of these parameters are based on the input file's parameters.
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
-    AVCodecID       audio_codec_id = AV_CODEC_ID_NONE;
-    AVCodecID       video_codec_id = AV_CODEC_ID_NONE;
-    const char *    format;
+    AVCodecID       audio_codec_id = params.m_audio_codecid;
+    AVCodecID       video_codec_id = params.m_video_codecid;
+    const char *    format = params.m_format;
     int             ret = 0;
 
-    format = get_codecs(params.m_desttype, &m_out.m_file_type, &audio_codec_id, &video_codec_id);
-
-    if (format == NULL)
-    {
-        ffmpegfs_error(destname(), "Unknown format type '%s'.", params.m_desttype);
-        return -1;
-    }
-
+    m_out.m_file_type = params.m_filetype;
+    
     ffmpegfs_debug(destname(), "Opening format type '%s'.", params.m_desttype);
 
     // Create a new format context for the output container format.
@@ -2833,19 +2827,10 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 // Try to predict final file size.
 size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const
 {
-    AVCodecID audio_codec_id = AV_CODEC_ID_NONE;
-    AVCodecID video_codec_id = AV_CODEC_ID_NONE;
-    FILETYPE file_type;
-    const char * format;
+    AVCodecID audio_codec_id = params.m_audio_codecid;
+    AVCodecID video_codec_id = params.m_video_codecid;
+    FILETYPE file_type = params.m_filetype;
     size_t size = 0;
-
-    format = get_codecs(params.m_desttype, &file_type, &audio_codec_id, &video_codec_id);
-
-    if (format == NULL)
-    {
-        ffmpegfs_error(filename, "Unknown format type '%s'.", params.m_desttype);
-        return 0;
-    }
 
     if (input_audio_bit_rate)
     {

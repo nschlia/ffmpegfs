@@ -37,7 +37,7 @@
 // 2017-03-29 - bfdcdd6d82 - lavu 55.52.100 - avutil.h
 //   add av_fourcc_make_string() function and av_fourcc2str() macro to replace
 //   av_get_codec_tag_string() from lavc.
-#define LAVF_DEP_AV_GET_CODEC_TAG          (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(55, 52, 0))
+#define LAVU_DEP_AV_GET_CODEC_TAG           (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 52, 0))
 
 // Check for FFMPEG version 3+
 #define FFMPEG_VERSION3                     (LIBAVCODEC_VERSION_MAJOR > 56)

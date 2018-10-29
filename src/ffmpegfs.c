@@ -59,11 +59,15 @@ struct ffmpegfs_params params =
     .m_mountpath          	= NULL,                     // required parameter
 
     .m_desttype           	= "mp4",                    // default: encode to mp4
+    .m_format               = "mp4",                    // default: mp4
+    .m_filetype             = FILETYPE_MP4,             // default: mp4
     .m_profile              = PROFILE_NONE,       		// default: no profile
 
+    .m_audio_codecid        = AV_CODEC_ID_AAC,          // default: AAC
     .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
 
+    .m_video_codecid        = AV_CODEC_ID_MPEG4,        // default: MPEG4
     .m_videobitrate       	= 2*1024*1024,              // default: 2 MBit
     .m_videowidth           = 0,                        // default: do not change width
     .m_videoheight          = 0,                        // default: do not change height
@@ -837,8 +841,8 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 static void print_params()
 {
     char cachepath[PATH_MAX];
-    enum AVCodecID audio_codecid = AV_CODEC_ID_NONE;
-    enum AVCodecID video_codecid = AV_CODEC_ID_NONE;
+    enum AVCodecID audio_codecid = params.m_audio_codecid;
+    enum AVCodecID video_codecid = params.m_audio_codecid;
     char audiobitrate[100];
     char audiosamplerate[100];
     char width[100];
@@ -854,8 +858,6 @@ static void print_params()
     char max_threads[100];
 
     transcoder_cache_path(cachepath, sizeof(cachepath));
-
-    get_codecs(params.m_desttype, NULL, &audio_codecid, &video_codecid);
 
     format_bitrate(audiobitrate, sizeof(audiobitrate), params.m_audiobitrate);
     format_samplerate(audiosamplerate, sizeof(audiosamplerate), params.m_audiosamplerate);
@@ -1069,8 +1071,18 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Check for valid destination type.
-    if (!check_encoder(params.m_desttype))
+    // Check for valid destination type and obtain codecs and file type.
+    if (check_encoder(params.m_desttype))
+    {
+        params.m_format = get_codecs(params.m_desttype, 
+            &params.m_filetype, &params.m_audio_codecid, &params.m_video_codecid);
+        if (params.m_format == NULL)
+        {
+            fprintf(stderr, "ERROR: No codecs available for desttype: %s\n\n", params.m_desttype);
+            return 1;
+        }
+    }
+    else
     {
         fprintf(stderr, "ERROR: No encoder available for desttype: %s\n\n", params.m_desttype);
         return 1;

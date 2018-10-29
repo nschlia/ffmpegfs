@@ -486,6 +486,10 @@ FILETYPE get_filetype(const char * type)
     {
         return FILETYPE_AIFF;
     }
+    else if (strcasestr(type, "opus") != NULL)
+    {
+        return FILETYPE_OPUS;
+    }
     else
     {
         return FILETYPE_UNKNOWN;
@@ -573,6 +577,17 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
             *output_type = FILETYPE_AIFF;
         }
         format = "aiff";
+        break;
+    }
+    case FILETYPE_OPUS:
+    {
+        *audio_codecid = AV_CODEC_ID_OPUS;
+        *video_codecid = AV_CODEC_ID_NONE;
+        if (output_type != NULL)
+        {
+            *output_type = FILETYPE_OPUS;
+        }
+        format = "opus";
         break;
     }
     case FILETYPE_UNKNOWN:

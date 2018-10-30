@@ -29,6 +29,7 @@ Supported output formats:
 * MP4 (audio & video)
 * WebM (audio & video)
 * OGG (audio & video)
+* Opus (audio only)
 * MP3 (audio only)
 * WAV (audio only)
 

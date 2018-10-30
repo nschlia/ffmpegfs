@@ -164,7 +164,8 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
 
     if (!frame_rate.num || !frame_rate.den)
     {
-        frame_rate                              = { .num = 25, .den = 1 };
+        frame_rate.num = 25;
+        frame_rate.den = 1;
         ffmpegfs_warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
     }
 
@@ -186,12 +187,14 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     }
     case AV_CODEC_ID_VP9:           // webm
     {
-        time_base                               = { .num = 1, .den = 1000 };
+        time_base.num = 1;
+        time_base.den = 1000;
         break;
     }
     default:                        // mp4 and all others
     {
-        time_base                               = { .num = 1, .den = 90000 };
+        time_base.num = 1;
+        time_base.den = 90000;
         break;
     }
     }

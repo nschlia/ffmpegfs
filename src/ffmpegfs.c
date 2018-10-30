@@ -228,7 +228,7 @@ static int get_time(const char * arg, time_t *value);
 static int get_size(const char * arg, size_t *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
-static void print_params();
+static void print_params(void);
 static void usage(char *name);
 
 static void usage(char *name)
@@ -254,8 +254,8 @@ static void usage(char *name)
           "                           OPERA    Opera\n"
           "                           MAXTHON  Maxthon\n"
           "                           Default: NONE\n"
-          "\n"
-          "Audio Options:\n"
+          "\n", stdout);
+          fputs("Audio Options:\n"
           "\n"
           "    --audiobitrate=BITRATE, -o audiobitrate=BITRATE\n"
           "                           Audio encoding bitrate.\n"
@@ -275,8 +275,8 @@ static void usage(char *name)
           "SAMPLERATE can be defined as...n"
           " * In Hz:  #  or #Hzn"
           " * In kHz: #K or #KHzn"
-          "\n"
-          "Video Options:\n"
+          "\n", stdout);
+          fputs("Video Options:\n"
           "\n"
           "    --videobitrate=BITRATE, -o videobitrate=BITRATE\n"
           "                           Video encoding bit rate. Setting this too high or low may\n"
@@ -302,8 +302,8 @@ static void usage(char *name)
           " * n bit/s:  #  or #bps\n"
           " * n kbit/s: #M or #Mbps\n"
           " * n Mbit/s: #M or #Mbps\n"
-          "\n"
-          "Album Arts:\n"
+          "\n", stdout);
+          fputs("Album Arts:\n"
           "\n"
           "    --noalbumarts, -o noalbumarts\n"
           "                           Do not copy album arts into output file.\n"
@@ -325,8 +325,8 @@ static void usage(char *name)
           "     --scriptsource, -o scriptsource\n"
           "                           Take a different source file.\n"
           "                           Default: scripts/videotag.php\n"
-          "\n"
-          "Cache Options:\n"
+          "\n", stdout);
+          fputs("Cache Options:\n"
           "\n"
           "     --expiry_time=TIME, -o expiry_time=TIME\n"
           "                           Cache entries expire after TIME and will be deleted\n"
@@ -389,8 +389,8 @@ static void usage(char *name)
           " * n MBytes: #B or #MB\n"
           " * n GBytes: #G or #GB\n"
           " * n TBytes: #T or #TB\n"
-          "\n"
-          "Other:\n"
+          "\n", stdout);
+          fputs("Other:\n"
           "\n"
           "     --max_threads=COUNT, -o max_threads=COUNT\n"
           "                           Limit concurrent transcoder threads. Set to 0 for unlimited threads.\n"
@@ -838,7 +838,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     return 1;
 }
 
-static void print_params()
+static void print_params(void)
 {
     char cachepath[PATH_MAX];
     enum AVCodecID audio_codecid = params.m_audio_codecid;

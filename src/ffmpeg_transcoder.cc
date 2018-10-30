@@ -3510,13 +3510,13 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 // Not an error, go on
-                ::av_frame_unref(filterframe);
+                ::av_frame_free(&filterframe);
                 ret = 0;
             }
             else if (ret < 0)
             {
                 ffmpegfs_error(destname(), "Error while getting frame from filtergraph (error '%s').", ffmpeg_geterror(ret).c_str());
-                ::av_frame_unref(filterframe);
+                ::av_frame_free(&filterframe);
                 throw ret;
             }
             else
@@ -3530,7 +3530,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 #else
                 tgtframe->best_effort_timestamp = av_frame_get_best_effort_timestamp(srcframe);
 #endif
-                ::av_frame_unref(srcframe);
+                ::av_frame_free(&srcframe);
             }
         }
         catch (int _ret)

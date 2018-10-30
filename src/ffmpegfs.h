@@ -64,11 +64,9 @@ extern struct ffmpegfs_params
     FILETYPE        m_filetype;
     PROFILE         m_profile;					// Target type: Firefox, MS Edge/IE or other
     // Audio
-    enum AVCodecID  m_audio_codecid;
     unsigned int    m_audiobitrate;
     unsigned int    m_audiosamplerate;
     // Video
-    enum AVCodecID  m_video_codecid;
     unsigned int    m_videobitrate;
     unsigned int    m_videowidth;               // set video width
     unsigned int    m_videoheight;              // set video height
@@ -102,6 +100,15 @@ extern struct ffmpegfs_params
     unsigned int    m_max_threads;              // Max. number of recoder threads
     int             m_decoding_errors;          // Break transcoding on decoding error
 } params;
+
+// Global program parameters
+extern struct ffmpegfs_runtime
+{
+    // Audio
+    enum AVCodecID  m_audio_codecid;
+    // Video
+    enum AVCodecID  m_video_codecid;
+} runtime;
 
 // Forward declare transcoder struct. Don't actually define it here, to avoid
 // including coders.h and turning into C++.

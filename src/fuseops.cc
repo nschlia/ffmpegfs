@@ -142,8 +142,8 @@ static bool transcoded_name(string * path)
     
     if (format != nullptr)
     {
-        if ((params.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-            (params.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((runtime.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+            (runtime.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
             replace_ext(path, params.m_desttype);
             return true;

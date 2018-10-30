@@ -63,11 +63,9 @@ struct ffmpegfs_params params =
     .m_filetype             = FILETYPE_MP4,             // default: mp4
     .m_profile              = PROFILE_NONE,       		// default: no profile
 
-    .m_audio_codecid        = AV_CODEC_ID_AAC,          // default: AAC
     .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
     .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
 
-    .m_video_codecid        = AV_CODEC_ID_MPEG4,        // default: MPEG4
     .m_videobitrate       	= 2*1024*1024,              // default: 2 MBit
     .m_videowidth           = 0,                        // default: do not change width
     .m_videoheight          = 0,                        // default: do not change height
@@ -100,6 +98,12 @@ struct ffmpegfs_params params =
     .m_clear_cache          = 0,                        // default: Do not clear cache on startup
     .m_max_threads          = 0,                        // default: 16 * CPU cores (this value here is overwritten later)
     .m_decoding_errors      = 0,                        // default: ignore errors
+};
+
+struct ffmpegfs_runtime runtime =
+{
+    .m_audio_codecid        = AV_CODEC_ID_AAC,          // default: AAC
+    .m_video_codecid        = AV_CODEC_ID_MPEG4,        // default: MPEG4
 };
 
 enum
@@ -255,7 +259,7 @@ static void usage(char *name)
           "                           MAXTHON  Maxthon\n"
           "                           Default: NONE\n"
           "\n", stdout);
-          fputs("Audio Options:\n"
+    fputs("Audio Options:\n"
           "\n"
           "    --audiobitrate=BITRATE, -o audiobitrate=BITRATE\n"
           "                           Audio encoding bitrate.\n"
@@ -276,7 +280,7 @@ static void usage(char *name)
           " * In Hz:  #  or #Hzn"
           " * In kHz: #K or #KHzn"
           "\n", stdout);
-          fputs("Video Options:\n"
+    fputs("Video Options:\n"
           "\n"
           "    --videobitrate=BITRATE, -o videobitrate=BITRATE\n"
           "                           Video encoding bit rate. Setting this too high or low may\n"
@@ -303,7 +307,7 @@ static void usage(char *name)
           " * n kbit/s: #M or #Mbps\n"
           " * n Mbit/s: #M or #Mbps\n"
           "\n", stdout);
-          fputs("Album Arts:\n"
+    fputs("Album Arts:\n"
           "\n"
           "    --noalbumarts, -o noalbumarts\n"
           "                           Do not copy album arts into output file.\n"
@@ -326,7 +330,7 @@ static void usage(char *name)
           "                           Take a different source file.\n"
           "                           Default: scripts/videotag.php\n"
           "\n", stdout);
-          fputs("Cache Options:\n"
+    fputs("Cache Options:\n"
           "\n"
           "     --expiry_time=TIME, -o expiry_time=TIME\n"
           "                           Cache entries expire after TIME and will be deleted\n"
@@ -390,7 +394,7 @@ static void usage(char *name)
           " * n GBytes: #G or #GB\n"
           " * n TBytes: #T or #TB\n"
           "\n", stdout);
-          fputs("Other:\n"
+    fputs("Other:\n"
           "\n"
           "     --max_threads=COUNT, -o max_threads=COUNT\n"
           "                           Limit concurrent transcoder threads. Set to 0 for unlimited threads.\n"
@@ -841,8 +845,8 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 static void print_params(void)
 {
     char cachepath[PATH_MAX];
-    enum AVCodecID audio_codecid = params.m_audio_codecid;
-    enum AVCodecID video_codecid = params.m_audio_codecid;
+    enum AVCodecID audio_codecid = runtime.m_audio_codecid;
+    enum AVCodecID video_codecid = runtime.m_video_codecid;
     char audiobitrate[100];
     char audiosamplerate[100];
     char width[100];
@@ -881,45 +885,45 @@ static void print_params(void)
     format_number(max_threads, sizeof(max_threads), params.m_max_threads);
 
     ffmpegfs_trace(NULL, PACKAGE_NAME " options:\n\n"
-                                "Base Path         : %s\n"
-                                "Mount Path        : %s\n\n"
-                                "Destination Type  : %s\n"
-                                "Profile           : %s\n"
-                                "\nAudio\n\n"
-                                "Audio Format      : %s\n"
-                                "Audio Bitrate     : %s\n"
-                                "Audio Sample Rate : %s\n"
-                                "\nVideo\n\n"
-                                "Video Size/Pixels : width=%s height=%s\n"
+                                      "Base Path         : %s\n"
+                                      "Mount Path        : %s\n\n"
+                                      "Destination Type  : %s\n"
+                                      "Profile           : %s\n"
+                                      "\nAudio\n\n"
+                                      "Audio Format      : %s\n"
+                                      "Audio Bitrate     : %s\n"
+                                      "Audio Sample Rate : %s\n"
+                                      "\nVideo\n\n"
+                                      "Video Size/Pixels : width=%s height=%s\n"
                #ifndef USING_LIBAV
-                                "Deinterlace       : %s\n"
+                                      "Deinterlace       : %s\n"
                #endif  // !USING_LIBAV
-                                "Remove Album Arts : %s\n"
-                                "Video Format      : %s\n"
-                                "Video Bitrate     : %s\n"
-                                "\nVirtual Script\n\n"
-                                "Create script     : %s\n"
-                                "Script file name  : %s\n"
-                                "Input file        : %s\n"
-                                "\nLogging\n\n"
-                                "Max. Log Level    : %s\n"
-                                "Log to stderr     : %s\n"
-                                "Log to syslog     : %s\n"
-                                "Logfile           : %s\n"
-                                "\nCache Settings\n\n"
-                                "Expiry Time       : %s\n"
-                                "Inactivity Suspend: %s\n"
-                                "Inactivity Abort  : %s\n"
-                                "Pre-buffer size   : %s\n"
-                                "Max. Cache Size   : %s\n"
-                                "Min. Disk Space   : %s\n"
-                                "Cache Path        : %s\n"
-                                "Disable Cache     : %s\n"
-                                "Maintenance Timer : %s\n"
-                                "Clear Cache       : %s\n"
-                                "\nVarious Options\n\n"
-                                "Max. Threads      : %s\n"
-                                "Consider Decoding Errors: %s\n",
+                                      "Remove Album Arts : %s\n"
+                                      "Video Format      : %s\n"
+                                      "Video Bitrate     : %s\n"
+                                      "\nVirtual Script\n\n"
+                                      "Create script     : %s\n"
+                                      "Script file name  : %s\n"
+                                      "Input file        : %s\n"
+                                      "\nLogging\n\n"
+                                      "Max. Log Level    : %s\n"
+                                      "Log to stderr     : %s\n"
+                                      "Log to syslog     : %s\n"
+                                      "Logfile           : %s\n"
+                                      "\nCache Settings\n\n"
+                                      "Expiry Time       : %s\n"
+                                      "Inactivity Suspend: %s\n"
+                                      "Inactivity Abort  : %s\n"
+                                      "Pre-buffer size   : %s\n"
+                                      "Max. Cache Size   : %s\n"
+                                      "Min. Disk Space   : %s\n"
+                                      "Cache Path        : %s\n"
+                                      "Disable Cache     : %s\n"
+                                      "Maintenance Timer : %s\n"
+                                      "Clear Cache       : %s\n"
+                                      "\nVarious Options\n\n"
+                                      "Max. Threads      : %s\n"
+                                      "Consider Decoding Errors: %s\n",
                    params.m_basepath,
                    params.m_mountpath,
                    params.m_desttype,
@@ -953,7 +957,7 @@ static void print_params(void)
                    params.m_clear_cache ? "yes" : "no",
                    max_threads,
                    params.m_decoding_errors ? "yes" : "no"
-                   );
+                                              );
 }
 
 int main(int argc, char *argv[])
@@ -1074,8 +1078,7 @@ int main(int argc, char *argv[])
     // Check for valid destination type and obtain codecs and file type.
     if (check_encoder(params.m_desttype))
     {
-        params.m_format = get_codecs(params.m_desttype, 
-            &params.m_filetype, &params.m_audio_codecid, &params.m_video_codecid);
+        params.m_format = get_codecs(params.m_desttype, &params.m_filetype, &runtime.m_audio_codecid, &runtime.m_video_codecid);
         if (params.m_format == NULL)
         {
             fprintf(stderr, "ERROR: No codecs available for desttype: %s\n\n", params.m_desttype);

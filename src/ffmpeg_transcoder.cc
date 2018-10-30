@@ -1112,8 +1112,8 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 // Some of these parameters are based on the input file's parameters.
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
-    AVCodecID       audio_codec_id = params.m_audio_codecid;
-    AVCodecID       video_codec_id = params.m_video_codecid;
+    AVCodecID       audio_codec_id = runtime.m_audio_codecid;
+    AVCodecID       video_codec_id = runtime.m_video_codecid;
     const char *    format = params.m_format;
     int             ret = 0;
 
@@ -2827,8 +2827,8 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 // Try to predict final file size.
 size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const
 {
-    AVCodecID audio_codec_id = params.m_audio_codecid;
-    AVCodecID video_codec_id = params.m_video_codecid;
+    AVCodecID audio_codec_id = runtime.m_audio_codecid;
+    AVCodecID video_codec_id = runtime.m_video_codecid;
     //FILETYPE file_type = params.m_filetype;
     size_t size = 0;
 

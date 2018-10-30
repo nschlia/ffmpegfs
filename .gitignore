@@ -12,6 +12,9 @@ Makefile
 ffmpegfs.1
 /lib/libbase64.a
 /src/ffmpegfs
+/src/config.h
+/src/config.h.in
+src/stamp-h1
 /test/fpcompare
 /test/*.log
 /test/*.trs

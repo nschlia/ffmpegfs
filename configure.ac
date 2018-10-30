@@ -4,6 +4,7 @@
 AC_PREREQ(2.57)
 AC_INIT([FFMPEGFS], [1.6])
 AC_CONFIG_SRCDIR([src/ffmpegfs.c])
+AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([config])
 
 # Get configure arguments
@@ -26,8 +27,25 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDC
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_INT32_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+
+# Checks for header files.
+#AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h sstream climits cstring])
+
 # Check integer size
 AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF([off_t])
+#AC_CHECK_SIZEOF([size_t]
 
 AS_IF([test "$ac_cv_sizeof_int" -lt 4],
     AC_MSG_ERROR([Integer type 'int' must be at least 4 bytes in size.]))

@@ -23,6 +23,10 @@
 
 #pragma once
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <sys/stat.h>
 #include <string>
 

@@ -23,6 +23,10 @@
 
 #pragma once
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 // Force PRId64 defines
 #define __STDC_FORMAT_MACROS
 
@@ -37,6 +41,10 @@
 #define LAVR_DEPRECATE                      1
 #else
 #define LAVR_DEPRECATE                      0
+#endif
+
+#ifndef PATH_MAX
+#include <linux/limits.h>
 #endif
 
 // Disable annoying warnings outside our code
@@ -192,6 +200,8 @@ void format_size(char *output, size_t size, size_t value);
 int print_info(AVStream* stream);
 
 int compare(const char *value, const char *pattern);
+
+char *expand_path(char *tgt, size_t buflen, const char* src);
 
 #ifdef __cplusplus
 }

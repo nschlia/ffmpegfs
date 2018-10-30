@@ -104,10 +104,15 @@ extern struct ffmpegfs_params
 // Global program parameters
 extern struct ffmpegfs_runtime
 {
+    // Paths
+     char           m_basepath[PATH_MAX];
+     char           m_mountpath[PATH_MAX];
     // Audio
     enum AVCodecID  m_audio_codecid;
     // Video
     enum AVCodecID  m_video_codecid;
+    // Background recoding/caching
+     char           m_cachepath[PATH_MAX];
 } runtime;
 
 // Forward declare transcoder struct. Don't actually define it here, to avoid

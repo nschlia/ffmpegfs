@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include <regex.h>
+#include <wordexp.h>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -160,9 +161,9 @@ const string & replace_ext(string * filename, const string & ext)
 
 const string & get_destname(string *destname, const string & filename)
 {
-    size_t len = strlen(params.m_basepath);
+    size_t len = strlen(runtime.m_basepath);
 
-    *destname = params.m_mountpath;
+    *destname = runtime.m_mountpath;
     *destname += filename.substr(len);
 
     replace_ext(destname, params.m_desttype);
@@ -1046,4 +1047,18 @@ int compare(const char *value, const char *pattern)
     return reti;
 }
 
+char * expand_path(char *tgt, size_t buflen, const char *src)
+{
+    wordexp_t exp_result;
+    if (!wordexp(src, &exp_result, 0))
+    {
+        strncpy(tgt, exp_result.we_wordv[0], buflen);
+        wordfree(&exp_result);
+    }
+    else
+    {
+        strncpy(tgt, src, buflen);
+    }
 
+    return tgt;
+}

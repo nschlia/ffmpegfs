@@ -130,7 +130,7 @@ static void prepare_script()
 // Translate file names from FUSE to the original absolute path.
 static void translate_path(string *origpath, const char* path)
 {
-    *origpath = params.m_basepath;
+    *origpath = runtime.m_basepath;
     *origpath += path;
 }
 
@@ -859,7 +859,7 @@ void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     ffmpegfs_info(nullptr, "%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
     ffmpegfs_info(nullptr, "Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
-    ffmpegfs_info(nullptr, "Mapping '%s' to '%s'.", params.m_basepath, params.m_mountpath);
+    ffmpegfs_info(nullptr, "Mapping '%s' to '%s'.", runtime.m_basepath, runtime.m_mountpath);
 
     // We need synchronous reads.
     conn->async_read = 0;

@@ -500,7 +500,7 @@ const string & Buffer::make_cachefile_name(string & cachefile, const string & fi
     transcoder_cache_path(cachepath, sizeof(cachepath));
 
     cachefile = cachepath;
-    cachefile += params.m_mountpath;
+    cachefile += runtime.m_mountpath;
     cachefile += filename;
     cachefile += ".cache.";
     cachefile += params.m_desttype;

@@ -108,10 +108,10 @@ extern "C" {
 
 void transcoder_cache_path(char *dir, size_t size)
 {
-    if (params.m_cachepath != nullptr)
+    if (runtime.m_cachepath[0])
     {
         *dir = 0;
-        strncat(dir, params.m_cachepath, size - 1);
+        strncat(dir, runtime.m_cachepath, size - 1);
     }
     else
     {

@@ -102,8 +102,15 @@ struct ffmpegfs_params params =
 
 struct ffmpegfs_runtime runtime =
 {
-    .m_audio_codecid        = AV_CODEC_ID_AAC,          // default: AAC
-    .m_video_codecid        = AV_CODEC_ID_MPEG4,        // default: MPEG4
+    // Paths
+     .m_basepath            = "",
+     .m_mountpath           = "",
+    // Audio
+     .m_audio_codecid       = AV_CODEC_ID_AAC,          // default: AAC
+    // Video
+     .m_video_codecid       = AV_CODEC_ID_MPEG4,        // default: MPEG4
+    // Background recoding/caching
+     .m_cachepath           = ""
 };
 
 enum
@@ -734,12 +741,14 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         if (n == 0 && !params.m_basepath)
         {
             params.m_basepath = arg;
+            expand_path(runtime.m_basepath, sizeof(runtime.m_basepath), arg);
             n++;
             return 0;
         }
         else if (n == 1 && !params.m_mountpath)
         {
             params.m_mountpath = arg;
+            expand_path(runtime.m_mountpath, sizeof(runtime.m_mountpath), arg);
             n++;
             return 1;
         }
@@ -924,8 +933,8 @@ static void print_params(void)
                                       "\nVarious Options\n\n"
                                       "Max. Threads      : %s\n"
                                       "Consider Decoding Errors: %s\n",
-                   params.m_basepath,
-                   params.m_mountpath,
+                   runtime.m_basepath,
+                   runtime.m_mountpath,
                    params.m_desttype,
                    get_profile_text(params.m_profile),
                    get_codec_name(audio_codecid, 1),
@@ -997,6 +1006,12 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Expand cache path
+    if (params.m_cachepath)
+    {
+        expand_path(runtime.m_cachepath, sizeof(runtime.m_cachepath), params.m_cachepath);
+    }
+
     // Log to the screen, and enable debug messages, if debug is enabled.
     if (params.m_debug)
     {
@@ -1038,40 +1053,40 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (!params.m_basepath)
+    if (!runtime.m_basepath[0])
     {
         fprintf(stderr, "ERROR: No valid basepath specified.\n\n");
         return 1;
     }
 
-    if (params.m_basepath[0] != '/')
+    if (runtime.m_basepath[0] != '/')
     {
         fprintf(stderr, "ERROR: basepath must be an absolute path.\n\n");
         return 1;
     }
 
     struct stat st;
-    if (stat(params.m_basepath, &st) != 0 || !S_ISDIR(st.st_mode))
+    if (stat(runtime.m_basepath, &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        fprintf(stderr, "ERROR: basepath is not a valid directory: %s\n\n", params.m_basepath);
+        fprintf(stderr, "ERROR: basepath is not a valid directory: %s\n\n", runtime.m_basepath);
         return 1;
     }
 
-    if (!params.m_mountpath)
+    if (!runtime.m_mountpath[0])
     {
         fprintf(stderr, "ERROR: No valid mountpath specified.\n\n");
         return 1;
     }
 
-    if (params.m_mountpath[0] != '/')
+    if (runtime.m_mountpath[0] != '/')
     {
         fprintf(stderr, "ERROR: mountpath must be an absolute path.\n\n");
         return 1;
     }
 
-    if (stat(params.m_mountpath, &st) != 0 || !S_ISDIR(st.st_mode))
+    if (stat(runtime.m_mountpath, &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        fprintf(stderr, "ERROR: mountpath is not a valid directory: %s\n\n", params.m_mountpath);
+        fprintf(stderr, "ERROR: mountpath is not a valid directory: %s\n\n", runtime.m_mountpath);
         return 1;
     }
 

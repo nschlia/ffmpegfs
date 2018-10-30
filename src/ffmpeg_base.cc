@@ -150,7 +150,7 @@ void FFMPEG_Base::init_packet(AVPacket *packet) const
 // Initialise one frame for reading from the input file
 int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
 {
-    if (!(*frame = av_frame_alloc()))
+    if (!(*frame = ::av_frame_alloc()))
     {
         ffmpegfs_error(filename, "Could not allocate frame.");
         return AVERROR(ENOMEM);

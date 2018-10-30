@@ -20,10 +20,11 @@ using namespace  std;
 
 #define     MAX_ENTRIES     500
 
-typedef struct _tagVCDMSF
-{
+#pragma pack(push)
 #pragma pack(1)
 
+typedef struct _tagVCDMSF
+{
     // Note: the fields in this structure are BCD encoded
     char    m_min;
     char    m_sec;
@@ -34,8 +35,6 @@ typedef const VCDMSF * LPCVCDMSF;
 
 typedef struct _tagVCDCHAPTER
 {
-#pragma pack(1)
-
     char    m_track_no;
     VCDMSF  m_msf;
 
@@ -44,9 +43,7 @@ typedef const VCDCHAPTER * LPCVCDCHAPTER;
 
 typedef struct _tagVCDENTRIES
 {
-#pragma pack(1)
-
-    char        m_ID[8];                // 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD"
+   char        m_ID[8];                // 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD"
     uint8_t     m_type;                 // 1 Byte: CD type
     //          1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD
     //          2 for VCD 2.0
@@ -67,6 +64,7 @@ typedef struct _tagVCDENTRIES
 
 } VCDENTRY, *LPVCDENTRIES;
 typedef const VCDENTRY * LPCVCDENTRIES;
+#pragma pack(pop)
 
 extern const char SYNC[12];
 

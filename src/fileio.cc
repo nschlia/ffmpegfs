@@ -35,7 +35,7 @@
 #include <assert.h>
 
 fileio::fileio()
-    : m_virtualfile(NULL)
+    : m_virtualfile(nullptr)
 {
 
 }
@@ -79,7 +79,7 @@ fileio * fileio::alloc(VIRTUALTYPE type)
     //case VIRTUALTYPE_SCRIPT:
     default:
     {
-        return NULL;
+        return nullptr;
     }
     }
 }

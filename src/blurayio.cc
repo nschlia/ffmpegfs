@@ -29,7 +29,7 @@
 //#define MIN(a,b) (((a) < (b)) ? a : b)
 
 blurayio::blurayio()
-    : m_bd(NULL)
+    : m_bd(nullptr)
     , m_is_eof(false)
     , m_errno(0)
     , m_rest_size(0)
@@ -61,17 +61,17 @@ int blurayio::bufsize() const
 
 int blurayio::open(const string & filename)
 {
-    const char *bdpath = NULL;
+    const char *bdpath = nullptr;
     int title_count;
     int chapter_end = -1;
-    char *keyfile = NULL;
+    char *keyfile = nullptr;
     BLURAY_TITLE_INFO *ti;
 
     set_path(filename);
 
     bdpath = path.c_str();
 
-    if (get_virtualfile() != NULL)
+    if (get_virtualfile() != nullptr)
     {
         m_title_no      = get_virtualfile()->bluray.m_title_no - 1;
         m_chapter_no    = get_virtualfile()->bluray.m_chapter_no - 1;
@@ -89,7 +89,7 @@ int blurayio::open(const string & filename)
     ffmpegfs_debug(bdpath, "Opening input Bluray.");
 
     m_bd = bd_open(bdpath, keyfile);
-    if (m_bd == NULL)
+    if (m_bd == nullptr)
     {
         ffmpegfs_error(bdpath, "Failed to open disc.");
         return 1;

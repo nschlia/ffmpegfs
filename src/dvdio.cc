@@ -36,11 +36,11 @@
 //#include <dvdread/nav_print.h>
 
 dvdio::dvdio()
-    : m_dvd(NULL)
-    , m_dvd_title(NULL)
-    , m_vmg_file(NULL)
-    , m_vts_file(NULL)
-    , m_cur_pgc(NULL)
+    : m_dvd(nullptr)
+    , m_dvd_title(nullptr)
+    , m_vmg_file(nullptr)
+    , m_vts_file(nullptr)
+    , m_cur_pgc(nullptr)
     , m_start_cell(0)
     , m_cur_cell(0)
     , m_next_cell(0)
@@ -83,7 +83,7 @@ int dvdio::open(const string & filename)
 
     set_path(filename);
 
-    if (get_virtualfile() != NULL)
+    if (get_virtualfile() != nullptr)
     {
         m_title_no     = get_virtualfile()->dvd.m_title_no - 1;
         m_chapter_no   = get_virtualfile()->dvd.m_chapter_no - 1;
@@ -110,40 +110,40 @@ int dvdio::open(const string & filename)
     m_vmg_file = ifoOpen( m_dvd, 0 );
     if ( !m_vmg_file )
     {
-        ffmpegfs_error(NULL, "Can't open VMG info." );
+        ffmpegfs_error(nullptr, "Can't open VMG info." );
         DVDClose( m_dvd );
         return EINVAL;
     }
     tt_srpt = m_vmg_file->tt_srpt;
 
     // Make sure our title number is valid.
-    ffmpegfs_trace(NULL, "There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
+    ffmpegfs_trace(nullptr, "There are %d titles on this DVD.", tt_srpt->nr_of_srpts );
 
     if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
     {
-        ffmpegfs_error(NULL, "Invalid title %d.", m_title_no + 1 );
+        ffmpegfs_error(nullptr, "Invalid title %d.", m_title_no + 1 );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
     }
 
     // Make sure the chapter number is valid for this title.
-    ffmpegfs_trace(NULL, "There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );
+    ffmpegfs_trace(nullptr, "There are %d chapters in this title.", tt_srpt->title[ m_title_no ].nr_of_ptts );
 
     if ( m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[ m_title_no ].nr_of_ptts )
     {
-        ffmpegfs_error(NULL, "Invalid chapter %d", m_chapter_no + 1 );
+        ffmpegfs_error(nullptr, "Invalid chapter %d", m_chapter_no + 1 );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
     }
 
     // Make sure the angle number is valid for this title.
-    ffmpegfs_trace(NULL, "There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
+    ffmpegfs_trace(nullptr, "There are %d angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
 
     if ( m_angle_no < 0 || m_angle_no >= tt_srpt->title[ m_title_no ].nr_of_angles )
     {
-        ffmpegfs_error(NULL, "Invalid angle %d", m_angle_no + 1 );
+        ffmpegfs_error(nullptr, "Invalid angle %d", m_angle_no + 1 );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
@@ -154,7 +154,7 @@ int dvdio::open(const string & filename)
     m_vts_file = ifoOpen( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr );
     if ( !m_vts_file )
     {
-        ffmpegfs_error(NULL, "Can't open the title %d info file.", tt_srpt->title[ m_title_no ].title_set_nr );
+        ffmpegfs_error(nullptr, "Can't open the title %d info file.", tt_srpt->title[ m_title_no ].title_set_nr );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
@@ -174,7 +174,7 @@ int dvdio::open(const string & filename)
     m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );
     if ( !m_dvd_title )
     {
-        ffmpegfs_error(NULL, "Can't open title VOBS (VTS_%02d_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
+        ffmpegfs_error(nullptr, "Can't open title VOBS (VTS_%02d_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
         ifoClose( m_vts_file );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
@@ -278,7 +278,7 @@ int dvdio::read(void * dataX, int size)
             maxlen = DVDReadBlocks( m_dvd_title, m_cur_pack, 1, m_data );
             if ( maxlen != 1 )
             {
-                ffmpegfs_error(NULL, "Read failed for block %d", m_cur_pack );
+                ffmpegfs_error(nullptr, "Read failed for block %d", m_cur_pack );
                 //                ifoClose( vts_file );
                 //                ifoClose( vmg_file );
                 //                DVDCloseFile( title );
@@ -328,7 +328,7 @@ int dvdio::read(void * dataX, int size)
             maxlen = DVDReadBlocks( m_dvd_title, (size_t)m_cur_pack, cur_output_size, m_data );
             if ( maxlen != (int) cur_output_size )
             {
-                ffmpegfs_error(NULL, "Read failed for %d blocks at %d", cur_output_size, m_cur_pack );
+                ffmpegfs_error(nullptr, "Read failed for %d blocks at %d", cur_output_size, m_cur_pack );
                 m_errno = EIO;
                 return -1;
             }
@@ -375,7 +375,7 @@ int dvdio::duration() const
 
 size_t dvdio::size() const
 {
-    if (m_cur_pgc == NULL)
+    if (m_cur_pgc == nullptr)
     {
         return 0;
     }
@@ -417,25 +417,25 @@ bool dvdio::eof() const
 
 void dvdio::close()
 {
-    if (m_vts_file != NULL)
+    if (m_vts_file != nullptr)
     {
         ifoClose(m_vts_file);
-        m_vts_file = NULL;
+        m_vts_file = nullptr;
     }
-    if (m_vmg_file != NULL)
+    if (m_vmg_file != nullptr)
     {
         ifoClose(m_vmg_file);
-        m_vmg_file = NULL;
+        m_vmg_file = nullptr;
     }
-    if (m_dvd_title != NULL)
+    if (m_dvd_title != nullptr)
     {
         DVDCloseFile(m_dvd_title);
-        m_dvd_title = NULL;
+        m_dvd_title = nullptr;
     }
-    if (m_dvd != NULL)
+    if (m_dvd != nullptr)
     {
         DVDClose(m_dvd);
-        m_dvd = NULL;
+        m_dvd = nullptr;
     }
 }
 

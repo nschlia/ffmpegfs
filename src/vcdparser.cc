@@ -58,7 +58,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
 
         //init_stat(&st, size, false);
 
-        if (buf != NULL && filler(buf, filename.c_str(), &st, 0))
+        if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
         {
             // break;
         }
@@ -88,13 +88,13 @@ int check_vcd(const string & _path, void *buf, fuse_fill_dir_t filler)
     {
         ffmpegfs_trace(path.c_str(), "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-        ffmpegfs_trace(NULL, "Found %i titles.", res);
+        ffmpegfs_trace(nullptr, "Found %i titles.", res);
     }
     else if (stat((path + "VCD/INFO.VCD").c_str(), &st) == 0)
     {
         ffmpegfs_trace(path.c_str(), "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-        ffmpegfs_trace(NULL, "Found %i titles.", res);
+        ffmpegfs_trace(nullptr, "Found %i titles.", res);
     }
     return res;
 }

@@ -30,7 +30,7 @@
 using namespace std;
 
 int parse_vcd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
-int check_vcd(const string & path, void *buf = NULL, fuse_fill_dir_t filler = NULL);
+int check_vcd(const string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBVCD
 #endif // VCDPARSER_H

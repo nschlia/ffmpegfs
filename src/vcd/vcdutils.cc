@@ -21,7 +21,7 @@ string convert_psz2string(const char * psz, int size, bool trimmed)
     char * buffer = new char[size + 1];
     string ret_value;
 
-    if (buffer != NULL)
+    if (buffer != nullptr)
     {
         memcpy(buffer, psz, size);
         *(buffer + size) = '\0';

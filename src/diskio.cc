@@ -25,7 +25,7 @@
 #include <assert.h>
 
 diskio::diskio()
-    : m_fpi(NULL)
+    : m_fpi(nullptr)
 {
 
 }
@@ -53,7 +53,7 @@ int diskio::open(const string & filename)
 
     m_fpi = fopen(filename.c_str(), "rb");
 
-    if (m_fpi != NULL)
+    if (m_fpi != nullptr)
     {
         return 0;
     }
@@ -112,9 +112,9 @@ bool diskio::eof() const
 void diskio::close()
 {
     FILE *fpi = m_fpi;
-    if (fpi != NULL)
+    if (fpi != nullptr)
     {
-        m_fpi = NULL;
+        m_fpi = nullptr;
         fclose(fpi);
     }
 }

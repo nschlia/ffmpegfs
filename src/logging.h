@@ -62,7 +62,7 @@ private:
     public:
         Logger(level loglevel, const char *filename, Logging* logging) :
             loglevel_(loglevel), filename_(filename), logging_(logging) {}
-        Logger() : loglevel_(level::DEBUG), filename_(NULL) {}
+        Logger() : loglevel_(level::DEBUG), filename_(nullptr) {}
         virtual ~Logger();
 
     private:

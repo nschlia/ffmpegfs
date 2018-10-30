@@ -108,7 +108,7 @@ extern "C" {
 
 void transcoder_cache_path(char *dir, size_t size)
 {
-    if (params.m_cachepath != NULL)
+    if (params.m_cachepath != nullptr)
     {
         *dir = 0;
         strncat(dir, params.m_cachepath, size - 1);
@@ -127,13 +127,13 @@ void transcoder_cache_path(char *dir, size_t size)
 
 int transcoder_init(void)
 {
-    if (cache == NULL)
+    if (cache == nullptr)
     {
-        ffmpegfs_debug(NULL, "Creating media file cache.");
+        ffmpegfs_debug(nullptr, "Creating media file cache.");
         cache = new Cache;
-        if (cache == NULL)
+        if (cache == nullptr)
         {
-            ffmpegfs_error(NULL, "Unable to create media file cache. Out of memory.");
+            ffmpegfs_error(nullptr, "Unable to create media file cache. Out of memory.");
             fprintf(stderr, "ERROR: creating media file cache. Out of memory.\n");
             return -1;
         }
@@ -152,11 +152,11 @@ int transcoder_init(void)
 void transcoder_free(void)
 {
     Cache *p1 = cache;
-    cache = NULL;
+    cache = nullptr;
 
-    if (p1 != NULL)
+    if (p1 != nullptr)
     {
-        ffmpegfs_debug(NULL, "Deleting media file cache.");
+        ffmpegfs_debug(nullptr, "Deleting media file cache.");
         delete p1;
     }
 }
@@ -203,7 +203,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (!cache_entry)
     {
-        return NULL;
+        return nullptr;
     }
 
     cache_entry->lock();
@@ -402,7 +402,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         }
 
         // Set last access time
-        cache_entry->m_cache_info.m_access_time = time(NULL);
+        cache_entry->m_cache_info.m_access_time = time(nullptr);
 
         bool success = transcode_until(cache_entry, offset, len);
 
@@ -476,7 +476,7 @@ void transcoder_exit(void)
 
 int transcoder_cache_maintenance(void)
 {
-    if (cache != NULL)
+    if (cache != nullptr)
     {
         return cache->maintenance();
     }
@@ -488,7 +488,7 @@ int transcoder_cache_maintenance(void)
 
 int transcoder_cache_clear(void)
 {
-    if (cache != NULL)
+    if (cache != nullptr)
     {
         return cache->clear();
     }
@@ -514,7 +514,7 @@ static void *decoder_thread(void *arg)
     {
         ffmpegfs_info(cache_entry->filename().c_str(), "Transcoding to %s.", params.m_desttype);
 
-        if (transcoder == NULL)
+        if (transcoder == nullptr)
         {
             ffmpegfs_error(cache_entry->filename().c_str(), "Out of memory creating transcoder.");
             throw ((int)ENOMEM);
@@ -668,7 +668,7 @@ static void *decoder_thread(void *arg)
 
     thread_count--;
 
-    return NULL;
+    return nullptr;
 }
 
 void ffmpegfs_trace(const char *filename, const char* format, ...)
@@ -758,7 +758,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     }
 #endif
 
-    log_with_level(ffmpegfs_level, "", NULL, line);
+    log_with_level(ffmpegfs_level, "", nullptr, line);
 }
 #endif
 

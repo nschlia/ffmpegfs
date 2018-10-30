@@ -34,10 +34,10 @@ using namespace std;
 
 Cache::Cache() :
     m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP),
-    m_cacheidx_db(NULL),
-    m_cacheidx_select_stmt(NULL),
-    m_cacheidx_insert_stmt(NULL),
-    m_cacheidx_delete_stmt(NULL)
+    m_cacheidx_db(nullptr),
+    m_cacheidx_select_stmt(nullptr),
+    m_cacheidx_insert_stmt(nullptr),
+    m_cacheidx_delete_stmt(nullptr)
 {
 }
 
@@ -66,7 +66,7 @@ bool Cache::load_index()
     try
     {
         char cachepath[PATH_MAX];
-        char *errmsg = NULL;
+        char *errmsg = nullptr;
         const char * sql;
         int ret;
 
@@ -89,7 +89,7 @@ bool Cache::load_index()
         }
 
         // open connection to a DB
-        if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to initialise SQLite3 connection: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
@@ -103,7 +103,7 @@ bool Cache::load_index()
 
         // Beginning with version 3.7.0 (2010-07-21), a new "Write-Ahead Log" option
         // We support Sqlite from 3.7.13 anyway
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", NULL, NULL, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", nullptr, nullptr, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to set SQLite3 WAL mode: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
@@ -144,7 +144,7 @@ bool Cache::load_index()
                 ");\n";
         //"CREATE UNIQUE INDEX IF NOT EXISTS `idx_cache_entry_key` ON `cache_entry` (`filename`,`desttype`);\n";
 
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, callback, 0, &errmsg)))
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, callback, nullptr, &errmsg)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 exec error: %d\n%s", ret, errmsg);
             throw false;
@@ -163,7 +163,7 @@ bool Cache::load_index()
                 "(filename, desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, finished, error, errno, averror, creation_time, access_time, file_time, file_size) VALUES\n"
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), ?);\n";
 
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare insert: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
@@ -171,7 +171,7 @@ bool Cache::load_index()
 
         sql =   "SELECT desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, finished, error, errno, averror, strftime('%s', creation_time), strftime('%s', access_time), strftime('%s', file_time), file_size FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
 
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare select: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
@@ -179,7 +179,7 @@ bool Cache::load_index()
 
         sql =   "DELETE FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
 
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "Failed to prepare delete: %d\n%s", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
@@ -196,7 +196,7 @@ bool Cache::load_index()
 #ifdef HAVE_SQLITE_CACHEFLUSH
 bool Cache::flush_index()
 {
-    if (m_cacheidx_db != NULL)
+    if (m_cacheidx_db != nullptr)
     {
         int ret;
 
@@ -216,7 +216,7 @@ bool Cache::read_info(t_cache_info & cache_info)
     int ret;
     bool success = true;
 
-    if (m_cacheidx_select_stmt == NULL)
+    if (m_cacheidx_select_stmt == nullptr)
     {
         ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select statement not open");
         return false;
@@ -228,13 +228,13 @@ bool Cache::read_info(t_cache_info & cache_info)
     {
         assert(sqlite3_bind_parameter_count(m_cacheidx_select_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info.m_filename.c_str(), -1, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info.m_filename.c_str(), -1, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info.m_desttype, -1, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info.m_desttype, -1, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
@@ -245,7 +245,7 @@ bool Cache::read_info(t_cache_info & cache_info)
         if (ret == SQLITE_ROW)
         {
             const char *text                = (const char *)sqlite3_column_text(m_cacheidx_select_stmt, 0);
-            if (text != NULL)
+            if (text != nullptr)
             {
                 cache_info.m_desttype[0] = '\0';
                 strncat(cache_info.m_desttype, text, sizeof(cache_info.m_desttype) - 1);
@@ -293,7 +293,7 @@ bool Cache::read_info(t_cache_info & cache_info)
 }
 
 #define SQLBINDTXT(idx, var) \
-    if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, NULL))) \
+    if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, nullptr))) \
 { \
     ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select column #%i error: %d\n%s", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
@@ -311,7 +311,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
     int ret;
     bool success = true;
 
-    if (m_cacheidx_insert_stmt == NULL)
+    if (m_cacheidx_insert_stmt == nullptr)
     {
         ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select statement not open.");
         return false;
@@ -376,7 +376,7 @@ bool Cache::delete_info(const string & filename, const string & desttype)
     int ret;
     bool success = true;
 
-    if (m_cacheidx_delete_stmt == NULL)
+    if (m_cacheidx_delete_stmt == nullptr)
     {
         ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 delete statement not open.");
         return false;
@@ -388,13 +388,13 @@ bool Cache::delete_info(const string & filename, const string & desttype)
     {
         assert(sqlite3_bind_parameter_count(m_cacheidx_delete_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 1, filename.c_str(), -1, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 1, filename.c_str(), -1, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'filename': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 2, desttype.c_str(), -1, NULL)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 2, desttype.c_str(), -1, nullptr)))
         {
             ffmpegfs_error(m_cacheidx_file.c_str(), "SQLite3 select error 'desttype': %d\n%s", ret, sqlite3_errstr(ret));
             throw false;
@@ -427,7 +427,7 @@ bool Cache::delete_info(const string & filename, const string & desttype)
 
 void Cache::close_index()
 {
-    if (m_cacheidx_db != NULL)
+    if (m_cacheidx_db != nullptr)
     {
 #ifdef HAVE_SQLITE_CACHEFLUSH
         flush_index();
@@ -445,10 +445,10 @@ void Cache::close_index()
 Cache_Entry* Cache::create_entry(const string & filename, const string & desttype)
 {
     Cache_Entry* cache_entry = new Cache_Entry(this, filename);
-    if (cache_entry == NULL)
+    if (cache_entry == nullptr)
     {
         ffmpegfs_error(m_cacheidx_file.c_str(), "Out of memory.");
-        return NULL;
+        return nullptr;
     }
     m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
     return cache_entry;
@@ -456,7 +456,7 @@ Cache_Entry* Cache::create_entry(const string & filename, const string & desttyp
 
 bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
 {
-    if (*cache_entry == NULL)
+    if (*cache_entry == nullptr)
     {
         return true;
     }
@@ -469,7 +469,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
             m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_filename, (*cache_entry)->m_cache_info.m_desttype));
 
             delete (*cache_entry);
-            *cache_entry = NULL;
+            *cache_entry = nullptr;
 
             return true; // Freed entry
         }
@@ -489,11 +489,11 @@ Cache_Entry *Cache::open(LPCVIRTUALFILE virtualfile)
 
 Cache_Entry * Cache::open(const string & filename)
 {
-    Cache_Entry* cache_entry = NULL;
+    Cache_Entry* cache_entry = nullptr;
     char resolved_name[PATH_MAX + 1];
     string sanitised_name;
 
-    if (realpath(filename.c_str(), resolved_name) == NULL)
+    if (realpath(filename.c_str(), resolved_name) == nullptr)
     {
         sanitised_name = filename;
     }
@@ -519,7 +519,7 @@ Cache_Entry * Cache::open(const string & filename)
 
 bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
 {
-    if ((*cache_entry) == NULL)
+    if ((*cache_entry) == nullptr)
     {
         return true;
     }
@@ -547,7 +547,7 @@ bool Cache::prune_expired()
 
     vector<cache_key_t> keys;
     sqlite3_stmt * stmt;
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
     char sql[1024];
 
     ffmpegfs_trace(m_cacheidx_file.c_str(), "Pruning expired cache entries older than %s...", format_time(params.m_expiry_time).c_str());
@@ -556,7 +556,7 @@ bool Cache::prune_expired()
 
     lock();
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
+    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -621,7 +621,7 @@ bool Cache::prune_cache_size()
 
     lock();
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
+    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
     size_t total_size = 0;
@@ -711,7 +711,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
         sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
-        sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
+        sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
         int ret = 0;
         while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -796,7 +796,7 @@ bool Cache::clear()
 
     sql = "SELECT filename, desttype FROM cache_entry;\n";
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, NULL);
+    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -870,13 +870,13 @@ string Cache::expanded_sql(sqlite3_stmt *pStmt)
     return sql;
 #else
     const char *p = sqlite3_sql(pStmt);
-    if (p != NULL)
+    if (p != nullptr)
     {
         sql=p;
     }
     else
     {
-        sql="(NULL)";
+        sql="(nullptr)";
     }
 #endif
     return sql;

@@ -279,8 +279,8 @@ static int is_device(const AVClass *avclass)
 
 int show_formats_devices(int device_only)
 {
-    const AVInputFormat *ifmt  = NULL;
-    const AVOutputFormat *ofmt = NULL;
+    const AVInputFormat *ifmt  = nullptr;
+    const AVOutputFormat *ofmt = nullptr;
     const char *last_name;
     int is_dev;
 
@@ -293,13 +293,13 @@ int show_formats_devices(int device_only)
     {
         int decode = 0;
         int encode = 0;
-        const char *name      = NULL;
-        const char *long_name = NULL;
-        const char *extensions = NULL;
+        const char *name      = nullptr;
+        const char *long_name = nullptr;
+        const char *extensions = nullptr;
 
 #if LAVF_DEP_AV_REGISTER
-        void *ofmt_opaque = NULL;
-        ofmt_opaque = NULL;
+        void *ofmt_opaque = nullptr;
+        ofmt_opaque = nullptr;
         while ((ofmt = av_muxer_iterate(&ofmt_opaque)))
 #else
         while ((ofmt = av_oformat_next(ofmt)))
@@ -320,8 +320,8 @@ int show_formats_devices(int device_only)
             }
         }
 #if LAVF_DEP_AV_REGISTER
-        void *ifmt_opaque = NULL;
-        ifmt_opaque = NULL;
+        void *ifmt_opaque = nullptr;
+        ifmt_opaque = nullptr;
         while ((ifmt = av_demuxer_iterate(&ifmt_opaque)))
 #else
         while ((ifmt = av_iformat_next(ifmt)))
@@ -361,7 +361,7 @@ int show_formats_devices(int device_only)
         printf(" %s%s %-15s %-15s %s\n",
                decode ? "D" : " ",
                encode ? "E" : " ",
-               extensions != NULL ? extensions : "-",
+               extensions != nullptr ? extensions : "-",
                name,
                long_name ? long_name:" ");
     }
@@ -375,9 +375,9 @@ const char * get_codec_name(enum AVCodecID codec_id, int long_name)
 
     pCodecDescriptor = avcodec_descriptor_get(codec_id);
 
-    if (pCodecDescriptor != NULL)
+    if (pCodecDescriptor != nullptr)
     {
-        if (pCodecDescriptor->long_name != NULL && long_name)
+        if (pCodecDescriptor->long_name != nullptr && long_name)
         {
             psz = pCodecDescriptor->long_name;
         }
@@ -395,7 +395,7 @@ int mktree(const char *path, mode_t mode)
 {
     char *_path = strdup(path);
 
-    if (_path == NULL)
+    if (_path == nullptr)
     {
         return ENOMEM;
     }
@@ -404,7 +404,7 @@ int mktree(const char *path, mode_t mode)
     char *p = strtok (_path, "/");
     int status = 0;
 
-    while (p != NULL)
+    while (p != nullptr)
     {
         int newstat;
 
@@ -423,7 +423,7 @@ int mktree(const char *path, mode_t mode)
 
         status = newstat;
 
-        p = strtok (NULL, "/");
+        p = strtok (nullptr, "/");
     }
 
     free(_path);
@@ -435,7 +435,7 @@ void tempdir(char *dir, size_t size)
     *dir = '\0';
     const char *temp = getenv("TMPDIR");
 
-    if (temp != NULL)
+    if (temp != nullptr)
     {
         strncpy(dir, temp, size);
         return;
@@ -458,35 +458,35 @@ int supports_albumart(FILETYPE filetype)
 
 FILETYPE get_filetype(const char * type)
 {
-    if (strcasestr(type, "mp3") != NULL)
+    if (strcasestr(type, "mp3") != nullptr)
     {
         return FILETYPE_MP3;
     }
-    else if (strcasestr(type, "mp4") != NULL)
+    else if (strcasestr(type, "mp4") != nullptr)
     {
         return FILETYPE_MP4;
     }
-    else if (strcasestr(type, "wav") != NULL)
+    else if (strcasestr(type, "wav") != nullptr)
     {
         return FILETYPE_WAV;
     }
-    else if (strcasestr(type, "ogg") != NULL)
+    else if (strcasestr(type, "ogg") != nullptr)
     {
         return FILETYPE_OGG;
     }
-    else if (strcasestr(type, "webm") != NULL)
+    else if (strcasestr(type, "webm") != nullptr)
     {
         return FILETYPE_WEBM;
     }
-    else if (strcasestr(type, "mov") != NULL)
+    else if (strcasestr(type, "mov") != nullptr)
     {
         return FILETYPE_MOV;
     }
-    else if (strcasestr(type, "aiff") != NULL)
+    else if (strcasestr(type, "aiff") != nullptr)
     {
         return FILETYPE_AIFF;
     }
-    else if (strcasestr(type, "opus") != NULL)
+    else if (strcasestr(type, "opus") != nullptr)
     {
         return FILETYPE_OPUS;
     }
@@ -498,7 +498,7 @@ FILETYPE get_filetype(const char * type)
 
 const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
 {
-    const char * format = NULL;
+    const char * format = nullptr;
 
     switch (get_filetype(type))
     {
@@ -506,7 +506,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_MP3;
         *video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_MP3;
         }
@@ -517,7 +517,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_AAC;
         *video_codecid = AV_CODEC_ID_H264;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_MP4;
         }
@@ -528,7 +528,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_PCM_S16LE;
         *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_WAV;
         }
@@ -539,7 +539,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_VORBIS;
         *video_codecid = AV_CODEC_ID_THEORA;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_OGG;
         }
@@ -550,7 +550,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_OPUS;
         *video_codecid = AV_CODEC_ID_VP9;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_WEBM;
         }
@@ -561,7 +561,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_AAC;
         *video_codecid = AV_CODEC_ID_H264;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_MOV;
         }
@@ -572,7 +572,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_PCM_S16BE;
         *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_AIFF;
         }
@@ -583,7 +583,7 @@ const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * a
     {
         *audio_codecid = AV_CODEC_ID_OPUS;
         *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != NULL)
+        if (output_type != nullptr)
         {
             *output_type = FILETYPE_OPUS;
         }
@@ -605,7 +605,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
     AVFormatContext *s = avformat_alloc_context();
     int ret = 0;
 
-    *avctx = NULL;
+    *avctx = nullptr;
     if (!s)
         goto nomem;
 
@@ -613,7 +613,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
     {
         if (format)
         {
-            oformat = av_guess_format(format, NULL, NULL);
+            oformat = av_guess_format(format, nullptr, nullptr);
             if (!oformat)
             {
                 av_log(s, AV_LOG_ERROR, "Requested output format '%s' is not a suitable output format\n", format);
@@ -623,7 +623,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
         }
         else
         {
-            oformat = av_guess_format(NULL, filename, NULL);
+            oformat = av_guess_format(nullptr, filename, nullptr);
             if (!oformat)
             {
                 ret = AVERROR(EINVAL);
@@ -646,7 +646,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
         }
     }
     else
-        s->priv_data = NULL;
+        s->priv_data = nullptr;
 
     if (filename)
         av_strlcpy(s->filename, filename, sizeof(s->filename));
@@ -670,7 +670,7 @@ const char *avcodec_get_name(enum AVCodecID id)
     cd = avcodec_descriptor_get(id);
     if (cd)
         return cd->name;
-    av_log(NULL, AV_LOG_WARNING, "Codec 0x%x is not in the full list.\n", id);
+    av_log(nullptr, AV_LOG_WARNING, "Codec 0x%x is not in the full list.\n", id);
     codec = avcodec_find_decoder(id);
     if (codec)
         return codec->name;
@@ -938,7 +938,7 @@ int print_info(AVStream* stream)
     int ret = 0;
 
 #if LAVF_DEP_AVSTREAM_CODEC
-    AVCodecContext *avctx = avcodec_alloc_context3(NULL);
+    AVCodecContext *avctx = avcodec_alloc_context3(nullptr);
     if (!avctx)
     {
         return AVERROR(ENOMEM);
@@ -1039,7 +1039,7 @@ int compare(const char *value, const char *pattern)
         return -1;
     }
 
-    reti = regexec(&regex, value, 0, NULL, 0);
+    reti = regexec(&regex, value, 0, nullptr, 0);
 
     regfree(&regex);
 

@@ -34,7 +34,7 @@ static const char* encoder_list[] =
     "mov",  // TYPE_MOV
     "aiff", // TYPE_AIFF
     "opus", // TYPE_OPUS
-    NULL
+    nullptr
 };
 
 // Use "C" linkage to allow access from C code.

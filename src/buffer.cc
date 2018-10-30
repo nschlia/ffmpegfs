@@ -36,7 +36,7 @@ Buffer::Buffer()
     , m_buffer_pos(0)
     , m_buffer_watermark(0)
     , m_is_open(false)
-    , m_buffer(NULL)
+    , m_buffer(nullptr)
     , m_fd(-1)
 {
 }
@@ -102,7 +102,7 @@ bool Buffer::init(bool erase_cache)
         free(cachefile);
 
         m_buffer_size = 0;
-        m_buffer = NULL;
+        m_buffer = nullptr;
         m_buffer_pos = 0;
         m_buffer_watermark = 0;
 
@@ -204,7 +204,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     size_t size = m_buffer_size;
     int fd = m_fd;
 
-    m_buffer = NULL;
+    m_buffer = nullptr;
     m_buffer_size = 0;
     m_buffer_pos = 0;
     m_fd = -1;
@@ -296,7 +296,7 @@ bool Buffer::reserve(size_t size)
     }
 
     m_buffer = (uint8_t*)mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE);
-    if (m_buffer != NULL)
+    if (m_buffer != nullptr)
     {
         m_buffer_size = size;
     }
@@ -309,7 +309,7 @@ bool Buffer::reserve(size_t size)
 
     unlock();
 
-    return ((m_buffer != NULL) && success);
+    return ((m_buffer != nullptr) && success);
 }
 
 // Write data to the current position in the Buffer. The position pointer
@@ -349,7 +349,7 @@ uint8_t* Buffer::write_prepare(size_t length)
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -433,7 +433,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 
     lock();
 
-    if (size() >= offset && m_buffer != NULL)
+    if (size() >= offset && m_buffer != nullptr)
     {
         if (size() < offset + bufsize)
         {

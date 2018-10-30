@@ -59,7 +59,7 @@ int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
 {
     int ret;
 
-    ret = av_find_best_stream(fmt_ctx, type, INVALID_STREAM, INVALID_STREAM, NULL, 0);
+    ret = av_find_best_stream(fmt_ctx, type, INVALID_STREAM, INVALID_STREAM, nullptr, 0);
     if (ret < 0)
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
@@ -76,9 +76,9 @@ int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
 
 int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
-    AVCodecContext *dec_ctx = NULL;
-    AVCodec *dec = NULL;
-    AVDictionary *opts = NULL;
+    AVCodecContext *dec_ctx = nullptr;
+    AVCodec *dec = nullptr;
+    AVDictionary *opts = nullptr;
     AVStream *input_stream;
     AVCodecID codec_id = AV_CODEC_ID_NONE;
     int ret;
@@ -143,7 +143,7 @@ void FFMPEG_Base::init_packet(AVPacket *packet) const
 {
     av_init_packet(packet);
     // Set the packet data and size so that it is recognised as being empty.
-    packet->data = NULL;
+    packet->data = nullptr;
     packet->size = 0;
 }
 
@@ -165,7 +165,7 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     if (!frame_rate.num || !frame_rate.den)
     {
         frame_rate                              = { .num = 25, .den = 1 };
-        ffmpegfs_warning(NULL, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        ffmpegfs_warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
     }
 
     // timebase: This is the fundamental unit of time (in seconds) in terms

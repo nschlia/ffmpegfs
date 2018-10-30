@@ -78,7 +78,7 @@ static void init_stat(struct stat * st, size_t size, bool directory)
     st->st_gid = getgid();
 
     // Use current date/time
-    st->st_atime = st->st_mtime = st->st_ctime = time(NULL);
+    st->st_atime = st->st_mtime = st->st_ctime = time(nullptr);
 }
 
 static void prepare_script()
@@ -91,7 +91,7 @@ static void prepare_script()
     ffmpegfs_debug(scriptsource.c_str(), "Reading virtual script source.");
 
     FILE *fpi = fopen(scriptsource.c_str(), "rt");
-    if (fpi == NULL)
+    if (fpi == nullptr)
     {
         ffmpegfs_warning(scriptsource.c_str(), "File open failed. Disabling script: %s", strerror(errno));
         params.m_enablescript = false;
@@ -134,9 +134,9 @@ static void translate_path(string *origpath, const char* path)
 // Returns true if filename has been changed
 static bool transcoded_name(string * path)
 {
-    AVOutputFormat* format = av_guess_format(NULL, path->c_str(),NULL);
+    AVOutputFormat* format = av_guess_format(nullptr, path->c_str(),nullptr);
     
-    if (format != NULL)
+    if (format != nullptr)
     {
         if ((params.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
             (params.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
@@ -149,7 +149,7 @@ static bool transcoded_name(string * path)
 }
 
 // Add new virtual file to internal list
-// Returns constant pointer to VIRTUALFILE object of file, NULL if not found
+// Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, const string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
@@ -168,9 +168,9 @@ static int selector(const struct dirent * de)
 {
     if (de->d_type & (DT_REG | DT_LNK))
     {
-        AVOutputFormat* format = av_guess_format(NULL, de->d_name, NULL);
+        AVOutputFormat* format = av_guess_format(nullptr, de->d_name, nullptr);
 
-        return (format != NULL);
+        return (format != nullptr);
     }
     else
     {
@@ -189,7 +189,7 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 
 // Given the destination (post-transcode) file name, determine the name of
 // the original file to be transcoded.
-// Returns contstant pointer to VIRTUALFILE object of file, NULL if not found
+// Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
 static LPCVIRTUALFILE find_original(string * path)
 {
     // 1st do fast map lookup
@@ -219,11 +219,11 @@ static LPCVIRTUALFILE find_original(string * path)
             remove_filename(&dir);
             tmppath = dir;
 
-            count = scandir(dir.c_str(), &namelist, selector, NULL);
+            count = scandir(dir.c_str(), &namelist, selector, nullptr);
             if (count == -1)
             {
                 perror("scandir");
-                return NULL;
+                return nullptr;
             }
 
             remove_path(&filename);
@@ -257,7 +257,7 @@ static LPCVIRTUALFILE find_original(string * path)
         }
     }
     // Source file exists with no supported extension, keep path
-    return NULL;
+    return nullptr;
 }
 
 int ffmpegfs_readlink(const char *path, char *buf, size_t size)
@@ -417,7 +417,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     // This is a virtual file
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
-    VIRTUALTYPE type = (virtualfile != NULL) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
+    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
     bool no_lstat = false;
 
@@ -482,7 +482,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 virtualfile = find_original(&origpath);
 
-                if (virtualfile == NULL)
+                if (virtualfile == nullptr)
                 {
                     // Not a DVD file
                     return -ENOENT;
@@ -558,7 +558,7 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
     // This is a virtual file
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
-    assert(virtualfile != NULL);
+    assert(virtualfile != nullptr);
 
     bool no_lstat = false;
 
@@ -665,7 +665,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     // This is a virtual file
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
-    assert(virtualfile != NULL);
+    assert(virtualfile != nullptr);
 
     switch (virtualfile->m_type)
     {
@@ -750,7 +750,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
-    assert(virtualfile != NULL);
+    assert(virtualfile != nullptr);
 
     switch (virtualfile->m_type)
     {
@@ -856,9 +856,9 @@ int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 
 void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
-    ffmpegfs_info(NULL, "%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    ffmpegfs_info(NULL, "Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
-    ffmpegfs_info(NULL, "Mapping '%s' to '%s'.", params.m_basepath, params.m_mountpath);
+    ffmpegfs_info(nullptr, "%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
+    ffmpegfs_info(nullptr, "Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
+    ffmpegfs_info(nullptr, "Mapping '%s' to '%s'.", params.m_basepath, params.m_mountpath);
 
     // We need synchronous reads.
     conn->async_read = 0;
@@ -876,12 +876,12 @@ void *ffmpegfs_init(struct fuse_conn_info *conn)
         prepare_script();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
-    ffmpegfs_info(NULL, "%s V%s terminating", PACKAGE_NAME, PACKAGE_VERSION);
+    ffmpegfs_info(nullptr, "%s V%s terminating", PACKAGE_NAME, PACKAGE_VERSION);
     printf("%s V%s terminating\n", PACKAGE_NAME, PACKAGE_VERSION);
 
     stop_cache_maintenance();
@@ -891,5 +891,5 @@ void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     index_buffer.clear();
 
-    ffmpegfs_debug(NULL, "%s V%s terminated", PACKAGE_NAME, PACKAGE_VERSION);
+    ffmpegfs_debug(nullptr, "%s V%s terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }

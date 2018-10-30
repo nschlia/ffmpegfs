@@ -74,7 +74,7 @@ Logging::Logger::~Logger()
     }
 
     // Construct string containing time
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
     string time_string(30, '\0');
     string msg;
 
@@ -82,7 +82,7 @@ Logging::Logger::~Logger()
 
     msg = time_string + level_name_map_.at(loglevel_) + ": ";
 
-    if (filename_ != NULL)
+    if (filename_ != nullptr)
     {
         msg += "[";
         msg += filename_;
@@ -106,7 +106,7 @@ Logging::Logger::~Logger()
     {
         msg = COLOUR_DARK_GRAY + time_string + level_colour_map_.at(loglevel_) + level_name_map_.at(loglevel_) + COLOUR_RESET + ": ";
 
-        if (filename_ != NULL)
+        if (filename_ != nullptr)
         {
             msg += COLOUR_LIGHT_PURPLE;
             msg += "[";
@@ -172,7 +172,7 @@ void log_with_level(Logging::level level, const char* prefix, const char* filena
     va_list ap2;
     va_copy(ap2, ap);
 
-    int size = vsnprintf(NULL, 0, format, ap);
+    int size = vsnprintf(nullptr, 0, format, ap);
     string buffer(size, '\0');
     vsnprintf(&buffer[0], buffer.size() + 1, format, ap2);
 

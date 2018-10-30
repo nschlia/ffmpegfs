@@ -27,7 +27,7 @@
 #include <assert.h>
 
 vcdio::vcdio()
-    : m_fpi(NULL)
+    : m_fpi(nullptr)
     , m_track_no(0)
     , m_chapter_no(0)
     , m_start_pos(0)
@@ -57,7 +57,7 @@ int vcdio::open(const string & filename)
 
     set_path(filename);
 
-    if (get_virtualfile() != NULL)
+    if (get_virtualfile() != nullptr)
     {
         m_track_no      = get_virtualfile()->vcd.m_track_no;
         m_chapter_no    = get_virtualfile()->vcd.m_chapter_no;
@@ -78,7 +78,7 @@ int vcdio::open(const string & filename)
 
     m_fpi = fopen(src_filename.c_str(), "rb");
 
-    if (m_fpi == NULL)
+    if (m_fpi == nullptr)
     {
         return errno;
     }
@@ -172,9 +172,9 @@ bool vcdio::eof() const
 void vcdio::close()
 {
     FILE *fpi = m_fpi;
-    if (fpi != NULL)
+    if (fpi != nullptr)
     {
-        m_fpi = NULL;
+        m_fpi = nullptr;
         fclose(fpi);
     }
 }

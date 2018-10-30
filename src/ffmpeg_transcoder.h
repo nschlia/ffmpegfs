@@ -74,8 +74,8 @@ public:
     struct STREAMREF
     {
         STREAMREF() :
-            m_pCodec_ctx(NULL),
-            m_pStream(NULL),
+            m_pCodec_ctx(nullptr),
+            m_pStream(nullptr),
             m_nStream_idx(INVALID_STREAM)
         {}
 
@@ -90,7 +90,7 @@ public:
         INPUTFILE() :
             m_file_type(FILETYPE_UNKNOWN),
             m_filename("unset"),
-            m_pFormat_ctx(NULL)
+            m_pFormat_ctx(nullptr)
         {}
 
         FILETYPE                m_file_type;
@@ -110,7 +110,7 @@ public:
         OUTPUTFILE() :
             m_file_type(FILETYPE_UNKNOWN),
             m_filename("unset"),
-            m_pFormat_ctx(NULL),
+            m_pFormat_ctx(nullptr),
             m_nAudio_pts(0),
             m_video_start_pts(0),
             m_last_mux_dts((int64_t)AV_NOPTS_VALUE)

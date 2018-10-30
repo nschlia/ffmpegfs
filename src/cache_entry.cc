@@ -30,7 +30,7 @@ Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
     : m_owner(owner)
     , m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
     , m_ref_count(0)
-    , m_virtualfile(NULL)
+    , m_virtualfile(nullptr)
     , m_thread_id(0)
 {
     m_cache_info.m_filename = filename;
@@ -53,7 +53,7 @@ Cache_Entry::~Cache_Entry()
         // If not same thread, wait for other to finish
         ffmpegfs_warning(m_cache_info.m_filename.c_str(), "Waiting for thread id %" FFMPEGFS_FORMAT_PTHREAD_T " to terminate.", m_thread_id);
 
-        int s = pthread_join(m_thread_id, NULL);
+        int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
             ffmpegfs_error(m_cache_info.m_filename.c_str(), "Error joining thread id %" FFMPEGFS_FORMAT_PTHREAD_T " : %s", m_thread_id, strerror(s));
@@ -96,7 +96,7 @@ void Cache_Entry::clear(int fetch_file_time)
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;
     m_cache_info.m_averror              = 0;
-    m_cache_info.m_access_time = m_cache_info.m_creation_time = time(NULL);
+    m_cache_info.m_access_time = m_cache_info.m_creation_time = time(nullptr);
 
     if (fetch_file_time)
     {
@@ -114,7 +114,7 @@ void Cache_Entry::clear(int fetch_file_time)
         }
     }
 
-    if (m_buffer != NULL)
+    if (m_buffer != nullptr)
     {
         m_buffer->clear();
     }
@@ -137,7 +137,7 @@ bool Cache_Entry::delete_info()
 
 bool Cache_Entry::update_access(bool bUpdateDB /*= false*/)
 {
-    m_cache_info.m_access_time = time(NULL);
+    m_cache_info.m_access_time = time(nullptr);
 
     if (bUpdateDB)
     {
@@ -151,7 +151,7 @@ bool Cache_Entry::update_access(bool bUpdateDB /*= false*/)
 
 bool Cache_Entry::open(bool create_cache /*= true*/)
 {
-    if (m_buffer == NULL)
+    if (m_buffer == nullptr)
     {
         errno = EINVAL;
         return false;
@@ -210,7 +210,7 @@ bool Cache_Entry::close(int flags)
 {
     write_info();
 
-    if (m_buffer == NULL)
+    if (m_buffer == nullptr)
     {
         errno = EINVAL;
         return false;
@@ -237,7 +237,7 @@ bool Cache_Entry::close(int flags)
 
 bool Cache_Entry::flush()
 {
-    if (m_buffer == NULL)
+    if (m_buffer == nullptr)
     {
         errno = EINVAL;
         return false;
@@ -257,7 +257,7 @@ size_t Cache_Entry::size() const
     }
     else
     {
-        if (m_buffer == NULL)
+        if (m_buffer == nullptr)
         {
             return m_cache_info.m_predicted_filesize;
         }
@@ -272,7 +272,7 @@ size_t Cache_Entry::size() const
 
 time_t Cache_Entry::age() const
 {
-    return (time(NULL) - m_cache_info.m_creation_time);
+    return (time(nullptr) - m_cache_info.m_creation_time);
 }
 
 time_t Cache_Entry::last_access() const
@@ -287,12 +287,12 @@ bool Cache_Entry::expired() const
 
 bool Cache_Entry::suspend_timeout() const
 {
-    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_suspend) && m_ref_count <= 1);
+    return (((time(nullptr) - m_cache_info.m_access_time) > params.m_max_inactive_suspend) && m_ref_count <= 1);
 }
 
 bool Cache_Entry::decode_timeout() const
 {
-    return (((time(NULL) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && m_ref_count <= 1);
+    return (((time(nullptr) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && m_ref_count <= 1);
 }
 
 const string & Cache_Entry::filename() const

@@ -127,7 +127,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 
                 //init_stat(&st, size, false);
 
-                if (buf != NULL && filler(buf, filename.c_str(), &st, 0))
+                if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
                 {
                     // break;
                 }

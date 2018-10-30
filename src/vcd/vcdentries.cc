@@ -50,7 +50,7 @@ void VcdEntries::clear()
 
 int VcdEntries::load_file(const string & path)
 {
-    FILE * fpi = NULL;
+    FILE * fpi = nullptr;
     string fullname;
     bool is_vcd = false;
 
@@ -70,7 +70,7 @@ int VcdEntries::load_file(const string & path)
         int         num_entries = 0;
 
         fpi = fopen(fullname.c_str(), "rb");
-        if (fpi == NULL)
+        if (fpi == nullptr)
         {
             throw (int)errno;
         }
@@ -103,7 +103,7 @@ int VcdEntries::load_file(const string & path)
     }
     catch (int _errno)
     {
-        if (fpi != NULL)
+        if (fpi != nullptr)
         {
             fclose(fpi);
         }
@@ -117,7 +117,7 @@ int VcdEntries::load_file(const string & path)
 
 int VcdEntries::scan_chapters()
 {
-    FILE *  fpi = NULL;
+    FILE *  fpi = nullptr;
     string  fullname;
     int     last_track_no = -1;
     int64_t first_sync = -1;
@@ -148,14 +148,14 @@ int VcdEntries::scan_chapters()
                     m_chapters[chapter_no - 1].m_end_pos = st.st_size;
                 }
 
-                if (fpi != NULL)
+                if (fpi != nullptr)
                 {
                     fclose(fpi);
                 }
 
                 fpi = fopen(fullname.c_str(), "rb");
 
-                if (fpi == NULL)
+                if (fpi == nullptr)
                 {
                     throw (int)_errno;
                 }
@@ -224,7 +224,7 @@ int VcdEntries::scan_chapters()
     }
     catch (int _errno)
     {
-        if (fpi != NULL)
+        if (fpi != nullptr)
         {
             fclose(fpi);
         }
@@ -234,7 +234,7 @@ int VcdEntries::scan_chapters()
     // End of last chapter
     m_chapters[m_chapters.size() - 1].m_end_pos = st.st_size;
 
-    if (fpi != NULL)
+    if (fpi != nullptr)
     {
         fclose(fpi);
     }

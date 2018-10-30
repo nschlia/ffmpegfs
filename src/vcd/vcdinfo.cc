@@ -102,7 +102,7 @@ int VcdInfo::load_file(const string & path)
     bool success = true;
 
     fpi = fopen(fullname.c_str(), "rb");
-    if (fpi == NULL)
+    if (fpi == nullptr)
     {
         return errno;
     }

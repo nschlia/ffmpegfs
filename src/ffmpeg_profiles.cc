@@ -62,7 +62,7 @@
  *
  *          -movflags frag_custom
  *
- *      Allow the caller to manually choose when to cut fragments, by calling av_write_frame(ctx, NULL) to write a
+ *      Allow the caller to manually choose when to cut fragments, by calling av_write_frame(ctx, nullptr) to write a
  *      fragment with the packets written so far. (This is only useful with other applications integrating libavformat,
  *      not from ffmpeg.)
  *
@@ -150,7 +150,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_none[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_none[] =
@@ -170,7 +170,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_none[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -192,7 +192,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ff[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ff[] =
@@ -212,7 +212,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ff[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },       // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -233,7 +233,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_edge[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_edge[] =
@@ -253,7 +253,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_edge[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -273,7 +273,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ie[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ie[] =
@@ -293,7 +293,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ie[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -313,7 +313,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_chrome[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_chrome[] =
@@ -333,7 +333,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_chrome[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -353,7 +353,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_safari[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_safari[] =
@@ -373,7 +373,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_safari[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -392,7 +392,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_opera[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_opera[] =
@@ -412,7 +412,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_opera[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -432,7 +432,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
     { "preset",               "ultrafast",                0,  0 },
     //{ "preset",               "veryfast",                 0,  0 },
     //{ "tune",                 "zerolatency",              0,  0 },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_maxthon[] =
@@ -452,7 +452,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_maxthon[] =
     //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
     //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
     //{ "movflags",               "+isml",                   0, OPT_ALL },
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 /*
@@ -499,12 +499,12 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_codec_none[] =
     { "deadline",               "realtime",                 0,  0 },
     { "cpu-used",               "8",                        0,  0 },
 
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_format_none[] =
 {
-    { NULL, NULL, 0, 0 }
+    { nullptr, nullptr, 0, 0 }
 };
 
 // ****************************************************************************************************************
@@ -575,7 +575,7 @@ const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
     {
         .m_filetype         = FILETYPE_UNKNOWN,
         .m_profile          = PROFILE_INVALID,
-        .m_option_codec     = NULL,
-        .m_option_format    = NULL
+        .m_option_codec     = nullptr,
+        .m_option_format    = nullptr
     }
 };

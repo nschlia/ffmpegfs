@@ -36,21 +36,21 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
     int main_title;
     unsigned int seconds = 0;
     uint8_t flags = TITLES_RELEVANT;
-    const char *bd_dir = NULL;
+    const char *bd_dir = nullptr;
 
     bd_dir = path.c_str();
     //flags = TITLES_ALL;
-    //seconds = strtol(optarg, NULL, 0);
+    //seconds = strtol(optarg, nullptr, 0);
 
     ffmpegfs_debug(path.c_str(), "Parsing Bluray.");
 
-    bd = bd_open(bd_dir, NULL);
+    bd = bd_open(bd_dir, nullptr);
 
     title_count = bd_get_titles(bd, flags, seconds);
     main_title = bd_get_main_title(bd);
     if (main_title >= 0)
     {
-        ffmpegfs_trace(NULL, "Main title: %d", main_title + 1);
+        ffmpegfs_trace(nullptr, "Main title: %d", main_title + 1);
     }
 
     for (uint32_t title_no = 0; title_no < title_count; title_no++)
@@ -99,7 +99,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
             st.st_size = 0;
             st.st_blocks = (st.st_size + 512 - 1) / 512;
 
-            if (buf != NULL && filler(buf, filename.c_str(), &st, 0))
+            if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
             {
                 // break;
             }
@@ -135,7 +135,7 @@ int check_bluray(const string & _path, void *buf, fuse_fill_dir_t filler)
     {
         ffmpegfs_trace(path.c_str(), "Bluray detected.");
         res = parse_bluray(path, &st, buf, filler);
-        ffmpegfs_trace(NULL, "Found %i titles.", res);
+        ffmpegfs_trace(nullptr, "Found %i titles.", res);
     }
     return res;
 }

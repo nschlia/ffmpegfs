@@ -2829,7 +2829,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
 {
     AVCodecID audio_codec_id = params.m_audio_codecid;
     AVCodecID video_codec_id = params.m_video_codecid;
-    FILETYPE file_type = params.m_filetype;
+    //FILETYPE file_type = params.m_filetype;
     size_t size = 0;
 
     if (input_audio_bit_rate)

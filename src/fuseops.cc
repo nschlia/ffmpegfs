@@ -70,7 +70,11 @@ static void init_stat(struct stat * st, size_t size, bool directory)
         st->st_nlink = 1;
     }
 
-    st->st_size = size;
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+    st->st_size = static_cast<__off_t>(size);
+#else
+    st->st_size = static_cast<__off64_t>(size);
+#endif
     st->st_blocks = (st->st_size + 512 - 1) / 512;
 
     // Set current user as owner
@@ -598,9 +602,7 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
         {
-            struct Cache_Entry* cache_entry;
-
-            cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
+            struct Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
             if (!cache_entry)
             {
@@ -781,7 +783,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 #endif // USE_LIBBLURAY
     case VIRTUALTYPE_REGULAR:
     {
-        cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
+        cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
         if (!cache_entry)
         {
@@ -841,11 +843,10 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
 int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
-    struct Cache_Entry* cache_entry;
+    struct Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
     ffmpegfs_trace(path, "release");
 
-    cache_entry = (struct Cache_Entry*)(uintptr_t)fi->fh;
     if (cache_entry)
     {
         transcoder_delete(cache_entry);

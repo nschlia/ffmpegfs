@@ -53,7 +53,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
 
         memcpy(&st, statbuf, sizeof(struct stat));
 
-        st.st_size = size;
+        st.st_size = static_cast<__off_t>(size);
         st.st_blocks = (st.st_size + 512 - 1) / 512;
 
         //init_stat(&st, size, false);

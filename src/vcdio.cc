@@ -113,7 +113,7 @@ int vcdio::duration() const
 
 size_t vcdio::size() const
 {
-    if (m_fpi == 0)
+    if (m_fpi == nullptr)
     {
         errno = EINVAL;
         return 0;

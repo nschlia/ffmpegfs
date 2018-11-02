@@ -57,7 +57,8 @@ HEADERS += \
     src/vcd/vcdchapter.h \
     src/vcd/vcdentries.h \
     src/vcd/vcdinfo.h \
-    src/vcd/vcdutils.h
+    src/vcd/vcdutils.h \
+    src/config.h
 
 DEFINES+=_DEBUG
 DEFINES+=HAVE_CONFIG_H _FILE_OFFSET_BITS=64 _GNU_SOURCE
@@ -116,4 +117,5 @@ DISTFILES += \
     src/scripts/videotag.txt \
     Makefile.am \
     src/Makefile.am \
-    test/Makefile.am
+    test/Makefile.am \
+    src/config.h.in

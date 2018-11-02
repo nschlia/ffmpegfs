@@ -250,8 +250,8 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                 }
 
                 pthread_attr_t attr;
-                int stack_size = 0;
-                int s;
+                size_t stack_size = 0;
+                int ret;
 
                 ffmpegfs_debug(virtualfile->m_origfile.c_str(), "Starting decoder thread.");
 
@@ -265,37 +265,45 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                 cache_entry->m_is_decoding = true;
 
                 // Initialise thread creation attributes
-                s = pthread_attr_init(&attr);
-                if (s != 0)
+                ret = pthread_attr_init(&attr);
+                if (ret != 0)
                 {
-                    _errno = s;
-                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread attributes: %s", strerror(s));
+                    _errno = ret;
+                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread attributes: %s", strerror(ret));
                     throw false;
                 }
 
                 if (stack_size > 0)
                 {
-                    s = pthread_attr_setstacksize(&attr, stack_size);
-                    if (s != 0)
+                    ret = pthread_attr_setstacksize(&attr, stack_size);
+                    if (ret != 0)
                     {
-                        _errno = s;
-                        ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error setting stack size: %s", strerror(s));
+                        _errno = ret;
+                        ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error setting stack size: %s", strerror(ret));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
                 }
 
-                Thread_Data* thread_data = (Thread_Data*)malloc(sizeof(Thread_Data));
+                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+                if (ret != 0)
+                {
+                    _errno = ret;
+                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error setting thread detached state: %s", strerror(ret));
+                    throw false;
+                }
+
+                Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;
 
-                pthread_mutex_init(&thread_data->m_mutex, 0);
-                pthread_cond_init (&thread_data->m_cond, 0);
+                pthread_mutex_init(&thread_data->m_mutex, nullptr);
+                pthread_cond_init (&thread_data->m_cond, nullptr);
 
                 pthread_mutex_lock(&thread_data->m_mutex);
-                s = pthread_create(&cache_entry->m_thread_id, &attr, &decoder_thread, thread_data);
-                if (s == 0)
+                ret = pthread_create(&cache_entry->m_thread_id, &attr, &decoder_thread, thread_data);
+                if (ret == 0)
                 {
                     pthread_cond_wait(&thread_data->m_cond, &thread_data->m_mutex);
                 }
@@ -305,20 +313,20 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 
                 free(thread_data); // can safely be done here, will not be used in thread from now on
 
-                if (s != 0)
+                if (ret != 0)
                 {
-                    _errno = s;
-                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread: %s", strerror(s));
+                    _errno = ret;
+                    ffmpegfs_error(virtualfile->m_origfile.c_str(), "Error creating thread: %s", strerror(ret));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
 
                 // Destroy the thread attributes object, since it is no longer needed
 
-                s = pthread_attr_destroy(&attr);
-                if (s != 0)
+                ret = pthread_attr_destroy(&attr);
+                if (ret != 0)
                 {
-                    ffmpegfs_warning(virtualfile->m_origfile.c_str(), "Error destroying thread attributes: %s", strerror(s));
+                    ffmpegfs_warning(virtualfile->m_origfile.c_str(), "Error destroying thread attributes: %s", strerror(ret));
                 }
 
                 if (cache_entry->m_cache_info.m_error)

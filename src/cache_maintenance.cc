@@ -68,7 +68,7 @@ static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, 
     if (master)
     {
         ffmpegfs_info(nullptr, "Running periodic cache maintenance.");
-        //transcoder_cache_maintenance();
+        transcoder_cache_maintenance();
     }
 }
 

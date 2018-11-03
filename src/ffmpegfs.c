@@ -751,6 +751,13 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         {
             params.m_mountpath = arg;
             expand_path(runtime.m_mountpath, sizeof(runtime.m_mountpath), arg);
+
+            if (is_mount(runtime.m_mountpath))
+            {
+                fprintf(stderr, "%-25s: already mounted\n", runtime.m_mountpath);
+                exit(1);
+            }
+
             n++;
             return 1;
         }

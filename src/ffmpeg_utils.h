@@ -203,6 +203,8 @@ int compare(const char *value, const char *pattern);
 
 char *expand_path(char *tgt, size_t buflen, const char* src);
 
+int is_mount(const char * filename);
+
 #ifdef __cplusplus
 }
 #endif

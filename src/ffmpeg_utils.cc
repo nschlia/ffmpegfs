@@ -1062,3 +1062,74 @@ char * expand_path(char *tgt, size_t buflen, const char *src)
 
     return tgt;
 }
+
+int is_mount(const char * filename)
+{
+
+    char* orig_name = nullptr;
+    int ret = 0;
+
+    try
+    {
+        struct stat file_stat;
+        struct stat parent_stat;
+        char * parent_name = nullptr;
+
+        orig_name = (char*)malloc(strlen(filename) + 1);
+        memcpy(orig_name, filename, strlen(filename) + 1);
+
+        // get the parent directory of the file
+        parent_name = dirname(orig_name);
+
+        // get the file's stat info
+        if( -1 == stat(filename, &file_stat) )
+        {
+            fprintf(stderr, "is_mount(): %s", strerror(errno));
+            throw -1;
+        }
+
+        //determine whether the supplied file is a directory
+        // if it isn't, then it can't be a mountpoint.
+        if( !(file_stat.st_mode & S_IFDIR) )
+        {
+            fprintf(stderr, "is_mount(): %s is not a directory.\n", filename);
+            throw -1;
+        }
+
+        // get the parent's stat info
+        if( -1 == stat(parent_name, &parent_stat) )
+        {
+            fprintf(stderr, "is_mount(): %s", strerror(errno));
+            throw -1;
+        }
+
+        // if file and parent have different device ids,
+        // then the file is a mount point
+        // or, if they refer to the same file,
+        // then it's probably the root directory
+        // and therefore a mountpoint
+        if( file_stat.st_dev != parent_stat.st_dev ||
+                ( file_stat.st_dev == parent_stat.st_dev &&
+                  file_stat.st_ino == parent_stat.st_ino ) )
+        {
+            // IS a mountpoint
+            ret = 1;
+        }
+        else
+        {
+            // is NOT a mountpoint
+            ret = 0;
+        }
+    }
+    catch (int _ret)
+    {
+        ret = _ret;
+    }
+
+    // Free the malloc'ed pointer.
+    if (orig_name != nullptr)
+    {
+        free(orig_name);
+    }
+    return ret;
+}

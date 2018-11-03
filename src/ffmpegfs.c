@@ -27,6 +27,8 @@
 
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
+#include <unistd.h>
+
 #ifdef USE_LIBBLURAY
 #include <libbluray/bluray-version.h>
 #endif
@@ -103,14 +105,14 @@ struct ffmpegfs_params params =
 struct ffmpegfs_runtime runtime =
 {
     // Paths
-     .m_basepath            = "",
-     .m_mountpath           = "",
+    .m_basepath            = "",
+    .m_mountpath           = "",
     // Audio
-     .m_audio_codecid       = AV_CODEC_ID_AAC,          // default: AAC
+    .m_audio_codecid       = AV_CODEC_ID_AAC,          // default: AAC
     // Video
-     .m_video_codecid       = AV_CODEC_ID_MPEG4,        // default: MPEG4
+    .m_video_codecid       = AV_CODEC_ID_MPEG4,        // default: MPEG4
     // Background recoding/caching
-     .m_cachepath           = ""
+    .m_cachepath           = ""
 };
 
 enum
@@ -975,10 +977,14 @@ int main(int argc, char *argv[])
 
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 
-    printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
-    printf("Copyright (C) 2006-2008 David Collett\n"
-           "Copyright (C) 2008-2012 K. Henriksson\n"
-           "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
+    // Check if run from other process group like mount and if so, inhibit startup message
+    if (getppid() == getpgid(0))
+    {
+        printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
+        printf("Copyright (C) 2006-2008 David Collett\n"
+               "Copyright (C) 2008-2012 K. Henriksson\n"
+               "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
+    }
 
     // Configure FFmpeg
 #if !LAVC_DEP_AV_CODEC_REGISTER

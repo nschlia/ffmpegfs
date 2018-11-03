@@ -3482,7 +3482,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 
     ret = 0;
 
-    if (m_pBufferSourceContext != nullptr && srcframe->interlaced_frame)
+    if (m_pBufferSourceContext != nullptr /*&& srcframe->interlaced_frame*/)
     {
         try
         {

@@ -3334,13 +3334,13 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
     {
         if (pStream == nullptr)
         {
-            throw (int)AVERROR(EINVAL);
+            throw static_cast<int>(AVERROR(EINVAL));
         }
 
         if (!pStream->avg_frame_rate.den && !pStream->avg_frame_rate.num)
         {
             // No framerate, so this video "stream" has only one picture
-            throw (int)AVERROR(EINVAL);
+            throw static_cast<int>(AVERROR(EINVAL));
         }
 
         m_pFilterGraph = avfilter_graph_alloc();
@@ -3348,14 +3348,14 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         AVBufferSinkParams bufferSinkParams;
         enum AVPixelFormat aePixelFormat[3];
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = (AVPixelFormat)pStream->codecpar->format;
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(pStream->codecpar->format);
 #else
-        AVPixelFormat pix_fmt = (AVPixelFormat)pStream->codec->pix_fmt;
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(pStream->codec->pix_fmt);
 #endif
 
         if (pOutputs == nullptr || pInputs == nullptr || m_pFilterGraph == nullptr)
         {
-            throw (int)AVERROR(ENOMEM);
+            throw static_cast<int>(AVERROR(ENOMEM));
         }
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
@@ -3373,7 +3373,6 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
         ret = avfilter_graph_create_filter(&m_pBufferSourceContext, pBufferSrc, "in", args, nullptr, m_pFilterGraph);
-
         if (ret < 0)
         {
             ffmpegfs_error(destname(), "Cannot create buffer source (error '%s').", ffmpeg_geterror(ret).c_str());
@@ -3442,6 +3441,7 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         //filters = "yadif=0:-1:0";
         //filters = "bwdif=mode=send_frame:parity=auto:deint=all";
         //filters = "kerndeint=thresh=10:map=0:order=0:sharp=1:twoway=1";
+        //filters = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'";
 
         ret = avfilter_graph_parse_ptr(m_pFilterGraph, filters, &pInputs, &pOutputs, nullptr);
         if (ret < 0)

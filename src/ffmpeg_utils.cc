@@ -1075,14 +1075,13 @@ int is_mount(const char * filename)
         struct stat parent_stat;
         char * parent_name = nullptr;
 
-        orig_name = (char*)malloc(strlen(filename) + 1);
-        memcpy(orig_name, filename, strlen(filename) + 1);
+        orig_name = strdup(filename);
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);
 
         // get the file's stat info
-        if( -1 == stat(filename, &file_stat) )
+        if ( -1 == stat(filename, &file_stat) )
         {
             fprintf(stderr, "is_mount(): %s", strerror(errno));
             throw -1;
@@ -1090,14 +1089,14 @@ int is_mount(const char * filename)
 
         //determine whether the supplied file is a directory
         // if it isn't, then it can't be a mountpoint.
-        if( !(file_stat.st_mode & S_IFDIR) )
+        if ( !(file_stat.st_mode & S_IFDIR) )
         {
             fprintf(stderr, "is_mount(): %s is not a directory.\n", filename);
             throw -1;
         }
 
         // get the parent's stat info
-        if( -1 == stat(parent_name, &parent_stat) )
+        if ( -1 == stat(parent_name, &parent_stat) )
         {
             fprintf(stderr, "is_mount(): %s", strerror(errno));
             throw -1;
@@ -1108,7 +1107,7 @@ int is_mount(const char * filename)
         // or, if they refer to the same file,
         // then it's probably the root directory
         // and therefore a mountpoint
-        if( file_stat.st_dev != parent_stat.st_dev ||
+        if ( file_stat.st_dev != parent_stat.st_dev ||
                 ( file_stat.st_dev == parent_stat.st_dev &&
                   file_stat.st_ino == parent_stat.st_ino ) )
         {

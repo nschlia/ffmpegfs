@@ -58,7 +58,7 @@ elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
     check_filesize "obama" 87441 92398  
-    check_filesize "raven" 131806 149219 
+    check_filesize "raven" 131776 149219 
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

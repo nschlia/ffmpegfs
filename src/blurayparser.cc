@@ -24,6 +24,7 @@
 #include "blurayparser.h"
 #include "transcode.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 #include "libbluray/bluray.h"
 
@@ -42,7 +43,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
     //flags = TITLES_ALL;
     //seconds = strtol(optarg, nullptr, 0);
 
-    ffmpegfs_debug(path.c_str(), "Parsing Bluray.");
+    Logging::debug(path, "Parsing Bluray.");
 
     bd = bd_open(bd_dir, nullptr);
 
@@ -50,7 +51,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
     main_title = bd_get_main_title(bd);
     if (main_title >= 0)
     {
-        ffmpegfs_trace(nullptr, "Main title: %d", main_title + 1);
+        Logging::trace(nullptr, "Main title: %1", main_title + 1);
     }
 
     for (uint32_t title_no = 0; title_no < title_count; title_no++)
@@ -88,7 +89,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
                                     (ti->chapters[chapter_no].duration / 90000) / (3600),
                                     ((ti->chapters[chapter_no].duration / 90000) % 3600) / 60,
                                     ((ti->chapters[chapter_no].duration / 90000) % 60),
-                    params.m_desttype);
+                    params.m_desttype.c_str());
 
             string filename(title_buf);
 
@@ -133,9 +134,9 @@ int check_bluray(const string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "BDMV/index.bdmv").c_str(), &st) == 0)
     {
-        ffmpegfs_trace(path.c_str(), "Bluray detected.");
+        Logging::trace(path, "Bluray detected.");
         res = parse_bluray(path, &st, buf, filler);
-        ffmpegfs_trace(nullptr, "Found %i titles.", res);
+        Logging::trace(path, "Found %1 titles.", res);
     }
     return res;
 }

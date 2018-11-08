@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <regex.h>
 #include <wordexp.h>
+#include <memory>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -72,7 +73,7 @@ static int is_device(const AVClass *avclass);
 
 // Add / to the path if required
 // Returns: Constant reference to path
-const string & append_sep(string * path)
+const std::string & append_sep(std::string * path)
 {
     if (path->back() != '/')
     {
@@ -84,7 +85,7 @@ const string & append_sep(string * path)
 
 // Add filename to path, adding a / to the path if required
 // Returns: Constant reference to path
-const string & append_filename(string * path, const string & filename)
+const std::string & append_filename(std::string * path, const std::string & filename)
 {
     append_sep(path);
 
@@ -94,7 +95,7 @@ const string & append_filename(string * path, const string & filename)
 }
 
 // Remove filename from path. Handy dirname alternative.
-const string & remove_filename(string * path)
+const std::string & remove_filename(std::string * path)
 {
     char *p = strdup(path->c_str());
     *path = dirname(p);
@@ -104,7 +105,7 @@ const string & remove_filename(string * path)
 }
 
 // Remove path from filename. Handy basename alternative.
-const string & remove_path(string *path)
+const std::string & remove_path(std::string *path)
 {
     char *p = strdup(path->c_str());
     *path = basename(p);
@@ -114,13 +115,13 @@ const string & remove_path(string *path)
 
 // Find extension in filename, if any
 // Returns: Constant true if extension was found, false if there was none
-bool find_ext(string * ext, const string & filename)
+bool find_ext(std::string * ext, const std::string & filename)
 {
     size_t found;
 
     found = filename.rfind('.');
 
-    if (found == string::npos)
+    if (found == std::string::npos)
     {
         // No extension
         ext->clear();
@@ -137,13 +138,13 @@ bool find_ext(string * ext, const string & filename)
 // Replace extension in filename. Take into account that there might
 // not be an extension already.
 // Returns: Constant reference to filename
-const string & replace_ext(string * filename, const string & ext)
+const std::string & replace_ext(std::string * filename, const std::string & ext)
 {
     size_t found;
 
     found = filename->rfind('.');
 
-    if (found == string::npos)
+    if (found == std::string::npos)
     {
         // No extension, just add
         *filename += '.';
@@ -159,11 +160,11 @@ const string & replace_ext(string * filename, const string & ext)
     return *filename;
 }
 
-const string & get_destname(string *destname, const string & filename)
+const std::string & get_destname(std::string *destname, const std::string & filename)
 {
-    size_t len = strlen(runtime.m_basepath);
+    size_t len = params.m_basepath.size();
 
-    *destname = runtime.m_mountpath;
+    *destname = params.m_mountpath;
     *destname += filename.substr(len);
 
     replace_ext(destname, params.m_desttype);
@@ -171,7 +172,7 @@ const string & get_destname(string *destname, const string & filename)
     return *destname;
 }
 
-string ffmpeg_geterror(int errnum)
+std::string ffmpeg_geterror(int errnum)
 {
     char error[AV_ERROR_MAX_STRING_SIZE];
     av_strerror(errnum, error, AV_ERROR_MAX_STRING_SIZE);
@@ -211,7 +212,7 @@ const char *get_media_type_string(enum AVMediaType media_type)
 }
 #endif
 
-static string ffmpeg_libinfo(
+static std::string ffmpeg_libinfo(
         bool bLibExists,
         unsigned int /*nVersion*/,
         const char * /*pszCfg*/,
@@ -220,31 +221,28 @@ static string ffmpeg_libinfo(
         int nVersionMicro,
         const char * pszLibname)
 {
-    string info;
+    std::string info;
 
     if (bLibExists)
     {
-        char buffer[1024];
-
-        sprintf(buffer,
-                "lib%-17s: %d.%d.%d\n",
-                pszLibname,
-                nVersionMinor,
-                nVersionMajor,
-                nVersionMicro);
-        info = buffer;
+        string_format(info,
+                      "lib%-17s: %d.%d.%d\n",
+                      pszLibname,
+                      nVersionMinor,
+                      nVersionMajor,
+                      nVersionMicro);
     }
 
     return info;
 }
 
-void ffmpeg_libinfo(char * buffer, size_t maxsize)
+std::string ffmpeg_libinfo()
 {
 #define PRINT_LIB_INFO(libname, LIBNAME) \
     ffmpeg_libinfo(true, libname##_version(), libname##_configuration(), \
     LIB##LIBNAME##_VERSION_MAJOR, LIB##LIBNAME##_VERSION_MINOR, LIB##LIBNAME##_VERSION_MICRO, #libname)
 
-    string info;
+    std::string info;
 
 #ifdef USING_LIBAV
     info = "Libav Version       :\n";
@@ -265,8 +263,7 @@ void ffmpeg_libinfo(char * buffer, size_t maxsize)
     info += PRINT_LIB_INFO(swscale,     SWSCALE);
     // info += PRINT_LIB_INFO(postproc,    POSTPROC);
 
-    *buffer = '\0';
-    strncat(buffer, info.c_str(), maxsize - 1);
+    return info;
 }
 
 static int is_device(const AVClass *avclass)
@@ -285,10 +282,10 @@ int show_formats_devices(int device_only)
     const char *last_name;
     int is_dev;
 
-    printf("%s\n"
-           " D. = Demuxing supported\n"
-           " .E = Muxing supported\n"
-           " --\n", device_only ? "Devices:" : "File formats:");
+    std::printf("%s\n"
+                " D. = Demuxing supported\n"
+                " .E = Muxing supported\n"
+                " --\n", device_only ? "Devices:" : "File formats:");
     last_name = "000";
     for (;;)
     {
@@ -359,17 +356,17 @@ int show_formats_devices(int device_only)
             continue;
         }
 
-        printf(" %s%s %-15s %-15s %s\n",
-               decode ? "D" : " ",
-               encode ? "E" : " ",
-               extensions != nullptr ? extensions : "-",
-               name,
-               long_name ? long_name:" ");
+        std::printf(" %s%s %-15s %-15s %s\n",
+                    decode ? "D" : " ",
+                    encode ? "E" : " ",
+                    extensions != nullptr ? extensions : "-",
+                    name,
+                    long_name ? long_name:" ");
     }
     return 0;
 }
 
-const char * get_codec_name(enum AVCodecID codec_id, int long_name)
+const char * get_codec_name(AVCodecID codec_id, bool long_name)
 {
     const AVCodecDescriptor * pCodecDescriptor;
     const char * psz = "unknown";
@@ -392,9 +389,9 @@ const char * get_codec_name(enum AVCodecID codec_id, int long_name)
     return psz;
 }
 
-int mktree(const char *path, mode_t mode)
+int mktree(const std::string &filename, mode_t mode)
 {
-    char *_path = strdup(path);
+    char *_path = strdup(filename.c_str());
 
     if (_path == nullptr)
     {
@@ -431,25 +428,24 @@ int mktree(const char *path, mode_t mode)
     return status;
 }
 
-void tempdir(char *dir, size_t size)
+void tempdir(std::string & dir)
 {
-    *dir = '\0';
     const char *temp = getenv("TMPDIR");
 
     if (temp != nullptr)
     {
-        strncpy(dir, temp, size);
+        dir = temp;
         return;
     }
 
-    strncpy(dir, P_tmpdir, size);
+    dir = P_tmpdir;
 
-    if (*dir)
+    if (!dir.empty())
     {
         return;
     }
 
-    strncpy(dir, "/tmp", size);
+    dir = "/tmp";
 }
 
 int supports_albumart(FILETYPE filetype)
@@ -457,37 +453,37 @@ int supports_albumart(FILETYPE filetype)
     return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4);
 }
 
-FILETYPE get_filetype(const char * type)
+FILETYPE get_filetype(const std::string & type)
 {
-    if (strcasestr(type, "mp3") != nullptr)
+    if (!strcasecmp(type, "mp3"))
     {
         return FILETYPE_MP3;
     }
-    else if (strcasestr(type, "mp4") != nullptr)
+    else if (!strcasecmp(type, "mp4"))
     {
         return FILETYPE_MP4;
     }
-    else if (strcasestr(type, "wav") != nullptr)
+    else if (!strcasecmp(type, "wav"))
     {
         return FILETYPE_WAV;
     }
-    else if (strcasestr(type, "ogg") != nullptr)
+    else if (!strcasecmp(type, "ogg"))
     {
         return FILETYPE_OGG;
     }
-    else if (strcasestr(type, "webm") != nullptr)
+    else if (!strcasecmp(type, "webm"))
     {
         return FILETYPE_WEBM;
     }
-    else if (strcasestr(type, "mov") != nullptr)
+    else if (!strcasecmp(type, "mov"))
     {
         return FILETYPE_MOV;
     }
-    else if (strcasestr(type, "aiff") != nullptr)
+    else if (!strcasecmp(type, "aiff"))
     {
         return FILETYPE_AIFF;
     }
-    else if (strcasestr(type, "opus") != nullptr)
+    else if (!strcasecmp(type, "opus"))
     {
         return FILETYPE_OPUS;
     }
@@ -497,107 +493,84 @@ FILETYPE get_filetype(const char * type)
     }
 }
 
-const char * get_codecs(const char * type, FILETYPE * output_type, AVCodecID * audio_codecid, AVCodecID * video_codecid)
+int get_codecs(const std::string & type, ffmpegfs_format *format)
 {
-    const char * format = nullptr;
+    int ret = -1;
 
     switch (get_filetype(type))
     {
     case FILETYPE_MP3:
     {
-        *audio_codecid = AV_CODEC_ID_MP3;
-        *video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_MP3;
-        }
-        format = "mp3";
+        format->m_audio_codecid = AV_CODEC_ID_MP3;
+        format->m_video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        format->m_filetype      = FILETYPE_MP3;
+        format->m_format_name   = "mp3";
         break;
     }
     case FILETYPE_MP4:
     {
-        *audio_codecid = AV_CODEC_ID_AAC;
-        *video_codecid = AV_CODEC_ID_H264;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_MP4;
-        }
-        format = "mp4";
+        format->m_audio_codecid = AV_CODEC_ID_AAC;
+        format->m_video_codecid = AV_CODEC_ID_H264;
+        format->m_filetype      = FILETYPE_MP4;
+        format->m_format_name   = "mp4";
         break;
     }
     case FILETYPE_WAV:
     {
-        *audio_codecid = AV_CODEC_ID_PCM_S16LE;
-        *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_WAV;
-        }
-        format = "wav";
+        format->m_audio_codecid = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_filetype      =  FILETYPE_WAV;
+        format->m_format_name   = "wav";
         break;
     }
     case FILETYPE_OGG:
     {
-        *audio_codecid = AV_CODEC_ID_VORBIS;
-        *video_codecid = AV_CODEC_ID_THEORA;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_OGG;
-        }
-        format = "ogg";
+        format->m_audio_codecid = AV_CODEC_ID_VORBIS;
+        format->m_video_codecid = AV_CODEC_ID_THEORA;
+        format->m_filetype      = FILETYPE_OGG;
+        format->m_format_name   = "ogg";
         break;
     }
     case FILETYPE_WEBM:
     {
-        *audio_codecid = AV_CODEC_ID_OPUS;
-        *video_codecid = AV_CODEC_ID_VP9;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_WEBM;
-        }
-        format = "webm";
+        format->m_audio_codecid = AV_CODEC_ID_OPUS;
+        format->m_video_codecid = AV_CODEC_ID_VP9;
+        format->m_filetype      = FILETYPE_WEBM;
+        format->m_format_name   = "webm";
         break;
     }
     case FILETYPE_MOV:
     {
-        *audio_codecid = AV_CODEC_ID_AAC;
-        *video_codecid = AV_CODEC_ID_H264;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_MOV;
-        }
-        format = "mov";
+        format->m_audio_codecid = AV_CODEC_ID_AAC;
+        format->m_video_codecid = AV_CODEC_ID_H264;
+        format->m_filetype      = FILETYPE_MOV;
+        format->m_format_name   = "mov";
         break;
     }
     case FILETYPE_AIFF:
     {
-        *audio_codecid = AV_CODEC_ID_PCM_S16BE;
-        *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_AIFF;
-        }
-        format = "aiff";
+        format->m_audio_codecid = AV_CODEC_ID_PCM_S16BE;
+        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_filetype      = FILETYPE_AIFF;
+        format->m_format_name   = "aiff";
         break;
     }
     case FILETYPE_OPUS:
     {
-        *audio_codecid = AV_CODEC_ID_OPUS;
-        *video_codecid = AV_CODEC_ID_NONE;
-        if (output_type != nullptr)
-        {
-            *output_type = FILETYPE_OPUS;
-        }
-        format = "opus";
+        format->m_audio_codecid = AV_CODEC_ID_OPUS;
+        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_filetype      = FILETYPE_OPUS;
+        format->m_format_name   = "opus";
         break;
     }
     case FILETYPE_UNKNOWN:
     {
+        ret = 0;
         break;
     }
     }
 
-    return format;
+    return ret;
 }
 
 #ifdef USING_LIBAV
@@ -692,249 +665,193 @@ void init_id3v1(ID3v1 *id3v1)
     id3v1->m_genre = 0;
 }
 
-void format_number(char *output, size_t size, uint64_t value)
+std::string format_number(int64_t value)
 {
     if (!value)
     {
-        strncpy(output, "unlimited", size);
-        return;
+        return "unlimited";
     }
 
     if (value == (uint64_t)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
-    snprintf(output, size, "%" PRId64, value);
+    return string_format("%" PRId64, value);
 }
 
-void format_bitrate(char *output, size_t size, uint64_t value)
+std::string format_bitrate(uint64_t value)
 {
     if (value == (uint64_t)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
     if (value > 1000000)
     {
-        snprintf(output, size, "%.2f Mbps", (double)value / 1000000);
+        return string_format("%.2f Mbps", static_cast<double>(value) / 1000000);
     }
     else if (value > 1000)
     {
-        snprintf(output, size, "%.1f kbps", (double)value / 1000);
+        return string_format("%.1f kbps", static_cast<double>(value) / 1000);
     }
     else
     {
-        snprintf(output, size, "%" PRId64 " bps", value);
+        return string_format("%" PRId64 " bps", value);
     }
 }
 
-void format_samplerate(char *output, size_t size, unsigned int value)
+std::string format_samplerate(unsigned int value)
 {
     if (value == (unsigned int)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
     if (value < 1000)
     {
-        snprintf(output, size, "%u Hz", value);
+        return string_format("%u Hz", value);
     }
     else
     {
-        snprintf(output, size, "%.3f kHz", (double)value / 1000);
+        return string_format("%.3f kHz", static_cast<double>(value) / 1000);
     }
 }
 
-void format_duration(char *output, size_t size, time_t value)
+std::string format_duration(time_t value)
 {
     if (value == (time_t)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
+    std::string buffer;
     int hours;
     int mins;
     int secs;
-    int pos;
 
-    hours = (int)(value / (60*60));
+    hours = static_cast<int>(value / (60*60));
     value -= hours * (60*60);
-    mins = (int)(value / (60));
+    mins = static_cast<int>(value / (60));
     value -= mins * (60);
-    secs = (int)(value);
+    secs = static_cast<int>(value);
 
-    *output = '0';
-    pos = 0;
     if (hours)
     {
-        pos += snprintf(output + pos, size - pos, "%02i:", hours);
+        buffer = string_format("%02i:", hours);
     }
-    snprintf(output + pos, size - pos, "%02i:%02i", mins, secs);
+    buffer += string_format("%02i:%02i", mins, secs);
+    return buffer;
 }
 
-void format_time(char *output, size_t size, time_t value)
+std::string format_time(time_t value)
 {
     if (!value)
     {
-        strncpy(output, "unlimited", size);
-        return;
+        return "unlimited";
     }
 
     if (value == (time_t)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
+    std::string buffer;
     int weeks;
     int days;
     int hours;
     int mins;
     int secs;
-    int pos;
 
-    weeks = (int)(value / (60*60*24*7));
+    weeks = static_cast<int>(value / (60*60*24*7));
     value -= weeks * (60*60*24*7);
-    days = (int)(value / (60*60*24));
+    days = static_cast<int>(value / (60*60*24));
     value -= days * (60*60*24);
-    hours = (int)(value / (60*60));
+    hours = static_cast<int>(value / (60*60));
     value -= hours * (60*60);
-    mins = (int)(value / (60));
+    mins = static_cast<int>(value / (60));
     value -= mins * (60);
-    secs = (int)(value);
+    secs = static_cast<int>(value);
 
-    *output = '0';
-    pos = 0;
     if (weeks)
     {
-        pos += snprintf(output, size, "%iw ", weeks);
+        buffer = string_format("%iw ", weeks);
     }
     if (days)
     {
-        pos += snprintf(output + pos, size - pos, "%id ", days);
+        buffer += string_format("%id ", days);
     }
     if (hours)
     {
-        pos += snprintf(output + pos, size - pos, "%ih ", hours);
+        buffer += string_format("%ih ", hours);
     }
     if (mins)
     {
-        pos += snprintf(output + pos, size - pos, "%im ", mins);
+        buffer += string_format("%im ", mins);
     }
     if (secs)
     {
-        pos += snprintf(output + pos, size - pos, "%is ", secs);
+        buffer += string_format("%is ", secs);
     }
+    return buffer;
 }
 
-void format_size(char *output, size_t size, size_t value)
+std::string format_size(size_t value)
 {
     if (!value)
     {
-        strncpy(output, "unlimited", size);
-        return;
+        return "unlimited";
     }
 
     if (value == (size_t)AV_NOPTS_VALUE)
     {
-        strncpy(output, "unset", size);
-        return;
+        return "unset";
     }
 
     if (value > 1024*1024*1024*1024LL)
     {
-        snprintf(output, size, "%.3f TB", (double)value / (1024*1024*1024*1024LL));
+        return string_format("%.3f TB", static_cast<double>(value) / (1024*1024*1024*1024LL));
     }
     else if (value > 1024*1024*1024)
     {
-        snprintf(output, size, "%.2f GB", (double)value / (1024*1024*1024));
+        return string_format("%.2f GB", static_cast<double>(value) / (1024*1024*1024));
     }
     else if (value > 1024*1024)
     {
-        snprintf(output, size, "%.1f MB", (double)value / (1024*1024));
+        return string_format("%.1f MB", static_cast<double>(value) / (1024*1024));
     }
     else if (value > 1024)
     {
-        snprintf(output, size, "%.1f KB", (double)value / (1024));
+        return string_format("%.1f KB", static_cast<double>(value) / (1024));
     }
     else
     {
-        snprintf(output, size, "%zu bytes", value);
+        return string_format("%zu bytes", value);
     }
-}
-
-string format_number(int64_t value)
-{
-    char buffer[100];
-
-    format_number(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-
-string format_bitrate(uint64_t value)
-{
-    char buffer[100];
-
-    format_bitrate(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-
-string format_samplerate(unsigned int value)
-{
-    char buffer[100];
-
-    format_samplerate(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-
-string format_duration(time_t value)
-{
-    char buffer[100];
-
-    format_duration(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-string format_time(time_t value)
-{
-    char buffer[100];
-
-    format_time(buffer, sizeof(buffer), value);
-
-    return buffer;
-}
-
-string format_size(size_t value)
-{
-    char buffer[100];
-
-    format_size(buffer, sizeof(buffer), value);
-
-    return buffer;
 }
 
 static void print_fps(double d, const char *postfix)
 {
     uint64_t v = lrint(d * 100);
     if (!v)
-        printf("%1.4f %s\n", d, postfix);
+    {
+        std::printf("%1.4f %s\n", d, postfix);
+    }
     else if (v % 100)
-        printf("%3.2f %s\n", d, postfix);
+    {
+        std::printf("%3.2f %s\n", d, postfix);
+    }
     else if (v % (100 * 1000))
-        printf("%1.0f %s\n", d, postfix);
+    {
+        std::printf("%1.0f %s\n", d, postfix);
+    }
     else
-        printf("%1.0fk %s\n", d / 1000, postfix);
+    {
+        std::printf("%1.0fk %s\n", d / 1000, postfix);
+    }
 }
 
-int print_info(AVStream* stream)
+int print_info(const AVStream* stream)
 {
     int ret = 0;
 
@@ -946,7 +863,8 @@ int print_info(AVStream* stream)
     }
 
     ret = avcodec_parameters_to_context(avctx, stream->codecpar);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         avcodec_free_context(&avctx);
         return ret;
     }
@@ -986,7 +904,7 @@ int print_info(AVStream* stream)
     return ret;
 }
 
-void exepath(string * path)
+void exepath(std::string * path)
 {
     char result[PATH_MAX + 1] = "";
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
@@ -1004,16 +922,14 @@ void exepath(string * path)
 // trim from start
 std::string &ltrim(std::string &s)
 {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-                                    std::not1(std::ptr_fun<int, int>(std::isspace))));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
 }
 
 // trim from end
 std::string &rtrim(std::string &s)
 {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
 }
 
@@ -1023,49 +939,73 @@ std::string &trim(std::string &s)
     return ltrim(rtrim(s));
 }
 
+std::string replace_all(std::string str, const std::string& from, const std::string& to)
+{
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos)
+    {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+}
+
+int strcasecmp(const std::string & s1, const std::string & s2)
+{
+    return strcasecmp(s1.c_str(), s2.c_str());
+}
+
+template<typename ... Args>
+std::string string_format(const std::string& format, Args ... args)
+{
+    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    std::snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
+
 // Compare value with pattern
 // Returns:
 // -1 if pattern is no valid regex
 // 0 if pattern matches
 // 1 if not
-int compare(const char *value, const char *pattern)
+int compare(const std::string & value, const std::string & pattern)
 {
     regex_t regex;
     int reti;
 
-    reti = regcomp(&regex, pattern, REG_EXTENDED | REG_ICASE);
+    reti = regcomp(&regex, pattern.c_str(), REG_EXTENDED | REG_ICASE);
     if (reti)
     {
-        fprintf(stderr, "Could not compile regex\n");
+        std::fprintf(stderr, "Could not compile regex\n");
         return -1;
     }
 
-    reti = regexec(&regex, value, 0, nullptr, 0);
+    reti = regexec(&regex, value.c_str(), 0, nullptr, 0);
 
     regfree(&regex);
 
     return reti;
 }
 
-char * expand_path(char *tgt, size_t buflen, const char *src)
+const std::string & expand_path(std::string *tgt, const std::string & src)
 {
     wordexp_t exp_result;
-    if (!wordexp(src, &exp_result, 0))
+    if (!wordexp(replace_all(src, " ", "\\ ").c_str(), &exp_result, 0))
     {
-        strncpy(tgt, exp_result.we_wordv[0], buflen);
+        *tgt = exp_result.we_wordv[0];
         wordfree(&exp_result);
     }
     else
     {
-        strncpy(tgt, src, buflen);
+        *tgt =  src;
     }
 
-    return tgt;
+    return *tgt;
 }
 
-int is_mount(const char * filename)
+int is_mount(const std::string & filename)
 {
-
     char* orig_name = nullptr;
     int ret = 0;
 
@@ -1075,15 +1015,15 @@ int is_mount(const char * filename)
         struct stat parent_stat;
         char * parent_name = nullptr;
 
-        orig_name = strdup(filename);
+        orig_name = strdup(filename.c_str());
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);
 
         // get the file's stat info
-        if ( -1 == stat(filename, &file_stat) )
+        if ( -1 == stat(filename.c_str(), &file_stat) )
         {
-            fprintf(stderr, "is_mount(): %s", strerror(errno));
+            std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
             throw -1;
         }
 
@@ -1091,14 +1031,14 @@ int is_mount(const char * filename)
         // if it isn't, then it can't be a mountpoint.
         if ( !(file_stat.st_mode & S_IFDIR) )
         {
-            fprintf(stderr, "is_mount(): %s is not a directory.\n", filename);
+            std::fprintf(stderr, "is_mount(): %s is not a directory.\n", filename.c_str());
             throw -1;
         }
 
         // get the parent's stat info
         if ( -1 == stat(parent_name, &parent_stat) )
         {
-            fprintf(stderr, "is_mount(): %s", strerror(errno));
+            std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
             throw -1;
         }
 
@@ -1108,8 +1048,8 @@ int is_mount(const char * filename)
         // then it's probably the root directory
         // and therefore a mountpoint
         if ( file_stat.st_dev != parent_stat.st_dev ||
-                ( file_stat.st_dev == parent_stat.st_dev &&
-                  file_stat.st_ino == parent_stat.st_ino ) )
+             ( file_stat.st_dev == parent_stat.st_dev &&
+               file_stat.st_ino == parent_stat.st_ino ) )
         {
             // IS a mountpoint
             ret = 1;

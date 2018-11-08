@@ -20,6 +20,7 @@
 
 #include "ffmpeg_base.h"
 #include "transcode.h"
+#include "logging.h"
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -64,7 +65,7 @@ int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            ffmpegfs_error(filename, "Could not find %s stream in input file (error '%s').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
+            Logging::error(filename, "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret));
         }
         return ret;
     }
@@ -93,7 +94,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     dec_ctx = avcodec_alloc_context3(dec);
     if (!dec_ctx)
     {
-        ffmpegfs_error(filename, "Could not allocate a decoding context.");
+        Logging::error(filename, "Could not allocate a decoding context.");
         return AVERROR(ENOMEM);
     }
 
@@ -115,7 +116,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     dec = avcodec_find_decoder(codec_id);
     if (!dec)
     {
-        ffmpegfs_error(filename, "Failed to find %s input codec.", get_media_type_string(type));
+        Logging::error(filename, "Failed to find %1 input codec.", get_media_type_string(type));
         return AVERROR(EINVAL);
     }
 
@@ -127,11 +128,11 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
     if (ret < 0)
     {
-        ffmpegfs_error(filename, "Failed to open %s input codec for stream #%u (error '%s').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
+        Logging::error(filename, "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret));
         return ret;
     }
 
-    ffmpegfs_debug(filename, "Opened %s input codec for stream #%u.", get_codec_name(codec_id, true), input_stream->index);
+    Logging::debug(filename, "Opened %1 input codec for stream #%2.", get_codec_name(codec_id, true), input_stream->index);
 
     *avctx = dec_ctx;
 
@@ -152,7 +153,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
 {
     if (!(*frame = ::av_frame_alloc()))
     {
-        ffmpegfs_error(filename, "Could not allocate frame.");
+        Logging::error(filename, "Could not allocate frame.");
         return AVERROR(ENOMEM);
     }
     return 0;
@@ -166,7 +167,7 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     {
         frame_rate.num = 25;
         frame_rate.den = 1;
-        ffmpegfs_warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        Logging::warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
     }
 
     // timebase: This is the fundamental unit of time (in seconds) in terms
@@ -232,7 +233,7 @@ int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
 
     if (ret < 0)
     {
-        ffmpegfs_error(filename, "Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
     }
 
     return ret;
@@ -244,7 +245,7 @@ int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
     if (ret < 0)
     {
-        ffmpegfs_error(filename, "Error setting dictionary option key(%s)='%s' (error '%s').", key, value, ffmpeg_geterror(ret).c_str());
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
     }
 
     return ret;
@@ -259,11 +260,11 @@ void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
     }
 
-    ffmpegfs_info(out_file ? destname() : filename(), "Video %s: %s Bit Rate: %s Duration: %s",
+    Logging::info(out_file ? destname() : filename(), "Video %1: %2 Bit Rate: %3 Duration: %4",
                   out_file ? "out" : "in",
-                  get_codec_name(codec->codec_id, 0),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
-                  format_duration(duration).c_str());
+                  get_codec_name(codec->codec_id, false),
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
+                  format_duration(duration));
 }
 
 void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
@@ -275,12 +276,12 @@ void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
     }
 
-    ffmpegfs_info(out_file ? destname() : filename(), "Audio %s: %s Bit Rate: %s Channels: %i Sample Rate: %s Duration: %s",
+    Logging::info(out_file ? destname() : filename(), "Audio %1: %2 Bit Rate: %3 Channels: %4 Sample Rate: %5 Duration: %6",
                   out_file ? "out" : "in",
-                  get_codec_name(codec->codec_id, 0),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                  get_codec_name(codec->codec_id, false),
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
                   codec->channels,
-                  format_samplerate(codec->sample_rate).c_str(),
-                  format_duration(duration).c_str());
+                  format_samplerate(codec->sample_rate),
+                  format_duration(duration));
 }
 

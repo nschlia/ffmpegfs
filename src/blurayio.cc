@@ -22,6 +22,7 @@
 #include "blurayio.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 #include <libbluray/bluray.h>
 #include <assert.h>
@@ -86,19 +87,19 @@ int blurayio::open(const string & filename)
 
     chapter_end = m_chapter_no + 1;
 	
-    ffmpegfs_debug(bdpath, "Opening input Bluray.");
+    Logging::debug(bdpath, "Opening input Bluray.");
 
     m_bd = bd_open(bdpath, keyfile);
     if (m_bd == nullptr)
     {
-        ffmpegfs_error(bdpath, "Failed to open disc.");
+        Logging::error(bdpath, "Failed to open disc.");
         return 1;
     }
 
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
     if (title_count <= 0)
     {
-        ffmpegfs_error(bdpath, "No titles found.");
+        Logging::error(bdpath, "No titles found.");
         return 1;
     }
 
@@ -106,7 +107,7 @@ int blurayio::open(const string & filename)
     {
         if (!bd_select_title(m_bd, m_title_no))
         {
-            ffmpegfs_error(bdpath, "Failed to open title: %d", m_title_no);
+            Logging::error(bdpath, "Failed to open title: %1", m_title_no);
             return 1;
         }
         ti = bd_get_title_info(m_bd, m_title_no, m_angle_no);
@@ -115,7 +116,7 @@ int blurayio::open(const string & filename)
 
     if (m_angle_no >= ti->angle_count)
     {
-        ffmpegfs_warning(bdpath, "Invalid angle %d > angle count %d. Using angle 1.", m_angle_no+1, ti->angle_count);
+        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_no+1, ti->angle_count);
         m_angle_no = 0;
     }
 
@@ -123,7 +124,7 @@ int blurayio::open(const string & filename)
 
     if (m_chapter_no >= ti->chapter_count)
     {
-        ffmpegfs_error(bdpath, "First chapter %d > chapter count %d", m_chapter_no+1, ti->chapter_count);
+        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_no+1, ti->chapter_count);
         return 1;
     }
 
@@ -182,7 +183,7 @@ int blurayio::read(void * dataX, int size)
         bytes = bd_read(m_bd, m_data, XXsize);
         if (bytes <= 0)
         {
-            ffmpegfs_error(path.c_str(), "bd_read fail ret = %i", bytes);
+            Logging::error(path, "bd_read fail ret = %1", bytes);
             return 0;
         }
         m_cur_pos = bd_tell(m_bd);

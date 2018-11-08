@@ -24,6 +24,7 @@
 #include "vcdparser.h"
 #include "transcode.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 #include "vcd/vcdentries.h"
 
@@ -35,7 +36,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
 
     vcd.load_file(path);
 	
-    ffmpegfs_debug(path.c_str(), "Parsing Video CD.");
+    Logging::debug(path, "Parsing Video CD.");
 
     for (int chapter_no = 0; chapter_no < vcd.get_number_of_chapters(); chapter_no++)
     {
@@ -45,7 +46,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
         struct stat st;
         size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
-        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype);
+        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype.c_str());
 
         string filename(title_buf);
 
@@ -86,15 +87,15 @@ int check_vcd(const string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "SVCD/INFO.SVD").c_str(), &st) == 0)
     {
-        ffmpegfs_trace(path.c_str(), "VCD detected.");
+        Logging::trace(path, "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-        ffmpegfs_trace(nullptr, "Found %i titles.", res);
+        Logging::trace(nullptr, "Found %1 titles.", res);
     }
     else if (stat((path + "VCD/INFO.VCD").c_str(), &st) == 0)
     {
-        ffmpegfs_trace(path.c_str(), "VCD detected.");
+        Logging::trace(path, "VCD detected.");
         res = parse_vcd(path, &st, buf, filler);
-        ffmpegfs_trace(nullptr, "Found %i titles.", res);
+        Logging::trace(nullptr, "Found %1 titles.", res);
     }
     return res;
 }

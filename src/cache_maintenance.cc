@@ -29,6 +29,7 @@
 #include "cache_maintenance.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 #include <signal.h>
 #include <unistd.h>
@@ -67,7 +68,7 @@ static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, 
 
     if (master)
     {
-        ffmpegfs_info(nullptr, "Running periodic cache maintenance.");
+        Logging::info(nullptr, "Running periodic cache maintenance.");
         transcoder_cache_maintenance();
     }
 }
@@ -78,13 +79,10 @@ static int start_timer(time_t interval)
     struct itimerspec its;
     long long freq_nanosecs;
     struct sigaction sa;
-    char cache_maintenance[100];
-
-    format_time(cache_maintenance, sizeof(cache_maintenance), interval);
 
     freq_nanosecs = interval * 1000000000LL;
 
-    ffmpegfs_trace(nullptr, "Starting maintenance timer with %speriod.", cache_maintenance);
+    Logging::trace(nullptr, "Starting maintenance timer with %1period.", format_time(interval).c_str());
 
     // Establish maintenance_handler for timer signal
     sa.sa_flags = SA_SIGINFO;
@@ -92,7 +90,7 @@ static int start_timer(time_t interval)
     sigemptyset(&sa.sa_mask);
     if (sigaction(SIGMAINT, &sa, nullptr) == -1)
     {
-        ffmpegfs_error(nullptr, "start_timer(): sigaction failed: %s", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigaction failed: %1", strerror(errno));
         return -1;
     }
 
@@ -101,7 +99,7 @@ static int start_timer(time_t interval)
     sigaddset(&mask, SIGMAINT);
     if (sigprocmask(SIG_SETMASK, &mask, nullptr) == -1)
     {
-        ffmpegfs_error(nullptr, "start_timer(): sigprocmask(SIG_SETMASK) failed: %s", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_SETMASK) failed: %1", strerror(errno));
         return -1;
     }
 
@@ -111,7 +109,7 @@ static int start_timer(time_t interval)
     sev.sigev_value.sival_ptr = &timerid;
     if (timer_create(CLOCKID, &sev, &timerid) == -1)
     {
-        ffmpegfs_error(nullptr, "start_timer(): timer_create failed: %s", strerror(errno));
+        Logging::error(nullptr, "start_timer(): timer_create failed: %1", strerror(errno));
         return -1;
     }
 
@@ -123,27 +121,27 @@ static int start_timer(time_t interval)
 
     if (timer_settime(timerid, 0, &its, nullptr) == -1)
     {
-        ffmpegfs_error(nullptr, "start_timer(): timer_settime failed: %s", strerror(errno));
+        Logging::error(nullptr, "start_timer(): timer_settime failed: %1", strerror(errno));
         return -1;
     }
 
     if (sigprocmask(SIG_UNBLOCK, &mask, nullptr) == -1)
     {
-        ffmpegfs_error(nullptr, "start_timer(): sigprocmask(SIG_UNBLOCK) failed: %s", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_UNBLOCK) failed: %1", strerror(errno));
     }
 
-    ffmpegfs_trace(nullptr, "Maintenance timer started successfully.");
+    Logging::trace(nullptr, "Maintenance timer started successfully.");
 
     return 0;
 }
 
 static int stop_timer()
 {
-    ffmpegfs_info(nullptr, "Stopping maintenance timer.");
+    Logging::info(nullptr, "Stopping maintenance timer.");
 
     if (timer_delete(timerid) == -1)
     {
-        ffmpegfs_error(nullptr, "stop_timer(): timer_delete failed: %s", strerror(errno));
+        Logging::error(nullptr, "stop_timer(): timer_delete failed: %1", strerror(errno));
         return -1;
     }
 
@@ -154,14 +152,14 @@ static int link_up()
 {
     key_t shmkey;
 
-    ffmpegfs_debug(nullptr, "Activating " PACKAGE " inter-process link.");
+    Logging::debug(nullptr, "Activating " PACKAGE " inter-process link.");
 
     // initialise a shared variable in shared memory
     shmkey = ftok ("/dev/null", 5);     // valid directory name and a number
 
     if (shmkey == -1)
     {
-        ffmpegfs_error(nullptr, "link_up(): ftok error %s", strerror(errno));
+        Logging::error(nullptr, "link_up(): ftok error %1", strerror(errno));
         return -1;
     }
 
@@ -183,7 +181,7 @@ static int link_up()
         }
         else
         {
-            ffmpegfs_error(nullptr, "link_up(): shmget error %s", strerror(errno));
+            Logging::error(nullptr, "link_up(): shmget error %1", strerror(errno));
             return -1;
         }
     }
@@ -193,11 +191,11 @@ static int link_up()
     if (master)
     {
         *pid_master = getpid();
-        ffmpegfs_info(nullptr, "Process with PID %i is now master.", *pid_master);
+        Logging::info(nullptr, "Process with PID %1 is now master.", *pid_master);
     }
     else
     {
-        ffmpegfs_info(nullptr, "Process with PID %i is now client, master is PID %i.", getpid(), *pid_master);
+        Logging::info(nullptr, "Process with PID %1 is now client, master is PID %2.", getpid(), *pid_master);
     }
 
     // Also create inter-process semaphore.
@@ -214,7 +212,7 @@ static int link_up()
 
         if (sem == SEM_FAILED)
         {
-            ffmpegfs_error(nullptr, "link_up(): sem_open error %s", strerror(errno));
+            Logging::error(nullptr, "link_up(): sem_open error %1", strerror(errno));
             link_down();
             return -1;
         }
@@ -229,7 +227,7 @@ static void master_check()
 
     if (*pid_master == pid_self)
     {
-        ffmpegfs_trace(nullptr, "PID %i is already master.", pid_self);
+        Logging::trace(nullptr, "PID %1 is already master.", pid_self);
         return;
     }
 
@@ -238,11 +236,11 @@ static void master_check()
     // Check if master process still exists
     int master_running = (getpgid(*pid_master) >= 0);
 
-    ffmpegfs_trace(nullptr, "Master with PID %i is %s running.", *pid_master, master_running ? "still" : "NOT");
+    Logging::trace(nullptr, "Master with PID %1 is %2 running.", *pid_master, master_running ? "still" : "NOT");
 
     if (!master_running)
     {
-        ffmpegfs_info(nullptr, "Master with PID %i is gone. PID %i taking over as new master.", *pid_master, pid_self);
+        Logging::info(nullptr, "Master with PID %1 is gone. PID %2 taking over as new master.", *pid_master, pid_self);
 
         // Register us as master
         *pid_master = pid_self;
@@ -257,24 +255,24 @@ static int link_down()
     struct shmid_ds buf;
     int ret = 0;
 
-    ffmpegfs_info(nullptr, "Shutting " PACKAGE " inter-process link down.");
+    Logging::info(nullptr, "Shutting " PACKAGE " inter-process link down.");
 
     if (sem_close(sem))
     {
-        ffmpegfs_error(nullptr, "link_down(): sem_close error %s", strerror(errno));
+        Logging::error(nullptr, "link_down(): sem_close error %1", strerror(errno));
         ret = -1;
     }
 
     // shared memory detach
     if (shmdt (pid_master))
     {
-        ffmpegfs_error(nullptr, "link_down(): shmdt error %s", strerror(errno));
+        Logging::error(nullptr, "link_down(): shmdt error %1", strerror(errno));
         ret = -1;
     }
 
     if (shmctl(shmid, IPC_STAT, &buf))
     {
-        ffmpegfs_error(nullptr, "link_down(): shmctl error %s", strerror(errno));
+        Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
         ret = -1;
     }
     else
@@ -283,7 +281,7 @@ static int link_down()
         {
             if (shmctl (shmid, IPC_RMID, 0))
             {
-                ffmpegfs_error(nullptr, "link_down(): shmctl error %s", strerror(errno));
+                Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
                 ret = -1;
             }
 
@@ -291,7 +289,7 @@ static int link_down()
             // if a crash occurs during the execution
             if (sem_unlink(SEM_OPEN_FILE))
             {
-                ffmpegfs_error(nullptr, "link_down(): sem_unlink error %s", strerror(errno));
+                Logging::error(nullptr, "link_down(): sem_unlink error %1", strerror(errno));
                 ret = -1;
             }
         }

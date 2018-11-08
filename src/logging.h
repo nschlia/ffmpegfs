@@ -26,8 +26,9 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+#include <regex>
 
-using namespace std;
+#include <iostream>
 
 class Logging
 {
@@ -49,52 +50,136 @@ public:
      *   to_stderr: Whether to write log output to stderr.
      *   to_syslog: Whether to write log output to syslog.
      */
-    explicit Logging(string logfile, level max_level, bool to_stderr, bool to_syslog);
+    explicit Logging(const std::string & logfile, level max_level, bool to_stderr, bool to_syslog);
 
     bool GetFail() const
     {
-        return logfile_.fail();
+        return m_logfile.fail();
     }
 
-private:
-    class Logger : public ostringstream
+    //private:
+    class Logger : public std::ostringstream
     {
     public:
-        Logger(level loglevel, const char *filename, Logging* logging) :
-            loglevel_(loglevel), filename_(filename), logging_(logging) {}
-        Logger() : loglevel_(level::DEBUG), filename_(nullptr) {}
+        Logger(level loglevel, const std::string & filename, Logging* logging) :
+            m_loglevel(loglevel),
+            m_filename(filename),
+            m_logging(logging) {}
+        Logger() :
+            m_loglevel(level::DEBUG) {}
         virtual ~Logger();
 
     private:
-        const level loglevel_;
+        const level m_loglevel;
 
-        const char *filename_;
-        Logging* logging_;
+        const std::string   m_filename;
+        Logging*            m_logging;
 
-        static const map<level,int> syslog_level_map_;
-        static const map<level,string> level_name_map_;
-        static const map<level,string> level_colour_map_;
+        static const std::map<level, int>           m_syslog_level_map;
+        static const std::map<level, std::string>   m_level_name_map;
+        static const std::map<level, std::string>   m_level_colour_map;
     };
+public:
+    static bool init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
 
-    friend Logger Log(level lev, const char * filename);
+    template <typename... Args>
+    static void trace(const char *filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::TRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+    template <typename... Args>
+    static void trace(const std::string &filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::TRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+
+    template <typename... Args>
+    static void debug(const char * filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::DEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+    template <typename... Args>
+    static void debug(const std::string & filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::DEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+
+    template <typename... Args>
+    static void info(const char *filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::INFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+    template <typename... Args>
+    static void info(const std::string &filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::INFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+
+    template <typename... Args>
+    static void warning(const char *filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::WARNING, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+    template <typename... Args>
+    static void warning(const std::string &filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::WARNING, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+
+    template <typename... Args>
+    static void error(const char *filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::ERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+    template <typename... Args>
+    static void error(const std::string &filename, const std::string &format_string, Args &&...args)
+    {
+        log_with_level(Logging::level::ERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+    }
+
+    static void log_with_level(Logging::level level, const std::string & filename, const std::string & message);
+
+protected:
+    static std::string format_helper(
+            const std::string &string_to_update,
+            const size_t);
+
+    template <typename T, typename... Args>
+    static std::string format_helper(
+            const std::string &string_to_update,
+            const size_t index_to_replace,
+            T &&val,
+            Args &&...args) {
+        std::regex pattern("%" + std::to_string(index_to_replace) + "(?=[^0-9])");
+        std::ostringstream ostr;
+        ostr << val;
+        std::string replacement_string(ostr.str());
+        return format_helper(
+                    std::regex_replace(string_to_update, pattern, replacement_string),
+                    index_to_replace + 1,
+                    std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    static std::string format(const std::string &format_string, Args &&...args)
+    {
+        return format_helper(format_string, 1, std::forward<Args>(args)...);
+    }
+
+protected:
+    friend Logger Log(level lev, const std::string & filename);
     friend Logger;
 
-    ofstream logfile_;
-    const level max_level_;
-    const bool to_stderr_;
-    const bool to_syslog_;
+    std::ofstream   m_logfile;
+    const level     m_max_level;
+    const bool      m_to_stderr;
+    const bool      m_to_syslog;
 };
-
-bool InitLogging(string logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
 
 constexpr auto ERROR    = Logging::level::ERROR;
 constexpr auto WARNING  = Logging::level::WARNING;
 constexpr auto INFO     = Logging::level::INFO;
 constexpr auto DEBUG    = Logging::level::DEBUG;
 constexpr auto TRACE    = Logging::level::TRACE;
-
-void log_with_level(Logging::level level, const char *filename, const char* format, va_list ap);
-void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* format, va_list ap);
-void log_with_level(Logging::level level, const char* prefix, const char *filename, const char* message);
 
 #endif

@@ -24,6 +24,7 @@
 #include "dvdparser.h"
 #include "transcode.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 //#include <dvdnav/dvdnav.h>
 #include <dvdread/dvd_reader.h>
@@ -43,19 +44,19 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
     int titles;
     int i, j;
 
-    ffmpegfs_debug(path.c_str(), "Parsing DVD.");
+    Logging::debug(path, "Parsing DVD.");
 
     dvd = DVDOpen(path.c_str());
     if ( !dvd )
     {
-        ffmpegfs_error(path.c_str(), "Couldn't open DVD: %s", path.c_str());
+        Logging::error(path, "Couldn't open DVD.");
         return ENOENT;
     }
 
     ifo_file = ifoOpen( dvd, 0 );
     if ( !ifo_file )
     {
-        ffmpegfs_error(path.c_str(), "Can't open VMG info." );
+        Logging::error(path, "Can't open VMG info." );
         DVDClose( dvd );
         return EINVAL;
     }
@@ -63,7 +64,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 
     titles = tt_srpt->nr_of_srpts;
 
-    ffmpegfs_debug(path.c_str(), "There are %d titles.", titles );
+    Logging::debug(path, "There are %1 titles.", titles );
 
     for( i = 0; i < titles; ++i )
     {
@@ -75,14 +76,14 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
         ttnnum = tt_srpt->title[ i ].vts_ttn;
         chapts = tt_srpt->title[ i ].nr_of_ptts;
 
-        ffmpegfs_trace(path.c_str(), "Title : %d", i + 1 );
-        ffmpegfs_trace(path.c_str(), "In VTS: %d [TTN %d]", vtsnum, ttnnum );
-        ffmpegfs_trace(path.c_str(), "Title has %d chapters and %d angles", chapts, tt_srpt->title[ i ].nr_of_angles );
+        Logging::trace(path, "Title : %1", i + 1 );
+        Logging::trace(path, "In VTS: %1 [TTN %2]", vtsnum, ttnnum );
+        Logging::trace(path, "Title has %1 chapters and %2 angles", chapts, tt_srpt->title[ i ].nr_of_angles );
 
         vts_file = ifoOpen( dvd, vtsnum );
         if ( !vts_file )
         {
-            ffmpegfs_error(path.c_str(), "Can't open info file for title %d.", vtsnum );
+            Logging::error(path, "Can't open info file for title %1.", vtsnum );
             DVDClose( dvd );
             return EINVAL;
         }
@@ -101,10 +102,10 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
             cur_pgc = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
             start_cell = cur_pgc->program_map[ pgn - 1 ] - 1;
 
-            ffmpegfs_trace(path.c_str(), "Chapter %3d [PGC %2d, PG %2d] starts at Cell %2d [sector %x-%x]",
+            Logging::trace(path, "Chapter %1 [PGC %2, PG %3] starts at Cell %4 [sector %5-%6]",
                            j, pgcnum, pgn, start_cell,
-                           cur_pgc->cell_playback[ start_cell ].first_sector,
-                           cur_pgc->cell_playback[ start_cell ].last_sector );
+                           static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].first_sector),
+                           static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].last_sector));
 
             {
                 char title_buf[PATH_MAX + 1];
@@ -114,7 +115,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 //cur_pgc->playback_time;
 
                 //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.m_desttype);
-                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_desttype);
+                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_desttype.c_str());
 
                 string filename(title_buf);
 
@@ -161,9 +162,9 @@ int check_dvd(const string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "VIDEO_TS.IFO").c_str(), &st) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &st) == 0)
     {
-        ffmpegfs_trace(path.c_str(), "DVD detected.");
+        Logging::trace(path, "DVD detected.");
         res = parse_dvd(path, &st, buf, filler);
-        ffmpegfs_trace(path.c_str(), "Found %i titles.", res);
+        Logging::trace(path, "Found %1 titles.", res);
     }
     return res;
 }

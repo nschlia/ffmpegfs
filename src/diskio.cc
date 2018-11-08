@@ -20,6 +20,7 @@
 
 #include "diskio.h"
 #include "ffmpegfs.h"
+#include "logging.h"
 
 #include <errno.h>
 #include <assert.h>
@@ -47,7 +48,7 @@ int diskio::bufsize() const
 
 int diskio::open(const string & filename)
 {
-    ffmpegfs_info(filename.c_str(), "Opening input file.");
+    Logging::info(filename, "Opening input file.");
 
     set_path(filename);
 

@@ -22,6 +22,7 @@
 #include "buffer.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
+#include "logging.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -93,7 +94,7 @@ bool Buffer::init(bool erase_cache)
         char *cachefile = strdup(m_cachefile.c_str());
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            ffmpegfs_error(m_cachefile.c_str(), "Error creating cache directory: %s", strerror(errno));
+            Logging::error(m_cachefile, "Error creating cache directory: %1", strerror(errno));
             free(cachefile);
             throw false;
         }
@@ -115,19 +116,19 @@ bool Buffer::init(bool erase_cache)
         m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, (mode_t)0644);
         if (m_fd == -1)
         {
-            ffmpegfs_error(m_cachefile.c_str(), "Error opening cache file: %s", strerror(errno));
+            Logging::error(m_cachefile, "Error opening cache file: %1", strerror(errno));
             throw false;
         }
 
         if (fstat(m_fd, &sb) == -1)
         {
-            ffmpegfs_error(m_cachefile.c_str(), "File stat failed: %s", strerror(errno));
+            Logging::error(m_cachefile, "File stat failed: %1", strerror(errno));
             throw false;
         }
 
         if (!S_ISREG(sb.st_mode))
         {
-            ffmpegfs_error(m_cachefile.c_str(), "Not a file.");
+            Logging::error(m_cachefile, "Not a file.");
             throw false;
         }
 
@@ -140,7 +141,7 @@ bool Buffer::init(bool erase_cache)
 
             if (ftruncate(m_fd, filesize) == -1)
             {
-                ffmpegfs_error(m_cachefile.c_str(), "Error calling ftruncate() to 'stretch' the file: %s", strerror(errno));
+                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: %1", strerror(errno));
                 throw false;
             }
         }
@@ -152,7 +153,7 @@ bool Buffer::init(bool erase_cache)
         p = mmap(0, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
         if (p == MAP_FAILED)
         {
-            ffmpegfs_error(m_cachefile.c_str(),  "File mapping failed: %s", strerror(errno));
+            Logging::error(m_cachefile,  "File mapping failed: %1", strerror(errno));
             throw false;
         }
 
@@ -211,13 +212,13 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (munmap(p, size) == -1)
     {
-        ffmpegfs_error(m_cachefile.c_str(), "File unmapping failed: %s", strerror(errno));
+        Logging::error(m_cachefile, "File unmapping failed: %1", strerror(errno));
         success = false;
     }
 
     if (ftruncate(fd, m_buffer_watermark) == -1)
     {
-        ffmpegfs_error(m_cachefile.c_str(), "Error calling ftruncate() to resize and close the file: %s", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: %1", strerror(errno));
         success = false;
     }
 
@@ -249,7 +250,7 @@ bool Buffer::flush()
     lock();
     if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
     {
-        ffmpegfs_error(m_cachefile.c_str(), "Could not sync to disk: %s", strerror(errno));
+        Logging::error(m_cachefile, "Could not sync to disk: %1", strerror(errno));
     }
     unlock();
 
@@ -275,7 +276,7 @@ bool Buffer::clear()
 
     if (ftruncate(m_fd, filesize) == -1)
     {
-        ffmpegfs_error(m_cachefile.c_str(), "Error calling ftruncate() to clear the file: %s", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: %1", strerror(errno));
         success = false;
     }
     unlock();
@@ -303,7 +304,7 @@ bool Buffer::reserve(size_t size)
 
     if (ftruncate(m_fd, m_buffer_size) == -1)
     {
-        ffmpegfs_error(m_cachefile.c_str(), "Error calling ftruncate() to resize the file: %s", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: %1", strerror(errno));
         success = false;
     }
 
@@ -467,7 +468,7 @@ bool Buffer::reallocate(size_t newsize)
             return false;
         }
 
-        ffmpegfs_trace(m_filename.c_str(), "Buffer reallocate: %zu -> %zu.", oldsize, newsize);
+        Logging::trace(m_filename, "Buffer reallocate: %1 -> %2.", oldsize, newsize);
     }
     return true;
 }
@@ -495,12 +496,9 @@ const string & Buffer::cachefile() const
 // Make up a cache file name including full path
 const string & Buffer::make_cachefile_name(string & cachefile, const string & filename)
 {
-    char cachepath[PATH_MAX];
+    transcoder_cache_path(cachefile);
 
-    transcoder_cache_path(cachepath, sizeof(cachepath));
-
-    cachefile = cachepath;
-    cachefile += runtime.m_mountpath;
+    cachefile += params.m_mountpath;
     cachefile += filename;
     cachefile += ".cache.";
     cachefile += params.m_desttype;
@@ -512,7 +510,7 @@ bool Buffer::remove_file(const string & filename)
 {
     if (unlink(filename.c_str()) && errno != ENOENT)
     {
-        ffmpegfs_warning(filename.c_str(), "Cannot unlink the file: %s", strerror(errno));
+        Logging::warning(filename, "Cannot unlink the file: %1", strerror(errno));
         return false;
     }
     else

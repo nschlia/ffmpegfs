@@ -23,7 +23,7 @@
  */
 
 #include "ffmpegfs.h"
-#include "coders.h"
+#include "logging.h"
 
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
@@ -48,72 +48,68 @@
 #     error("GCC < 4.8 not supported");
 #  endif
 #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavfilter/avfilter.h>
+#ifdef __cplusplus
+}
+#endif
 #pragma GCC diagnostic pop
 
 #include "ffmpeg_utils.h"
 
-struct ffmpegfs_params params =
-{
-    .m_basepath           	= NULL,                     // required parameter
-    .m_mountpath          	= NULL,                     // required parameter
+ffmpegfs_params     params;
 
-    .m_desttype           	= "mp4",                    // default: encode to mp4
-    .m_format               = "mp4",                    // default: mp4
-    .m_filetype             = FILETYPE_MP4,             // default: mp4
-    .m_profile              = PROFILE_NONE,       		// default: no profile
+ffmpegfs_params::ffmpegfs_params()
+    : m_basepath("")                            // required parameter
+    , m_mountpath("")                           // required parameter
 
-    .m_audiobitrate       	= 128*1024,                 // default: 128 kBit
-    .m_audiosamplerate      = 44100,                    // default: 44.1 kHz
+    , m_desttype("mp4")                         // default: encode to mp4
+    , m_profile(PROFILE_NONE)                   // default: no profile
 
-    .m_videobitrate       	= 2*1024*1024,              // default: 2 MBit
-    .m_videowidth           = 0,                        // default: do not change width
-    .m_videoheight          = 0,                        // default: do not change height
-#ifndef USING_LIBAV
-    .m_deinterlace          = 0,                        // default: do not interlace video
-#endif  // !USING_LIBAV
+    // Format
+    , m_video_format("mp4", FILETYPE_MP4, AV_CODEC_ID_MPEG4, AV_CODEC_ID_AAC)
+    , m_audio_format("mp4", FILETYPE_MP4, AV_CODEC_ID_NONE,  AV_CODEC_ID_AAC)
+
+    , m_audiobitrate(128*1024)                  // default: 128 kBit
+    , m_audiosamplerate(44100)                  // default: 44.1 kHz
+
+    , m_videobitrate(2*1024*1024)               // default: 2 MBit
+    , m_videowidth(0)                           // default: do not change width
+    , m_videoheight(0)                          // default: do not change height
+    #ifndef USING_LIBAV
+    , m_deinterlace(0)                          // default: do not interlace video
+    #endif  // !USING_LIBAV
     // Album arts
-    .m_noalbumarts          = 0,                        // default: copy album arts
+    , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
-    .m_enablescript         = 0,                        // default: no virtual script
-    .m_scriptfile           = "index.php",              // default name
-    .m_scriptsource         = "scripts/videotag.php",   // default name
-    // Other
-    .m_debug              	= 0,                        // default: no debug messages
-    .m_log_maxlevel       	= "INFO",                   // default: INFO level
-    .m_log_stderr         	= 0,                        // default: do not log to stderr
-    .m_log_syslog         	= 0,                        // default: do not use syslog
-    .m_logfile            	= "",                       // default: none
+    , m_enablescript(0)                         // default: no virtual script
+    , m_scriptfile("index.php")                 // default name
+    , m_scriptsource("scripts/videotag.php")    // default name
+        // Other
+    , m_debug(0)                                // default: no debug messages
+    , m_log_maxlevel("INFO")                    // default: INFO level
+    , m_log_stderr(0)                           // default: do not log to stderr
+    , m_log_syslog(0)                           // default: do not use syslog
+    , m_logfile("")                             // default: none
     // Cache/recoding options
-    .m_expiry_time          = (60*60*24 /* d */) * 7,	// default: 1 week
-    .m_max_inactive_suspend = 15,                       // default: 15 seconds
-    .m_max_inactive_abort   = 30,                       // default: 30 seconds
-    .m_prebuffer_size       = 100 /* KB */ * 1024,      // default: 100 KB
-    .m_max_cache_size       = 0,                        // default: no limit
-    .m_min_diskspace        = 0,                        // default: no minimum
-    .m_cachepath            = NULL,                     // default: /tmp
-    .m_disable_cache        = 0,                        // default: enabled
-    .m_cache_maintenance    = (60*60),                  // default: prune every 60 minutes
-    .m_prune_cache          = 0,                        // default: Do not prune cache immediately
-    .m_clear_cache          = 0,                        // default: Do not clear cache on startup
-    .m_max_threads          = 0,                        // default: 16 * CPU cores (this value here is overwritten later)
-    .m_decoding_errors      = 0,                        // default: ignore errors
-};
-
-struct ffmpegfs_runtime runtime =
+    , m_expiry_time((60*60*24 /* d */) * 7)     // default: 1 week)
+    , m_max_inactive_abort(30)                  // default: 30 seconds
+    , m_prebuffer_size(100 /* KB */ * 1024)     // default: 100 KB
+    , m_max_cache_size(0)                       // default: no limit
+    , m_min_diskspace(0)                        // default: no minimum
+    , m_cachepath("")                           // default: /tmp
+    , m_disable_cache(0)                        // default: enabled
+    , m_cache_maintenance((60*60))              // default: prune every 60 minutes
+    , m_prune_cache(0)                          // default: Do not prune cache immediately
+    , m_clear_cache(0)                          // default: Do not clear cache on startup
+    , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
+    , m_decoding_errors(0)                      // default: ignore errors
 {
-    // Paths
-    .m_basepath            = "",
-    .m_mountpath           = "",
-    // Audio
-    .m_audio_codecid       = AV_CODEC_ID_AAC,          // default: AAC
-    // Video
-    .m_video_codecid       = AV_CODEC_ID_MPEG4,        // default: MPEG4
-    // Background recoding/caching
-    .m_cachepath           = ""
-};
+}
 
 enum
 {
@@ -121,17 +117,23 @@ enum
     KEY_VERSION,
     KEY_KEEP_OPT,
     // Intelligent parameters
+    KEY_DESTTYPE,
     KEY_AUDIO_BITRATE,
     KEY_AUDIO_SAMPLERATE,
     KEY_VIDEO_BITRATE,
+    KEY_SCRIPTFILE,
+    KEY_SCRIPTSOURCE,
     KEY_EXPIRY_TIME,
     KEY_MAX_INACTIVE_SUSPEND_TIME,
     KEY_MAX_INACTIVE_ABORT_TIME,
     KEY_PREBUFFER_SIZE,
     KEY_MAX_CACHE_SIZE,
     KEY_MIN_DISKSPACE_SIZE,
+    KEY_CACHEPATH,
     KEY_CACHE_MAINTENANCE,
-    KEY_PROFILE
+    KEY_PROFILE,
+    KEY_LOG_MAXLEVEL,
+    KEY_LOGFILE
 };
 
 #define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(struct ffmpegfs_params, param), value }
@@ -139,8 +141,8 @@ enum
 static struct fuse_opt ffmpegfs_opts[] =
 {
     // Output type
-    FFMPEGFS_OPT("--desttype=%s",               m_desttype, 0),
-    FFMPEGFS_OPT("desttype=%s",                 m_desttype, 0),
+    FUSE_OPT_KEY("--desttype=%s",               KEY_DESTTYPE),
+    FUSE_OPT_KEY("desttype=%s",                 KEY_DESTTYPE),
     FUSE_OPT_KEY("--profile=%s",                KEY_PROFILE),
     FUSE_OPT_KEY("profile=%s",                  KEY_PROFILE),
 
@@ -167,10 +169,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Virtual script
     FFMPEGFS_OPT("--enablescript",              m_enablescript, 1),
     FFMPEGFS_OPT("enablescript",                m_enablescript, 1),
-    FFMPEGFS_OPT("--scriptfile=%s",             m_scriptfile, 0),
-    FFMPEGFS_OPT("scriptfile=%s",               m_scriptfile, 0),
-    FFMPEGFS_OPT("--scriptsource=%s",           m_scriptsource, 0),
-    FFMPEGFS_OPT("scriptsource=%s",             m_scriptsource, 0),
+    FUSE_OPT_KEY("--scriptfile=%s",             KEY_SCRIPTFILE),
+    FUSE_OPT_KEY("scriptfile=%s",               KEY_SCRIPTFILE),
+    FUSE_OPT_KEY("--scriptsource=%s",           KEY_SCRIPTSOURCE),
+    FUSE_OPT_KEY("scriptsource=%s",             KEY_SCRIPTSOURCE),
     // Background recoding/caching
     // Cache
     FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
@@ -185,8 +187,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("max_cache_size=%s",           KEY_MAX_CACHE_SIZE),
     FUSE_OPT_KEY("--min_diskspace=%s",          KEY_MIN_DISKSPACE_SIZE),
     FUSE_OPT_KEY("min_diskspace=%s",            KEY_MIN_DISKSPACE_SIZE),
-    FFMPEGFS_OPT("--cachepath=%s",              m_cachepath, 0),
-    FFMPEGFS_OPT("cachepath=%s",                m_cachepath, 0),
+    FUSE_OPT_KEY("--cachepath=%s",              KEY_CACHEPATH),
+    FUSE_OPT_KEY("cachepath=%s",                KEY_CACHEPATH),
     FFMPEGFS_OPT("--disable_cache",             m_disable_cache, 1),
     FFMPEGFS_OPT("disable_cache",               m_disable_cache, 1),
     FUSE_OPT_KEY("--cache_maintenance=%s",      KEY_CACHE_MAINTENANCE),
@@ -203,14 +205,14 @@ static struct fuse_opt ffmpegfs_opts[] =
     // ffmpegfs options
     FFMPEGFS_OPT("-d",                          m_debug, 1),
     FFMPEGFS_OPT("debug",                       m_debug, 1),
-    FFMPEGFS_OPT("--log_maxlevel=%s",           m_log_maxlevel, 0),
-    FFMPEGFS_OPT("log_maxlevel=%s",             m_log_maxlevel, 0),
+    FUSE_OPT_KEY("--log_maxlevel=%s",           KEY_LOG_MAXLEVEL),
+    FUSE_OPT_KEY("log_maxlevel=%s",             KEY_LOG_MAXLEVEL),
     FFMPEGFS_OPT("--log_stderr",                m_log_stderr, 1),
     FFMPEGFS_OPT("log_stderr",                  m_log_stderr, 1),
     FFMPEGFS_OPT("--log_syslog",                m_log_syslog, 1),
     FFMPEGFS_OPT("log_syslog",                  m_log_syslog, 1),
-    FFMPEGFS_OPT("--logfile=%s",                m_logfile, 0),
-    FFMPEGFS_OPT("logfile=%s",                  m_logfile, 0),
+    FUSE_OPT_KEY("--logfile=%s",                KEY_LOGFILE),
+    FUSE_OPT_KEY("logfile=%s",                  KEY_LOGFILE),
 
     FUSE_OPT_KEY("-h",                          KEY_HELP),
     FUSE_OPT_KEY("--help",                      KEY_HELP),
@@ -219,20 +221,6 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("-d",                          KEY_KEEP_OPT),
     FUSE_OPT_KEY("debug",                       KEY_KEEP_OPT),
     FUSE_OPT_END
-};
-
-struct fuse_operations ffmpegfs_ops =
-{
-    .getattr  = ffmpegfs_getattr,
-    .fgetattr = ffmpegfs_fgetattr,
-    .readlink = ffmpegfs_readlink,
-    .readdir  = ffmpegfs_readdir,
-    .open     = ffmpegfs_open,
-    .read     = ffmpegfs_read,
-    .statfs   = ffmpegfs_statfs,
-    .release  = ffmpegfs_release,
-    .init     = ffmpegfs_init,
-    .destroy  = ffmpegfs_destroy,
 };
 
 static int get_bitrate(const char * arg, unsigned int *value);
@@ -246,7 +234,7 @@ static void usage(char *name);
 
 static void usage(char *name)
 {
-    printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
+    std::printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
     fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OPUS, OGG or WAV upon access.\n"
           "\n"
           "Encoding options:\n"
@@ -459,7 +447,7 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)atol(ptr);
+            *value = static_cast<unsigned int>(atol(ptr));
             return 0;   // OK
         }
 
@@ -472,7 +460,7 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)(atof(ptr) * 1000);
+            *value = static_cast<unsigned int>(atof(ptr) * 1000);
             return 0;   // OK
         }
 
@@ -485,15 +473,15 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)(atof(ptr) * 1000000);
+            *value = static_cast<unsigned int>(atof(ptr) * 1000000);
             return 0;   // OK
         }
 
-        fprintf(stderr, "Invalid bit rate '%s'\n", ptr);
+        std::fprintf(stderr, "Invalid bit rate '%s'\n", ptr);
     }
     else
     {
-        fprintf(stderr, "Invalid bit rate\n");
+        std::fprintf(stderr, "Invalid bit rate\n");
     }
 
     return -1;
@@ -521,7 +509,7 @@ static int get_samplerate(const char * arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)atol(ptr);
+            *value = static_cast<unsigned int>(atol(ptr));
             return 0;   // OK
         }
 
@@ -534,15 +522,15 @@ static int get_samplerate(const char * arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = (unsigned int)(atof(ptr) * 1000);
+            *value = static_cast<unsigned int>(atof(ptr) * 1000);
             return 0;   // OK
         }
 
-        fprintf(stderr, "Invalid sample rate '%s'\n", ptr);
+        std::fprintf(stderr, "Invalid sample rate '%s'\n", ptr);
     }
     else
     {
-        fprintf(stderr, "Invalid sample rate\n");
+        std::fprintf(stderr, "Invalid sample rate\n");
     }
 
     return -1;
@@ -573,7 +561,7 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (time_t)atol(ptr);
+            *value = static_cast<time_t>(atol(ptr));
             return 0;   // OK
         }
 
@@ -586,7 +574,7 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (time_t)(atof(ptr) * 60);
+            *value = static_cast<time_t>(atof(ptr) * 60);
             return 0;   // OK
         }
 
@@ -599,7 +587,7 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (time_t)(atof(ptr) * 60 * 60);
+            *value = static_cast<time_t>(atof(ptr) * 60 * 60);
             return 0;   // OK
         }
 
@@ -612,7 +600,7 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (time_t)(atof(ptr) * 60 * 60 * 24);
+            *value = static_cast<time_t>(atof(ptr) * 60 * 60 * 24);
             return 0;   // OK
         }
 
@@ -625,15 +613,15 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = (time_t)(atof(ptr) * 60 * 60 * 24 * 7);
+            *value = static_cast<time_t>(atof(ptr) * 60 * 60 * 24 * 7);
             return 0;   // OK
         }
 
-        fprintf(stderr, "Invalid time format '%s'\n", ptr);
+        std::fprintf(stderr, "Invalid time format '%s'\n", ptr);
     }
     else
     {
-        fprintf(stderr, "Invalid time format\n");
+        std::fprintf(stderr, "Invalid time format\n");
     }
 
     return -1;
@@ -664,7 +652,7 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = (size_t)atol(ptr);
+            *value = static_cast<size_t>(atol(ptr));
             return 0;   // OK
         }
 
@@ -677,7 +665,7 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = (size_t)(atof(ptr) * 1024);
+            *value = static_cast<size_t>(atof(ptr) * 1024);
             return 0;   // OK
         }
 
@@ -690,7 +678,7 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = (size_t)(atof(ptr) * 1024 * 1024);
+            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -703,7 +691,7 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = (size_t)(atof(ptr) * 1024 * 1024 * 1024);
+            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -716,15 +704,15 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = (size_t)(atof(ptr) * 1024 * 1024 * 1024 * 1024);
+            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
-        fprintf(stderr, "Invalid size '%s'\n", ptr);
+        std::fprintf(stderr, "Invalid size '%s'\n", ptr);
     }
     else
     {
-        fprintf(stderr, "Invalid size\n");
+        std::fprintf(stderr, "Invalid size\n");
     }
 
     return -1;
@@ -740,22 +728,28 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     case FUSE_OPT_KEY_NONOPT:
     {
         // check for basepath and bitrate parameters
-        if (n == 0 && !params.m_basepath)
+        if (n == 0 && params.m_basepath.empty())
         {
-            params.m_basepath = arg;
-            expand_path(runtime.m_basepath, sizeof(runtime.m_basepath), arg);
+            expand_path(&params.m_basepath, arg);
             n++;
             return 0;
         }
-        else if (n == 1 && !params.m_mountpath)
+        else if (n == 1 && params.m_mountpath.empty())
         {
-            params.m_mountpath = arg;
-            expand_path(runtime.m_mountpath, sizeof(runtime.m_mountpath), arg);
+            expand_path(&params.m_mountpath, arg);
 
-            if (is_mount(runtime.m_mountpath))
+            switch (is_mount(params.m_mountpath))
             {
-                fprintf(stderr, "%-25s: already mounted\n", runtime.m_mountpath);
+            case 1:
+            {
+                std::fprintf(stderr, "%-25s: already mounted\n", params.m_mountpath.c_str());
                 exit(1);
+            }
+                //case -1:
+                //{
+                //  // Error already reported
+                //  exit(1);
+                //}
             }
 
             n++;
@@ -768,48 +762,50 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         usage(outargs->argv[0]);
         fuse_opt_add_arg(outargs, "-ho");
-        fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
+        fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, nullptr);
         exit(1);
     }
     case KEY_VERSION:
     {
         // TODO: Also output this information in debug mode
-        printf("-------------------------------------------------------------------------------------------\n");
+        std::printf("-------------------------------------------------------------------------------------------\n");
 
 #ifdef __GNUC__
 #ifndef __clang_version__
-        printf("%-20s: %s (%s)\n", "Built with", "gcc " __VERSION__, HOST_OS);
+        std::printf("%-20s: %s (%s)\n", "Built with", "gcc " __VERSION__, HOST_OS);
 #else
-        printf("%-20s: %s (%s)\n", "Built with", "clang " __clang_version__, HOST_OS);
+        std::printf("%-20s: %s (%s)\n", "Built with", "clang " __clang_version__, HOST_OS);
 #endif
 #endif
-        printf("%-20s: %s\n\n", "configuration", CONFIGURE_ARGS);
+        std::printf("%-20s: %s\n\n", "configuration", CONFIGURE_ARGS);
 
-        printf("%-20s: %s\n", PACKAGE_NAME " Version", PACKAGE_VERSION);
+        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", PACKAGE_VERSION);
 
-        char buffer[1024];
-        ffmpeg_libinfo(buffer, sizeof(buffer));
-        printf("%s", buffer);
+        std::printf("%s", ffmpeg_libinfo().c_str());
 
 #ifdef USE_LIBVCD
-        printf("%-20s: %s\n", "Video CD Library", "enabled");
+        std::printf("%-20s: %s\n", "Video CD Library", "enabled");
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-        printf("%-20s: %s\n", "DVD Library", "enabled");
+        std::printf("%-20s: %s\n", "DVD Library", "enabled");
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        printf("%-20s: %s\n", "Bluray Library", BLURAY_VERSION_STRING);
+        std::printf("%-20s: %s\n", "Bluray Library", BLURAY_VERSION_STRING);
 #endif // USE_LIBBLURAY
 
         fuse_opt_add_arg(outargs, "--version");
-        fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, NULL);
+        fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, nullptr);
 
-        printf("-------------------------------------------------------------------------------------------\n\n");
-        printf("FFMpeg capabilities\n\n");
+        std::printf("-------------------------------------------------------------------------------------------\n\n");
+        std::printf("FFMpeg capabilities\n\n");
 
         show_formats_devices(0);
 
         exit(0);
+    }
+    case KEY_DESTTYPE:
+    {
+        return get_desttype(arg, &params.m_desttype);
     }
     case KEY_PROFILE:
     {
@@ -822,6 +818,14 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     case KEY_AUDIO_SAMPLERATE:
     {
         return get_samplerate(arg, &params.m_audiosamplerate);
+    }
+    case KEY_SCRIPTFILE:
+    {
+        return get_value(arg, &params.m_scriptfile);
+    }
+    case KEY_SCRIPTSOURCE:
+    {
+        return get_value(arg, &params.m_scriptsource);
     }
     case KEY_VIDEO_BITRATE:
     {
@@ -851,9 +855,21 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_size(arg, &params.m_min_diskspace);
     }
+    case KEY_CACHEPATH:
+    {
+        return get_value(arg, &params.m_cachepath);
+    }
     case KEY_CACHE_MAINTENANCE:
     {
         return get_time(arg, &params.m_cache_maintenance);
+    }
+    case KEY_LOG_MAXLEVEL:
+    {
+        return get_value(arg, &params.m_log_maxlevel);
+    }
+    case KEY_LOGFILE:
+    {
+        return get_value(arg, &params.m_logfile);
     }
     }
 
@@ -862,119 +878,86 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 
 static void print_params(void)
 {
-    char cachepath[PATH_MAX];
-    enum AVCodecID audio_codecid = runtime.m_audio_codecid;
-    enum AVCodecID video_codecid = runtime.m_video_codecid;
-    char audiobitrate[100];
-    char audiosamplerate[100];
-    char width[100];
-    char height[100];
-    char videobitrate[100];
-    char expiry_time[100];
-    char max_inactive_suspend[100];
-    char max_inactive_abort[100];
-    char max_cache_size[100];
-    char prebuffer_size[100];
-    char min_diskspace[100];
-    char cache_maintenance[100];
-    char max_threads[100];
+    std::string cachepath;
+    AVCodecID audio_codecid = params.m_video_format.m_audio_codecid;
+    AVCodecID video_codecid = params.m_video_format.m_video_codecid;
 
-    transcoder_cache_path(cachepath, sizeof(cachepath));
+    transcoder_cache_path(cachepath);
 
-    format_bitrate(audiobitrate, sizeof(audiobitrate), params.m_audiobitrate);
-    format_samplerate(audiosamplerate, sizeof(audiosamplerate), params.m_audiosamplerate);
-    format_number(width, sizeof(width), params.m_videowidth);
-    format_number(height, sizeof(height), params.m_videoheight);
-    format_bitrate(videobitrate, sizeof(videobitrate), params.m_videobitrate);
-    format_time(expiry_time, sizeof(expiry_time), params.m_expiry_time);
-    format_time(max_inactive_suspend, sizeof(expiry_time), params.m_max_inactive_suspend);
-    format_time(max_inactive_abort, sizeof(max_inactive_abort), params.m_max_inactive_abort);
-    format_size(prebuffer_size, sizeof(prebuffer_size), params.m_prebuffer_size);
-    format_size(max_cache_size, sizeof(max_cache_size), params.m_max_cache_size);
-    format_size(min_diskspace, sizeof(min_diskspace), params.m_min_diskspace);
-    if (params.m_cache_maintenance)
-    {
-        format_time(cache_maintenance, sizeof(cache_maintenance), params.m_cache_maintenance);
-    }
-    else
-    {
-        strcpy(cache_maintenance, "inactive");
-    }
-    format_number(max_threads, sizeof(max_threads), params.m_max_threads);
-
-    ffmpegfs_trace(NULL, PACKAGE_NAME " options:\n\n"
-                                      "Base Path         : %s\n"
-                                      "Mount Path        : %s\n\n"
-                                      "Destination Type  : %s\n"
-                                      "Profile           : %s\n"
-                                      "\nAudio\n\n"
-                                      "Audio Format      : %s\n"
-                                      "Audio Bitrate     : %s\n"
-                                      "Audio Sample Rate : %s\n"
-                                      "\nVideo\n\n"
-                                      "Video Size/Pixels : width=%s height=%s\n"
+    Logging::trace(nullptr, PACKAGE_NAME " options:\n\n"
+                                         "Base Path         : %1\n"
+                                         "Mount Path        : %2\n\n"
+                                         "Destination Type  : %3\n"
+                                         "Profile           : %4\n"
+                                         "\nAudio\n\n"
+                                         "Audio Format      : %5\n"
+                                         "Audio Bitrate     : %6\n"
+                                         "Audio Sample Rate : %7\n"
+                                         "\nVideo\n\n"
+                                         "Video Size/Pixels : width=%8 height=%9\n"
                #ifndef USING_LIBAV
-                                      "Deinterlace       : %s\n"
+                                         "Deinterlace       : %10\n"
                #endif  // !USING_LIBAV
-                                      "Remove Album Arts : %s\n"
-                                      "Video Format      : %s\n"
-                                      "Video Bitrate     : %s\n"
-                                      "\nVirtual Script\n\n"
-                                      "Create script     : %s\n"
-                                      "Script file name  : %s\n"
-                                      "Input file        : %s\n"
-                                      "\nLogging\n\n"
-                                      "Max. Log Level    : %s\n"
-                                      "Log to stderr     : %s\n"
-                                      "Log to syslog     : %s\n"
-                                      "Logfile           : %s\n"
-                                      "\nCache Settings\n\n"
-                                      "Expiry Time       : %s\n"
-                                      "Inactivity Suspend: %s\n"
-                                      "Inactivity Abort  : %s\n"
-                                      "Pre-buffer size   : %s\n"
-                                      "Max. Cache Size   : %s\n"
-                                      "Min. Disk Space   : %s\n"
-                                      "Cache Path        : %s\n"
-                                      "Disable Cache     : %s\n"
-                                      "Maintenance Timer : %s\n"
-                                      "Clear Cache       : %s\n"
-                                      "\nVarious Options\n\n"
-                                      "Max. Threads      : %s\n"
-                                      "Consider Decoding Errors: %s\n",
-                   runtime.m_basepath,
-                   runtime.m_mountpath,
+                                         "Remove Album Arts : %11\n"
+                                         "Video Format      : %12\n"
+                                         "Video Bitrate     : %13\n"
+                                         "\nVirtual Script\n\n"
+                                         "Create script     : %14\n"
+                                         "Script file name  : %15\n"
+                                         "Input file        : %16\n"
+                                         "\nLogging\n\n"
+                                         "Max. Log Level    : %17\n"
+                                         "Log to stderr     : %18\n"
+                                         "Log to syslog     : %19\n"
+                                         "Logfile           : %20\n"
+                                         "\nCache Settings\n\n"
+                                         "Expiry Time       : %21\n"
+                                         "Inactivity Suspend: %22\n"
+                                         "Inactivity Abort  : %23\n"
+                                         "Pre-buffer size   : %24\n"
+                                         "Max. Cache Size   : %25\n"
+                                         "Min. Disk Space   : %26\n"
+                                         "Cache Path        : %27\n"
+                                         "Disable Cache     : %28\n"
+                                         "Maintenance Timer : %29\n"
+                                         "Clear Cache       : %30\n"
+                                         "\nVarious Options\n\n"
+                                         "Max. Threads      : %31\n"
+                                         "Decoding Errors   : %32\n",
+                   params.m_basepath,
+                   params.m_mountpath,
                    params.m_desttype,
                    get_profile_text(params.m_profile),
-                   get_codec_name(audio_codecid, 1),
-                   audiobitrate,
-                   audiosamplerate,
-                   width, height,
+                   get_codec_name(audio_codecid, true),
+                   format_bitrate(params.m_audiobitrate),
+                   format_samplerate(params.m_audiosamplerate),
+                   format_number(params.m_videowidth),
+                   format_number(params.m_videoheight),
                #ifndef USING_LIBAV
                    params.m_deinterlace ? "yes" : "no",
                #endif  // !USING_LIBAV
                    params.m_noalbumarts ? "yes" : "no",
-                   get_codec_name(video_codecid, 1),
-                   videobitrate,
+                   get_codec_name(video_codecid, true),
+                   format_bitrate(params.m_videobitrate),
                    params.m_enablescript ? "yes" : "no",
                    params.m_scriptfile,
                    params.m_scriptsource,
                    params.m_log_maxlevel,
                    params.m_log_stderr ? "yes" : "no",
                    params.m_log_syslog ? "yes" : "no",
-                   *params.m_logfile ? params.m_logfile : "none",
-                   expiry_time,
-                   max_inactive_suspend,
-                   max_inactive_abort,
-                   prebuffer_size,
-                   max_cache_size,
-                   min_diskspace,
+                   !params.m_logfile.empty() ? params.m_logfile : "none",
+                   format_time(params.m_expiry_time),
+                   format_time(params.m_max_inactive_suspend),
+                   format_time(params.m_max_inactive_abort),
+                   format_size(params.m_prebuffer_size),
+                   format_size(params.m_max_cache_size),
+                   format_size(params.m_min_diskspace),
                    cachepath,
                    params.m_disable_cache ? "yes" : "no",
-                   cache_maintenance,
+                   params.m_cache_maintenance ? format_time(params.m_cache_maintenance) : "inactive",
                    params.m_clear_cache ? "yes" : "no",
-                   max_threads,
-                   params.m_decoding_errors ? "yes" : "no"
+                   format_number(params.m_max_threads),
+                   params.m_decoding_errors ? "break transcode" : "ignore"
                                               );
 }
 
@@ -987,11 +970,13 @@ int main(int argc, char *argv[])
     // Check if run from other process group like mount and if so, inhibit startup message
     if (getppid() == getpgid(0))
     {
-        printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
-        printf("Copyright (C) 2006-2008 David Collett\n"
+        std::printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
+        std::printf("Copyright (C) 2006-2008 David Collett\n"
                "Copyright (C) 2008-2012 K. Henriksson\n"
                "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
     }
+
+    init_fuse_ops();
 
     // Configure FFmpeg
 #if !LAVC_DEP_AV_CODEC_REGISTER
@@ -1010,19 +995,19 @@ int main(int argc, char *argv[])
 #endif
 
     // Set default
-    params.m_max_threads = (unsigned)get_nprocs() * 16;
+    params.m_max_threads = static_cast<unsigned>(get_nprocs() * 16);
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {
-        fprintf(stderr, "ERROR: Parsing options.\n\n");
+        std::fprintf(stderr, "ERROR: Parsing options.\n\n");
         //usage(argv[0]);
         return 1;
     }
 
     // Expand cache path
-    if (params.m_cachepath)
+    if (!params.m_cachepath.empty())
     {
-        expand_path(runtime.m_cachepath, sizeof(runtime.m_cachepath), params.m_cachepath);
+        expand_path(&params.m_cachepath, params.m_cachepath);
     }
 
     // Log to the screen, and enable debug messages, if debug is enabled.
@@ -1040,8 +1025,8 @@ int main(int argc, char *argv[])
 
     if (!init_logging(params.m_logfile, params.m_log_maxlevel, params.m_log_stderr, params.m_log_syslog))
     {
-        fprintf(stderr, "ERROR: Failed to initialise logging module.\n");
-        fprintf(stderr, "Maybe log file couldn't be opened for writing?\n\n");
+        std::fprintf(stderr, "ERROR: Failed to initialise logging module.\n");
+        std::fprintf(stderr, "Maybe log file couldn't be opened for writing?\n\n");
         return 1;
     }
 
@@ -1049,10 +1034,10 @@ int main(int argc, char *argv[])
     {
         if (args.argc > 1)
         {
-            fprintf(stderr, "ERROR: Invalid additional parameters for --prune_cache:\n");
+            std::fprintf(stderr, "ERROR: Invalid additional parameters for --prune_cache:\n");
             for (int n = 1; n < args.argc; n++)
             {
-                fprintf(stderr, "Invalid: '%s'\n", args.argv[n]);
+                std::fprintf(stderr, "Invalid: '%s'\n", args.argv[n]);
             }
             return 1;
         }
@@ -1066,56 +1051,47 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (!runtime.m_basepath[0])
+    if (params.m_basepath.empty())
     {
-        fprintf(stderr, "ERROR: No valid basepath specified.\n\n");
+        std::fprintf(stderr, "ERROR: No valid basepath specified.\n\n");
         return 1;
     }
 
-    if (runtime.m_basepath[0] != '/')
+    if (params.m_basepath.front() != '/')
     {
-        fprintf(stderr, "ERROR: basepath must be an absolute path.\n\n");
+        std::fprintf(stderr, "ERROR: basepath must be an absolute path.\n\n");
         return 1;
     }
 
     struct stat st;
-    if (stat(runtime.m_basepath, &st) != 0 || !S_ISDIR(st.st_mode))
+    if (stat(params.m_basepath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        fprintf(stderr, "ERROR: basepath is not a valid directory: %s\n\n", runtime.m_basepath);
+        std::fprintf(stderr, "ERROR: basepath is not a valid directory: %s\n\n", params.m_basepath.c_str());
         return 1;
     }
 
-    if (!runtime.m_mountpath[0])
+    if (params.m_mountpath.empty())
     {
-        fprintf(stderr, "ERROR: No valid mountpath specified.\n\n");
+        std::fprintf(stderr, "ERROR: No valid mountpath specified.\n\n");
         return 1;
     }
 
-    if (runtime.m_mountpath[0] != '/')
+    if (params.m_mountpath.front() != '/')
     {
-        fprintf(stderr, "ERROR: mountpath must be an absolute path.\n\n");
+        std::fprintf(stderr, "ERROR: mountpath must be an absolute path.\n\n");
         return 1;
     }
 
-    if (stat(runtime.m_mountpath, &st) != 0 || !S_ISDIR(st.st_mode))
+    if (stat(params.m_mountpath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        fprintf(stderr, "ERROR: mountpath is not a valid directory: %s\n\n", runtime.m_mountpath);
+        std::fprintf(stderr, "ERROR: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;
     }
 
     // Check for valid destination type and obtain codecs and file type.
-    if (check_encoder(params.m_desttype))
+    if (!get_codecs(params.m_desttype, &params.m_video_format))
     {
-        params.m_format = get_codecs(params.m_desttype, &params.m_filetype, &runtime.m_audio_codecid, &runtime.m_video_codecid);
-        if (params.m_format == NULL)
-        {
-            fprintf(stderr, "ERROR: No codecs available for desttype: %s\n\n", params.m_desttype);
-            return 1;
-        }
-    }
-    else
-    {
-        fprintf(stderr, "ERROR: No encoder available for desttype: %s\n\n", params.m_desttype);
+        std::fprintf(stderr, "ERROR: No codecs available for desttype: %s\n\n", params.m_desttype.c_str());
         return 1;
     }
 
@@ -1136,7 +1112,7 @@ int main(int argc, char *argv[])
     }
 
     // start FUSE
-    ret = fuse_main(args.argc, args.argv, &ffmpegfs_ops, NULL);
+    ret = fuse_main(args.argc, args.argv, &ffmpegfs_ops, nullptr);
 
     fuse_opt_free_args(&args);
 

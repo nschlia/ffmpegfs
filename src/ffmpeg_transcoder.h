@@ -113,7 +113,7 @@ public:
             m_pFormat_ctx(nullptr),
             m_nAudio_pts(0),
             m_video_start_pts(0),
-            m_last_mux_dts((int64_t)AV_NOPTS_VALUE)
+            m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
         FILETYPE                m_file_type;

@@ -5,12 +5,10 @@ CONFIG -= qt
 
 SOURCES += \
     src/buffer.cc \
-    src/coders.cc \
     src/ffmpeg_transcoder.cc \
     src/ffmpeg_utils.cc \
     src/fuseops.cc \
     src/logging.cc \
-    src/ffmpegfs.c \
     src/transcode.cc \
     src/cache.cc \
     src/cache_entry.cc \
@@ -28,11 +26,11 @@ SOURCES += \
     src/vcd/vcdentries.cc \
     src/vcd/vcdinfo.cc \
     src/vcd/vcdutils.cc \
-    src/ffmpeg_profiles.cc
+    src/ffmpeg_profiles.cc \
+    src/ffmpegfs.cc
 
 HEADERS += \
     src/buffer.h \
-    src/coders.h \
     src/ffmpeg_transcoder.h \
     src/ffmpeg_utils.h \
     src/ffmpeg_compat.h \

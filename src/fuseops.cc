@@ -25,7 +25,7 @@
 #include "transcode.h"
 #include "ffmpeg_utils.h"
 #include "cache_maintenance.h"
-#include "coders.h"
+#include "logging.h"
 #ifdef USE_LIBVCD
 #include "vcdparser.h"
 #endif // USE_LIBVCD
@@ -51,8 +51,36 @@ static void translate_path(string *origpath, const char* path);
 static bool transcoded_name(string *path);
 static LPCVIRTUALFILE find_original(string *path);
 
+static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
+static int ffmpegfs_getattr(const char *path, struct stat *stbuf);
+static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
+static int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
+static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
+static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
+static int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+static void *ffmpegfs_init(struct fuse_conn_info *conn);
+static void ffmpegfs_destroy(__attribute__((unused)) void * p);
+
 static vector<char> index_buffer;
 static map<string, VIRTUALFILE> filenames;
+
+fuse_operations ffmpegfs_ops;
+
+void init_fuse_ops(void)
+{
+    memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
+    ffmpegfs_ops.getattr  = ffmpegfs_getattr;
+    ffmpegfs_ops.fgetattr = ffmpegfs_fgetattr;
+    ffmpegfs_ops.readlink = ffmpegfs_readlink;
+    ffmpegfs_ops.readdir  = ffmpegfs_readdir;
+    ffmpegfs_ops.open     = ffmpegfs_open;
+    ffmpegfs_ops.read     = ffmpegfs_read;
+    ffmpegfs_ops.statfs   = ffmpegfs_statfs;
+    ffmpegfs_ops.release  = ffmpegfs_release;
+    ffmpegfs_ops.init     = ffmpegfs_init;
+    ffmpegfs_ops.destroy  = ffmpegfs_destroy;
+}
 
 static void init_stat(struct stat * st, size_t size, bool directory)
 {
@@ -92,12 +120,12 @@ static void prepare_script()
     exepath(&scriptsource);
     scriptsource += params.m_scriptsource;
 
-    ffmpegfs_debug(scriptsource.c_str(), "Reading virtual script source.");
+    Logging::debug(scriptsource, "Reading virtual script source.");
 
     FILE *fpi = fopen(scriptsource.c_str(), "rt");
     if (fpi == nullptr)
     {
-        ffmpegfs_warning(scriptsource.c_str(), "File open failed. Disabling script: %s", strerror(errno));
+        Logging::warning(scriptsource, "File open failed. Disabling script: %1", strerror(errno));
         params.m_enablescript = false;
     }
     else
@@ -105,21 +133,21 @@ static void prepare_script()
         struct stat st;
         if (fstat(fileno(fpi), &st) == -1)
         {
-            ffmpegfs_warning(scriptsource.c_str(), "File could not be accessed. Disabling script: %s", strerror(errno));
+            Logging::warning(scriptsource, "File could not be accessed. Disabling script: %1", strerror(errno));
             params.m_enablescript = false;
         }
         else
         {
             index_buffer.resize(st.st_size);
 
-            if (fread(&index_buffer[0], 1, st.st_size, fpi) != (size_t)st.st_size)
+            if (fread(&index_buffer[0], 1, static_cast<size_t>(st.st_size), fpi) != static_cast<size_t>(st.st_size))
             {
-                ffmpegfs_warning(scriptsource.c_str(), "File could not be read. Disabling script: %s", strerror(errno));
+                Logging::warning(scriptsource, "File could not be read. Disabling script: %1", strerror(errno));
                 params.m_enablescript = false;
             }
             else
             {
-                ffmpegfs_trace(scriptsource.c_str(), "Read %zu bytes of script file.", index_buffer.size());
+                Logging::trace(scriptsource, "Read %1 bytes of script file.", index_buffer.size());
             }
         }
 
@@ -130,7 +158,7 @@ static void prepare_script()
 // Translate file names from FUSE to the original absolute path.
 static void translate_path(string *origpath, const char* path)
 {
-    *origpath = runtime.m_basepath;
+    *origpath = params.m_basepath;
     *origpath += path;
 }
 
@@ -142,8 +170,8 @@ static bool transcoded_name(string * path)
     
     if (format != nullptr)
     {
-        if ((runtime.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-            (runtime.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((params.m_video_format.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                (params.m_video_format.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
             replace_ext(path, params.m_desttype);
             return true;
@@ -180,15 +208,6 @@ static int selector(const struct dirent * de)
     {
         return 0;
     }
-}
-
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-    }
-    return str;
 }
 
 // Given the destination (post-transcode) file name, determine the name of
@@ -237,7 +256,7 @@ static LPCVIRTUALFILE find_original(string * path)
 
             for (int n = 0; n < count; n++)
             {
-                if (!found && !compare(namelist[n]->d_name, filename.c_str()))
+                if (!found && !compare(namelist[n]->d_name, filename))
                 {
                     append_filename(&tmppath, namelist[n]->d_name);
                     found = 1;
@@ -264,13 +283,13 @@ static LPCVIRTUALFILE find_original(string * path)
     return nullptr;
 }
 
-int ffmpegfs_readlink(const char *path, char *buf, size_t size)
+static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
     string origpath;
     string transcoded;
     ssize_t len;
 
-    ffmpegfs_trace(path, "readlink");
+    Logging::trace(path, "readlink");
 
     translate_path(&origpath, path);
 
@@ -293,7 +312,7 @@ int ffmpegfs_readlink(const char *path, char *buf, size_t size)
     return -errno;
 }
 
-int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
     string origpath;
     DIR *dp;
@@ -302,7 +321,7 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     int res;
 #endif
 
-    ffmpegfs_trace(path, "readdir");
+    Logging::trace(path, "readdir");
 
     translate_path(&origpath, path);
     append_sep(&origpath);
@@ -396,14 +415,14 @@ int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
     return -errno;
 }
 
-int ffmpegfs_getattr(const char *path, struct stat *stbuf)
+static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     string origpath;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res = 0;
 #endif
 
-    ffmpegfs_trace(path, "getattr");
+    Logging::trace(path, "getattr");
 
     translate_path(&origpath, path);
 
@@ -447,6 +466,7 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
+        //[[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
@@ -513,9 +533,9 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-                stbuf->st_size = (__off_t)transcoder_get_size(cache_entry);
+                stbuf->st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
 #else
-                stbuf->st_size = (__off64_t)transcoder_get_size(cache_entry);
+                stbuf->st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
 #endif
                 stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
 
@@ -537,11 +557,11 @@ int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
 
-int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
+static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
 {
     string origpath;
 
-    ffmpegfs_trace(path, "fgetattr");
+    Logging::trace(path, "fgetattr");
 
     errno = 0;
 
@@ -588,6 +608,7 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
+        //[[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
@@ -606,15 +627,15 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
 
             if (!cache_entry)
             {
-                ffmpegfs_error(path, "Tried to stat unopen file.");
+                Logging::error(path, "Tried to stat unopen file.");
                 errno = EBADF;
                 return -errno;
             }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-            stbuf->st_size = (__off_t)transcoder_buffer_watermark(cache_entry);
+            stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry));
 #else
-            stbuf->st_size = (__off64_t)transcoder_buffer_watermark(cache_entry);
+            stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry));
 #endif
             stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
         }
@@ -633,13 +654,13 @@ int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_in
     return 0;
 }
 
-int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
+static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     string origpath;
     struct Cache_Entry* cache_entry;
     int fd;
 
-    ffmpegfs_trace(path, "open");
+    Logging::trace(path, "open");
 
     translate_path(&origpath, path);
 
@@ -694,7 +715,7 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         }
 
         // Store transcoder in the fuse_file_info structure.
-        fi->fh = (uintptr_t)cache_entry;
+        fi->fh = reinterpret_cast<uintptr_t>(cache_entry);
         // Need this because we do not know the exact size in advance.
         fi->direct_io = 1;
 
@@ -713,14 +734,14 @@ int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
-int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
     string origpath;
     int fd;
     ssize_t read = 0;
     struct Cache_Entry* cache_entry;
 
-    ffmpegfs_trace(path, "read %zu bytes from %jd.", size, (intmax_t)offset);
+    Logging::trace(path, "read %1 bytes from %2.", size, static_cast<intmax_t>(offset));
 
     translate_path(&origpath, path);
 
@@ -732,7 +753,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
         close(fd);
         if (read >= 0)
         {
-            return (int)read;
+            return static_cast<int>(read);
         }
         else
         {
@@ -769,7 +790,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
             memcpy(buf, &index_buffer[offset], bytes);
         }
 
-        read = (ssize_t)bytes;
+        read = static_cast<ssize_t>(bytes);
         break;
     }
 #ifdef USE_LIBVCD
@@ -787,7 +808,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
         if (!cache_entry)
         {
-            ffmpegfs_error(origpath.c_str(), "Tried to read from unopen file.");
+            Logging::error(origpath.c_str(), "Tried to read from unopen file.");
             return -errno;
         }
 
@@ -805,7 +826,7 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
 
     if (read >= 0)
     {
-        return (int)read;
+        return static_cast<int>(read);
     }
     else
     {
@@ -813,11 +834,11 @@ int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct
     }
 }
 
-int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
+static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
     string origpath;
 
-    ffmpegfs_trace(path, "statfs");
+    Logging::trace(path, "statfs");
 
     translate_path(&origpath, path);
 
@@ -841,11 +862,11 @@ int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
     return 0;
 }
 
-int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
+static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
     struct Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
-    ffmpegfs_trace(path, "release");
+    Logging::trace(path, "release");
 
     if (cache_entry)
     {
@@ -855,11 +876,11 @@ int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
-void *ffmpegfs_init(struct fuse_conn_info *conn)
+static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
-    ffmpegfs_info(nullptr, "%s V%s initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    ffmpegfs_info(nullptr, "Target type: %s Profile: %s", params.m_desttype, get_profile_text(params.m_profile));
-    ffmpegfs_info(nullptr, "Mapping '%s' to '%s'.", runtime.m_basepath, runtime.m_mountpath);
+    Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "Target type: %1 Profile: %2", params.m_desttype.c_str(), get_profile_text(params.m_profile));
+    Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
 
     // We need synchronous reads.
     conn->async_read = 0;
@@ -880,10 +901,10 @@ void *ffmpegfs_init(struct fuse_conn_info *conn)
     return nullptr;
 }
 
-void ffmpegfs_destroy(__attribute__((unused)) void * p)
+static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
-    ffmpegfs_info(nullptr, "%s V%s terminating", PACKAGE_NAME, PACKAGE_VERSION);
-    printf("%s V%s terminating\n", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminating", PACKAGE_NAME, PACKAGE_VERSION);
+    std::printf("%s V%s terminating\n", PACKAGE_NAME, PACKAGE_VERSION);
 
     stop_cache_maintenance();
 
@@ -892,5 +913,5 @@ void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     index_buffer.clear();
 
-    ffmpegfs_debug(nullptr, "%s V%s terminated", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::debug(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }

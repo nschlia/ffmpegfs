@@ -21,6 +21,7 @@
 #include "cache_entry.h"
 #include "ffmpegfs.h"
 #include "buffer.h"
+#include "logging.h"
 
 #include <string.h>
 
@@ -36,14 +37,14 @@ Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
     m_cache_info.m_filename = filename;
 
     m_cache_info.m_desttype[0] = '\0';
-    strncat(m_cache_info.m_desttype, params.m_desttype, sizeof(m_cache_info.m_desttype) - 1);
+    strncat(m_cache_info.m_desttype, params.m_desttype.c_str(), sizeof(m_cache_info.m_desttype) - 1);
 
     m_buffer = new Buffer;
     m_buffer->open(m_cache_info.m_filename);
 
     clear();
 
-    ffmpegfs_trace(m_cache_info.m_filename.c_str(), "Created new cache entry.");
+    Logging::trace(m_cache_info.m_filename, "Created new cache entry.");
 }
 
 Cache_Entry::~Cache_Entry()
@@ -51,22 +52,22 @@ Cache_Entry::~Cache_Entry()
     if (m_thread_id && m_thread_id != pthread_self())
     {
         // If not same thread, wait for other to finish
-        ffmpegfs_warning(m_cache_info.m_filename.c_str(), "Waiting for thread id %" FFMPEGFS_FORMAT_PTHREAD_T " to terminate.", m_thread_id);
+        Logging::warning(m_cache_info.m_filename, "Waiting for thread id %1 to terminate.", m_thread_id);
 
         int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
-            ffmpegfs_error(m_cache_info.m_filename.c_str(), "Error joining thread id %" FFMPEGFS_FORMAT_PTHREAD_T " : %s", m_thread_id, strerror(s));
+            Logging::error(m_cache_info.m_filename, "Error joining thread id %1 : %2", m_thread_id, strerror(s));
         }
         else
         {
-            ffmpegfs_info(m_cache_info.m_filename.c_str(), "Thread id %" FFMPEGFS_FORMAT_PTHREAD_T " has terminated.", m_thread_id);
+            Logging::info(m_cache_info.m_filename, "Thread id %1 has terminated.", m_thread_id);
         }
     }
 
     delete m_buffer;
 
-    ffmpegfs_trace(m_cache_info.m_filename.c_str(), "Deleted buffer.");
+    Logging::trace(m_cache_info.m_filename, "Deleted buffer.");
 }
 
 void Cache_Entry::clear(int fetch_file_time)
@@ -177,7 +178,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         erase_cache = true;
     }
 
-    ffmpegfs_trace(m_cache_info.m_filename.c_str(), "Last transcode finished: %i Erase cache: %i.", m_cache_info.m_finished, erase_cache);
+    Logging::trace(m_cache_info.m_filename, "Last transcode finished: %1 Erase cache: %2.", m_cache_info.m_finished, erase_cache);
 
     // Store access time
     update_access(true);
@@ -321,32 +322,32 @@ bool Cache_Entry::outdated() const
 
     if (m_cache_info.m_audiobitrate != params.m_audiobitrate)
     {
-        ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: Selected audio bitrate changed from %u to %u.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected audio bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
         return true;
     }
 
     if (m_cache_info.m_audiosamplerate != params.m_audiosamplerate)
     {
-        ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: Selected audio samplerate changed from %u to %u.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
+        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected audio samplerate changed from %1 to %2.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
         return true;
     }
 
     if (m_cache_info.m_videobitrate != params.m_videobitrate)
     {
-        ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: Selected video bitrate changed from %u to %u.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
         return true;
     }
 
     if (m_cache_info.m_videowidth != params.m_videowidth || m_cache_info.m_videoheight != params.m_videoheight)
     {
-        ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: Selected video witdh/height changed.");
+        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video witdh/height changed.");
         return true;
     }
 
 #ifndef USING_LIBAV
     if (m_cache_info.m_deinterlace != params.m_deinterlace)
     {
-        ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: Selected video deinterlace changed from %u to %u.", m_cache_info.m_deinterlace, params.m_deinterlace);
+        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video deinterlace changed from %1 to %2.", m_cache_info.m_deinterlace, params.m_deinterlace);
         return true;
     }
 #endif  // !USING_LIBAV
@@ -356,13 +357,13 @@ bool Cache_Entry::outdated() const
         // If source file exists, check file date/size
         if (m_cache_info.m_file_time < sb.st_mtime)
         {
-            ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: File time has gone forward.");
+            Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: File time has gone forward.");
             return true;
         }
 
         if (m_cache_info.m_file_size != (size_t)sb.st_size)
         {
-            ffmpegfs_debug(m_cache_info.m_filename.c_str(), "Triggering re-transcode: File size has changed.");
+            Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: File size has changed.");
             return true;
         }
     }

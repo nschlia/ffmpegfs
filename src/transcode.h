@@ -29,15 +29,15 @@
 #include "fileio.h"
 
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
-int transcoder_cached_filesize(const string & filename, struct stat *stbuf);
+int             transcoder_cached_filesize(const string & filename, struct stat *stbuf);
 
 // Functions for doing transcoding, called by main program body
-Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode);
-ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len);
-void transcoder_delete(Cache_Entry* cache_entry);
-size_t transcoder_get_size(Cache_Entry* cache_entry);
-size_t transcoder_buffer_watermark(Cache_Entry* cache_entry);
-size_t transcoder_buffer_tell(Cache_Entry* cache_entry);
-void transcoder_exit(void);
+Cache_Entry*    transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode);
+ssize_t         transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len);
+void            transcoder_delete(Cache_Entry* cache_entry);
+size_t          transcoder_get_size(Cache_Entry* cache_entry);
+size_t          transcoder_buffer_watermark(Cache_Entry* cache_entry);
+size_t          transcoder_buffer_tell(Cache_Entry* cache_entry);
+void            transcoder_exit(void);
 
 #endif

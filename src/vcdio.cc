@@ -23,6 +23,7 @@
 #include "vcd/vcdutils.h"
 //#include "ffmpeg_utils.h"
 #include "ffmpegfs.h"
+#include "logging.h"
 
 #include <assert.h>
 
@@ -74,7 +75,7 @@ int vcdio::open(const string & filename)
 
     VCDUTILS::locate_video(path, m_track_no, src_filename);
 
-    ffmpegfs_info(src_filename.c_str(), "Opening input VCD.");
+    Logging::info(src_filename.c_str(), "Opening input VCD.");
 
     m_fpi = fopen(src_filename.c_str(), "rb");
 

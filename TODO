@@ -3,8 +3,6 @@ ffmpegfs TODOs
 * Add intelligent stream copy, e.g., if transcoding a transport stream
   that already represents a H264 video stream it would be possible to
   simply repackage it to a mp4 container without recoding.
-* Add MOV target format.
-* Add AIFF target format.
 * Convert audio-only files to WAV or AIFF
 * Convert video-only and audio-video files to MOV
 * Vcodec copy and acodec copy if supported by MOV

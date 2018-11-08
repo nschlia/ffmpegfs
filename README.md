@@ -29,9 +29,11 @@ Supported output formats:
 * MP4 (audio & video)
 * WebM (audio & video)
 * OGG (audio & video)
+* MOV (audio & video)
 * Opus (audio only)
 * MP3 (audio only)
 * WAV (audio only)
+* AIFF (audio only)
 
 This can let you use a multi media file collection with software 
 and/or hardware which only understands one of the supported output

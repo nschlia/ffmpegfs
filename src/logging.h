@@ -148,7 +148,8 @@ protected:
             const size_t index_to_replace,
             T &&val,
             Args &&...args) {
-        std::regex pattern("%" + std::to_string(index_to_replace) + "(?=[^0-9])");
+        // Match %# exactly (e.g. %12 and %123 literally)
+        std::regex pattern("%" + std::to_string(index_to_replace) + "(?=[^0-9]|$)");
         std::ostringstream ostr;
         ostr << val;
         std::string replacement_string(ostr.str());

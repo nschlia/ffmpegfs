@@ -28,8 +28,6 @@
 #include <sstream>
 #include <regex>
 
-#include <iostream>
-
 class Logging
 {
 public:

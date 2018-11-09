@@ -762,56 +762,19 @@ static const map<string, PROFILE> profile_map =
     // WEBM
 };
 
-int get_desttype(const char * arg, std::string *value)
+int get_profile(const std::string & arg, PROFILE *value)
 {
-    // TODO: evaluate
-    const char * ptr = strchr(arg, '=');
+    size_t pos = arg.find('=');
 
-    if (ptr != nullptr)
+    if (pos != std::string::npos)
     {
-        ptr++;
+        std::string data(arg.substr(pos + 1));
 
-        *value = ptr;
-
-        return 0;
-    }
-
-    std::fprintf(stderr, "Missing destination type string\n");
-
-    return -1;
-}
-
-int get_value(const char * arg, std::string *value)
-{
-    const char * ptr = strchr(arg, '=');
-
-    if (ptr != nullptr)
-    {
-        ptr++;
-
-        *value = ptr;
-
-        return 0;
-    }
-
-    std::fprintf(stderr, "Missing value\n");
-
-    return -1;
-}
-
-int get_profile(const char * arg, PROFILE *value)
-{
-    const char * ptr = strchr(arg, '=');
-
-    if (ptr != nullptr)
-    {
-        ptr++;
-
-        auto it = profile_map.find(ptr);
+        auto it = profile_map.find(data);
 
         if (it == profile_map.end())
         {
-            std::fprintf(stderr, "Invalid profile: %s\n", ptr);
+            std::fprintf(stderr, "Invalid profile: %s\n", data.c_str());
             return -1;
         }
 

@@ -91,16 +91,16 @@ bool Buffer::init(bool erase_cache)
         void *p;
 
         // Create the path to the cache file
-        char *cachefile = strdup(m_cachefile.c_str());
+        char *cachefile = new_strdup(m_cachefile);
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
             Logging::error(m_cachefile, "Error creating cache directory: %1", strerror(errno));
-            free(cachefile);
+            delete [] cachefile;
             throw false;
         }
         errno = 0;  // reset EEXIST, error can safely be ignored here
 
-        free(cachefile);
+        delete [] cachefile;
 
         m_buffer_size = 0;
         m_buffer = nullptr;

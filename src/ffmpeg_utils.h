@@ -194,6 +194,7 @@ const std::string & remove_filename(std::string *path);
 const std::string & remove_path(std::string *path);
 bool find_ext(std::string * ext, const std::string & filename);
 const std::string & replace_ext(std::string * filename, const std::string & ext);
+char * new_strdup(const std::string & str);
 const std::string & get_destname(std::string *destname, const std::string & filename);
 std::string ffmpeg_geterror(int errnum);
 double ffmpeg_cvttime(int64_t ts, const AVRational & time_base);

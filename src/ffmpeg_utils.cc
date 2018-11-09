@@ -97,9 +97,9 @@ const std::string & append_filename(std::string * path, const std::string & file
 // Remove filename from path. Handy dirname alternative.
 const std::string & remove_filename(std::string * path)
 {
-    char *p = strdup(path->c_str());
+    char *p = new_strdup(*path);
     *path = dirname(p);
-    free(p);
+    delete [] p;
     append_sep(path);
     return *path;
 }
@@ -107,9 +107,9 @@ const std::string & remove_filename(std::string * path)
 // Remove path from filename. Handy basename alternative.
 const std::string & remove_path(std::string *path)
 {
-    char *p = strdup(path->c_str());
+    char *p = new_strdup(*path);
     *path = basename(p);
-    free(p);
+    delete [] p;
     return *path;
 }
 
@@ -158,6 +158,14 @@ const std::string & replace_ext(std::string * filename, const std::string & ext)
     *filename += ext;
 
     return *filename;
+}
+
+char * new_strdup(const std::string & str)
+{
+    size_t n = str.size() + 1;
+    char * p = new char[n];
+    strncpy(p, str.c_str(), n);
+    return p;
 }
 
 const std::string & get_destname(std::string *destname, const std::string & filename)
@@ -391,15 +399,15 @@ const char * get_codec_name(AVCodecID codec_id, bool long_name)
 
 int mktree(const std::string &filename, mode_t mode)
 {
-    char *_path = strdup(filename.c_str());
+    char *path = new_strdup(filename);
 
-    if (_path == nullptr)
+    if (path == nullptr)
     {
         return ENOMEM;
     }
 
     char dir[PATH_MAX] = "\0";
-    char *p = strtok (_path, "/");
+    char *p = strtok (path, "/");
     int status = 0;
 
     while (p != nullptr)
@@ -424,7 +432,8 @@ int mktree(const std::string &filename, mode_t mode)
         p = strtok (nullptr, "/");
     }
 
-    free(_path);
+    delete [] path;
+
     return status;
 }
 
@@ -1015,7 +1024,7 @@ int is_mount(const std::string & filename)
         struct stat parent_stat;
         char * parent_name = nullptr;
 
-        orig_name = strdup(filename.c_str());
+        orig_name = new_strdup(filename);
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);
@@ -1065,10 +1074,7 @@ int is_mount(const std::string & filename)
         ret = _ret;
     }
 
-    // Free the malloc'ed pointer.
-    if (orig_name != nullptr)
-    {
-        free(orig_name);
-    }
+    delete [] orig_name;
+
     return ret;
 }

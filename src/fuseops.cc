@@ -229,7 +229,7 @@ static LPCVIRTUALFILE find_original(string * path)
     {
         // Fallback to old method (required if file accessed directly)
         string ext;
-        if (find_ext(&ext, *path) && strcasecmp(ext.c_str(), params.m_desttype) == 0)
+        if (find_ext(&ext, *path) && strcasecmp(ext, params.m_desttype) == 0)
         {
             string dir(*path);
             string filename(*path);
@@ -879,8 +879,8 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    Logging::info(nullptr, "Target type: %1 Profile: %2", params.m_desttype.c_str(), get_profile_text(params.m_profile));
-    Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
+    Logging::info(nullptr, "Target type: %1 Profile: %2", params.m_desttype, get_profile_text(params.m_profile));
+    Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath, params.m_mountpath);
 
     // We need synchronous reads.
     conn->async_read = 0;

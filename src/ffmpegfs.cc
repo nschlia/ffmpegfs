@@ -227,6 +227,8 @@ static int get_bitrate(const std::string & arg, BITRATE *value);
 static int get_samplerate(const std::string & arg, unsigned int *value);
 static int get_time(const std::string & arg, time_t *value);
 static int get_size(const std::string & arg, size_t *value);
+static int get_desttype(const std::string & arg, std::string *value);
+static int get_value(const std::string & arg, std::string *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static void print_params(void);
@@ -714,6 +716,39 @@ static int get_size(const std::string & arg, size_t *value)
     return -1;
 }
 
+int get_desttype(const std::string & arg, std::string *value)
+{
+    // TODO: evaluate
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        *value = arg.substr(pos + 1);
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing destination type string\n");
+
+    return -1;
+}
+
+int get_value(const std::string & arg, std::string *value)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        *value = arg.substr(pos + 1);
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+
+    return -1;
+}
+
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs)
 {
     static int n;
@@ -995,7 +1030,7 @@ int main(int argc, char *argv[])
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {
-        std::fprintf(stderr, "ERROR: Parsing options.\n\n");
+        std::fprintf(stderr, "INVALID PARAMETER: Parsing options.\n\n");
         //usage(argv[0]);
         return 1;
     }
@@ -1030,7 +1065,7 @@ int main(int argc, char *argv[])
     {
         if (args.argc > 1)
         {
-            std::fprintf(stderr, "ERROR: Invalid additional parameters for --prune_cache:\n");
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid additional parameters for --prune_cache:\n");
             for (int n = 1; n < args.argc; n++)
             {
                 std::fprintf(stderr, "Invalid: '%s'\n", args.argv[n]);
@@ -1049,38 +1084,38 @@ int main(int argc, char *argv[])
 
     if (params.m_basepath.empty())
     {
-        std::fprintf(stderr, "ERROR: No valid basepath specified.\n\n");
+        std::fprintf(stderr, "INVALID PARAMETER: No valid basepath specified.\n\n");
         return 1;
     }
 
     if (params.m_basepath.front() != '/')
     {
-        std::fprintf(stderr, "ERROR: basepath must be an absolute path.\n\n");
+        std::fprintf(stderr, "INVALID PARAMETER: basepath must be an absolute path.\n\n");
         return 1;
     }
 
     struct stat st;
     if (stat(params.m_basepath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        std::fprintf(stderr, "ERROR: basepath is not a valid directory: %s\n\n", params.m_basepath.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER: basepath is not a valid directory: %s\n\n", params.m_basepath.c_str());
         return 1;
     }
 
     if (params.m_mountpath.empty())
     {
-        std::fprintf(stderr, "ERROR: No valid mountpath specified.\n\n");
+        std::fprintf(stderr, "INVALID PARAMETER: No valid mountpath specified.\n\n");
         return 1;
     }
 
     if (params.m_mountpath.front() != '/')
     {
-        std::fprintf(stderr, "ERROR: mountpath must be an absolute path.\n\n");
+        std::fprintf(stderr, "INVALID PARAMETER: mountpath must be an absolute path.\n\n");
         return 1;
     }
 
     if (stat(params.m_mountpath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
-        std::fprintf(stderr, "ERROR: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;
     }
 

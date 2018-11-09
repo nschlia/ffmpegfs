@@ -89,7 +89,7 @@ struct Cache_Entry;
 // Fuse operations struct
 extern fuse_operations ffmpegfs_ops;
 
-void    init_fuse_ops(void);
+void        init_fuse_ops(void);
 
 #ifndef USING_LIBAV
 void        ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
@@ -97,9 +97,7 @@ void        ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 
 int         init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog);
 
-int         get_desttype(const char * arg, std::string *value);
-int         get_value(const char * arg, std::string *value);
-int         get_profile(const char * arg, PROFILE *value);
+int         get_profile(const std::string & arg, PROFILE *value);
 std::string get_profile_text(PROFILE value);
 
 void        transcoder_cache_path(std::string & path);

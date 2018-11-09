@@ -2191,7 +2191,7 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
-        int64_t duration;
+        int duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)

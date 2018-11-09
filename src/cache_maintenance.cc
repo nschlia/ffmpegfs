@@ -186,7 +186,7 @@ static int link_up()
         }
     }
 
-    pid_master = (pid_t *) shmat (shmid, nullptr, 0);   // attach pid_master to shared memory
+    pid_master = static_cast<pid_t *>(shmat (shmid, nullptr, 0));   // attach pid_master to shared memory
 
     if (master)
     {
@@ -207,7 +207,7 @@ static int link_up()
         if (errno == ENOENT)
         {
             // If semaphore does not exist, then try to create one.
-            sem = sem_open((const char *)SEM_OPEN_FILE, O_CREAT | O_EXCL, 0777, 1);
+            sem = sem_open(const_cast<const char *>(SEM_OPEN_FILE), O_CREAT | O_EXCL, 0777, 1);
         }
 
         if (sem == SEM_FAILED)
@@ -279,7 +279,7 @@ static int link_down()
     {
         if (!buf.shm_nattch)
         {
-            if (shmctl (shmid, IPC_RMID, 0))
+            if (shmctl (shmid, IPC_RMID, nullptr))
             {
                 Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
                 ret = -1;

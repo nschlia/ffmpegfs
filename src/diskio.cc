@@ -66,7 +66,7 @@ int diskio::open(const string & filename)
 
 int diskio::read(void * data, int maxlen)
 {
-    return (int)fread(data, 1, maxlen, m_fpi);
+    return static_cast<int>(fread(data, 1, static_cast<size_t>(maxlen), m_fpi));
 }
 
 int diskio::error() const
@@ -81,7 +81,7 @@ int diskio::duration() const
 
 size_t diskio::size() const
 {
-    if (m_fpi == 0)
+    if (m_fpi == nullptr)
     {
         errno = EINVAL;
         return 0;
@@ -97,7 +97,7 @@ size_t diskio::tell() const
     // falls nicht möglich:
     // errno = EPERM;
     // return -1;
-    return ftell(m_fpi);
+    return static_cast<size_t>(ftell(m_fpi));
 }
 
 int diskio::seek(long offset, int whence)

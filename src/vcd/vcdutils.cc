@@ -23,7 +23,7 @@ string convert_psz2string(const char * psz, int size, bool trimmed)
 
     if (buffer != nullptr)
     {
-        memcpy(buffer, psz, size);
+        memcpy(buffer, psz, static_cast<size_t>(size));
         *(buffer + size) = '\0';
 
         ret_value = buffer;
@@ -97,19 +97,16 @@ string get_type_str(int type)
     case 1:
     {
         return "VCD 1.0, VCD 1.1, SVCD 1.0, HQVCD";
-        break;
     }
 
     case 2:
     {
         return "VCD 2.0";
-        break;
     }
 
     default:
     {
         return "";
-        break;
     }
     }
 }
@@ -121,17 +118,14 @@ string get_profile_tag_str(int tag)
     case 0:
     {
         return "VCD 1.0, VCD 2.0, SVCD, HQVCD";
-        break;
     }
     case 1:
     {
         return "VCD 1.1";
-        break;
     }
     default:
     {
         return "";
-        break;
     }
     }
 }

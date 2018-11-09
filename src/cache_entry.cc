@@ -111,7 +111,7 @@ void Cache_Entry::clear(int fetch_file_time)
         else
         {
             m_cache_info.m_file_time    = sb.st_mtime;
-            m_cache_info.m_file_size    = sb.st_size;
+            m_cache_info.m_file_size    = static_cast<size_t>(sb.st_size);
         }
     }
 
@@ -361,7 +361,7 @@ bool Cache_Entry::outdated() const
             return true;
         }
 
-        if (m_cache_info.m_file_size != (size_t)sb.st_size)
+        if (m_cache_info.m_file_size != static_cast<size_t>(sb.st_size))
         {
             Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: File size has changed.");
             return true;

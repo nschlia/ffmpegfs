@@ -608,7 +608,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     {
     case AVMEDIA_TYPE_AUDIO:
     {
-        int64_t orig_bit_rate;
+        BITRATE orig_bit_rate;
         int orig_sample_rate;
 
         // Set the basic encoder parameters
@@ -616,7 +616,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit bit rate
-            Logging::trace(destname(), "Limiting audio bit rate from %1 to %1.",
+            Logging::trace(destname(), "Limiting audio bit rate from %1 to %2.",
                            format_bitrate(orig_bit_rate),
                            format_bitrate(output_codec_ctx->bit_rate));
         }
@@ -758,7 +758,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
     case AVMEDIA_TYPE_VIDEO:
     {
-        int64_t orig_bit_rate;
+        BITRATE orig_bit_rate;
 
         output_codec_ctx->codec_id = codec_id;
 
@@ -2206,7 +2206,7 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
                 // TODO: Is this a FFmpeg bug or am I too stupid?
                 if (duration > 0 && CODECPAR(m_out.m_audio.m_pStream)->sample_rate > 0)
                 {
-                    pkt->duration = duration = av_rescale(duration, (int64_t)m_out.m_audio.m_pStream->time_base.den * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_pStream)->sample_rate * (int64_t)m_out.m_audio.m_pStream->time_base.num);
+                    pkt->duration = duration = static_cast<int>(av_rescale(duration, static_cast<int64_t>(m_out.m_audio.m_pStream->time_base.den) * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_pStream)->sample_rate * static_cast<int64_t>(m_out.m_audio.m_pStream->time_base.num)));
                 }
             }
 
@@ -2845,7 +2845,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
         case AV_CODEC_ID_AAC:
         {
             // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
-            size += (size_t)(duration * 1.025 * (double)output_audio_bit_rate / 8); // add 2.5% for overhead
+            size += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8); // add 2.5% for overhead
             break;
         }
         case AV_CODEC_ID_MP3:
@@ -2856,7 +2856,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             // but in practice gives excellent answers, usually exactly correct.
             // Cast to 64-bit int to avoid overflow.
 
-            size += (size_t)(duration * (double)output_audio_bit_rate / 8) + ID3V1_TAG_LENGTH;
+            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) + ID3V1_TAG_LENGTH;
             break;
         }
         case AV_CODEC_ID_PCM_S16LE:
@@ -2872,19 +2872,19 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             // file duration * sample rate (HZ) * channels * bytes per sample
             // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
             // The real size of the list header is unkown as we don't know the contents (meta tags)
-            size += (size_t)(duration * output_sample_rate * channels * bytes_per_sample) + sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER);
+            size += static_cast<size_t>(duration * output_sample_rate * channels * bytes_per_sample) + sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER);
             break;
         }
         case AV_CODEC_ID_VORBIS:
         {
             // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-            size += (size_t)(duration * (double)output_audio_bit_rate / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
             break;
         }
         case AV_CODEC_ID_OPUS:
         {
             // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-            size += (size_t)(duration * (double)output_audio_bit_rate / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
             break;
         }
         case AV_CODEC_ID_NONE:
@@ -2914,7 +2914,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             {
             case AV_CODEC_ID_H264:
             {
-                size += (size_t)(duration * 1.025  * (double)out_video_bit_rate / 8); // add 2.5% for overhead
+                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // add 2.5% for overhead
                 break;
             }
             case AV_CODEC_ID_MJPEG:
@@ -2924,12 +2924,12 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             }
             case AV_CODEC_ID_THEORA:
             {
-                size += (size_t)(duration * 1.025  * (double)out_video_bit_rate / 8); // ??? // add 2.5% for overhead
+                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
                 break;
             }
             case AV_CODEC_ID_VP9:
             {
-                size += (size_t)(duration * 1.025  * (double)out_video_bit_rate / 8); // ??? // add 2.5% for overhead
+                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
                 break;
             }
             case AV_CODEC_ID_NONE:

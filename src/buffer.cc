@@ -91,16 +91,16 @@ bool Buffer::init(bool erase_cache)
         void *p;
 
         // Create the path to the cache file
-        char *cachefile = strdup(m_cachefile.c_str());
+        char *cachefile = new_strdup(m_cachefile);
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
             Logging::error(m_cachefile, "Error creating cache directory: %1", strerror(errno));
-            free(cachefile);
+            delete [] cachefile;
             throw false;
         }
         errno = 0;  // reset EEXIST, error can safely be ignored here
 
-        free(cachefile);
+        delete [] cachefile;
 
         m_buffer_size = 0;
         m_buffer = nullptr;
@@ -113,7 +113,7 @@ bool Buffer::init(bool erase_cache)
             errno = 0;  // ignore this error
         }
 
-        m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, (mode_t)0644);
+        m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
         if (m_fd == -1)
         {
             Logging::error(m_cachefile, "Error opening cache file: %1", strerror(errno));
@@ -150,7 +150,7 @@ bool Buffer::init(bool erase_cache)
             m_buffer_pos = m_buffer_watermark = filesize;
         }
 
-        p = mmap(0, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
+        p = mmap(nullptr, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
         if (p == MAP_FAILED)
         {
             Logging::error(m_cachefile,  "File mapping failed: %1", strerror(errno));
@@ -158,7 +158,7 @@ bool Buffer::init(bool erase_cache)
         }
 
         m_buffer_size = filesize;
-        m_buffer = (uint8_t*)p;
+        m_buffer = static_cast<uint8_t*>(p);
     }
     catch (bool _success)
     {
@@ -296,7 +296,7 @@ bool Buffer::reserve(size_t size)
         size = m_buffer_size;
     }
 
-    m_buffer = (uint8_t*)mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE);
+    m_buffer = static_cast<uint8_t*>(mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
     if (m_buffer != nullptr)
     {
         m_buffer_size = size;
@@ -375,7 +375,7 @@ int Buffer::seek(long offset, int whence)
     }
     case SEEK_END:
     {
-        if (size() > (size_t)offset)
+        if (size() > static_cast<size_t>(offset))
         {
             pos = size() - offset;
         }

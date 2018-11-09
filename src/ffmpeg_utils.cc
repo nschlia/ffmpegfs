@@ -28,6 +28,7 @@
 #include <regex.h>
 #include <wordexp.h>
 #include <memory>
+#include <regex>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -97,9 +98,9 @@ const std::string & append_filename(std::string * path, const std::string & file
 // Remove filename from path. Handy dirname alternative.
 const std::string & remove_filename(std::string * path)
 {
-    char *p = strdup(path->c_str());
+    char *p = new_strdup(*path);
     *path = dirname(p);
-    free(p);
+    delete [] p;
     append_sep(path);
     return *path;
 }
@@ -107,9 +108,9 @@ const std::string & remove_filename(std::string * path)
 // Remove path from filename. Handy basename alternative.
 const std::string & remove_path(std::string *path)
 {
-    char *p = strdup(path->c_str());
+    char *p = new_strdup(*path);
     *path = basename(p);
-    free(p);
+    delete [] p;
     return *path;
 }
 
@@ -158,6 +159,14 @@ const std::string & replace_ext(std::string * filename, const std::string & ext)
     *filename += ext;
 
     return *filename;
+}
+
+char * new_strdup(const std::string & str)
+{
+    size_t n = str.size() + 1;
+    char * p = new char[n];
+    strncpy(p, str.c_str(), n);
+    return p;
 }
 
 const std::string & get_destname(std::string *destname, const std::string & filename)
@@ -391,15 +400,15 @@ const char * get_codec_name(AVCodecID codec_id, bool long_name)
 
 int mktree(const std::string &filename, mode_t mode)
 {
-    char *_path = strdup(filename.c_str());
+    char *path = new_strdup(filename);
 
-    if (_path == nullptr)
+    if (path == nullptr)
     {
         return ENOMEM;
     }
 
     char dir[PATH_MAX] = "\0";
-    char *p = strtok (_path, "/");
+    char *p = strtok (path, "/");
     int status = 0;
 
     while (p != nullptr)
@@ -424,7 +433,8 @@ int mktree(const std::string &filename, mode_t mode)
         p = strtok (nullptr, "/");
     }
 
-    free(_path);
+    delete [] path;
+
     return status;
 }
 
@@ -453,37 +463,37 @@ int supports_albumart(FILETYPE filetype)
     return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4);
 }
 
-FILETYPE get_filetype(const std::string & type)
+FILETYPE get_filetype(const std::string & desttype)
 {
-    if (!strcasecmp(type, "mp3"))
+    if (!strcasecmp(desttype, "mp3"))
     {
         return FILETYPE_MP3;
     }
-    else if (!strcasecmp(type, "mp4"))
+    else if (!strcasecmp(desttype, "mp4"))
     {
         return FILETYPE_MP4;
     }
-    else if (!strcasecmp(type, "wav"))
+    else if (!strcasecmp(desttype, "wav"))
     {
         return FILETYPE_WAV;
     }
-    else if (!strcasecmp(type, "ogg"))
+    else if (!strcasecmp(desttype, "ogg"))
     {
         return FILETYPE_OGG;
     }
-    else if (!strcasecmp(type, "webm"))
+    else if (!strcasecmp(desttype, "webm"))
     {
         return FILETYPE_WEBM;
     }
-    else if (!strcasecmp(type, "mov"))
+    else if (!strcasecmp(desttype, "mov"))
     {
         return FILETYPE_MOV;
     }
-    else if (!strcasecmp(type, "aiff"))
+    else if (!strcasecmp(desttype, "aiff"))
     {
         return FILETYPE_AIFF;
     }
-    else if (!strcasecmp(type, "opus"))
+    else if (!strcasecmp(desttype, "opus"))
     {
         return FILETYPE_OPUS;
     }
@@ -493,11 +503,11 @@ FILETYPE get_filetype(const std::string & type)
     }
 }
 
-int get_codecs(const std::string & type, ffmpegfs_format *format)
+int get_codecs(const std::string & desttype, ffmpegfs_format *format)
 {
     int ret = -1;
 
-    switch (get_filetype(type))
+    switch (get_filetype(desttype))
     {
     case FILETYPE_MP3:
     {
@@ -672,7 +682,7 @@ std::string format_number(int64_t value)
         return "unlimited";
     }
 
-    if (value == (uint64_t)AV_NOPTS_VALUE)
+    if (value == static_cast<int64_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -680,9 +690,9 @@ std::string format_number(int64_t value)
     return string_format("%" PRId64, value);
 }
 
-std::string format_bitrate(uint64_t value)
+std::string format_bitrate(BITRATE value)
 {
-    if (value == (uint64_t)AV_NOPTS_VALUE)
+    if (value == static_cast<BITRATE>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -703,7 +713,7 @@ std::string format_bitrate(uint64_t value)
 
 std::string format_samplerate(unsigned int value)
 {
-    if (value == (unsigned int)AV_NOPTS_VALUE)
+    if (value == static_cast<unsigned int>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -720,7 +730,7 @@ std::string format_samplerate(unsigned int value)
 
 std::string format_duration(time_t value)
 {
-    if (value == (time_t)AV_NOPTS_VALUE)
+    if (value == static_cast<time_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -751,7 +761,7 @@ std::string format_time(time_t value)
         return "unlimited";
     }
 
-    if (value == (time_t)AV_NOPTS_VALUE)
+    if (value == static_cast<time_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -803,7 +813,7 @@ std::string format_size(size_t value)
         return "unlimited";
     }
 
-    if (value == (size_t)AV_NOPTS_VALUE)
+    if (value == static_cast<size_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -1015,7 +1025,7 @@ int is_mount(const std::string & filename)
         struct stat parent_stat;
         char * parent_name = nullptr;
 
-        orig_name = strdup(filename.c_str());
+        orig_name = new_strdup(filename);
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);
@@ -1065,10 +1075,18 @@ int is_mount(const std::string & filename)
         ret = _ret;
     }
 
-    // Free the malloc'ed pointer.
-    if (orig_name != nullptr)
-    {
-        free(orig_name);
-    }
+    delete [] orig_name;
+
     return ret;
 }
+
+std::vector<std::string> split(const std::string& input, const std::string & regex)
+{
+    // passing -1 as the submatch index parameter performs splitting
+    std::regex re(regex);
+    std::sregex_token_iterator
+            first{input.begin(), input.end(), re, -1},
+    last;
+    return {first, last};
+}
+

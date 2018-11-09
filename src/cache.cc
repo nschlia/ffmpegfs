@@ -47,7 +47,7 @@ Cache::~Cache()
     // Clean up memory
     for (cache_t::iterator p = m_cache.begin(); p != m_cache.end(); ++p)
     {
-        delete (Cache_Entry *)p->second;
+        delete static_cast<Cache_Entry *>(p->second);
     }
 
     m_cache.clear();
@@ -243,7 +243,7 @@ bool Cache::read_info(t_cache_info & cache_info)
 
         if (ret == SQLITE_ROW)
         {
-            const char *text                = (const char *)sqlite3_column_text(m_cacheidx_select_stmt, 0);
+            const char *text                = reinterpret_cast<const char *>(sqlite3_column_text(m_cacheidx_select_stmt, 0));
             if (text != nullptr)
             {
                 cache_info.m_desttype[0] = '\0';
@@ -252,21 +252,21 @@ bool Cache::read_info(t_cache_info & cache_info)
             
             //cache_info.m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info.m_audiobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 2);
-            cache_info.m_audiosamplerate    = sqlite3_column_int(m_cacheidx_select_stmt, 3);
+            cache_info.m_audiosamplerate    = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 3));
             cache_info.m_videobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 4);
-            cache_info.m_videowidth         = sqlite3_column_int(m_cacheidx_select_stmt, 5);
-            cache_info.m_videoheight        = sqlite3_column_int(m_cacheidx_select_stmt, 6);
+            cache_info.m_videowidth         = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 5));
+            cache_info.m_videoheight        = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 6));
             cache_info.m_deinterlace        = sqlite3_column_int(m_cacheidx_select_stmt, 7);
-            cache_info.m_predicted_filesize = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 8);
-            cache_info.m_encoded_filesize   = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 9);
+            cache_info.m_predicted_filesize = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 8));
+            cache_info.m_encoded_filesize   = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 9));
             cache_info.m_finished           = sqlite3_column_int(m_cacheidx_select_stmt, 10);
             cache_info.m_error              = sqlite3_column_int(m_cacheidx_select_stmt, 11);
             cache_info.m_errno              = sqlite3_column_int(m_cacheidx_select_stmt, 12);
             cache_info.m_averror            = sqlite3_column_int(m_cacheidx_select_stmt, 13);
-            cache_info.m_creation_time      = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 14);
-            cache_info.m_access_time        = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 15);
-            cache_info.m_file_time          = (time_t)sqlite3_column_int64(m_cacheidx_select_stmt, 16);
-            cache_info.m_file_size          = (size_t)sqlite3_column_int64(m_cacheidx_select_stmt, 17);
+            cache_info.m_creation_time      = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 14));
+            cache_info.m_access_time        = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 15));
+            cache_info.m_file_time          = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 16));
+            cache_info.m_file_size          = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 17));
         }
         else if (ret != SQLITE_DONE)
         {
@@ -326,24 +326,24 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
         SQLBINDTXT(1, cache_info.m_filename.c_str());
         SQLBINDTXT(2, cache_info.m_desttype);
-        //SQLBINDNUM(sqlite3_bind_int, 3, cache_info.m_enable_ismv);
-        SQLBINDNUM(sqlite3_bind_int, 3, enable_ismv_dummy);
-        SQLBINDNUM(sqlite3_bind_int, 4, cache_info.m_audiobitrate);
-        SQLBINDNUM(sqlite3_bind_int, 5, cache_info.m_audiosamplerate);
-        SQLBINDNUM(sqlite3_bind_int, 6, cache_info.m_videobitrate);
-        SQLBINDNUM(sqlite3_bind_int, 7, cache_info.m_videowidth);
-        SQLBINDNUM(sqlite3_bind_int, 8, cache_info.m_videoheight);
-        SQLBINDNUM(sqlite3_bind_int, 9, cache_info.m_deinterlace);
-        SQLBINDNUM(sqlite3_bind_int64, 10, cache_info.m_predicted_filesize);
-        SQLBINDNUM(sqlite3_bind_int64, 11, cache_info.m_encoded_filesize);
-        SQLBINDNUM(sqlite3_bind_int, 12, cache_info.m_finished);
-        SQLBINDNUM(sqlite3_bind_int, 13, cache_info.m_error);
-        SQLBINDNUM(sqlite3_bind_int, 14, cache_info.m_errno);
-        SQLBINDNUM(sqlite3_bind_int, 15, cache_info.m_averror);
-        SQLBINDNUM(sqlite3_bind_int64, 16, cache_info.m_creation_time);
-        SQLBINDNUM(sqlite3_bind_int64, 17, cache_info.m_access_time);
-        SQLBINDNUM(sqlite3_bind_int64, 18, cache_info.m_file_time);
-        SQLBINDNUM(sqlite3_bind_int64, 19, cache_info.m_file_size);
+        //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info.m_enable_ismv);
+        SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
+        SQLBINDNUM(sqlite3_bind_int64,  4,  cache_info.m_audiobitrate);
+        SQLBINDNUM(sqlite3_bind_int,    5,  static_cast<int>(cache_info.m_audiosamplerate));
+        SQLBINDNUM(sqlite3_bind_int64,  6,  cache_info.m_videobitrate);
+        SQLBINDNUM(sqlite3_bind_int,    7,  static_cast<int>(cache_info.m_videowidth));
+        SQLBINDNUM(sqlite3_bind_int,    8,  static_cast<int>(cache_info.m_videoheight));
+        SQLBINDNUM(sqlite3_bind_int,    9,  cache_info.m_deinterlace);
+        SQLBINDNUM(sqlite3_bind_int64,  10, static_cast<sqlite3_int64>(cache_info.m_predicted_filesize));
+        SQLBINDNUM(sqlite3_bind_int64,  11, static_cast<sqlite3_int64>(cache_info.m_encoded_filesize));
+        SQLBINDNUM(sqlite3_bind_int,    12, cache_info.m_finished);
+        SQLBINDNUM(sqlite3_bind_int,    13, cache_info.m_error);
+        SQLBINDNUM(sqlite3_bind_int,    14, cache_info.m_errno);
+        SQLBINDNUM(sqlite3_bind_int,    15, cache_info.m_averror);
+        SQLBINDNUM(sqlite3_bind_int64,  16, cache_info.m_creation_time);
+        SQLBINDNUM(sqlite3_bind_int64,  17, cache_info.m_access_time);
+        SQLBINDNUM(sqlite3_bind_int64,  18, cache_info.m_file_time);
+        SQLBINDNUM(sqlite3_bind_int64,  19, static_cast<sqlite3_int64>(cache_info.m_file_size));
 
         ret = sqlite3_step(m_cacheidx_insert_stmt);
 
@@ -560,12 +560,12 @@ bool Cache::prune_expired()
     int ret = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
     {
-        const char *filename = (const char *) sqlite3_column_text(stmt, 0);
-        const char *desttype = (const char *) sqlite3_column_text(stmt, 1);
+        const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+        const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
         keys.push_back(make_pair(filename, desttype));
 
-        Logging::trace(filename, "Found %1 old entries.", format_time(now - (time_t)sqlite3_column_int64(stmt, 2)));
+        Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))));
     }
 
     Logging::trace(m_cacheidx_file, "%1 expired cache entries found.", keys.size());
@@ -626,9 +626,9 @@ bool Cache::prune_cache_size()
     size_t total_size = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
     {
-        const char *filename = (const char *) sqlite3_column_text(stmt, 0);
-        const char *desttype = (const char *) sqlite3_column_text(stmt, 1);
-        size_t size = (size_t)sqlite3_column_int64(stmt, 2);
+        const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+        const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        size_t size = static_cast<size_t>(sqlite3_column_int64(stmt, 2));
 
         keys.push_back(make_pair(filename, desttype));
         filesizes.push_back(size);
@@ -642,7 +642,7 @@ bool Cache::prune_cache_size()
         Logging::trace(m_cacheidx_file, "Pruning %1 of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size));
         if (ret == SQLITE_DONE)
         {
-            int n = 0;
+            size_t n = 0;
             for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
             {
                 const cache_key_t & key = *it;
@@ -727,7 +727,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
         if (ret == SQLITE_DONE)
         {
-            int n = 0;
+            size_t n = 0;
             for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
             {
                 const cache_key_t & key = *it;
@@ -800,8 +800,8 @@ bool Cache::clear()
     int ret = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
     {
-        const char *filename = (const char *) sqlite3_column_text(stmt, 0);
-        const char *desttype = (const char *) sqlite3_column_text(stmt, 1);
+        const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
+        const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
         keys.push_back(make_pair(filename, desttype));
     }
@@ -866,7 +866,6 @@ string Cache::expanded_sql(sqlite3_stmt *pStmt)
     char * p = sqlite3_expanded_sql(pStmt);
     sql = p;
     free(p);
-    return sql;
 #else
     const char *p = sqlite3_sql(pStmt);
     if (p != nullptr)

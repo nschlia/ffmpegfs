@@ -72,26 +72,26 @@ int VcdEntries::load_file(const string & path)
         fpi = fopen(fullname.c_str(), "rb");
         if (fpi == nullptr)
         {
-            throw (int)errno;
+            throw static_cast<int>(errno);
         }
 
         if (fstat(fileno(fpi), &st) != 0)
         {
-            throw (int)ferror(fpi);
+            throw static_cast<int>(ferror(fpi));
         }
 
         m_file_date      = st.st_mtime;
 
         memset(&vcdentry, 0, sizeof(vcdentry));
 
-        if (fread((char *)&vcdentry, 1, sizeof(vcdentry), fpi) != sizeof(vcdentry))
+        if (fread(reinterpret_cast<char *>(&vcdentry), 1, sizeof(vcdentry), fpi) != sizeof(vcdentry))
         {
-            throw (int)ferror(fpi);
+            throw static_cast<int>(ferror(fpi));
         }
 
-        m_id            = VCDUTILS::convert_psz2string((const char*)vcdentry.m_ID, sizeof(vcdentry.m_ID));
-        m_type          = (int)vcdentry.m_type;
-        m_profile_tag   = (int)vcdentry.m_profile_tag;
+        m_id            = VCDUTILS::convert_psz2string(reinterpret_cast<const char *>(vcdentry.m_ID), sizeof(vcdentry.m_ID));
+        m_type          = static_cast<int>(vcdentry.m_type);
+        m_profile_tag   = static_cast<int>(vcdentry.m_profile_tag);
         num_entries     = htons(vcdentry.m_num_entries);
 
         for (int chapter_num = 0; chapter_num < num_entries; chapter_num++)
@@ -140,7 +140,7 @@ int VcdEntries::scan_chapters()
                 int _errno = VCDUTILS::locate_video(m_disk_path, last_track_no, fullname);
                 if (_errno != 0)
                 {
-                    throw (int)_errno;
+                    throw static_cast<int>(errno);
                 }
 
                 if (chapter_no)
@@ -157,12 +157,12 @@ int VcdEntries::scan_chapters()
 
                 if (fpi == nullptr)
                 {
-                    throw (int)_errno;
+                    throw static_cast<int>(errno);
                 }
 
                 if (fstat(fileno(fpi), &st) != 0)
                 {
-                    throw (int)ferror(fpi);
+                    throw static_cast<int>(ferror(fpi));
                 }
 
                 // Locate the first sync bytes
@@ -170,7 +170,7 @@ int VcdEntries::scan_chapters()
 
                 if (res != SEEKRES_FOUND)
                 {
-                    throw (int)EIO;
+                    throw static_cast<int>(EIO);
                 }
 
                 first_sync = ftell(fpi) - sizeof(SYNC);
@@ -190,13 +190,13 @@ int VcdEntries::scan_chapters()
 
                 if (fseek(fpi, file_pos, SEEK_SET))
                 {
-                    throw (int)ferror(fpi);
+                    throw static_cast<int>(ferror(fpi));
                 }
 
                 int _errno = buffer.read(fpi, last_track_no);
                 if (_errno)
                 {
-                    throw (int)_errno;
+                    throw static_cast<int>(errno);
                 }
 
                 if (buffer < m_chapters[chapter_no])
@@ -313,10 +313,10 @@ string VcdEntries::get_profile_tag_str() const
 
 int VcdEntries::get_number_of_chapters() const
 {
-    return (int)m_chapters.size();
+    return static_cast<int>(m_chapters.size());
 }
 
 const VcdChapter & VcdEntries::get_chapter(int chapter_no) const
 {
-    return m_chapters[chapter_no];
+    return m_chapters[static_cast<size_t>(chapter_no)];
 }

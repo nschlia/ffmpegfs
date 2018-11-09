@@ -223,10 +223,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-static int get_bitrate(const char * arg, unsigned int *value);
-static int get_samplerate(const char * arg, unsigned int *value);
-static int get_time(const char * arg, time_t *value);
-static int get_size(const char * arg, size_t *value);
+static int get_bitrate(const std::string & arg, BITRATE *value);
+static int get_samplerate(const std::string & arg, unsigned int *value);
+static int get_time(const std::string & arg, time_t *value);
+static int get_size(const std::string & arg, size_t *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static void print_params(void);
@@ -428,18 +428,17 @@ static void usage(char *name)
 // In bit/s:  #  or #bps
 // In kbit/s: #M or #Mbps
 // In Mbit/s: #M or #Mbps
-static int get_bitrate(const char * arg, unsigned int *value)
+static int get_bitrate(const std::string & arg, BITRATE *value)
 {
-    const char * ptr = strchr(arg, '=');
+    size_t pos = arg.find('=');
 
-    if (ptr)
+    if (pos != std::string::npos)
     {
+        std::string data(arg.substr(pos + 1));
         int reti;
 
-        ptr++;
-
         // Check for decimal number
-        reti = compare(ptr, "^([1-9][0-9]*|0)?(bps)?$");
+        reti = compare(data, "^([1-9][0-9]*|0)?(bps)?$");
 
         if (reti == -1)
         {
@@ -447,12 +446,12 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atol(ptr));
+            *value = static_cast<BITRATE>(atol(data.c_str()));
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and K modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?K(bps)?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(bps)?$");
 
         if (reti == -1)
         {
@@ -460,12 +459,12 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atof(ptr) * 1000);
+            *value = static_cast<BITRATE>(atof(data.c_str()) * 1000);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and M modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?M(bps)?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?M(bps)?$");
 
         if (reti == -1)
         {
@@ -473,15 +472,15 @@ static int get_bitrate(const char * arg, unsigned int *value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atof(ptr) * 1000000);
+            *value = static_cast<BITRATE>(atof(data.c_str()) * 1000000);
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "Invalid bit rate '%s'\n", ptr);
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid bit rate '%s'\n", data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "Invalid bit rate\n");
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid bit rate\n");
     }
 
     return -1;
@@ -490,18 +489,17 @@ static int get_bitrate(const char * arg, unsigned int *value)
 // Get sample rate:
 // In Hz:  #  or #Hz
 // In kHz: #K or #KHz
-static int get_samplerate(const char * arg, unsigned int * value)
+static int get_samplerate(const std::string & arg, unsigned int * value)
 {
-    const char * ptr = strchr(arg, '=');
+    size_t pos = arg.find('=');
 
-    if (ptr)
+    if (pos != std::string::npos)
     {
+        std::string data(arg.substr(pos + 1));
         int reti;
 
-        ptr++;
-
         // Check for decimal number
-        reti = compare(ptr, "^([1-9][0-9]*|0)(Hz)?$");
+        reti = compare(data, "^([1-9][0-9]*|0)(Hz)?$");
 
         if (reti == -1)
         {
@@ -509,12 +507,12 @@ static int get_samplerate(const char * arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atol(ptr));
+            *value = static_cast<unsigned int>(atol(data.c_str()));
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and K modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?K(Hz)?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(Hz)?$");
 
         if (reti == -1)
         {
@@ -522,15 +520,15 @@ static int get_samplerate(const char * arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atof(ptr) * 1000);
+            *value = static_cast<unsigned int>(atof(data.c_str()) * 1000);
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "Invalid sample rate '%s'\n", ptr);
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid sample rate '%s'\n", data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "Invalid sample rate\n");
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid sample rate\n");
     }
 
     return -1;
@@ -542,18 +540,17 @@ static int get_samplerate(const char * arg, unsigned int * value)
 // Hours:   #h
 // Days:    #d
 // Weeks:   #w
-static int get_time(const char * arg, time_t *value)
+static int get_time(const std::string & arg, time_t *value)
 {
-    const char * ptr = strchr(arg, '=');
+    size_t pos = arg.find('=');
 
-    if (ptr)
+    if (pos != std::string::npos)
     {
+        std::string data(arg.substr(pos + 1));
         int reti;
 
-        ptr++;
-
         // Check for decimal number
-        reti = compare(ptr, "^([1-9][0-9]*|0)?s?$");
+        reti = compare(data, "^([1-9][0-9]*|0)?s?$");
 
         if (reti == -1)
         {
@@ -561,12 +558,12 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atol(ptr));
+            *value = static_cast<time_t>(atol(data.c_str()));
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and m modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?m$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?m$");
 
         if (reti == -1)
         {
@@ -574,12 +571,12 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(ptr) * 60);
+            *value = static_cast<time_t>(atof(data.c_str()) * 60);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and h modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?h$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?h$");
 
         if (reti == -1)
         {
@@ -587,12 +584,12 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(ptr) * 60 * 60);
+            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and d modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?d$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?d$");
 
         if (reti == -1)
         {
@@ -600,12 +597,12 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(ptr) * 60 * 60 * 24);
+            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and w modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?w$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?w$");
 
         if (reti == -1)
         {
@@ -613,15 +610,15 @@ static int get_time(const char * arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(ptr) * 60 * 60 * 24 * 7);
+            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24 * 7);
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "Invalid time format '%s'\n", ptr);
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid time format '%s'\n", data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "Invalid time format\n");
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid time format\n");
     }
 
     return -1;
@@ -633,18 +630,17 @@ static int get_time(const char * arg, time_t *value)
 // In MBytes: #B or #MB
 // In GBytes: #G or #GB
 // In TBytes: #T or #TB
-static int get_size(const char * arg, size_t *value)
+static int get_size(const std::string & arg, size_t *value)
 {
-    const char * ptr = strchr(arg, '=');
+    size_t pos = arg.find('=');
 
-    if (ptr)
+    if (pos != std::string::npos)
     {
+        std::string data(arg.substr(pos + 1));
         int reti;
 
-        ptr++;
-
         // Check for decimal number
-        reti = compare(ptr, "^([1-9][0-9]*|0)?B?$");
+        reti = compare(data, "^([1-9][0-9]*|0)?B?$");
 
         if (reti == -1)
         {
@@ -652,12 +648,12 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atol(ptr));
+            *value = static_cast<size_t>(atol(data.c_str()));
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and K/KB modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?KB?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?KB?$");
 
         if (reti == -1)
         {
@@ -665,12 +661,12 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(ptr) * 1024);
+            *value = static_cast<size_t>(atof(data.c_str()) * 1024);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and M/MB modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?MB?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?MB?$");
 
         if (reti == -1)
         {
@@ -678,12 +674,12 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024);
+            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and G/GB modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?GB?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?GB?$");
 
         if (reti == -1)
         {
@@ -691,12 +687,12 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024 * 1024);
+            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
         // Check for number with optional descimal point and T/TB modifier
-        reti = compare(ptr, "^[1-9][0-9]*(\\.[0-9]+)?TB?$");
+        reti = compare(data, "^[1-9][0-9]*(\\.[0-9]+)?TB?$");
 
         if (reti == -1)
         {
@@ -704,15 +700,15 @@ static int get_size(const char * arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(ptr) * 1024 * 1024 * 1024 * 1024);
+            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "Invalid size '%s'\n", ptr);
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid size '%s'\n", data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "Invalid size\n");
+        std::fprintf(stderr, "INVALID PARAMETER: Invalid size\n");
     }
 
     return -1;

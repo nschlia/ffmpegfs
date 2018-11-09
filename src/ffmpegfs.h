@@ -47,10 +47,10 @@ extern struct ffmpegfs_params
     ffmpegfs_format     m_video_format;
     ffmpegfs_format     m_audio_format;
     // Audio
-    unsigned int        m_audiobitrate;
+    BITRATE             m_audiobitrate;
     unsigned int        m_audiosamplerate;
     // Video
-    unsigned int        m_videobitrate;
+    BITRATE             m_videobitrate;
     unsigned int        m_videowidth;               // set video width
     unsigned int        m_videoheight;              // set video height
 #ifndef USING_LIBAV

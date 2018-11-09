@@ -118,14 +118,14 @@ int VcdInfo::load_file(const string & path)
 
     memset(&vi, 0, sizeof(vi));
 
-    if (fread((char *)&vi, 1, sizeof(vi), fpi) == sizeof(vi))
+    if (fread(reinterpret_cast<char *>(&vi), 1, sizeof(vi), fpi) == sizeof(vi))
     {
         m_id            = VCDUTILS::convert_psz2string(vi.m_ID, sizeof(vi.m_ID));
-        m_type          = (int)vi.m_type;
-        m_profile_tag   = (int)vi.m_profile_tag;
+        m_type          = static_cast<int>(vi.m_type);
+        m_profile_tag   = static_cast<int>(vi.m_profile_tag);
         m_album_id      = VCDUTILS::convert_psz2string(vi.m_albumid, sizeof(vi.m_albumid));
-        m_number_of_cds = htons(vi.m_numberof_cds);
-        m_cd_number     = htons(vi.m_cd_number);
+        m_number_of_cds = htons(static_cast<uint16_t>(vi.m_numberof_cds));
+        m_cd_number     = htons(static_cast<uint16_t>(vi.m_cd_number));
     }
 
     else

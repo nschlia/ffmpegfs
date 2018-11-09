@@ -35,9 +35,9 @@ typedef struct
     string          m_filename;
     char            m_desttype[11];
     //bool            m_enable_ismv;
-    unsigned int    m_audiobitrate;
+    int             m_audiobitrate;
     unsigned int    m_audiosamplerate;
-    unsigned int    m_videobitrate;
+    int             m_videobitrate;
     unsigned int    m_videowidth;
     unsigned int    m_videoheight;
     bool            m_deinterlace;

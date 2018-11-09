@@ -608,7 +608,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     {
     case AVMEDIA_TYPE_AUDIO:
     {
-        int64_t orig_bit_rate;
+        BITRATE orig_bit_rate;
         int orig_sample_rate;
 
         // Set the basic encoder parameters
@@ -616,7 +616,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit bit rate
-            Logging::trace(destname(), "Limiting audio bit rate from %1 to %1.",
+            Logging::trace(destname(), "Limiting audio bit rate from %1 to %2.",
                            format_bitrate(orig_bit_rate),
                            format_bitrate(output_codec_ctx->bit_rate));
         }
@@ -758,7 +758,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
     case AVMEDIA_TYPE_VIDEO:
     {
-        int64_t orig_bit_rate;
+        BITRATE orig_bit_rate;
 
         output_codec_ctx->codec_id = codec_id;
 
@@ -2191,7 +2191,7 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
-        int64_t duration;
+        int duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)
@@ -2206,7 +2206,7 @@ void FFMPEG_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
                 // TODO: Is this a FFmpeg bug or am I too stupid?
                 if (duration > 0 && CODECPAR(m_out.m_audio.m_pStream)->sample_rate > 0)
                 {
-                    pkt->duration = duration = av_rescale(duration, (int64_t)m_out.m_audio.m_pStream->time_base.den * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_pStream)->sample_rate * (int64_t)m_out.m_audio.m_pStream->time_base.num);
+                    pkt->duration = duration = static_cast<int>(av_rescale(duration, static_cast<int64_t>(m_out.m_audio.m_pStream->time_base.den) * m_out.m_audio.m_pCodec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_pStream)->sample_rate * static_cast<int64_t>(m_out.m_audio.m_pStream->time_base.num)));
                 }
             }
 

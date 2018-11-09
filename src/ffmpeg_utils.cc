@@ -681,7 +681,7 @@ std::string format_number(int64_t value)
         return "unlimited";
     }
 
-    if (value == (uint64_t)AV_NOPTS_VALUE)
+    if (value == static_cast<int64_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -689,9 +689,9 @@ std::string format_number(int64_t value)
     return string_format("%" PRId64, value);
 }
 
-std::string format_bitrate(uint64_t value)
+std::string format_bitrate(BITRATE value)
 {
-    if (value == (uint64_t)AV_NOPTS_VALUE)
+    if (value == static_cast<BITRATE>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -712,7 +712,7 @@ std::string format_bitrate(uint64_t value)
 
 std::string format_samplerate(unsigned int value)
 {
-    if (value == (unsigned int)AV_NOPTS_VALUE)
+    if (value == static_cast<unsigned int>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -729,7 +729,7 @@ std::string format_samplerate(unsigned int value)
 
 std::string format_duration(time_t value)
 {
-    if (value == (time_t)AV_NOPTS_VALUE)
+    if (value == static_cast<time_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -760,7 +760,7 @@ std::string format_time(time_t value)
         return "unlimited";
     }
 
-    if (value == (time_t)AV_NOPTS_VALUE)
+    if (value == static_cast<time_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -812,7 +812,7 @@ std::string format_size(size_t value)
         return "unlimited";
     }
 
-    if (value == (size_t)AV_NOPTS_VALUE)
+    if (value == static_cast<size_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }

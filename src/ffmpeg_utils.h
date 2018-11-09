@@ -200,7 +200,7 @@ std::string ffmpeg_geterror(int errnum);
 double ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
 
 std::string format_number(int64_t value);
-std::string format_bitrate(uint64_t value);
+std::string format_bitrate(BITRATE value);
 std::string format_samplerate(unsigned int value);
 std::string format_duration(time_t value);
 std::string format_time(time_t value);

@@ -7,7 +7,7 @@ cleanup () {
     # Errors are no longer fatal
     set +e
     # Unmount all
-    hash fusermount 2>&- && fusermount -u "$DIRNAME" || umount "$DIRNAME"
+    hash fusermount 2>&- && fusermount -u "$DIRNAME" || umount -l "$DIRNAME"
     # Remove temporary directories
     rmdir "$DIRNAME"
     rm -Rf "$CACHEPATH"

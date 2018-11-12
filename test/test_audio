@@ -53,6 +53,21 @@ then
 	# webm
 	check_audio "obama" "flac" 0.03
 	check_audio "raven" "ogg" 0.03
+elif [ "$DESTTYPE" == "opus" ];
+then
+	# opus
+	check_audio "obama" "flac" 0.4
+	check_audio "raven" "ogg" 0.03
+elif [ "$DESTTYPE" == "mov" ];
+then
+	# mov
+	check_audio "obama" "flac" 0.04
+	check_audio "raven" "ogg" 0.05
+elif [ "$DESTTYPE" == "aiff" ];
+then
+	# aiff
+	check_audio "obama" "flac" 0.0
+	check_audio "raven" "ogg" 0.0
 else
 	echo "Internal error, unknown type $DESTTYPE. Fix script!"
 	exit 99

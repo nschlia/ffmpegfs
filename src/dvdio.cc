@@ -97,13 +97,13 @@ int dvdio::open(const string & filename)
         m_angle_no     = 0;
     }
 
-    Logging::debug(path, "Opening input DVD.");
+    Logging::debug(m_path, "Opening input DVD.");
 
      // Open the disc.
-    m_dvd = DVDOpen(path.c_str());
+    m_dvd = DVDOpen(m_path.c_str());
     if ( !m_dvd )
     {
-        Logging::error(path, "Couldn't open DVD.");
+        Logging::error(m_path, "Couldn't open DVD.");
         return EINVAL;
     }
 
@@ -111,7 +111,7 @@ int dvdio::open(const string & filename)
     m_vmg_file = ifoOpen( m_dvd, 0 );
     if ( !m_vmg_file )
     {
-        Logging::error(path.c_str(), "Can't open VMG info." );
+        Logging::error(m_path, "Can't open VMG info." );
         DVDClose( m_dvd );
         return EINVAL;
     }
@@ -122,7 +122,7 @@ int dvdio::open(const string & filename)
 
     if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
     {
-        Logging::error(path.c_str(), "Invalid title %1.", m_title_no + 1 );
+        Logging::error(m_path, "Invalid title %1.", m_title_no + 1 );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
@@ -133,14 +133,14 @@ int dvdio::open(const string & filename)
 
     if ( m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[ m_title_no ].nr_of_ptts )
     {
-        Logging::error(path.c_str(), "Invalid chapter %1", m_chapter_no + 1 );
+        Logging::error(m_path, "Invalid chapter %1", m_chapter_no + 1 );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
     }
 
     // Make sure the angle number is valid for this title.
-    Logging::trace(path.c_str(), "There are %1 angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
+    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
 
     if ( m_angle_no < 0 || m_angle_no >= tt_srpt->title[ m_title_no ].nr_of_angles )
     {
@@ -155,12 +155,11 @@ int dvdio::open(const string & filename)
     m_vts_file = ifoOpen( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr );
     if ( !m_vts_file )
     {
-        Logging::error(path.c_str(), "Can't open the title %1 info file.", tt_srpt->title[ m_title_no ].title_set_nr );
+        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[ m_title_no ].title_set_nr );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
         return EINVAL;
     }
-
 
     // Determine which program chain we want to watch.  This is based on the chapter number.
     ttn = tt_srpt->title[ m_title_no ].vts_ttn;
@@ -175,7 +174,7 @@ int dvdio::open(const string & filename)
     m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );
     if ( !m_dvd_title )
     {
-        Logging::error(path.c_str(), "Can't open title VOBS (VTS_%1_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
+        Logging::error(m_path, "Can't open title VOBS (VTS_%1_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
         ifoClose( m_vts_file );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );
@@ -279,7 +278,7 @@ int dvdio::read(void * dataX, int size)
             maxlen = DVDReadBlocks( m_dvd_title, m_cur_pack, 1, m_data );
             if ( maxlen != 1 )
             {
-                Logging::error(path.c_str(), "Read failed for block %1", m_cur_pack );
+                Logging::error(m_path, "Read failed for block %1", m_cur_pack );
                 //                ifoClose( vts_file );
                 //                ifoClose( vmg_file );
                 //                DVDCloseFile( title );
@@ -329,7 +328,7 @@ int dvdio::read(void * dataX, int size)
             maxlen = DVDReadBlocks( m_dvd_title, (size_t)m_cur_pack, cur_output_size, m_data );
             if ( maxlen != (int) cur_output_size )
             {
-                Logging::error(path.c_str(), "Read failed for %d blocks at %1", cur_output_size, m_cur_pack );
+                Logging::error(m_path, "Read failed for %d blocks at %1", cur_output_size, m_cur_pack );
                 m_errno = EIO;
                 return -1;
             }

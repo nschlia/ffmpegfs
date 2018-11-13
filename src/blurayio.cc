@@ -70,7 +70,7 @@ int blurayio::open(const string & filename)
 
     set_path(filename);
 
-    bdpath = path.c_str();
+    bdpath = m_path.c_str();
 
     if (get_virtualfile() != nullptr)
     {
@@ -183,7 +183,7 @@ int blurayio::read(void * dataX, int size)
         bytes = bd_read(m_bd, m_data, XXsize);
         if (bytes <= 0)
         {
-            Logging::error(path, "bd_read fail ret = %1", bytes);
+            Logging::error(m_path, "bd_read fail ret = %1", bytes);
             return 0;
         }
         m_cur_pos = bd_tell(m_bd);

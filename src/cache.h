@@ -66,38 +66,38 @@ public:
     Cache();
     virtual ~Cache();
 
-    Cache_Entry *open(LPCVIRTUALFILE virtualfile);
-    Cache_Entry *open(const string & filename);
-    bool close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
+    Cache_Entry *	open(LPCVIRTUALFILE virtualfile);
+    Cache_Entry *	open(const string & filename);
+    bool            close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
 
-    bool load_index();
+    bool            load_index();
 #ifdef HAVE_SQLITE_CACHEFLUSH
-    bool flush_index();
+    bool            flush_index();
 #endif // HAVE_SQLITE_CACHEFLUSH
 
-    void lock();
-    void unlock();
+    void            lock();
+    void            unlock();
 
-    bool maintenance(size_t predicted_filesize = 0);
-    bool clear();
+    bool            maintenance(size_t predicted_filesize = 0);
+    bool            clear();
 
-    bool prune_expired();
-    bool prune_cache_size();
-    bool prune_disk_space(size_t predicted_filesize);
+    bool            prune_expired();
+    bool            prune_cache_size();
+    bool            prune_disk_space(size_t predicted_filesize);
 
-    bool remove_cachefile(const string & filename);
+    bool 			remove_cachefile(const string & filename);
 
 protected:
-    bool read_info(t_cache_info & cache_info);
-    bool write_info(const t_cache_info & cache_info);
-    bool delete_info(const string & filename, const string & desttype);
+    bool            read_info(t_cache_info & cache_info);
+    bool            write_info(const t_cache_info & cache_info);
+    bool            delete_info(const string & filename, const string & desttype);
 
-    Cache_Entry* create_entry(const string & filename, const string & desttype);
-    bool delete_entry(Cache_Entry **cache_entry, int flags);
+    Cache_Entry* 	create_entry(const string & filename, const string & desttype);
+    bool            delete_entry(Cache_Entry **cache_entry, int flags);
 
-    void close_index();
+    void            close_index();
 
-    string expanded_sql(sqlite3_stmt *pStmt);
+    string          expanded_sql(sqlite3_stmt *pStmt);
 
 private:
     pthread_mutex_t m_mutex;

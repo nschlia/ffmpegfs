@@ -98,12 +98,12 @@ LPCVIRTUALFILE fileio::get_virtualfile() const
     return m_virtualfile;
 }
 
-const string & fileio::set_path(const string & _path)
+const string & fileio::set_path(const string & path)
 {
-    path = _path;
+    m_path = path;
 
-    remove_filename(&path);
+    remove_filename(&m_path);
 
-    return path;
+    return m_path;
 }
 

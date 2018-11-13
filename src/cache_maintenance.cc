@@ -164,7 +164,7 @@ static int link_up()
     }
 
     // First try to open existing memory.
-    shmid = shmget (shmkey, sizeof (pid_t), S_IRUSR | S_IWUSR | S_IRGRP |S_IWGRP);
+    shmid = shmget (shmkey, sizeof (pid_t), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
     if (shmid != -1)
     {
         // Shared memory already exists, seems we are client.
@@ -173,7 +173,7 @@ static int link_up()
     else
     {
         // Ignore error at first, try to create memory.
-        shmid = shmget (shmkey, sizeof (pid_t), IPC_CREAT | S_IRUSR | S_IWUSR | S_IRGRP |S_IWGRP);
+        shmid = shmget (shmkey, sizeof (pid_t), IPC_CREAT | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
         if (shmid != -1)
         {
             // Shared memory freshly created, seems we are master.

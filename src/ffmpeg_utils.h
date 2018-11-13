@@ -173,7 +173,8 @@ typedef enum _tagPROFILE
 
 } PROFILE;
 
-typedef struct ffmpegfs_format {
+typedef struct ffmpegfs_format
+{
     ffmpegfs_format(const char * format_name, FILETYPE filetype, AVCodecID video_codecid, AVCodecID audio_codecid)
         : m_format_name(format_name)
         , m_filetype(filetype)
@@ -193,53 +194,54 @@ const std::string & append_sep(std::string * path);
 const std::string & append_filename(std::string * path, const std::string & filename);
 const std::string & remove_filename(std::string *path);
 const std::string & remove_path(std::string *path);
-bool find_ext(std::string * ext, const std::string & filename);
+bool                find_ext(std::string * ext, const std::string & filename);
 const std::string & replace_ext(std::string * filename, const std::string & ext);
-char * new_strdup(const std::string & str);
+char *              new_strdup(const std::string & str);
 const std::string & get_destname(std::string *destname, const std::string & filename);
-std::string ffmpeg_geterror(int errnum);
-double ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
+std::string         ffmpeg_geterror(int errnum);
+double              ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
 
-std::string format_number(int64_t value);
-std::string format_bitrate(BITRATE value);
-std::string format_samplerate(unsigned int value);
-std::string format_duration(time_t value);
-std::string format_time(time_t value);
-std::string format_size(size_t value);
+std::string         format_number(int64_t value);
+std::string         format_bitrate(BITRATE value);
+std::string         format_samplerate(unsigned int value);
+std::string         format_duration(time_t value);
+std::string         format_time(time_t value);
+std::string         format_size(size_t value);
 
-void exepath(std::string *path);
+void                exepath(std::string *path);
 
-std::string &ltrim(std::string &s);
-std::string &rtrim(std::string &s);
-std::string &trim(std::string &s);
+std::string &       ltrim(std::string &s);
+std::string &       rtrim(std::string &s);
+std::string &       trim(std::string &s);
 
-std::string replace_all(std::string str, const std::string& from, const std::string& to);
+std::string         replace_all(std::string str, const std::string& from, const std::string& to);
 template<typename ... Args> std::string string_format(const std::string& format, Args ... args);
 
-int strcasecmp(const std::string & s1, const std::string & s2);
+int                 strcasecmp(const std::string & s1, const std::string & s2);
 
-std::string ffmpeg_libinfo();
-int show_formats_devices(int device_only);
-const char * get_codec_name(AVCodecID codec_id, bool long_name);
-int supports_albumart(FILETYPE filetype);
-FILETYPE get_filetype(const std::string & desttype);
-int get_codecs(const std::string & desttype, ffmpegfs_format *video_format);
+std::string         ffmpeg_libinfo();
+int                 show_formats_devices(int device_only);
+const char *        get_codec_name(AVCodecID codec_id, bool long_name);
+int                 supports_albumart(FILETYPE filetype);
+// Get the ffmpegfs filetype, desttype mut be one of FFmpeg's "official" short names for formats.
+FILETYPE            get_filetype(const std::string & desttype);
+int                 get_codecs(const std::string & desttype, ffmpegfs_format *video_format);
 
-int print_info(const AVStream* stream);
+int                 print_info(const AVStream* stream);
 
-int compare(const std::string &value, const std::string &pattern);
+int                 compare(const std::string &value, const std::string &pattern);
 
-const std::string &expand_path(std::string *tgt, const std::string &src);
+const std::string & expand_path(std::string *tgt, const std::string &src);
 
-int is_mount(const std::string &filename);
+int                 is_mount(const std::string &filename);
 
-int mktree(const std::string & filename, mode_t mode);
-void tempdir(std::string & dir);
+int                 mktree(const std::string & filename, mode_t mode);
+void                tempdir(std::string & dir);
 
 #ifdef USING_LIBAV
 // Libav does not have these functions
-int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename);
-const char *avcodec_get_name(AVCodecID id);
+int                 avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename);
+const char *        avcodec_get_name(AVCodecID id);
 #endif
 
 std::vector<std::string> split(const std::string& input, const std::string & regex);

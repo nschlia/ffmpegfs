@@ -35,23 +35,23 @@ public:
 
     virtual VIRTUALTYPE type() const;
 
-    virtual int bufsize() const;
-    virtual int open(const string & filename);
-    virtual int read(void *data, int maxlen);
-    virtual int error() const;
-    virtual int duration() const;
-    virtual size_t size() const;
-    virtual size_t tell() const;
-    virtual int seek(long offset, int whence);
-    virtual bool eof() const;
-    virtual void close();
+    virtual int     bufsize() const;
+    virtual int 	open(const string & filename);
+    virtual int     read(void *data, int maxlen);
+    virtual int     error() const;
+    virtual int     duration() const;
+    virtual size_t  size() const;
+    virtual size_t  tell() const;
+    virtual int     seek(long offset, int whence);
+    virtual bool    eof() const;
+    virtual void    close();
 
 protected:
-    FILE *      m_fpi;
-    int         m_track_no;
-    int         m_chapter_no;
-    uint64_t    m_start_pos;
-    uint64_t    m_end_pos;
+    FILE *          m_fpi;
+    int             m_track_no;
+    int             m_chapter_no;
+    uint64_t        m_start_pos;
+    uint64_t        m_end_pos;
 
 };
 #endif // USE_LIBVCD

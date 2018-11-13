@@ -41,44 +41,45 @@ public:
 
     virtual VIRTUALTYPE type() const;
 
-    bool init(bool erase_cache = false);                // Initialise cache, if erase_cache = true delete old file before opening
-    bool release(int flags = CLOSE_CACHE_NOOPT);
+    bool            init(bool erase_cache = false);                // Initialise cache, if erase_cache = true delete old file before opening
+    bool            release(int flags = CLOSE_CACHE_NOOPT);
 
-    virtual int bufsize() const;
-    virtual int open(LPCVIRTUALFILE virtualfile);
-    virtual int open(const string & filename);
-    virtual int read(void *data, int maxlen);
-    virtual int error() const;
-    virtual int duration() const;
-    virtual size_t size() const;
-    virtual size_t tell() const;
-    virtual int seek(long offset, int whence);
-    virtual bool eof() const;
-    virtual void close();
+    virtual int     bufsize() const;
+    virtual int 	open(LPCVIRTUALFILE virtualfile);
+    virtual int 	open(const string & filename);
+    virtual int     read(void *data, int maxlen);
+    virtual int     error() const;
+    virtual int     duration() const;
+    virtual size_t  size() const;
+    virtual size_t  tell() const;
+    virtual int     seek(long offset, int whence);
+    virtual bool    eof() const;
+    virtual void    close();
 
-    size_t write(const uint8_t* data, size_t length);
-    bool flush();
-    bool clear();
-    bool reserve(size_t size);
-    size_t buffer_watermark() const;
-    bool copy(uint8_t* out_data, size_t offset, size_t bufsize);
+    size_t          write(const uint8_t* data, size_t length);
+    bool            flush();
+    bool            clear();
+    bool            reserve(size_t size);
+    size_t          buffer_watermark() const;
+    bool            copy(uint8_t* out_data, size_t offset, size_t bufsize);
 
-    void lock();
-    void unlock();
+    void            lock();
+    void            unlock();
 
-    const string & filename() const;
-    const string & cachefile() const;
+    const string &  filename() const;
+    const string &  cachefile() const;
 
     static const string & make_cachefile_name(string &cachefile, const string & filename);
-    static bool remove_file(const string & filename);
+    static bool     remove_file(const string & filename);
 
 protected:
-    bool remove_cachefile();
+
+    bool            remove_cachefile();
 
 private:
-    uint8_t* write_prepare(size_t length);
-    void increment_pos(ptrdiff_t increment);
-    bool reallocate(size_t newsize);
+    uint8_t*        write_prepare(size_t length);
+    void            increment_pos(ptrdiff_t increment);
+    bool            reallocate(size_t newsize);
 
 private:
     pthread_mutex_t m_mutex;

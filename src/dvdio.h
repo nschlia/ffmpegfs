@@ -37,19 +37,19 @@ public:
 
     virtual VIRTUALTYPE type() const;
 
-    virtual int bufsize() const;
-    virtual int open(const string & filename);
-    virtual int read(void *data, int maxlen);
-    virtual int error() const;
-    virtual int duration() const;
-    virtual size_t size() const;
-    virtual size_t tell() const;
-    virtual int seek(long offset, int whence);
-    virtual bool eof() const;
-    virtual void close();
+    virtual int     bufsize() const;
+    virtual int 	open(const string & filename);
+    virtual int     read(void *data, int maxlen);
+    virtual int     error() const;
+    virtual int     duration() const;
+    virtual size_t  size() const;
+    virtual size_t  tell() const;
+    virtual int     seek(long offset, int whence);
+    virtual bool    eof() const;
+    virtual void    close();
 
 private:
-    bool is_nav_pack(const unsigned char *buffer) const;
+    bool            is_nav_pack(const unsigned char *buffer) const;
 
 protected:
     dvd_reader_t *  m_dvd;

@@ -53,8 +53,8 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;
 
 typedef struct _tagVIRTUALFILE
 {
-    VIRTUALTYPE     m_type;
-    string          m_origfile;
+    VIRTUALTYPE     m_type;         // Type of this vurtual file
+    string          m_origfile;     // Sanitised original file name
     struct stat     m_st;
 
 #ifdef USE_LIBVCD
@@ -100,39 +100,39 @@ public:
     virtual VIRTUALTYPE type() const = 0;
 
     // Ideal buffer size, may be 0 if no recommendation.
-    virtual int bufsize() const = 0;
+    virtual int     bufsize() const = 0;
     // Open virtual file
-    virtual int open(LPCVIRTUALFILE virtualfile);
+    virtual int     open(LPCVIRTUALFILE virtualfile);
     // Open with file name
     virtual int open(const string & filename) = 0;
     // Read data
-    virtual int read(void *data, int size) = 0;
+    virtual int     read(void *data, int size) = 0;
     // If error occurred return number
-    virtual int error() const = 0;
+    virtual int     error() const = 0;
     // Get play time in ms
     // This is only possible for file formats that are aware
     // of the play time. May be -1 if the time is not known.
-    virtual int duration() const = 0;
+    virtual int     duration() const = 0;
     // Get file size
-    virtual size_t size() const = 0;
+    virtual size_t  size() const = 0;
     // Get current read position
-    virtual size_t tell() const = 0;
+    virtual size_t  tell() const = 0;
     // Seek to position
-    virtual int seek(long offset, int whence) = 0;
+    virtual int     seek(long offset, int whence) = 0;
     // Return true if at end of file
-    virtual bool eof() const = 0;
+    virtual bool    eof() const = 0;
     // Close virtual file
-    virtual void close() = 0;
+    virtual void    close() = 0;
 
 protected:
     LPCVIRTUALFILE get_virtualfile() const;
     const string &set_path(const string & path);
 
 protected:
-    string path;
+    string          m_path;
 
 private:
-    LPCVIRTUALFILE m_virtualfile;
+    LPCVIRTUALFILE  m_virtualfile;
 };
 
 #endif // FILEIO_H

@@ -21,12 +21,22 @@ get_metadata() {
 FFMPEGVERSION=`./metadata -v | sed -n 's/^FFmpeg[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
 LIBAVVERSION=`./metadata -v | sed -n 's/^Libav[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
 
+if [ -z "${FFMPEGVERSION}" ] && [ -z "${LIBAVVERSION}" ];
+then
+	FFMPEGVERSION=`./metadata -v | sed -n 's/^FFmpeg \(.*\)$/\1/p' | head -n 1`
+	LIBAVVERSION=`./metadata -v | sed -n 's/^Libav \(.*\)$/\1/p' | head -n 1`
+fi
+
 if [ ! -z "${FFMPEGVERSION}" ];
 then
 	echo "FFmpeg version is ${FFMPEGVERSION}"
 
 	LIBRARY=ffmpeg
-        if (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
+	if  [[ "${FFMPEGVERSION}" == N* ]];
+	then
+		echo "FFmpeg Nightly Build"
+		VERSION=3.2+
+        elif (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
                 echo "FFmpeg > 3.2.x"
 		VERSION=3.2+
         else

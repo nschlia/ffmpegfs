@@ -803,11 +803,10 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             // Use command line argument(s)
             limit_video_size(output_codec_ctx);
         }
-
 #if LAVF_DEP_AVSTREAM_CODEC
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->avg_frame_rate);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pCodec_ctx, m_in.m_video.m_pStream->avg_frame_rate);
 #else
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pStream->codec->framerate);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_pCodec_ctx, m_in.m_video.m_pStream->codec->framerate);
 #endif
 
         AVRational sample_aspect_ratio                  = CODECPAR(m_in.m_video.m_pStream)->sample_aspect_ratio;
@@ -3447,7 +3446,6 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
 
         // https://stackoverflow.com/questions/31163120/c-applying-filter-in-ffmpeg
         //filters = "yadif=mode=send_frame:parity=auto:deint=interlaced";
-        //filters = "yadif=mode=send_frame:parity=auto:deint=all";
         filters = "yadif=mode=send_frame:parity=auto:deint=all";
         //filters = "yadif=0:-1:0";
         //filters = "bwdif=mode=send_frame:parity=auto:deint=all";

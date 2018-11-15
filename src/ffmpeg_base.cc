@@ -42,6 +42,7 @@ extern "C" {
 #endif
 #include <libavutil/opt.h>
 #include <libavutil/mathematics.h>
+#include <libavutil/pixdesc.h>
 #ifdef __cplusplus
 }
 #endif
@@ -151,7 +152,8 @@ void FFMPEG_Base::init_packet(AVPacket *packet) const
 // Initialise one frame for reading from the input file
 int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
 {
-    if (!(*frame = ::av_frame_alloc()))
+    *frame = ::av_frame_alloc();
+    if (*frame == nullptr)
     {
         Logging::error(filename, "Could not allocate frame.");
         return AVERROR(ENOMEM);
@@ -159,7 +161,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVRational frame_rate) const
+void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational frame_rate) const
 {
     AVRational time_base;
 
@@ -220,43 +222,36 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_stream->avg_frame_rate               = frame_rate;
     output_codec_ctx->framerate                 = frame_rate;
 #endif
+    int alpha = 0;
+    int loss = 0;
 
-    switch (output_codec_ctx->codec_id)
-    {
-    case AV_CODEC_ID_PRORES:       // mov/prores
-    {
-        //  yuva444p10le
-        // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
-        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV422P10LE;
+    AVPixelFormat  src_pix_fmt = input_codec_ctx->pix_fmt;
+    AVPixelFormat  dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
 
-        // TODO
-        /**
-         * The following 12 formats have the disadvantage of needing 1 format for each bit depth.
-         * Notice that each 9/10 bits sample is stored in 16 bits with extra padding.
-         * If you want to support multiple bit depths, then using AV_PIX_FMT_YUV420P16* with the bpp stored separately is better.
-         */
-        //        AV_PIX_FMT_YUV420P9BE, ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-        //        AV_PIX_FMT_YUV420P9LE, ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-        //        AV_PIX_FMT_YUV420P10BE,///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-        //        AV_PIX_FMT_YUV420P10LE,///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-        //        AV_PIX_FMT_YUV422P10BE,///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-        //        AV_PIX_FMT_YUV422P10LE,///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-        //        AV_PIX_FMT_YUV444P9BE, ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-        //        AV_PIX_FMT_YUV444P9LE, ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-        //        AV_PIX_FMT_YUV444P10BE,///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-        //        AV_PIX_FMT_YUV444P10LE,///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-        //        AV_PIX_FMT_YUV422P9BE, ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-        //        AV_PIX_FMT_YUV422P9LE, ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-        break;
-    }
-    default:                        // all others
+    if (dst_pix_fmt == AV_PIX_FMT_NONE)
     {
-        // At this moment the output format must be AV_PIX_FMT_YUV420P;
-        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
-        break;
-    }
+        // Fail safe if avcodec_find_best_pix_fmt_of_list has no idea what to use.
+        switch (output_codec_ctx->codec_id)
+        {
+        case AV_CODEC_ID_PRORES:       // mov/prores
+        {
+            //  yuva444p10le
+            // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
+            output_codec_ctx->pix_fmt           = AV_PIX_FMT_YUV422P10LE;
+            break;
+        }
+        default:                        // all others
+        {
+            // At this moment the output format must be AV_PIX_FMT_YUV420P;
+            output_codec_ctx->pix_fmt           = AV_PIX_FMT_YUV420P;
+            break;
+        }
+        }
     }
 
+    Logging::info(nullptr, "Input pixel format: %1 Output pixel format: %2", get_pix_fmt_name(src_pix_fmt), get_pix_fmt_name(dst_pix_fmt));
+
+    output_codec_ctx->pix_fmt                   = dst_pix_fmt;
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 
@@ -317,4 +312,10 @@ void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
                   format_samplerate(codec->sample_rate),
                   format_duration(duration));
 }
+
+std::string FFMPEG_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
+{
+    return ::av_get_pix_fmt_name(pix_fmt);
+}
+
 

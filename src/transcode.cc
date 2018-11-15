@@ -727,11 +727,11 @@ int init_logging(const std::string &logfile, const std::string & max_level, int 
 {
     static const map<string, Logging::level> level_map =
     {
-        { "ERROR", ERROR },
-        { "WARNING", WARNING },
-        { "INFO", INFO },
-        { "DEBUG", DEBUG },
-        { "TRACE", TRACE },
+        { "ERROR",      ERROR },
+        { "WARNING",    WARNING },
+        { "INFO",       INFO },
+        { "DEBUG",      DEBUG },
+        { "TRACE",      TRACE },
     };
 
     auto it = level_map.find(max_level);
@@ -747,17 +747,17 @@ int init_logging(const std::string &logfile, const std::string & max_level, int 
 
 static const map<string, PROFILE> profile_map =
 {
-    { "NONE", PROFILE_NONE },
+    { "NONE",           PROFILE_NONE },
 
     // MP4
 
-    { "FF", PROFILE_MP4_FF },
-    { "EDGE", PROFILE_MP4_EDGE },
-    { "IE", PROFILE_MP4_IE },
-    { "CHROME", PROFILE_MP4_CHROME },
-    { "SAFARI", PROFILE_MP4_SAFARI },
-    { "OPERA", PROFILE_MP4_OPERA },
-    { "MAXTHON", PROFILE_MP4_MAXTHON },
+    { "FF",             PROFILE_MP4_FF },
+    { "EDGE",           PROFILE_MP4_EDGE },
+    { "IE",             PROFILE_MP4_IE },
+    { "CHROME",         PROFILE_MP4_CHROME },
+    { "SAFARI",         PROFILE_MP4_SAFARI },
+    { "OPERA",          PROFILE_MP4_OPERA },
+    { "MAXTHON",        PROFILE_MP4_MAXTHON },
 
     // WEBM
 };

@@ -1,5 +1,5 @@
 ffmpegfs
-=====
+========
 
 | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- |
@@ -12,8 +12,10 @@ News
 ----
 
 * **Work on release 1.6 now in progress.**
-* Added MOV target format.
-* Added AIFF target format.
+* Added MOV target format *(incomplete, work in progress)*.
+* Added AIFF target format *(incomplete, work in progress)*.
+* Added Apple Prores target format *(incomplete, work in progress)*.
+* Added smart transcoding feature, see "Smart Transcoding".
 
 About
 -----
@@ -135,8 +137,17 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
 Enable deinterlacing to enhance image quality.
 
+SMART TRANSCODING
+-----------------
+
+To use the new smart transcoding feature, simply specify a video and audio file
+type, separated by a "+" sign. For example, --desttype=mov+aiff will
+convert video files to Apple Quicktime MOV and audio only files to
+AIFF. This can be handy if the results are consumed by some Apple Editing
+software.
+
 MP4 FORMAT PROFILE
-------------------------
+------------------
 
 The MP4 container has several derivative formats that are not compatible with
 all target audiences. To feed the resulting files into for example MS Edge,

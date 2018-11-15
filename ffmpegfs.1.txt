@@ -23,13 +23,17 @@ format upon access.
 == OPTIONS ==
 Usage: ffmpegfs [OPTION]... IN_DIR OUT_DIR
 
-Mount IN_DIR on OUT_DIR, converting audio/video files to *mp4*, *mp3*, *ogg* or *wav* upon access.
+Mount IN_DIR on OUT_DIR, converting audio/video files to *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*/*ProRes*, *AIFF*, *OPUS* or *WAV* upon access.
 
 === Encoding options === 
 *--desttype*=TYPE, *-odesttype*=TYPE::
     Select destination format. 'TYPE' can currently be
-    *mp4*, *mp3*, *ogg* or *wav*. To stream videos, 
-    *mp4* or *ogg* must be selected.
+    *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *OPUS* or *WAV*. To stream videos,
+    *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
+    To use the smart transcoding feature, specify a video and audio file
+    type, separated by a "+" sign. For example, --desttype=mov+aiff will
+    convert video files to Apple Quicktime MOV and audio only files to
+    AIFF.
     Default: *mp4*
 *--profile*=NAME, *-oprofile*=NAME::
     Set profile for target audience. Currently selectable:

@@ -43,13 +43,10 @@
 #include <regex>
 #include <assert.h>
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
-
 static void init_stat(struct stat *st, size_t size, bool directory);
 static void prepare_script();
-static void translate_path(string *origpath, const char* path);
-static bool transcoded_name(string *path);
-static LPCVIRTUALFILE find_original(string *path);
+static void translate_path(std::string *origpath, const char* path);
+static bool transcoded_name(std::string *filepath);
 
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -63,7 +60,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static vector<char> index_buffer;
-static map<string, VIRTUALFILE> filenames;
+static map<std::string, VIRTUALFILE> filenames;
 
 fuse_operations ffmpegfs_ops;
 
@@ -115,7 +112,7 @@ static void init_stat(struct stat * st, size_t size, bool directory)
 
 static void prepare_script()
 {
-    string scriptsource;
+    std::string scriptsource;
 
     exepath(&scriptsource);
     scriptsource += params.m_scriptsource;
@@ -138,7 +135,7 @@ static void prepare_script()
         }
         else
         {
-            index_buffer.resize(st.st_size);
+            index_buffer.resize(static_cast<size_t>(st.st_size));
 
             if (fread(&index_buffer[0], 1, static_cast<size_t>(st.st_size), fpi) != static_cast<size_t>(st.st_size))
             {
@@ -156,7 +153,7 @@ static void prepare_script()
 }
 
 // Translate file names from FUSE to the original absolute path.
-static void translate_path(string *origpath, const char* path)
+static void translate_path(std::string *origpath, const char* path)
 {
     *origpath = params.m_basepath;
     *origpath += path;
@@ -164,16 +161,16 @@ static void translate_path(string *origpath, const char* path)
 
 // Convert file name from source to destination name.
 // Returns true if filename has been changed
-static bool transcoded_name(string * path)
+static bool transcoded_name(std::string * filepath)
 {
-    AVOutputFormat* format = av_guess_format(nullptr, path->c_str(),nullptr);
+    AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
     
     if (format != nullptr)
     {
-        if ((params.m_video_format.m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                (params.m_video_format.m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((params.current_format(*filepath)->m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                (params.current_format(*filepath)->m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
-            replace_ext(path, params.m_desttype);
+            replace_ext(filepath, params.current_format(*filepath)->m_format_name);
             return true;
         }
     }
@@ -182,18 +179,33 @@ static bool transcoded_name(string * path)
 
 // Add new virtual file to internal list
 // Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string & filename, const string & origfile, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const std::string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
 
-    virtualfile.m_type = type;
-    virtualfile.m_origfile = origfile;
+    virtualfile.m_type          = type;
+    virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+    virtualfile.m_origfile      = sanitise_name(origfile);
+
     memcpy(&virtualfile.m_st, st, sizeof(struct stat));
 
-    filenames.insert(make_pair(filename, virtualfile));
+    filenames.insert(make_pair(filepath, virtualfile));
 
-    map<string, VIRTUALFILE>::iterator it = filenames.find(filename);
+    map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
     return &it->second;
+}
+
+LPVIRTUALFILE find_file(const std::string & filepath)
+{
+    map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
+
+    errno = 0;
+
+    if (it != filenames.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
 }
 
 static int selector(const struct dirent * de)
@@ -213,27 +225,26 @@ static int selector(const struct dirent * de)
 // Given the destination (post-transcode) file name, determine the name of
 // the original file to be transcoded.
 // Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
-static LPCVIRTUALFILE find_original(string * path)
+LPVIRTUALFILE find_original(std::string * filepath)
 {
-    // 1st do fast map lookup
-    map<string, VIRTUALFILE>::iterator it = filenames.find(*path);
+    LPVIRTUALFILE virtualfile = find_file(*filepath);
 
     errno = 0;
 
-    if (it != filenames.end())
+    if (virtualfile != nullptr)
     {
-        *path = it->second.m_origfile;
-        return &it->second;
+        *filepath = virtualfile->m_origfile;
+        return virtualfile;
     }
     else
     {
         // Fallback to old method (required if file accessed directly)
-        string ext;
-        if (find_ext(&ext, *path) && strcasecmp(ext, params.m_desttype) == 0)
+        std::string ext;
+        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].m_desttype) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].m_desttype) == 0)))
         {
-            string dir(*path);
-            string filename(*path);
-            string tmppath;
+            std::string dir(*filepath);
+            std::string filename(*filepath);
+            std::string tmppath;
             struct dirent **namelist;
             struct stat st;
             int count;
@@ -268,8 +279,8 @@ static LPCVIRTUALFILE find_original(string * path)
             if (found && lstat(tmppath.c_str(), &st) == 0)
             {
                 // File exists with this extension
-                LPCVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *path, tmppath, &st);
-                *path = tmppath;
+                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &st);
+                *filepath = tmppath;
                 return virtualfile;
             }
             else
@@ -285,8 +296,8 @@ static LPCVIRTUALFILE find_original(string * path)
 
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
-    string origpath;
-    string transcoded;
+    std::string origpath;
+    std::string transcoded;
     ssize_t len;
 
     Logging::trace(path, "readlink");
@@ -314,7 +325,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
-    string origpath;
+    std::string origpath;
     DIR *dp;
     struct dirent *de;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
@@ -329,8 +340,8 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     // Add a virtual script if enabled
     if (params.m_enablescript)
     {
-        string filename(params.m_scriptfile);
-        string origfile;
+        std::string filename(params.m_scriptfile);
+        std::string origfile;
         struct stat st;
 
         origfile = origpath + filename;
@@ -371,14 +382,14 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 #endif // USE_LIBBLURAY
 
     dp = opendir(origpath.c_str());
-    if (dp)
+    if (dp != nullptr)
     {
         try
         {
-            while ((de = readdir(dp)))
+            while ((de = readdir(dp)) != nullptr)
             {
-                string filename(de->d_name);
-                string origfile;
+                std::string filename(de->d_name);
+                std::string origfile;
                 struct stat st;
 
                 origfile = origpath + filename;
@@ -417,7 +428,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
-    string origpath;
+    std::string origpath;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res = 0;
 #endif
@@ -439,7 +450,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
 
     // This is a virtual file
-    LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    LPVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
     bool no_lstat = false;
@@ -466,7 +477,16 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
-        //[[clang::fallthrough]];
+        // Issues:
+        // Warning: unannotated fall-through between switch labels
+        //      insert '[[clang::fallthrough]];' to silence this warning
+        // Adding this:
+        //      [[clang::fallthrough]];
+        // issues for a change:
+        // Warning: attributes at the beginning of statement are ignored [-Wattributes]
+        //                 [[clang::fallthrough]];
+        //                 ^
+        // Useless.
     }
     case VIRTUALTYPE_REGULAR:
     {
@@ -477,7 +497,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 int error = -errno;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 // Returns -errno or number or titles on DVD
-                string path(origpath);
+                std::string path(origpath);
 
                 remove_filename(&path);
 #ifdef USE_LIBVCD
@@ -522,7 +542,9 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
         {
-            if (!transcoder_cached_filesize(origpath, stbuf))
+            assert(virtualfile->m_origfile == origpath);
+            //if (!transcoder_cached_filesize(origpath, stbuf))
+            if (!transcoder_cached_filesize(virtualfile, stbuf))
             {
                 struct Cache_Entry* cache_entry;
 
@@ -559,7 +581,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
 static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
 {
-    string origpath;
+    std::string origpath;
 
     Logging::trace(path, "fgetattr");
 
@@ -608,7 +630,16 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
-        //[[clang::fallthrough]];
+        // Issues:
+        // Warning: unannotated fall-through between switch labels
+        //      insert '[[clang::fallthrough]];' to silence this warning
+        // Adding this:
+        //      [[clang::fallthrough]];
+        // issues for a change:
+        // Warning: attributes at the beginning of statement are ignored [-Wattributes]
+        //                 [[clang::fallthrough]];
+        //                 ^
+        // Useless.
     }
     case VIRTUALTYPE_REGULAR:
     {
@@ -656,7 +687,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
-    string origpath;
+    std::string origpath;
     struct Cache_Entry* cache_entry;
     int fd;
 
@@ -686,7 +717,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     }
 
     // This is a virtual file
-    LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     assert(virtualfile != nullptr);
 
@@ -736,7 +767,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
 static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
-    string origpath;
+    std::string origpath;
     int fd;
     ssize_t read = 0;
     struct Cache_Entry* cache_entry;
@@ -780,14 +811,14 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     case VIRTUALTYPE_SCRIPT:
     {
         size_t bytes = size;
-        if (offset + bytes > index_buffer.size())
+        if (static_cast<size_t>(offset) + bytes > index_buffer.size())
         {
-            bytes = index_buffer.size() - offset;
+            bytes = index_buffer.size() - static_cast<size_t>(offset);
         }
 
         if (bytes)
         {
-            memcpy(buf, &index_buffer[offset], bytes);
+            memcpy(buf, &index_buffer[static_cast<size_t>(offset)], bytes);
         }
 
         read = static_cast<ssize_t>(bytes);
@@ -836,7 +867,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
 
 static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
-    string origpath;
+    std::string origpath;
 
     Logging::trace(path, "statfs");
 
@@ -879,7 +910,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    Logging::info(nullptr, "Target type: %1 Profile: %2", params.m_desttype, get_profile_text(params.m_profile));
+    //Logging::info(nullptr, "Target type: %1 Profile: %2", params.current_format().m_desttype, get_profile_text(params.m_profile));
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath, params.m_mountpath);
 
     // We need synchronous reads.

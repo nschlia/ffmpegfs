@@ -53,7 +53,16 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;
 
 typedef struct _tagVIRTUALFILE
 {
+    _tagVIRTUALFILE()
+        : m_type(VIRTUALTYPE_REGULAR)
+        , m_format_idx(0)
+    {
+
+    }
+
     VIRTUALTYPE     m_type;         // Type of this vurtual file
+
+    int             m_format_idx;   // Index in params.format[] array
     string          m_origfile;     // Sanitised original file name
     struct stat     m_st;
 
@@ -103,8 +112,6 @@ public:
     virtual int     bufsize() const = 0;
     // Open virtual file
     virtual int     open(LPCVIRTUALFILE virtualfile);
-    // Open with file name
-    virtual int open(const string & filename) = 0;
     // Read data
     virtual int     read(void *data, int size) = 0;
     // If error occurred return number
@@ -124,8 +131,12 @@ public:
     // Close virtual file
     virtual void    close() = 0;
 
+    LPCVIRTUALFILE  virtualfile() const;
+
 protected:
-    LPCVIRTUALFILE get_virtualfile() const;
+    // Open with file name
+    virtual int     openX(const string & filename) = 0;
+
     const string &set_path(const string & path);
 
 protected:

@@ -53,7 +53,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
 // if no errors and false otherwise.
 static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 {
-    size_t end = offset + len;
+    size_t end = static_cast<size_t>(offset) + len;
     bool success = true;
 
     if (cache_entry->m_cache_info.m_finished || cache_entry->m_buffer->tell() >= end)
@@ -97,7 +97,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    Logging::debug(transcoder->destname(), "Predicted/final size: %1/%2 bytes, diff: %3 (%4%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, (double)(long)((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    Logging::debug(transcoder->destname(), "Predicted/final size: %1/%2 bytes, diff: %3 (%4%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_encoded_filesize - cache_entry->m_cache_info.m_predicted_filesize, static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 
@@ -154,11 +154,11 @@ void transcoder_free(void)
     }
 }
 
-int transcoder_cached_filesize(const string & filename, struct stat *stbuf)
+int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 {
-    Logging::trace(filename, "Retrieving encoded size.");
+    Logging::trace(virtualfile->m_origfile, "Retrieving encoded size.");
 
-    Cache_Entry* cache_entry = cache->open(filename);
+    Cache_Entry* cache_entry = cache->open(virtualfile);
     if (!cache_entry)
     {
         return false;
@@ -186,7 +186,7 @@ int transcoder_cached_filesize(const string & filename, struct stat *stbuf)
 
 // Allocate and initialize the transcoder
 
-Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
+Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     int _errno = 0;
 
@@ -286,7 +286,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
                     throw false;
                 }
 
-                Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));
+                Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));  // TODO: replace with new/delete
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;
@@ -376,7 +376,7 @@ Cache_Entry* transcoder_new(LPCVIRTUALFILE virtualfile, bool begin_transcode)
 
 ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
-    Logging::trace(cache_entry->filename(), "Reading %1 bytes from offset %2.", len, (intmax_t)offset);
+    Logging::trace(cache_entry->filename(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
 
     cache_entry->lock();
 
@@ -390,9 +390,9 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         // This optimizes the case where applications read the end of the file
         // first to read the ID3v1 tag.
         if (!cache_entry->m_cache_info.m_finished &&
-                (size_t)offset > cache_entry->m_buffer->tell() &&
+                static_cast<size_t>(offset) > cache_entry->m_buffer->tell() &&
                 offset + len > (cache_entry->size() - ID3V1_TAG_LENGTH) &&
-                !strcasecmp(params.m_desttype, "mp3"))
+                !strcasecmp(params.current_format(cache_entry->virtualfile())->m_desttype, "mp3"))
         {
 
             memcpy(buff, &cache_entry->m_id3v1, ID3V1_TAG_LENGTH);
@@ -410,11 +410,11 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         if (!success)
         {
             errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
-            throw (ssize_t)-1;
+            throw static_cast<ssize_t>(-1);
         }
 
         // truncate if we didn't actually get len
-        if (cache_entry->m_buffer->buffer_watermark() < (size_t) offset)
+        if (cache_entry->m_buffer->buffer_watermark() < static_cast<size_t>(offset))
         {
             len = 0;
         }
@@ -426,13 +426,13 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         if (!cache_entry->m_buffer->copy((uint8_t*)buff, offset, len))
         {
             len = 0;
-            // throw (ssize_t)-1;
+            // throw static_cast<ssize_t>(-1);
         }
 
         if (cache_entry->m_cache_info.m_error)
         {
             errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
-            throw (ssize_t)-1;
+            throw static_cast<ssize_t>(-1);
         }
 
         errno = 0;
@@ -513,7 +513,7 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.m_desttype);
+        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->m_desttype);
 
         if (transcoder == nullptr)
         {

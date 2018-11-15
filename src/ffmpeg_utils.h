@@ -150,32 +150,46 @@ typedef enum _tagFILETYPE
     FILETYPE_WEBM,
     FILETYPE_MOV,
     FILETYPE_AIFF,
-    FILETYPE_OPUS
+    FILETYPE_OPUS,
+    FILETYPE_PRORES
 } FILETYPE;
 
 typedef enum _tagPROFILE
 {
     PROFILE_INVALID = -1,
 
-    PROFILE_NONE,               // no specific profile
+    PROFILE_NONE = 0,           // no specific profile
 
     // MP4
 
-    PROFILE_MP4_FF,				// Firefox
+    PROFILE_MP4_FF = 1,         // Firefox
     PROFILE_MP4_EDGE,			// MS Edge
     PROFILE_MP4_IE,				// MS Internet Explorer
     PROFILE_MP4_CHROME,			// Google Chrome
     PROFILE_MP4_SAFARI,			// Apple Safari
     PROFILE_MP4_OPERA,			// Opera
-    PROFILE_MP4_MAXTHON         // Maxthon
+    PROFILE_MP4_MAXTHON,        // Maxthon
+
+    // mov
+    PROFILE_MOV_NONE = 0,       // Use for all
 
     // WEBM
+
+    // prores
+    PROFILE_PRORES_NONE = 0,    // Use for all
 
 } PROFILE;
 
 typedef struct ffmpegfs_format
 {
-    ffmpegfs_format(const char * format_name, FILETYPE filetype, AVCodecID video_codecid, AVCodecID audio_codecid)
+    ffmpegfs_format()
+        : m_format_name("")
+        , m_filetype(FILETYPE_UNKNOWN)
+        , m_video_codecid(AV_CODEC_ID_NONE)
+        , m_audio_codecid(AV_CODEC_ID_NONE)
+    {}
+
+    ffmpegfs_format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codecid, AVCodecID audio_codecid)
         : m_format_name(format_name)
         , m_filetype(filetype)
         , m_video_codecid(video_codecid)
@@ -183,6 +197,7 @@ typedef struct ffmpegfs_format
     {}
 
     std::string m_format_name;
+    std::string m_desttype;                 // Destination type: mp4, mp3 or other
     FILETYPE    m_filetype;
     // Video
     AVCodecID   m_video_codecid;
@@ -225,6 +240,8 @@ const char *        get_codec_name(AVCodecID codec_id, bool long_name);
 int                 supports_albumart(FILETYPE filetype);
 // Get the ffmpegfs filetype, desttype mut be one of FFmpeg's "official" short names for formats.
 FILETYPE            get_filetype(const std::string & desttype);
+// Same as get_filetype, but accepts a comma separated list.
+FILETYPE            get_filetype_from_list(const std::string & desttypelist);
 int                 get_codecs(const std::string & desttype, ffmpegfs_format *video_format);
 
 int                 print_info(const AVStream* stream);
@@ -245,5 +262,15 @@ const char *        avcodec_get_name(AVCodecID id);
 #endif
 
 std::vector<std::string> split(const std::string& input, const std::string & regex);
+
+template <typename T, std::size_t N>
+constexpr std::size_t countof(T const (&)[N]) noexcept
+{
+    return N;
+}
+
+std::string         sanitise_name(const std::string & filename);
+
+bool                is_album_art(AVCodecID codec_id);
 
 #endif

@@ -67,13 +67,9 @@ ffmpegfs_params::ffmpegfs_params()
     : m_basepath("")                            // required parameter
     , m_mountpath("")                           // required parameter
 
-    , m_desttype("mp4")                         // default: encode to mp4
     , m_profile(PROFILE_NONE)                   // default: no profile
 
     // Format
-    , m_video_format("mp4", FILETYPE_MP4, AV_CODEC_ID_MPEG4, AV_CODEC_ID_AAC)
-    , m_audio_format("mp4", FILETYPE_MP4, AV_CODEC_ID_NONE,  AV_CODEC_ID_AAC)
-
     , m_audiobitrate(128*1024)                  // default: 128 kBit
     , m_audiosamplerate(44100)                  // default: 44.1 kHz
 
@@ -89,7 +85,7 @@ ffmpegfs_params::ffmpegfs_params()
     , m_enablescript(0)                         // default: no virtual script
     , m_scriptfile("index.php")                 // default name
     , m_scriptsource("scripts/videotag.php")    // default name
-        // Other
+    // Other
     , m_debug(0)                                // default: no debug messages
     , m_log_maxlevel("INFO")                    // default: INFO level
     , m_log_stderr(0)                           // default: do not log to stderr
@@ -97,6 +93,7 @@ ffmpegfs_params::ffmpegfs_params()
     , m_logfile("")                             // default: none
     // Cache/recoding options
     , m_expiry_time((60*60*24 /* d */) * 7)     // default: 1 week)
+    , m_max_inactive_suspend(15)                // default: 15 seconds
     , m_max_inactive_abort(30)                  // default: 30 seconds
     , m_prebuffer_size(100 /* KB */ * 1024)     // default: 100 KB
     , m_max_cache_size(0)                       // default: no limit
@@ -109,6 +106,68 @@ ffmpegfs_params::ffmpegfs_params()
     , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
     , m_decoding_errors(0)                      // default: ignore errors
 {
+}
+
+bool ffmpegfs_params::smart_transcode(void) const
+{
+    return (params.m_format[1].m_filetype != FILETYPE_UNKNOWN && params.m_format[0].m_filetype != params.m_format[1].m_filetype);
+}
+
+int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
+{
+    AVOutputFormat* format = av_guess_format(nullptr, filepath.c_str(), nullptr);
+
+    if (format != nullptr)
+    {
+        if (!params.smart_transcode())
+        {
+            // Not smart encoding: use first format (video file)
+            return 0;
+        }
+        else
+        {
+            // Smart transcoding
+            if (params.m_format[0].m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE && !is_album_art(format->video_codec))
+            {
+                // Is a video: use first format (video file)
+                return 0;
+            }
+            else if (params.m_format[1].m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE)
+            {
+                // For audio only, use second format (audio only file)
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+ffmpegfs_format * ffmpegfs_params::current_format(const std::string & filepath)
+{
+    LPCVIRTUALFILE virtualfile = find_file(filepath);
+
+    if (virtualfile != nullptr)
+    {
+        // We know the file
+        return current_format(virtualfile);
+    }
+
+    // Guess the result
+    int format_idx = guess_format_idx(filepath);
+
+    if (format_idx > -1)
+    {
+        return &m_format[format_idx];
+    }
+
+    return nullptr;
+}
+
+ffmpegfs_format *ffmpegfs_params::current_format(LPCVIRTUALFILE virtualfile)
+{
+    return &m_format[virtualfile->m_format_idx];
 }
 
 enum
@@ -227,7 +286,7 @@ static int get_bitrate(const std::string & arg, BITRATE *value);
 static int get_samplerate(const std::string & arg, unsigned int *value);
 static int get_time(const std::string & arg, time_t *value);
 static int get_size(const std::string & arg, size_t *value);
-static int get_desttype(const std::string & arg, std::string *value);
+static int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
 static int get_value(const std::string & arg, std::string *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
@@ -237,14 +296,18 @@ static void usage(char *name);
 static void usage(char *name)
 {
     std::printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
-    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OPUS, OGG or WAV upon access.\n"
+    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG, WEBM, MOV, AIFF, OPUS or WAV upon access.\n"
           "\n"
           "Encoding options:\n"
           "\n"
           "    --desttype=TYPE, -o desttype=TYPE\n"
-          "                           Select destination format. Can currently be\n"
-          "                           either MP4, MP3, OGG, OPUS or WAV. To stream videos,\n"
-          "                           MP4 or OGG must be selected.\n"
+          "                           Select destination format. 'TYPE' can currently be\n"
+          "                           MP4, MP3, OGG, WEBM, MOV, AIFF, OPUS or WAV. To stream videos,\n"
+          "                           MP4, OGG, WEBM or MOV must be selected.\n"
+          "                           To use the smart transcoding feature, specify a video and audio file\n"
+          "                           type, separated by a \"+\" sign. For example, --desttype=mov+aiff will\n"
+          "                           convert video files to Apple Quicktime MOV and audio only files to\n"
+          "                           AIFF.\n"
           "                           Default: mp4\n"
           "    --profile=NAME, -o profile=NAME\n"
           "                           Set profile for target audience. Currently selectable:\n"
@@ -716,16 +779,35 @@ static int get_size(const std::string & arg, size_t *value)
     return -1;
 }
 
-int get_desttype(const std::string & arg, std::string *value)
+int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format * audio_format)
 {
     // TODO: evaluate
     size_t pos = arg.find('=');
 
     if (pos != std::string::npos)
     {
-        *value = arg.substr(pos + 1);
+        std::vector<std::string> results =  split(arg.substr(pos + 1), "\\+");
 
-        return 0;
+        if (results.size() > 0 && results.size() < 3)
+        {
+            // Check for valid destination type and obtain codecs and file type.
+            if (!get_codecs(results[0], video_format))
+            {
+                std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[0].c_str());
+                return 1;
+            }
+
+            if (results.size() == 2)
+            {
+                if (!get_codecs(results[1], audio_format))
+                {
+                    std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[1].c_str());
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
     }
 
     std::fprintf(stderr, "INVALID PARAMETER: Missing destination type string\n");
@@ -836,7 +918,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_DESTTYPE:
     {
-        return get_desttype(arg, &params.m_desttype);
+        return get_desttype(arg, &params.m_format[0], &params.m_format[1]);
     }
     case KEY_PROFILE:
     {
@@ -910,86 +992,88 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 static void print_params(void)
 {
     std::string cachepath;
-    AVCodecID audio_codecid = params.m_video_format.m_audio_codecid;
-    AVCodecID video_codecid = params.m_video_format.m_video_codecid;
 
     transcoder_cache_path(cachepath);
 
     Logging::trace(nullptr, PACKAGE_NAME " options:\n\n"
                                          "Base Path         : %1\n"
                                          "Mount Path        : %2\n\n"
-                                         "Destination Type  : %3\n"
-                                         "Profile           : %4\n"
+                                         "Smart Transcode   : %3\n"
+                                         "Audio File Type   : %4\n"
+                                         "Video File Type   : %5\n"
+                                         "Profile           : %6\n"
                                          "\nAudio\n\n"
-                                         "Audio Format      : %5\n"
-                                         "Audio Bitrate     : %6\n"
-                                         "Audio Sample Rate : %7\n"
+                                         "Audio Codecs      : %7+%8\n"
+                                         "Audio Bitrate     : %9\n"
+                                         "Audio Sample Rate : %10\n"
                                          "\nVideo\n\n"
-                                         "Video Size/Pixels : width=%8 height=%9\n"
+                                         "Video Size/Pixels : width=%11 height=%12\n"
                #ifndef USING_LIBAV
-                                         "Deinterlace       : %10\n"
+                                         "Deinterlace       : %13\n"
                #endif  // !USING_LIBAV
-                                         "Remove Album Arts : %11\n"
-                                         "Video Format      : %12\n"
-                                         "Video Bitrate     : %13\n"
+                                         "Remove Album Arts : %14\n"
+                                         "Video Codec       : %15\n"
+                                         "Video Bitrate     : %16\n"
                                          "\nVirtual Script\n\n"
-                                         "Create script     : %14\n"
-                                         "Script file name  : %15\n"
-                                         "Input file        : %16\n"
+                                         "Create script     : %17\n"
+                                         "Script file name  : %18\n"
+                                         "Input file        : %19\n"
                                          "\nLogging\n\n"
-                                         "Max. Log Level    : %17\n"
-                                         "Log to stderr     : %18\n"
-                                         "Log to syslog     : %19\n"
-                                         "Logfile           : %20\n"
+                                         "Max. Log Level    : %20\n"
+                                         "Log to stderr     : %21\n"
+                                         "Log to syslog     : %22\n"
+                                         "Logfile           : %23\n"
                                          "\nCache Settings\n\n"
-                                         "Expiry Time       : %21\n"
-                                         "Inactivity Suspend: %22\n"
-                                         "Inactivity Abort  : %23\n"
-                                         "Pre-buffer size   : %24\n"
-                                         "Max. Cache Size   : %25\n"
-                                         "Min. Disk Space   : %26\n"
-                                         "Cache Path        : %27\n"
-                                         "Disable Cache     : %28\n"
-                                         "Maintenance Timer : %29\n"
-                                         "Clear Cache       : %30\n"
+                                         "Expiry Time       : %24\n"
+                                         "Inactivity Suspend: %25\n"
+                                         "Inactivity Abort  : %26\n"
+                                         "Pre-buffer size   : %27\n"
+                                         "Max. Cache Size   : %28\n"
+                                         "Min. Disk Space   : %29\n"
+                                         "Cache Path        : %30\n"
+                                         "Disable Cache     : %31\n"
+                                         "Maintenance Timer : %32\n"
+                                         "Clear Cache       : %33\n"
                                          "\nVarious Options\n\n"
-                                         "Max. Threads      : %31\n"
-                                         "Decoding Errors   : %32\n",
+                                         "Max. Threads      : %34\n"
+                                         "Decoding Errors   : %35\n",
                    params.m_basepath,
                    params.m_mountpath,
-                   params.m_desttype,
-                   get_profile_text(params.m_profile),
-                   get_codec_name(audio_codecid, true),
-                   format_bitrate(params.m_audiobitrate),
-                   format_samplerate(params.m_audiosamplerate),
-                   format_number(params.m_videowidth),
-                   format_number(params.m_videoheight),
-               #ifndef USING_LIBAV
-                   params.m_deinterlace ? "yes" : "no",
-               #endif  // !USING_LIBAV
-                   params.m_noalbumarts ? "yes" : "no",
-                   get_codec_name(video_codecid, true),
-                   format_bitrate(params.m_videobitrate),
-                   params.m_enablescript ? "yes" : "no",
-                   params.m_scriptfile,
-                   params.m_scriptsource,
-                   params.m_log_maxlevel,
-                   params.m_log_stderr ? "yes" : "no",
-                   params.m_log_syslog ? "yes" : "no",
-                   !params.m_logfile.empty() ? params.m_logfile : "none",
-                   format_time(params.m_expiry_time),
-                   format_time(params.m_max_inactive_suspend),
-                   format_time(params.m_max_inactive_abort),
-                   format_size(params.m_prebuffer_size),
-                   format_size(params.m_max_cache_size),
-                   format_size(params.m_min_diskspace),
-                   cachepath,
-                   params.m_disable_cache ? "yes" : "no",
-                   params.m_cache_maintenance ? format_time(params.m_cache_maintenance) : "inactive",
-                   params.m_clear_cache ? "yes" : "no",
-                   format_number(params.m_max_threads),
-                   params.m_decoding_errors ? "break transcode" : "ignore"
-                                              );
+                   params.smart_transcode() ? "yes" : "no",
+                   params.m_format[1].m_desttype,
+            params.m_format[0].m_desttype,
+            get_profile_text(params.m_profile),
+            get_codec_name(params.m_format[0].m_audio_codecid, true),
+            get_codec_name(params.m_format[1].m_audio_codecid, true),
+            format_bitrate(params.m_audiobitrate),
+            format_samplerate(params.m_audiosamplerate),
+            format_number(params.m_videowidth),
+            format_number(params.m_videoheight),
+        #ifndef USING_LIBAV
+            params.m_deinterlace ? "yes" : "no",
+        #endif  // !USING_LIBAV
+            params.m_noalbumarts ? "yes" : "no",
+            get_codec_name(params.m_format[0].m_video_codecid, true),
+            format_bitrate(params.m_videobitrate),
+            params.m_enablescript ? "yes" : "no",
+            params.m_scriptfile,
+            params.m_scriptsource,
+            params.m_log_maxlevel,
+            params.m_log_stderr ? "yes" : "no",
+            params.m_log_syslog ? "yes" : "no",
+            !params.m_logfile.empty() ? params.m_logfile : "none",
+            format_time(params.m_expiry_time),
+            format_time(params.m_max_inactive_suspend),
+            format_time(params.m_max_inactive_abort),
+            format_size(params.m_prebuffer_size),
+            format_size(params.m_max_cache_size),
+            format_size(params.m_min_diskspace),
+            cachepath,
+            params.m_disable_cache ? "yes" : "no",
+            params.m_cache_maintenance ? format_time(params.m_cache_maintenance) : "inactive",
+            params.m_clear_cache ? "yes" : "no",
+            format_number(params.m_max_threads),
+            params.m_decoding_errors ? "break transcode" : "ignore");
 }
 
 int main(int argc, char *argv[])
@@ -1003,8 +1087,8 @@ int main(int argc, char *argv[])
     {
         std::printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
         std::printf("Copyright (C) 2006-2008 David Collett\n"
-               "Copyright (C) 2008-2012 K. Henriksson\n"
-               "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
+                    "Copyright (C) 2008-2012 K. Henriksson\n"
+                    "Copyright (C) 2017-2018 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
     }
 
     init_fuse_ops();
@@ -1116,13 +1200,6 @@ int main(int argc, char *argv[])
     if (stat(params.m_mountpath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
-        return 1;
-    }
-
-    // Check for valid destination type and obtain codecs and file type.
-    if (!get_codecs(params.m_desttype, &params.m_video_format))
-    {
-        std::fprintf(stderr, "ERROR: No codecs available for desttype: %s\n\n", params.m_desttype.c_str());
         return 1;
     }
 

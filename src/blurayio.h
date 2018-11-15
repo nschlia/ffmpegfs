@@ -41,7 +41,6 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual int         bufsize() const;
-    virtual int 		open(const string & filename);
     virtual int         read(void *data, int maxlen);
     virtual int         error() const;
     virtual int         duration() const;
@@ -51,6 +50,8 @@ public:
     virtual bool        eof() const;
     virtual void        close();
 
+protected:
+    virtual int         openX(const string & filename);
 
 protected:
     BLURAY *            m_bd;

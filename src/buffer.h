@@ -45,8 +45,6 @@ public:
     bool            release(int flags = CLOSE_CACHE_NOOPT);
 
     virtual int     bufsize() const;
-    virtual int 	open(LPCVIRTUALFILE virtualfile);
-    virtual int 	open(const string & filename);
     virtual int     read(void *data, int maxlen);
     virtual int     error() const;
     virtual int     duration() const;
@@ -69,10 +67,11 @@ public:
     const string &  filename() const;
     const string &  cachefile() const;
 
-    static const string & make_cachefile_name(string &cachefile, const string & filename);
+    static const string & make_cachefile_name(string &cachefile, const string & filename, const string &desttype);
     static bool     remove_file(const string & filename);
 
 protected:
+    virtual int     openX(const string & filename);
 
     bool            remove_cachefile();
 

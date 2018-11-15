@@ -86,14 +86,14 @@ fileio * fileio::alloc(VIRTUALTYPE type)
 
 int fileio::open(LPCVIRTUALFILE virtualfile)
 {
-    assert(virtualfile->m_type == type());
+//    assert(virtualfile->m_type == type());
 
     m_virtualfile = virtualfile;
 
-    return open(virtualfile->m_origfile);
+    return openX(virtualfile->m_origfile);
 }
 
-LPCVIRTUALFILE fileio::get_virtualfile() const
+LPCVIRTUALFILE fileio::virtualfile() const
 {
     return m_virtualfile;
 }

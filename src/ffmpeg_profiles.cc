@@ -455,6 +455,85 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_maxthon[] =
     { nullptr, nullptr, 0, 0 }
 };
 
+// ****************************************************************************************************************
+
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mov_codec[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    //{ "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+    { nullptr, nullptr, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mov_format[] =
+{
+    //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
+    //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
+    //{ "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+    //{ "frag_size",              "100000",                  0, OPT_ALL },      // bytes
+    //{ "min_frag_duration",      "1000",                    0, OPT_ALL },      // microsenconds
+    //{ "movflags",               "+empty_moov",              0, OPT_ALL },
+    //{ "movflags",               "+separate_moof",           0, OPT_ALL },
+    //{ "movflags",               "+faststart",               0, OPT_ALL },
+    //{ "movflags",               "+rtphint",                0, OPT_ALL },
+    //{ "movflags",               "+disable_chpl",           0, OPT_ALL },
+    //{ "movflags",               "+omit_tfhd_offset",       0, OPT_ALL },
+    //{ "movflags",               "+default_base_moof",      0, OPT_ALL },
+    //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
+    //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
+    //{ "movflags",               "+isml",                   0, OPT_ALL },
+    { nullptr, nullptr, 0, 0 }
+};
+
+// ****************************************************************************************************************
+
+// Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_codec[] =
+{
+    // -profile:v baseline -level 3.0
+    //{ "profile",              "baseline",                 0,  0 },
+    //{ "level",                "3.0",                      0,  0 },
+
+    // -profile:v high -level 3.1
+    //{ "profile",              "high",                     0,  0 },
+    //{ "level",                "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    //{ "preset",               "ultrafast",                0,  0 },
+    //{ "preset",               "veryfast",                 0,  0 },
+    //{ "tune",                 "zerolatency",              0,  0 },
+    { nullptr, nullptr, 0, 0 }
+};
+
+static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_format[] =
+{
+    //{ "moov_size",             "1000000",                 0, OPT_ALL },       // bytes
+    //{ "movflags",               "frag_keyframe",          0, OPT_ALL },
+    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+    //{ "frag_size",              "100000",                  0, OPT_ALL },       // bytes
+    //{ "min_frag_duration",      "1000",                    0, OPT_ALL },       // microsenconds
+    { "movflags",               "+empty_moov",              0, OPT_ALL },
+    { "movflags",               "+separate_moof",           0, OPT_ALL },
+    { "movflags",               "+faststart",               0, OPT_ALL },
+    //{ "movflags",               "+rtphint",                0, OPT_ALL },
+    //{ "movflags",               "+disable_chpl",           0, OPT_ALL },
+    //{ "movflags",               "+omit_tfhd_offset",       0, OPT_ALL },
+    //{ "movflags",               "+default_base_moof",      0, OPT_ALL },
+    //{ "write_tmcd",             "on",                      0, OPT_ALL },      // on, off or auto
+    //{ "movflags",               "+negative_cts_offsets",   0, OPT_ALL },
+    //{ "movflags",               "+isml",                   0, OPT_ALL },
+    { nullptr, nullptr, 0, 0 }
+};
+
 /*
  * *******************************************************************************************************************
  *
@@ -514,68 +593,84 @@ const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
     // MP4
 
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_NONE,
-        .m_option_codec     = m_option_mp4_codec_none,
-        .m_option_format    = m_option_mp4_format_none
+        FILETYPE_MP4,
+        PROFILE_NONE,
+        m_option_mp4_codec_none,
+        m_option_mp4_format_none
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_FF,
-        .m_option_codec     = m_option_mp4_codec_ff,
-        .m_option_format    = m_option_mp4_format_ff
+        FILETYPE_MP4,
+        PROFILE_MP4_FF,
+        m_option_mp4_codec_ff,
+        m_option_mp4_format_ff
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_EDGE,
-        .m_option_codec     = m_option_mp4_codec_edge,
-        .m_option_format    = m_option_mp4_format_edge
+        FILETYPE_MP4,
+        PROFILE_MP4_EDGE,
+        m_option_mp4_codec_edge,
+        m_option_mp4_format_edge
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_IE,
-        .m_option_codec     = m_option_mp4_codec_ie,
-        .m_option_format    = m_option_mp4_format_ie
+        FILETYPE_MP4,
+        PROFILE_MP4_IE,
+        m_option_mp4_codec_ie,
+        m_option_mp4_format_ie
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_CHROME,
-        .m_option_codec     = m_option_mp4_codec_chrome,
-        .m_option_format    = m_option_mp4_format_chrome
+        FILETYPE_MP4,
+        PROFILE_MP4_CHROME,
+        m_option_mp4_codec_chrome,
+        m_option_mp4_format_chrome
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_SAFARI,
-        .m_option_codec     = m_option_mp4_codec_safari,
-        .m_option_format    = m_option_mp4_format_safari
+        FILETYPE_MP4,
+        PROFILE_MP4_SAFARI,
+        m_option_mp4_codec_safari,
+        m_option_mp4_format_safari
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_OPERA,
-        .m_option_codec     = m_option_mp4_codec_opera,
-        .m_option_format    = m_option_mp4_format_opera
+        FILETYPE_MP4,
+        PROFILE_MP4_OPERA,
+        m_option_mp4_codec_opera,
+        m_option_mp4_format_opera
     },
     {
-        .m_filetype         = FILETYPE_MP4, // or FILETYPE_MOV
-        .m_profile          = PROFILE_MP4_MAXTHON,
-        .m_option_codec     = m_option_mp4_codec_maxthon,
-        .m_option_format    = m_option_mp4_format_maxthon
+        FILETYPE_MP4,
+        PROFILE_MP4_MAXTHON,
+        m_option_mp4_codec_maxthon,
+        m_option_mp4_format_maxthon
+    },
+
+    // MOV
+    {
+        FILETYPE_MOV,
+        PROFILE_MOV_NONE,
+        m_option_mov_codec,
+        m_option_mov_format
+    },
+
+    // prores
+    {
+        FILETYPE_PRORES,
+        PROFILE_PRORES_NONE,
+        m_option_prores_codec,
+        m_option_prores_format
     },
 
     // WebM
 
     {
-        .m_filetype         = FILETYPE_WEBM,
-        .m_profile          = PROFILE_NONE,
-        .m_option_codec     = m_option_webm_codec_none,
-        .m_option_format    = m_option_webm_format_none
+        FILETYPE_WEBM,
+        PROFILE_NONE,
+        m_option_webm_codec_none,
+        m_option_webm_format_none
     },
 
     // Must be last entry
     {
-        .m_filetype         = FILETYPE_UNKNOWN,
-        .m_profile          = PROFILE_INVALID,
-        .m_option_codec     = nullptr,
-        .m_option_format    = nullptr
+        FILETYPE_UNKNOWN,
+        PROFILE_INVALID,
+        nullptr,
+        nullptr
     }
 };

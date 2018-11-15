@@ -60,7 +60,7 @@ int blurayio::bufsize() const
     return sizeof(m_data);
 }
 
-int blurayio::open(const string & filename)
+int blurayio::openX(const string & filename)
 {
     const char *bdpath = nullptr;
     int title_count;
@@ -72,11 +72,11 @@ int blurayio::open(const string & filename)
 
     bdpath = m_path.c_str();
 
-    if (get_virtualfile() != nullptr)
+    if (virtualfile() != nullptr)
     {
-        m_title_no      = get_virtualfile()->bluray.m_title_no - 1;
-        m_chapter_no    = get_virtualfile()->bluray.m_chapter_no - 1;
-        m_angle_no      = get_virtualfile()->bluray.m_angle_no - 1;
+        m_title_no      = virtualfile()->bluray.m_title_no - 1;
+        m_chapter_no    = virtualfile()->bluray.m_chapter_no - 1;
+        m_angle_no      = virtualfile()->bluray.m_angle_no - 1;
     }
     else
     {

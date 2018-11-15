@@ -52,18 +52,18 @@ int vcdio::bufsize() const
     return (32 * 1024);
 }
 
-int vcdio::open(const string & filename)
+int vcdio::openX(const string & filename)
 {
     string src_filename;
 
     set_path(filename);
 
-    if (get_virtualfile() != nullptr)
+    if (virtualfile() != nullptr)
     {
-        m_track_no      = get_virtualfile()->vcd.m_track_no;
-        m_chapter_no    = get_virtualfile()->vcd.m_chapter_no;
-        m_start_pos     = get_virtualfile()->vcd.m_start_pos;
-        m_end_pos       = get_virtualfile()->vcd.m_end_pos;
+        m_track_no      = virtualfile()->vcd.m_track_no;
+        m_chapter_no    = virtualfile()->vcd.m_chapter_no;
+        m_start_pos     = virtualfile()->vcd.m_start_pos;
+        m_end_pos       = virtualfile()->vcd.m_end_pos;
     }
     else
     {

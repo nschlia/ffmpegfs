@@ -221,8 +221,41 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_codec_ctx->framerate                 = frame_rate;
 #endif
 
-    // At this moment the output format must be AV_PIX_FMT_YUV420P;
-    output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
+    switch (output_codec_ctx->codec_id)
+    {
+    case AV_CODEC_ID_PRORES:       // mov/prores
+    {
+        //  yuva444p10le
+        // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
+        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV422P10LE;
+
+        // TODO
+        /**
+         * The following 12 formats have the disadvantage of needing 1 format for each bit depth.
+         * Notice that each 9/10 bits sample is stored in 16 bits with extra padding.
+         * If you want to support multiple bit depths, then using AV_PIX_FMT_YUV420P16* with the bpp stored separately is better.
+         */
+        //        AV_PIX_FMT_YUV420P9BE, ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
+        //        AV_PIX_FMT_YUV420P9LE, ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
+        //        AV_PIX_FMT_YUV420P10BE,///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
+        //        AV_PIX_FMT_YUV420P10LE,///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
+        //        AV_PIX_FMT_YUV422P10BE,///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
+        //        AV_PIX_FMT_YUV422P10LE,///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
+        //        AV_PIX_FMT_YUV444P9BE, ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
+        //        AV_PIX_FMT_YUV444P9LE, ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
+        //        AV_PIX_FMT_YUV444P10BE,///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
+        //        AV_PIX_FMT_YUV444P10LE,///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
+        //        AV_PIX_FMT_YUV422P9BE, ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
+        //        AV_PIX_FMT_YUV422P9LE, ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
+        break;
+    }
+    default:                        // all others
+    {
+        // At this moment the output format must be AV_PIX_FMT_YUV420P;
+        output_codec_ctx->pix_fmt                   = AV_PIX_FMT_YUV420P;
+        break;
+    }
+    }
 
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }

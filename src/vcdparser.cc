@@ -28,8 +28,6 @@
 
 #include "vcd/vcdentries.h"
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
-
 int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     VcdEntries vcd;
@@ -46,7 +44,7 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
         struct stat st;
         size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
-        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_desttype.c_str());
+        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_format[0].m_desttype.c_str()); // can safely assume this a video
 
         string filename(title_buf);
 
@@ -66,6 +64,8 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
 
         LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, path + filename, origfile, &st);
 
+        // Video CD is video format anyway
+        virtualfile->m_format_idx       = 0;
         // Mark title/chapter/angle
         virtualfile->vcd.m_track_no     = chapter.get_track_no();
         virtualfile->vcd.m_chapter_no   = chapter_no;

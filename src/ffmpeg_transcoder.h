@@ -138,7 +138,7 @@ public:
     virtual ~FFMPEG_Transcoder();
 
     bool            is_open() const;
-    int 			open_input_file(LPCVIRTUALFILE virtualfile);
+    int             open_input_file(LPVIRTUALFILE virtualfile);
     int             open_output_file(Buffer* buffer);
     int             process_single_fr(int & status);
     int             encode_finish();
@@ -156,8 +156,7 @@ protected:
     bool            is_video() const;
     void            limit_video_size(AVCodecContext *output_codec_ctx);
     int             update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const;
-    int             prepare_mp4_codec(void *opt) const;
-    int             prepare_webm_codec(void *opt) const;
+    int             prepare_codec(void *opt, FILETYPE filetype) const;
     int             add_stream(AVCodecID codec_id);
     int             add_albumart_stream(const AVCodecContext *input_codec_ctx);
     int             add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
@@ -168,8 +167,7 @@ protected:
     int             init_resampler();
     int             init_fifo();
     int             update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
-    int             prepare_mp4_format(AVDictionary **dict) const;
-    int             prepare_webm_format(AVDictionary **dict) const;
+    int             prepare_format(AVDictionary **dict,  FILETYPE filetype) const;
     int             write_output_file_header();
     int             decode_audio_frame(AVPacket *pkt, int *decoded);
     int             decode_video_frame(AVPacket *pkt, int *decoded);

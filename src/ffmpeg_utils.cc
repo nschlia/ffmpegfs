@@ -176,7 +176,7 @@ const std::string & get_destname(std::string *destname, const std::string & file
     *destname = params.m_mountpath;
     *destname += filename.substr(len);
 
-    replace_ext(destname, params.m_desttype);
+    replace_ext(destname, params.current_format(filename)->m_format_name);
 
     return *destname;
 }
@@ -190,9 +190,9 @@ std::string ffmpeg_geterror(int errnum)
 
 double ffmpeg_cvttime(int64_t ts, const AVRational & time_base)
 {
-    if (ts != 0 && ts != (int64_t)AV_NOPTS_VALUE)
+    if (ts != 0 && ts != static_cast<int64_t>(AV_NOPTS_VALUE))
     {
-        return ((double)ts * ::av_q2d(time_base));
+        return (static_cast<double>(ts) * ::av_q2d(time_base));
     }
     else
     {
@@ -460,6 +460,7 @@ void tempdir(std::string & dir)
 
 int supports_albumart(FILETYPE filetype)
 {
+    // Could also allow OGG but the format requires special handling for album arts
     return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4);
 }
 
@@ -497,10 +498,27 @@ FILETYPE get_filetype(const std::string & desttype)
     {
         return FILETYPE_OPUS;
     }
+    else if (!strcasecmp(desttype, "prores"))
+    {
+        return FILETYPE_PRORES;
+    }
     else
     {
         return FILETYPE_UNKNOWN;
     }
+}
+
+FILETYPE get_filetype_from_list(const std::string & desttypelist)
+{
+    std::vector<std::string> desttype = split(desttypelist, ",");
+    FILETYPE filetype = FILETYPE_UNKNOWN;
+
+    // Find first matching entry
+    for (size_t n = 0; n < desttype.size() && filetype != FILETYPE_UNKNOWN; n++)
+    {
+        filetype = get_filetype(desttype[n]);
+    }
+    return filetype;
 }
 
 int get_codecs(const std::string & desttype, ffmpegfs_format *format)
@@ -511,6 +529,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     {
     case FILETYPE_MP3:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_MP3;
         format->m_video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
         format->m_filetype      = FILETYPE_MP3;
@@ -519,6 +538,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_MP4:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_AAC;
         format->m_video_codecid = AV_CODEC_ID_H264;
         format->m_filetype      = FILETYPE_MP4;
@@ -527,6 +547,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_WAV:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_PCM_S16LE;
         format->m_video_codecid = AV_CODEC_ID_NONE;
         format->m_filetype      =  FILETYPE_WAV;
@@ -535,6 +556,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_OGG:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_VORBIS;
         format->m_video_codecid = AV_CODEC_ID_THEORA;
         format->m_filetype      = FILETYPE_OGG;
@@ -543,6 +565,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_WEBM:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_OPUS;
         format->m_video_codecid = AV_CODEC_ID_VP9;
         format->m_filetype      = FILETYPE_WEBM;
@@ -551,6 +574,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_MOV:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_AAC;
         format->m_video_codecid = AV_CODEC_ID_H264;
         format->m_filetype      = FILETYPE_MOV;
@@ -559,6 +583,7 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_AIFF:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_PCM_S16BE;
         format->m_video_codecid = AV_CODEC_ID_NONE;
         format->m_filetype      = FILETYPE_AIFF;
@@ -567,10 +592,20 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     }
     case FILETYPE_OPUS:
     {
+        format->m_desttype      = desttype;
         format->m_audio_codecid = AV_CODEC_ID_OPUS;
         format->m_video_codecid = AV_CODEC_ID_NONE;
         format->m_filetype      = FILETYPE_OPUS;
         format->m_format_name   = "opus";
+        break;
+    }
+    case FILETYPE_PRORES:
+    {
+        format->m_desttype      = desttype;
+        format->m_audio_codecid = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codecid = AV_CODEC_ID_PRORES;
+        format->m_filetype      = FILETYPE_PRORES;
+        format->m_format_name   = "mov";
         break;
     }
     case FILETYPE_UNKNOWN:
@@ -1090,3 +1125,18 @@ std::vector<std::string> split(const std::string& input, const std::string & reg
     return {first, last};
 }
 
+std::string sanitise_name(const std::string & filename)
+{
+    char resolved_name[PATH_MAX + 1];
+
+    if (realpath(filename.c_str(), resolved_name) != nullptr)
+    {
+        return resolved_name;
+    }
+    return filename;
+}
+
+bool is_album_art(AVCodecID codec_id)
+{
+    return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
+}

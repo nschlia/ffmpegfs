@@ -66,8 +66,7 @@ public:
     Cache();
     virtual ~Cache();
 
-    Cache_Entry *	open(LPCVIRTUALFILE virtualfile);
-    Cache_Entry *	open(const string & filename);
+    Cache_Entry *   open(LPVIRTUALFILE virtualfile);
     bool            close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
 
     bool            load_index();
@@ -85,14 +84,14 @@ public:
     bool            prune_cache_size();
     bool            prune_disk_space(size_t predicted_filesize);
 
-    bool 			remove_cachefile(const string & filename);
+    bool            remove_cachefile(const string & filename, const string &desttype);
 
 protected:
     bool            read_info(t_cache_info & cache_info);
     bool            write_info(const t_cache_info & cache_info);
     bool            delete_info(const string & filename, const string & desttype);
 
-    Cache_Entry* 	create_entry(const string & filename, const string & desttype);
+    Cache_Entry*    create_entry(LPCVIRTUALFILE virtualfile, const string & desttype);
     bool            delete_entry(Cache_Entry **cache_entry, int flags);
 
     void            close_index();

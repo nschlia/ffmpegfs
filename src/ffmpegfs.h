@@ -31,21 +31,25 @@
 #include <stdarg.h>
 
 #include "ffmpeg_utils.h"
+#include "fileio.h"
 
 // Global program parameters
 extern struct ffmpegfs_params
 {
     ffmpegfs_params();
 
+    bool                smart_transcode(void) const;
+    int                 guess_format_idx(const std::string & filepath) const;
+    ffmpegfs_format *   current_format(const std::string & filepath);
+    ffmpegfs_format *   current_format(LPCVIRTUALFILE virtualfile);
+
     // Paths
     std::string         m_basepath;
     std::string         m_mountpath;
     // Output type
-    std::string         m_desttype;                 // Destination type: mp4, mp3 or other
     PROFILE             m_profile;					// Target profile: Firefox, MS Edge/IE or other
     // Format
-    ffmpegfs_format     m_video_format;
-    ffmpegfs_format     m_audio_format;
+    ffmpegfs_format     m_format[2];
     // Audio
     BITRATE             m_audiobitrate;
     unsigned int        m_audiosamplerate;
@@ -105,6 +109,10 @@ int         transcoder_init(void);
 void        transcoder_free(void);
 int         transcoder_cache_maintenance(void);
 int         transcoder_cache_clear(void);
+
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string &filepath, const std::string & origfile, const struct stat *st);
+LPVIRTUALFILE find_file(const std::string &filepath);
+LPVIRTUALFILE find_original(std::string *filepath);
 
 #endif // FFMPEGFS_H
 

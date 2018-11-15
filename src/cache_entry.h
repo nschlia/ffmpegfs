@@ -28,44 +28,44 @@
 
 class Buffer;
 
-struct Cache_Entry
+class Cache_Entry
 {
     friend class Cache;
 
 protected:
-    explicit Cache_Entry(Cache *owner, const string & filename);
+    explicit Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile);
     virtual ~Cache_Entry();
 
 public:
-    bool open(bool create_cache = true);
-    bool flush();
-    void clear(int fetch_file_time = true);
-    size_t size() const;
-    time_t age() const;
-    time_t last_access() const;
-    bool expired() const;
-    bool suspend_timeout() const;
-    bool decode_timeout() const;
-    const string & filename() const;
-    bool update_access(bool bUpdateDB = false);
+    bool            open(bool create_cache = true);
+    bool            flush();
+    void            clear(int fetch_file_time = true);
+    size_t          size() const;
+    time_t          age() const;
+    time_t          last_access() const;
+    bool            expired() const;
+    bool            suspend_timeout() const;
+    bool            decode_timeout() const;
+    const string &  filename() const;
+    bool            update_access(bool bUpdateDB = false);
 
-    void lock();
-    void unlock();
+    void            lock();
+    void            unlock();
 
-    int ref_count() const;
+    int             ref_count() const;
 
     // Check if cache entry needs to be recoded
-    bool outdated() const;
+    bool            outdated() const;
 
-    LPCVIRTUALFILE virtualfile() const;
+    LPVIRTUALFILE   virtualfile();
 
 protected:
-    bool close(int flags);
-    void close_buffer(int flags);
+    bool            close(int flags);
+    void            close_buffer(int flags);
 
-    bool read_info();
-    bool write_info();
-    bool delete_info();
+    bool            read_info();
+    bool            write_info();
+    bool            delete_info();
 
 protected:
     Cache *         m_owner;
@@ -73,7 +73,7 @@ protected:
 
     int             m_ref_count;
 
-    LPCVIRTUALFILE  m_virtualfile;
+    LPVIRTUALFILE   m_virtualfile;
 
 public:
     Buffer *        m_buffer;

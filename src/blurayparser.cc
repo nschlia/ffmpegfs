@@ -28,8 +28,6 @@
 
 #include "libbluray/bluray.h"
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
-
 int parse_bluray(const string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;
@@ -79,7 +77,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
             //                ti->clips[0].ig_stream_count,
             //                ti->clips[0].sec_video_stream_count,
             //                ti->clips[0].sec_audio_stream_count,
-            //                params.m_desttype
+            //                params.get_current_format().m_desttype
             //                );
 
             sprintf(title_buf, "%02d.%cChapter %03d [%02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 "].%s",
@@ -89,7 +87,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
                                     (ti->chapters[chapter_no].duration / 90000) / (3600),
                                     ((ti->chapters[chapter_no].duration / 90000) % 3600) / 60,
                                     ((ti->chapters[chapter_no].duration / 90000) % 60),
-                    params.m_desttype.c_str());
+                    params.m_format[0].m_desttype.c_str()); // can safely assume this is a video format
 
             string filename(title_buf);
 
@@ -107,6 +105,8 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
 
             LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &st);
 
+            // Bluray is video format anyway
+            virtualfile->m_format_idx       = 0;
             // Mark title/chapter/angle
             // ti->chapter_count
             virtualfile->bluray.m_title_no      = title_no + 1;

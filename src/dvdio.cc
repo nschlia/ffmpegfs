@@ -75,7 +75,7 @@ int dvdio::bufsize() const
     return sizeof(m_data);
 }
 
-int dvdio::open(const string & filename)
+int dvdio::openX(const string & filename)
 {
     int pgc_id;
     int ttn, pgn;
@@ -84,11 +84,11 @@ int dvdio::open(const string & filename)
 
     set_path(filename);
 
-    if (get_virtualfile() != nullptr)
+    if (virtualfile() != nullptr)
     {
-        m_title_no     = get_virtualfile()->dvd.m_title_no - 1;
-        m_chapter_no   = get_virtualfile()->dvd.m_chapter_no - 1;
-        m_angle_no     = get_virtualfile()->dvd.m_angle_no - 1;
+        m_title_no     = virtualfile()->dvd.m_title_no - 1;
+        m_chapter_no   = virtualfile()->dvd.m_chapter_no - 1;
+        m_angle_no     = virtualfile()->dvd.m_angle_no - 1;
     }
     else
     {

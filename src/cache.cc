@@ -441,15 +441,19 @@ void Cache::close_index()
     sqlite3_shutdown();
 }
 
-Cache_Entry* Cache::create_entry(const string & filename, const string & desttype)
+//Cache_Entry* Cache::create_entry(const string & filename, const string & desttype)
+Cache_Entry* Cache::create_entry(LPCVIRTUALFILE virtualfile, const string & desttype)
 {
-    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
+//    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
+    Cache_Entry* cache_entry = new Cache_Entry(this, virtualfile);
     if (cache_entry == nullptr)
     {
         Logging::error(m_cacheidx_file, "Out of memory.");
         return nullptr;
     }
-    m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
+//    m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
+    m_cache.insert(make_pair(make_pair(virtualfile->m_origfile, desttype), cache_entry));
+
     return cache_entry;
 }
 
@@ -477,41 +481,28 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
     return false;   // Kept entry
 }
 
-Cache_Entry *Cache::open(LPCVIRTUALFILE virtualfile)
-{
-    Cache_Entry* cache_entry = open(virtualfile->m_origfile);
-
-    cache_entry->m_virtualfile = virtualfile;
-
-    return cache_entry;
-}
-
-Cache_Entry * Cache::open(const string & filename)
+Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = nullptr;
-    char resolved_name[PATH_MAX + 1];
-    string sanitised_name;
-
-    if (realpath(filename.c_str(), resolved_name) == nullptr)
-    {
-        sanitised_name = filename;
-    }
-    else
-    {
-        sanitised_name = resolved_name;
-    }
-
-    cache_t::iterator p = m_cache.find(make_pair(sanitised_name, params.m_desttype));
+    cache_t::iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->m_desttype));
     if (p == m_cache.end())
     {
-        Logging::trace(sanitised_name, "Created new transcoder.");
-        cache_entry = create_entry(sanitised_name, params.m_desttype);
+//        Logging::trace(sanitised_name, "Created new transcoder.");
+        Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
+        cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->m_desttype);
     }
     else
     {
-        Logging::trace(sanitised_name, "Reusing cached transcoder.");
+//        Logging::trace(sanitised_name, "Reusing cached transcoder.");
         cache_entry = p->second;
     }
+
+    if (cache_entry == nullptr)
+    {
+        return nullptr;
+    }
+
+    cache_entry->m_virtualfile = virtualfile;
 
     return cache_entry;
 }
@@ -585,7 +576,7 @@ bool Cache::prune_expired()
 
             if (delete_info(key.first, key.second))
             {
-                remove_cachefile(key.first);
+                remove_cachefile(key.first, key.second);
             }
         }
     }
@@ -657,7 +648,7 @@ bool Cache::prune_cache_size()
 
                 if (delete_info(key.first, key.second))
                 {
-                    remove_cachefile(key.first);
+                    remove_cachefile(key.first, key.second);
                 }
 
                 total_size -= filesizes[n++];
@@ -742,7 +733,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
                 if (delete_info(key.first, key.second))
                 {
-                    remove_cachefile(key.first);
+                    remove_cachefile(key.first, key.second);
                 }
 
                 free_bytes += filesizes[n++];
@@ -824,7 +815,7 @@ bool Cache::clear()
 
             if (delete_info(key.first, key.second))
             {
-                remove_cachefile(key.first);
+                remove_cachefile(key.first, key.second);
             }
         }
     }
@@ -850,11 +841,11 @@ void Cache::unlock()
     pthread_mutex_unlock(&m_mutex);
 }
 
-bool Cache::remove_cachefile(const string & filename)
+bool Cache::remove_cachefile(const string & filename, const string & desttype)
 {
     string cachefile;
 
-    Buffer::make_cachefile_name(cachefile, filename);
+    Buffer::make_cachefile_name(cachefile, filename, desttype);
 
     return Buffer::remove_file(cachefile);
 }

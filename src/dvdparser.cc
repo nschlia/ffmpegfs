@@ -34,8 +34,6 @@
 //#include <dvdread/nav_read.h>
 //#include <dvdread/nav_print.h>
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const string &filename, const string & origfile, const struct stat *st);
-
 int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     dvd_reader_t *dvd;
@@ -114,8 +112,8 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
 
-                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.m_desttype);
-                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_desttype.c_str());
+                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().m_desttype);
+                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
 
                 string filename(title_buf);
 
@@ -135,10 +133,12 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 
                 LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &st);
 
+                // DVD is video format anyway
+                virtualfile->m_format_idx       = 0;
                 // Mark title/chapter/angle
-                virtualfile->dvd.m_title_no    = title_no;
-                virtualfile->dvd.m_chapter_no  = chapter_no;
-                virtualfile->dvd.m_angle_no    = 1;            // TODO
+                virtualfile->dvd.m_title_no     = title_no;
+                virtualfile->dvd.m_chapter_no   = chapter_no;
+                virtualfile->dvd.m_angle_no     = 1;            // TODO
             }
         }
 

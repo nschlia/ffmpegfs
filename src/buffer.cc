@@ -58,17 +58,10 @@ int Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::open(LPCVIRTUALFILE virtualfile)
-{
-    assert(virtualfile->m_type == type());
-
-    return open(virtualfile->m_origfile);
-}
-
-int Buffer::open(const string & filename)
+int Buffer::openX(const string & filename)
 {
     m_filename = filename;
-    make_cachefile_name(m_cachefile, m_filename);
+    make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->m_desttype);
     return 0;
 }
 
@@ -494,14 +487,14 @@ const string & Buffer::cachefile() const
 }
 
 // Make up a cache file name including full path
-const string & Buffer::make_cachefile_name(string & cachefile, const string & filename)
+const string & Buffer::make_cachefile_name(string & cachefile, const string & filename, const string & desttype)
 {
     transcoder_cache_path(cachefile);
 
     cachefile += params.m_mountpath;
     cachefile += filename;
     cachefile += ".cache.";
-    cachefile += params.m_desttype;
+    cachefile += desttype;
 
     return cachefile;
 }

@@ -27,20 +27,23 @@
 
 using namespace std;
 
-Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
+//Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
+Cache_Entry::Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile)
     : m_owner(owner)
     , m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
     , m_ref_count(0)
     , m_virtualfile(nullptr)
     , m_thread_id(0)
 {
-    m_cache_info.m_filename = filename;
+    m_cache_info.m_filename = virtualfile->m_origfile;
+//    m_cache_info.m_filename = filename;
 
     m_cache_info.m_desttype[0] = '\0';
-    strncat(m_cache_info.m_desttype, params.m_desttype.c_str(), sizeof(m_cache_info.m_desttype) - 1);
+    strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->m_desttype.c_str(), sizeof(m_cache_info.m_desttype) - 1);
 
     m_buffer = new Buffer;
-    m_buffer->open(m_cache_info.m_filename);
+//    m_buffer->open(m_cache_info.m_filename);
+    m_buffer->open(virtualfile);
 
     clear();
 
@@ -77,9 +80,6 @@ void Cache_Entry::clear(int fetch_file_time)
     // Initialise ID3v1.1 tag structure
     init_id3v1(&m_id3v1);
 
-    //string          m_filename;
-    //char            m_desttype[11];
-	
     //m_cache_info.m_enable_ismv        = params.m_enable_ismv;
     m_cache_info.m_audiobitrate         = params.m_audiobitrate;
     m_cache_info.m_audiosamplerate      = params.m_audiosamplerate;
@@ -371,7 +371,7 @@ bool Cache_Entry::outdated() const
     return false;
 }
 
-LPCVIRTUALFILE Cache_Entry::virtualfile() const
+LPVIRTUALFILE Cache_Entry::virtualfile()
 {
     return m_virtualfile;
 }

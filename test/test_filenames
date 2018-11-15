@@ -2,6 +2,11 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+if [ ! -z "$2" ];
+then
+    DESTTYPE=$2
+fi
+
 [ "$(ls -m "$DIRNAME")" = "dir.flac, obama.$DESTTYPE, raven.$DESTTYPE" ]
 echo "Pass"
 

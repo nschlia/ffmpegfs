@@ -68,6 +68,11 @@ then
 	# aiff
 	check_audio "obama" "flac" 0.0
 	check_audio "raven" "ogg" 0.0
+elif [ "$DESTTYPE" == "prores" ];
+then
+	# aiff
+	check_audio "obama" "flac" 0.0
+	check_audio "raven" "ogg" 0.0
 else
 	echo "Internal error, unknown type $DESTTYPE. Fix script!"
 	exit 99

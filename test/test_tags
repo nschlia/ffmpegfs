@@ -35,7 +35,7 @@ then
 	if  [[ "${FFMPEGVERSION}" == N* ]];
 	then
 		echo "FFmpeg Nightly Build"
-		VERSION=3.2+
+		VERSION=N
         elif (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
                 echo "FFmpeg > 3.2.x"
 		VERSION=3.2+
@@ -55,7 +55,7 @@ else
 	exit 99
 fi
 
-TAGFILE=tags/obama.$1.${LIBRARY}${VERSION}.tag
+TAGFILE=tags/${LIBRARY}${VERSION}/obama.$1.tag
 get_metadata "$DIRNAME/obama.$1" TAGS
 echo "Compare file: ${TAGFILE}" 
 echo "Tags found:"
@@ -63,7 +63,7 @@ echo "$TAGS"
 cmp -b ${TAGFILE} <(echo "$TAGS")
 printf "*** PASS ***\n\n"
 
-TAGFILE=tags/raven.$1.${LIBRARY}${VERSION}.tag
+TAGFILE=tags/${LIBRARY}${VERSION}/raven.$1.tag
 get_metadata "$DIRNAME/raven.$1" TAGS
 echo "Compare file: ${TAGFILE}"
 echo "Tags found:"

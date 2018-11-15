@@ -74,6 +74,11 @@ then
     # aiff
     check_filesize "obama" 1058454 1058506  
     check_filesize "raven" 3699254 3699296 
+elif [ "${DESTTYPE}" == "prores" ];
+then
+    # prores
+    check_filesize "obama" 1059408 1060126
+    check_filesize "raven" 3700414 3702941
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

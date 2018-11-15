@@ -20,3 +20,4 @@ src/stamp-h1
 /test/*.trs
 src/.directory
 build
+/src/vcd/.dirstamp

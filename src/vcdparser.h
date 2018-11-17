@@ -27,10 +27,8 @@
 
 #include <string>
 
-using namespace std;
-
-int parse_vcd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
-int check_vcd(const string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
+int parse_vcd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+int check_vcd(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBVCD
 #endif // VCDPARSER_H

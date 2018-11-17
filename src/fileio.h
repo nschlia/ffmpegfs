@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #include <string>
 
-using namespace std;
-
 typedef enum _tagVIRTUALTYPE
 {
     VIRTUALTYPE_PASSTHROUGH,        // passthrough file, not used
@@ -63,7 +61,7 @@ typedef struct _tagVIRTUALFILE
     VIRTUALTYPE     m_type;         // Type of this vurtual file
 
     int             m_format_idx;   // Index in params.format[] array
-    string          m_origfile;     // Sanitised original file name
+    std::string     m_origfile;     // Sanitised original file name
     struct stat     m_st;
 
 #ifdef USE_LIBVCD
@@ -135,15 +133,15 @@ public:
 
 protected:
     // Open with file name
-    virtual int     openX(const string & filename) = 0;
+    virtual int         openX(const std::string & filename) = 0;
 
-    const string &set_path(const string & path);
+    const std::string & set_path(const std::string & path);
 
 protected:
-    string          m_path;
+    std::string         m_path;
 
 private:
-    LPCVIRTUALFILE  m_virtualfile;
+    LPCVIRTUALFILE      m_virtualfile;
 };
 
 #endif // FILEIO_H

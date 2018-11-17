@@ -28,11 +28,9 @@
 #include <map>
 #include <sqlite3.h>
 
-using namespace std;
-
 typedef struct
 {
-    string          m_filename;
+    std::string     m_filename;
     char            m_desttype[11];
     //bool            m_enable_ismv;
     int64_t         m_audiobitrate;
@@ -57,8 +55,8 @@ class Cache_Entry;
 
 class Cache
 {
-    typedef pair<string, string> cache_key_t;
-    typedef map<cache_key_t, Cache_Entry *> cache_t;
+    typedef std::pair<std::string, std::string> cache_key_t;
+    typedef std::map<cache_key_t, Cache_Entry *> cache_t;
 
     friend class Cache_Entry;
 
@@ -84,23 +82,23 @@ public:
     bool            prune_cache_size();
     bool            prune_disk_space(size_t predicted_filesize);
 
-    bool            remove_cachefile(const string & filename, const string &desttype);
+    bool            remove_cachefile(const std::string & filename, const std::string &desttype);
 
 protected:
     bool            read_info(t_cache_info & cache_info);
     bool            write_info(const t_cache_info & cache_info);
-    bool            delete_info(const string & filename, const string & desttype);
+    bool            delete_info(const std::string & filename, const std::string & desttype);
 
-    Cache_Entry*    create_entry(LPCVIRTUALFILE virtualfile, const string & desttype);
+    Cache_Entry*    create_entry(LPCVIRTUALFILE virtualfile, const std::string & desttype);
     bool            delete_entry(Cache_Entry **cache_entry, int flags);
 
     void            close_index();
 
-    string          expanded_sql(sqlite3_stmt *pStmt);
+    std::string          expanded_sql(sqlite3_stmt *pStmt);
 
 private:
     pthread_mutex_t m_mutex;
-    string          m_cacheidx_file;
+    std::string     m_cacheidx_file;
     sqlite3*        m_cacheidx_db;
     sqlite3_stmt *  m_cacheidx_select_stmt;
     sqlite3_stmt *  m_cacheidx_insert_stmt;

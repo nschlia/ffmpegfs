@@ -46,7 +46,7 @@ int diskio::bufsize() const
     return (100 /* KB */ * 1024);
 }
 
-int diskio::openX(const string & filename)
+int diskio::openX(const std::string & filename)
 {
     Logging::info(filename, "Opening input file.");
 

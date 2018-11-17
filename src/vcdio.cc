@@ -52,9 +52,9 @@ int vcdio::bufsize() const
     return (32 * 1024);
 }
 
-int vcdio::openX(const string & filename)
+int vcdio::openX(const std::string & filename)
 {
-    string src_filename;
+    std::string src_filename;
 
     set_path(filename);
 

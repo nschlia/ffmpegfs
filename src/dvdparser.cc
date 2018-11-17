@@ -34,7 +34,7 @@
 //#include <dvdread/nav_read.h>
 //#include <dvdread/nav_print.h>
 
-int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
+int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     dvd_reader_t *dvd;
     ifo_handle_t *ifo_file;
@@ -107,7 +107,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 
             {
                 char title_buf[PATH_MAX + 1];
-                string origfile;
+                std::string origfile;
                 struct stat st;
                 size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
@@ -115,7 +115,7 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
                 //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().m_desttype);
                 sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
 
-                string filename(title_buf);
+                std::string filename(title_buf);
 
                 origfile = path + filename;
 
@@ -152,9 +152,9 @@ int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_f
 }
 
 // Returns -errno or number or titles on DVD
-int check_dvd(const string & _path, void *buf, fuse_fill_dir_t filler)
+int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
-    string path(_path);
+    std::string path(_path);
     struct stat st;
     int res = 0;
 

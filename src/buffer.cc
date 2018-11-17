@@ -29,8 +29,6 @@
 #include <libgen.h>
 #include <assert.h>
 
-using namespace std;
-
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
     : m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
@@ -58,7 +56,7 @@ int Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::openX(const string & filename)
+int Buffer::openX(const std::string & filename)
 {
     m_filename = filename;
     make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->m_desttype);
@@ -476,18 +474,18 @@ void Buffer::unlock()
     pthread_mutex_unlock(&m_mutex);
 }
 
-const string & Buffer::filename() const
+const std::string & Buffer::filename() const
 {
     return m_filename;
 }
 
-const string & Buffer::cachefile() const
+const std::string & Buffer::cachefile() const
 {
     return m_cachefile;
 }
 
 // Make up a cache file name including full path
-const string & Buffer::make_cachefile_name(string & cachefile, const string & filename, const string & desttype)
+const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype)
 {
     transcoder_cache_path(cachefile);
 
@@ -499,7 +497,7 @@ const string & Buffer::make_cachefile_name(string & cachefile, const string & fi
     return cachefile;
 }
 
-bool Buffer::remove_file(const string & filename)
+bool Buffer::remove_file(const std::string & filename)
 {
     if (unlink(filename.c_str()) && errno != ENOENT)
     {

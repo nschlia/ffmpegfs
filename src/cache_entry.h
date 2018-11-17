@@ -46,7 +46,7 @@ public:
     bool            expired() const;
     bool            suspend_timeout() const;
     bool            decode_timeout() const;
-    const string &  filename() const;
+    const std::string &  filename() const;
     bool            update_access(bool bUpdateDB = false);
 
     void            lock();

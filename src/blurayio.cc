@@ -60,7 +60,7 @@ int blurayio::bufsize() const
     return sizeof(m_data);
 }
 
-int blurayio::openX(const string & filename)
+int blurayio::openX(const std::string & filename)
 {
     const char *bdpath = nullptr;
     int title_count;

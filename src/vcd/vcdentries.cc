@@ -48,10 +48,10 @@ void VcdEntries::clear()
     m_disk_path.clear();
 }
 
-int VcdEntries::load_file(const string & path)
+int VcdEntries::load_file(const std::string & path)
 {
     FILE * fpi = nullptr;
-    string fullname;
+    std::string fullname;
     bool is_vcd = false;
 
     clear();
@@ -118,7 +118,7 @@ int VcdEntries::load_file(const string & path)
 int VcdEntries::scan_chapters()
 {
     FILE *  fpi = nullptr;
-    string  fullname;
+    std::string  fullname;
     int     last_track_no = -1;
     int64_t first_sync = -1;
     struct stat st;
@@ -286,7 +286,7 @@ time_t VcdEntries::get_file_date() const
     return m_file_date;
 }
 
-const string & VcdEntries::get_id() const
+const std::string & VcdEntries::get_id() const
 {
     return m_id;
 }
@@ -296,7 +296,7 @@ int VcdEntries::get_type() const
     return m_type;
 }
 
-string VcdEntries::get_type_str() const
+std::string VcdEntries::get_type_str() const
 {
     return VCDUTILS::get_type_str(m_type);
 }
@@ -306,7 +306,7 @@ int VcdEntries::get_profile_tag() const
     return m_profile_tag;
 }
 
-string VcdEntries::get_profile_tag_str() const
+std::string VcdEntries::get_profile_tag_str() const
 {
     return VCDUTILS::get_profile_tag_str(m_profile_tag);
 }

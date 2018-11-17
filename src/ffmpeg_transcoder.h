@@ -30,8 +30,6 @@
 
 #include <queue>
 
-using namespace std;
-
 class Buffer;
 #if LAVR_DEPRECATE
 struct SwrContext;
@@ -94,14 +92,14 @@ public:
         {}
 
         FILETYPE                m_file_type;
-        string                  m_filename;
+        std::string             m_filename;
 
         AVFormatContext *       m_pFormat_ctx;
 
         STREAMREF               m_audio;
         STREAMREF               m_video;
 
-        vector<STREAMREF>       m_aAlbumArt;
+        std::vector<STREAMREF>  m_aAlbumArt;
     };
 
     // Output file
@@ -117,14 +115,14 @@ public:
         {}
 
         FILETYPE                m_file_type;
-        string                  m_filename;
+        std::string             m_filename;
 
         AVFormatContext *       m_pFormat_ctx;
 
         STREAMREF               m_audio;
         STREAMREF               m_video;
 
-        vector<STREAMREF>       m_aAlbumArt;
+        std::vector<STREAMREF>  m_aAlbumArt;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
         int64_t                 m_video_start_pts;      // Video start PTS
@@ -222,7 +220,7 @@ private:
     AVFilterContext *           m_pBufferSinkContext;
     AVFilterContext *           m_pBufferSourceContext;
     AVFilterGraph *             m_pFilterGraph;
-    queue<AVFrame*>             m_VideoFifo;
+    std::queue<AVFrame*>        m_VideoFifo;
     int64_t                     m_pts;
     int64_t                     m_pos;
 

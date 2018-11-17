@@ -14,8 +14,6 @@
 
 #include <string>
 
-using namespace  std;
-
 #define     BCD2DEC(hex)    (((hex & 0xF0) >> 4) * 10 + (hex & 0x0F))
 
 #define     MAX_ENTRIES     500
@@ -70,12 +68,12 @@ extern const char SYNC[12];
 
 namespace VCDUTILS
 {
-string      convert_psz2string(const char * psz, int size, bool trimmed = true);
-bool        locate_file(const string & path, const string & filename, string & fullname, bool & is_vcd);
-int         locate_video(const string & path, int track_no, string & fullname);
-string      get_type_str(int type);
-string      get_profile_tag_str(int tag);
-void        get_directory(const string & fullname, string * directory);
+std::string convert_psz2string(const char * psz, int size, bool trimmed = true);
+bool        locate_file(const std::string & path, const std::string & filename, std::string & fullname, bool & is_vcd);
+int         locate_video(const std::string & path, int track_no, std::string & fullname);
+std::string get_type_str(int type);
+std::string get_profile_tag_str(int tag);
+void        get_directory(const std::string & fullname, std::string * directory);
 }
 
 #endif // VCDUTILS_H

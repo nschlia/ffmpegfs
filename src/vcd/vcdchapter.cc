@@ -111,7 +111,7 @@ int VcdChapter::get_frame() const
     return m_frame;
 }
 
-string VcdChapter::get_filename() const
+std::string VcdChapter::get_filename() const
 {
     char buffer[PATH_MAX + 1];
 

@@ -59,8 +59,8 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
 static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
-static vector<char> index_buffer;
-static map<std::string, VIRTUALFILE> filenames;
+static std::vector<char> index_buffer;
+static std::map<std::string, VIRTUALFILE> filenames;
 
 fuse_operations ffmpegfs_ops;
 
@@ -191,13 +191,13 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const 
 
     filenames.insert(make_pair(filepath, virtualfile));
 
-    map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
+    std::map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
     return &it->second;
 }
 
 LPVIRTUALFILE find_file(const std::string & filepath)
 {
-    map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
+    std::map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
 
     errno = 0;
 

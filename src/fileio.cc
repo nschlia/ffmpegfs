@@ -98,7 +98,7 @@ LPCVIRTUALFILE fileio::virtualfile() const
     return m_virtualfile;
 }
 
-const string & fileio::set_path(const string & path)
+const std::string & fileio::set_path(const std::string & path)
 {
     m_path = path;
 

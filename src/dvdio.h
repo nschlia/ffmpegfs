@@ -48,7 +48,7 @@ public:
     virtual void    close();
 
 protected:
-    virtual int     openX(const string & filename);
+    virtual int     openX(const std::string & filename);
 
 private:
     bool            is_nav_pack(const unsigned char *buffer) const;

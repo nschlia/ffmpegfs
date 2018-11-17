@@ -51,7 +51,7 @@ public:
     virtual void        close();
 
 protected:
-    virtual int         openX(const string & filename);
+    virtual int         openX(const std::string & filename);
 
 protected:
     BLURAY *            m_bd;

@@ -83,9 +83,9 @@ void VcdInfo::clear()
     m_cd_number     = 0;
 }
 
-int VcdInfo::load_file(const string & path)
+int VcdInfo::load_file(const std::string & path)
 {
-    string fullname;
+    std::string fullname;
     bool is_svcd = false;
 
     clear();
@@ -150,7 +150,7 @@ const time_t &VcdInfo::get_file_date() const
     return m_file_date;
 }
 
-const string & VcdInfo::get_id() const
+const std::string & VcdInfo::get_id() const
 {
     return m_id;
 }
@@ -160,7 +160,7 @@ int VcdInfo::get_type() const
     return m_type;
 }
 
-string VcdInfo::get_type_str() const
+std::string VcdInfo::get_type_str() const
 {
     return VCDUTILS::get_type_str(m_type);
 }
@@ -170,12 +170,12 @@ int VcdInfo::get_profile_tag() const
     return m_profile_tag;
 }
 
-string VcdInfo::get_profile_tag_str() const
+std::string VcdInfo::get_profile_tag_str() const
 {
     return VCDUTILS::get_profile_tag_str(m_profile_tag);
 }
 
-const string & VcdInfo::get_album_id() const
+const std::string & VcdInfo::get_album_id() const
 {
     return m_album_id;
 }

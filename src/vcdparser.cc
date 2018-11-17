@@ -28,7 +28,7 @@
 
 #include "vcd/vcdentries.h"
 
-int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
+int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     VcdEntries vcd;
 
@@ -40,13 +40,13 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
     {
         const VcdChapter & chapter = vcd.get_chapter(chapter_no);
         char title_buf[PATH_MAX + 1];
-        string origfile;
+        std::string origfile;
         struct stat st;
         size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
         sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_format[0].m_desttype.c_str()); // can safely assume this a video
 
-        string filename(title_buf);
+        std::string filename(title_buf);
 
         origfile = path + filename;
 
@@ -77,9 +77,9 @@ int parse_vcd(const string & path, const struct stat * statbuf, void * buf, fuse
 }
 
 // Returns -errno or number or titles on BLURAY
-int check_vcd(const string & _path, void *buf, fuse_fill_dir_t filler)
+int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
-    string path(_path);
+    std::string path(_path);
     struct stat st;
     int res = 0;
 

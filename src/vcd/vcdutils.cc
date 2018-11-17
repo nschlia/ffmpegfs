@@ -16,10 +16,10 @@
 
 namespace VCDUTILS
 {
-string convert_psz2string(const char * psz, int size, bool trimmed)
+std::string convert_psz2string(const char * psz, int size, bool trimmed)
 {
     char * buffer = new char[size + 1];
-    string ret_value;
+    std::string ret_value;
 
     if (buffer != nullptr)
     {
@@ -41,7 +41,7 @@ string convert_psz2string(const char * psz, int size, bool trimmed)
     }
 }
 
-bool locate_file(const string & path, const string & filename, string & fullname, bool & is_vcd)
+bool locate_file(const std::string & path, const std::string & filename, std::string & fullname, bool & is_vcd)
 {
     is_vcd = false;
 
@@ -67,7 +67,7 @@ bool locate_file(const string & path, const string & filename, string & fullname
     return false;
 }
 
-int locate_video(const string & path, int track_no, string & fullname)
+int locate_video(const std::string & path, int track_no, std::string & fullname)
 {
     char buffer[PATH_MAX + 1];
 
@@ -90,7 +90,7 @@ int locate_video(const string & path, int track_no, string & fullname)
     return ENOENT;
 }
 
-string get_type_str(int type)
+std::string get_type_str(int type)
 {
     switch (type)
     {
@@ -111,7 +111,7 @@ string get_type_str(int type)
     }
 }
 
-string get_profile_tag_str(int tag)
+std::string get_profile_tag_str(int tag)
 {
     switch (tag)
     {
@@ -130,7 +130,7 @@ string get_profile_tag_str(int tag)
     }
 }
 
-void get_directory(const string & fullname, string *directory)
+void get_directory(const std::string & fullname, std::string *directory)
 {
     struct stat st;
 

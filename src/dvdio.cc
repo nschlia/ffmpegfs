@@ -75,7 +75,7 @@ int dvdio::bufsize() const
     return sizeof(m_data);
 }
 
-int dvdio::openX(const string & filename)
+int dvdio::openX(const std::string & filename)
 {
     int pgc_id;
     int ttn, pgn;

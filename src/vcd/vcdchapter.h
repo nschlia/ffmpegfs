@@ -14,8 +14,6 @@
 
 #include <string>
 
-using namespace std;
-
 struct _tagVCDCHAPTER;
 typedef struct _tagVCDCHAPTER VCDCHAPTER;
 
@@ -35,7 +33,7 @@ public:
     int         get_sec() const;        // MSF second
     int         get_frame() const;      // MSF frame
 
-    string      get_filename() const;   // File name and path (e.g. MPEG/AVSEQ##.MPG)
+    std::string get_filename() const;   // File name and path (e.g. MPEG/AVSEQ##.MPG)
     uint64_t    get_start_pos() const;  // File position of chapter in bytes
     uint64_t    get_end_pos() const;    // End position of chapter in bytes
     int         get_lba() const;        // LBA (large block address)

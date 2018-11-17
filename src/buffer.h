@@ -25,13 +25,13 @@
 
 #include "fileio.h"
 
+#include <stddef.h>
+
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))
 
 #define CLOSE_CACHE_NOOPT   0x00                        // Dummy, do nothing special
 #define CLOSE_CACHE_FREE    0x01                        // Free memory for cache entry
 #define CLOSE_CACHE_DELETE  (0x02 | CLOSE_CACHE_FREE)   // Delete cache entry, will unlink cached file! Implies CLOSE_CACHE_FREE.
-
-using namespace std;
 
 class Buffer : public fileio
 {
@@ -64,14 +64,14 @@ public:
     void            lock();
     void            unlock();
 
-    const string &  filename() const;
-    const string &  cachefile() const;
+    const std::string &  filename() const;
+    const std::string &  cachefile() const;
 
-    static const string & make_cachefile_name(string &cachefile, const string & filename, const string &desttype);
-    static bool     remove_file(const string & filename);
+    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
+    static bool     remove_file(const std::string & filename);
 
 protected:
-    virtual int     openX(const string & filename);
+    virtual int     openX(const std::string & filename);
 
     bool            remove_cachefile();
 
@@ -82,8 +82,8 @@ private:
 
 private:
     pthread_mutex_t m_mutex;
-    string          m_filename;
-    string          m_cachefile;
+    std::string     m_filename;
+    std::string     m_cachefile;
     size_t          m_buffer_pos;           // Read/write position
     size_t          m_buffer_watermark;     // Number of bytes in buffer
     volatile bool   m_is_open;

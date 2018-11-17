@@ -25,8 +25,6 @@
 
 #include "ffmpeg_utils.h"
 
-using namespace std;
-
 #define INVALID_STREAM  -1
 
 class FFMPEG_Base
@@ -45,7 +43,7 @@ protected:
     int         av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     void        video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
     void        audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
-    std::string get_pix_fmt_name(enum AVPixelFormat pix_fmt) const;
+    std::string get_pix_fmt_name(AVPixelFormat pix_fmt) const;
 
     virtual const char *filename() const = 0;
     virtual const char *destname() const = 0;

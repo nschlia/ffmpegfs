@@ -27,10 +27,8 @@
 
 #include <string>
 
-using namespace std;
-
-int parse_dvd(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
-int check_dvd(const string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
+int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+int check_dvd(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBDVD
 #endif // DVDPARSER_H

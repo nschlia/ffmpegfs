@@ -28,7 +28,7 @@
 
 #include "libbluray/bluray.h"
 
-int parse_bluray(const string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
+int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;
     uint32_t title_count;
@@ -61,7 +61,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
         for (uint32_t chapter_no = 0; chapter_no < ti->chapter_count; chapter_no++)
         {
             char title_buf[PATH_MAX + 1];
-            string origfile;
+            std::string origfile;
             struct stat st;
 
             //        sprintf(title_buf, "index%c%02d duration %02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 " chapters %3d angles %2u clips %3u (playlist %05d.mpls) V %d A %-2d PG %-2d IG %-2d SV %d SA %d.%s",
@@ -89,7 +89,7 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
                                     ((ti->chapters[chapter_no].duration / 90000) % 60),
                     params.m_format[0].m_desttype.c_str()); // can safely assume this is a video format
 
-            string filename(title_buf);
+            std::string filename(title_buf);
 
             origfile = path + filename;
 
@@ -124,9 +124,9 @@ int parse_bluray(const string & path, const struct stat * statbuf, void * buf, f
 }
 
 // Returns -errno or number or titles on BLURAY
-int check_bluray(const string & _path, void *buf, fuse_fill_dir_t filler)
+int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
-    string path(_path);
+    std::string path(_path);
     struct stat st;
     int res = 0;
 

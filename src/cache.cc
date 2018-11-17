@@ -31,8 +31,6 @@
 #define sqlite3_errstr(rc)  ""
 #endif // HAVE_SQLITE_ERRSTR
 
-using namespace std;
-
 Cache::Cache() :
     m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP),
     m_cacheidx_db(nullptr),
@@ -370,7 +368,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
     return success;
 }
 
-bool Cache::delete_info(const string & filename, const string & desttype)
+bool Cache::delete_info(const std::string & filename, const std::string & desttype)
 {
     int ret;
     bool success = true;
@@ -441,8 +439,7 @@ void Cache::close_index()
     sqlite3_shutdown();
 }
 
-//Cache_Entry* Cache::create_entry(const string & filename, const string & desttype)
-Cache_Entry* Cache::create_entry(LPCVIRTUALFILE virtualfile, const string & desttype)
+Cache_Entry* Cache::create_entry(LPCVIRTUALFILE virtualfile, const std::string & desttype)
 {
 //    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
     Cache_Entry* cache_entry = new Cache_Entry(this, virtualfile);
@@ -514,7 +511,7 @@ bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
         return true;
     }
 
-    string filename((*cache_entry)->filename());
+    std::string filename((*cache_entry)->filename());
     if (delete_entry(cache_entry, flags))
     {
         Logging::trace(filename, "Freed cache entry.");
@@ -535,7 +532,7 @@ bool Cache::prune_expired()
         return true;
     }
 
-    vector<cache_key_t> keys;
+    std::vector<cache_key_t> keys;
     sqlite3_stmt * stmt;
     time_t now = time(nullptr);
     char sql[1024];
@@ -549,12 +546,12 @@ bool Cache::prune_expired()
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
-    while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
+    while ((ret = sqlite3_step(stmt)) == SQLITE_ROW)
     {
         const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
-        keys.push_back(make_pair(filename, desttype));
+        keys.push_back(std::make_pair(filename, desttype));
 
         Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))));
     }
@@ -563,7 +560,7 @@ bool Cache::prune_expired()
 
     if (ret == SQLITE_DONE)
     {
-        for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+        for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
         {
             const cache_key_t & key = *it;
             Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.first, key.second);
@@ -600,8 +597,8 @@ bool Cache::prune_cache_size()
         return true;
     }
 
-    vector<cache_key_t> keys;
-    vector<size_t> filesizes;
+    std::vector<cache_key_t> keys;
+    std::vector<size_t> filesizes;
     sqlite3_stmt * stmt;
     const char * sql;
 
@@ -621,7 +618,7 @@ bool Cache::prune_cache_size()
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
         size_t size = static_cast<size_t>(sqlite3_column_int64(stmt, 2));
 
-        keys.push_back(make_pair(filename, desttype));
+        keys.push_back(std::make_pair(filename, desttype));
         filesizes.push_back(size);
         total_size += size;
     }
@@ -634,7 +631,7 @@ bool Cache::prune_cache_size()
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+            for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
             {
                 const cache_key_t & key = *it;
 
@@ -694,8 +691,8 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
     Logging::trace(m_cacheidx_file, "%1 disk space before prune.", format_size(free_bytes));
     if (free_bytes < params.m_min_diskspace + predicted_filesize)
     {
-        vector<cache_key_t> keys;
-        vector<size_t> filesizes;
+        std::vector<cache_key_t> keys;
+        std::vector<size_t> filesizes;
         sqlite3_stmt * stmt;
         const char * sql;
 
@@ -704,13 +701,13 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
         int ret = 0;
-        while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
+        while ((ret = sqlite3_step(stmt)) == SQLITE_ROW)
         {
             const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
             const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
             size_t size = static_cast<size_t>(sqlite3_column_int64(stmt, 2));
 
-            keys.push_back(make_pair(filename, desttype));
+            keys.push_back(std::make_pair(filename, desttype));
             filesizes.push_back(size);
         }
 
@@ -719,7 +716,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+            for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
             {
                 const cache_key_t & key = *it;
 
@@ -780,7 +777,7 @@ bool Cache::clear()
 
     lock();
 
-    vector<cache_key_t> keys;
+    std::vector<cache_key_t> keys;
     sqlite3_stmt * stmt;
     const char * sql;
 
@@ -794,14 +791,14 @@ bool Cache::clear()
         const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
-        keys.push_back(make_pair(filename, desttype));
+        keys.push_back(std::make_pair(filename, desttype));
     }
 
     Logging::trace(m_cacheidx_file, "Clearing all %1 entries from cache...", keys.size());
 
     if (ret == SQLITE_DONE)
     {
-        for (vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+        for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
         {
             const cache_key_t & key = *it;
 
@@ -841,18 +838,18 @@ void Cache::unlock()
     pthread_mutex_unlock(&m_mutex);
 }
 
-bool Cache::remove_cachefile(const string & filename, const string & desttype)
+bool Cache::remove_cachefile(const std::string & filename, const std::string & desttype)
 {
-    string cachefile;
+    std::string cachefile;
 
     Buffer::make_cachefile_name(cachefile, filename, desttype);
 
     return Buffer::remove_file(cachefile);
 }
 
-string Cache::expanded_sql(sqlite3_stmt *pStmt)
+std::string Cache::expanded_sql(sqlite3_stmt *pStmt)
 {
-    string sql;
+    std::string sql;
 #ifdef HAVE_SQLITE_EXPANDED_SQL
     char * p = sqlite3_expanded_sql(pStmt);
     sql = p;

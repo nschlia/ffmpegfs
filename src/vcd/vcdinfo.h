@@ -14,39 +14,37 @@
 
 #include <string>
 
-using namespace std;
-
 class VcdInfo
 {
 public:
     explicit VcdInfo();
     virtual ~VcdInfo();
 
-    void                clear();
-    int                 load_file(const string & path);
+    void                    clear();
+    int                     load_file(const std::string & path);
 
-    const time_t  &     get_file_date() const;
-    int64_t             get_disk_size() const;
-    const string   &    get_id() const;
-    int                 get_type() const;
-    string              get_type_str() const;
-    int                 get_profile_tag() const;
-    string              get_profile_tag_str() const;
-    const string   &    get_album_id() const;
-    int                 get_number_of_cds() const;
-    int                 get_cd_number() const;
+    const time_t  &         get_file_date() const;
+    int64_t                 get_disk_size() const;
+    const std::string   &    get_id() const;
+    int                     get_type() const;
+    std::string             get_type_str() const;
+    int                     get_profile_tag() const;
+    std::string              get_profile_tag_str() const;
+    const std::string   &    get_album_id() const;
+    int                     get_number_of_cds() const;
+    int                     get_cd_number() const;
 
 protected:
     // Common data
-    string              m_disk_path;        // Path to disk
-    time_t              m_file_date;        // File date
-    string              m_id;               // ID für die CD.
-    int                 m_type;             // Type der CD.
-    int                 m_profile_tag;      // System Profile Tag.
+    std::string             m_disk_path;        // Path to disk
+    time_t                  m_file_date;        // File date
+    std::string             m_id;               // ID für die CD.
+    int                     m_type;             // Type der CD.
+    int                     m_profile_tag;      // System Profile Tag.
     // INFO.XXX data
-    string              m_album_id;         // Album ID
-    int                 m_number_of_cds;    // Number of CDs in set
-    int                 m_cd_number;        // Number of this CD in set
+    std::string             m_album_id;         // Album ID
+    int                     m_number_of_cds;    // Number of CDs in set
+    int                     m_cd_number;        // Number of this CD in set
 };
 
 #endif // VCDINFO_H

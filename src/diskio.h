@@ -44,7 +44,7 @@ public:
     virtual void    close();
 
 protected:
-    virtual int     openX(const string & filename);
+    virtual int     openX(const std::string & filename);
 
 protected:
     FILE *          m_fpi;

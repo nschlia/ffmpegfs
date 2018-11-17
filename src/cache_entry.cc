@@ -25,8 +25,6 @@
 
 #include <string.h>
 
-using namespace std;
-
 //Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
 Cache_Entry::Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile)
     : m_owner(owner)
@@ -266,7 +264,7 @@ size_t Cache_Entry::size() const
         {
             size_t current_size = m_buffer->buffer_watermark();
 
-            return max(current_size, m_cache_info.m_predicted_filesize);
+            return std::max(current_size, m_cache_info.m_predicted_filesize);
         }
     }
 }
@@ -296,7 +294,7 @@ bool Cache_Entry::decode_timeout() const
     return (((time(nullptr) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && m_ref_count <= 1);
 }
 
-const string & Cache_Entry::filename() const
+const std::string & Cache_Entry::filename() const
 {
     return m_cache_info.m_filename;
 }

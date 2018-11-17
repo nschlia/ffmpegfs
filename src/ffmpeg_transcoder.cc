@@ -1247,8 +1247,8 @@ int FFMPEG_Transcoder::init_resampler()
             m_in.m_audio.m_pCodec_ctx->sample_rate != m_out.m_audio.m_pCodec_ctx->sample_rate ||
             m_in.m_audio.m_pCodec_ctx->channels != m_out.m_audio.m_pCodec_ctx->channels)
     {
-        string in_sample_format(av_get_sample_fmt_name(m_in.m_audio.m_pCodec_ctx->sample_fmt));
-        string out_sample_format(av_get_sample_fmt_name(m_out.m_audio.m_pCodec_ctx->sample_fmt));
+        std::string in_sample_format(av_get_sample_fmt_name(m_in.m_audio.m_pCodec_ctx->sample_fmt));
+        std::string out_sample_format(av_get_sample_fmt_name(m_out.m_audio.m_pCodec_ctx->sample_fmt));
         int ret;
 
         Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / bit rate %3 -> %4.",
@@ -3088,7 +3088,7 @@ void FFMPEG_Transcoder::close()
 {
     int nAudioSamplesLeft = 0;
     size_t nVideoFramesLeft = 0;
-    string file;
+    std::string file;
     bool bClosed = false;
 
     if (m_pAudioFifo)

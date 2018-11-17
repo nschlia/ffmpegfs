@@ -27,10 +27,8 @@
 
 #include <string>
 
-using namespace std;
-
-int parse_bluray(const string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
-int check_bluray(const string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
+int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+int check_bluray(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBBLURAY
 #endif // BLURAYPARSER_H

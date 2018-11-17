@@ -282,11 +282,35 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-static int get_bitrate(const std::string & arg, BITRATE *value);
-static int get_samplerate(const std::string & arg, unsigned int *value);
-static int get_time(const std::string & arg, time_t *value);
-static int get_size(const std::string & arg, size_t *value);
+typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;
+
+static const PROFILE_MAP profile_map =
+{
+    { "NONE",           PROFILE_NONE },
+
+    // MP4
+
+    { "FF",             PROFILE_MP4_FF },
+    { "EDGE",           PROFILE_MP4_EDGE },
+    { "IE",             PROFILE_MP4_IE },
+    { "CHROME",         PROFILE_MP4_CHROME },
+    { "SAFARI",         PROFILE_MP4_SAFARI },
+    { "OPERA",          PROFILE_MP4_OPERA },
+    { "MAXTHON",        PROFILE_MP4_MAXTHON },
+
+    // WEBM
+};
+
+template <typename T>
+static typename std::map<std::string, T>::const_iterator search_by_value(const std::map<std::string, T> & mapOfWords, T value);
+
+static int get_bitrate(const std::string & arg, BITRATE *bitrate);
+static int get_samplerate(const std::string & arg, unsigned int *samplerate);
+static int get_time(const std::string & arg, time_t *time);
+static int get_size(const std::string & arg, size_t *size);
 static int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
+static int get_profile(const std::string & arg, PROFILE *profile);
+static std::string get_profile_text(PROFILE profile);
 static int get_value(const std::string & arg, std::string *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
@@ -489,11 +513,27 @@ static void usage(char *name)
           "\n", stdout);
 }
 
+template <typename T>
+static typename std::map<std::string, T, comp>::const_iterator search_by_value(const std::map<std::string, T, comp> & mapOfWords, T value)
+{
+    // Iterate through all elements in map and search for the passed element
+    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.begin();
+    while (it != mapOfWords.end())
+    {
+        if(it->second == value)
+        {
+            return it;
+        }
+        it++;
+    }
+    return mapOfWords.end();
+}
+
 // Get bitrate:
 // In bit/s:  #  or #bps
 // In kbit/s: #M or #Mbps
 // In Mbit/s: #M or #Mbps
-static int get_bitrate(const std::string & arg, BITRATE *value)
+static int get_bitrate(const std::string & arg, BITRATE *bitrate)
 {
     size_t pos = arg.find('=');
 
@@ -511,7 +551,7 @@ static int get_bitrate(const std::string & arg, BITRATE *value)
         }
         else if (!reti)
         {
-            *value = static_cast<BITRATE>(atol(data.c_str()));
+            *bitrate = static_cast<BITRATE>(atol(data.c_str()));
             return 0;   // OK
         }
 
@@ -524,7 +564,7 @@ static int get_bitrate(const std::string & arg, BITRATE *value)
         }
         else if (!reti)
         {
-            *value = static_cast<BITRATE>(atof(data.c_str()) * 1000);
+            *bitrate = static_cast<BITRATE>(atof(data.c_str()) * 1000);
             return 0;   // OK
         }
 
@@ -537,7 +577,7 @@ static int get_bitrate(const std::string & arg, BITRATE *value)
         }
         else if (!reti)
         {
-            *value = static_cast<BITRATE>(atof(data.c_str()) * 1000000);
+            *bitrate = static_cast<BITRATE>(atof(data.c_str()) * 1000000);
             return 0;   // OK
         }
 
@@ -554,7 +594,7 @@ static int get_bitrate(const std::string & arg, BITRATE *value)
 // Get sample rate:
 // In Hz:  #  or #Hz
 // In kHz: #K or #KHz
-static int get_samplerate(const std::string & arg, unsigned int * value)
+static int get_samplerate(const std::string & arg, unsigned int * samplerate)
 {
     size_t pos = arg.find('=');
 
@@ -572,7 +612,7 @@ static int get_samplerate(const std::string & arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atol(data.c_str()));
+            *samplerate = static_cast<unsigned int>(atol(data.c_str()));
             return 0;   // OK
         }
 
@@ -585,7 +625,7 @@ static int get_samplerate(const std::string & arg, unsigned int * value)
         }
         else if (!reti)
         {
-            *value = static_cast<unsigned int>(atof(data.c_str()) * 1000);
+            *samplerate = static_cast<unsigned int>(atof(data.c_str()) * 1000);
             return 0;   // OK
         }
 
@@ -605,7 +645,7 @@ static int get_samplerate(const std::string & arg, unsigned int * value)
 // Hours:   #h
 // Days:    #d
 // Weeks:   #w
-static int get_time(const std::string & arg, time_t *value)
+static int get_time(const std::string & arg, time_t *time)
 {
     size_t pos = arg.find('=');
 
@@ -623,7 +663,7 @@ static int get_time(const std::string & arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atol(data.c_str()));
+            *time = static_cast<time_t>(atol(data.c_str()));
             return 0;   // OK
         }
 
@@ -636,7 +676,7 @@ static int get_time(const std::string & arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(data.c_str()) * 60);
+            *time = static_cast<time_t>(atof(data.c_str()) * 60);
             return 0;   // OK
         }
 
@@ -649,7 +689,7 @@ static int get_time(const std::string & arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60);
+            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60);
             return 0;   // OK
         }
 
@@ -662,7 +702,7 @@ static int get_time(const std::string & arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24);
+            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24);
             return 0;   // OK
         }
 
@@ -675,7 +715,7 @@ static int get_time(const std::string & arg, time_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24 * 7);
+            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24 * 7);
             return 0;   // OK
         }
 
@@ -695,7 +735,7 @@ static int get_time(const std::string & arg, time_t *value)
 // In MBytes: #B or #MB
 // In GBytes: #G or #GB
 // In TBytes: #T or #TB
-static int get_size(const std::string & arg, size_t *value)
+static int get_size(const std::string & arg, size_t *size)
 {
     size_t pos = arg.find('=');
 
@@ -713,7 +753,7 @@ static int get_size(const std::string & arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atol(data.c_str()));
+            *size = static_cast<size_t>(atol(data.c_str()));
             return 0;   // OK
         }
 
@@ -726,7 +766,7 @@ static int get_size(const std::string & arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(data.c_str()) * 1024);
+            *size = static_cast<size_t>(atof(data.c_str()) * 1024);
             return 0;   // OK
         }
 
@@ -739,7 +779,7 @@ static int get_size(const std::string & arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024);
+            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -752,7 +792,7 @@ static int get_size(const std::string & arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024);
+            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -765,7 +805,7 @@ static int get_size(const std::string & arg, size_t *value)
         }
         else if (!reti)
         {
-            *value = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024 * 1024);
+            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -779,6 +819,7 @@ static int get_size(const std::string & arg, size_t *value)
     return -1;
 }
 
+// Read destination type
 int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format * audio_format)
 {
     // TODO: evaluate
@@ -815,7 +856,44 @@ int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegf
     return -1;
 }
 
-int get_value(const std::string & arg, std::string *value)
+// Read profile:
+static int get_profile(const std::string & arg, PROFILE *profile)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string data(arg.substr(pos + 1));
+
+        auto it = profile_map.find(data);
+
+        if (it == profile_map.end())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid profile: %s\n", data.c_str());
+            return -1;
+        }
+
+        *profile = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing profile string\n");
+
+    return -1;
+}
+
+// Get profile text
+static std::string get_profile_text(PROFILE profile)
+{
+    PROFILE_MAP::const_iterator it = search_by_value(profile_map, profile);
+    if (it != profile_map.end())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+static int get_value(const std::string & arg, std::string *value)
 {
     size_t pos = arg.find('=');
 

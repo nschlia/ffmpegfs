@@ -101,9 +101,6 @@ void        ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 
 int         init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog);
 
-int         get_profile(const std::string & arg, PROFILE *value);
-std::string get_profile_text(PROFILE value);
-
 void        transcoder_cache_path(std::string & path);
 int         transcoder_init(void);
 void        transcoder_free(void);

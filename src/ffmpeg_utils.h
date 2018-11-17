@@ -273,4 +273,11 @@ std::string         sanitise_name(const std::string & filename);
 
 bool                is_album_art(AVCodecID codec_id);
 
+// Make find case insensitive
+struct comp {
+    bool operator() (const std::string& lhs, const std::string& rhs) const {
+        return strcasecmp(lhs, rhs) < 0;
+    }
+};
+
 #endif

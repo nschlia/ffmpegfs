@@ -725,7 +725,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 
 int init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog)
 {
-    static const std::map<std::string, Logging::level> level_map =
+    static const std::map<std::string, Logging::level, comp> level_map =
     {
         { "ERROR",      ERROR },
         { "WARNING",    WARNING },
@@ -738,77 +738,9 @@ int init_logging(const std::string &logfile, const std::string & max_level, int 
 
     if (it == level_map.end())
     {
-        std::fprintf(stderr, "Invalid logging level std::string: %s\n", max_level.c_str());
+        std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
         return false;
     }
 
     return Logging::init_logging(logfile, it->second, to_stderr, to_syslog);
-}
-
-static const std::map<std::string, PROFILE> profile_map =
-{
-    { "NONE",           PROFILE_NONE },
-
-    // MP4
-
-    { "FF",             PROFILE_MP4_FF },
-    { "EDGE",           PROFILE_MP4_EDGE },
-    { "IE",             PROFILE_MP4_IE },
-    { "CHROME",         PROFILE_MP4_CHROME },
-    { "SAFARI",         PROFILE_MP4_SAFARI },
-    { "OPERA",          PROFILE_MP4_OPERA },
-    { "MAXTHON",        PROFILE_MP4_MAXTHON },
-
-    // WEBM
-};
-
-int get_profile(const std::string & arg, PROFILE *value)
-{
-    size_t pos = arg.find('=');
-
-    if (pos != std::string::npos)
-    {
-        std::string data(arg.substr(pos + 1));
-
-        auto it = profile_map.find(data);
-
-        if (it == profile_map.end())
-        {
-            std::fprintf(stderr, "Invalid profile: %s\n", data.c_str());
-            return -1;
-        }
-
-        *value = it->second;
-
-        return 0;
-    }
-
-    std::fprintf(stderr, "Missing profile std::string\n");
-
-    return -1;
-}
-
-static std::map<std::string, PROFILE>::const_iterator search_by_value(const std::map<std::string, PROFILE> & mapOfWords, PROFILE value)
-{
-    // Iterate through all elements in map and search for the passed element
-    std::map<std::string, PROFILE>::const_iterator it = mapOfWords.begin();
-    while (it != mapOfWords.end())
-    {
-        if(it->second == value)
-        {
-            return it;
-        }
-        it++;
-    }
-    return mapOfWords.end();
-}
-
-std::string get_profile_text(PROFILE value)
-{
-    std::map<std::string, PROFILE>::const_iterator it = search_by_value(profile_map, value);
-    if (it != profile_map.end())
-    {
-        return it->first;
-    }
-    return "INVALID";
 }

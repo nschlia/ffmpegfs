@@ -180,6 +180,16 @@ typedef enum _tagPROFILE
 
 } PROFILE;
 
+typedef enum _tagLEVEL
+{
+    LEVEL_NONE = -1,
+    // Prores profiles
+    LEVEL_PRORES_PROXY = 0,
+    LEVEL_PRORES_LT,
+    LEVEL_PRORES_STANDARD,
+    LEVEL_PRORES_HQ,
+} LEVEL;
+
 typedef struct ffmpegfs_format
 {
     ffmpegfs_format()

@@ -68,6 +68,7 @@ ffmpegfs_params::ffmpegfs_params()
     , m_mountpath("")                           // required parameter
 
     , m_profile(PROFILE_NONE)                   // default: no profile
+    , m_level(LEVEL_NONE)                       // default: no level
 
     // Format
     , m_audiobitrate(128*1024)                  // default: 128 kBit
@@ -191,6 +192,7 @@ enum
     KEY_CACHEPATH,
     KEY_CACHE_MAINTENANCE,
     KEY_PROFILE,
+    KEY_LEVEL,
     KEY_LOG_MAXLEVEL,
     KEY_LOGFILE
 };
@@ -204,6 +206,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("desttype=%s",                 KEY_DESTTYPE),
     FUSE_OPT_KEY("--profile=%s",                KEY_PROFILE),
     FUSE_OPT_KEY("profile=%s",                  KEY_PROFILE),
+    FUSE_OPT_KEY("--level=%s",                  KEY_LEVEL),
+    FUSE_OPT_KEY("level=%s",                    KEY_LEVEL),
 
     // Audio
     FUSE_OPT_KEY("--audiobitrate=%s",           KEY_AUDIO_BITRATE),
@@ -283,6 +287,7 @@ static struct fuse_opt ffmpegfs_opts[] =
 };
 
 typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;
+typedef std::map<std::string, LEVEL, comp> LEVEL_MAP;
 
 static const PROFILE_MAP profile_map =
 {
@@ -301,6 +306,15 @@ static const PROFILE_MAP profile_map =
     // WEBM
 };
 
+static const LEVEL_MAP level_map =
+{
+    // ProRes
+    { "PROXY",          LEVEL_PRORES_PROXY },
+    { "LT",             LEVEL_PRORES_LT },
+    { "STANDARD",       LEVEL_PRORES_STANDARD },
+    { "HQ",             LEVEL_PRORES_HQ },
+};
+
 template <typename T>
 static typename std::map<std::string, T>::const_iterator search_by_value(const std::map<std::string, T> & mapOfWords, T value);
 
@@ -311,23 +325,26 @@ static int get_size(const std::string & arg, size_t *size);
 static int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
 static int get_profile(const std::string & arg, PROFILE *profile);
 static std::string get_profile_text(PROFILE profile);
+static int get_level(const std::string & arg, LEVEL *level);
+static std::string get_level_text(LEVEL level);
 static int get_value(const std::string & arg, std::string *value);
 
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
+static int set_defaults(void);
 static void print_params(void);
 static void usage(char *name);
 
 static void usage(char *name)
 {
     std::printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
-    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG, WEBM, MOV, AIFF, OPUS or WAV upon access.\n"
+    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG, WEBM, MOV, PRORES, AIFF, OPUS or WAV upon access.\n"
           "\n"
           "Encoding options:\n"
           "\n"
           "    --desttype=TYPE, -o desttype=TYPE\n"
           "                           Select destination format. 'TYPE' can currently be\n"
-          "                           MP4, MP3, OGG, WEBM, MOV, AIFF, OPUS or WAV. To stream videos,\n"
-          "                           MP4, OGG, WEBM or MOV must be selected.\n"
+          "                           MP4, MP3, OGG, WEBM, MOV, PRORES, AIFF, OPUS or WAV. To stream videos,\n"
+          "                           MP4, OGG, WEBM or MOV, PRORES must be selected.\n"
           "                           To use the smart transcoding feature, specify a video and audio file\n"
           "                           type, separated by a \"+\" sign. For example, --desttype=mov+aiff will\n"
           "                           convert video files to Apple Quicktime MOV and audio only files to\n"
@@ -344,6 +361,13 @@ static void usage(char *name)
           "                           OPERA    Opera\n"
           "                           MAXTHON  Maxthon\n"
           "                           Default: NONE\n"
+          "    --level=NAME, -o level=NAME\n"
+          "                           Set level for output if available. Currently selectable:\n"
+          "                           Apple ProRes:\n"
+          "                           PROXY    Proxy – apco\n"
+          "                           LT       LT – apcs\n"
+          "                           STANDARD standard – apcn\n"
+          "                           HQ       HQ - apch\n"
           "\n", stdout);
     fputs("Audio Options:\n"
           "\n"
@@ -362,9 +386,9 @@ static void usage(char *name)
           " * n kbit/s: #M or #Mbps\n"
           " * n Mbit/s: #M or #Mbps\n"
           "\n"
-          "SAMPLERATE can be defined as...n"
-          " * In Hz:  #  or #Hzn"
-          " * In kHz: #K or #KHzn"
+          "SAMPLERATE can be defined as...\n"
+          " * In Hz:  #  or #Hz\n"
+          " * In kHz: #K or #KHz\n"
           "\n", stdout);
     fputs("Video Options:\n"
           "\n"
@@ -893,6 +917,45 @@ static std::string get_profile_text(PROFILE profile)
     }
     return "INVALID";
 }
+
+// Read level
+static int get_level(const std::string & arg, LEVEL *level)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string data(arg.substr(pos + 1));
+
+        auto it = level_map.find(data);
+
+        if (it == level_map.end())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid level: %s\n", data.c_str());
+            return -1;
+        }
+
+        *level = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing level string\n");
+
+    return -1;
+}
+
+// Get level text
+static std::string get_level_text(LEVEL level)
+{
+    LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
+    if (it != level_map.end())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
 static int get_value(const std::string & arg, std::string *value)
 {
     size_t pos = arg.find('=');
@@ -1002,6 +1065,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_profile(arg, &params.m_profile);
     }
+    case KEY_LEVEL:
+    {
+        return get_level(arg, &params.m_level);
+    }
     case KEY_AUDIO_BITRATE:
     {
         return get_bitrate(arg, &params.m_audiobitrate);
@@ -1067,6 +1134,19 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     return 1;
 }
 
+static int set_defaults(void)
+{
+    if (params.m_format[0].m_video_codecid == AV_CODEC_ID_PRORES)
+    {
+        if (params.m_level == LEVEL_NONE)
+        {
+            params.m_level = LEVEL_PRORES_HQ;
+        }
+    }
+
+    return 0;
+}
+
 static void print_params(void)
 {
     std::string cachepath;
@@ -1080,47 +1160,49 @@ static void print_params(void)
                                          "Audio File Type   : %4\n"
                                          "Video File Type   : %5\n"
                                          "Profile           : %6\n"
+                                         "Level             : %7\n"
                                          "\nAudio\n\n"
-                                         "Audio Codecs      : %7+%8\n"
-                                         "Audio Bitrate     : %9\n"
-                                         "Audio Sample Rate : %10\n"
+                                         "Audio Codecs      : %8+%9\n"
+                                         "Audio Bitrate     : %10\n"
+                                         "Audio Sample Rate : %11\n"
                                          "\nVideo\n\n"
-                                         "Video Size/Pixels : width=%11 height=%12\n"
+                                         "Video Size/Pixels : width=%12 height=%13\n"
                #ifndef USING_LIBAV
-                                         "Deinterlace       : %13\n"
+                                         "Deinterlace       : %14\n"
                #endif  // !USING_LIBAV
-                                         "Remove Album Arts : %14\n"
-                                         "Video Codec       : %15\n"
-                                         "Video Bitrate     : %16\n"
+                                         "Remove Album Arts : %15\n"
+                                         "Video Codec       : %16\n"
+                                         "Video Bitrate     : %17\n"
                                          "\nVirtual Script\n\n"
-                                         "Create script     : %17\n"
-                                         "Script file name  : %18\n"
-                                         "Input file        : %19\n"
+                                         "Create script     : %18\n"
+                                         "Script file name  : %19\n"
+                                         "Input file        : %20\n"
                                          "\nLogging\n\n"
-                                         "Max. Log Level    : %20\n"
-                                         "Log to stderr     : %21\n"
-                                         "Log to syslog     : %22\n"
-                                         "Logfile           : %23\n"
+                                         "Max. Log Level    : %21\n"
+                                         "Log to stderr     : %22\n"
+                                         "Log to syslog     : %23\n"
+                                         "Logfile           : %24\n"
                                          "\nCache Settings\n\n"
-                                         "Expiry Time       : %24\n"
-                                         "Inactivity Suspend: %25\n"
-                                         "Inactivity Abort  : %26\n"
-                                         "Pre-buffer size   : %27\n"
-                                         "Max. Cache Size   : %28\n"
-                                         "Min. Disk Space   : %29\n"
-                                         "Cache Path        : %30\n"
-                                         "Disable Cache     : %31\n"
-                                         "Maintenance Timer : %32\n"
-                                         "Clear Cache       : %33\n"
+                                         "Expiry Time       : %25\n"
+                                         "Inactivity Suspend: %26\n"
+                                         "Inactivity Abort  : %27\n"
+                                         "Pre-buffer size   : %28\n"
+                                         "Max. Cache Size   : %29\n"
+                                         "Min. Disk Space   : %30\n"
+                                         "Cache Path        : %31\n"
+                                         "Disable Cache     : %32\n"
+                                         "Maintenance Timer : %33\n"
+                                         "Clear Cache       : %34\n"
                                          "\nVarious Options\n\n"
-                                         "Max. Threads      : %34\n"
-                                         "Decoding Errors   : %35\n",
+                                         "Max. Threads      : %35\n"
+                                         "Decoding Errors   : %36\n",
                    params.m_basepath,
                    params.m_mountpath,
                    params.smart_transcode() ? "yes" : "no",
                    params.m_format[1].m_desttype,
             params.m_format[0].m_desttype,
             get_profile_text(params.m_profile),
+            get_level_text(params.m_level),
             get_codec_name(params.m_format[0].m_audio_codecid, true),
             get_codec_name(params.m_format[1].m_audio_codecid, true),
             format_bitrate(params.m_audiobitrate),
@@ -1278,6 +1360,11 @@ int main(int argc, char *argv[])
     if (stat(params.m_mountpath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
     {
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
+        return 1;
+    }
+
+    if (set_defaults())
+    {
         return 1;
     }
 

@@ -14,8 +14,8 @@ News
 * **Work on release 1.6 now in progress.**
 * Added MOV target format *(incomplete, work in progress)*.
 * Added AIFF target format *(incomplete, work in progress)*.
-* Added Apple Prores target format *(incomplete, work in progress)*.
-* Added smart transcoding feature, see "Smart Transcoding".
+* Added Apple Prores target format.
+* Added smart transcoding feature, see "Smart Transcoding" *(incomplete, work in progress)*.
 
 About
 -----
@@ -32,6 +32,7 @@ Supported output formats:
 * WebM (audio & video)
 * OGG (audio & video)
 * MOV (audio & video)
+* Prores (a MOV container for Apple Prores video & PCM audio)
 * Opus (audio only)
 * MP3 (audio only)
 * WAV (audio only)

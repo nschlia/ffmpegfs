@@ -2,8 +2,16 @@ ffmpegfs NEWS
 
 Important changes in 1.6 (2018-06-XX) UNRELEASED
 
+* Feature: Made all parameters like --profile case insensitive.
+* Feature: Added Apple MOV, Apple Prores and Apple AIFF formats.
+* Feature: Enable "Smart Transcoding": To enable, specify --desttype=AUDIO+VIDEO, e.g.
+           --desttype=MOV+AIFF will automatically convert video files to MOV and audio
+           to AIFF.
+* Feature: New parameter --level allows selecting a profile for Prores: proxy, lt, standard
+           or hq.
 * Feature:
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
+* Bugfix: Fixed memory leak when using the deinterlace option.
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-08)
@@ -17,9 +25,7 @@ Important changes in 1.5 (2018-06-08)
 * Feature: Check if sample rate or sample format is supported by audio codec and change if
            necessary. Avoid transcode fails e.g. if 44.1KHz sampling rate is requested but
            not supported (e.g. OPUS only supports 8K, 16K, 24K or 48K). Select nearest
-           supported sample rate or sample format.
-* Bugfix: 
-* Fix deprecation: 
+           supported sample rate or sample format.z
 
 Important changes in 1.4 (2018-05-30)
 

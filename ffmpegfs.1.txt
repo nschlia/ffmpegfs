@@ -46,6 +46,14 @@ Mount IN_DIR on OUT_DIR, converting audio/video files to *MP4*, *MP3*, *OGG*, *W
     OPERA    Opera
     MAXTHON  Maxthon
     Defaults to NONE
+--level=NAME, -o level=NAME
+    Set level for output if available. Currently selectable:
+    Apple ProRes:
+    PROXY    Proxy – apco
+    LT       LT – apcs
+    STANDARD standard – apcn
+    HQ       HQ - apch
+    Defaults to HQ
 
 === Audio Options ===
 *--audiobitrate*=BITRATE, *-o audiobitrate*=BITRATE::

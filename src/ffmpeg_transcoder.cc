@@ -759,12 +759,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
         if (codec_id == AV_CODEC_ID_PRORES)
         {
-            // TODO: Parameter einbauen
             //        0=‘proxy’,
             //        1=‘lt’,
             //        2=‘standard’,
             //        3=‘hq’
-            output_codec_ctx->profile = 2;
+            output_codec_ctx->profile = params.m_profile;
         }
 
         // Set duration as hint for muxer

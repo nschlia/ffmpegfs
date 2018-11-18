@@ -788,7 +788,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate, &output_codec_ctx->bit_rate))
         {
             // Limit sample rate
-            Logging::trace(destname(), "Limiting video bit rate FROM %1 to %2.",
+            Logging::trace(destname(), "Limiting video bit rate from %1 to %2.",
                            format_bitrate(orig_bit_rate),
                            format_bitrate(output_codec_ctx->bit_rate));
         }
@@ -1250,7 +1250,7 @@ int FFMPEG_Transcoder::init_resampler()
         std::string out_sample_format(av_get_sample_fmt_name(m_out.m_audio.m_pCodec_ctx->sample_fmt));
         int ret;
 
-        Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / bit rate %3 -> %4.",
+        Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / sample rate %3 -> %4.",
                       in_sample_format,
                       out_sample_format,
                       format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate),

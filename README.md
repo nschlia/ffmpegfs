@@ -14,7 +14,7 @@ News
 * **Work on release 1.6 now in progress.**
 * Added MOV target format *(incomplete, work in progress)*.
 * Added AIFF target format *(incomplete, work in progress)*.
-* Added Apple Prores target format.
+* Added Apple Prores target format *(please read the "A few words on Prores" section)*.
 * Added smart transcoding feature, see "Smart Transcoding" *(incomplete, work in progress)*.
 
 About
@@ -146,6 +146,21 @@ type, separated by a "+" sign. For example, --desttype=mov+aiff will
 convert video files to Apple Quicktime MOV and audio only files to
 AIFF. This can be handy if the results are consumed by some Apple Editing
 software.
+
+A FEW WORDS ON PRORES
+---------------------
+
+Apple's Prores is a so-called intermediate format, intended for post-production
+editing. It combines highest possible quality while still saving some disk space
+and not requiring high performance disk systems. On the other hand this means
+that Prores encoded videos will become quite large - e.g. a 60 minute video may
+require up to 25 GB.
+
+It is not for target audience use, and certainly not suitable for internet streamimng.
+
+Also please keep in mind that when using lossy source formats the quality will not
+get better, but the files can be fed into software like Final Cut Pro which only
+accepts a small number of input formats.
 
 MP4 FORMAT PROFILE
 ------------------

@@ -156,7 +156,7 @@ and not requiring high performance disk systems. On the other hand this means
 that Prores encoded videos will become quite large - e.g. a 60 minute video may
 require up to 25 GB.
 
-It is not for target audience use, and certainly not suitable for internet streamimng.
+It is not for target audience use, and certainly not suitable for internet streaming.
 
 Also please keep in mind that when using lossy source formats the quality will not
 get better, but the files can be fed into software like Final Cut Pro which only

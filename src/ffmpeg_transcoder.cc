@@ -61,6 +61,84 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
+const FFMPEG_Transcoder::PRORES_BITRATE FFMPEG_Transcoder::m_prores_bitrate[] =
+{
+    // SD
+    {	720,	486,	{ {	24,	0 }                   },	{	10,     23,     34,     50,     75,     113     }	},
+    {	720,	486,	{ {	60,	1 },	{   30,	0 }   },	{	12,     29,     42,     63,     94,     141     }	},
+
+    {	720,	576,	{ {	50,	1 },	{   25,	0 }   },	{	12,     28,     41,     61,     92,     138     }	},
+
+    {	960,	720,	{ {	24,	0 }                   },	{	15,     35,     50,     75,     113,	170     }	},
+    {	960,	720,	{ {	25,	0 }                   },	{	16,     36,     52,     79,     118,	177     }	},
+    {	960,	720,	{ {	30,	0 }                   },	{	19,     44,     63,     94,     141,	212     }	},
+    {	960,	720,	{ {	50,	0 }                   },	{	32,     73,     105,	157,	236,	354     }	},
+    {	960,	720,	{ {	60,	0 }                   },	{	38,     87,     126,	189,	283,	424     }	},
+    // HD
+    {	1280,	720,	{ {	24,	0 }                   },	{	18,     41,     59,     88,     132,	198     }	},
+    {	1280,	720,	{ {	25,	0 }                   },	{	19,     42,     61,     92,     138,	206     }	},
+    {	1280,	720,	{ {	30,	0 }                   },	{	23,     51,     73,     110,	165,	247     }	},
+    {	1280,	720,	{ {	50,	0 }                   },	{	38,     84,     122,	184,	275,	413     }	},
+    {	1280,	720,	{ {	60,	0 }                   },	{	45,     101,	147,	220,	330,	495     }	},
+
+    {	1280,	1080,	{ {	24,	0 }                   },	{	31,     70,     101,	151,	226,	339     }	},
+    {	1280,	1080,	{ {	60,	1 },	{   30,	0 }   },	{	38,     87,     126,	189,	283,	424     }	},
+
+    {	1440,	1080,	{ {	24,	0 }                   },	{	31,     70,     101,	151,	226,	339     }	},
+    {	1440,	1080,	{ {	50,	1 },	{   25,	0 }   },	{	32,     73,     105,	157,	236,	354     }	},
+    {	1440,	1080,	{ {	60,	1 },	{   30,	0 }   },	{	38,     87,     126,	189,	283,	424     }	},
+    // Full HD
+    {	1920,	1080,	{ {	24,	0 }                   },	{	36,     82,     117,	176,	264,	396     }	},
+    {	1920,	1080,	{ {	50,	1 },	{   25,	0 }   },	{	38,     85,     122,	184,	275,	413     }	},
+    {	1920,	1080,	{ {	60,	1 },	{   30,	0 }   },	{	45,     102,	147,	220,	330,	495     }	},
+    {	1920,	1080,	{ {	50,	0 }                   },	{	76,     170,	245,	367,	551,	826     }	},
+    {	1920,	1080,	{ {	60,	0 }                   },	{	91,     204,	293,	440,	660,	990     }	},
+    // 2K
+    {	2048,	1080,	{ {	24,	0 }                   },	{	41,     93,     134,	201,	302,	453     }	},
+    {	2048,	1080,	{ {	25,	0 }                   },	{	43,     97,     140,	210,	315,	472     }	},
+    {	2048,	1080,	{ {	30,	0 }                   },	{	52,     116,	168,	251,	377,	566     }	},
+    {	2048,	1080,	{ {	50,	0 }                   },	{	86,     194,	280,	419,	629,	944     }	},
+    {	2048,	1080,	{ {	60,	0 }                   },	{	103,	232,	335,	503,	754,	1131	}	},
+    // 2K
+    {	2048,	1556,	{ {	24,	0 }                   },	{	56,     126,	181,	272,	407,	611     }	},
+    {	2048,	1556,	{ {	25,	0 }                   },	{	58,     131,	189,	283,	425,	637     }	},
+    {	2048,	1556,	{ {	30,	0 }                   },	{	70,     157,	226,	340,	509,	764     }	},
+    {	2048,	1556,	{ {	50,	0 }                   },	{	117,	262,	377,	567,	850,	1275	}	},
+    {	2048,	1556,	{ {	60,	0 }                   },	{	140,	314,	452,	679,	1019,	1528	}	},
+    // QFHD
+    {	3840,	2160,	{ {	24,	0 }                   },	{	145,	328,	471,	707,	1061,	1591	}	},
+    {	3840,	2160,	{ {	25,	0 }                   },	{	151,	342,	492,	737,	1106,	1659	}	},
+    {	3840,	2160,	{ {	30,	0 }                   },	{	182,	410,	589,	884,	1326,	1989	}	},
+    {	3840,	2160,	{ {	50,	0 }                   },	{	303,	684,	983,	1475,	2212,	3318	}	},
+    {	3840,	2160,	{ {	60,	0 }                   },	{	363,	821,	1178,	1768,	2652,	3977	}	},
+    // 4K
+    {	4096,	2160,	{ {	24,	0 }                   },	{	155,	350,	503,	754,	1131,	1697	}	},
+    {	4096,	2160,	{ {	25,	0 }                   },	{	162,	365,	524,	786,	1180,	1769	}	},
+    {	4096,	2160,	{ {	30,	0 }                   },	{	194,	437,	629,	943,	1414,	2121	}	},
+    {	4096,	2160,	{ {	50,	0 }                   },	{	323,	730,	1049,	1573,	2359,	3539	}	},
+    {	4096,	2160,	{ {	60,	0 }                   },	{	388,	875,	1257,	1886,	2828,	4242	}	},
+    // 5K
+    {	5120,	2700,	{ {	24,	0 }                   },	{	243,	547,	786,	1178,	1768,	2652	}	},
+    {	5120,	2700,	{ {	25,	0 }                   },	{	253,	570,	819,	1229,	1843,	2765	}	},
+    {	5120,	2700,	{ {	30,	0 }                   },	{	304,	684,	982,	1473,	2210,	3314	}	},
+    {	5120,	2700,	{ {	50,	0 }                   },	{	507,	1140,	1638,	2458,	3686,	5530	}	},
+    {	5120,	2700,	{ {	60,	0 }                   },	{	608,	1367,	1964,	2946,	4419,	6629	}	},
+    // 6K
+    {	6144,	3240,	{ {	24,	0 }                   },	{	350,	788,	1131,	1697,	2545,	3818	}	},
+    {	6144,	3240,	{ {	25,	0 }                   },	{	365,	821,	1180,	1769,	2654,	3981	}	},
+    {	6144,	3240,	{ {	30,	0 }                   },	{	437,	985,	1414,	2121,	3182,	4772	}	},
+    {	6144,	3240,	{ {	50,	0 }                   },	{	730,	1643,	2359,	3539,	5308,	7962	}	},
+    {	6144,	3240,	{ {	60,	0 }                   },	{	875,	1969,	2828,	4242,	6364,	9545	}	},
+    // 8K
+    {	8192,	4320,	{ {	24,	0 }                   },	{	622,	1400,	2011,	3017,	4525,	6788	}	},
+    {	8192,	4320,	{ {	25,	0 }                   },	{	649,	1460,	2097,	3146,	4719,	7078	}	},
+    {	8192,	4320,	{ {	30,	0 }                   },	{	778,	1750,	2514,	3771,	5657,	8485	}	},
+    {	8192,	4320,	{ {	50,	0 }                   },	{	1298,	2920,	4194,	6291,	9437,	14156	}	},
+    {	8192,	4320,	{ {	60,	0 }                   },	{	1556,	3500,	5028,	7542,	11313,	16970	}	},
+    // That's it
+    {   0,     0,     {                               },	{	0 }	},
+};
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
@@ -365,7 +443,7 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     Logging::info(destname(), "Opening output file.");
 
     // Pre-allocate the predicted file size to reduce memory reallocations
-    if (!buffer->reserve(predict_filesize()))
+    if (!buffer->reserve(predicted_filesize()))
     {
         Logging::error(filename(), "Out of memory pre-allocating buffer.");
         return AVERROR(ENOMEM);
@@ -757,15 +835,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 #endif
 
-        if (codec_id == AV_CODEC_ID_PRORES)
-        {
-            //        0=‘proxy’,
-            //        1=‘lt’,
-            //        2=‘standard’,
-            //        3=‘hq’
-            output_codec_ctx->profile = params.m_profile;
-        }
-
         // Set duration as hint for muxer
         output_stream->duration                 = av_rescale_q(m_in.m_audio.m_pStream->duration, m_in.m_audio.m_pStream->time_base, output_stream->time_base);
 
@@ -860,6 +929,13 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
                 return ret;
             }
+
+            //        0=‘proxy’,
+            //        1=‘lt’,
+            //        2=‘standard’,
+            //        3=‘hq’
+            output_codec_ctx->profile = params.m_profile;
+
             break;
         }
         default:
@@ -2821,10 +2897,84 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
     return 0;
 }
 
-// Try to predict final file size.
-size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duration, BITRATE input_audio_bit_rate, int input_sample_rate, BITRATE input_video_bit_rate, bool is_video) const
+BITRATE FFMPEG_Transcoder::get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile) const
 {
-    ffmpegfs_format * current_format = params.current_format(filename);
+    unsigned int mindist;
+    int match = -1;
+
+    // Find best match resolution
+    mindist = UINT_MAX;
+    for (int i = 0; m_prores_bitrate[i].m_width; i++)
+    {
+        int x = (width - m_prores_bitrate[i].m_width);
+        int y = (height - m_prores_bitrate[i].m_height);;
+        unsigned int dist = (x * x) + (y * y);
+
+        if (dist < mindist)
+        {
+            mindist = dist;
+            match = i;
+        }
+
+        if (!dist)
+        {
+            // Exact match, won't find a better one.
+            break;
+        }
+    }
+
+    width   = m_prores_bitrate[match].m_width;
+    height  = m_prores_bitrate[match].m_height;
+
+    // Find best match framerate
+    mindist = UINT_MAX;
+    for (int i = match; width == m_prores_bitrate[i].m_width && height == m_prores_bitrate[i].m_height; i++)
+    {
+        unsigned int dist = UINT_MAX;
+        for (int j = 0; j < MAX_PRORES_FRAMERATE && m_prores_bitrate[i].m_framerate[j].m_framerate; j++)
+        {
+            int x = static_cast<int>(framerate - m_prores_bitrate[i].m_framerate[j].m_framerate);
+            int y = (interleaved - m_prores_bitrate[i].m_framerate[j].m_interleaved);
+
+            dist = (x * x) + (y * y);
+
+            if (dist < mindist)
+            {
+                mindist = dist;
+                match = i;
+            }
+
+            if (!dist)
+            {
+                // Exact match, won't find a better one.
+                break;
+            }
+        }
+
+        if (!dist)
+        {
+            // Exact match, won't find a better one.
+            break;
+        }
+    }
+
+    if (match < 0)
+    {
+        return 0;
+    }
+
+    return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
+}
+
+// Try to predict final file size.
+size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
+{
+    if (m_in.m_pFormat_ctx == nullptr)
+    {
+        return 0;
+    }
+
+    ffmpegfs_format * current_format = params.current_format(filename());
     if (current_format == nullptr)
     {
         // Should ever happen, but better check this to avoid crashes.
@@ -2834,6 +2984,27 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
     AVCodecID video_codec_id = current_format->m_video_codecid;
     //FILETYPE format_name = current_format->m_format_name;
     size_t size = 0;
+
+    double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, av_get_time_base_q());
+    BITRATE input_audio_bit_rate = 0;
+    int input_sample_rate = 0;
+    BITRATE input_video_bit_rate = 0;
+
+    if (m_fileio->duration() > -1)
+    {
+        duration = static_cast<double>(m_fileio->duration());
+    }
+
+    if (m_in.m_audio.m_nStream_idx > -1)
+    {
+        input_sample_rate = CODECPAR(m_in.m_audio.m_pStream)->sample_rate;
+        input_audio_bit_rate = (CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+    }
+
+    if (m_in.m_video.m_nStream_idx > -1)
+    {
+        input_video_bit_rate = (CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
+    }
 
     if (input_audio_bit_rate)
     {
@@ -2863,6 +3034,9 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
         case AV_CODEC_ID_PCM_S16LE:
         case AV_CODEC_ID_PCM_S16BE:
         {
+            //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
+            //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
+
             int channels = 2; //m_in.m_audio.m_pCodec_ctx->channels;
             int bytes_per_sample =  2; // av_get_bytes_per_sample(m_in.m_audio.m_pCodec_ctx->sample_fmt);
             int output_sample_rate;
@@ -2894,7 +3068,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
         }
         default:
         {
-            Logging::error(filename, "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(audio_codec_id, 0), current_format->m_desttype);
+            Logging::error(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(audio_codec_id, 0), current_format->m_desttype);
             break;
         }
         }
@@ -2902,7 +3076,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
 
     if (input_video_bit_rate)
     {
-        if (is_video)
+        if (m_is_video)
         {
             BITRATE out_video_bit_rate;
             int bitrateoverhead = 0;
@@ -2935,7 +3109,20 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             }
             case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
             {
-                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
+                int width = CODECPAR(m_in.m_video.m_pStream)->width;
+                int height = CODECPAR(m_in.m_video.m_pStream)->height;
+#ifdef USING_LIBAV
+                int interleaved = 0; // TODO: Check source if not deinterlace is on
+#else
+                int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_pStream)->field_order != AV_FIELD_PROGRESSIVE);
+#endif // !USING_LIBAV
+
+
+#if LAVF_DEP_AVSTREAM_CODEC
+                size += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, av_q2d(m_in.m_video.m_pStream->avg_frame_rate), interleaved, params.m_level)) / 8);
+#else
+                size += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, av_q2d(m_in.m_video.m_pStream->codec->framerate), interleaved, params.m_level)) / 8);
+#endif
                 break;
             }
             case AV_CODEC_ID_NONE:
@@ -2944,7 +3131,7 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
             }
             default:
             {
-                Logging::warning(filename, "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(video_codec_id, 0), current_format->m_desttype);
+                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(video_codec_id, 0), current_format->m_desttype);
                 break;
             }
             }
@@ -2958,31 +3145,11 @@ size_t FFMPEG_Transcoder::predict_filesize(const char * filename, double duratio
     return size;
 }
 
-size_t FFMPEG_Transcoder::predict_filesize()
+size_t FFMPEG_Transcoder::predicted_filesize()
 {
-    if (m_predicted_size == 0 && m_in.m_pFormat_ctx != nullptr)
+    if (m_predicted_size == 0)
     {
-        double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, av_get_time_base_q());
-        BITRATE input_audio_bit_rate = 0;
-        int input_sample_rate = 0;
-        BITRATE input_video_bit_rate = 0;
-
-        if (m_fileio->duration() > -1)
-        {
-            duration = static_cast<double>(m_fileio->duration());
-        }
-
-        if (m_in.m_audio.m_nStream_idx > -1)
-        {
-            input_sample_rate = CODECPAR(m_in.m_audio.m_pStream)->sample_rate;
-            input_audio_bit_rate = (CODECPAR(m_in.m_audio.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
-        }
-        if (m_in.m_video.m_nStream_idx > -1)
-        {
-            input_video_bit_rate = (CODECPAR(m_in.m_video.m_pStream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_pStream)->bit_rate : m_in.m_pFormat_ctx->bit_rate;
-        }
-
-        m_predicted_size = predict_filesize(filename(), duration, input_audio_bit_rate, input_sample_rate, input_video_bit_rate, m_is_video);
+        m_predicted_size = calculate_predicted_filesize();
     }
 
     return m_predicted_size;
@@ -3549,7 +3716,6 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 
     return tgtframe;
 }
-
 
 // free
 

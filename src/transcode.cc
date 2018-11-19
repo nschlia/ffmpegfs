@@ -344,7 +344,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     throw false;
                 }
 
-                cache_entry->m_cache_info.m_predicted_filesize = transcoder->predict_filesize();
+                cache_entry->m_cache_info.m_predicted_filesize = transcoder->predicted_filesize();
 
                 transcoder->close();
 
@@ -532,7 +532,7 @@ static void *decoder_thread(void *arg)
             throw (static_cast<int>(errno));
         }
 
-        if (!cache->maintenance(transcoder->predict_filesize()))
+        if (!cache->maintenance(transcoder->predicted_filesize()))
         {
             throw (static_cast<int>(errno));
         }

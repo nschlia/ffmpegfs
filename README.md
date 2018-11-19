@@ -174,7 +174,7 @@ The --profile option allows to select the format:
 | Profile | OS | Target | Remarks |
 | ------------- | ------------- | ------------- | ------------- |
 | NONE | all | VLC, Windows Media Player etc. | Playback (default) |
-| FF | Linux, Win10 | Firefox| OK: Playback while transcoding |
+| FF | Linux, Win10, Android | Firefox| OK: Playback while transcoding |
 | | Win7 | Firefox | OK: Playback while transcoding |
 | EDGE | Win10 | MS Edge, IE > 11 | OK: Playback while transcoding |
 | | Win10 Mobile | | OK: Playback while transcoding |

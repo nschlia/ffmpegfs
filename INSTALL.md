@@ -200,3 +200,11 @@ not.
 
 As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured
 to cope with that, but how to is unknown to me.
+
+** Make reports "/bin/sh: a2x: command not found"**
+
+You need to install asciidoc, doing (or similar)
+
+     aptitude install asciidoc
+     
+should fix it.

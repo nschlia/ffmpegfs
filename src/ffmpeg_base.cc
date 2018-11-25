@@ -324,7 +324,8 @@ void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
 std::string FFMPEG_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
 {
-    return ::av_get_pix_fmt_name(pix_fmt);
+    const char *fmt_name = ::av_get_pix_fmt_name(pix_fmt);
+    return (fmt_name != nullptr ? fmt_name : "none");
 }
 
 

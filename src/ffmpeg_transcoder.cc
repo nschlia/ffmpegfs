@@ -302,8 +302,8 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
         return ret;
     }
 
-    AVDictionaryEntry * t;
-    if ((t = av_dict_get(opt, "", nullptr, AV_DICT_IGNORE_SUFFIX)))
+    AVDictionaryEntry * t = av_dict_get(opt, "", nullptr, AV_DICT_IGNORE_SUFFIX);
+    if (t != nullptr)
     {
         Logging::error(filename(), "Option %1 not found.", t->key);
         return -1; // Couldn't open file
@@ -1220,8 +1220,8 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     LPCVIRTUALFILE  virtualfile = buffer->virtualfile();
-    AVCodecID       audio_codec_id = params.current_format(virtualfile)->m_audio_codecid;
-    AVCodecID       video_codec_id = params.current_format(virtualfile)->m_video_codecid;
+    AVCodecID       audio_codec_id = params.current_format(virtualfile)->m_audio_codec_id;
+    AVCodecID       video_codec_id = params.current_format(virtualfile)->m_video_codec_id;
     int             ret = 0;
 
     m_out.m_file_type = params.current_format(virtualfile)->m_filetype;
@@ -1241,7 +1241,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         m_in.m_video.m_nStream_idx = INVALID_STREAM;
     }
 
-    //video_codecid = m_out.m_pFormat_ctx->oformat->video_codec;
+    //video_codec_id = m_out.m_pFormat_ctx->oformat->video_codec;
 
     if (m_in.m_video.m_nStream_idx != INVALID_STREAM && video_codec_id != AV_CODEC_ID_NONE)
     {
@@ -2980,8 +2980,8 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
         // Should ever happen, but better check this to avoid crashes.
         return 0;
     }
-    AVCodecID audio_codec_id = current_format->m_audio_codecid;
-    AVCodecID video_codec_id = current_format->m_video_codecid;
+    AVCodecID audio_codec_id = current_format->m_audio_codec_id;
+    AVCodecID video_codec_id = current_format->m_video_codec_id;
     //FILETYPE format_name = current_format->m_format_name;
     size_t size = 0;
 

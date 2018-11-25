@@ -86,6 +86,7 @@ Tested with:
 * `Ubuntu 17.10` **FFmpeg 3.3.4-2**: OK!
 * `Suse 42` **FFmpeg 3.3.4**: No H264/AAC support by default
 * `Red Hat 7` **FFmpeg must be compiled from sources**: OK!
+* `Funtoo 7.3.1` **FFmpeg 3.4.1**: FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md): OK!
 
 **Tips on other OSs and distributions like Mac or other *nixes are welcome.**
 

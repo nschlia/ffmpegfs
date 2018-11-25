@@ -195,24 +195,24 @@ typedef struct ffmpegfs_format
     ffmpegfs_format()
         : m_format_name("")
         , m_filetype(FILETYPE_UNKNOWN)
-        , m_video_codecid(AV_CODEC_ID_NONE)
-        , m_audio_codecid(AV_CODEC_ID_NONE)
+        , m_video_codec_id(AV_CODEC_ID_NONE)
+        , m_audio_codec_id(AV_CODEC_ID_NONE)
     {}
 
-    ffmpegfs_format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codecid, AVCodecID audio_codecid)
+    ffmpegfs_format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
         : m_format_name(format_name)
         , m_filetype(filetype)
-        , m_video_codecid(video_codecid)
-        , m_audio_codecid(audio_codecid)
+        , m_video_codec_id(video_codec_id)
+        , m_audio_codec_id(audio_codec_id)
     {}
 
     std::string m_format_name;
     std::string m_desttype;                 // Destination type: mp4, mp3 or other
     FILETYPE    m_filetype;
     // Video
-    AVCodecID   m_video_codecid;
+    AVCodecID   m_video_codec_id;
     // Audio
-    AVCodecID   m_audio_codecid;
+    AVCodecID   m_audio_codec_id;
 } ffmpegfs_format;
 
 const std::string & append_sep(std::string * path);

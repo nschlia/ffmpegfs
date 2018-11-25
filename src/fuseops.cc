@@ -167,8 +167,8 @@ static bool transcoded_name(std::string * filepath)
     
     if (format != nullptr)
     {
-        if ((params.current_format(*filepath)->m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                (params.current_format(*filepath)->m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((params.current_format(*filepath)->m_audio_codec_id != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                (params.current_format(*filepath)->m_video_codec_id != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
             replace_ext(filepath, params.current_format(*filepath)->m_format_name);
             return true;

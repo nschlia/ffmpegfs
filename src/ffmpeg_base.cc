@@ -226,12 +226,16 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     int loss = 0;
 
     AVPixelFormat  src_pix_fmt = input_codec_ctx->pix_fmt;
+    AVPixelFormat  dst_pix_fmt = AV_PIX_FMT_NONE;
+    if (output_codec_ctx->codec->pix_fmts != nullptr)
+    {
 #ifndef USING_LIBAV
-    AVPixelFormat  dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
+    	dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
 #else
     // Yes, casting const away is bad. Libav is bad, too. OK, two wrongs make no right. To fix that use FFmpeg. Don't use libav. Did I mention it's bad?
-    AVPixelFormat  dst_pix_fmt = avcodec_find_best_pix_fmt2(const_cast<AVPixelFormat *>(output_codec_ctx->codec->pix_fmts), src_pix_fmt, alpha, &loss);
+    	dst_pix_fmt = avcodec_find_best_pix_fmt2(const_cast<AVPixelFormat *>(output_codec_ctx->codec->pix_fmts), src_pix_fmt, alpha, &loss);
 #endif
+    }
 
     if (dst_pix_fmt == AV_PIX_FMT_NONE)
     {

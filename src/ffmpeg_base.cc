@@ -246,13 +246,13 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
         {
             //  yuva444p10le
             // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
-            output_codec_ctx->pix_fmt           = AV_PIX_FMT_YUV422P10LE;
+            dst_pix_fmt                         = AV_PIX_FMT_YUV422P10LE;
             break;
         }
         default:                        // all others
         {
             // At this moment the output format must be AV_PIX_FMT_YUV420P;
-            output_codec_ctx->pix_fmt           = AV_PIX_FMT_YUV420P;
+            dst_pix_fmt                         = AV_PIX_FMT_YUV420P;
             break;
         }
         }

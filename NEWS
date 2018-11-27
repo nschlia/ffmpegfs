@@ -12,6 +12,17 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Feature:
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
 * Bugfix: Fixed memory leak when using the deinterlace option.
+* Bugfix: Deinterlace did not always work.
+* Bugfix: Fixed memory leaks.
+* Bugfix: Report correct error if directory mounted twice.
+* Bugfix: SIlence chatty log outputs.
+* Bugfix: Fix GPF when accessed.
+* Bugfix: Fix GPF when channel layout changed during playback.
+* Feature: Add MOV target format
+* Feature: Add AIFF target format
+* Feature: Smart conversion option ("Smart Transcode")
+* Feature: Add level option for Prores
+* Feature: Add Apple Prores support
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-08)
@@ -25,7 +36,7 @@ Important changes in 1.5 (2018-06-08)
 * Feature: Check if sample rate or sample format is supported by audio codec and change if
            necessary. Avoid transcode fails e.g. if 44.1KHz sampling rate is requested but
            not supported (e.g. OPUS only supports 8K, 16K, 24K or 48K). Select nearest
-           supported sample rate or sample format.z
+           supported sample rate or sample format.
 
 Important changes in 1.4 (2018-05-30)
 

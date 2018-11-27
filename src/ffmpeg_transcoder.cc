@@ -934,8 +934,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             //        1=‘lt’,
             //        2=‘standard’,
             //        3=‘hq’
-            output_codec_ctx->profile = params.m_profile;
-
+            output_codec_ctx->profile = params.m_level;
             break;
         }
         default:
@@ -1690,10 +1689,10 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
                 ret = _ret;
             }
 
-            if (converted_input_samples)
+            if (converted_input_samples != nullptr)
             {
                 av_freep(&converted_input_samples[0]);
-                free(converted_input_samples);
+                av_free(converted_input_samples);
             }
         }
         av_frame_free(&frame);
@@ -1969,7 +1968,14 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Each pointer will later point to the audio samples of the corresponding
     // channels (although it may be nullptr for interleaved formats).
 
-    if (!(*converted_input_samples = static_cast<uint8_t **>(calloc(m_out.m_audio.m_pCodec_ctx->channels, sizeof(**converted_input_samples)))))   // TODO: replace with new/delete
+#ifndef USING_LIBAV
+    *converted_input_samples = static_cast<uint8_t **>(av_calloc(m_out.m_audio.m_pCodec_ctx->channels, sizeof(**converted_input_samples)));
+#else
+    // Libav does not provide av_calloc
+    *converted_input_samples = static_cast<uint8_t **>(av_malloc(m_out.m_audio.m_pCodec_ctx->channels * sizeof(**converted_input_samples)));
+#endif  // !USING_LIBAV
+
+    if (*converted_input_samples == nullptr)
     {
         Logging::error(destname(), "Could not allocate converted input sample pointers.");
         return AVERROR(ENOMEM);
@@ -1985,7 +1991,7 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     {
         Logging::error(destname(), "Could not allocate converted input samples (error '%1').", ffmpeg_geterror(ret));
         av_freep(&(*converted_input_samples)[0]);
-        free(*converted_input_samples);
+        av_free(*converted_input_samples);
         return ret;
     }
     return 0;

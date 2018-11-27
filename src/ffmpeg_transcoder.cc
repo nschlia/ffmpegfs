@@ -145,6 +145,9 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     : m_fileio(nullptr)
     , m_predicted_size(0)
     , m_is_video(false)
+    , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
+    , m_cur_sample_rate(-1)
+    , m_cur_channel_layout(-1)
     , m_pAudio_resample_ctx(nullptr)
     , m_pAudioFifo(nullptr)
     , m_pSws_ctx(nullptr)
@@ -459,13 +462,6 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     if (m_out.m_audio.m_nStream_idx > -1)
     {
         audio_info(true, m_out.m_pFormat_ctx, m_out.m_audio.m_pCodec_ctx, m_out.m_audio.m_pStream);
-
-        // Initialise the resampler to be able to convert audio sample formats.
-        ret = init_resampler();
-        if (ret)
-        {
-            return ret;
-        }
 
         // Initialise the FIFO buffer to store audio samples to be encoded.
         ret = init_fifo();
@@ -1314,31 +1310,56 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 // libswresample takes care of this, but requires initialization.
 int FFMPEG_Transcoder::init_resampler()
 {
+    // Fail save: if channel layout not know assume mono or stereo
+    if (!m_in.m_audio.m_pCodec_ctx->channel_layout)
+    {
+        m_in.m_audio.m_pCodec_ctx->channel_layout = m_in.m_audio.m_pCodec_ctx->channels;
+    }
+    if (!m_in.m_audio.m_pCodec_ctx->channel_layout)
+    {
+        m_in.m_audio.m_pCodec_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
+    }
     // Only initialise the resampler if it is necessary, i.e.,
     // if and only if the sample formats differ.
+    if (m_in.m_audio.m_pCodec_ctx->sample_fmt == m_out.m_audio.m_pCodec_ctx->sample_fmt &&
+            m_in.m_audio.m_pCodec_ctx->sample_rate == m_out.m_audio.m_pCodec_ctx->sample_rate &&
+            m_in.m_audio.m_pCodec_ctx->channel_layout == m_out.m_audio.m_pCodec_ctx->channel_layout)
 
-    if (m_in.m_audio.m_pCodec_ctx->sample_fmt != m_out.m_audio.m_pCodec_ctx->sample_fmt ||
-            m_in.m_audio.m_pCodec_ctx->sample_rate != m_out.m_audio.m_pCodec_ctx->sample_rate ||
-            m_in.m_audio.m_pCodec_ctx->channels != m_out.m_audio.m_pCodec_ctx->channels)
     {
-        std::string in_sample_format(av_get_sample_fmt_name(m_in.m_audio.m_pCodec_ctx->sample_fmt));
-        std::string out_sample_format(av_get_sample_fmt_name(m_out.m_audio.m_pCodec_ctx->sample_fmt));
+        // Formats are same
+        close_resample();
+        return 0;
+    }
+
+    if (m_pAudio_resample_ctx == nullptr ||
+            m_cur_sample_fmt != m_in.m_audio.m_pCodec_ctx->sample_fmt ||
+            m_cur_sample_rate != m_in.m_audio.m_pCodec_ctx->sample_rate ||
+            m_cur_channel_layout != m_in.m_audio.m_pCodec_ctx->channel_layout)
+    {
         int ret;
 
-        Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / sample rate %3 -> %4.",
-                      in_sample_format,
-                      out_sample_format,
+        Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / sample rate %3 -> %4 / channel layout %5 -> %6.",
+                      get_sample_fmt_name(m_in.m_audio.m_pCodec_ctx->sample_fmt),
+                      get_sample_fmt_name(m_out.m_audio.m_pCodec_ctx->sample_fmt),
                       format_samplerate(m_in.m_audio.m_pCodec_ctx->sample_rate),
-                      format_samplerate(m_out.m_audio.m_pCodec_ctx->sample_rate));
+                      format_samplerate(m_out.m_audio.m_pCodec_ctx->sample_rate),
+                      get_channel_layout_name(m_in.m_audio.m_pCodec_ctx->channels, m_in.m_audio.m_pCodec_ctx->channel_layout),
+                      get_channel_layout_name(m_out.m_audio.m_pCodec_ctx->channels, m_out.m_audio.m_pCodec_ctx->channel_layout));
+
+        close_resample();
+
+        m_cur_sample_fmt        = m_in.m_audio.m_pCodec_ctx->sample_fmt;
+        m_cur_sample_rate       = m_in.m_audio.m_pCodec_ctx->sample_rate;
+        m_cur_channel_layout    = m_in.m_audio.m_pCodec_ctx->channel_layout;
 
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
 #if LAVR_DEPRECATE
         m_pAudio_resample_ctx = swr_alloc_set_opts(nullptr,
-                                                   av_get_default_channel_layout(m_out.m_audio.m_pCodec_ctx->channels),
+                                                   m_out.m_audio.m_pCodec_ctx->channel_layout,
                                                    m_out.m_audio.m_pCodec_ctx->sample_fmt,
                                                    m_out.m_audio.m_pCodec_ctx->sample_rate,
-                                                   av_get_default_channel_layout(m_in.m_audio.m_pCodec_ctx->channels),
+                                                   m_in.m_audio.m_pCodec_ctx->channel_layout,
                                                    m_in.m_audio.m_pCodec_ctx->sample_fmt,
                                                    m_in.m_audio.m_pCodec_ctx->sample_rate,
                                                    0, nullptr);
@@ -1659,6 +1680,13 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
 
             try
             {
+                // Initialise the resampler to be able to convert audio sample formats.
+                ret = init_resampler();
+                if (ret)
+                {
+                    throw ret;
+                }
+
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.
                 ret = init_converted_samples(&converted_input_samples, nb_output_samples);
@@ -1669,7 +1697,6 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
 
                 // Convert the input samples to the desired output sample format.
                 // This requires a temporary storage provided by converted_input_samples.
-
                 ret = convert_samples(frame->extended_data, frame->nb_samples, converted_input_samples, &nb_output_samples);
                 if (ret < 0)
                 {
@@ -3256,6 +3283,23 @@ int64_t FFMPEG_Transcoder::seek(void * opaque, int64_t offset, int whence)
 }
 
 // Close the open FFmpeg file
+bool FFMPEG_Transcoder::close_resample()
+{
+    if (m_pAudio_resample_ctx)
+    {
+#if LAVR_DEPRECATE
+        swr_free(&m_pAudio_resample_ctx);
+#else
+        avresample_close(m_pAudio_resample_ctx);
+        avresample_free(&m_pAudio_resample_ctx);
+#endif
+        m_pAudio_resample_ctx = nullptr;
+        return true;
+    }
+
+    return false;
+}
+
 void FFMPEG_Transcoder::close()
 {
     int nAudioSamplesLeft = 0;
@@ -3281,15 +3325,8 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 
-    if (m_pAudio_resample_ctx)
+    if (close_resample())
     {
-#if LAVR_DEPRECATE
-        swr_free(&m_pAudio_resample_ctx);
-#else
-        avresample_close(m_pAudio_resample_ctx);
-        avresample_free(&m_pAudio_resample_ctx);
-#endif
-        m_pAudio_resample_ctx = nullptr;
         bClosed = true;
     }
 

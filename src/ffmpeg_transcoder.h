@@ -212,13 +212,18 @@ protected:
     void                        free_filters();
 #endif // !USING_LIBAV
 
+    bool                        close_resample();
+
 private:
     fileio *                    m_fileio;
     time_t                      m_mtime;
     size_t                      m_predicted_size;         // Use this as the size instead of computing it.
     bool                        m_is_video;
 
-    // Audio conversion and buffering
+    // Audio conversion and buffering    
+    AVSampleFormat              m_cur_sample_fmt;
+    int                         m_cur_sample_rate;
+    uint64_t                    m_cur_channel_layout;
 #if LAVR_DEPRECATE
     SwrContext *                m_pAudio_resample_ctx;
 #else

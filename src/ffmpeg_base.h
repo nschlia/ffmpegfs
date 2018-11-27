@@ -44,6 +44,8 @@ protected:
     void        video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
     void        audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
     std::string get_pix_fmt_name(AVPixelFormat pix_fmt) const;
+    std::string get_sample_fmt_name(AVSampleFormat sample_fmt) const;
+    std::string get_channel_layout_name(int nb_channels, uint64_t channel_layout) const;
 
     virtual const char *filename() const = 0;
     virtual const char *destname() const = 0;

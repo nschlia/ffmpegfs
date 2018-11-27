@@ -1972,7 +1972,7 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     *converted_input_samples = static_cast<uint8_t **>(av_calloc(m_out.m_audio.m_pCodec_ctx->channels, sizeof(**converted_input_samples)));
 #else
     // Libav does not provide av_calloc
-    *converted_input_samples = static_cast<uint8_t **>(av_alloc(m_out.m_audio.m_pCodec_ctx->channels * sizeof(**converted_input_samples)));
+    *converted_input_samples = static_cast<uint8_t **>(av_malloc(m_out.m_audio.m_pCodec_ctx->channels * sizeof(**converted_input_samples)));
 #endif  // !USING_LIBAV
 
     if (*converted_input_samples == nullptr)

@@ -934,8 +934,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             //        1=‘lt’,
             //        2=‘standard’,
             //        3=‘hq’
-            output_codec_ctx->profile = params.m_profile;
-
+            output_codec_ctx->profile = params.m_level;
             break;
         }
         default:

@@ -463,6 +463,14 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     {
         audio_info(true, m_out.m_pFormat_ctx, m_out.m_audio.m_pCodec_ctx, m_out.m_audio.m_pStream);
 
+#ifdef USING_LIBAV
+        ret = init_resampler();
+        if (ret)
+        {
+            return ret;
+        }
+#endif
+
         // Initialise the FIFO buffer to store audio samples to be encoded.
         ret = init_fifo();
         if (ret)
@@ -1681,11 +1689,13 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             try
             {
                 // Initialise the resampler to be able to convert audio sample formats.
+#ifndef USING_LIBAV
                 ret = init_resampler();
                 if (ret)
                 {
                     throw ret;
                 }
+#endif
 
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.

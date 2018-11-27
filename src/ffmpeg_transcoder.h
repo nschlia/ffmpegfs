@@ -126,26 +126,13 @@ public:
     };
 
     // Output file
-    struct OUTPUTFILE
+    struct OUTPUTFILE : public INPUTFILE
     {
         OUTPUTFILE() :
-            m_file_type(FILETYPE_UNKNOWN),
-            m_filename("unset"),
-            m_pFormat_ctx(nullptr),
             m_nAudio_pts(0),
             m_video_start_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
-
-        FILETYPE                m_file_type;
-        std::string             m_filename;
-
-        AVFormatContext *       m_pFormat_ctx;
-
-        STREAMREF               m_audio;
-        STREAMREF               m_video;
-
-        std::vector<STREAMREF>  m_aAlbumArt;
 
         int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
         int64_t                 m_video_start_pts;      // Video start PTS

@@ -436,7 +436,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
 
 int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 {
-    int res = 0;
+    int ret = 0;
 
     get_destname(&m_out.m_filename, m_in.m_filename);
 
@@ -450,10 +450,10 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     }
 
     // Open the output file for writing.
-    res = open_output_filestreams(buffer);
-    if (res)
+    ret = open_output_filestreams(buffer);
+    if (ret)
     {
-        return res;
+        return ret;
     }
 
     if (m_out.m_audio.m_nStream_idx > -1)
@@ -461,17 +461,17 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
         audio_info(true, m_out.m_pFormat_ctx, m_out.m_audio.m_pCodec_ctx, m_out.m_audio.m_pStream);
 
         // Initialise the resampler to be able to convert audio sample formats.
-        res = init_resampler();
-        if (res)
+        ret = init_resampler();
+        if (ret)
         {
-            return res;
+            return ret;
         }
 
         // Initialise the FIFO buffer to store audio samples to be encoded.
-        res = init_fifo();
-        if (res)
+        ret = init_fifo();
+        if (ret)
         {
-            return res;
+            return ret;
         }
     }
 
@@ -482,24 +482,24 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
     // Process metadata. The decoder will call the encoder to set appropriate
     // tag values for the output file.
-    res = process_metadata();
-    if (res)
+    ret = process_metadata();
+    if (ret)
     {
-        return res;
+        return ret;
     }
 
     // Write the header of the output file container.
-    res = write_output_file_header();
-    if (res)
+    ret = write_output_file_header();
+    if (ret)
     {
-        return res;
+        return ret;
     }
 
     // Process album arts: copy all from source file to target.
-    res = process_albumarts();
-    if (res)
+    ret = process_albumarts();
+    if (ret)
     {
-        return res;
+        return ret;
     }
 
     return 0;

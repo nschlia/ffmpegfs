@@ -276,6 +276,8 @@ LPVIRTUALFILE find_original(std::string * filepath)
             }
             free(namelist);
 
+            tmppath = sanitise_name(tmppath);
+
             if (found && lstat(tmppath.c_str(), &st) == 0)
             {
                 // File exists with this extension

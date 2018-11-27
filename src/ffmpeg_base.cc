@@ -230,10 +230,10 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     if (output_codec_ctx->codec->pix_fmts != nullptr)
     {
 #ifndef USING_LIBAV
-    	dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
+        dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
 #else
-    // Yes, casting const away is bad. Libav is bad, too. OK, two wrongs make no right. To fix that use FFmpeg. Don't use libav. Did I mention it's bad?
-    	dst_pix_fmt = avcodec_find_best_pix_fmt2(const_cast<AVPixelFormat *>(output_codec_ctx->codec->pix_fmts), src_pix_fmt, alpha, &loss);
+        // Yes, casting const away is bad. Libav is bad, too. OK, two wrongs make no right. To fix that use FFmpeg. Don't use libav. Did I mention it's bad?
+        dst_pix_fmt = avcodec_find_best_pix_fmt2(const_cast<AVPixelFormat *>(output_codec_ctx->codec->pix_fmts), src_pix_fmt, alpha, &loss);
 #endif
     }
 
@@ -328,4 +328,20 @@ std::string FFMPEG_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
     return (fmt_name != nullptr ? fmt_name : "none");
 }
 
+std::string FFMPEG_Base::get_sample_fmt_name(AVSampleFormat sample_fmt) const
+{
+    return av_get_sample_fmt_name(sample_fmt);
+}
+
+std::string FFMPEG_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout) const
+{
+    char buffer[1024];
+#ifndef USING_LIBAV
+    av_get_channel_layout_string(buffer, sizeof(buffer), nb_channels, channel_layout);
+#else
+    // av_get_channel_layout_string not supported by Libav
+    std::sprintf(buffer, "%" PRId64, channel_layout);
+#endif
+    return buffer;
+}
 

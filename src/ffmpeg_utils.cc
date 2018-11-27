@@ -530,8 +530,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_MP3:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_MP3;
-        format->m_video_codecid = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        format->m_audio_codec_id = AV_CODEC_ID_MP3;
+        format->m_video_codec_id = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
         format->m_filetype      = FILETYPE_MP3;
         format->m_format_name   = "mp3";
         break;
@@ -539,8 +539,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_MP4:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_AAC;
-        format->m_video_codecid = AV_CODEC_ID_H264;
+        format->m_audio_codec_id = AV_CODEC_ID_AAC;
+        format->m_video_codec_id = AV_CODEC_ID_H264;
         format->m_filetype      = FILETYPE_MP4;
         format->m_format_name   = "mp4";
         break;
@@ -548,8 +548,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_WAV:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codec_id = AV_CODEC_ID_NONE;
         format->m_filetype      =  FILETYPE_WAV;
         format->m_format_name   = "wav";
         break;
@@ -557,8 +557,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_OGG:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_VORBIS;
-        format->m_video_codecid = AV_CODEC_ID_THEORA;
+        format->m_audio_codec_id = AV_CODEC_ID_VORBIS;
+        format->m_video_codec_id = AV_CODEC_ID_THEORA;
         format->m_filetype      = FILETYPE_OGG;
         format->m_format_name   = "ogg";
         break;
@@ -566,8 +566,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_WEBM:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_OPUS;
-        format->m_video_codecid = AV_CODEC_ID_VP9;
+        format->m_audio_codec_id = AV_CODEC_ID_OPUS;
+        format->m_video_codec_id = AV_CODEC_ID_VP9;
         format->m_filetype      = FILETYPE_WEBM;
         format->m_format_name   = "webm";
         break;
@@ -575,8 +575,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_MOV:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_AAC;
-        format->m_video_codecid = AV_CODEC_ID_H264;
+        format->m_audio_codec_id = AV_CODEC_ID_AAC;
+        format->m_video_codec_id = AV_CODEC_ID_H264;
         format->m_filetype      = FILETYPE_MOV;
         format->m_format_name   = "mov";
         break;
@@ -584,8 +584,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_AIFF:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_PCM_S16BE;
-        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16BE;
+        format->m_video_codec_id = AV_CODEC_ID_NONE;
         format->m_filetype      = FILETYPE_AIFF;
         format->m_format_name   = "aiff";
         break;
@@ -593,8 +593,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_OPUS:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_OPUS;
-        format->m_video_codecid = AV_CODEC_ID_NONE;
+        format->m_audio_codec_id = AV_CODEC_ID_OPUS;
+        format->m_video_codec_id = AV_CODEC_ID_NONE;
         format->m_filetype      = FILETYPE_OPUS;
         format->m_format_name   = "opus";
         break;
@@ -602,8 +602,8 @@ int get_codecs(const std::string & desttype, ffmpegfs_format *format)
     case FILETYPE_PRORES:
     {
         format->m_desttype      = desttype;
-        format->m_audio_codecid = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codecid = AV_CODEC_ID_PRORES;
+        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codec_id = AV_CODEC_ID_PRORES;
         format->m_filetype      = FILETYPE_PRORES;
         format->m_format_name   = "mov";
         break;

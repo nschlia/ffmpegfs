@@ -302,8 +302,8 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
         return ret;
     }
 
-    AVDictionaryEntry * t;
-    if ((t = av_dict_get(opt, "", nullptr, AV_DICT_IGNORE_SUFFIX)))
+    AVDictionaryEntry * t = av_dict_get(opt, "", nullptr, AV_DICT_IGNORE_SUFFIX);
+    if (t != nullptr)
     {
         Logging::error(filename(), "Option %1 not found.", t->key);
         return -1; // Couldn't open file
@@ -1219,8 +1219,8 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     LPCVIRTUALFILE  virtualfile = buffer->virtualfile();
-    AVCodecID       audio_codec_id = params.current_format(virtualfile)->m_audio_codecid;
-    AVCodecID       video_codec_id = params.current_format(virtualfile)->m_video_codecid;
+    AVCodecID       audio_codec_id = params.current_format(virtualfile)->m_audio_codec_id;
+    AVCodecID       video_codec_id = params.current_format(virtualfile)->m_video_codec_id;
     int             ret = 0;
 
     m_out.m_file_type = params.current_format(virtualfile)->m_filetype;
@@ -1240,7 +1240,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
         m_in.m_video.m_nStream_idx = INVALID_STREAM;
     }
 
-    //video_codecid = m_out.m_pFormat_ctx->oformat->video_codec;
+    //video_codec_id = m_out.m_pFormat_ctx->oformat->video_codec;
 
     if (m_in.m_video.m_nStream_idx != INVALID_STREAM && video_codec_id != AV_CODEC_ID_NONE)
     {
@@ -1689,10 +1689,10 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
                 ret = _ret;
             }
 
-            if (converted_input_samples)
+            if (converted_input_samples != nullptr)
             {
                 av_freep(&converted_input_samples[0]);
-                free(converted_input_samples);
+                av_free(converted_input_samples);
             }
         }
         av_frame_free(&frame);
@@ -1968,7 +1968,14 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Each pointer will later point to the audio samples of the corresponding
     // channels (although it may be nullptr for interleaved formats).
 
-    if (!(*converted_input_samples = static_cast<uint8_t **>(calloc(m_out.m_audio.m_pCodec_ctx->channels, sizeof(**converted_input_samples)))))   // TODO: replace with new/delete
+#ifndef USING_LIBAV
+    *converted_input_samples = static_cast<uint8_t **>(av_calloc(m_out.m_audio.m_pCodec_ctx->channels, sizeof(**converted_input_samples)));
+#else
+    // Libav does not provide av_calloc
+    *converted_input_samples = static_cast<uint8_t **>(av_alloc(m_out.m_audio.m_pCodec_ctx->channels * sizeof(**converted_input_samples)));
+#endif  // !USING_LIBAV
+
+    if (*converted_input_samples == nullptr)
     {
         Logging::error(destname(), "Could not allocate converted input sample pointers.");
         return AVERROR(ENOMEM);
@@ -1984,7 +1991,7 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     {
         Logging::error(destname(), "Could not allocate converted input samples (error '%1').", ffmpeg_geterror(ret));
         av_freep(&(*converted_input_samples)[0]);
-        free(*converted_input_samples);
+        av_free(*converted_input_samples);
         return ret;
     }
     return 0;
@@ -2979,8 +2986,8 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
         // Should ever happen, but better check this to avoid crashes.
         return 0;
     }
-    AVCodecID audio_codec_id = current_format->m_audio_codecid;
-    AVCodecID video_codec_id = current_format->m_video_codecid;
+    AVCodecID audio_codec_id = current_format->m_audio_codec_id;
+    AVCodecID video_codec_id = current_format->m_video_codec_id;
     //FILETYPE format_name = current_format->m_format_name;
     size_t size = 0;
 

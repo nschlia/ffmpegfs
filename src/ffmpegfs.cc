@@ -128,12 +128,12 @@ int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
         else
         {
             // Smart transcoding
-            if (params.m_format[0].m_video_codecid != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE && !is_album_art(format->video_codec))
+            if (params.m_format[0].m_video_codec_id != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE && !is_album_art(format->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (params.m_format[1].m_audio_codecid != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE)
+            else if (params.m_format[1].m_audio_codec_id != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;
@@ -1136,7 +1136,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 
 static int set_defaults(void)
 {
-    if (params.m_format[0].m_video_codecid == AV_CODEC_ID_PRORES)
+    if (params.m_format[0].m_video_codec_id == AV_CODEC_ID_PRORES)
     {
         if (params.m_level == LEVEL_NONE)
         {
@@ -1203,8 +1203,8 @@ static void print_params(void)
             params.m_format[0].m_desttype,
             get_profile_text(params.m_profile),
             get_level_text(params.m_level),
-            get_codec_name(params.m_format[0].m_audio_codecid, true),
-            get_codec_name(params.m_format[1].m_audio_codecid, true),
+            get_codec_name(params.m_format[0].m_audio_codec_id, true),
+            get_codec_name(params.m_format[1].m_audio_codec_id, true),
             format_bitrate(params.m_audiobitrate),
             format_samplerate(params.m_audiosamplerate),
             format_number(params.m_videowidth),
@@ -1213,7 +1213,7 @@ static void print_params(void)
             params.m_deinterlace ? "yes" : "no",
         #endif  // !USING_LIBAV
             params.m_noalbumarts ? "yes" : "no",
-            get_codec_name(params.m_format[0].m_video_codecid, true),
+            get_codec_name(params.m_format[0].m_video_codec_id, true),
             format_bitrate(params.m_videobitrate),
             params.m_enablescript ? "yes" : "no",
             params.m_scriptfile,

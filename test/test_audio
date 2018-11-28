@@ -37,7 +37,7 @@ elif [ "$DESTTYPE" == "mp3" ];
 then
 	# mp3
         check_audio "obama" "flac" 0.04
-        check_audio "raven" "ogg" 0.05
+        check_audio "raven" "ogg" 0.08
 elif [ "$DESTTYPE" == "wav" ];
 then
 	# wav

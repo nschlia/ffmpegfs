@@ -716,7 +716,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate));
         }
 
-        output_codec_ctx->channels              = 2;
+
+        output_codec_ctx->channels              = m_in.m_audio.m_pCodec_ctx->channels > 2 ? 2 : m_in.m_audio.m_pCodec_ctx->channels;
         output_codec_ctx->channel_layout        = av_get_default_channel_layout(output_codec_ctx->channels);
         output_codec_ctx->sample_rate           = m_in.m_audio.m_pCodec_ctx->sample_rate;
         orig_sample_rate                        = m_in.m_audio.m_pCodec_ctx->sample_rate;

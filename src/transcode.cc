@@ -199,10 +199,10 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         return nullptr;
     }
 
-    cache_entry->lock();
-
     try
     {
+        cache_entry->lock();
+
         if (!cache_entry->open(begin_transcode))
         {
             _errno = errno;
@@ -278,13 +278,23 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     }
                 }
 
-                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+                // Make thread joinable
+                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+                    Logging::error(virtualfile->m_origfile, "Cannot make thread joinable: %1", strerror(ret));
+                    pthread_attr_destroy(&attr);
                     throw false;
                 }
+
+//                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+//                if (ret != 0)
+//                {
+//                    _errno = ret;
+//                    Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+//                    throw false;
+//                }
 
                 Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));  // TODO: replace with new/delete
 
@@ -364,7 +374,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     catch (bool /*_bSuccess*/)
     {
         cache_entry->m_is_decoding = false;
-        cache_entry->unlock();
         cache->close(&cache_entry, CLOSE_CACHE_DELETE);
         errno = _errno; // Restore last errno
     }
@@ -622,7 +631,6 @@ static void *decoder_thread(void *arg)
         cache_entry->m_cache_info.m_averror = success ? 0 : averror;                    // Preserve averror
 
         pthread_cond_signal(&thread_data->m_cond);  // unlock main thread
-        cache_entry->unlock();
     }
 
     transcoder->close();

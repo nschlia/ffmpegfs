@@ -253,16 +253,20 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
         return ret;
     }
 
+ 
+    // defaults to 5,000,000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
     //    if (ret < 0)
     //    {
     //        return ret;
     //    }
-    //    ret = av_dict_set_with_check(&opt, "probesize", "100M", 0);          // <<== honored;
-    //    if (ret < 0)
-    //    {
-    //        return ret;
-    //    }
+
+    //  5000000 by default.
+    //ret = av_dict_set_with_check(&opt, "probesize", "2000000", 0);          // <<== honored;
+    //if (ret < 0)
+    //{
+    //    return ret;
+    //}
 
     // using own I/O
     m_fileio = fileio::alloc(virtualfile->m_type);
@@ -899,7 +903,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
 
-            output_codec_ctx->width                         = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
+            // Make sure we do not zero width
+            if (sample_aspect_ratio.num && sample_aspect_ratio.den)
+            {
+                output_codec_ctx->width                       = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
+            }
             //output_codec_ctx->height                        *= sample_aspect_ratio.den;
         }
 

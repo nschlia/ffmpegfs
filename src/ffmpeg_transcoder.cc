@@ -987,7 +987,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                     CODECPAR(m_in.m_video.m_pStream)->height != output_codec_ctx->height)
 
             {
-                Logging::debug(destname(), "Rescaling video size ffrom %1:%2 to %3:%4.",
+                Logging::debug(destname(), "Rescaling video size from %1:%2 to %3:%4.",
                                CODECPAR(m_in.m_video.m_pStream)->width, CODECPAR(m_in.m_video.m_pStream)->height,
                                output_codec_ctx->width, output_codec_ctx->height);
             }

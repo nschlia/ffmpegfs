@@ -21,3 +21,6 @@ src/stamp-h1
 src/.directory
 build
 /src/vcd/.dirstamp
+/src/ffmpegfs
+core
+

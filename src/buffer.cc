@@ -31,8 +31,7 @@
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
-    : m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
-    , m_buffer_pos(0)
+    : m_buffer_pos(0)
     , m_buffer_watermark(0)
     , m_is_open(false)
     , m_buffer(nullptr)
@@ -74,7 +73,7 @@ bool Buffer::init(bool erase_cache)
 
     bool success = true;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     try
     {
         struct stat sb;
@@ -165,7 +164,6 @@ bool Buffer::init(bool erase_cache)
             }
         }
     }
-    unlock();
 
     return success;
 }
@@ -187,7 +185,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     m_is_open = false;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Write it now to disk
     flush();
@@ -221,8 +219,6 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         errno = 0;  // ignore this error
     }
 
-    unlock();
-
     return success;
 }
 
@@ -238,12 +234,11 @@ bool Buffer::flush()
         return false;
     }
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
     {
         Logging::error(m_cachefile, "Could not sync to disk: %1", strerror(errno));
     }
-    unlock();
 
     return true;
 }
@@ -257,7 +252,7 @@ bool Buffer::clear()
 
     bool success = true;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     m_buffer_pos = 0;
     m_buffer_watermark = 0;
@@ -270,7 +265,6 @@ bool Buffer::clear()
         Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: %1", strerror(errno));
         success = false;
     }
-    unlock();
 
     return success;
 }
@@ -280,7 +274,7 @@ bool Buffer::reserve(size_t size)
 {
     bool success = true;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (!size)
     {
@@ -299,8 +293,6 @@ bool Buffer::reserve(size_t size)
         success = false;
     }
 
-    unlock();
-
     return ((m_buffer != nullptr) && success);
 }
 
@@ -308,7 +300,7 @@ bool Buffer::reserve(size_t size)
 // will be updated.
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     uint8_t* write_ptr = write_prepare(length);
     if (!write_ptr)
@@ -320,8 +312,6 @@ size_t Buffer::write(const uint8_t* data, size_t length)
         memcpy(write_ptr, data, length);
         increment_pos(length);
     }
-
-    unlock();
 
     return length;
 }
@@ -423,7 +413,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
     bool success = true;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (size() >= offset && m_buffer != nullptr)
     {
@@ -439,8 +429,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
         errno = ENOMEM;
         success = false;
     }
-
-    unlock();
 
     return success;
 }
@@ -462,16 +450,6 @@ bool Buffer::reallocate(size_t newsize)
         Logging::trace(m_filename, "Buffer reallocate: %1 -> %2.", oldsize, newsize);
     }
     return true;
-}
-
-void Buffer::lock()
-{
-    pthread_mutex_lock(&m_mutex);
-}
-
-void Buffer::unlock()
-{
-    pthread_mutex_unlock(&m_mutex);
 }
 
 const std::string & Buffer::filename() const

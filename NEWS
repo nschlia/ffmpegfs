@@ -18,6 +18,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: Silence chatty log outputs.
 * Bugfix: Fix GPF when accessed.
 * Bugfix: Fix GPF when channel layout changed during playback.
+* Bugfix: If transcode failed, the error was sometimes not reported to the client process, causing it to hang.
 * Feature: Add MOV target format
 * Feature: Add AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")

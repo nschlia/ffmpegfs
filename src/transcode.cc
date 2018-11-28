@@ -659,7 +659,9 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            Logging::error(cache_entry->filename(), "Transcoding exited with error.\nSystem error: %1 (%2)\nFFMpeg error: %3 (%4)", strerror(syserror), syserror, ffmpeg_geterror(averror), averror);
+            Logging::error(cache_entry->filename(), "Transcoding exited with error.");
+            Logging::error(cache_entry->filename(), "System error: %1 (%2)", strerror(cache_entry->m_cache_info.m_errno), cache_entry->m_cache_info.m_errno);
+            Logging::error(cache_entry->filename(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror), cache_entry->m_cache_info.m_averror);
         }
     }
 

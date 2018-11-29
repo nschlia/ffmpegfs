@@ -57,13 +57,13 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "obama" 87441 92398  
+    check_filesize "obama" 87441 92398
     check_filesize "raven" 131776 149735
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "obama" 85751 89365 
-    check_filesize "raven" 126696 126732
+    check_filesize "obama" 85751 89365
+    check_filesize "raven" 126696 126937
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
@@ -72,7 +72,7 @@ then
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "obama" 1058454 1058506  
+    check_filesize "obama" 1058454 1058506
     check_filesize "raven" 1849654 1849696
 elif [ "${DESTTYPE}" == "prores" ];
 then

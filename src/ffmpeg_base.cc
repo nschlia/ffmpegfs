@@ -258,15 +258,6 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
         }
     }
 
-    if (src_pix_fmt != dst_pix_fmt)
-    {
-        Logging::debug(destname(), "Pixel format conversion: %1 -> %2", get_pix_fmt_name(src_pix_fmt), get_pix_fmt_name(dst_pix_fmt));
-    }
-    else
-    {
-        Logging::debug(destname(), "Pixel format: %1", get_pix_fmt_name(dst_pix_fmt));
-    }
-
     output_codec_ctx->pix_fmt                   = dst_pix_fmt;
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }

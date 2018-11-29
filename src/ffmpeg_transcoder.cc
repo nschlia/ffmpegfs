@@ -3081,8 +3081,8 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
             //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
             //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
 
-            int channels = 2; //m_in.m_audio.m_pCodec_ctx->channels;
-            int bytes_per_sample =  2; // av_get_bytes_per_sample(m_in.m_audio.m_pCodec_ctx->sample_fmt);
+            int channels            = m_in.m_audio.m_pCodec_ctx->channels > 2 ? 2 : m_in.m_audio.m_pCodec_ctx->channels;
+            int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
             int output_sample_rate;
 
             get_output_sample_rate(input_sample_rate, params.m_audiosamplerate, &output_sample_rate);

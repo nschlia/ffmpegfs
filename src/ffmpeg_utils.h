@@ -134,7 +134,7 @@ const char *get_media_type_string(enum 		AVMediaType media_type);
 #endif
 
 // Make access possible over codecpar if available
-#if LAVF_DEP_AVSTREAM_CODEC
+#if LAVF_DEP_AVSTREAM_CODEC || defined(USING_LIBAV)
 #define CODECPAR(s)     ((s)->codecpar)
 #else
 #define CODECPAR(s)     ((s)->codec)

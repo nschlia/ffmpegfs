@@ -48,7 +48,7 @@ elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
     check_filesize "obama" 1058636
-    check_filesize "raven" 1849806 3699264
+    check_filesize "raven" 1849780 3699264
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
@@ -78,7 +78,7 @@ elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
     check_filesize "obama" 1059408 1060126
-    check_filesize "raven" 1850814 1853299 
+    check_filesize "raven" 1850814 1853324
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

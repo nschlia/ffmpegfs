@@ -960,27 +960,24 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Initialise pixel format conversion and rescaling if necessary
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codecpar->format);
+        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codecpar->format);
 #else
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codec->pix_fmt);
+        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codec->pix_fmt);
 #endif
-        if (pix_fmt == AV_PIX_FMT_NONE)
+        if (src_pix_fmt == AV_PIX_FMT_NONE)
         {
             // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-            pix_fmt = output_codec_ctx->pix_fmt;
+            src_pix_fmt = output_codec_ctx->pix_fmt;
         }
 
-        if (pix_fmt != output_codec_ctx->pix_fmt ||
+        if (src_pix_fmt != output_codec_ctx->pix_fmt ||
                 CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||
                 CODECPAR(m_in.m_video.m_pStream)->height != output_codec_ctx->height)
         {
             // Rescale image if required
-            const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get(pix_fmt);
-            const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(output_codec_ctx->pix_fmt);
-
-            if (pix_fmt != output_codec_ctx->pix_fmt)
+            if (src_pix_fmt != output_codec_ctx->pix_fmt)
             {
-                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", fmtin != nullptr ? fmtin->name : "-", fmtout != nullptr ? fmtout->name : "-");
+                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(src_pix_fmt), get_pix_fmt_name(output_codec_ctx->pix_fmt));
             }
 
             if (CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||
@@ -996,7 +993,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         // Source settings
                         CODECPAR(m_in.m_video.m_pStream)->width,    // width
                         CODECPAR(m_in.m_video.m_pStream)->height,   // height
-                        pix_fmt,                                    // format
+                        src_pix_fmt,                                    // format
                         // Target settings
                         output_codec_ctx->width,                    // width
                         output_codec_ctx->height,                   // height

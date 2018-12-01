@@ -48,7 +48,7 @@ The commands to install just the first prerequisites follow.
 Please read the "Supported Linux Distributions" chapter in README.md 
 for details.
 
-On Debian:
+**On Debian:**
 
     aptitude install gcc g++
 
@@ -64,7 +64,7 @@ To get Bluray support:
 
 On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
-On Suse (please read notes before continuing):
+**On Suse** (please read notes before continuing):
 
     zypper install gcc gcc-c++
 
@@ -83,7 +83,7 @@ are *not* available which renders this library next to usesless. But FFmpeg can
 be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
 "FFmpeg compile notes" below.
 
-On Red Hat:
+**On Red Hat:**
 
     yum install gcc g++
 
@@ -104,6 +104,28 @@ If you want to build the documentation you will find "asciidoc" missing from
 the Red Hat repositories. To get it use a beta repository:
 
     yum --enablerepo=rhel-7-server-optional-beta-rpms install asciidoc
+
+**On Funtoo Linux:**
+
+To get fuse suppprt and chromaprint (for make check):
+
+    emerge sys-fs/fuse
+    emerge media-libs/chromaprint
+
+To get FFmpeg with H264 etc. support, specify some "USE flags" when doing emerge:
+
+Create file /etc/portage/package.use, e.g. "vi vi /etc/portage/package.use" and add this line:
+
+    media-video/ffmpeg mp3 x264 opus vorbis vpx
+
+This will enable H264, mp3, Opus and WebM support. Next...
+
+    emerge media-libs/openh264
+    emerge media-sound/twolame
+
+    emerge media-video/ffmpeg
+
+to build ffmpeg.
 
 FFmpeg compile notes:
 

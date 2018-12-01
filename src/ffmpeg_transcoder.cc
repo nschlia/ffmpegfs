@@ -156,6 +156,7 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     , m_pFilterGraph(nullptr)
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
+    , m_current_format(nullptr)
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -233,8 +234,8 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
     int ret;
 
     m_in.m_filename = virtualfile->m_origfile;
-
     m_mtime = virtualfile->m_st.st_mtime;
+    m_current_format = params.current_format(virtualfile);
 
     if (is_open())
     {
@@ -252,16 +253,20 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
         return ret;
     }
 
+ 
+    // defaults to 5,000,000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
     //    if (ret < 0)
     //    {
     //        return ret;
     //    }
-    //    ret = av_dict_set_with_check(&opt, "probesize", "100M", 0);          // <<== honored;
-    //    if (ret < 0)
-    //    {
-    //        return ret;
-    //    }
+
+    //  5000000 by default.
+    //ret = av_dict_set_with_check(&opt, "probesize", "2000000", 0);          // <<== honored;
+    //if (ret < 0)
+    //{
+    //    return ret;
+    //}
 
     // using own I/O
     m_fileio = fileio::alloc(virtualfile->m_type);
@@ -402,7 +407,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
 
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_pStream != nullptr &&
-            supports_albumart(m_in.m_file_type) && supports_albumart(get_filetype(params.current_format(virtualfile)->m_desttype)))
+            supports_albumart(m_in.m_file_type) && supports_albumart(get_filetype(m_current_format->m_desttype)))
     {
         Logging::trace(filename(), "Processing album arts.");
 
@@ -462,6 +467,14 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     if (m_out.m_audio.m_nStream_idx > -1)
     {
         audio_info(true, m_out.m_pFormat_ctx, m_out.m_audio.m_pCodec_ctx, m_out.m_audio.m_pStream);
+
+#ifdef USING_LIBAV
+        ret = init_resampler();
+        if (ret)
+        {
+            return ret;
+        }
+#endif
 
         // Initialise the FIFO buffer to store audio samples to be encoded.
         ret = init_fifo();
@@ -707,7 +720,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate));
         }
 
-        output_codec_ctx->channels              = 2;
+
+        output_codec_ctx->channels              = m_in.m_audio.m_pCodec_ctx->channels > 2 ? 2 : m_in.m_audio.m_pCodec_ctx->channels;
         output_codec_ctx->channel_layout        = av_get_default_channel_layout(output_codec_ctx->channels);
         output_codec_ctx->sample_rate           = m_in.m_audio.m_pCodec_ctx->sample_rate;
         orig_sample_rate                        = m_in.m_audio.m_pCodec_ctx->sample_rate;
@@ -889,7 +903,11 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
 
-            output_codec_ctx->width                         = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
+            // Make sure we do not zero width
+            if (sample_aspect_ratio.num && sample_aspect_ratio.den)
+            {
+                output_codec_ctx->width                       = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
+            }
             //output_codec_ctx->height                        *= sample_aspect_ratio.den;
         }
 
@@ -942,34 +960,31 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Initialise pixel format conversion and rescaling if necessary
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codecpar->format);
+        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codecpar->format);
 #else
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codec->pix_fmt);
+        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_pStream->codec->pix_fmt);
 #endif
-        if (pix_fmt == AV_PIX_FMT_NONE)
+        if (src_pix_fmt == AV_PIX_FMT_NONE)
         {
             // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-            pix_fmt = output_codec_ctx->pix_fmt;
+            src_pix_fmt = output_codec_ctx->pix_fmt;
         }
 
-        if (pix_fmt != output_codec_ctx->pix_fmt ||
+        if (src_pix_fmt != output_codec_ctx->pix_fmt ||
                 CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||
                 CODECPAR(m_in.m_video.m_pStream)->height != output_codec_ctx->height)
         {
             // Rescale image if required
-            const AVPixFmtDescriptor *fmtin = av_pix_fmt_desc_get(pix_fmt);
-            const AVPixFmtDescriptor *fmtout = av_pix_fmt_desc_get(output_codec_ctx->pix_fmt);
-
-            if (pix_fmt != output_codec_ctx->pix_fmt)
+            if (src_pix_fmt != output_codec_ctx->pix_fmt)
             {
-                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", fmtin != nullptr ? fmtin->name : "-", fmtout != nullptr ? fmtout->name : "-");
+                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(src_pix_fmt), get_pix_fmt_name(output_codec_ctx->pix_fmt));
             }
 
             if (CODECPAR(m_in.m_video.m_pStream)->width != output_codec_ctx->width ||
                     CODECPAR(m_in.m_video.m_pStream)->height != output_codec_ctx->height)
 
             {
-                Logging::debug(destname(), "Rescaling video size ffrom %1:%2 to %3:%4.",
+                Logging::debug(destname(), "Rescaling video size from %1:%2 to %3:%4.",
                                CODECPAR(m_in.m_video.m_pStream)->width, CODECPAR(m_in.m_video.m_pStream)->height,
                                output_codec_ctx->width, output_codec_ctx->height);
             }
@@ -978,7 +993,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         // Source settings
                         CODECPAR(m_in.m_video.m_pStream)->width,    // width
                         CODECPAR(m_in.m_video.m_pStream)->height,   // height
-                        pix_fmt,                                    // format
+                        src_pix_fmt,                                    // format
                         // Target settings
                         output_codec_ctx->width,                    // width
                         output_codec_ctx->height,                   // height
@@ -1214,17 +1229,14 @@ int FFMPEG_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 // Some of these parameters are based on the input file's parameters.
 int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 {
-    LPCVIRTUALFILE  virtualfile = buffer->virtualfile();
-    AVCodecID       audio_codec_id = params.current_format(virtualfile)->m_audio_codec_id;
-    AVCodecID       video_codec_id = params.current_format(virtualfile)->m_video_codec_id;
     int             ret = 0;
 
-    m_out.m_file_type = params.current_format(virtualfile)->m_filetype;
+    m_out.m_file_type = m_current_format->m_filetype;
     
-    Logging::debug(destname(), "Opening format type '%1'.", params.current_format(virtualfile)->m_desttype);
+    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype);
 
     // Create a new format context for the output container format.
-    avformat_alloc_output_context2(&m_out.m_pFormat_ctx, nullptr, params.current_format(virtualfile)->m_format_name.c_str(), nullptr);
+    avformat_alloc_output_context2(&m_out.m_pFormat_ctx, nullptr, m_current_format->m_format_name.c_str(), nullptr);
     if (!m_out.m_pFormat_ctx)
     {
         Logging::error(destname(), "Could not allocate output format context.");
@@ -1238,9 +1250,9 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     //video_codec_id = m_out.m_pFormat_ctx->oformat->video_codec;
 
-    if (m_in.m_video.m_nStream_idx != INVALID_STREAM && video_codec_id != AV_CODEC_ID_NONE)
+    if (m_in.m_video.m_nStream_idx != INVALID_STREAM && m_current_format->m_video_codec_id != AV_CODEC_ID_NONE)
     {
-        ret = add_stream(video_codec_id);
+        ret = add_stream(m_current_format->m_video_codec_id);
         if (ret < 0)
         {
             return ret;
@@ -1259,11 +1271,11 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 #endif // !USING_LIBAV
     }
 
-    //audio_codec_id = m_out.m_pFormat_ctx->oformat->audio_codec;
+    //m_current_format->m_audio_codec_id = m_out.m_pFormat_ctx->oformat->audio_codec;
 
-    if (m_in.m_audio.m_nStream_idx != INVALID_STREAM && audio_codec_id != AV_CODEC_ID_NONE)
+    if (m_in.m_audio.m_nStream_idx != INVALID_STREAM && m_current_format->m_audio_codec_id != AV_CODEC_ID_NONE)
     {
-        ret = add_stream(audio_codec_id);
+        ret = add_stream(m_current_format->m_audio_codec_id);
         if (ret < 0)
         {
             return ret;
@@ -1292,7 +1304,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
                 static_cast<void *>(buffer),
                 nullptr,           // read
                 output_write,   // write
-                (audio_codec_id != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
+                (m_current_format->m_audio_codec_id != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
     // Some formats require the time stamps to start at 0, so if there is a difference between
     // the streams we need to drop audio or video until we are in sync.
@@ -1681,11 +1693,13 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             try
             {
                 // Initialise the resampler to be able to convert audio sample formats.
+#ifndef USING_LIBAV
                 ret = init_resampler();
                 if (ret)
                 {
                     throw ret;
                 }
+#endif
 
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.
@@ -2053,9 +2067,10 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         }
         else
         {
+            int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_pCodec_ctx->sample_fmt);
             for (int n = 0; n < m_in.m_audio.m_pCodec_ctx->channels; n++)
             {
-                memcpy(converted_data[n], input_data[n], in_samples * av_get_bytes_per_sample(m_out.m_audio.m_pCodec_ctx->sample_fmt));
+                memcpy(converted_data[n], input_data[n], samples);
             }
         }
     }
@@ -3007,15 +3022,11 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
         return 0;
     }
 
-    ffmpegfs_format * current_format = params.current_format(filename());
-    if (current_format == nullptr)
+    if (m_current_format == nullptr)
     {
         // Should ever happen, but better check this to avoid crashes.
         return 0;
     }
-    AVCodecID audio_codec_id = current_format->m_audio_codec_id;
-    AVCodecID video_codec_id = current_format->m_video_codec_id;
-    //FILETYPE format_name = current_format->m_format_name;
     size_t size = 0;
 
     double duration = ffmpeg_cvttime(m_in.m_pFormat_ctx->duration, av_get_time_base_q());
@@ -3045,7 +3056,7 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
 
         get_output_bit_rate(input_audio_bit_rate, params.m_audiobitrate, &output_audio_bit_rate);
 
-        switch (audio_codec_id)
+        switch (m_current_format->m_audio_codec_id)
         {
         case AV_CODEC_ID_AAC:
         {
@@ -3070,8 +3081,8 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
             //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
             //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
 
-            int channels = 2; //m_in.m_audio.m_pCodec_ctx->channels;
-            int bytes_per_sample =  2; // av_get_bytes_per_sample(m_in.m_audio.m_pCodec_ctx->sample_fmt);
+            int channels            = m_in.m_audio.m_pCodec_ctx->channels > 2 ? 2 : m_in.m_audio.m_pCodec_ctx->channels;
+            int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
             int output_sample_rate;
 
             get_output_sample_rate(input_sample_rate, params.m_audiosamplerate, &output_sample_rate);
@@ -3101,7 +3112,7 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
         }
         default:
         {
-            Logging::error(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(audio_codec_id, 0), current_format->m_desttype);
+            Logging::error(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype);
             break;
         }
         }
@@ -3118,7 +3129,7 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
 
             out_video_bit_rate += bitrateoverhead;
 
-            switch (video_codec_id)
+            switch (m_current_format->m_video_codec_id)
             {
             case AV_CODEC_ID_H264:
             {
@@ -3164,7 +3175,7 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
             }
             default:
             {
-                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(video_codec_id, 0), current_format->m_desttype);
+                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype);
                 break;
             }
             }

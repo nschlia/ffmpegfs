@@ -1140,3 +1140,15 @@ bool is_album_art(AVCodecID codec_id)
 {
     return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
 }
+
+void averr2errno(int *syserror, int averror)
+{
+    errno = 0;
+    strerror(AVUNERROR(averror));
+    if (!errno)
+    {
+        // If strerror did not set errno we can use the value
+        *syserror = AVUNERROR(averror);
+    }
+}
+

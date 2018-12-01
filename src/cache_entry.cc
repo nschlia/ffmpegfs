@@ -28,7 +28,6 @@
 //Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
 Cache_Entry::Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile)
     : m_owner(owner)
-    , m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP)
     , m_ref_count(0)
     , m_virtualfile(nullptr)
     , m_thread_id(0)
@@ -52,21 +51,24 @@ Cache_Entry::~Cache_Entry()
 {
     if (m_thread_id && m_thread_id != pthread_self())
     {
+        pthread_t thread_id = m_thread_id;
         // If not same thread, wait for other to finish
-        Logging::warning(m_cache_info.m_filename, "Waiting for thread id %1 to terminate.", m_thread_id);
+        Logging::warning(m_cache_info.m_filename, "Waiting for thread id %1 to terminate.", thread_id);
 
         int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
-            Logging::error(m_cache_info.m_filename, "Error joining thread id %1 : %2", m_thread_id, strerror(s));
+            Logging::error(m_cache_info.m_filename, "Error joining thread id %1 : %2", thread_id, strerror(s));
         }
         else
         {
-            Logging::info(m_cache_info.m_filename, "Thread id %1 has terminated.", m_thread_id);
+            Logging::info(m_cache_info.m_filename, "Thread id %1 has terminated.", thread_id);
         }
     }
 
     delete m_buffer;
+
+    unlock();
 
     Logging::trace(m_cache_info.m_filename, "Deleted buffer.");
 }
@@ -301,12 +303,12 @@ const std::string & Cache_Entry::filename() const
 
 void Cache_Entry::lock()
 {
-    pthread_mutex_lock(&m_mutex);
+    m_mutex.lock();
 }
 
 void Cache_Entry::unlock()
 {
-    pthread_mutex_unlock(&m_mutex);
+    m_mutex.unlock();
 }
 
 int Cache_Entry::ref_count() const

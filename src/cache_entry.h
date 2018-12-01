@@ -24,6 +24,7 @@
 #pragma once
 
 #include "cache.h"
+
 #include "id3v1tag.h"
 
 class Buffer;
@@ -37,52 +38,52 @@ protected:
     virtual ~Cache_Entry();
 
 public:
-    bool            open(bool create_cache = true);
-    bool            flush();
-    void            clear(int fetch_file_time = true);
-    size_t          size() const;
-    time_t          age() const;
-    time_t          last_access() const;
-    bool            expired() const;
-    bool            suspend_timeout() const;
-    bool            decode_timeout() const;
-    const std::string &  filename() const;
-    bool            update_access(bool bUpdateDB = false);
+    bool                    open(bool create_cache = true);
+    bool                    flush();
+    void                    clear(int fetch_file_time = true);
+    size_t                  size() const;
+    time_t                  age() const;
+    time_t                  last_access() const;
+    bool                    expired() const;
+    bool                    suspend_timeout() const;
+    bool                    decode_timeout() const;
+    const std::string &     filename() const;
+    bool                    update_access(bool bUpdateDB = false);
 
-    void            lock();
-    void            unlock();
+    void                    lock();
+    void                    unlock();
 
-    int             ref_count() const;
+    int                     ref_count() const;
 
     // Check if cache entry needs to be recoded
-    bool            outdated() const;
+    bool                    outdated() const;
 
-    LPVIRTUALFILE   virtualfile();
-
-protected:
-    bool            close(int flags);
-    void            close_buffer(int flags);
-
-    bool            read_info();
-    bool            write_info();
-    bool            delete_info();
+    LPVIRTUALFILE           virtualfile();
 
 protected:
-    Cache *         m_owner;
-    pthread_mutex_t m_mutex;
+    bool                    close(int flags);
+    void                    close_buffer(int flags);
 
-    int             m_ref_count;
+    bool                    read_info();
+    bool                    write_info();
+    bool                    delete_info();
 
-    LPVIRTUALFILE   m_virtualfile;
+protected:
+    Cache *                 m_owner;
+    std::recursive_mutex    m_mutex;
+
+    int                     m_ref_count;
+
+    LPVIRTUALFILE           m_virtualfile;
 
 public:
-    Buffer *        m_buffer;
-    bool            m_is_decoding;
-    pthread_t       m_thread_id;
+    Buffer *                m_buffer;
+    bool                    m_is_decoding;
+    pthread_t               m_thread_id;
 
-    t_cache_info    m_cache_info;
+    t_cache_info            m_cache_info;
 
-    ID3v1           m_id3v1;
+    ID3v1                   m_id3v1;
 };
 
 #endif // CACHE_ENTRY_H

@@ -199,10 +199,10 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         return nullptr;
     }
 
-    cache_entry->lock();
-
     try
     {
+        cache_entry->lock();
+
         if (!cache_entry->open(begin_transcode))
         {
             _errno = errno;
@@ -278,13 +278,23 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     }
                 }
 
-                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+                // Make thread joinable
+                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+                    Logging::error(virtualfile->m_origfile, "Cannot make thread joinable: %1", strerror(ret));
+                    pthread_attr_destroy(&attr);
                     throw false;
                 }
+
+                //                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+                //                if (ret != 0)
+                //                {
+                //                    _errno = ret;
+                //                    Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+                //                    throw false;
+                //                }
 
                 Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));  // TODO: replace with new/delete
 
@@ -329,6 +339,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     if (!_errno)
                     {
                         _errno = EIO; // Must return anything...
+                        averr2errno(&_errno, cache_entry->m_cache_info.m_averror);
                     }
                     throw false;
                 }
@@ -364,9 +375,9 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     catch (bool /*_bSuccess*/)
     {
         cache_entry->m_is_decoding = false;
-        cache_entry->unlock();
         cache->close(&cache_entry, CLOSE_CACHE_DELETE);
-        errno = _errno; // Restore last errno
+        cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
+        errno = _errno;         // Restore last errno
     }
 
     return cache_entry;
@@ -564,6 +575,7 @@ static void *decoder_thread(void *arg)
             if (status < 0)
             {
                 syserror = EIO;
+                averr2errno(&syserror, averror);
                 success = false;
                 break;
             }
@@ -571,6 +583,7 @@ static void *decoder_thread(void *arg)
             if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
             {
                 syserror = EIO;
+                averr2errno(&syserror, averror);
                 success = false;
                 break;
             }
@@ -616,13 +629,16 @@ static void *decoder_thread(void *arg)
     {
         success = false;
         syserror = _syserror;
-        cache_entry->m_is_decoding = false;
-        cache_entry->m_cache_info.m_error = !success;
-        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : EIO);  // Preserve errno
-        cache_entry->m_cache_info.m_averror = success ? 0 : averror;                    // Preserve averror
+        if (!syserror)
+        {
+            averr2errno(&syserror, averror);
+        }
+        cache_entry->m_is_decoding              = false;
+        cache_entry->m_cache_info.m_error       = !success;
+        cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
+        cache_entry->m_cache_info.m_averror     = success ? 0 : averror;                        // Preserve averror
 
         pthread_cond_signal(&thread_data->m_cond);  // unlock main thread
-        cache_entry->unlock();
     }
 
     transcoder->close();
@@ -631,11 +647,11 @@ static void *decoder_thread(void *arg)
 
     if (timeout || thread_exit)
     {
-        cache_entry->m_is_decoding = false;
-        cache_entry->m_cache_info.m_finished = false;
-        cache_entry->m_cache_info.m_error = true;
-        cache_entry->m_cache_info.m_errno = EIO;        // Report I/O error
-        cache_entry->m_cache_info.m_averror = averror;  // Preserve averror
+        cache_entry->m_is_decoding              = false;
+        cache_entry->m_cache_info.m_finished    = false;
+        cache_entry->m_cache_info.m_error       = true;
+        cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
+        cache_entry->m_cache_info.m_averror     = averror;  // Preserve averror
 
         if (timeout)
         {
@@ -648,10 +664,16 @@ static void *decoder_thread(void *arg)
     }
     else
     {
+        if (!success && !syserror)
+        {
+            // If syserror is 0 check if averror is a valid system errno value
+            averr2errno(&syserror, averror);
+        }
+
         cache_entry->m_is_decoding = false;
-        cache_entry->m_cache_info.m_error = !success;
-        cache_entry->m_cache_info.m_errno = success ? 0 : (syserror ? syserror : EIO);  // Preserve errno
-        cache_entry->m_cache_info.m_averror = success ? 0 : averror;                    // Preserve averror
+        cache_entry->m_cache_info.m_error   = !success;
+        cache_entry->m_cache_info.m_errno   = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
+        cache_entry->m_cache_info.m_averror = success ? 0 : averror;                        // Preserve averror
 
         if (success)
         {
@@ -659,7 +681,9 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            Logging::error(cache_entry->filename(), "Transcoding exited with error.\nSystem error: %1 (%2)\nFFMpeg error: %3 (%4)", strerror(syserror), syserror, ffmpeg_geterror(averror), averror);
+            Logging::error(cache_entry->filename(), "Transcoding exited with error.");
+            Logging::error(cache_entry->filename(), "System error: %1 (%2)", strerror(cache_entry->m_cache_info.m_errno), cache_entry->m_cache_info.m_errno);
+            Logging::error(cache_entry->filename(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror), cache_entry->m_cache_info.m_averror);
         }
     }
 
@@ -668,6 +692,8 @@ static void *decoder_thread(void *arg)
     cache->close(&cache_entry, timeout ? CLOSE_CACHE_DELETE : CLOSE_CACHE_NOOPT);
 
     thread_count--;
+
+    errno = syserror;
 
     return nullptr;
 }

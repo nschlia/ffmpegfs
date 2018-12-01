@@ -7,7 +7,7 @@ ffmpegfs TODOs
 * Convert video-only and audio-video files to MOV
 * Vcodec copy and acodec copy if supported by MOV
 * Transcode to vcodec prores if video source codec not supported by MOV
-* Transcode to acodec pcm if audio source codec not supported by MOV.
+* Transcode to acodec pcm if audio source codec not supported by MOV
 * Improve Libav compatibility (maybe it is possible to use Libav 11+?).
 * Many more ideas I'll have when I wake up and find them nice to have.
 * Any features that you may request.

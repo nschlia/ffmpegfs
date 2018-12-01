@@ -31,12 +31,11 @@
 #define sqlite3_errstr(rc)  ""
 #endif // HAVE_SQLITE_ERRSTR
 
-Cache::Cache() :
-    m_mutex(PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP),
-    m_cacheidx_db(nullptr),
-    m_cacheidx_select_stmt(nullptr),
-    m_cacheidx_insert_stmt(nullptr),
-    m_cacheidx_delete_stmt(nullptr)
+Cache::Cache()
+    : m_cacheidx_db(nullptr)
+    , m_cacheidx_select_stmt(nullptr)
+    , m_cacheidx_insert_stmt(nullptr)
+    , m_cacheidx_delete_stmt(nullptr)
 {
 }
 
@@ -219,7 +218,7 @@ bool Cache::read_info(t_cache_info & cache_info)
         return false;
     }
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     try
     {
@@ -279,8 +278,6 @@ bool Cache::read_info(t_cache_info & cache_info)
 
     sqlite3_reset(m_cacheidx_select_stmt);
 
-    unlock();
-
     if (success)
     {
         errno = 0; // sqlite3 sometimes sets errno without any reason, better reset any error
@@ -314,7 +311,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
         return false;
     }
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     try
     {
@@ -358,8 +355,6 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
     sqlite3_reset(m_cacheidx_insert_stmt);
 
-    unlock();
-
     if (success)
     {
         errno = 0; // sqlite3 sometimes sets errno without any reason, better reset any error
@@ -379,7 +374,7 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
         return false;
     }
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     try
     {
@@ -411,8 +406,6 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
     }
 
     sqlite3_reset(m_cacheidx_delete_stmt);
-
-    unlock();
 
     if (success)
     {
@@ -511,17 +504,21 @@ bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
         return true;
     }
 
+    bool bSuccess;
+
     std::string filename((*cache_entry)->filename());
     if (delete_entry(cache_entry, flags))
     {
         Logging::trace(filename, "Freed cache entry.");
-        return true;
+        bSuccess = true;
     }
     else
     {
         Logging::trace(filename, "Keeping cache entry.");
-        return false;
+        bSuccess = false;
     }
+
+    return bSuccess;
 }
 
 bool Cache::prune_expired()
@@ -541,7 +538,7 @@ bool Cache::prune_expired()
     
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
@@ -584,8 +581,6 @@ bool Cache::prune_expired()
 
     sqlite3_finalize(stmt);
 
-    unlock();
-
     return true;
 }
 
@@ -606,7 +601,7 @@ bool Cache::prune_cache_size()
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
@@ -666,8 +661,6 @@ bool Cache::prune_cache_size()
 
     sqlite3_finalize(stmt);
 
-    unlock();
-
     return true;
 }
 
@@ -684,7 +677,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         return false;
     }
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     size_t free_bytes = buf.f_bfree * buf.f_bsize;
 
@@ -750,8 +743,6 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         sqlite3_finalize(stmt);
     }
 
-    unlock();
-
     return true;
 }
 
@@ -775,7 +766,7 @@ bool Cache::clear()
 {
     bool success = true;
 
-    lock();
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     std::vector<cache_key_t> keys;
     sqlite3_stmt * stmt;
@@ -823,19 +814,7 @@ bool Cache::clear()
 
     sqlite3_finalize(stmt);
 
-    unlock();
-
     return success;
-}
-
-void Cache::lock()
-{
-    pthread_mutex_lock(&m_mutex);
-}
-
-void Cache::unlock()
-{
-    pthread_mutex_unlock(&m_mutex);
 }
 
 bool Cache::remove_cachefile(const std::string & filename, const std::string & desttype)

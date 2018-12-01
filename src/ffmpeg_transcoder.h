@@ -243,6 +243,8 @@ private:
     INPUTFILE                   m_in;
     OUTPUTFILE                  m_out;
 
+    ffmpegfs_format *           m_current_format;
+
     static const PROFILE_LIST   m_profile[];
 
     static const PRORES_BITRATE m_prores_bitrate[];

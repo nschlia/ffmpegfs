@@ -25,6 +25,7 @@
 
 #include "fileio.h"
 
+#include <mutex>
 #include <stddef.h>
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))
@@ -41,55 +42,52 @@ public:
 
     virtual VIRTUALTYPE type() const;
 
-    bool            init(bool erase_cache = false);                // Initialise cache, if erase_cache = true delete old file before opening
-    bool            release(int flags = CLOSE_CACHE_NOOPT);
+    bool                    init(bool erase_cache = false);                // Initialise cache, if erase_cache = true delete old file before opening
+    bool                    release(int flags = CLOSE_CACHE_NOOPT);
 
-    virtual int     bufsize() const;
-    virtual int     read(void *data, int maxlen);
-    virtual int     error() const;
-    virtual int     duration() const;
-    virtual size_t  size() const;
-    virtual size_t  tell() const;
-    virtual int     seek(long offset, int whence);
-    virtual bool    eof() const;
-    virtual void    close();
+    virtual int             bufsize() const;
+    virtual int             read(void *data, int maxlen);
+    virtual int             error() const;
+    virtual int             duration() const;
+    virtual size_t          size() const;
+    virtual size_t          tell() const;
+    virtual int             seek(long offset, int whence);
+    virtual bool            eof() const;
+    virtual void            close();
 
-    size_t          write(const uint8_t* data, size_t length);
-    bool            flush();
-    bool            clear();
-    bool            reserve(size_t size);
-    size_t          buffer_watermark() const;
-    bool            copy(uint8_t* out_data, size_t offset, size_t bufsize);
+    size_t                  write(const uint8_t* data, size_t length);
+    bool                    flush();
+    bool                    clear();
+    bool                    reserve(size_t size);
+    size_t                  buffer_watermark() const;
+    bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize);
 
-    void            lock();
-    void            unlock();
-
-    const std::string &  filename() const;
-    const std::string &  cachefile() const;
+    const std::string &     filename() const;
+    const std::string &     cachefile() const;
 
     static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
-    static bool     remove_file(const std::string & filename);
+    static bool             remove_file(const std::string & filename);
 
 protected:
-    virtual int     openX(const std::string & filename);
+    virtual int             openX(const std::string & filename);
 
-    bool            remove_cachefile();
-
-private:
-    uint8_t*        write_prepare(size_t length);
-    void            increment_pos(ptrdiff_t increment);
-    bool            reallocate(size_t newsize);
+    bool                    remove_cachefile();
 
 private:
-    pthread_mutex_t m_mutex;
-    std::string     m_filename;
-    std::string     m_cachefile;
-    size_t          m_buffer_pos;           // Read/write position
-    size_t          m_buffer_watermark;     // Number of bytes in buffer
-    volatile bool   m_is_open;
-    size_t          m_buffer_size;          // Current buffer size
-    uint8_t *       m_buffer;
-    int             m_fd;
+    uint8_t*                write_prepare(size_t length);
+    void                    increment_pos(ptrdiff_t increment);
+    bool                    reallocate(size_t newsize);
+
+private:
+    std::recursive_mutex    m_mutex;
+    std::string             m_filename;
+    std::string             m_cachefile;
+    size_t                  m_buffer_pos;           // Read/write position
+    size_t                  m_buffer_watermark;     // Number of bytes in buffer
+    volatile bool           m_is_open;
+    size_t                  m_buffer_size;          // Current buffer size
+    uint8_t *               m_buffer;
+    int                     m_fd;
 };
 
 #endif

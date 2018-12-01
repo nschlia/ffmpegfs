@@ -15,14 +15,26 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: Deinterlace did not always work.
 * Bugfix: Fixed memory leaks.
 * Bugfix: Report correct error if directory mounted twice.
+<<<<<<< HEAD
 * Bugfix: SIlence chatty log outputs.
 * Bugfix: Fix GPF when accessed.
 * Bugfix: Fix GPF when channel layout changed during playback.
+=======
+* Bugfix: Silence chatty log outputs.
+* Bugfix: Fix GPF when accessed.
+* Bugfix: Fix GPF when channel layout changed during playback.
+* Bugfix: If transcode failed, the error was sometimes not reported to the client process, causing it to hang.
+* Bugfix: Sometimes tried to create WebM files with zero width (failed to transcode).
+>>>>>>> 3acbcff8c691e765086ef619d1a61054b1d5f3f4
 * Feature: Add MOV target format
 * Feature: Add AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")
 * Feature: Add level option for Prores
 * Feature: Add Apple Prores support
+<<<<<<< HEAD
+=======
+* Feature: Do not "uprade" mono audio to stereo. Create mono audio stream.
+>>>>>>> 3acbcff8c691e765086ef619d1a61054b1d5f3f4
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-08)

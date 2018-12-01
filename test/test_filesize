@@ -43,12 +43,12 @@ elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
     check_filesize "obama" 97231 97244
-    check_filesize "raven" 126447 126456
+    check_filesize "raven" 126430 126447
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
     check_filesize "obama" 1058636
-    check_filesize "raven" 3699380 3699406
+    check_filesize "raven" 1849780 3699264
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
@@ -57,13 +57,13 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "obama" 87441 92398  
-    check_filesize "raven" 131776 149219 
+    check_filesize "obama" 87441 92398
+    check_filesize "raven" 131776 149735
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "obama" 85751 89365 
-    check_filesize "raven" 126177 126589 
+    check_filesize "obama" 85751 89365
+    check_filesize "raven" 126696 126937
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
@@ -72,13 +72,13 @@ then
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "obama" 1058454 1058506  
-    check_filesize "raven" 3699254 3699296 
+    check_filesize "obama" 1058454 1058506
+    check_filesize "raven" 1849654 1849696
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
     check_filesize "obama" 1059408 1060126
-    check_filesize "raven" 3700414 3702941
+    check_filesize "raven" 1850814 1853324
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

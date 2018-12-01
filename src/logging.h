@@ -144,17 +144,47 @@ protected:
 
     template <typename T, typename... Args>
     static std::string format_helper(
-            const std::string &string_to_update,
+            const std::string &string_to_search,
             const size_t index_to_replace,
             T &&val,
-            Args &&...args) {
+            Args &&...args)
+    {
         // Match %# exactly (e.g. %12 and %123 literally)
-        std::regex pattern("%" + std::to_string(index_to_replace) + "(?=[^0-9]|$)");
-        std::ostringstream ostr;
-        ostr << val;
-        std::string replacement_string(ostr.str());
+
+        std::regex exp("%(<([^>]+)>)*" + std::to_string(index_to_replace) + "(?=[^0-9]|$)");
+        std::smatch res;
+        std::string string_to_update(string_to_search);
+        std::string::const_iterator searchStart(string_to_search.cbegin());
+        size_t offset = 0;
+
+        while (std::regex_search(searchStart, string_to_search.cend(), res, exp))
+        {
+            std::ostringstream ostr;
+
+            if (res[2].length())
+            {
+                // Found match with printf format in res[2]
+                size_t size = std::snprintf(nullptr, 0, res[2].str().c_str(), val);
+                std::vector<char> buffer;
+                buffer.resize(size + 1);
+                std::snprintf(buffer.data(), size + 1, res[2].str().c_str(), val);
+                ostr << buffer.data();
+            }
+            else
+            {
+                // No printf format, replace literally
+                ostr << val;
+            }
+
+            string_to_update.replace(res.position() + offset, res[0].length(), ostr.str());
+
+            offset += static_cast<size_t>(res.position()) + ostr.str().length();
+
+            searchStart = res.suffix().first;
+        }
+
         return format_helper(
-                    std::regex_replace(string_to_update, pattern, replacement_string),
+                    string_to_update,
                     index_to_replace + 1,
                     std::forward<Args>(args)...);
     }

@@ -100,7 +100,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             cur_pgc = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
             start_cell = cur_pgc->program_map[ pgn - 1 ] - 1;
 
-            Logging::trace(path, "Chapter %1 [PGC %2, PG %3] starts at Cell %4 [sector %5-%6]",
+            Logging::trace(path, "Chapter %<%3d>1 [PGC %<%2d>2, PG %<%2d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
                            j, pgcnum, pgn, start_cell,
                            static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].first_sector),
                            static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].last_sector));

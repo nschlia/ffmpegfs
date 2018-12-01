@@ -53,16 +53,16 @@ Cache_Entry::~Cache_Entry()
     {
         pthread_t thread_id = m_thread_id;
         // If not same thread, wait for other to finish
-        Logging::warning(m_cache_info.m_filename, "Waiting for thread id %1 to terminate.", thread_id);
+        Logging::warning(m_cache_info.m_filename, "Waiting for thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 to terminate.", thread_id);
 
         int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
-            Logging::error(m_cache_info.m_filename, "Error joining thread id %1 : %2", thread_id, strerror(s));
+            Logging::error(m_cache_info.m_filename, "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : %2", thread_id, strerror(s));
         }
         else
         {
-            Logging::info(m_cache_info.m_filename, "Thread id %1 has terminated.", thread_id);
+            Logging::info(m_cache_info.m_filename, "Thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 has terminated.", thread_id);
         }
     }
 

@@ -174,7 +174,7 @@ int dvdio::openX(const std::string & filename)
     m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );
     if ( !m_dvd_title )
     {
-        Logging::error(m_path, "Can't open title VOBS (VTS_%1_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
+        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
         ifoClose( m_vts_file );
         ifoClose( m_vmg_file );
         DVDClose( m_dvd );

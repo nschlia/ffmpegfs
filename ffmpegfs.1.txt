@@ -82,7 +82,7 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
 
 *BITRATE*:: can be defined as...
  * n bit/s:  #  or #bps
- * n kbit/s: #M or #Mbps
+ * n kbit/s: #K or #Kbps
  * n Mbit/s: #M or #Mbps
 
 *SAMPLERATE*:: can be defined as...
@@ -115,7 +115,7 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
 
 *BITRATE*:: can be defined as...
  * n bit/s:  #  or #bps
- * n kbit/s: #M or #Mbps
+ * n kbit/s: #K or #Kbps
  * n Mbit/s: #M or #Mbps
 
 === Album Arts ===
@@ -199,7 +199,7 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
  *SIZE*:: can be defined as...
   * In bytes:  # or #B
   * In KBytes: #K or #KB
-  * In MBytes: #B or #MB
+  * In MBytes: #M or #MB
   * In GBytes: #G or #GB
   * In TBytes: #T or #TB
 
@@ -253,12 +253,12 @@ Mount your filesystem like this:
 
 For example,
 
-    ffmpegfs --audiobitrate 256 -videobitrate 2000000 /mnt/music /mnt/ffmpegfs -o allow_other,ro
+    ffmpegfs --audiobitrate 256K -videobitrate 2000000 /mnt/music /mnt/ffmpegfs -o allow_other,ro
 
 In recent versions of FUSE and ffmpegfs, the same can be achieved with the
 following entry in `/etc/fstab`:
 
-    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256,videobitrate=2000000 0 0
+    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
 
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.

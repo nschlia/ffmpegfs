@@ -375,6 +375,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     catch (bool /*_bSuccess*/)
     {
         cache_entry->m_is_decoding = false;
+        cache_entry->unlock();
         cache->close(&cache_entry, CLOSE_CACHE_DELETE);
         cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
         errno = _errno;         // Restore last errno

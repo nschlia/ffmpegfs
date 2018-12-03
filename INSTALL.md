@@ -230,3 +230,14 @@ You need to install asciidoc, doing (or similar)
      aptitude install asciidoc
      
 should fix it.
+
+**libbluray fails to load libbluray.jar**
+
+When you see this message accessing blurays:
+
+    bdj.c:340: libbluray-j2se-0.9.3.jar not found.
+    bdj.c:466: BD-J check: Failed to load libbluray.jar
+
+To get rid of this message simply install "libbluray-bdj", this will make it go away.
+This is not necessary, though, as to read the bluray tracks it is not nessessary, so
+this is simply cosmetical.

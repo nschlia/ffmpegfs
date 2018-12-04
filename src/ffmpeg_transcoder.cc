@@ -1422,7 +1422,7 @@ int FFMPEG_Transcoder::init_resampler()
     // Fail save: if channel layout not know assume mono or stereo
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
-        m_in.m_audio.m_codec_ctx->channel_layout = m_in.m_audio.m_codec_ctx->channels;
+        m_in.m_audio.m_codec_ctx->channel_layout = av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels);
     }
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {

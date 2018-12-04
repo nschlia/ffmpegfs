@@ -95,14 +95,14 @@ public:
     struct STREAMREF
     {
         STREAMREF() :
-            m_pCodec_ctx(nullptr),
-            m_pStream(nullptr),
-            m_nStream_idx(INVALID_STREAM)
+            m_codec_ctx(nullptr),
+            m_stream(nullptr),
+            m_stream_idx(INVALID_STREAM)
         {}
 
-        AVCodecContext *        m_pCodec_ctx;
-        AVStream *              m_pStream;
-        int                     m_nStream_idx;
+        AVCodecContext *        m_codec_ctx;
+        AVStream *              m_stream;
+        int                     m_stream_idx;
     };
 
     // Input file
@@ -111,18 +111,18 @@ public:
         INPUTFILE() :
             m_file_type(FILETYPE_UNKNOWN),
             m_filename("unset"),
-            m_pFormat_ctx(nullptr)
+            m_format_ctx(nullptr)
         {}
 
         FILETYPE                m_file_type;
         std::string             m_filename;
 
-        AVFormatContext *       m_pFormat_ctx;
+        AVFormatContext *       m_format_ctx;
 
         STREAMREF               m_audio;
         STREAMREF               m_video;
 
-        std::vector<STREAMREF>  m_aAlbumArt;
+        std::vector<STREAMREF>  m_album_art;
     };
 
     // Output file

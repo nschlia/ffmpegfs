@@ -75,6 +75,35 @@ int dvdio::bufsize() const
     return sizeof(m_data);
 }
 
+/*
+  static void print_time(dvd_time_t *dtime) {
+  const char *rate;
+
+  assert((dtime->hour>>4) < 0xa && (dtime->hour&0xf) < 0xa);
+  assert((dtime->minute>>4) < 0x7 && (dtime->minute&0xf) < 0xa);
+  assert((dtime->second>>4) < 0x7 && (dtime->second&0xf) < 0xa);
+  assert((dtime->frame_u&0xf) < 0xa);
+
+  fprintf(MSG_OUT,"%02x:%02x:%02x.%02x",
+         dtime->hour,
+         dtime->minute,
+         dtime->second,
+         dtime->frame_u & 0x3f);
+  switch((dtime->frame_u & 0xc0) >> 6) {
+  case 1:
+    rate = "25.00";
+    break;
+  case 3:
+    rate = "29.97";
+    break;
+  default:
+    rate = "(please send a bug report)";
+    break;
+  }
+  fprintf(MSG_OUT," @ %s fps", rate);
+}
+*/
+
 int dvdio::openX(const std::string & filename)
 {
     int pgc_id;
@@ -194,7 +223,9 @@ int dvdio::openX(const std::string & filename)
             first_cell += m_angle_no;
         }
 
-        m_duration = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.second) * AV_TIME_BASE;
+        int framerate = ((m_cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0xc0) >> 6);
+        int64_t frac = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
+        m_duration = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.second) * AV_TIME_BASE + frac;
     }
 
     m_goto_next_cell = true;

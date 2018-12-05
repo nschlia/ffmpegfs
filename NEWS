@@ -21,6 +21,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: If transcode failed, the error was sometimes not reported to the client process, causing it to hang.
 * Bugfix: Sometimes tried to create WebM files with zero width (failed to transcode).
 * Bugfix: Avoid mpeg-4 profile/pixel format mismatches.
+* Bugfix: Fix creating zero sized files from DVDs when chapter playtime < 1 s.
 * Feature: Add MOV target format
 * Feature: Add AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")

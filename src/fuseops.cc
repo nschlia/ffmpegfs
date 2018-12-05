@@ -545,13 +545,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         if (S_ISREG(stbuf->st_mode))
         {
             assert(virtualfile->m_origfile == origpath);
-            //if (!transcoder_cached_filesize(origpath, stbuf))
+
             if (!transcoder_cached_filesize(virtualfile, stbuf))
             {
-                struct Cache_Entry* cache_entry;
-
-                cache_entry = transcoder_new(virtualfile, false);
-                if (!cache_entry)
+                Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+                if (cache_entry == nullptr)
                 {
                     return -errno;
                 }
@@ -656,9 +654,9 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
         {
-            struct Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
+            Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
-            if (!cache_entry)
+            if (cache_entry == nullptr)
             {
                 Logging::error(path, "Tried to stat unopen file.");
                 errno = EBADF;
@@ -690,7 +688,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     std::string origpath;
-    struct Cache_Entry* cache_entry;
+    Cache_Entry* cache_entry;
     int fd;
 
     Logging::trace(path, "open");
@@ -742,7 +740,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     case VIRTUALTYPE_REGULAR:
     {
         cache_entry = transcoder_new(virtualfile, true);
-        if (!cache_entry)
+        if (cache_entry == nullptr)
         {
             return -errno;
         }
@@ -772,7 +770,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     std::string origpath;
     int fd;
     ssize_t read = 0;
-    struct Cache_Entry* cache_entry;
+    Cache_Entry* cache_entry;
 
     Logging::trace(path, "read %1 bytes from %2.", size, static_cast<intmax_t>(offset));
 
@@ -839,7 +837,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     {
         cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
-        if (!cache_entry)
+        if (cache_entry == nullptr)
         {
             Logging::error(origpath.c_str(), "Tried to read from unopen file.");
             return -errno;
@@ -897,7 +895,7 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
 static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
-    struct Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
+    Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
     Logging::trace(path, "release");
 

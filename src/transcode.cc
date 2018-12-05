@@ -106,7 +106,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
 
 void transcoder_cache_path(std::string & path)
 {
-    if (params.m_cachepath[0])
+    if (params.m_cachepath.size())
     {
         path = params.m_cachepath;
     }
@@ -159,7 +159,7 @@ int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
     Logging::trace(virtualfile->m_origfile, "Retrieving encoded size.");
 
     Cache_Entry* cache_entry = cache->open(virtualfile);
-    if (!cache_entry)
+    if (cache_entry == nullptr)
     {
         return false;
     }
@@ -194,7 +194,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     Logging::trace(virtualfile->m_origfile, "Creating transcoder object.");
 
     Cache_Entry* cache_entry = cache->open(virtualfile);
-    if (!cache_entry)
+    if (cache_entry == nullptr)
     {
         return nullptr;
     }
@@ -288,13 +288,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     throw false;
                 }
 
-                //                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-                //                if (ret != 0)
-                //                {
-                //                    _errno = ret;
-                //                    Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
-                //                    throw false;
-                //                }
+                //ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+                //if (ret != 0)
+                //{
+                //  _errno = ret;
+                //  Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+                //  throw false;
+                //}
 
                 Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));  // TODO: replace with new/delete
 

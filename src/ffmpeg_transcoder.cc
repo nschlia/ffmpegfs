@@ -1422,7 +1422,7 @@ int FFMPEG_Transcoder::init_resampler()
     // Fail save: if channel layout not know assume mono or stereo
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
-        m_in.m_audio.m_codec_ctx->channel_layout = m_in.m_audio.m_codec_ctx->channels;
+        m_in.m_audio.m_codec_ctx->channel_layout = av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels);
     }
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
@@ -3133,7 +3133,7 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
 
     if (m_fileio->duration() > -1)
     {
-        duration = static_cast<double>(m_fileio->duration());
+        duration = static_cast<double>(m_fileio->duration()) / AV_TIME_BASE;
     }
 
     if (m_in.m_audio.m_stream_idx > -1)

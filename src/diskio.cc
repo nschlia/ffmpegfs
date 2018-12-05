@@ -74,7 +74,7 @@ int diskio::error() const
     return ferror(m_fpi);
 }
 
-int diskio::duration() const
+int64_t diskio::duration() const
 {
     return -1;  // not applicable
 }

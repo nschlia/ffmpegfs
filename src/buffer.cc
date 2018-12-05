@@ -391,7 +391,7 @@ size_t Buffer::tell() const
     return m_buffer_pos;
 }
 
-int Buffer::duration() const
+int64_t Buffer::duration() const
 {
     return -1;  // not applicable
 }

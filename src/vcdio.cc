@@ -107,7 +107,7 @@ int vcdio::error() const
     return ferror(m_fpi);
 }
 
-int vcdio::duration() const
+int64_t vcdio::duration() const
 {
     return -1;  // TODO
 }

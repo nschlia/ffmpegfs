@@ -194,7 +194,7 @@ int dvdio::openX(const std::string & filename)
             first_cell += m_angle_no;
         }
 
-        m_duration = (m_cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.second;
+        m_duration = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.second) * AV_TIME_BASE;
     }
 
     m_goto_next_cell = true;
@@ -368,7 +368,7 @@ int dvdio::error() const
     return m_errno;
 }
 
-int dvdio::duration() const
+int64_t dvdio::duration() const
 {
     return m_duration;
 }

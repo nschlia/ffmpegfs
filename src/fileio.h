@@ -117,7 +117,7 @@ public:
     // Get play time in ms
     // This is only possible for file formats that are aware
     // of the play time. May be -1 if the time is not known.
-    virtual int     duration() const = 0;
+    virtual int64_t  duration() const = 0;
     // Get file size
     virtual size_t  size() const = 0;
     // Get current read position

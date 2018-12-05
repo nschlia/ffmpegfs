@@ -38,7 +38,7 @@ public:
     virtual int     bufsize() const;
     virtual int     read(void *data, int maxlen);
     virtual int     error() const;
-    virtual int     duration() const;
+    virtual int64_t duration() const;
     virtual size_t  size() const;
     virtual size_t  tell() const;
     virtual int     seek(long offset, int whence);

@@ -211,9 +211,9 @@ int blurayio::error() const
     return m_errno;
 }
 
-int blurayio::duration() const
+int64_t blurayio::duration() const
 {
-    return -1;
+    return -1;  // TODO
 }
 
 size_t blurayio::size() const

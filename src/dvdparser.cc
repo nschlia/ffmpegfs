@@ -108,7 +108,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             {
                 char title_buf[PATH_MAX + 1];
                 std::string origfile;
-                struct stat st;
+                struct stat stbuf;
                 size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
 
@@ -119,19 +119,19 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
 
                 origfile = path + filename;
 
-                memcpy(&st, statbuf, sizeof(struct stat));
+                memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-                st.st_size = size;
-                st.st_blocks = (st.st_size + 512 - 1) / 512;
+                stbuf.st_size = size;
+                stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
                 //init_stat(&st, size, false);
 
-                if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
+                if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
                 {
                     // break;
                 }
 
-                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &st);
+                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &stbuf);
 
                 // DVD is video format anyway
                 virtualfile->m_format_idx       = 0;

@@ -179,7 +179,6 @@ int dvdio::openX(const std::string & filename)
         return EINVAL;
     }
 
-
     // Load the VTS information for the title set our title is in.
     m_vts_file = ifoOpen( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr );
     if ( !m_vts_file )
@@ -197,7 +196,6 @@ int dvdio::openX(const std::string & filename)
     pgn = vts_ptt_srpt->title[ ttn - 1 ].ptt[ m_chapter_no ].pgn;
     m_cur_pgc = m_vts_file->vts_pgcit->pgci_srp[ pgc_id - 1 ].pgc;
     m_start_cell = m_cur_pgc->program_map[ pgn - 1 ] - 1;
-
 
     // We've got enough info, time to open the title set data.
     m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );

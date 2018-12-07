@@ -68,7 +68,10 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
     {
         ifo_handle_t *vts_file;
         vts_ptt_srpt_t *vts_ptt_srpt;
-        int vtsnum, ttnnum, pgcnum, chapts;
+        int vtsnum;
+        int ttnnum;
+        int pgcnum;
+        int chapts;
 
         vtsnum = tt_srpt->title[ i ].title_set_nr;
         ttnnum = tt_srpt->title[ i ].vts_ttn;
@@ -95,10 +98,10 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             int title_no = i + 1;
             int chapter_no = j + 1;
 
-            pgcnum = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgcn;
-            pgn = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgn;
-            cur_pgc = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
-            start_cell = cur_pgc->program_map[ pgn - 1 ] - 1;
+            pgcnum      = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgcn;
+            pgn         = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgn;
+            cur_pgc     = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
+            start_cell  = cur_pgc->program_map[ pgn - 1 ] - 1;
 
             Logging::trace(path, "Chapter %<%3d>1 [PGC %<%2d>2, PG %<%2d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
                            j, pgcnum, pgn, start_cell,
@@ -121,7 +124,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
 
                 memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-                stbuf.st_size = size;
+                stbuf.st_size   = static_cast<__off_t>(size);
                 stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
                 //init_stat(&st, size, false);

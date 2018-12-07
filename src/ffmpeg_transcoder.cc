@@ -143,6 +143,7 @@ const FFMPEG_Transcoder::PRORES_BITRATE FFMPEG_Transcoder::m_prores_bitrate[] =
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFMPEG_Transcoder::FFMPEG_Transcoder()
     : m_fileio(nullptr)
+    , m_close_fileio(true)
     , m_predicted_size(0)
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
@@ -228,7 +229,7 @@ bool FFMPEG_Transcoder::is_open() const
 
 // Open the given FFmpeg file and prepare for decoding. After this function,
 // the other methods can be used to process the file.
-int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
+int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
 {
     AVDictionary * opt = nullptr;
     int ret;
@@ -253,7 +254,6 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
         return ret;
     }
 
- 
     // defaults to 5,000,000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
     //    if (ret < 0)
@@ -269,7 +269,19 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile)
     //}
 
     // using own I/O
-    m_fileio = fileio::alloc(virtualfile->m_type);
+    if (fio == nullptr)
+    {
+        // Open new file io
+        m_fileio = fileio::alloc(virtualfile->m_type);
+        m_close_fileio = true;  // do not close and delete
+    }
+    else
+    {
+        // Use already open file io
+        m_fileio = fio;
+        m_close_fileio = false; // must not close or delete
+    }
+
     if (m_fileio == nullptr)
     {
         Logging::error(filename(), "Out of memory opening file.");
@@ -963,8 +975,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                     case AV_PIX_FMT_YUV422P14LE: ///< planar YUV 4:2:2,28bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
 #endif
                     {
-                    ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
-                    break;
+                        ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
+                        break;
                     }
                     case AV_PIX_FMT_YUV444P:   ///< planar YUV 4:4:4, 24bpp, (1 Cr & Cb sample per 1x1 Y samples)
                     case AV_PIX_FMT_YUVJ444P:  ///< planar YUV 4:4:4, 24bpp, full scale (JPEG), deprecated in favor of AV_PIX_FMT_YUV444P and setting color_range
@@ -3582,7 +3594,7 @@ void FFMPEG_Transcoder::close()
 
         //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))
         {
-            if (m_fileio != nullptr)
+            if (m_close_fileio && m_fileio != nullptr)
             {
                 m_fileio->close();
                 delete m_fileio;

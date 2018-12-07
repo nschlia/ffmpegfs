@@ -146,7 +146,7 @@ public:
     virtual ~FFMPEG_Transcoder();
 
     bool                        is_open() const;
-    int                         open_input_file(LPVIRTUALFILE virtualfile);
+    int                         open_input_file(LPVIRTUALFILE virtualfile, fileio * fio = nullptr);
     int                         open_output_file(Buffer* buffer);
     int                         process_single_fr(int & status);
     int                         encode_finish();
@@ -216,6 +216,7 @@ protected:
 
 private:
     fileio *                    m_fileio;
+    bool                        m_close_fileio;
     time_t                      m_mtime;
     size_t                      m_predicted_size;         // Use this as the size instead of computing it.
     bool                        m_is_video;

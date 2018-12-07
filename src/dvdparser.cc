@@ -166,8 +166,15 @@ int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
     if (stat((path + "VIDEO_TS.IFO").c_str(), &st) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &st) == 0)
     {
         Logging::trace(path, "DVD detected.");
-        res = parse_dvd(path, &st, buf, filler);
-        Logging::trace(path, "Found %1 titles.", res);
+        if (buf != nullptr && filler != nullptr)
+        {
+            res = parse_dvd(path, &st, buf, filler);
+            Logging::trace(path, "Found %1 titles.", res);
+        }
+        else
+        {
+            res = 1;
+        }
     }
     return res;
 }

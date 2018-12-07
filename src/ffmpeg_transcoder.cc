@@ -526,7 +526,7 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     return 0;
 }
 
-bool FFMPEG_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate) const
+bool FFMPEG_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate)
 {
     *output_sample_rate = input_sample_rate;
 
@@ -541,7 +541,7 @@ bool FFMPEG_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sa
     }
 }
 
-bool FFMPEG_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate) const
+bool FFMPEG_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate)
 {
     *output_bit_rate = input_bit_rate;
 
@@ -3054,7 +3054,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
     return 0;
 }
 
-BITRATE FFMPEG_Transcoder::get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile) const
+BITRATE FFMPEG_Transcoder::get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile)
 {
     unsigned int mindist;
     int match = -1;
@@ -3123,6 +3123,121 @@ BITRATE FFMPEG_Transcoder::get_prores_bitrate(int width, int height, double fram
     return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
 }
 
+bool FFMPEG_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, int64_t bit_rate, double duration, int channels, int sample_rate)
+{
+    BITRATE output_audio_bit_rate;
+    int output_sample_rate;
+    bool success = true;
+
+    get_output_bit_rate(bit_rate, params.m_audiobitrate, &output_audio_bit_rate);
+    get_output_sample_rate(sample_rate, params.m_audiosamplerate, &output_sample_rate);
+
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_AAC:
+    {
+        // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
+        *filesize += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8); // add 2.5% for overhead
+        break;
+    }
+    case AV_CODEC_ID_MP3:
+    {
+        // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
+        // This is the sum of the size of
+        // ID3v2, ID3v1, and raw MP3 data. This is theoretically only approximate
+        // but in practice gives excellent answers, usually exactly correct.
+        // Cast to 64-bit int to avoid overflow.
+
+        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) + ID3V1_TAG_LENGTH;
+        break;
+    }
+    case AV_CODEC_ID_PCM_S16LE:
+    case AV_CODEC_ID_PCM_S16BE:
+    {
+        //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
+        //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
+
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample) + sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_VORBIS:
+    {
+        // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
+        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+        break;
+    }
+    case AV_CODEC_ID_OPUS:
+    {
+        // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
+        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+        break;
+    }
+    case AV_CODEC_ID_NONE:
+    {
+        break;
+    }
+    default:
+    {
+        success = false;
+        break;
+    }
+    }
+    return success;
+}
+
+bool FFMPEG_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, double frame_rate)
+{
+    BITRATE out_video_bit_rate;
+    bool success = true;
+
+    get_output_bit_rate(bit_rate, params.m_videobitrate, &out_video_bit_rate);
+
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_H264:
+    {
+        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // add 2.5% for overhead
+        break;
+    }
+    case AV_CODEC_ID_MJPEG:
+    {
+        // TODO... size += ???
+        break;
+    }
+    case AV_CODEC_ID_THEORA:
+    {
+        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
+        break;
+    }
+    case AV_CODEC_ID_VP9:
+    {
+        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
+        break;
+    }
+    case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
+    {
+        *filesize += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, frame_rate, interleaved, params.m_level)) / 8);
+        break;
+    }
+    case AV_CODEC_ID_NONE:
+    {
+        break;
+    }
+    default:
+    {
+        success = false;
+        break;
+    }
+    }
+    return success;
+}
+
 // Try to predict final file size.
 size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
 {
@@ -3136,7 +3251,8 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
         // Should ever happen, but better check this to avoid crashes.
         return 0;
     }
-    size_t size = 0;
+
+    size_t filesize = 0;
 
     double duration = ffmpeg_cvttime(m_in.m_format_ctx->duration, av_get_time_base_q());
     BITRATE input_audio_bit_rate = 0;
@@ -3161,69 +3277,11 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
 
     if (input_audio_bit_rate)
     {
-        BITRATE output_audio_bit_rate;
+        int channels = m_in.m_audio.m_codec_ctx->channels;
 
-        get_output_bit_rate(input_audio_bit_rate, params.m_audiobitrate, &output_audio_bit_rate);
-
-        switch (m_current_format->m_audio_codec_id)
+        if (!audio_size(&filesize, m_current_format->m_audio_codec_id, input_audio_bit_rate, duration, channels, input_sample_rate))
         {
-        case AV_CODEC_ID_AAC:
-        {
-            // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
-            size += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8); // add 2.5% for overhead
-            break;
-        }
-        case AV_CODEC_ID_MP3:
-        {
-            // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-            // This is the sum of the size of
-            // ID3v2, ID3v1, and raw MP3 data. This is theoretically only approximate
-            // but in practice gives excellent answers, usually exactly correct.
-            // Cast to 64-bit int to avoid overflow.
-
-            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) + ID3V1_TAG_LENGTH;
-            break;
-        }
-        case AV_CODEC_ID_PCM_S16LE:
-        case AV_CODEC_ID_PCM_S16BE:
-        {
-            //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
-            //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
-
-            int channels            = m_in.m_audio.m_codec_ctx->channels > 2 ? 2 : m_in.m_audio.m_codec_ctx->channels;
-            int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
-            int output_sample_rate;
-
-            get_output_sample_rate(input_sample_rate, params.m_audiosamplerate, &output_sample_rate);
-
-            // File size:
-            // file duration * sample rate (HZ) * channels * bytes per sample
-            // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
-            // The real size of the list header is unkown as we don't know the contents (meta tags)
-            size += static_cast<size_t>(duration * output_sample_rate * channels * bytes_per_sample) + sizeof(WAV_HEADER) + sizeof(LIST_HEADER) + sizeof(DATA_HEADER);
-            break;
-        }
-        case AV_CODEC_ID_VORBIS:
-        {
-            // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
-            break;
-        }
-        case AV_CODEC_ID_OPUS:
-        {
-            // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-            size += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
-            break;
-        }
-        case AV_CODEC_ID_NONE:
-        {
-            break;
-        }
-        default:
-        {
-            Logging::error(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype);
-            break;
-        }
+            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype);
         }
     }
 
@@ -3231,71 +3289,29 @@ size_t FFMPEG_Transcoder::calculate_predicted_filesize() const
     {
         if (m_is_video)
         {
-            BITRATE out_video_bit_rate;
-            int bitrateoverhead = 0;
-
-            get_output_bit_rate(input_video_bit_rate, params.m_videobitrate, &out_video_bit_rate);
-
-            out_video_bit_rate += bitrateoverhead;
-
-            switch (m_current_format->m_video_codec_id)
-            {
-            case AV_CODEC_ID_H264:
-            {
-                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // add 2.5% for overhead
-                break;
-            }
-            case AV_CODEC_ID_MJPEG:
-            {
-                // TODO... size += ???
-                break;
-            }
-            case AV_CODEC_ID_THEORA:
-            {
-                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
-                break;
-            }
-            case AV_CODEC_ID_VP9:
-            {
-                size += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
-                break;
-            }
-            case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
-            {
-                int width = CODECPAR(m_in.m_video.m_stream)->width;
-                int height = CODECPAR(m_in.m_video.m_stream)->height;
+            int width = CODECPAR(m_in.m_video.m_stream)->width;
+            int height = CODECPAR(m_in.m_video.m_stream)->height;
 #ifdef USING_LIBAV
-                int interleaved = 0; // TODO: Check source if not deinterlace is on
+            int interleaved = 0; // TODO: Check source if not deinterlace is on
 #else
-                int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
+            int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
 #endif // !USING_LIBAV
-
-
 #if LAVF_DEP_AVSTREAM_CODEC
-                size += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, av_q2d(m_in.m_video.m_stream->avg_frame_rate), interleaved, params.m_level)) / 8);
+            double frame_rate = av_q2d(m_in.m_video.m_stream->avg_frame_rate);
 #else
-                size += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, av_q2d(m_in.m_video.m_stream->codec->framerate), interleaved, params.m_level)) / 8);
+            double frame_rate = av_q2d(m_in.m_video.m_stream->codec->framerate);
 #endif
-                break;
-            }
-            case AV_CODEC_ID_NONE:
-            {
-                break;
-            }
-            default:
+            if (!video_size(&filesize, m_current_format->m_video_codec_id, input_video_bit_rate, duration, width, height, interleaved, frame_rate))
             {
                 Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype);
-                break;
-            }
             }
         }
         // else      // TODO #2260: Add picture size
         // {
-
         // }
     }
 
-    return size;
+    return filesize;
 }
 
 size_t FFMPEG_Transcoder::predicted_filesize()

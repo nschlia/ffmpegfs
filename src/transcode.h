@@ -30,6 +30,8 @@
 
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 int             transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf);
+bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, int64_t audio_bit_rate, int channels, int sample_rate, int64_t video_bit_rate, int width, int height, int interleaved, double frame_rate);
+bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry);
 
 // Functions for doing transcoding, called by main program body
 Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);

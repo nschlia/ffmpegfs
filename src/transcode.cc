@@ -1,4 +1,4 @@
-/*
+﻿/*
  * FileTranscoder interface for ffmpegfs
  *
  * Copyright (C) 2006-2008 David Collett
@@ -184,8 +184,72 @@ int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
     }
 }
 
-// Allocate and initialize the transcoder
 
+// Set the file size
+bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, int64_t audio_bit_rate, int channels, int sample_rate, int64_t video_bit_rate, int width, int height, int interleaved, double frame_rate)
+{
+    Cache_Entry * cache_entry = cache->open(virtualfile);
+    if (cache_entry == nullptr)
+    {
+        Logging::error(virtualfile->m_origfile, "Out of memory getting file size.");
+        return false;
+    }
+
+    ffmpegfs_format *current_format = params.current_format(virtualfile);
+    if (current_format == nullptr)
+    {
+        Logging::error(virtualfile->m_origfile, "Internal error getting file size.");
+        return false;
+    }
+
+    size_t filesize = 0;
+
+    if (!FFMPEG_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
+    {
+        Logging::warning(virtualfile->m_origfile, "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype);
+    }
+
+    if (!FFMPEG_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
+    {
+        Logging::warning(virtualfile->m_origfile, "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype);
+    }
+
+    cache_entry->m_cache_info.m_predicted_filesize = filesize;
+
+    Logging::debug(virtualfile->m_origfile, "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+
+    return true;
+}
+
+// Predict file size
+bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
+{
+    FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
+    bool success = false;
+
+    if (transcoder == nullptr)
+    {
+        Logging::error(virtualfile->m_origfile, "Out of memory getting file size.");
+        return false;
+    }
+
+    if (transcoder->open_input_file(virtualfile) >= 0)
+    {
+        cache_entry->m_cache_info.m_predicted_filesize = transcoder->predicted_filesize();
+
+        transcoder->close();
+
+        Logging::debug(virtualfile->m_origfile, "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+
+        success = true;
+    }
+
+    delete transcoder;
+
+    return success;
+}
+
+// Allocate and initialize the transcoder
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     int _errno = 0;
@@ -346,22 +410,11 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
             }
             else if (!cache_entry->m_cache_info.m_predicted_filesize)
             {
-                FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
-
-                if (transcoder->open_input_file(virtualfile) < 0)
+                if (!transcoder_predict_filesize(virtualfile, cache_entry))
                 {
                     _errno = errno;
-                    delete transcoder;
                     throw false;
                 }
-
-                cache_entry->m_cache_info.m_predicted_filesize = transcoder->predicted_filesize();
-
-                transcoder->close();
-
-                Logging::debug(virtualfile->m_origfile, "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
-
-                delete transcoder;
             }
         }
         else if (begin_transcode)

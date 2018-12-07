@@ -160,6 +160,9 @@ public:
     virtual const char *        filename() const;
     virtual const char *        destname() const;
     
+    static bool                 audio_size(size_t *filesize, AVCodecID codec_id, int64_t bit_rate, double duration, int channels, int sample_rate);
+    static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, double frame_rate);
+
 protected:
     bool                        is_video() const;
     void                        limit_video_size(AVCodecContext *output_codec_ctx);
@@ -200,10 +203,10 @@ protected:
     static int                  output_write(void * opaque, unsigned char * data, int size);
     static int64_t              seek(void * opaque, int64_t offset, int whence);
 
-    BITRATE                     get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile) const;
+    static BITRATE              get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile);
     size_t                      calculate_predicted_filesize() const;
-    bool                        get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate) const;
-    bool                        get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate) const;
+    static bool                 get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate);
+    static bool                 get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate);
     double                      get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;
 
 #ifndef USING_LIBAV

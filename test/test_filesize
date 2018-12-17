@@ -37,8 +37,8 @@ cat "${DIRNAME}/raven.${DESTTYPE}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "obama" 100547 101906
-    check_filesize "raven" 130730 135525
+    check_filesize "obama" 100547 103185
+    check_filesize "raven" 130730 139098
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
@@ -63,12 +63,12 @@ elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
     check_filesize "obama" 85751 89365
-    check_filesize "raven" 126696 126937
+    check_filesize "raven" 126696 126937 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "obama" 100515 101849
-    check_filesize "raven" 130680 135415
+    check_filesize "obama" 100515 103132
+    check_filesize "raven" 130680 139073
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
@@ -77,8 +77,8 @@ then
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "obama" 1059408 1060126
-    check_filesize "raven" 1850814 1853324
+    check_filesize "obama" 1059275 1061039
+    check_filesize "raven" 1850485 1853884
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

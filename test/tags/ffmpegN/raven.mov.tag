@@ -1,7 +1,7 @@
 album=The Raven
 artist=Edgar Allen Poe
 comment=www.librivox.org
-compatible_brands=qt  
+compatible_brands=qt  iso6
 date=2007
 
 genre=Speech

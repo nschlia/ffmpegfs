@@ -57,18 +57,22 @@ fi
 
 TAGFILE=tags/${LIBRARY}${VERSION}/obama.$1.tag
 get_metadata "$DIRNAME/obama.$1" TAGS
+echo "$TAGS" > "obama.$1.tag"
 echo "Compare file: ${TAGFILE}" 
 echo "Tags found:"
 echo "$TAGS"
-cmp -b ${TAGFILE} <(echo "$TAGS")
+cmp -c ${TAGFILE} "obama.$1.tag"
 printf "*** PASS ***\n\n"
+rm -f "obama.$1.tag"
 
 TAGFILE=tags/${LIBRARY}${VERSION}/raven.$1.tag
 get_metadata "$DIRNAME/raven.$1" TAGS
+echo "${TAGS}" > "raven.$1.tag"
 echo "Compare file: ${TAGFILE}"
 echo "Tags found:"
 echo "${TAGS}"
-cmp -b ${TAGFILE} <(echo "$TAGS")
+cmp -b ${TAGFILE} "raven.$1.tag"
 printf "*** PASS ***\n\n"
+rm -f "raven.$1.tag"
 
 echo OK

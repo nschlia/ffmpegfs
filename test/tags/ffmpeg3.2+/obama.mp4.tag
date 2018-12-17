@@ -1,6 +1,6 @@
 album=US State of the Union 2011
 artist=Barack Obama
-compatible_brands=isomiso2mp41
+compatible_brands=isomiso2iso6mp41
 copyright=Public Domain
 date=2011-01-25
 

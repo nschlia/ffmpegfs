@@ -23,4 +23,4 @@ build
 /src/vcd/.dirstamp
 /src/ffmpegfs
 core
-
+*.user

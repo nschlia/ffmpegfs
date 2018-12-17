@@ -64,9 +64,20 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
     // Wait until decoder thread has reached the desired position
     if (cache_entry->m_is_decoding)
     {
+        bool reported = false;
         while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
         {
+            if (!reported)
+            {
+                Logging::trace(cache_entry->filename(), "Cache miss at offset %1 (length %2).", offset, len);
+                reported = true;
+            }
             sleep(0);
+        }
+
+        if (reported)
+        {
+            Logging::trace(cache_entry->filename(), "Cache hit  at offset %1 (length %2).", offset, len);
         }
         success = !cache_entry->m_cache_info.m_error;
     }

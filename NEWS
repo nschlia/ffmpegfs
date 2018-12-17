@@ -22,12 +22,14 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: Sometimes tried to create WebM files with zero width (failed to transcode).
 * Bugfix: Avoid mpeg-4 profile/pixel format mismatches.
 * Bugfix: Fix creating zero sized files from DVDs when chapter playtime < 1 s.
+* Bugfix: Update timeout when client just holds the file open without reading.
 * Feature: Add MOV target format
 * Feature: Add AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")
 * Feature: Add level option for Prores
 * Feature: Add Apple Prores support
 * Feature: Do not "uprade" mono audio to stereo. Create mono audio stream.
+* Feature: Speed up MP4 scanning by sending bogus MOOV atom if client accesses file tail immediately.
 
 * Fix deprecation:
 

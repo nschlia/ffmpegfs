@@ -450,21 +450,54 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
 
     try
     {
-        // If we are encoding to MP3 and the requested data overlaps the ID3v1 tag
-        // at the end of the file, do not encode data first up to that position.
-        // This optimizes the case where applications read the end of the file
-        // first to read the ID3v1 tag.
-        if (!cache_entry->m_cache_info.m_finished &&
-                static_cast<size_t>(offset) > cache_entry->m_buffer->tell() &&
-                offset + len > (cache_entry->size() - ID3V1_TAG_LENGTH) &&
-                !strcasecmp(params.current_format(cache_entry->virtualfile())->m_desttype, "mp3"))
+        if (!cache_entry->m_cache_info.m_finished)
         {
+            switch (params.current_format(cache_entry->virtualfile())->m_filetype)
+            {
+            case FILETYPE_MP3:
+            {
+                // If we are encoding to MP3 and the requested data overlaps the ID3v1 tag
+                // at the end of the file, do not encode data first up to that position.
+                // This optimises the case where applications read the end of the file
+                // first to read the ID3v1 tag.
+                if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
+                        ((offset + len) > (cache_entry->size() - ID3V1_TAG_LENGTH)))
+                {
 
-            memcpy(buff, &cache_entry->m_id3v1, ID3V1_TAG_LENGTH);
+                    memcpy(buff, &cache_entry->m_id3v1, ID3V1_TAG_LENGTH);
 
-            errno = 0;
+                    errno = 0;
 
-            throw static_cast<ssize_t>(len);
+                    throw static_cast<ssize_t>(len);
+                }
+                break;
+            }
+            case FILETYPE_PRORES:
+            case FILETYPE_MOV:
+            case FILETYPE_MP4:
+            {
+                // By default MP4/MOV have a so called MOOV atom at the tail. Some playback
+                // software check the end of the file for that atom. We simply send an empty
+                // block so that it "thinks" there is no MOOV and starts accessing the file
+                // from head.
+                if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
+                        ((offset + len) == cache_entry->size()))
+                {
+                    Logging::info(cache_entry->filename(), "Sending bogus MOOV atom.");
+
+                    memset(buff, 0, len);
+
+                    errno = 0;
+
+                    throw static_cast<ssize_t>(len);
+                }
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
         }
 
         // Set last access time

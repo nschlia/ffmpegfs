@@ -742,6 +742,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
             Logging::trace(destname(), "Limiting audio sample rate from %1 to %2.",
                            format_samplerate(orig_sample_rate),
                            format_samplerate(output_codec_ctx->sample_rate));
+            orig_sample_rate = output_codec_ctx->sample_rate;
         }
 
         if (output_codec->supported_samplerates != nullptr)

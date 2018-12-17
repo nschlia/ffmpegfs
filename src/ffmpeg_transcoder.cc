@@ -812,7 +812,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                     return AVERROR(EINVAL);
                 }
 
-                Logging::warning(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
+                Logging::info(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
                                  format_samplerate(orig_sample_rate),
                                  format_samplerate(output_codec_ctx->sample_rate));
             }

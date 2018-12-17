@@ -716,11 +716,11 @@ static void *decoder_thread(void *arg)
 
         if (timeout)
         {
-            Logging::error(cache_entry->filename(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
+            Logging::warning(cache_entry->filename(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
         }
         else
         {
-            Logging::error(cache_entry->filename(), "Thread exit! Transcoding aborted.");
+            Logging::info(cache_entry->filename(), "Thread exit! Transcoding aborted.");
         }
     }
     else

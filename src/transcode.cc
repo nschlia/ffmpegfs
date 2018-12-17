@@ -625,6 +625,13 @@ static void *decoder_thread(void *arg)
         while (!cache_entry->m_cache_info.m_finished && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
             int status = 0;
+
+            if (cache_entry->ref_count() > 1)
+            {
+                // Set last access time
+                cache_entry->update_access(false);
+            }
+
             averror = transcoder->process_single_fr(status);
             if (status < 0)
             {

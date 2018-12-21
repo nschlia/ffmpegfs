@@ -5,7 +5,7 @@ copyright=Public Domain
 date=2011-01-25
 
 genre=Spoken
-handler_name=DataHandler
+handler_name=SoundHandler
 language=eng
 major_brand=qt  
 minor_version=512

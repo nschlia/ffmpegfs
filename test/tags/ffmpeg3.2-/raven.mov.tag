@@ -5,7 +5,7 @@ compatible_brands=qt  iso6
 date=2007
 
 genre=Speech
-handler_name=DataHandler
+handler_name=SoundHandler
 language=eng
 major_brand=qt  
 minor_version=512

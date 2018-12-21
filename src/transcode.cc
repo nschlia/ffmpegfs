@@ -69,7 +69,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
         {
             if (!reported)
             {
-                Logging::trace(cache_entry->filename(), "Cache miss at offset %1 (length %2).", offset, len);
+                Logging::trace(cache_entry->filename(), "Cache miss at offset %1 (length %2) remaining %3.", offset, len, cache_entry->m_buffer->size() - end);
                 reported = true;
             }
             sleep(0);
@@ -77,7 +77,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 
         if (reported)
         {
-            Logging::trace(cache_entry->filename(), "Cache hit  at offset %1 (length %2).", offset, len);
+            Logging::trace(cache_entry->filename(), "Cache hit  at offset %1 (length %2) remaining %3.", offset, len, cache_entry->m_buffer->size() - end);
         }
         success = !cache_entry->m_cache_info.m_error;
     }
@@ -140,13 +140,13 @@ int transcoder_init(void)
         if (cache == nullptr)
         {
             Logging::error(nullptr, "Unable to create media file cache. Out of memory.");
-            std::fprintf(stderr, "ERROR: creating media file cache. Out of memory.\n");
+            std::fprintf(stderr, "ERROR: Creating media file cache. Out of memory.\n");
             return -1;
         }
 
         if (!cache->load_index())
         {
-            std::fprintf(stderr, "ERROR: creating media file cache.\n");
+            std::fprintf(stderr, "ERROR: Creating media file cache.\n");
             return -1;
         }
     }

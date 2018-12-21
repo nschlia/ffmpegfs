@@ -150,12 +150,12 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     in the background. When the client quits transcoding will continue
     until this time out. Transcoding is suspended until it is
     accessed again, and transcoding will continue.
-    Default: 2 minutes
+    Default: 15 seconds
  *--max_inactive_abort*=TIME, *-o max_inactive_abort*=TIME::
     While being accessed the file is transcoded to the target format
     in the background. When the client quits transcoding will continue
     until this time out, and the transcoder thread quits
-    Default: 5 minutes
+    Default: 30 seconds
  *--prebuffer_size*=SIZE, *-o prebuffer_size*=SIZE::
     Files will be decoded until the buffer contains this much bytes
     allowing playback to start smoothly without lags.

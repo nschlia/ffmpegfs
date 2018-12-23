@@ -82,7 +82,7 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
 
             sprintf(title_buf, "%02d.%cChapter %03d [%02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 "].%s",
                     title_no + 1,
-                    (main_title >= 0 && title_no == (uint32_t)main_title) ? '+' : ' ',
+                    (main_title >= 0 && title_no == static_cast<uint32_t>(main_title)) ? '+' : ' ',
                     chapter_no + 1,
                                     (ti->chapters[chapter_no].duration / 90000) / (3600),
                                     ((ti->chapters[chapter_no].duration / 90000) % 3600) / 60,

@@ -185,7 +185,7 @@ int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 
     if (encoded_filesize)
     {
-        stbuf->st_size = encoded_filesize;
+        stbuf->st_size = static_cast<off_t>(encoded_filesize);
         stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
         return true;
     }

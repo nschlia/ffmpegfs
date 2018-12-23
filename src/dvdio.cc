@@ -244,9 +244,9 @@ int dvdio::read(void * dataX, int size)
 
     if (m_rest_size)
     {
-        result_len = (int)m_rest_size;
+        result_len = static_cast<int>(m_rest_size);
 
-        assert(m_rest_size < (size_t)size);
+        assert(m_rest_size < static_cast<size_t>(size));
 
         memcpy(dataX, &m_data[m_rest_pos], m_rest_size);
 
@@ -354,8 +354,8 @@ int dvdio::read(void * dataX, int size)
             /**
              * Read in and output cursize packs.
              */
-            maxlen = DVDReadBlocks( m_dvd_title, (size_t)m_cur_pack, cur_output_size, m_data );
-            if ( maxlen != (int) cur_output_size )
+            maxlen = DVDReadBlocks( m_dvd_title, static_cast<int>(m_cur_pack), cur_output_size, m_data);
+            if (maxlen != static_cast<int>(cur_output_size))
             {
                 Logging::error(m_path, "Read failed for %d blocks at %1", cur_output_size, m_cur_pack );
                 m_errno = EIO;
@@ -363,12 +363,12 @@ int dvdio::read(void * dataX, int size)
             }
 
             //fwrite( data, cur_output_size, DVD_VIDEO_LB_LEN, stdout );
-            if (cur_output_size * DVD_VIDEO_LB_LEN > (unsigned int)size)
+            if (cur_output_size * DVD_VIDEO_LB_LEN > static_cast<unsigned int>(size))
             {
                 result_len = size;
                 memcpy(dataX, m_data, result_len);
 
-                m_rest_size = cur_output_size * DVD_VIDEO_LB_LEN - (unsigned int)size;
+                m_rest_size = cur_output_size * DVD_VIDEO_LB_LEN - static_cast<unsigned int>(size);
                 m_rest_pos = size;
             }
             else

@@ -315,9 +315,6 @@ static const LEVEL_MAP level_map =
     { "HQ",             LEVEL_PRORES_HQ },
 };
 
-template <typename T>
-static typename std::map<std::string, T>::const_iterator search_by_value(const std::map<std::string, T> & mapOfWords, T value);
-
 static int get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int get_samplerate(const std::string & arg, unsigned int *samplerate);
 static int get_time(const std::string & arg, time_t *time);

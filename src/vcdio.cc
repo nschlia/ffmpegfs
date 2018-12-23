@@ -89,9 +89,9 @@ int vcdio::openX(const std::string & filename)
 
 int vcdio::read(void * data, int maxlen)
 {
-    if (ftell(m_fpi) + (uint64_t)maxlen > m_end_pos)
+    if (ftell(m_fpi) + static_cast<uint64_t>(maxlen) > m_end_pos)
     {
-        maxlen = (int)(m_end_pos - ftell(m_fpi));
+        maxlen = static_cast<int>(m_end_pos - ftell(m_fpi));
     }
 
     if (!maxlen)
@@ -99,7 +99,7 @@ int vcdio::read(void * data, int maxlen)
         return 0;
     }
 
-    return (int)fread(data, 1, maxlen, m_fpi);
+    return static_cast<int>(fread(data, 1, maxlen, m_fpi));
 }
 
 int vcdio::error() const
@@ -127,7 +127,7 @@ size_t vcdio::size() const
 
     struct stat st;
     fstat(fileno(m_fpi), &st);
-    return st.st_size;
+    return static_cast<size_t>(st.st_size);
 }
 
 size_t vcdio::tell() const
@@ -167,7 +167,7 @@ int vcdio::seek(long offset, int whence)
 
 bool vcdio::eof() const
 {
-    return ((feof(m_fpi) || ((uint64_t)ftell(m_fpi) >= m_end_pos)) ? true : false);
+    return ((feof(m_fpi) || (static_cast<uint64_t>(ftell(m_fpi)) >= m_end_pos)) ? true : false);
 }
 
 void vcdio::close()

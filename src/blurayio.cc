@@ -128,7 +128,7 @@ int blurayio::openX(const std::string & filename)
         return 1;
     }
 
-    if (chapter_end >= (int)ti->chapter_count)
+    if (chapter_end >= static_cast<int>(ti->chapter_count))
     {
         chapter_end = -1;
     }
@@ -158,9 +158,9 @@ int blurayio::read(void * dataX, int size)
 
     if (m_rest_size)
     {
-        result_len = (int)m_rest_size;
+        result_len = static_cast<int>(m_rest_size);
 
-        assert(m_rest_size < (size_t)size);
+        assert(m_rest_size < static_cast<size_t>(size));
 
         memcpy(dataX, &m_data[m_rest_pos], m_rest_size);
 
@@ -175,10 +175,10 @@ int blurayio::read(void * dataX, int size)
         int bytes;
         int XXsize;
 
-        XXsize = (int)sizeof(m_data);
+        XXsize = static_cast<int>(sizeof(m_data));
         if (XXsize > (m_end_pos - m_cur_pos))
         {
-            XXsize = (int)(m_end_pos - m_cur_pos);
+            XXsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
         bytes = bd_read(m_bd, m_data, XXsize);
         if (bytes <= 0)

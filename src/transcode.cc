@@ -532,7 +532,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
             len = cache_entry->m_buffer->buffer_watermark() - offset;
         }
 
-        if (!cache_entry->m_buffer->copy((uint8_t*)buff, offset, len))
+        if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
         {
             len = 0;
             // throw static_cast<ssize_t>(-1);

@@ -42,6 +42,7 @@
 #include <vector>
 #include <regex>
 #include <assert.h>
+#include <signal.h>
 
 static void init_stat(struct stat *st, size_t size, bool directory);
 static void prepare_script();
@@ -56,11 +57,14 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi);
 static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
 static int ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+static void sighandler(int signum);
 static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static std::vector<char> index_buffer;
 static std::map<std::string, VIRTUALFILE> filenames;
+
+static struct sigaction oldHandler;
 
 fuse_operations ffmpegfs_ops;
 
@@ -907,11 +911,34 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
+static void sighandler(int signum)
+{
+    assert(signum == SIGINT);
+
+    if (signum == SIGINT)
+    {
+        Logging::warning(nullptr, "Caught SIGIN, shutting down now");
+        // Make our threads terminate now
+        transcoder_exit();
+        // Restore fuse's handler
+        sigaction(SIGINT, &oldHandler, nullptr);
+        // Dispatch to fuse's handler
+        raise(SIGINT);
+    }
+}
+
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
     //Logging::info(nullptr, "Target type: %1 Profile: %2", params.current_format().m_desttype, get_profile_text(params.m_profile));
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath, params.m_mountpath);
+
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sigemptyset(&sa.sa_mask);
+    sigaddset(&sa.sa_mask, SIGINT);
+    sa.sa_handler = sighandler;
+    sigaction(SIGINT, &sa, &oldHandler);
 
     // We need synchronous reads.
     conn->async_read = 0;

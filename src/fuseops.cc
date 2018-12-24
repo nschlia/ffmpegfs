@@ -917,7 +917,7 @@ static void sighandler(int signum)
 
     if (signum == SIGINT)
     {
-        Logging::warning(nullptr, "Caught SIGIN, shutting down now");
+        Logging::warning(nullptr, "Caught SIGINT, shutting down now...");
         // Make our threads terminate now
         transcoder_exit();
         // Restore fuse's handler

@@ -466,8 +466,6 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
 {
     Logging::trace(cache_entry->filename(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
 
-    cache_entry->lock();
-
     // Store access time
     cache_entry->update_access();
 
@@ -562,8 +560,6 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
     {
         len = _len;
     }
-
-    cache_entry->unlock();
 
     return len;
 }

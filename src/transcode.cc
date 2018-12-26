@@ -67,15 +67,21 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
         bool reported = false;
         while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
         {
-        	if (thread_exit || fuse_interrupted())
+            if (fuse_interrupted())
         	{
-            	Logging::error(cache_entry->filename(), "Received thread exit, Terminating transcoding.");
+                Logging::error(cache_entry->filename(), "Client has gone away.");
             	return false;
         	}
 
+            if (thread_exit)
+            {
+                Logging::error(cache_entry->filename(), "Received thread exit.");
+                return false;
+            }
+
             if (!reported)
             {
-                Logging::info(cache_entry->filename(), "Cache miss at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+                Logging::debug(cache_entry->filename(), "Cache miss at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
                 reported = true;
             }
             sleep(0);
@@ -83,7 +89,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 
         if (reported)
         {
-            Logging::info(cache_entry->filename(), "Cache hit  at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+            Logging::debug(cache_entry->filename(), "Cache hit  at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
         }
         success = !cache_entry->m_cache_info.m_error;
     }

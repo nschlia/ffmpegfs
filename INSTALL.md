@@ -241,3 +241,22 @@ When you see this message accessing blurays:
 To get rid of this message simply install "libbluray-bdj", this will make it go away.
 This is not necessary, though, as to read the bluray tracks it is not nessessary, so
 this is simply cosmetical.
+
+*Lock ups when accessing through Samba*
+
+When accessed via Samba the pending read can lock the whole share, causing Windows Explorer and 
+even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" 
+is not possible and blocks until the data was returned.
+
+Seems others had the same problem:
+
+http://samba.2283325.n4.nabble.com/Hangs-Accessing-fuse-filesystem-in-Windows-through-Samba-td4681904.html
+
+Adding this to the [global] config in smb.conf fixes that:
+
+ 	oplocks = no
+ 	aio read size = 1
+
+The "aio read size" parameter may be moved to the share config:
+
+ 	aio read size = 1

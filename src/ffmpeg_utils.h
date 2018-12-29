@@ -87,10 +87,10 @@ extern "C" {
 #endif
 
 // Allow use of av_format_inject_global_side_data when available
-#define HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT( 57, 64, 101 ))
+#define HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 64, 101))
 
 // Add av_get_media_type_string function if missing
-#define HAVE_MEDIA_TYPE_STRING                  (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT( 55, 34, 101 ))
+#define HAVE_MEDIA_TYPE_STRING                  (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 34, 101))
 #if HAVE_MEDIA_TYPE_STRING
 #define get_media_type_string               av_get_media_type_string
 #else

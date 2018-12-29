@@ -266,7 +266,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
             remove_path(&filename);
             std::regex specialChars { R"([-[\]{}()*+?.,\^$|#\s])" };
-            filename = std::regex_replace(filename, specialChars, R"(\$&)" );
+            filename = std::regex_replace(filename, specialChars, R"(\$&)");
             replace_ext(&filename, "*");
 
             for (int n = 0; n < count; n++)

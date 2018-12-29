@@ -559,7 +559,7 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
     typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.begin();
     while (it != mapOfWords.end())
     {
-        if(it->second == value)
+        if (it->second == value)
         {
             return it;
         }

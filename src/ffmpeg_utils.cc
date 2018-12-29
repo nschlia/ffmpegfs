@@ -1003,10 +1003,10 @@ int strcasecmp(const std::string & s1, const std::string & s2)
 template<typename ... Args>
 std::string string_format(const std::string& format, Args ... args)
 {
-    size_t size = snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf( new char[ size ] );
-    std::snprintf( buf.get(), size, format.c_str(), args ... );
-    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+    size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+    std::unique_ptr<char[]> buf(new char[size]);
+    std::snprintf(buf.get(), size, format.c_str(), args ...);
+    return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
 // Compare value with pattern
@@ -1066,7 +1066,7 @@ int is_mount(const std::string & filename)
         parent_name = dirname(orig_name);
 
         // get the file's stat info
-        if ( -1 == stat(filename.c_str(), &file_stat) )
+        if (-1 == stat(filename.c_str(), &file_stat))
         {
             std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
             throw -1;
@@ -1074,14 +1074,14 @@ int is_mount(const std::string & filename)
 
         //determine whether the supplied file is a directory
         // if it isn't, then it can't be a mountpoint.
-        if ( !(file_stat.st_mode & S_IFDIR) )
+        if (!(file_stat.st_mode & S_IFDIR))
         {
             std::fprintf(stderr, "is_mount(): %s is not a directory.\n", filename.c_str());
             throw -1;
         }
 
         // get the parent's stat info
-        if ( -1 == stat(parent_name, &parent_stat) )
+        if (-1 == stat(parent_name, &parent_stat))
         {
             std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
             throw -1;
@@ -1092,9 +1092,9 @@ int is_mount(const std::string & filename)
         // or, if they refer to the same file,
         // then it's probably the root directory
         // and therefore a mountpoint
-        if ( file_stat.st_dev != parent_stat.st_dev ||
-             ( file_stat.st_dev == parent_stat.st_dev &&
-               file_stat.st_ino == parent_stat.st_ino ) )
+        if (file_stat.st_dev != parent_stat.st_dev ||
+             (file_stat.st_dev == parent_stat.st_dev &&
+               file_stat.st_ino == parent_stat.st_ino))
         {
             // IS a mountpoint
             ret = 1;

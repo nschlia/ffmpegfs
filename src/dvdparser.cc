@@ -176,7 +176,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
         }
 
         // Set reasonable defaults
-        int64_t audio_bit_rate = 256000;
+        BITRATE audio_bit_rate = 256000;
         int channels = 2;
         int sample_rate = 48000;
         int audio = 0;

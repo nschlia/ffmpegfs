@@ -3124,7 +3124,7 @@ BITRATE FFMPEG_Transcoder::get_prores_bitrate(int width, int height, double fram
     return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
 }
 
-bool FFMPEG_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, int64_t bit_rate, double duration, int channels, int sample_rate)
+bool FFMPEG_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int channels, int sample_rate)
 {
     BITRATE output_audio_bit_rate;
     int output_sample_rate;

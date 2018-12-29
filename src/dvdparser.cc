@@ -235,7 +235,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             cur_pgc     = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
             start_cell  = cur_pgc->program_map[ pgn - 1 ] - 1;
 
-            Logging::trace(path, "Chapter %<%3d>1 [PGC %<%2d>2, PG %<%2d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
+            Logging::trace(path, "Chapter %<%3d>1 [PGC %<%02d>2, PG %<%02d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
                            j, pgcnum, pgn, start_cell,
                            static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].first_sector),
                            static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].last_sector));
@@ -294,7 +294,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
 
                     video_bit_rate = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
 
-                    Logging::debug(virtualfile->m_origfile, "Video Bit Rate: %1 Dimensions: %2x%3@%<%5.2f>4 fps Interleaved: %5 Size: %6", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
+                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<time_t>(duration)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
                     if (audio > -1)
                     {
                         Logging::debug(virtualfile->m_origfile, "Audio Channels: %1 Sample Rate: %2", channels, sample_rate);

@@ -300,6 +300,43 @@ So there is a lot of work to be put into MP4 support, still.
 The output format must be selectable for the desired audience, for
 streaming or opening the files locally, for example.
 
+FIXING PROBLEMS
+---------------
+
+*Lock ups when accessing through Samba*
+
+When accessed via Samba the pending read can lock the whole share, causing 
+Windows Explorer and even KDE Dolphin to freeze. Any access from the same 
+machine to that share is blocked, Even "ls" is not possible and blocks until 
+the data was returned.
+
+Seems others had the same problem:
+
+http://samba.2283325.n4.nabble.com/Hangs-Accessing-fuse-filesystem-in-Windows-through-Samba-td4681904.html
+
+Adding this to the [global] config in smb.conf fixes that:
+
+ 	oplocks = no
+ 	aio read size = 1
+
+The "aio read size" parameter may be moved to the share config:
+
+ 	aio read size = 1
+ 	
+*rsync, Beyond Compare and other tools*
+
+Some copy tools do not go along very well with dynamically generated files 
+as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).
+
+Under Linux ist is best to use (optionally with -r parameter)
+
+        cp -uv /path/to/source /path/to/target
+	
+This will copy all missing/changed files without missing parts. On the Windows
+side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only
+copy the predicted size first and not respond to size changes.
+
+
 DEVELOPMENT
 -----------
 

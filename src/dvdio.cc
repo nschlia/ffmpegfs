@@ -460,9 +460,44 @@ void dvdio::close()
 }
 
 // Returns true if the pack is a NAV pack. 
+// Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)
 bool dvdio::is_nav_pack(const unsigned char *buffer) const
 {
-    return (buffer[ 41 ] == 0xbf && buffer[ 1027 ] == 0xbf);
+    /*
+     * The NAV Pack is comprised of the PCI Packet and DSI Packet, both
+     * of these start at known offsets and start with a special identifier.
+     *
+     * NAV = {
+     *  PCI = { 00 00 01 bf  # private stream header
+     *          ?? ??        # length
+     *          00           # substream
+     *          ...
+     *        }
+     *  DSI = { 00 00 01 bf  # private stream header
+     *          ?? ??        # length
+     *          01           # substream
+     *          ...
+     *        }
+     *
+     * The PCI starts at offset 0x26 into the sector, and the DSI starts at 0x400
+     *
+     * This information from: http://dvd.sourceforge.net/dvdinfo/
+     */
+    if ((buffer[0x26] == 0x00 &&      // PCI
+         buffer[0x27] == 0x00 &&
+         buffer[0x28] == 0x01 &&
+         buffer[0x29] == 0xbf &&
+         buffer[0x2c] == 0x00) &&
+            (buffer[0x400] == 0x00 &&     // DSI
+             buffer[0x401] == 0x00 &&
+             buffer[0x402] == 0x01 &&
+             buffer[0x403] == 0xbf &&
+             buffer[0x406] == 0x01))
+    {
+        return (1);
+    } else {
+        return (0);
+    }
 }
 
 #endif // USE_LIBDVD

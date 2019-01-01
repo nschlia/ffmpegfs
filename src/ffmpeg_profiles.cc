@@ -387,7 +387,32 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_format[] =
 static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_codec_none[] =
 {
     { "deadline",               "realtime",                 0,  0 },
+
     { "cpu-used",               "8",                        0,  0 },
+
+//    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1 
+//      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25 
+//      -c:a libopus -b:a 64k -f webm out.webm
+
+
+//    Most of the current VP9 decoders use tile-based, multi-threaded decoding. In order for the decoders to take advantage
+//    of multiple cores, the encoder must set tile-columns and frame-parallel.
+
+//    Setting auto-alt-ref and lag-in-frames >= 12 will turn on VP9's alt-ref frames, a VP9 feature that enhances quality.
+
+//    speed 4 tells VP9 to encode really fast, sacrificing quality. Useful to speed up the first pass.
+
+//    speed 1 is a good speed vs. quality compromise. Produces output quality typically very close to speed 0, but usually encodes much faster.
+
+//    Multi-threaded encoding may be used if -threads > 1 and -tile-columns > 0.
+
+
+//    { "threads",                "8",                        0,  0 },
+//    { "speed",                  "4",                        0,  0 },
+    { "tile-columns",           "6",                        0,  0 },
+    { "frame-parallel",         "1",                        0,  0 },
+    { "auto-alt-ref",           "1",                        0,  0 },
+    { "lag-in-frames",          "25",                        0,  0 },
 
     { nullptr, nullptr, 0, 0 }
 };

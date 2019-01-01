@@ -64,7 +64,7 @@ protected:
     int             m_next_cell;
     int             m_last_cell;
     bool            m_goto_next_cell;
-    unsigned int    m_cur_pack;
+    unsigned int    m_cur_block;
     bool            m_is_eof;
     int             m_errno;
     size_t          m_rest_size;

@@ -47,7 +47,7 @@ dvdio::dvdio()
     , m_next_cell(0)
     , m_last_cell(0)
     , m_goto_next_cell(false)
-    , m_cur_pack(0)
+    , m_cur_block(0)
     , m_is_eof(false)
     , m_errno(0)
     , m_rest_size(0)
@@ -128,20 +128,20 @@ int dvdio::openX(const std::string & filename)
 
     Logging::debug(m_path, "Opening input DVD.");
 
-     // Open the disc.
+    // Open the disc.
     m_dvd = DVDOpen(m_path.c_str());
-    if ( !m_dvd )
+    if (!m_dvd)
     {
         Logging::error(m_path, "Couldn't open DVD.");
         return EINVAL;
     }
 
     // Load the video manager to find out the information about the titles on this disc.
-    m_vmg_file = ifoOpen( m_dvd, 0 );
-    if ( !m_vmg_file )
+    m_vmg_file = ifoOpen(m_dvd, 0);
+    if (!m_vmg_file)
     {
-        Logging::error(m_path, "Can't open VMG info." );
-        DVDClose( m_dvd );
+        Logging::error(m_path, "Can't open VMG info.");
+        DVDClose(m_dvd);
         return EINVAL;
     }
     tt_srpt = m_vmg_file->tt_srpt;
@@ -149,87 +149,87 @@ int dvdio::openX(const std::string & filename)
     // Make sure our title number is valid.
     Logging::trace(nullptr, "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts) );
 
-    if ( m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts )
+    if (m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts)
     {
-        Logging::error(m_path, "Invalid title %1.", m_title_no + 1 );
-        ifoClose( m_vmg_file );
-        DVDClose( m_dvd );
+        Logging::error(m_path, "Invalid title %1.", m_title_no + 1);
+        ifoClose(m_vmg_file);
+        DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Make sure the chapter number is valid for this title.
-    Logging::trace(nullptr, "There are %1 chapters in this title.", static_cast<uint16_t>(tt_srpt->title[ m_title_no ].nr_of_ptts));
+    Logging::trace(nullptr, "There are %1 chapters in this title.", static_cast<uint16_t>(tt_srpt->title[m_title_no].nr_of_ptts));
 
-    if ( m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[ m_title_no ].nr_of_ptts )
+    if (m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[m_title_no].nr_of_ptts)
     {
-        Logging::error(m_path, "Invalid chapter %1", m_chapter_no + 1 );
-        ifoClose( m_vmg_file );
-        DVDClose( m_dvd );
+        Logging::error(m_path, "Invalid chapter %1", m_chapter_no + 1);
+        ifoClose(m_vmg_file);
+        DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Make sure the angle number is valid for this title.
-    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[ m_title_no ].nr_of_angles );
+    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[m_title_no].nr_of_angles);
 
-    if ( m_angle_no < 0 || m_angle_no >= tt_srpt->title[ m_title_no ].nr_of_angles )
+    if (m_angle_no < 0 || m_angle_no >= tt_srpt->title[m_title_no].nr_of_angles)
     {
-        Logging::error(nullptr, "Invalid angle %1", m_angle_no + 1 );
-        ifoClose( m_vmg_file );
-        DVDClose( m_dvd );
+        Logging::error(nullptr, "Invalid angle %1", m_angle_no + 1);
+        ifoClose(m_vmg_file);
+        DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Load the VTS information for the title set our title is in.
-    m_vts_file = ifoOpen( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr );
-    if ( !m_vts_file )
+    m_vts_file = ifoOpen(m_dvd, tt_srpt->title[m_title_no].title_set_nr);
+    if (!m_vts_file)
     {
-        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[ m_title_no ].title_set_nr );
-        ifoClose( m_vmg_file );
-        DVDClose( m_dvd );
+        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[m_title_no].title_set_nr);
+        ifoClose(m_vmg_file);
+        DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Determine which program chain we want to watch.  This is based on the chapter number.
-    ttn = tt_srpt->title[ m_title_no ].vts_ttn;
-    vts_ptt_srpt = m_vts_file->vts_ptt_srpt;
-    pgc_id = vts_ptt_srpt->title[ ttn - 1 ].ptt[ m_chapter_no ].pgcn;
-    pgn = vts_ptt_srpt->title[ ttn - 1 ].ptt[ m_chapter_no ].pgn;
-    m_cur_pgc = m_vts_file->vts_pgcit->pgci_srp[ pgc_id - 1 ].pgc;
-    m_start_cell = m_cur_pgc->program_map[ pgn - 1 ] - 1;
+    ttn                 = tt_srpt->title[m_title_no].vts_ttn;
+    vts_ptt_srpt        = m_vts_file->vts_ptt_srpt;
+    pgc_id              = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_no].pgcn;
+    pgn                 = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_no].pgn;
+    m_cur_pgc           = m_vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
+    m_start_cell        = m_cur_pgc->program_map[pgn - 1] - 1;
 
     // We've got enough info, time to open the title set data.
-    m_dvd_title = DVDOpenFile( m_dvd, tt_srpt->title[ m_title_no ].title_set_nr, DVD_READ_TITLE_VOBS );
-    if ( !m_dvd_title )
+    m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_no].title_set_nr, DVD_READ_TITLE_VOBS);
+    if (!m_dvd_title)
     {
-        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[ m_title_no ].title_set_nr );
-        ifoClose( m_vts_file );
-        ifoClose( m_vmg_file );
-        DVDClose( m_dvd );
+        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_no].title_set_nr);
+        ifoClose(m_vts_file);
+        ifoClose(m_vmg_file);
+        DVDClose(m_dvd);
         return EINVAL;
     }
 
-    m_next_cell = m_start_cell;
-    m_last_cell = m_cur_pgc->nr_of_cells;
-    m_cur_cell = m_start_cell;
+    m_next_cell         = m_start_cell;
+    m_last_cell         = m_cur_pgc->nr_of_cells;
+    m_cur_cell          = m_start_cell;
 
     {
         int first_cell = m_next_cell;
 
         // Check if we're entering an angle block.
-        if ( m_cur_pgc->cell_playback[ first_cell ].block_type == BLOCK_TYPE_ANGLE_BLOCK )
+        if (m_cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
         {
             first_cell += m_angle_no;
         }
 
-        int framerate = ((m_cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0xc0) >> 6);
-        int64_t frac = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
-        m_duration = static_cast<int64_t>((m_cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + m_cur_pgc->cell_playback[ first_cell ].playback_time.second) * AV_TIME_BASE + frac;
+        int framerate   = ((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6);
+        int64_t frac    = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
+        m_duration      = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
     }
 
-    m_goto_next_cell = true;
-    m_is_eof = false;
-    m_errno = 0;
-    m_rest_size = 0;
+    m_goto_next_cell    = true;
+    m_is_eof            = false;
+    m_errno             = 0;
+    m_rest_size         = 0;
     m_rest_pos = 0;
     m_cur_pos = 0;
 
@@ -264,62 +264,54 @@ int dvdio::read(void * dataX, int size)
 
             m_cur_cell = m_next_cell;
 
-            /* Check if we're entering an angle block. */
-            if ( m_cur_pgc->cell_playback[ m_cur_cell ].block_type == BLOCK_TYPE_ANGLE_BLOCK )
-            {
-                int i;
+    // Check if we're entering an angle block
+    if (m_cur_pgc->cell_playback[m_cur_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
+    {
+        m_cur_cell += m_angle_no;
 
-                m_cur_cell += m_angle_no;
-                for( i = 0;; ++i )
-                {
-                    if ( m_cur_pgc->cell_playback[ m_cur_cell + i ].block_mode == BLOCK_MODE_LAST_CELL )
-                    {
-                        m_next_cell = m_cur_cell + i + 1;
-                        break;
-                    }
-                }
-            }
-            else
+        for (int i = 0;; ++i)
+        {
+            if (m_cur_pgc->cell_playback[m_cur_cell + i].block_mode == BLOCK_MODE_LAST_CELL)
             {
-                m_next_cell = m_cur_cell + 1;
+                m_next_cell = m_cur_cell + i + 1;
+                break;
             }
+        }
+    }
+    else
+    {
+        m_next_cell = m_cur_cell + 1;
+    }
 
-            m_cur_pack = m_cur_pgc->cell_playback[ m_cur_cell ].first_sector;
+            m_cur_block = m_cur_pgc->cell_playback[ m_cur_cell ].first_sector;
         }
 
-        if (m_cur_pack >= m_cur_pgc->cell_playback[ m_cur_cell ].last_sector)
+        if (m_cur_block >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
         {
             m_is_eof = false;
             return 0;
         }
 
         // We loop until we're out of this cell.
-        //        for( cur_pack = cur_pgc->cell_playback[ cur_cell ].first_sector;
-        //             cur_pack < cur_pgc->cell_playback[ cur_cell ].last_sector; )
+        //        for(cur_pack = cur_pgc->cell_playback[cur_cell].first_sector;
+        //             cur_pack < cur_pgc->cell_playback[cur_cell].last_sector;)
         {
-
             dsi_t dsi_pack;
-            unsigned int next_vobu; //, cur_output_size;
+            unsigned int next_vobu;
 
-            /**
-             * Read NAV packet.
-             */
-            maxlen = DVDReadBlocks( m_dvd_title, m_cur_pack, 1, m_data );
-            if ( maxlen != 1 )
+            // Read NAV packet.
+            maxlen = DVDReadBlocks( m_dvd_title, m_cur_block, 1, m_data );
+            if (maxlen != 1)
             {
-                Logging::error(m_path, "Read failed for block %1", m_cur_pack );
-                //                ifoClose( vts_file );
-                //                ifoClose( vmg_file );
-                //                DVDCloseFile( title );
-                //                DVDClose( dvd );
+                Logging::error(m_path, "Read failed for block %1", m_cur_block);
                 m_errno = EIO;
                 return -1;
             }
-            //assert( is_nav_pack( m_data ) );
+            assert(is_nav_pack(m_data));
 
             // Parse the contained dsi packet.
             navRead_DSI( &dsi_pack, &(m_data[ DSI_START_BYTE ]) );
-            assert( m_cur_pack == dsi_pack.dsi_gi.nv_pck_lbn );
+            assert( m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn );
 
 
             // Determine where we go next.  These values are the ones we mostly care about.
@@ -341,23 +333,21 @@ int dvdio::read(void * dataX, int size)
              */
             if ( dsi_pack.vobu_sri.next_vobu != SRI_END_OF_CELL )
             {
-                next_vobu = m_cur_pack + ( dsi_pack.vobu_sri.next_vobu & 0x7fffffff );
+                next_vobu = m_cur_block + ( dsi_pack.vobu_sri.next_vobu & 0x7fffffff );
             }
             else
             {
-                next_vobu = m_cur_pack + cur_output_size + 1;
+                next_vobu = m_cur_block + cur_output_size + 1;
             }
 
-            assert( cur_output_size < 1024 );
-            m_cur_pack++;
+            assert(cur_output_size < 1024);
+            m_cur_block++;
 
-            /**
-             * Read in and output cursize packs.
-             */
-            maxlen = DVDReadBlocks( m_dvd_title, static_cast<int>(m_cur_pack), cur_output_size, m_data);
+            // Read in and output cur_output_size packs.
+            maxlen = DVDReadBlocks( m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_data);
             if (maxlen != static_cast<int>(cur_output_size))
             {
-                Logging::error(m_path, "Read failed for %d blocks at %1", cur_output_size, m_cur_pack );
+                Logging::error(m_path, "Read failed for %d blocks at %1", cur_output_size, m_cur_block );
                 m_errno = EIO;
                 return -1;
             }
@@ -376,13 +366,13 @@ int dvdio::read(void * dataX, int size)
                 result_len = cur_output_size * DVD_VIDEO_LB_LEN;
                 memcpy(dataX, m_data, result_len);
             }
-            m_cur_pack = next_vobu;
+            m_cur_block = next_vobu;
         }
 
         //break;
     }
 
-    if (m_cur_pack >= m_cur_pgc->cell_playback[ m_cur_cell ].last_sector)
+    if (m_cur_block >= m_cur_pgc->cell_playback[ m_cur_cell ].last_sector)
     {
         m_is_eof = true;
     }
@@ -410,7 +400,7 @@ size_t dvdio::size() const
     }
     else
     {
-        return (m_cur_pgc->cell_playback[ m_start_cell ].last_sector - m_cur_pgc->cell_playback[ m_start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
+        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;
     }
 }
 
@@ -420,7 +410,7 @@ size_t dvdio::tell() const
 }
 
 int dvdio::seek(long offset, int /*whence*/)
-{    
+{
     if (!offset)
     {
         m_next_cell = m_start_cell;
@@ -466,11 +456,10 @@ void dvdio::close()
         DVDClose(m_dvd);
         m_dvd = nullptr;
     }
+
 }
 
-// Returns true if the pack is a NAV pack.  This check is clearly insufficient,
-// and sometimes we incorrectly think that valid other packs are NAV packs.  I
-// need to make this stronger.
+// Returns true if the pack is a NAV pack. 
 bool dvdio::is_nav_pack(const unsigned char *buffer) const
 {
     return (buffer[ 41 ] == 0xbf && buffer[ 1027 ] == 0xbf);

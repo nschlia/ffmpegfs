@@ -50,7 +50,7 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
     {
         audio_attr_t *attr = &vtsi_mat->vts_audio_attr[i];
 
-        if(attr->audio_format == 0
+        if (attr->audio_format == 0
                 && attr->multichannel_extension == 0
                 && attr->lang_type == 0
                 && attr->application_mode == 0
@@ -131,26 +131,26 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
     Logging::debug(path, "Parsing DVD.");
 
     dvd = DVDOpen(path.c_str());
-    if ( !dvd )
+    if (!dvd)
     {
         Logging::error(path, "Couldn't open DVD.");
         return ENOENT;
     }
 
-    ifo_file = ifoOpen( dvd, 0 );
-    if ( !ifo_file )
+    ifo_file = ifoOpen(dvd, 0);
+    if (!ifo_file)
     {
-        Logging::error(path, "Can't open VMG info." );
-        DVDClose( dvd );
+        Logging::error(path, "Can't open VMG info.");
+        DVDClose(dvd);
         return EINVAL;
     }
     tt_srpt = ifo_file->tt_srpt;
 
     titles = tt_srpt->nr_of_srpts;
 
-    Logging::debug(path, "There are %1 titles.", titles );
+    Logging::debug(path, "There are %1 titles.", titles);
 
-    for( i = 0; i < titles; ++i )
+    for(i = 0; i < titles; ++i)
     {
         ifo_handle_t *vts_file;
         vts_ptt_srpt_t *vts_ptt_srpt;
@@ -159,19 +159,19 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
         int pgcnum;
         int chapts;
 
-        vtsnum = tt_srpt->title[ i ].title_set_nr;
-        ttnnum = tt_srpt->title[ i ].vts_ttn;
-        chapts = tt_srpt->title[ i ].nr_of_ptts;
+        vtsnum = tt_srpt->title[i].title_set_nr;
+        ttnnum = tt_srpt->title[i].vts_ttn;
+        chapts = tt_srpt->title[i].nr_of_ptts;
 
-        Logging::trace(path, "Title : %1", i + 1 );
-        Logging::trace(path, "In VTS: %1 [TTN %2]", vtsnum, ttnnum );
-        Logging::trace(path, "Title has %1 chapters and %2 angles", chapts, tt_srpt->title[ i ].nr_of_angles );
+        Logging::trace(path, "Title : %1", i + 1);
+        Logging::trace(path, "In VTS: %1 [TTN %2]", vtsnum, ttnnum);
+        Logging::trace(path, "Title has %1 chapters and %2 angles", chapts, tt_srpt->title[i].nr_of_angles);
 
-        vts_file = ifoOpen( dvd, vtsnum );
-        if ( !vts_file )
+        vts_file = ifoOpen(dvd, vtsnum);
+        if (!vts_file)
         {
-            Logging::error(path, "Can't open info file for title %1.", vtsnum );
-            DVDClose( dvd );
+            Logging::error(path, "Can't open info file for title %1.", vtsnum);
+            DVDClose(dvd);
             return EINVAL;
         }
 
@@ -222,7 +222,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
         }
 
         vts_ptt_srpt = vts_file->vts_ptt_srpt;
-        for( j = 0; j < chapts; ++j )
+        for(j = 0; j < chapts; ++j)
         {
             pgc_t *cur_pgc;
             int start_cell;
@@ -230,25 +230,25 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             int title_no = i + 1;
             int chapter_no = j + 1;
 
-            pgcnum      = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgcn;
-            pgn         = vts_ptt_srpt->title[ ttnnum - 1 ].ptt[ j ].pgn;
-            cur_pgc     = vts_file->vts_pgcit->pgci_srp[ pgcnum - 1 ].pgc;
-            start_cell  = cur_pgc->program_map[ pgn - 1 ] - 1;
+            pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[j].pgcn;
+            pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[j].pgn;
+            cur_pgc     = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
+            start_cell  = cur_pgc->program_map[pgn - 1] - 1;
 
             Logging::trace(path, "Chapter %<%3d>1 [PGC %<%02d>2, PG %<%02d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
                            j, pgcnum, pgn, start_cell,
-                           static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].first_sector),
-                           static_cast<uint32_t>(cur_pgc->cell_playback[ start_cell ].last_sector));
+                           static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].first_sector),
+                           static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
 
             {
                 char title_buf[PATH_MAX + 1];
                 std::string origfile;
                 struct stat stbuf;
-                size_t size = (cur_pgc->cell_playback[ start_cell ].last_sector - cur_pgc->cell_playback[ start_cell ].first_sector) * DVD_VIDEO_LB_LEN;
+                size_t size = (cur_pgc->cell_playback[start_cell].last_sector - cur_pgc->cell_playback[start_cell].first_sector) * DVD_VIDEO_LB_LEN;
                 //cur_pgc->playback_time;
 
                 //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().m_desttype);
-                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
+                    sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
 
                 std::string filename(title_buf);
 
@@ -280,19 +280,19 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                     int first_cell = start_cell;
 
                     // Check if we're entering an angle block.
-                    if (cur_pgc->cell_playback[ first_cell ].block_type == BLOCK_TYPE_ANGLE_BLOCK)
+                    if (cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
                     {
                         first_cell += virtualfile->dvd.m_angle_no;
                     }
 
-                    double frame_rate = (((cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
-                    int64_t frac = static_cast<int64_t>((cur_pgc->cell_playback[ first_cell ].playback_time.frame_u & 0x3f) * AV_TIME_BASE / frame_rate);
-                    int64_t msecduration = static_cast<int64_t>((cur_pgc->cell_playback[ first_cell ].playback_time.hour * 60 + cur_pgc->cell_playback[ first_cell ].playback_time.minute) * 60 + cur_pgc->cell_playback[ first_cell ].playback_time.second) * AV_TIME_BASE + frac;
-                    uint64_t size = (cur_pgc->cell_playback[ first_cell ].last_sector - cur_pgc->cell_playback[ first_cell ].first_sector) * 2048;
-                    int interleaved = cur_pgc->cell_playback[ first_cell ].interleaved;
-                    double duration = static_cast<double>(msecduration) / AV_TIME_BASE;
+                    double frame_rate       = (((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
+                    int64_t frac            = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / frame_rate);
+                    int64_t msecduration    = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
+                    uint64_t size           = (cur_pgc->cell_playback[first_cell].last_sector - cur_pgc->cell_playback[first_cell].first_sector) * 2048;
+                    int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
+                    double duration         = static_cast<double>(msecduration) / AV_TIME_BASE;
 
-                    video_bit_rate = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                    video_bit_rate          = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
 
                     Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<time_t>(duration)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
                     if (audio > -1)
@@ -305,11 +305,11 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
             }
         }
 
-        ifoClose( vts_file );
+        ifoClose(vts_file);
     }
 
-    ifoClose( ifo_file );
-    DVDClose( dvd );
+    ifoClose(ifo_file);
+    DVDClose(dvd);
 
     return titles;    // Number of titles on disk
 }

@@ -147,7 +147,7 @@ int dvdio::openX(const std::string & filename)
     tt_srpt = m_vmg_file->tt_srpt;
 
     // Make sure our title number is valid.
-    Logging::trace(nullptr, "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts) );
+    Logging::trace(m_path, "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts));
 
     if (m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts)
     {

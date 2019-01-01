@@ -30,7 +30,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Feature: Smart conversion option ("Smart Transcode")
 * Feature: Add level option for Prores
 * Feature: Add Apple Prores support
-* Feature: Do not "uprade" mono audio to stereo. Create mono audio stream.
+* Feature: Do not "upgrade" mono audio to stereo. Create mono audio stream.
 
 * Fix deprecation:
 

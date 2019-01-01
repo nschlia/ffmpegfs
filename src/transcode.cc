@@ -493,27 +493,6 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
                 }
                 break;
             }
-            case FILETYPE_PRORES:
-            case FILETYPE_MOV:
-            case FILETYPE_MP4:
-            {
-                // By default MP4/MOV have a so called MOOV atom at the tail. Some playback
-                // software check the end of the file for that atom. We simply send an empty
-                // block so that it "thinks" there is no MOOV and starts accessing the file
-                // from head.
-                if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
-                        ((offset + len) == cache_entry->size()))
-                {
-                    Logging::info(cache_entry->filename(), "Sending bogus MOOV atom.");
-
-                    memset(buff, 0, len);
-
-                    errno = 0;
-
-                    throw static_cast<ssize_t>(len);
-                }
-                break;
-            }
             default:
             {
                 break;

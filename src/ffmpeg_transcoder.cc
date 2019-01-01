@@ -306,8 +306,16 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
                 seek);      // input_seek
     m_in.m_format_ctx->pb = pb;
 
+    AVInputFormat * infmt = nullptr;
+
+    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    {
+        Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
+        infmt = av_find_input_format("mpeg");
+    }
+
     // Open the input file to read from it.
-    ret = avformat_open_input(&m_in.m_format_ctx, filename(), nullptr, &opt);
+    ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
     if (ret < 0)
     {
         Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret));

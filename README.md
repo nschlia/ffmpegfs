@@ -317,6 +317,7 @@ http://samba.2283325.n4.nabble.com/Hangs-Accessing-fuse-filesystem-in-Windows-th
 Adding this to the [global] config in smb.conf fixes that:
 
  	oplocks = no
+ 	level2 oplocks = no
  	aio read size = 1
 
 The "aio read size" parameter may be moved to the share config:

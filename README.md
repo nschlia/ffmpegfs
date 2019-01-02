@@ -303,7 +303,7 @@ streaming or opening the files locally, for example.
 FIXING PROBLEMS
 ---------------
 
-*Lock ups when accessing through Samba*
+**Lock ups when accessing through Samba**
 
 When accessed via Samba the pending read can lock the whole share, causing 
 Windows Explorer and even KDE Dolphin to freeze. Any access from the same 
@@ -323,7 +323,7 @@ The "aio read size" parameter may be moved to the share config:
 
  	aio read size = 1
  	
-*rsync, Beyond Compare and other tools*
+**rsync, Beyond Compare and other tools**
 
 Some copy tools do not go along very well with dynamically generated files 
 as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).

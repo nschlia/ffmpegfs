@@ -16,6 +16,7 @@ News
 * Added AIFF target format
 * Added Apple Prores target format *(please read the "A few words on Prores" section)*.
 * Added smart transcoding feature, see "Smart Transcoding" *(incomplete, work in progress)*.
+* Added support for DVD angles,
 
 About
 -----

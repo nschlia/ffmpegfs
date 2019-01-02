@@ -59,6 +59,7 @@ dvdio::dvdio()
     , m_duration(-1)
 {
     memset(&m_data, 0, sizeof(m_data));
+    memset(&m_buffer, 0, sizeof(m_buffer));
 }
 
 dvdio::~dvdio()
@@ -236,34 +237,321 @@ int dvdio::openX(const std::string & filename)
     return 0;
 }
 
-int dvdio::read(void * dataX, int size)
+// Demux and cell navigation nicked from https://www.videolan.org/vlc/download-sources.html
+// More details see http://stnsoft.com/DVD/vobov.html
+
+#define PS_STREAM_ID_END_STREAM         0xB9
+#define PS_STREAM_ID_PACK_HEADER        0xBA    // MPEG-2 Pack Header
+#define PS_STREAM_ID_SYSTEM_HEADER      0xBB    // Program Stream System Header
+#define PS_STREAM_ID_MAP                0xBC
+#define PS_STREAM_ID_PRIVATE_STREAM1    0xBD    // Private stream 1 (non MPEG audio, subpictures)
+#define PS_STREAM_ID_PADDING            0xBE    // Padding stream
+#define PS_STREAM_ID_PRIVATE            0xBF    // Private stream 2 (navigation data)
+#define PS_STREAM_ID_AUDIO              0xC0    // - 0xDF	MPEG-1 or MPEG-2 audio stream number (note: DVD allows only 8 audio streams)
+#define PS_STREAM_ID_VIDEO              0xE0    // - 0xEF	MPEG-1 or MPEG-2 video stream number (note: DVD allows only 1 video stream)
+#define PS_STREAM_ID_EXTENDED           0xFD
+#define PS_STREAM_ID_DIRECTORY          0xFF
+
+#define PS_STREAM_ID                    3
+
+// return the size of the next packet
+bool dvdio::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const
 {
-    unsigned int cur_output_size;
-    ssize_t maxlen;
-    int result_len = 0;
-
-    if (m_rest_size)
+    if (peek < 4)
     {
-        result_len = static_cast<int>(m_rest_size);
-
-        assert(m_rest_size < static_cast<size_t>(size));
-
-        memcpy(dataX, &m_data[m_rest_pos], m_rest_size);
-
-        m_rest_size = m_rest_pos = 0;
-
-        return result_len;
+        return false;   // Invalid size
     }
 
-    // Playback by cell in this pgc, starting at the cell for our chapter.
-    //while (next_cell < last_cell)
+    switch (p[PS_STREAM_ID])
     {
-        if (m_goto_next_cell)
+    case PS_STREAM_ID_END_STREAM:
+    {
+        *size = 4;
+        return true;
+    }
+    case PS_STREAM_ID_PACK_HEADER:
+    {
+        // MPEG-2 pack header, see http://stnsoft.com/DVD/packhdr.html
+        if (peek > 4)
         {
-            m_goto_next_cell = false;
+            if (peek >= 14 && (p[4] >> 6) == 0x01)
+            {
+                *size = 14 + (p[13] & 0x07); // Byte 13 Bit 0..2: Pack stuffing length
+                return true;
+            }
+            else if (peek >= 12 && (p[4] >> 4) == 0x02)
+            {
+                *size = 12;                  // unclear what this is for
+                return true;
+            }
+        }
+        break;
+    }
+    case PS_STREAM_ID_SYSTEM_HEADER:        // http://stnsoft.com/DVD/sys_hdr.html, see http://stnsoft.com/DVD/sys_hdr.html
+    case PS_STREAM_ID_MAP:                  // ???
+    case PS_STREAM_ID_DIRECTORY:            // ???
+    default:
+    {
+        if (peek >= 6)
+        {
+            *size = (6 + ((static_cast<unsigned int>(p[4]) << 8) | p[5]));  // Byte 4/5: header length
+            return true;
+        }
+        break;
+    }
+    }
+    return false;   // unknown ID
+}
+
+// return the id of a PES (should be valid)
+int dvdio::get_pes_id(const uint8_t *buffer, unsigned int size) const
+{
+    if (buffer[PS_STREAM_ID] == PS_STREAM_ID_PRIVATE_STREAM1)
+    {
+        uint8_t sub_id = 0;
+        if (size >= 9 && size >= static_cast<unsigned int>(9 + buffer[8]))
+        {
+            const unsigned int start = 9 + buffer[8];
+            sub_id = buffer[start];
+
+            if ((sub_id & 0xfe) == 0xa0 &&
+                    size >= start + 7 &&
+                    (buffer[start + 5] >= 0xc0 ||
+                     buffer[start + 6] != 0x80))
+            {
+                // AOB LPCM/MLP extension
+                // XXX for MLP I think that the !=0x80 test is not good and
+                // will fail for some valid files
+                return (0xa000 | (sub_id & 0x01));
+            }
+        }
+
+        // VOB extension
+        return (0xbd00 | sub_id);
+    }
+    else if (buffer[PS_STREAM_ID] == PS_STREAM_ID_EXTENDED &&
+             size >= 9 &&
+             (buffer[6] & 0xC0) == 0x80 &&    // mpeg2
+             (buffer[7] & 0x01) == 0x01)      // extension_flag
+    {
+        // ISO 13818 amendment 2 and SMPTE RP 227
+        const uint8_t flags = buffer[7];
+        unsigned int skip = 9;
+
+        // Find PES extension
+        if ((flags & 0x80))
+        {
+            skip += 5;        // pts
+            if ((flags & 0x40))
+            {
+                skip += 5;    // dts
+            }
+        }
+        if ((flags & 0x20))
+        {
+            skip += 6;
+        }
+        if ((flags & 0x10))
+        {
+            skip += 3;
+        }
+        if ((flags & 0x08))
+        {
+            skip += 1;
+        }
+        if ((flags & 0x04))
+        {
+            skip += 1;
+        }
+        if ((flags & 0x02))
+        {
+            skip += 2;
+        }
+
+        if (skip < size && (buffer[skip] & 0x01))
+        {
+            const uint8_t flags2 = buffer[skip];
+
+            // Find PES extension 2
+            skip += 1;
+            if (flags2 & 0x80)
+            {
+                skip += 16;
+            }
+            if ((flags2 & 0x40) && skip < size)
+            {
+                skip += 1 + buffer[skip];
+            }
+            if (flags2 & 0x20)
+            {
+                skip += 2;
+            }
+            if (flags2 & 0x10)
+            {
+                skip += 2;
+            }
+
+            if (skip + 1 < size)
+            {
+                const int i_extension_field_length = buffer[skip] & 0x7f;
+                if (i_extension_field_length >=1)
+                {
+                    int i_stream_id_extension_flag = (buffer[skip+1] >> 7) & 0x1;
+                    if (i_stream_id_extension_flag == 0)
+                    {
+                        return (0xfd00 | (buffer[skip+1] & 0x7f));
+                    }
+                }
+            }
+        }
+    }
+    return buffer[PS_STREAM_ID];
+}
+
+// Extract only the interesting portion of the VOB input stream
+unsigned int dvdio::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const
+{
+    unsigned int netsize = 0;
+    while (len > 0)
+    {
+        unsigned int size = 0;
+        if (!get_packet_size(in, len, &size) || size > len)
+        {
+            break;
+        }
+
+        // Parse block and copy to buffer
+        switch (0x100 | in[PS_STREAM_ID])
+        {
+        case (0x100 | PS_STREAM_ID_END_STREAM):
+        case (0x100 | PS_STREAM_ID_SYSTEM_HEADER):  // Program Stream System Header
+        case (0x100 | PS_STREAM_ID_MAP):
+        {
+            break;
+        }
+        case (0x100 | PS_STREAM_ID_PACK_HEADER):    // MPEG-2 Pack Header
+        {
+            memcpy(out, in, size);
+            out += size;
+            netsize += size;
+            break;
+        }
+        default:
+        {
+            int id = get_pes_id(in, size);
+            if (id >= PS_STREAM_ID_AUDIO)           // Audio/Video/Extended or Directory
+            {
+                // Probably this is sufficient here:
+                // 110x xxxx    0xC0 - 0xDF	MPEG-1 or MPEG-2 audio stream number x xxxx
+                // 1110 xxxx    0xE0 - 0xEF	MPEG-1 or MPEG-2 video stream number xxxx
+                memcpy(out, in, size);
+                out += size;
+                netsize += size;
+            }
+            break;
+        }
+        }
+
+        in += size;
+        len -= size;
+    }
+
+    return netsize;
+}
+
+dvdio::DSITYPE dvdio::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data)
+{
+    dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
+    DSITYPE dsitype = DSITYPE_CONTINUE;
+
+    navRead_DSI(dsi_pack, &data[DSI_START_BYTE]);
+
+    // Determine where we go next.  These values are the ones we mostly
+    // care about.
+    m_cur_block     = dsi_pack->dsi_gi.nv_pck_lbn;
+    cur_output_size = dsi_pack->dsi_gi.vobu_ea;
+
+    // If we're not at the end of this cell, we can determine the next
+    // VOBU to display using the VOBU_SRI information section of the
+    // DSI.  Using this value correctly follows the current angle,
+    // avoiding the doubled scenes in The Matrix, and makes our life
+    // really happy.
+
+    next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+
+    if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_no > 1)
+    {
+        switch ((dsi_pack->sml_pbi.category & 0xf000) >> 12)
+        {
+        case 0x4:
+        {
+            // Interleaved unit with no angle
+            // dsi_pack->sml_pbi.ilvu_sa
+            // relative offset to the next ILVU block (not VOBU) for this angle or scene.
+            // 00 00 00 00 for PREU and non-interleaved blocks
+            // ff ff ff ff for the last interleaved block, indicating the end of interleaving
+            if (dsi_pack->sml_pbi.ilvu_sa != 0 && dsi_pack->sml_pbi.ilvu_sa != 0xffffffff)
+            {
+                next_vobu = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
+                cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
+            }
+            else
+            {
+                next_vobu = m_cur_block + dsi_pack->dsi_gi.vobu_ea + 1;
+            }
+            break;
+        }
+        case 0x5:
+        {
+            // vobu is end of ilvu
+            if (dsi_pack->sml_agli.data[m_angle_no].address)
+            {
+                next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_no].address;
+                cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
+                break;
+            }
+        }
+            // fall through
+        case 0x6:   // vobu is beginning of ilvu
+        case 0x9:   // next scr is 0
+        case 0xa:   // entering interleaved section
+        case 0x8:   // non interleaved cells in interleaved section
+        default:
+        {
+            next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+            break;
+        }
+        }
+    }
+    else if (dsi_pack->vobu_sri.next_vobu == SRI_END_OF_CELL)
+    {
+        if (m_next_cell >= m_cur_pgc->nr_of_cells)
+        {
+            next_vobu = 0;
+            dsitype = DSITYPE_EOF_TITLE;
+        }
+        else
+        {
+            next_vobu = m_cur_pgc->cell_playback[m_next_cell].first_sector;
+
+            if (next_vobu >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
+            {
+                dsitype = DSITYPE_EOF_CHAPTER;
+            }
 
             m_cur_cell = m_next_cell;
 
+            next_cell();
+
+            next_vobu = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
+        }
+    }
+
+    return dsitype;
+}
+
+void dvdio::next_cell()
+{
     // Check if we're entering an angle block
     if (m_cur_pgc->cell_playback[m_cur_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
     {
@@ -282,8 +570,40 @@ int dvdio::read(void * dataX, int size)
     {
         m_next_cell = m_cur_cell + 1;
     }
+}
 
-            m_cur_block = m_cur_pgc->cell_playback[ m_cur_cell ].first_sector;
+int dvdio::read(void * data, int size)
+{
+    unsigned int cur_output_size;
+    ssize_t maxlen;
+    unsigned int result_len = 0;
+    DSITYPE hargn;
+
+    if (m_rest_size)
+    {
+        size_t rest_size = m_rest_size;
+
+        assert(rest_size < static_cast<size_t>(size));
+
+        memcpy(data, &m_data[m_rest_pos], rest_size);
+
+        m_rest_size = m_rest_pos = 0;
+
+        return static_cast<int>(rest_size);
+    }
+
+    // Playback by cell in this pgc, starting at the cell for our chapter.
+    //while (next_cell < last_cell)
+    {
+        if (m_goto_next_cell)
+        {
+            m_goto_next_cell = false;
+
+            m_cur_cell = m_next_cell;
+
+            next_cell();
+
+            m_cur_block = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
         }
 
         if (m_cur_block >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
@@ -300,71 +620,47 @@ int dvdio::read(void * dataX, int size)
             unsigned int next_vobu;
 
             // Read NAV packet.
-            maxlen = DVDReadBlocks( m_dvd_title, m_cur_block, 1, m_data );
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
             if (maxlen != 1)
             {
                 Logging::error(m_path, "Read failed for block %1", m_cur_block);
                 m_errno = EIO;
                 return -1;
             }
-            assert(is_nav_pack(m_data));
+            assert(is_nav_pack(m_buffer));
 
             // Parse the contained dsi packet.
-            navRead_DSI( &dsi_pack, &(m_data[ DSI_START_BYTE ]) );
-            assert( m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn );
-
-
-            // Determine where we go next.  These values are the ones we mostly care about.
-#if 0
-            next_ilvu_start = cur_pack + dsi_pack.sml_agli.data[ angle ].address;
-#endif
-            cur_output_size = dsi_pack.dsi_gi.vobu_ea;
-
-
-            /**
-             * If we're not at the end of this cell, we can determine the next
-             * VOBU to display using the VOBU_SRI information section of the
-             * DSI.  Using this value correctly follows the current angle,
-             * avoiding the doubled scenes in The Matrix, and makes our life
-             * really happy.
-             *
-             * Otherwise, we set our next address past the end of this cell to
-             * force the code above to go to the next cell in the program.
-             */
-            if ( dsi_pack.vobu_sri.next_vobu != SRI_END_OF_CELL )
-            {
-                next_vobu = m_cur_block + ( dsi_pack.vobu_sri.next_vobu & 0x7fffffff );
-            }
-            else
-            {
-                next_vobu = m_cur_block + cur_output_size + 1;
-            }
-
+            hargn = handle_DSI(&dsi_pack, cur_output_size, next_vobu, m_buffer);
+            assert(m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn);
             assert(cur_output_size < 1024);
             m_cur_block++;
 
             // Read in and output cur_output_size packs.
-            maxlen = DVDReadBlocks( m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_data);
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_buffer);
+
             if (maxlen != static_cast<int>(cur_output_size))
             {
-                Logging::error(m_path, "Read failed for %d blocks at %1", cur_output_size, m_cur_block );
+                Logging::error(m_path, "Read failed for %1 blocks at %2", cur_output_size, m_cur_block);
                 m_errno = EIO;
                 return -1;
             }
 
-            //fwrite( data, cur_output_size, DVD_VIDEO_LB_LEN, stdout );
-            if (cur_output_size * DVD_VIDEO_LB_LEN > static_cast<unsigned int>(size))
-            {
-                result_len = size;
-                memcpy(dataX, m_data, result_len);
+            unsigned int netsize = cur_output_size * DVD_VIDEO_LB_LEN;
 
-                m_rest_size = cur_output_size * DVD_VIDEO_LB_LEN - static_cast<unsigned int>(size);
-                m_rest_pos = size;
+            netsize = demux_pes(m_data, m_buffer, netsize);
+
+            if (netsize > static_cast<unsigned int>(size))
+            {
+                result_len = static_cast<unsigned int>(size);
+                memcpy(data, m_data, result_len);
+
+                m_rest_size = netsize - static_cast<unsigned int>(size);
+                m_rest_pos = static_cast<unsigned int>(size);
             }
             else
             {
-                result_len = cur_output_size * DVD_VIDEO_LB_LEN;
-                memcpy(dataX, m_data, result_len);
+                result_len = netsize;
+                memcpy(data, m_data, result_len);
             }
             m_cur_block = next_vobu;
         }
@@ -372,14 +668,16 @@ int dvdio::read(void * dataX, int size)
         //break;
     }
 
-    if (m_cur_block >= m_cur_pgc->cell_playback[ m_cur_cell ].last_sector)
+    // DSITYPE_EOF_TITLE - end of title
+    // DSITYPE_EOF_CHAPTER - end of chapter
+    if (hargn != DSITYPE_CONTINUE) //if (hargn == DSITYPE_EOF_TITLE)
     {
         m_is_eof = true;
     }
 
     m_cur_pos += result_len;
 
-    return result_len;
+    return static_cast<int>(result_len);
 }
 
 int dvdio::error() const

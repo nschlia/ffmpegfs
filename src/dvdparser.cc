@@ -240,15 +240,25 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                            static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].first_sector),
                            static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
 
+            // Split file if chapter has several angles
+            for (int k = 0; k < tt_srpt->title[i].nr_of_angles; k++)
             {
                 char title_buf[PATH_MAX + 1];
                 std::string origfile;
                 struct stat stbuf;
                 size_t size = (cur_pgc->cell_playback[start_cell].last_sector - cur_pgc->cell_playback[start_cell].first_sector) * DVD_VIDEO_LB_LEN;
+                int angle_no = k + 1;
                 //cur_pgc->playback_time;
 
                 //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().m_desttype);
+                if (k && tt_srpt->title[i].nr_of_angles > 1)
+                {
+                    sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
+                }
+                else
+                {
                     sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
+                }
 
                 std::string filename(title_buf);
 
@@ -273,7 +283,7 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                 // Mark title/chapter/angle
                 virtualfile->dvd.m_title_no     = title_no;
                 virtualfile->dvd.m_chapter_no   = chapter_no;
-                virtualfile->dvd.m_angle_no     = 1;            // TODO
+                virtualfile->dvd.m_angle_no     = angle_no;
 
                 if (!transcoder_cached_filesize(virtualfile, &stbuf))
                 {

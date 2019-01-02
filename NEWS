@@ -31,6 +31,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Feature: Add level option for Prores
 * Feature: Add Apple Prores support
 * Feature: Do not "upgrade" mono audio to stereo. Create mono audio stream.
+* Feature: Add DVD angle support.Chapters with angles will show as separate files.
 
 * Fix deprecation:
 

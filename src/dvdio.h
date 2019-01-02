@@ -31,6 +31,13 @@
 
 class dvdio : public fileio
 {
+    typedef enum _tagDSITYPE
+    {
+        DSITYPE_CONTINUE,
+        DSITYPE_EOF_CHAPTER,
+        DSITYPE_EOF_TITLE
+    } DSITYPE;
+
 public:
     dvdio();
     virtual ~dvdio();
@@ -52,7 +59,12 @@ protected:
 
 private:
     bool            is_nav_pack(const unsigned char *buffer) const;
-
+    bool            get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const;
+    int             get_pes_id(const uint8_t *buffer, unsigned int size) const;
+    unsigned int    demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const;
+    DSITYPE         handle_DSI(void * _dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data);
+    void            next_cell();
+    
 protected:
     dvd_reader_t *  m_dvd;
     dvd_file_t *    m_dvd_title;
@@ -76,6 +88,7 @@ protected:
     int             m_angle_no;
 
     unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];
+    unsigned char   m_buffer[1024 * DVD_VIDEO_LB_LEN];
 
     int64_t         m_duration;
 };

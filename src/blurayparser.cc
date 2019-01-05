@@ -62,7 +62,7 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
         {
             char title_buf[PATH_MAX + 1];
             std::string origfile;
-            struct stat st;
+            struct stat stbuf;
 
             //        sprintf(title_buf, "index%c%02d duration %02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 " chapters %3d angles %2u clips %3u (playlist %05d.mpls) V %d A %-2d PG %-2d IG %-2d SV %d SA %d.%s",
             //                (ii == main_title) ? '+' : ' ',
@@ -93,17 +93,17 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
 
             origfile = path + filename;
 
-            memcpy(&st, statbuf, sizeof(struct stat));
+            memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-            st.st_size = 0;
-            st.st_blocks = (st.st_size + 512 - 1) / 512;
+            stbuf.st_size = 0;
+            stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
-            if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
+            if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
             {
                 // break;
             }
 
-            LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &st);
+            LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &stbuf);
 
             // Bluray is video format anyway
             virtualfile->m_format_idx       = 0;
@@ -120,7 +120,7 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
 
     bd_close(bd);
 
-    return title_count;
+    return static_cast<int>(title_count);
 }
 
 // Returns -errno or number or titles on BLURAY

@@ -315,6 +315,11 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
+    else if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    {
+        Logging::debug(filename(), "Forcing mpegts format for Bluray source to avoid misdetections.");
+        infmt = av_find_input_format("mpegts");
+    }
 
     // Open the input file to read from it.
     ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);

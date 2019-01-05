@@ -577,7 +577,7 @@ int dvdio::read(void * data, int size)
     unsigned int cur_output_size;
     ssize_t maxlen;
     unsigned int result_len = 0;
-    DSITYPE hargn;
+    DSITYPE dsitype;
 
     if (m_rest_size)
     {
@@ -630,7 +630,7 @@ int dvdio::read(void * data, int size)
             assert(is_nav_pack(m_buffer));
 
             // Parse the contained dsi packet.
-            hargn = handle_DSI(&dsi_pack, cur_output_size, next_vobu, m_buffer);
+            dsitype = handle_DSI(&dsi_pack, cur_output_size, next_vobu, m_buffer);
             assert(m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn);
             assert(cur_output_size < 1024);
             m_cur_block++;
@@ -670,7 +670,7 @@ int dvdio::read(void * data, int size)
 
     // DSITYPE_EOF_TITLE - end of title
     // DSITYPE_EOF_CHAPTER - end of chapter
-    if (hargn != DSITYPE_CONTINUE) //if (hargn == DSITYPE_EOF_TITLE)
+    if (dsitype != DSITYPE_CONTINUE) //if (hargn == DSITYPE_EOF_TITLE)
     {
         m_is_eof = true;
     }

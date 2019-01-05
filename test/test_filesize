@@ -42,8 +42,8 @@ then
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "obama" 97231 97244
-    check_filesize "raven" 126430 126447
+    check_filesize "obama" 97231 97272
+    check_filesize "raven" 126430 126459
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
@@ -52,7 +52,7 @@ then
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "obama" 66181
+    check_filesize "obama" 66181 66201
     check_filesize "raven" 141211
 elif [ "${DESTTYPE}" == "webm" ];
 then

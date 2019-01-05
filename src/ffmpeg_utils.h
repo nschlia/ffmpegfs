@@ -229,7 +229,7 @@ double              ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
 std::string         format_number(int64_t value);
 std::string         format_bitrate(BITRATE value);
 std::string         format_samplerate(unsigned int value);
-std::string         format_duration(time_t value);
+std::string         format_duration(int64_t value, int fracs = 1);
 std::string         format_time(time_t value);
 std::string         format_size(size_t value);
 

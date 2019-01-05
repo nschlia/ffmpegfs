@@ -25,6 +25,7 @@ Important changes in 1.6 (2018-06-XX) UNRELEASED
 * Bugfix: Update timeout when client just holds the file open without reading.
 * Bugfix: Properly honour client exit (end wait for data).
 * Bugfix: Issue #23: do not block open with a read waiting for data.
+* Bugfix; WebM files had no duration. Added duration to Matroska container.
 * Feature: Add MOV target format
 * Feature: Add AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")

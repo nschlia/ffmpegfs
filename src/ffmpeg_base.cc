@@ -288,11 +288,11 @@ int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
 void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
 {
-    time_t duration = AV_NOPTS_VALUE;
+    int64_t duration = AV_NOPTS_VALUE;
 
     if (stream->duration != AV_NOPTS_VALUE)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
     Logging::info(out_file ? destname() : filename(), "Video %1: %2 Bit Rate: %3 Duration: %4",
@@ -304,11 +304,11 @@ void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
 
 void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
 {
-    time_t duration = AV_NOPTS_VALUE;
+    int64_t duration = AV_NOPTS_VALUE;
 
     if (stream->duration != AV_NOPTS_VALUE)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX)) / AV_TIME_BASE;
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
     Logging::info(out_file ? destname() : filename(), "Audio %1: %2 Bit Rate: %3 Channels: %4 Sample Rate: %5 Duration: %6",

@@ -1,3 +1,4 @@
+DURATION=20993741
 ENSEMBLE=Edgar Allen Poe
 album=The Raven
 artist=Edgar Allen Poe

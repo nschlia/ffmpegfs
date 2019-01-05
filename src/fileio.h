@@ -67,6 +67,12 @@ typedef struct _tagVIRTUALFILE
 #ifdef USE_LIBVCD
     struct VCD
     {
+        VCD()
+            : m_track_no(0)
+            , m_chapter_no(0)
+            , m_start_pos(0)
+            , m_end_pos(0)
+        {}
         int         m_track_no;
         int         m_chapter_no;
         uint64_t    m_start_pos;
@@ -77,14 +83,27 @@ typedef struct _tagVIRTUALFILE
 #ifdef USE_LIBDVD
     struct DVD
     {
+        DVD()
+            : m_title_no(0)
+            , m_chapter_no(0)
+            , m_angle_no(0)
+            , m_msecduration(0)
+        {}
         int         m_title_no;
         int         m_chapter_no;
         int         m_angle_no;
+        int64_t     m_msecduration;
     } dvd;
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     struct BLURAY
     {
+        BLURAY()
+            : m_title_no(0)
+            , m_playlist_no(0)
+            , m_chapter_no(0)
+            , m_angle_no(0)
+        {}
         uint32_t    m_title_no;
         uint32_t    m_playlist_no;
         unsigned    m_chapter_no;

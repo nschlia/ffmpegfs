@@ -763,29 +763,29 @@ std::string format_samplerate(unsigned int value)
     }
 }
 
-std::string format_duration(time_t value)
+std::string format_duration(int64_t value, int fracs /*= 1*/)
 {
-    if (value == static_cast<time_t>(AV_NOPTS_VALUE))
+    if (value == AV_NOPTS_VALUE)
     {
         return "unset";
     }
 
     std::string buffer;
-    int hours;
-    int mins;
-    int secs;
-
-    hours = static_cast<int>(value / (60*60));
-    value -= hours * (60*60);
-    mins = static_cast<int>(value / (60));
-    value -= mins * (60);
-    secs = static_cast<int>(value);
+    int hours   = static_cast<int>((value / AV_TIME_BASE) / (3600));
+    int mins    = static_cast<int>(((value / AV_TIME_BASE) % 3600) / 60);
+    int secs    = static_cast<int>((value / AV_TIME_BASE) % 60);
 
     if (hours)
     {
         buffer = string_format("%02i:", hours);
     }
+
     buffer += string_format("%02i:%02i", mins, secs);
+    if (fracs)
+    {
+        int decimals    = static_cast<int>(value % AV_TIME_BASE);
+        buffer += string_format(".%5i", decimals).substr(0, fracs + 1);
+    }
     return buffer;
 }
 

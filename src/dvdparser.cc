@@ -302,9 +302,14 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                     int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
                     double duration         = static_cast<double>(msecduration) / AV_TIME_BASE;
 
-                    video_bit_rate          = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                    virtualfile->dvd.m_msecduration = msecduration;
 
-                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<time_t>(duration)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
+                    if (duration != 0.)
+                    {
+                        video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                    }
+
+                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<int64_t>(duration * AV_TIME_BASE)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
                     if (audio > -1)
                     {
                         Logging::debug(virtualfile->m_origfile, "Audio Channels: %1 Sample Rate: %2", channels, sample_rate);

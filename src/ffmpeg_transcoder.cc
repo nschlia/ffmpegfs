@@ -234,9 +234,9 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     AVDictionary * opt = nullptr;
     int ret;
 
-    m_in.m_filename = virtualfile->m_origfile;
-    m_mtime = virtualfile->m_st.st_mtime;
-    m_current_format = params.current_format(virtualfile);
+    m_in.m_filename     = virtualfile->m_origfile;
+    m_mtime             = virtualfile->m_st.st_mtime;
+    m_current_format    = params.current_format(virtualfile);
 
     if (is_open())
     {
@@ -255,18 +255,18 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     }
 
     // defaults to 5,000,000 microseconds = 5 seconds.
-    //    ret = av_dict_set_with_check(&opt, "analyzeduration", "100M", 0);    // <<== honored
+    //    ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
     //    if (ret < 0)
     //    {
     //        return ret;
     //    }
 
     //  5000000 by default.
-    //ret = av_dict_set_with_check(&opt, "probesize", "2000000", 0);          // <<== honored;
-    //if (ret < 0)
-    //{
-    //    return ret;
-    //}
+    //    ret = av_dict_set_with_check(&opt, "probesize", "5000000", 0);          // <<== honored;
+    //    if (ret < 0)
+    //    {
+    //        return ret;
+    //    }
 
     // using own I/O
     if (fio == nullptr)
@@ -305,6 +305,8 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
                 nullptr,    // input_write
                 seek);      // input_seek
     m_in.m_format_ctx->pb = pb;
+
+    //    m_in.m_format_ctx->probesize = 15000000;
 
     AVInputFormat * infmt = nullptr;
 
@@ -349,6 +351,12 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         return ret;
     }
 
+    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    {
+        // FFmpeg API calculcates a wrong duration, so use value from IFO
+        m_in.m_format_ctx->duration = virtualfile->dvd.m_msecduration;
+    }
+
     // Open best match video codec
     ret = open_bestmatch_codec_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
@@ -360,7 +368,15 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     if (m_in.m_video.m_stream_idx >= 0)
     {
         // We have a video stream
-        m_in.m_video.m_stream = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
+        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
+
+        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+        }
+
+        video_info(false, m_in.m_format_ctx, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream);
 
         m_is_video = is_video();
 
@@ -372,7 +388,6 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
-        video_info(false, m_in.m_format_ctx, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream);
     }
 
     // Open best match audio codec
@@ -387,6 +402,12 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     {
         // We have an audio stream
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
+
+        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+        }
 
         audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_codec_ctx, m_in.m_audio.m_stream);
     }
@@ -821,8 +842,8 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                 }
 
                 Logging::info(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
-                                 format_samplerate(orig_sample_rate),
-                                 format_samplerate(output_codec_ctx->sample_rate));
+                              format_samplerate(orig_sample_rate),
+                              format_samplerate(output_codec_ctx->sample_rate));
             }
         }
 
@@ -866,7 +887,16 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #endif
 
         // Set duration as hint for muxer
-        output_stream->duration                 = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+        if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
+        {
+            output_stream->duration            = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+        }
+        else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+        {
+            output_stream->duration            = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+        }
+
+        //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
         m_out.m_audio.m_codec_ctx              = output_codec_ctx;
@@ -1129,7 +1159,16 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 #endif // _DEBUG
 
         // Set duration as hint for muxer
-        output_stream->duration                 = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+        if (m_in.m_video.m_stream->duration != AV_NOPTS_VALUE)
+        {
+            output_stream->duration            = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+        }
+        else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+        {
+            output_stream->duration            = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+        }
+
+        //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
         m_out.m_video.m_codec_ctx              = output_codec_ctx;
@@ -1143,6 +1182,12 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     default:
         break;
     }
+
+    // Although docs state this is "Demuxing only", this is actually used by encoders like Matroska/WebM, so we need to set this here.
+    m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
+#ifndef USING_LIBAV
+    av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
+#endif // !USING_LIBAV
 
     // Some formats want stream headers to be separate.
     if (m_out.m_format_ctx->oformat->flags & AVFMT_GLOBALHEADER)

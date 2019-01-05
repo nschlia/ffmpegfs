@@ -119,12 +119,14 @@ int dvdio::openX(const std::string & filename)
         m_title_no     = virtualfile()->dvd.m_title_no - 1;
         m_chapter_no   = virtualfile()->dvd.m_chapter_no - 1;
         m_angle_no     = virtualfile()->dvd.m_angle_no - 1;
+        m_duration     = virtualfile()->dvd.m_msecduration;
     }
     else
     {
         m_title_no     = 0;
         m_chapter_no   = 0;
         m_angle_no     = 0;
+        m_duration     = 0;
     }
 
     Logging::debug(m_path, "Opening input DVD.");
@@ -213,6 +215,7 @@ int dvdio::openX(const std::string & filename)
     m_last_cell         = m_cur_pgc->nr_of_cells;
     m_cur_cell          = m_start_cell;
 
+    if (!m_duration)
     {
         int first_cell = m_next_cell;
 
@@ -231,8 +234,8 @@ int dvdio::openX(const std::string & filename)
     m_is_eof            = false;
     m_errno             = 0;
     m_rest_size         = 0;
-    m_rest_pos = 0;
-    m_cur_pos = 0;
+    m_rest_pos          = 0;
+    m_cur_pos           = 0;
 
     return 0;
 }

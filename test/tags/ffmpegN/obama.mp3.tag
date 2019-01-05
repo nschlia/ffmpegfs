@@ -1,4 +1,5 @@
 DISCTOTAL=0
+DURATION=6000000
 TRACKTOTAL=1
 album=US State of the Union 2011
 artist=Barack Obama

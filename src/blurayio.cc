@@ -152,7 +152,7 @@ int blurayio::openX(const std::string & filename)
     return 0;
 }
 
-int blurayio::read(void * dataX, int size)
+int blurayio::read(void * data, int size)
 {
     int result_len = 0;
 
@@ -162,7 +162,7 @@ int blurayio::read(void * dataX, int size)
 
         assert(m_rest_size < static_cast<size_t>(size));
 
-        memcpy(dataX, &m_data[m_rest_pos], m_rest_size);
+        memcpy(data, &m_data[m_rest_pos], m_rest_size);
 
         m_rest_size = m_rest_pos = 0;
 
@@ -173,14 +173,14 @@ int blurayio::read(void * dataX, int size)
     if (m_end_pos < 0 || m_cur_pos < m_end_pos)
     {
         int bytes;
-        int XXsize;
+        int maxsize = static_cast<int>(sizeof(m_data));
 
-        XXsize = static_cast<int>(sizeof(m_data));
-        if (XXsize > (m_end_pos - m_cur_pos))
+        if (maxsize > (m_end_pos - m_cur_pos))
         {
-            XXsize = static_cast<int>(m_end_pos - m_cur_pos);
+            maxsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
-        bytes = bd_read(m_bd, m_data, XXsize);
+
+        bytes = bd_read(m_bd, m_data, maxsize);
         if (bytes <= 0)
         {
             Logging::error(m_path, "bd_read fail ret = %1", bytes);
@@ -191,7 +191,7 @@ int blurayio::read(void * dataX, int size)
         if (bytes > size)
         {
             result_len = size;
-            memcpy(dataX, m_data, result_len);
+            memcpy(data, m_data, result_len);
 
             m_rest_size = bytes - size;
             m_rest_pos = size;
@@ -199,7 +199,7 @@ int blurayio::read(void * dataX, int size)
         else
         {
             result_len = bytes;
-            memcpy(dataX, m_data, result_len);
+            memcpy(data, m_data, result_len);
         }
     }
 

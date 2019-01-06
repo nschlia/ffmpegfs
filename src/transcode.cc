@@ -120,7 +120,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    Logging::debug(transcoder->destname(), "Predicted/final size: %1/%2 bytes, diff: %3 (%4%%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize), static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    Logging::debug(transcoder->destname(), "Predicted/final size: %1/%2 bytes, diff: %3 (%4%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize), static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 

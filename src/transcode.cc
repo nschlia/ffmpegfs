@@ -609,7 +609,7 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->m_desttype);
+        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2 bytes.", params.current_format(cache_entry->virtualfile())->m_desttype, cache_entry->m_cache_info.m_predicted_filesize);
 
         if (transcoder == nullptr)
         {

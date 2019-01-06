@@ -364,7 +364,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     if (virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         // FFmpeg API calculcates a wrong duration, so use value from IFO
-        m_in.m_format_ctx->duration = virtualfile->dvd.m_msecduration;
+        m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY

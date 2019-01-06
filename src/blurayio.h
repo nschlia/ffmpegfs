@@ -43,7 +43,7 @@ public:
     virtual int         bufsize() const;
     virtual int         read(void *data, int maxlen);
     virtual int         error() const;
-    virtual int64_t duration() const;
+    virtual int64_t     duration() const;
     virtual size_t      size() const;
     virtual size_t      tell() const;
     virtual int         seek(long offset, int whence);
@@ -69,6 +69,8 @@ protected:
     unsigned            m_angle_no;
 
     uint8_t             m_data[192 * 1024];
+
+    int64_t         m_duration;
 };
 #endif // USE_LIBBLURAY
 

@@ -119,14 +119,14 @@ int dvdio::openX(const std::string & filename)
         m_title_no     = virtualfile()->dvd.m_title_no - 1;
         m_chapter_no   = virtualfile()->dvd.m_chapter_no - 1;
         m_angle_no     = virtualfile()->dvd.m_angle_no - 1;
-        m_duration     = virtualfile()->dvd.m_msecduration;
+        m_duration     = virtualfile()->dvd.m_duration;
     }
     else
     {
         m_title_no     = 0;
         m_chapter_no   = 0;
         m_angle_no     = 0;
-        m_duration     = 0;
+        m_duration     = -1;
     }
 
     Logging::debug(m_path, "Opening input DVD.");

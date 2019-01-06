@@ -41,6 +41,7 @@ blurayio::blurayio()
     , m_title_no(0)
     , m_chapter_no(0)
     , m_angle_no(0)
+    , m_duration(-1)
 {
     memset(&m_data, 0, sizeof(m_data));
 }
@@ -77,12 +78,14 @@ int blurayio::openX(const std::string & filename)
         m_title_no      = virtualfile()->bluray.m_title_no - 1;
         m_chapter_no    = virtualfile()->bluray.m_chapter_no - 1;
         m_angle_no      = virtualfile()->bluray.m_angle_no - 1;
+        m_duration     = virtualfile()->bluray.m_duration;
     }
     else
     {
         m_title_no      = 0;
         m_chapter_no    = 0;
         m_angle_no      = 0;
+        m_duration     = -1;
     }
 
     chapter_end = m_chapter_no + 1;
@@ -141,6 +144,9 @@ int blurayio::openX(const std::string & filename)
     {
         m_end_pos = bd_get_title_size(m_bd);
     }
+
+    BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_no];
+    m_duration = chapter->duration * AV_TIME_BASE / 90000;
 
     bd_free_title_info(ti);
 
@@ -215,7 +221,7 @@ int blurayio::error() const
 
 int64_t blurayio::duration() const
 {
-    return -1;  // TODO
+    return m_duration;
 }
 
 size_t blurayio::size() const

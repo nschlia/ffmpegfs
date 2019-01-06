@@ -297,25 +297,25 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
 
                     double frame_rate       = (((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
                     int64_t frac            = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / frame_rate);
-                    int64_t msecduration    = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
+                    int64_t duration        = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
                     uint64_t size           = (cur_pgc->cell_playback[first_cell].last_sector - cur_pgc->cell_playback[first_cell].first_sector) * 2048;
                     int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
-                    double duration         = static_cast<double>(msecduration) / AV_TIME_BASE;
+                    double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
 
-                    virtualfile->dvd.m_msecduration = msecduration;
+                    virtualfile->dvd.m_duration = duration;
 
-                    if (duration != 0.)
+                    if (secsduration != 0.)
                     {
-                        video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                        video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
                     }
 
-                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<int64_t>(duration * AV_TIME_BASE)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
+                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
                     if (audio > -1)
                     {
                         Logging::debug(virtualfile->m_origfile, "Audio Channels: %1 Sample Rate: %2", channels, sample_rate);
                     }
 
-                    transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
+                    transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
                 }
             }
         }

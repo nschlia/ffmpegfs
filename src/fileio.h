@@ -87,12 +87,12 @@ typedef struct _tagVIRTUALFILE
             : m_title_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
-            , m_msecduration(0)
+            , m_duration(0)
         {}
         int         m_title_no;
         int         m_chapter_no;
         int         m_angle_no;
-        int64_t     m_msecduration;
+        int64_t     m_duration;
     } dvd;
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
@@ -103,11 +103,13 @@ typedef struct _tagVIRTUALFILE
             , m_playlist_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
+            , m_duration(0)
         {}
         uint32_t    m_title_no;
         uint32_t    m_playlist_no;
         unsigned    m_chapter_no;
         unsigned    m_angle_no;
+        int64_t     m_duration;
     } bluray;
 #endif // USE_LIBBLURAY
 

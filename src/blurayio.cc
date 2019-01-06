@@ -116,7 +116,7 @@ int blurayio::openX(const std::string & filename)
 
     if (m_angle_no >= ti->angle_count)
     {
-        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_no+1, ti->angle_count);
+        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_no + 1, ti->angle_count);
         m_angle_no = 0;
     }
 
@@ -124,7 +124,7 @@ int blurayio::openX(const std::string & filename)
 
     if (m_chapter_no >= ti->chapter_count)
     {
-        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_no+1, ti->chapter_count);
+        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_no + 1, ti->chapter_count);
         return 1;
     }
 
@@ -180,6 +180,8 @@ int blurayio::read(void * data, int size)
             maxsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
 
+//        Logging::error(m_path, "READ %<%11lli>1", m_cur_pos);
+
         bytes = bd_read(m_bd, m_data, maxsize);
         if (bytes <= 0)
         {
@@ -229,6 +231,9 @@ size_t blurayio::tell() const
 int blurayio::seek(long offset, int whence)
 {
     long int seek_pos;
+
+//    Logging::error(m_path, "SEEK %<%11i>1", offset);
+
     switch (whence)
     {
     case SEEK_SET:
@@ -253,7 +258,9 @@ int blurayio::seek(long offset, int whence)
     }
     }
 
-    return (bd_seek(m_bd, seek_pos) != seek_pos);
+    bool success = (bd_seek(m_bd, seek_pos) != seek_pos);
+    m_cur_pos = bd_tell(m_bd);
+    return success;
 }
 
 bool blurayio::eof() const

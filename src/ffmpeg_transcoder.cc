@@ -310,16 +310,20 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
 
     AVInputFormat * infmt = nullptr;
 
+#ifdef USE_LIBDVD
     if (virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
-    else if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
         Logging::debug(filename(), "Forcing mpegts format for Bluray source to avoid misdetections.");
         infmt = av_find_input_format("mpegts");
     }
+#endif // USE_LIBBLURAY
 
     // Open the input file to read from it.
     ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
@@ -356,11 +360,15 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         return ret;
     }
 
+#ifdef USE_LIBDVD
     if (virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         // FFmpeg API calculcates a wrong duration, so use value from IFO
         m_in.m_format_ctx->duration = virtualfile->dvd.m_msecduration;
     }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+#endif // USE_LIBBLURAY
 
     // Open best match video codec
     ret = open_bestmatch_codec_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
@@ -375,11 +383,15 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         // We have a video stream
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
 
+#ifdef USE_LIBDVD
         if (virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
         }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+#endif // USE_LIBBLURAY
 
         video_info(false, m_in.m_format_ctx, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream);
 
@@ -408,11 +420,15 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         // We have an audio stream
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
 
+#ifdef USE_LIBDVD
         if (virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+#endif // USE_LIBBLURAY
 
         audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_codec_ctx, m_in.m_audio.m_stream);
     }

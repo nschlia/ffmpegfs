@@ -32,19 +32,19 @@ Cache_Entry::Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile)
     , m_virtualfile(nullptr)
     , m_thread_id(0)
 {
-    m_cache_info.m_filename = virtualfile->m_origfile;
-//    m_cache_info.m_filename = filename;
+    m_cache_info.m_origfile = virtualfile->m_origfile;
+
+    get_destname(&m_cache_info.m_destfile, m_cache_info.m_origfile);
 
     m_cache_info.m_desttype[0] = '\0';
     strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->m_desttype.c_str(), sizeof(m_cache_info.m_desttype) - 1);
 
     m_buffer = new Buffer;
-//    m_buffer->open(m_cache_info.m_filename);
     m_buffer->open(virtualfile);
 
     clear();
 
-    Logging::trace(m_cache_info.m_filename, "Created new cache entry.");
+    Logging::debug(filename(), "Created new cache entry.");
 }
 
 Cache_Entry::~Cache_Entry()
@@ -53,16 +53,16 @@ Cache_Entry::~Cache_Entry()
     {
         pthread_t thread_id = m_thread_id;
         // If not same thread, wait for other to finish
-        Logging::warning(m_cache_info.m_filename, "Waiting for thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 to terminate.", thread_id);
+        Logging::warning(filename(), "Waiting for thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 to terminate.", thread_id);
 
         int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
-            Logging::error(m_cache_info.m_filename, "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : %2", thread_id, strerror(s));
+            Logging::error(filename(), "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : %2", thread_id, strerror(s));
         }
         else
         {
-            Logging::info(m_cache_info.m_filename, "Thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 has terminated.", thread_id);
+            Logging::info(filename(), "Thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 has terminated.", thread_id);
         }
     }
 
@@ -70,7 +70,7 @@ Cache_Entry::~Cache_Entry()
 
     unlock();
 
-    Logging::trace(m_cache_info.m_filename, "Deleted buffer.");
+    Logging::trace(filename(), "Deleted buffer.");
 }
 
 void Cache_Entry::clear(int fetch_file_time)
@@ -133,7 +133,7 @@ bool Cache_Entry::write_info()
 
 bool Cache_Entry::delete_info()
 {
-    return m_owner->delete_info(m_cache_info.m_filename, m_cache_info.m_desttype);
+    return m_owner->delete_info(filename(), m_cache_info.m_desttype);
 }
 
 bool Cache_Entry::update_access(bool bUpdateDB /*= false*/)
@@ -178,7 +178,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         erase_cache = true;
     }
 
-    Logging::trace(m_cache_info.m_filename, "Last transcode finished: %1 Erase cache: %2.", m_cache_info.m_finished, erase_cache);
+    Logging::trace(filename(), "Last transcode finished: %1 Erase cache: %2.", m_cache_info.m_finished, erase_cache);
 
     // Store access time
     update_access(true);
@@ -298,7 +298,12 @@ bool Cache_Entry::decode_timeout() const
 
 const std::string & Cache_Entry::filename() const
 {
-    return m_cache_info.m_filename;
+    return m_cache_info.m_origfile;
+}
+
+const std::string & Cache_Entry::destname() const
+{
+    return m_cache_info.m_destfile;
 }
 
 void Cache_Entry::lock()
@@ -322,32 +327,32 @@ bool Cache_Entry::outdated() const
 
     if (m_cache_info.m_audiobitrate != params.m_audiobitrate)
     {
-        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected audio bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        Logging::debug(filename(), "Triggering re-transcode: Selected audio bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
         return true;
     }
 
     if (m_cache_info.m_audiosamplerate != params.m_audiosamplerate)
     {
-        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected audio samplerate changed from %1 to %2.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
+        Logging::debug(filename(), "Triggering re-transcode: Selected audio samplerate changed from %1 to %2.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
         return true;
     }
 
     if (m_cache_info.m_videobitrate != params.m_videobitrate)
     {
-        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        Logging::debug(filename(), "Triggering re-transcode: Selected video bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
         return true;
     }
 
     if (m_cache_info.m_videowidth != params.m_videowidth || m_cache_info.m_videoheight != params.m_videoheight)
     {
-        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video witdh/height changed.");
+        Logging::debug(filename(), "Triggering re-transcode: Selected video witdh/height changed.");
         return true;
     }
 
 #ifndef USING_LIBAV
     if (m_cache_info.m_deinterlace != params.m_deinterlace)
     {
-        Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: Selected video deinterlace changed from %1 to %2.", m_cache_info.m_deinterlace, params.m_deinterlace);
+        Logging::debug(filename(), "Triggering re-transcode: Selected video deinterlace changed from %1 to %2.", m_cache_info.m_deinterlace, params.m_deinterlace);
         return true;
     }
 #endif  // !USING_LIBAV
@@ -357,13 +362,13 @@ bool Cache_Entry::outdated() const
         // If source file exists, check file date/size
         if (m_cache_info.m_file_time < sb.st_mtime)
         {
-            Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: File time has gone forward.");
+            Logging::debug(filename(), "Triggering re-transcode: File time has gone forward.");
             return true;
         }
 
         if (m_cache_info.m_file_size != static_cast<size_t>(sb.st_size))
         {
-            Logging::debug(m_cache_info.m_filename, "Triggering re-transcode: File size has changed.");
+            Logging::debug(filename(), "Triggering re-transcode: File size has changed.");
             return true;
         }
     }

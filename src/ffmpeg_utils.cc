@@ -171,12 +171,10 @@ char * new_strdup(const std::string & str)
 
 const std::string & get_destname(std::string *destname, const std::string & filename)
 {
-    size_t len = params.m_basepath.size();
-
-    *destname = params.m_mountpath;
-    *destname += filename.substr(len);
-
+    *destname = filename;
+    remove_path(destname);
     replace_ext(destname, params.current_format(filename)->m_format_name);
+    *destname = params.m_mountpath + *destname;
 
     return *destname;
 }

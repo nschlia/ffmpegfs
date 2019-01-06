@@ -30,7 +30,8 @@
 
 typedef struct
 {
-    std::string     m_filename;
+    std::string     m_origfile;
+    std::string     m_destfile;
     char            m_desttype[11];
     //bool            m_enable_ismv;
     int64_t         m_audiobitrate;

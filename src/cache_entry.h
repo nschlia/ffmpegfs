@@ -48,6 +48,7 @@ public:
     bool                    suspend_timeout() const;
     bool                    decode_timeout() const;
     const std::string &     filename() const;
+    const std::string &     destname() const;
     bool                    update_access(bool bUpdateDB = false);
 
     void                    lock();

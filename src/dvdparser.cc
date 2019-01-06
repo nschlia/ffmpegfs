@@ -309,10 +309,10 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                         video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
                     }
 
-                    Logging::debug(virtualfile->m_origfile, "Video %1 Bit Rate: %2 Dimensions: %3x%4@%<%5.2f>5 fps Interleaved: %6 Size: %7", format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)), format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "yes" : "no", format_size(size));
+                    Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "i" : "p", format_size(size), format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)));
                     if (audio > -1)
                     {
-                        Logging::debug(virtualfile->m_origfile, "Audio Channels: %1 Sample Rate: %2", channels, sample_rate);
+                        Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", channels, sample_rate);
                     }
 
                     transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);

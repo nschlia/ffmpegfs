@@ -903,7 +903,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 
     Logging::trace(path, "release");
 
-    if (cache_entry)
+    if (cache_entry != nullptr)
     {
         transcoder_delete(cache_entry);
     }

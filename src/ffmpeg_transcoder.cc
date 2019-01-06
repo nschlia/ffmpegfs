@@ -1534,7 +1534,7 @@ int FFMPEG_Transcoder::init_resampler()
     {
         int ret;
 
-        Logging::info(destname(), "Creating audio resampler: Sample format %1 -> %2 / sample rate %3 -> %4 / channel layout %5 -> %6.",
+        Logging::info(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
                       get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt),
                       get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt),
                       format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate),
@@ -3515,7 +3515,8 @@ void FFMPEG_Transcoder::close()
 {
     int nAudioSamplesLeft = 0;
     size_t nVideoFramesLeft = 0;
-    std::string file;
+    std::string infile;
+    std::string outfile;
     bool bClosed = false;
 
     if (m_pAudioFifo)
@@ -3599,11 +3600,11 @@ void FFMPEG_Transcoder::close()
 #if LAVF_DEP_FILENAME
         if (m_out.m_format_ctx->url != nullptr)
         {
-            file = m_out.m_format_ctx->url;
+            outfile = m_out.m_format_ctx->url;
         }
 #else
         // lavf 58.7.100 - avformat.h - deprecated
-        file = m_out.m_format_ctx->filename;
+        outfile = m_out.m_format_ctx->filename;
 #endif
 
         if (m_out.m_format_ctx->pb != nullptr)
@@ -3673,15 +3674,15 @@ void FFMPEG_Transcoder::close()
 
     if (m_in.m_format_ctx != nullptr)
     {
-        if (file.empty())
-        {
 #if LAVF_DEP_FILENAME
-            file = m_in.m_format_ctx->url;
+            if (m_in.m_format_ctx->url != nullptr)
+            {
+                infile = m_in.m_format_ctx->url;
+            }
 #else
             // lavf 58.7.100 - avformat.h - deprecated
-            file = m_in.m_format_ctx->filename;
+            infile = m_in.m_format_ctx->filename;
 #endif
-        }
 
         //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))
         {
@@ -3716,7 +3717,7 @@ void FFMPEG_Transcoder::close()
 
     if (bClosed)
     {
-        const char *p = file.empty() ? nullptr : file.c_str();
+        const char *p = outfile.empty() ? nullptr : outfile.c_str();
         if (nAudioSamplesLeft)
         {
             Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", nAudioSamplesLeft);

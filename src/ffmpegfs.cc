@@ -1378,6 +1378,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    append_sep(&params.m_mountpath);
+
     if (set_defaults())
     {
         return 1;

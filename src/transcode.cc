@@ -69,19 +69,19 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
         {
             if (fuse_interrupted())
         	{
-                Logging::info(cache_entry->filename(), "Client has gone away.");
+                Logging::info(cache_entry->destname(), "Client has gone away.");
             	return false;
         	}
 
             if (thread_exit)
             {
-                Logging::warning(cache_entry->filename(), "Received thread exit.");
+                Logging::warning(cache_entry->destname(), "Received thread exit.");
                 return false;
             }
 
             if (!reported)
             {
-                Logging::trace(cache_entry->filename(), "Cache miss at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+                Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
                 reported = true;
             }
             sleep(0);
@@ -89,7 +89,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 
         if (reported)
         {
-            Logging::trace(cache_entry->filename(), "Cache hit  at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+            Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11u>1 (length %<%6u>2), remaining %<%11i>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
         }
         success = !cache_entry->m_cache_info.m_error;
     }
@@ -179,13 +179,13 @@ void transcoder_free(void)
 
 int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 {
-    Logging::trace(virtualfile->m_origfile, "Retrieving encoded size.");
-
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
         return false;
     }
+
+    Logging::trace(cache_entry->destname(), "Retrieving encoded size.");
 
     size_t encoded_filesize = cache_entry->m_cache_info.m_encoded_filesize;
 
@@ -214,14 +214,14 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
     Cache_Entry * cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
-        Logging::error(virtualfile->m_origfile, "Out of memory getting file size.");
+        Logging::error(cache_entry->filename(), "Out of memory getting file size.");
         return false;
     }
 
     ffmpegfs_format *current_format = params.current_format(virtualfile);
     if (current_format == nullptr)
     {
-        Logging::error(virtualfile->m_origfile, "Internal error getting file size.");
+        Logging::error(cache_entry->filename(), "Internal error getting file size.");
         return false;
     }
 
@@ -229,17 +229,17 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
 
     if (!FFMPEG_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
     {
-        Logging::warning(virtualfile->m_origfile, "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype);
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype);
     }
 
     if (!FFMPEG_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
     {
-        Logging::warning(virtualfile->m_origfile, "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype);
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype);
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
 
-    Logging::debug(virtualfile->m_origfile, "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+    Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
 
     return true;
 }
@@ -252,7 +252,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
     if (transcoder == nullptr)
     {
-        Logging::error(virtualfile->m_origfile, "Out of memory getting file size.");
+        Logging::error(cache_entry->filename(), "Out of memory getting file size.");
         return false;
     }
 
@@ -262,7 +262,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
         transcoder->close();
 
-        Logging::debug(virtualfile->m_origfile, "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+        Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
 
         success = true;
     }
@@ -278,13 +278,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     int _errno = 0;
 
     // Allocate transcoder structure
-    Logging::trace(virtualfile->m_origfile, "Creating transcoder object.");
-
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
         return nullptr;
     }
+
+    Logging::trace(cache_entry->filename(), "Creating transcoder object.");
 
     try
     {
@@ -312,7 +312,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
             {
                 if (params.m_max_threads && thread_count >= params.m_max_threads)
                 {
-                    Logging::warning(virtualfile->m_origfile, "Too many active threads. Deferring transcoder start until threads become available.");
+                    Logging::warning(cache_entry->filename(), "Too many active threads. Deferring transcoder start until threads become available.");
 
                     while (!thread_exit && thread_count >= params.m_max_threads)
                     {
@@ -321,19 +321,19 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                     if (thread_count >= params.m_max_threads)
                     {
-                        Logging::error(virtualfile->m_origfile, "Unable to start new thread. Cancelling transcode.");
+                        Logging::error(cache_entry->filename(), "Unable to start new thread. Cancelling transcode.");
                         _errno = EBUSY; // Report resource busy
                         throw false;
                     }
 
-                    Logging::info(virtualfile->m_origfile, "Threads available again. Continuing now.");
+                    Logging::info(cache_entry->filename(), "Threads available again. Continuing now.");
                 }
 
                 pthread_attr_t attr;
                 size_t stack_size = 0;
                 int ret;
 
-                Logging::debug(virtualfile->m_origfile, "Starting decoder thread.");
+                Logging::debug(cache_entry->filename(), "Starting decoder thread.");
 
                 if (cache_entry->m_cache_info.m_error)
                 {
@@ -349,7 +349,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(virtualfile->m_origfile, "Error creating thread attributes: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Error creating thread attributes: %1", strerror(ret));
                     throw false;
                 }
 
@@ -359,7 +359,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     if (ret != 0)
                     {
                         _errno = ret;
-                        Logging::error(virtualfile->m_origfile, "Error setting stack size: %1", strerror(ret));
+                        Logging::error(cache_entry->filename(), "Error setting stack size: %1", strerror(ret));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
@@ -370,7 +370,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(virtualfile->m_origfile, "Cannot make thread joinable: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Cannot make thread joinable: %1", strerror(ret));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -379,7 +379,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //if (ret != 0)
                 //{
                 //  _errno = ret;
-                //  Logging::error(virtualfile->m_origfile, "Error setting thread detached state: %1", strerror(ret));
+                //  Logging::error(cache_entry->filename(), "Error setting thread detached state: %1", strerror(ret));
                 //  throw false;
                 //}
 
@@ -399,14 +399,14 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 }
                 pthread_mutex_unlock(&thread_data->m_mutex);
 
-                Logging::debug(virtualfile->m_origfile, "Decoder thread is running.");
+                Logging::debug(cache_entry->filename(), "Decoder thread is running.");
 
                 free(thread_data); // can safely be done here, will not be used in thread from now on
 
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(virtualfile->m_origfile, "Error creating thread: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Error creating thread: %1", strerror(ret));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -416,12 +416,12 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 ret = pthread_attr_destroy(&attr);
                 if (ret != 0)
                 {
-                    Logging::warning(virtualfile->m_origfile, "Error destroying thread attributes: %1", strerror(ret));
+                    Logging::warning(cache_entry->filename(), "Error destroying thread attributes: %1", strerror(ret));
                 }
 
                 if (cache_entry->m_cache_info.m_error)
                 {
-                    Logging::debug(virtualfile->m_origfile, "Decoder error!");
+                    Logging::debug(cache_entry->filename(), "Decoder error!");
                     _errno = cache_entry->m_cache_info.m_errno;
                     if (!_errno)
                     {
@@ -442,8 +442,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         }
         else if (begin_transcode)
         {
-            std::string destname;
-            Logging::debug(get_destname(&destname, cache_entry->filename()), "Reading file from cache.");
+            Logging::debug(cache_entry->destname(), "Reading file from cache.");
         }
 
         cache_entry->unlock();
@@ -464,7 +463,9 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
 ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
-    Logging::trace(cache_entry->filename(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
+    Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
+
+//    cache_entry->lock();
 
     // Store access time
     cache_entry->update_access();
@@ -648,7 +649,7 @@ static void *decoder_thread(void *arg)
         }
         else
         {
-            Logging::debug(cache_entry->filename(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
+            Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
         }
 
         bool unlocked = false;
@@ -683,7 +684,7 @@ static void *decoder_thread(void *arg)
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
             {
                 unlocked = true;
-                Logging::debug(cache_entry->filename(), "Pre-buffer limit reached.");
+                Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
                 pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
             }
 
@@ -695,7 +696,7 @@ static void *decoder_thread(void *arg)
                     pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
                 }
 
-                Logging::info(cache_entry->filename(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
+                Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
@@ -707,13 +708,13 @@ static void *decoder_thread(void *arg)
                     break;
                 }
 
-                Logging::info(cache_entry->filename(), "Transcoding resumed.");
+                Logging::info(cache_entry->destname(), "Transcoding resumed.");
             }
         }
 
         if (!unlocked && params.m_prebuffer_size)
         {
-            Logging::debug(cache_entry->filename(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
+            Logging::debug(cache_entry->destname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
             pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
         }
     }
@@ -747,11 +748,11 @@ static void *decoder_thread(void *arg)
 
         if (timeout)
         {
-            Logging::warning(cache_entry->filename(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
+            Logging::warning(cache_entry->destname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
         }
         else
         {
-            Logging::info(cache_entry->filename(), "Thread exit! Transcoding aborted.");
+            Logging::info(cache_entry->destname(), "Thread exit! Transcoding aborted.");
         }
     }
     else
@@ -769,13 +770,13 @@ static void *decoder_thread(void *arg)
 
         if (success)
         {
-            Logging::info(cache_entry->filename(), "Transcoding completed successfully.");
+            Logging::info(cache_entry->destname(), "Transcoding completed successfully.");
         }
         else
         {
-            Logging::error(cache_entry->filename(), "Transcoding exited with error.");
-            Logging::error(cache_entry->filename(), "System error: %1 (%2)", strerror(cache_entry->m_cache_info.m_errno), cache_entry->m_cache_info.m_errno);
-            Logging::error(cache_entry->filename(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror), cache_entry->m_cache_info.m_averror);
+            Logging::error(cache_entry->destname(), "Transcoding exited with error.");
+            Logging::error(cache_entry->destname(), "System error: %1 (%2)", strerror(cache_entry->m_cache_info.m_errno), cache_entry->m_cache_info.m_errno);
+            Logging::error(cache_entry->destname(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror), cache_entry->m_cache_info.m_averror);
         }
     }
 
@@ -794,13 +795,24 @@ static void *decoder_thread(void *arg)
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
-    char line[1024];
+    char * line;
     Logging::level ffmpegfs_level = ERROR;
     static int print_prefix = 1;
+    int line_size;
 
     va_copy(vl2, vl);
     av_log_default_callback(ptr, level, fmt, vl);
-    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
+    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
+    if (line_size < 0)
+    {
+        return;
+    }
+    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
+    if (line == nullptr)
+    {
+        return;
+    }
+    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
     va_end(vl2);
 
     // Map log level
@@ -838,6 +850,8 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 #endif
 
     Logging::log_with_level(ffmpegfs_level, "", line);
+
+    av_free(line);
 }
 #endif
 

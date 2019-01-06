@@ -224,7 +224,7 @@ bool Cache::read_info(t_cache_info & cache_info)
     {
         assert(sqlite3_bind_parameter_count(m_cacheidx_select_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info.m_filename.c_str(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info.m_origfile.c_str(), -1, nullptr)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 select error 'filename': %1\n%2", ret, sqlite3_errstr(ret));
             throw false;
@@ -319,7 +319,7 @@ bool Cache::write_info(const t_cache_info & cache_info)
 
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 19);
 
-        SQLBINDTXT(1, cache_info.m_filename.c_str());
+        SQLBINDTXT(1, cache_info.m_origfile.c_str());
         SQLBINDTXT(2, cache_info.m_desttype);
         //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info.m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
@@ -459,7 +459,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
         // If CLOSE_CACHE_FREE is set, also free memory
         if (CACHE_CHECK_BIT(CLOSE_CACHE_FREE, flags))
         {
-            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_filename, (*cache_entry)->m_cache_info.m_desttype));
+            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_origfile, (*cache_entry)->m_cache_info.m_desttype));
 
             delete (*cache_entry);
             *cache_entry = nullptr;

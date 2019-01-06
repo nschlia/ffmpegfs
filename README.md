@@ -18,6 +18,8 @@ News
 * Added smart transcoding feature, see "Smart Transcoding" *(incomplete, work in progress)*.
 * Added support for DVD angles
 
+* See [NEWS](NEWS) for details.
+
 About
 -----
 

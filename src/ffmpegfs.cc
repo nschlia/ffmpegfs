@@ -999,13 +999,15 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         // check for basepath and bitrate parameters
         if (n == 0 && params.m_basepath.empty())
         {
-            expand_path(&params.m_basepath, arg);
+            expand_path(&params.m_basepath, arg);            
+            append_sep(&params.m_basepath);
             n++;
             return 0;
         }
         else if (n == 1 && params.m_mountpath.empty())
         {
             expand_path(&params.m_mountpath, arg);
+            append_sep(&params.m_mountpath);
 
             switch (is_mount(params.m_mountpath))
             {
@@ -1298,6 +1300,7 @@ int main(int argc, char *argv[])
     if (!params.m_cachepath.empty())
     {
         expand_path(&params.m_cachepath, params.m_cachepath);
+        append_sep(&params.m_cachepath);
     }
 
     // Log to the screen, and enable debug messages, if debug is enabled.
@@ -1377,8 +1380,6 @@ int main(int argc, char *argv[])
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;
     }
-
-    append_sep(&params.m_mountpath);
 
     if (set_defaults())
     {

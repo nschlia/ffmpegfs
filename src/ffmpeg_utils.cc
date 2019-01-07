@@ -1091,8 +1091,8 @@ int is_mount(const std::string & filename)
         // then it's probably the root directory
         // and therefore a mountpoint
         if (file_stat.st_dev != parent_stat.st_dev ||
-             (file_stat.st_dev == parent_stat.st_dev &&
-               file_stat.st_ino == parent_stat.st_ino))
+                (file_stat.st_dev == parent_stat.st_dev &&
+                 file_stat.st_ino == parent_stat.st_ino))
         {
             // IS a mountpoint
             ret = 1;

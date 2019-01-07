@@ -58,9 +58,9 @@ typedef struct _tagVIRTUALFILE
 
     }
 
-    VIRTUALTYPE     m_type;         // Type of this vurtual file
+    VIRTUALTYPE     m_type;         // Type of this virtual file
 
-    int             m_format_idx;   // Index in params.format[] array
+    int             m_format_idx;   // Index into params.format[] array
     std::string     m_origfile;     // Sanitised original file name
     struct stat     m_st;
 

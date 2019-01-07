@@ -753,6 +753,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         fi->fh = reinterpret_cast<uintptr_t>(cache_entry);
         // Need this because we do not know the exact size in advance.
         fi->direct_io = 1;
+//        fi->keep_cache = 1;
 
         // Clear errors
         errno = 0;
@@ -776,7 +777,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     ssize_t read = 0;
     Cache_Entry* cache_entry;
 
-    Logging::trace(path, "read %1 bytes from %2.", size, static_cast<intmax_t>(offset));
+	Logging::trace(path, "read %1 bytes from %2.", size, static_cast<intmax_t>(offset));
 
     translate_path(&origpath, path);
 
@@ -942,6 +943,9 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 
     // We need synchronous reads.
     conn->async_read = 0;
+//    conn->async_read = 1;
+//	conn->want |= FUSE_CAP_ASYNC_READ;
+//	conn->want |= FUSE_CAP_SPLICE_READ;
 
     if (params.m_cache_maintenance)
     {

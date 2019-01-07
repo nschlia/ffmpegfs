@@ -28,6 +28,204 @@
 
 #include "libbluray/bluray.h"
 
+
+static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved);
+static int parse_find_best_audio_stream();
+static int parse_find_best_video_stream();
+
+static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved)
+{
+    switch (ss->coding_type)
+    {
+    // Video
+    case 0x01:
+    case 0x02:
+    case 0xea:
+    case 0x1b:
+    case 0x24:
+    {
+        // SD
+        // 720×480,   59.94i,    4:3 or 16:9
+
+        // 720×576,   50i,       4:3 or 16:9
+
+        // HD
+        // 1280×720,  59.94p,    16:9
+        // 1280×720,  50p,       16:9
+        // 1280×720,  24p,       16:9
+        // 1280×720,  23.976p,   16:9
+
+        // 1440×1080, 59.94i,    16:9
+        // 1440×1080, 50i,       16:9
+        // 1440×1080, 24p,       16:9
+        // 1440×1080, 23.976p,   16:9
+
+        // 1920×1080, 59.94i,    16:9
+        // 1920×1080, 50i,       16:9
+        // 1920×1080, 24p,       16:9
+        // 1920×1080, 23.976p,   16:9
+
+        // HD
+        // 1920×1080, 60p,       16:9
+        // 1920×1080, 59.94p,    16:9
+        // 1920×1080, 50p,       16:9
+        // 1920×1080, 25p,       16:9
+
+        // 4K UHD
+        // 3840×2160, 60p,       16:9
+        // 3840×2160, 59.94p,    16:9
+        // 3840×2160, 50p,       16:9
+        // 3840×2160, 25p,       16:9
+        // 3840×2160, 24p,       16:9
+        // 3840×2160, 23.976p,   16:9
+
+        switch (ss->format)
+        {
+        case BLURAY_VIDEO_FORMAT_480I:  // ITU-R BT.601-5
+            *width = 720;
+            *height = 480;
+            *interleaved = 1;
+            break;
+        case BLURAY_VIDEO_FORMAT_576I:  // ITU-R BT.601-4
+            *width = 720;
+            *height = 576;
+            *interleaved = 1;
+            break;
+        case BLURAY_VIDEO_FORMAT_480P:  // SMPTE 293M
+            *width = 720;
+            *height = 480;
+            *interleaved = 0;
+            break;
+        case BLURAY_VIDEO_FORMAT_1080I: // SMPTE 274M
+            *width = 1920;
+            *height = 1080;
+            *interleaved = 1;
+            break;
+        case BLURAY_VIDEO_FORMAT_720P:  // SMPTE 296M
+            *height = 1280;
+            *width = 720;
+            *interleaved = 0;
+            break;
+        case BLURAY_VIDEO_FORMAT_1080P: // SMPTE 274M
+            *width = 1920;
+            *height = 1080;
+            *interleaved = 0;
+            break;
+        case BLURAY_VIDEO_FORMAT_576P:  // ITU-R BT.1358
+            *width = 720;
+            *height = 576;
+            *interleaved = 0;
+            break;
+        }
+
+        switch (ss->rate)
+        {
+        case BLURAY_VIDEO_RATE_24000_1001:
+            *frame_rate = 23.976;
+            break;
+        case BLURAY_VIDEO_RATE_24:
+            *frame_rate = 24;
+            break;
+        case BLURAY_VIDEO_RATE_25:
+            *frame_rate = 25;
+            break;
+        case BLURAY_VIDEO_RATE_30000_1001:
+            *frame_rate = 29.97;
+            break;
+        case BLURAY_VIDEO_RATE_50:
+            *frame_rate = 50;
+            break;
+        case BLURAY_VIDEO_RATE_60000_1001:
+            *frame_rate = 59.94;
+            break;
+        }
+
+        break;
+    }
+        // Audio
+    case 0x03:
+    case 0x04:
+    case 0x80:
+    case 0x81:
+    case 0x82:
+    case 0x83:
+    case 0x84:
+    case 0x85:
+    case 0x86:
+    case 0xa1:
+    case 0xa2:
+    {
+        switch (ss->format)
+        {
+        case BLURAY_AUDIO_FORMAT_MONO:
+            *channels = 1;  // Mono
+            break;
+        case BLURAY_AUDIO_FORMAT_STEREO:
+            *channels = 2;  // Multi Channel
+            break;
+        case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+            *channels = 2;  // Multi Channel
+            break;
+        case BLURAY_AUDIO_FORMAT_COMBO:
+            *channels = 2;  // Stereo ac3/dts
+            break;
+        }
+
+        switch (ss->rate)
+        {
+        case BLURAY_AUDIO_RATE_48:
+            *sample_rate = 48000;
+            break;
+        case BLURAY_AUDIO_RATE_96:
+            *sample_rate = 96000;
+            break;
+        case BLURAY_AUDIO_RATE_192:
+            *sample_rate = 192000;
+            break;
+            // 48 or 96 ac3/dts
+            // 192 mpl/dts-hd
+        case BLURAY_AUDIO_RATE_192_COMBO:
+            // *sample_rate = "48/192 Khz";
+            break;
+            // 48 ac3/dts
+            // 96 mpl/dts-hd
+        case BLURAY_AUDIO_RATE_96_COMBO:
+            // *sample_rate = "48/96 Khz";
+            break;
+        }
+
+        *audio = 1;
+
+        break;
+    }
+    case 0x90:
+    case 0x91:
+        // Language     ss->lang
+        break;
+
+    case 0x92:
+        // Char Code    ss->char_code);
+        // Language     ss->lang);
+        break;
+
+    default:
+        Logging::error(path, "Unrecognised coding type %<%02x>1", ss->coding_type);
+        break;
+    };
+}
+
+static int parse_find_best_audio_stream()
+{
+    // TODO: is 0 really OK or shall we better parse?
+    return 0;
+}
+
+static int parse_find_best_video_stream()
+{
+    // TODO: is 0 really OK or shall we better parse?
+    return 0;
+}
+
 int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;
@@ -38,8 +236,6 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
     const char *bd_dir = nullptr;
 
     bd_dir = path.c_str();
-    //flags = TITLES_ALL;
-    //seconds = strtol(optarg, nullptr, 0);
 
     Logging::debug(path, "Parsing Bluray.");
 
@@ -49,7 +245,7 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
     main_title = bd_get_main_title(bd);
     if (main_title >= 0)
     {
-        Logging::trace(nullptr, "Main title: %1", main_title + 1);
+        Logging::trace(path, "Main title: %1", main_title + 1);
     }
 
     for (uint32_t title_no = 0; title_no < title_count; title_no++)
@@ -58,35 +254,38 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
 
         ti = bd_get_title_info(bd, title_no, 0);
 
+        //ti->clip_count
         for (uint32_t chapter_no = 0; chapter_no < ti->chapter_count; chapter_no++)
         {
+            BLURAY_CLIP_INFO     *clip = &ti->clips[0];
+            BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_no];
             char title_buf[PATH_MAX + 1];
             std::string origfile;
             struct stat stbuf;
 
-            //        sprintf(title_buf, "index%c%02d duration %02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 " chapters %3d angles %2u clips %3u (playlist %05d.mpls) V %d A %-2d PG %-2d IG %-2d SV %d SA %d.%s",
-            //                (ii == main_title) ? '+' : ' ',
-            //                ii + 1,
-            //                (ti->duration / 90000) / (3600),
-            //                ((ti->duration / 90000) % 3600) / 60,
-            //                ((ti->duration / 90000) % 60),
-            //                ti->chapter_count, ti->angle_count, ti->clip_count, ti->playlist,
-            //                ti->clips[0].video_stream_count,
-            //                ti->clips[0].audio_stream_count,
-            //                ti->clips[0].pg_stream_count,
-            //                ti->clips[0].ig_stream_count,
-            //                ti->clips[0].sec_video_stream_count,
-            //                ti->clips[0].sec_audio_stream_count,
-            //                params.get_current_format().m_desttype
-            //                );
+            //            sprintf(title_buf, "index%c%02d duration %02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 " chapters %3d angles %2u clips %3u (playlist %05d.mpls) V %d A %-2d PG %-2d IG %-2d SV %d SA %d",
+            //                    (title_no == main_title) ? '+' : ' ',
+            //                    title_no + 1,
+            //                    (ti->duration / 90000) / (3600),
+            //                    ((ti->duration / 90000) % 3600) / 60,
+            //                    ((ti->duration / 90000) % 60),
+            //                    ti->chapter_count, ti->angle_count, ti->clip_count, ti->playlist,
+            //                    clip->video_stream_count,
+            //                    clip->audio_stream_count,
+            //                    clip->pg_stream_count,
+            //                    clip->ig_stream_count,
+            //                    clip->sec_video_stream_count,
+            //                    clip->sec_audio_stream_count
+            //                    );
+            //            fprintf(stderr, "%s\n", title_buf);
 
             sprintf(title_buf, "%02d.%cChapter %03d [%02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 "].%s",
                     title_no + 1,
                     (main_title >= 0 && title_no == static_cast<uint32_t>(main_title)) ? '+' : ' ',
                     chapter_no + 1,
-                                    (ti->chapters[chapter_no].duration / 90000) / (3600),
-                                    ((ti->chapters[chapter_no].duration / 90000) % 3600) / 60,
-                                    ((ti->chapters[chapter_no].duration / 90000) % 60),
+                    (chapter->duration / 90000) / (3600),
+                    ((chapter->duration / 90000) % 3600) / 60,
+                    ((chapter->duration / 90000) % 60),
                     params.m_format[0].m_desttype.c_str()); // can safely assume this is a video format
 
             std::string filename(title_buf);
@@ -113,6 +312,50 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
             virtualfile->bluray.m_playlist_no   = ti->playlist;
             virtualfile->bluray.m_chapter_no    = chapter_no + 1;
             virtualfile->bluray.m_angle_no      = 1;
+
+            if (!transcoder_cached_filesize(virtualfile, &stbuf))
+            {
+                BITRATE video_bit_rate   = 1024*1024;	// static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                BITRATE audio_bit_rate   = 256*1024;
+
+                int channels            = 0;
+                int sample_rate         = 0;
+                int audio               = 0;
+
+                int width               = 0;
+                int height              = 0;
+                double frame_rate       = 0;
+                int interleaved         = 0;
+
+                double duration         = static_cast<double>(chapter->duration) / 90000;
+
+                if (!bd_select_title(bd, title_no))
+                {
+                    Logging::error(path, "Failed to open title: %1", title_no);
+                    return 0;
+                }
+
+                uint64_t size           = bd_get_title_size(bd);
+
+                if (duration != 0.)
+                {
+                    video_bit_rate          = static_cast<BITRATE>(static_cast<double>(size) * 8 / duration);   // calculate bitrate in bps
+                }
+
+                virtualfile->bluray.m_duration = chapter->duration * AV_TIME_BASE / 90000;
+
+                // Get details
+                stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
+                stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
+
+                Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "i" : "p", format_size(size), format_duration(static_cast<int64_t>(duration * AV_TIME_BASE)));
+                if (audio > -1)
+                {
+                    Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", channels, sample_rate);
+                }
+
+                transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
+            }
         }
 
         bd_free_title_info(ti);
@@ -135,8 +378,15 @@ int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
     if (stat((path + "BDMV/index.bdmv").c_str(), &st) == 0)
     {
         Logging::trace(path, "Bluray detected.");
-        res = parse_bluray(path, &st, buf, filler);
-        Logging::trace(path, "Found %1 titles.", res);
+        if (buf != nullptr && filler != nullptr)
+        {
+            res = parse_bluray(path, &st, buf, filler);
+            Logging::trace(path, "Found %1 titles.", res);
+        }
+        else
+        {
+            res = 1;
+        }
     }
     return res;
 }

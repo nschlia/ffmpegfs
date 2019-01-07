@@ -1,7 +1,7 @@
 Installation Instructions for ffmpegfs
 ======================================
 
-Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
+Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
 This file was originally copyright (C) 2013-2014 K. Henriksson. 
 
 It can be distributed under the terms of the GFDL 1.3 or later. 

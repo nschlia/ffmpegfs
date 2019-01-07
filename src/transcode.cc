@@ -141,6 +141,8 @@ void transcoder_cache_path(std::string & path)
     append_sep(&path);
 
     path += PACKAGE;
+
+    append_sep(&path);
 }
 
 int transcoder_init(void)
@@ -442,7 +444,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         }
         else if (begin_transcode)
         {
-            Logging::debug(cache_entry->destname(), "Reading file from cache.");
+            Logging::info(cache_entry->destname(), "Reading file from cache.");
         }
 
         cache_entry->unlock();

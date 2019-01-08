@@ -94,8 +94,17 @@ int VcdEntries::load_file(const std::string & path)
         m_profile_tag   = static_cast<int>(vcdentry.m_profile_tag);
         num_entries     = htons(vcdentry.m_num_entries);
 
-        for (int chapter_num = 0; chapter_num < num_entries; chapter_num++)
+        int sec = BCD2DEC(vcdentry.m_entry[0].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_entry[0].m_msf.m_sec);
+        for (int chapter_num = 0, total = num_entries; chapter_num < total; chapter_num++)
         {
+            if (chapter_num && BCD2DEC(vcdentry.m_entry[chapter_num].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_entry[chapter_num].m_msf.m_sec) - sec < 1)
+            {
+                // Skip chapters shorter than 1 second
+                sec = BCD2DEC(vcdentry.m_entry[chapter_num].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_entry[chapter_num].m_msf.m_sec);
+                --num_entries;
+                continue;
+            }
+
             VcdChapter chapter(vcdentry.m_entry[chapter_num], is_vcd);
 
             m_chapters.push_back(chapter);

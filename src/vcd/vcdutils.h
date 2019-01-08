@@ -24,16 +24,16 @@
 typedef struct _tagVCDMSF
 {
     // Note: the fields in this structure are BCD encoded
-    char    m_min;
-    char    m_sec;
-    char    m_frame;
+    uint8_t m_min;
+    uint8_t m_sec;
+    uint8_t m_frame;
 
 } VCDMSF, *LPVCDMSF;
 typedef const VCDMSF * LPCVCDMSF;
 
 typedef struct _tagVCDCHAPTER
 {
-    char    m_track_no;
+    uint8_t m_track_no;
     VCDMSF  m_msf;
 
 } VCDCHAPTER, *LPVCDCHAPTER;
@@ -41,7 +41,7 @@ typedef const VCDCHAPTER * LPCVCDCHAPTER;
 
 typedef struct _tagVCDENTRIES
 {
-   char        m_ID[8];                // 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD"
+    char        m_ID[8];                // 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD"
     uint8_t     m_type;                 // 1 Byte: CD type
     //          1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD
     //          2 for VCD 2.0

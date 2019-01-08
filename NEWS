@@ -40,7 +40,7 @@ Important changes in 1.6 (2019-01-XX) UNRELEASED
 * Feature: Speed up DVD conversion significantly by using IFO data instead of probing each chapter.
 * Feature: Add DVD angle support.Chapters with angles will show as separate files.
 * Feature: Speed up Bluray conversion significantly by using the directory instead of probing each chapter.
-
+* Feature: Speed up VCD conversion.
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-08)

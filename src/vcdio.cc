@@ -162,6 +162,12 @@ int vcdio::seek(long offset, int whence)
     }
     }
 
+    if (static_cast<uint64_t>(seek_pos) > m_end_pos)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
     return fseek(m_fpi, seek_pos, SEEK_SET);
 }
 

@@ -310,6 +310,13 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
 
     AVInputFormat * infmt = nullptr;
 
+#ifdef USE_LIBVCD
+    if (virtualfile->m_type == VIRTUALTYPE_VCD)
+    {
+        Logging::debug(filename(), "Forcing mpeg format for VCD source to avoid misdetections.");
+        infmt = av_find_input_format("mpeg");
+    }
+#endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     if (virtualfile->m_type == VIRTUALTYPE_DVD)
     {
@@ -3690,13 +3697,13 @@ void FFMPEG_Transcoder::close()
     if (m_in.m_format_ctx != nullptr)
     {
 #if LAVF_DEP_FILENAME
-            if (m_in.m_format_ctx->url != nullptr)
-            {
-                infile = m_in.m_format_ctx->url;
-            }
+        if (m_in.m_format_ctx->url != nullptr)
+        {
+            infile = m_in.m_format_ctx->url;
+        }
 #else
-            // lavf 58.7.100 - avformat.h - deprecated
-            infile = m_in.m_format_ctx->filename;
+        // lavf 58.7.100 - avformat.h - deprecated
+        infile = m_in.m_format_ctx->filename;
 #endif
 
         //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))

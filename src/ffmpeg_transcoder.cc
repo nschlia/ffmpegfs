@@ -356,7 +356,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     ret = avformat_find_stream_info(m_in.m_format_ctx, nullptr);
     if (ret < 0)
     {
-        Logging::error(filename(), "Could not open find stream info (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not find stream info (error '%1').", ffmpeg_geterror(ret));
         return ret;
     }
 

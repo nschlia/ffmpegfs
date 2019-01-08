@@ -428,7 +428,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     if (!_errno)
                     {
                         _errno = EIO; // Must return anything...
-                        averr2errno(&_errno, cache_entry->m_cache_info.m_averror);
                     }
                     throw false;
                 }
@@ -670,7 +669,6 @@ static void *decoder_thread(void *arg)
             if (status < 0)
             {
                 syserror = EIO;
-                averr2errno(&syserror, averror);
                 success = false;
                 break;
             }
@@ -678,7 +676,6 @@ static void *decoder_thread(void *arg)
             if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
             {
                 syserror = EIO;
-                averr2errno(&syserror, averror);
                 success = false;
                 break;
             }
@@ -724,10 +721,7 @@ static void *decoder_thread(void *arg)
     {
         success = false;
         syserror = _syserror;
-        if (!syserror)
-        {
-            averr2errno(&syserror, averror);
-        }
+
         cache_entry->m_is_decoding              = false;
         cache_entry->m_cache_info.m_error       = !success;
         cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
@@ -759,12 +753,6 @@ static void *decoder_thread(void *arg)
     }
     else
     {
-        if (!success && !syserror)
-        {
-            // If syserror is 0 check if averror is a valid system errno value
-            averr2errno(&syserror, averror);
-        }
-
         cache_entry->m_is_decoding = false;
         cache_entry->m_cache_info.m_error   = !success;
         cache_entry->m_cache_info.m_errno   = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno

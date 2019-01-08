@@ -290,6 +290,4 @@ struct comp {
     }
 };
 
-void                averr2errno(int *syserror, int averror);
-
 #endif

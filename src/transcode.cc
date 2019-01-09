@@ -785,9 +785,11 @@ static void *decoder_thread(void *arg)
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
-    char * line;
     Logging::level ffmpegfs_level = ERROR;
     static int print_prefix = 1;
+
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
+    char * line;
     int line_size;
 
     va_copy(vl2, vl);
@@ -804,6 +806,14 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     }
     av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
     va_end(vl2);
+#else
+    char line[1024];
+
+    va_copy(vl2, vl);
+    av_log_default_callback(ptr, level, fmt, vl);
+    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
+    va_end(vl2);
+#endif
 
     // Map log level
     // AV_LOG_PANIC     0

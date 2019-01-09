@@ -503,25 +503,26 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 int error = -errno;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 // Returns -errno or number or titles on DVD
-                std::string path(origpath);
+                std::string _origpath(origpath);
 
-                remove_filename(&path);
+                remove_filename(&_origpath);
+
 #ifdef USE_LIBVCD
                 if (res <= 0)
                 {
-                    res = check_vcd(path);
+                    res = check_vcd(_origpath);
                 }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
                 if (res <= 0)
                 {
-                    res = check_dvd(path);
+                    res = check_dvd(_origpath);
                 }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
                 if (res <= 0)
                 {
-                    res = check_bluray(path);
+                    res = check_bluray(_origpath);
                 }
 #endif // USE_LIBBLURAY
                 if (res <= 0)

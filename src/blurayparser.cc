@@ -378,15 +378,8 @@ int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
     if (stat((path + "BDMV/index.bdmv").c_str(), &st) == 0)
     {
         Logging::trace(path, "Bluray detected.");
-        if (buf != nullptr && filler != nullptr)
-        {
-            res = parse_bluray(path, &st, buf, filler);
-            Logging::trace(path, "Found %1 titles.", res);
-        }
-        else
-        {
-            res = 1;
-        }
+        res = parse_bluray(path, &st, buf, filler);
+        Logging::trace(path, "Found %1 titles.", res);
     }
     return res;
 }

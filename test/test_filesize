@@ -3,7 +3,7 @@
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 check_filesize() {
-    FILE="$1.${DESTTYPE}"
+    FILE="$1.${FILEEXT}"
     MIN="$2"
     MAX="$3"
 
@@ -31,8 +31,8 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-cat "${DIRNAME}/obama.${DESTTYPE}" > /dev/null
-cat "${DIRNAME}/raven.${DESTTYPE}" > /dev/null
+cat "${DIRNAME}/obama.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven.${FILEEXT}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then

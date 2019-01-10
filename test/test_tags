@@ -55,24 +55,24 @@ else
 	exit 99
 fi
 
-TAGFILE=tags/${LIBRARY}${VERSION}/obama.$1.tag
-get_metadata "$DIRNAME/obama.$1" TAGS
-echo "$TAGS" > "obama.$1.tag"
+TAGFILE=tags/${LIBRARY}${VERSION}/obama.${DESTTYPE}.tag
+get_metadata "${DIRNAME}/obama.${FILEEXT}" TAGS
+echo "${TAGS}" > "obama.${DESTTYPE}.tag"
 echo "Compare file: ${TAGFILE}" 
 echo "Tags found:"
-echo "$TAGS"
-cmp -c ${TAGFILE} "obama.$1.tag"
+echo "${TAGS}"
+cmp -c ${TAGFILE} "obama.${DESTTYPE}.tag"
 printf "*** PASS ***\n\n"
-rm -f "obama.$1.tag"
+rm -f "obama.${DESTTYPE}.tag"
 
-TAGFILE=tags/${LIBRARY}${VERSION}/raven.$1.tag
-get_metadata "$DIRNAME/raven.$1" TAGS
-echo "${TAGS}" > "raven.$1.tag"
+TAGFILE=tags/${LIBRARY}${VERSION}/raven.${DESTTYPE}.tag
+get_metadata "${DIRNAME}/raven.${FILEEXT}" TAGS
+echo "${TAGS}" > "raven.${DESTTYPE}.tag"
 echo "Compare file: ${TAGFILE}"
 echo "Tags found:"
 echo "${TAGS}"
-cmp -b ${TAGFILE} "raven.$1.tag"
+cmp -b ${TAGFILE} "raven.${DESTTYPE}.tag"
 printf "*** PASS ***\n\n"
-rm -f "raven.$1.tag"
+rm -f "raven.${DESTTYPE}.tag"
 
 echo OK

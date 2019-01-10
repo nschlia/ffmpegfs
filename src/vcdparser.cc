@@ -44,7 +44,7 @@ int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf,
         struct stat st;
         size_t size = chapter.get_end_pos() - chapter.get_start_pos();
 
-        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_format[0].m_desttype.c_str()); // can safely assume this a video
+        sprintf(title_buf, "%02d. Chapter %03d.%s", chapter.get_track_no(), chapter_no + 1, params.m_format[0].real_desttype().c_str()); // can safely assume this a video
 
         std::string filename(title_buf);
 

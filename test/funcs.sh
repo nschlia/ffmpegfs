@@ -24,14 +24,20 @@ ffmpegfserr () {
 set -e
 trap cleanup EXIT
 trap ffmpegfserr USR1
-
 DESTTYPE=$1
+# Map filenames
+if [ "${DESTTYPE}" == "prores" ];
+then
+    FILEEXT="mov"
+else
+    FILEEXT=${DESTTYPE}
+fi
 SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
 DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
 
 #--disable_cache
-( ffmpegfs -f "$SRCDIR" "$DIRNAME" --logfile=$0_$DESTTYPE.builtin.log --log_maxlevel=TRACE --cachepath="$CACHEPATH" --desttype=$DESTTYPE > /dev/null || kill -USR1 $$ ) &
+( ffmpegfs -f "$SRCDIR" "$DIRNAME" --logfile=$0_${DESTTYPE}.builtin.log --log_maxlevel=TRACE --cachepath="$CACHEPATH" --desttype=${DESTTYPE} > /dev/null || kill -USR1 $$ ) &
 while ! mount | grep -q "$DIRNAME" ; do
     sleep 0.1
 done

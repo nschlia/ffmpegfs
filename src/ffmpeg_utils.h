@@ -190,8 +190,9 @@ typedef enum _tagLEVEL
     LEVEL_PRORES_HQ,
 } LEVEL;
 
-typedef struct ffmpegfs_format
+class ffmpegfs_format
 {
+public:
     ffmpegfs_format()
         : m_format_name("")
         , m_filetype(FILETYPE_UNKNOWN)
@@ -206,6 +207,16 @@ typedef struct ffmpegfs_format
         , m_audio_codec_id(audio_codec_id)
     {}
 
+    std::string real_desttype() const
+    {
+        if (m_desttype == "prores")
+        {
+            return "mov";
+        }
+        return m_desttype;
+    }
+
+public:
     std::string m_format_name;
     std::string m_desttype;                 // Destination type: mp4, mp3 or other
     FILETYPE    m_filetype;
@@ -213,7 +224,7 @@ typedef struct ffmpegfs_format
     AVCodecID   m_video_codec_id;
     // Audio
     AVCodecID   m_audio_codec_id;
-} ffmpegfs_format;
+};
 
 const std::string & append_sep(std::string * path);
 const std::string & append_filename(std::string * path, const std::string & filename);

@@ -244,7 +244,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].m_desttype) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].m_desttype) == 0)))
+        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].real_desttype()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].real_desttype()) == 0)))
         {
             std::string dir(*filepath);
             std::string filename(*filepath);
@@ -932,7 +932,6 @@ static void sighandler(int signum)
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    //Logging::info(nullptr, "Target type: %1 Profile: %2", params.current_format().m_desttype, get_profile_text(params.m_profile));
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath, params.m_mountpath);
 
     struct sigaction sa;

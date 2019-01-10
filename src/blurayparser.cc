@@ -286,7 +286,7 @@ int parse_bluray(const std::string & path, const struct stat * statbuf, void * b
                     ((chapter->duration / 90000) % 3600) / 60,
                     ((chapter->duration / 90000) % 60),
                     (main_title >= 0 && title_no == static_cast<uint32_t>(main_title)) ? "+" : "",
-                    params.m_format[0].m_desttype.c_str()); // can safely assume this is a video format
+                    params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
 
             std::string filename(title_buf);
 

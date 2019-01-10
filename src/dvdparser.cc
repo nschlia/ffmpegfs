@@ -250,14 +250,14 @@ int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, f
                 int angle_no = k + 1;
                 //cur_pgc->playback_time;
 
-                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().m_desttype);
+                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().real_desttype());
                 if (k && tt_srpt->title[i].nr_of_angles > 1)
                 {
-                    sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
+                    sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
                 }
                 else
                 {
-                    sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].m_desttype.c_str());   // can safely assume this a video
+                    sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
                 }
 
                 std::string filename(title_buf);

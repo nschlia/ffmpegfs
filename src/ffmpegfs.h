@@ -87,6 +87,8 @@ extern struct ffmpegfs_params
     int                 m_clear_cache;              // Clear cache on start up
     unsigned int        m_max_threads;              // Max. number of recoder threads
     int                 m_decoding_errors;          // Break transcoding on decoding error
+    // experimental
+    int                 m_win_smb_fix;              // Experimental Windows fix for access to EOF at file open
 } params;
 
 struct Cache_Entry;

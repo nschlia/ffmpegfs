@@ -68,10 +68,10 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
         while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
         {
             if (fuse_interrupted())
-        	{
+            {
                 Logging::info(cache_entry->destname(), "Client has gone away.");
-            	return false;
-        	}
+                return false;
+            }
 
             if (thread_exit)
             {
@@ -466,7 +466,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
 {
     Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
 
-//    cache_entry->lock();
+    //    cache_entry->lock();
 
     // Store access time
     cache_entry->update_access();
@@ -497,6 +497,23 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
             }
             default:
             {
+                // Windows seems to access the files on Samba drives starting at the last 64K segment simply when
+                // the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file up
+                // to this point).
+                if (params.m_win_smb_fix)
+                {
+                    if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
+                            (len <= 65536) &&
+                            ((static_cast<size_t>(offset) % 65536) == 0) &&
+                            ((offset + len) > (cache_entry->size())))
+                    {
+                        Logging::error(cache_entry->destname(), "IGNORE");
+
+                        errno = 0;
+
+                        throw static_cast<ssize_t>(0);
+                    }
+                }
                 break;
             }
             }

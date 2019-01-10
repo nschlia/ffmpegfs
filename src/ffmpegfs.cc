@@ -106,6 +106,7 @@ ffmpegfs_params::ffmpegfs_params()
     , m_clear_cache(0)                          // default: Do not clear cache on startup
     , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
     , m_decoding_errors(0)                      // default: ignore errors
+    , m_win_smb_fix(0)                          // default: no fix
 {
 }
 
@@ -265,6 +266,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("max_threads=%u",              m_max_threads, 0),
     FFMPEGFS_OPT("--decoding_errors=%u",        m_decoding_errors, 0),
     FFMPEGFS_OPT("decoding_errors=%u",          m_decoding_errors, 0),
+    FFMPEGFS_OPT("--win_smb_fix=%u",            m_win_smb_fix, 0),
+    FFMPEGFS_OPT("win_smb_fix=%u",              m_win_smb_fix, 0),
     // ffmpegfs options
     FFMPEGFS_OPT("-d",                          m_debug, 1),
     FFMPEGFS_OPT("debug",                       m_debug, 1),
@@ -999,7 +1002,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         // check for basepath and bitrate parameters
         if (n == 0 && params.m_basepath.empty())
         {
-            expand_path(&params.m_basepath, arg);            
+            expand_path(&params.m_basepath, arg);
             append_sep(&params.m_basepath);
             n++;
             return 0;

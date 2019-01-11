@@ -507,7 +507,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
                             ((static_cast<size_t>(offset) % 65536) == 0) &&
                             ((offset + len) > (cache_entry->size())))
                     {
-                        Logging::error(cache_entry->destname(), "IGNORE");
+                        Logging::error(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 64K boundary of file.");
 
                         errno = 0;
 

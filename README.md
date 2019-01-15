@@ -14,8 +14,8 @@ News
 * **Work on release 1.7 now in progress.**
 * Added MOV target format
 * Added AIFF target format
-* Added Apple Prores target format *(please read the "A few words on Prores" section)*.
-* Added smart transcoding feature, see "Smart Transcoding" *(incomplete, work in progress)*.
+* Added Apple Prores target format *(please read the ["A few words on Prores"](#a-few-words-on-prores) section)*.
+* Added smart transcoding feature, see ["Smart Transcoding"](#smart-transcoding) *(incomplete, work in progress)*.
 * Added support for DVD angles
 
 * See [NEWS](NEWS) for details.

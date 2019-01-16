@@ -157,6 +157,8 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     , m_pFilterGraph(nullptr)
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
+    , m_copy_audio(false)
+    , m_copy_video(false)
     , m_current_format(nullptr)
 {
 #pragma GCC diagnostic pop
@@ -253,6 +255,12 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     {
         return ret;
     }
+
+    //    ret = av_dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
+    //    if (ret < 0)
+    //    {
+    //        return ret;
+    //    }
 
     // defaults to 5,000,000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
@@ -526,6 +534,63 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     return 0;
 }
 
+bool FFMPEG_Transcoder::can_copy_audio() const
+{
+    if (params.m_autocopy == AUTOCOPY_OFF)
+    {
+        // Auto copy disabled
+        return false;
+    }
+
+    if (m_in.m_audio.m_stream == nullptr || CODECPAR(m_in.m_audio.m_stream)->codec_id != m_current_format->m_audio_codec_id)
+    {
+        // Different codecs, no auto copy
+        return false;
+    }
+
+    if (params.m_autocopy == AUTOCOPY_LIMIT)
+    {
+        BITRATE orig_bit_rate = (CODECPAR(m_in.m_audio.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
+        if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate))
+        {
+            // Bit rate changed, no auto copy
+            Logging::info(destname(), "Audio bit rate changed, no auto copy possible.");
+            return false;
+        }
+
+    }
+
+    return true;
+}
+
+bool FFMPEG_Transcoder::can_copy_video() const
+{
+    if (params.m_autocopy == AUTOCOPY_OFF)
+    {
+        // Auto copy disabled
+        return false;
+    }
+
+    if (m_in.m_video.m_stream == nullptr || CODECPAR(m_in.m_video.m_stream)->codec_id != m_current_format->m_video_codec_id)
+    {
+        // Different codecs, no auto copy
+        return false;
+    }
+
+    if (params.m_autocopy == AUTOCOPY_LIMIT)
+    {
+        BITRATE orig_bit_rate = (CODECPAR(m_in.m_video.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
+        if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate))
+        {
+            // Bit rate changed, no auto copy
+            Logging::info(destname(), "Video bit rate changed, no auto copy possible.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 {
     int ret = 0;
@@ -560,11 +625,14 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
         }
 #endif
 
-        // Initialise the FIFO buffer to store audio samples to be encoded.
-        ret = init_fifo();
-        if (ret)
+        if (m_out.m_audio.m_codec_ctx != nullptr)
         {
-            return ret;
+            // If not just copying the stream, initialise the FIFO buffer to store audio samples to be encoded.
+            ret = init_fifo();
+            if (ret)
+            {
+                return ret;
+            }
         }
     }
 
@@ -598,32 +666,42 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
     return 0;
 }
 
-bool FFMPEG_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate)
+bool FFMPEG_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate /*= nullptr*/)
 {
-    *output_sample_rate = input_sample_rate;
-
-    if (*output_sample_rate > max_sample_rate)
+    if (input_sample_rate > max_sample_rate)
     {
-        *output_sample_rate = max_sample_rate;
+        if (output_sample_rate != nullptr)
+        {
+            *output_sample_rate = max_sample_rate;
+        }
         return true;
     }
     else
     {
+        if (output_sample_rate != nullptr)
+        {
+            *output_sample_rate = input_sample_rate;
+        }
         return false;
     }
 }
 
-bool FFMPEG_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate)
+bool FFMPEG_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate /*= nullptr*/)
 {
-    *output_bit_rate = input_bit_rate;
-
-    if (*output_bit_rate > max_bit_rate)
+    if (input_bit_rate > max_bit_rate)
     {
-        *output_bit_rate = max_bit_rate;
+        if (output_bit_rate != nullptr)
+        {
+            *output_bit_rate = max_bit_rate;
+        }
         return true;
     }
     else
     {
+        if (output_bit_rate != nullptr)
+        {
+            *output_bit_rate = input_bit_rate;
+        }
         return false;
     }
 }
@@ -660,57 +738,59 @@ double FFMPEG_Transcoder::get_aspect_ratio(int width, int height, const AVRation
     return dblAspectRatio;
 }
 
-void FFMPEG_Transcoder::limit_video_size(AVCodecContext *output_codec_ctx)
+bool FFMPEG_Transcoder::get_video_size(int *output_width, int *output_height) const
 {
-    int width;
-    int height;
+    if (!params.m_videowidth && !params.m_videoheight)
+    {
+        // No options, leave as is
+        return false;
+    }
+
+    int input_width                 = CODECPAR(m_in.m_video.m_stream)->width;
+    int input_height                = CODECPAR(m_in.m_video.m_stream)->height;
+    AVRational sample_aspect_ratio  = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
 
     if (params.m_videowidth && params.m_videoheight)
     {
         // Both width/source set. May look strange, but this is an order...
-        width                               = params.m_videowidth;
-        height                              = params.m_videoheight;
+        *output_width      = params.m_videowidth;
+        *output_height     = params.m_videoheight;
     }
     else if (params.m_videowidth)
     {
         // Only video width
-        double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
+        double ratio = get_aspect_ratio(input_width, input_height, sample_aspect_ratio);
 
-        width                               = params.m_videowidth;
+        *output_width      = params.m_videowidth;
 
         if (!ratio)
         {
-            height                          = output_codec_ctx->height;
+            *output_height = input_height;
         }
         else
         {
-            height                          = static_cast<int>(params.m_videowidth / ratio);
-            height &= ~(static_cast<int>(0x1));
+            *output_height = static_cast<int>(params.m_videowidth / ratio);
+            *output_height &= ~(static_cast<int>(0x1));
         }
     }
     else //if (params.m_videoheight)
     {
         // Only video height
-        double ratio = get_aspect_ratio(output_codec_ctx->width, output_codec_ctx->height, output_codec_ctx->sample_aspect_ratio);
+        double ratio = get_aspect_ratio(input_width, input_height, sample_aspect_ratio);
 
         if (!ratio)
         {
-            width                           = output_codec_ctx->width;
+            *output_width  = input_width;
         }
         else
         {
-            width                           = static_cast<int>(params.m_videoheight * ratio);
-            width &= ~(static_cast<int>(0x1));
+            *output_width  = static_cast<int>(params.m_videoheight * ratio);
+            *output_width  &= ~(static_cast<int>(0x1));
         }
-        height                              = params.m_videoheight;
+        *output_height     = params.m_videoheight;
     }
 
-    if (output_codec_ctx->width > width || output_codec_ctx->height > height)
-    {
-        Logging::trace(destname(), "Changing video size from %1/%2 to %3/%4.", output_codec_ctx->width, output_codec_ctx->height, width, height);
-        output_codec_ctx->width             = width;
-        output_codec_ctx->height            = height;
-    }
+    return (input_width > *output_width || input_height > *output_height);
 }
 
 // Prepare codec optimisations
@@ -932,21 +1012,21 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Set duration as hint for muxer
         if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
         {
-            output_stream->duration            = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+            output_stream->duration             = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
         }
         else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
         {
-            output_stream->duration            = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+            output_stream->duration             = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
         }
 
         //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
-        m_out.m_audio.m_codec_ctx              = output_codec_ctx;
+        m_out.m_audio.m_codec_ctx               = output_codec_ctx;
         // Save the stream index
-        m_out.m_audio.m_stream_idx             = output_stream->index;
+        m_out.m_audio.m_stream_idx              = output_stream->index;
         // Save output audio stream for faster reference
-        m_out.m_audio.m_stream                 = output_stream;
+        m_out.m_audio.m_stream                  = output_stream;
         break;
     }
     case AVMEDIA_TYPE_VIDEO:
@@ -965,15 +1045,20 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate));
         }
 
-        // Resolution must be a multiple of two.
-        output_codec_ctx->width                 = CODECPAR(m_in.m_video.m_stream)->width;
-        output_codec_ctx->height                = CODECPAR(m_in.m_video.m_stream)->height;
-
-        if (params.m_videowidth || params.m_videoheight)
+        int width = 0;
+        int height = 0;
+        if (get_video_size(&width, &height))
         {
-            // Use command line argument(s)
-            limit_video_size(output_codec_ctx);
+            Logging::trace(destname(), "Changing video size from %1/%2 to %3/%4.", output_codec_ctx->width, output_codec_ctx->height, width, height);
+            output_codec_ctx->width             = width;
+            output_codec_ctx->height            = height;
         }
+        else
+        {
+            output_codec_ctx->width             = CODECPAR(m_in.m_video.m_stream)->width;
+            output_codec_ctx->height            = CODECPAR(m_in.m_video.m_stream)->height;
+        }
+
 #if LAVF_DEP_AVSTREAM_CODEC
         video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate);
 #else
@@ -1005,7 +1090,6 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Set up optimisations
-
         switch (output_codec_ctx->codec_id)
         {
         case AV_CODEC_ID_H264:
@@ -1204,21 +1288,21 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
         // Set duration as hint for muxer
         if (m_in.m_video.m_stream->duration != AV_NOPTS_VALUE)
         {
-            output_stream->duration            = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+            output_stream->duration             = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
         }
         else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
         {
-            output_stream->duration            = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+            output_stream->duration             = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
         }
 
         //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
-        m_out.m_video.m_codec_ctx              = output_codec_ctx;
+        m_out.m_video.m_codec_ctx               = output_codec_ctx;
         // Save the stream index
-        m_out.m_video.m_stream_idx             = output_stream->index;
+        m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
-        m_out.m_video.m_stream                 = output_stream;
+        m_out.m_video.m_stream                  = output_stream;
 
         break;
     }
@@ -1263,7 +1347,101 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
     }
 #endif
 
-    //    output_stream->time_base = output_codec_ctx->time_base;
+    return 0;
+}
+
+int FFMPEG_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_type)
+{
+    AVStream *      output_stream       = nullptr;
+    int ret;
+
+
+    output_stream = avformat_new_stream(m_out.m_format_ctx, nullptr);
+    if (output_stream == nullptr)
+    {
+        Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
+        return AVERROR(ENOMEM);
+    }
+    output_stream->id = m_out.m_format_ctx->nb_streams - 1;
+
+    switch (codec_type)
+    {
+    case AVMEDIA_TYPE_AUDIO:
+    {
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+
+        ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_audio.m_stream->codecpar);
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret));
+            return ret;
+        }
+#else
+        output_codec_ctx = output_stream->codec;
+
+        ret = avcodec_copy_context(output_codec_ctx /*output_stream->codec*/, m_in.m_audio.m_stream->codec);
+        if (ret != 0)
+        {
+            return ret;
+        }
+#endif
+
+        // Set the sample rate for the container.
+        output_stream->time_base                = m_in.m_audio.m_stream->time_base;
+
+        // Set duration as hint for muxer
+        output_stream->duration                 = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+
+        // Save the encoder context for easier access later.
+        m_out.m_audio.m_codec_ctx               = nullptr;
+        // Save the stream index
+        m_out.m_audio.m_stream_idx              = output_stream->index;
+        // Save output audio stream for faster reference
+        m_out.m_audio.m_stream                  = output_stream;
+        break;
+    }
+    case AVMEDIA_TYPE_VIDEO:
+    {
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+
+        ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_video.m_stream->codecpar);
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret));
+            return ret;
+        }
+#else
+        output_codec_ctx = output_stream->codec;
+
+        ret = avcodec_copy_context(output_codec_ctx /*output_stream->codec*/, m_in.in.m_video.m_stream->codec);
+        if (ret != 0)
+        {
+            return ret;
+        }
+#endif
+        output_stream->time_base                = m_in.m_video.m_stream->time_base;
+
+#ifdef _DEBUG
+        print_info(output_stream);
+#endif // _DEBUG
+
+        // Set duration as hint for muxer
+        output_stream->duration                 = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+
+        // Save the encoder context for easier access later.
+        m_out.m_video.m_codec_ctx               = nullptr;
+        // Save the stream index
+        m_out.m_video.m_stream_idx              = output_stream->index;
+        // Save output video stream for faster reference
+        m_out.m_video.m_stream                  = output_stream;
+
+        break;
+    }
+    default:
+        break;
+    }
+
+    CODECPAR(output_stream)->codec_tag = 0;
 
     return 0;
 }
@@ -1438,7 +1616,11 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     int             ret = 0;
 
     m_out.m_file_type = m_current_format->m_filetype;
-    
+
+    // Check if we can copy audio or video.
+    m_copy_video = can_copy_video();
+    m_copy_audio = can_copy_audio();
+
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype);
 
     // Create a new format context for the output container format.
@@ -1458,33 +1640,60 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->m_video_codec_id != AV_CODEC_ID_NONE)
     {
-        ret = add_stream(m_current_format->m_video_codec_id);
-        if (ret < 0)
+        if (!m_copy_video)
         {
-            return ret;
-        }
+            ret = add_stream(m_current_format->m_video_codec_id);
+            if (ret < 0)
+            {
+                return ret;
+            }
 
 #ifndef USING_LIBAV
-        if (params.m_deinterlace)
+            if (params.m_deinterlace)
+            {
+                // Init deinterlace filters
+                ret = init_filters(m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
+                if (ret < 0)
+                {
+                    return ret;
+                }
+            }
+#endif // !USING_LIBAV
+
+        }
+        else
         {
-            // Init deinterlace filters
-            ret = init_filters(m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
+            Logging::info(filename(), "Copying video stream.");
+
+            ret = add_stream_copy(m_current_format->m_video_codec_id, AVMEDIA_TYPE_VIDEO);
             if (ret < 0)
             {
                 return ret;
             }
         }
-#endif // !USING_LIBAV
     }
 
     //m_current_format->m_audio_codec_id = m_out.m_format_ctx->oformat->audio_codec;
 
     if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->m_audio_codec_id != AV_CODEC_ID_NONE)
     {
-        ret = add_stream(m_current_format->m_audio_codec_id);
-        if (ret < 0)
+        if (!m_copy_audio)
         {
-            return ret;
+            ret = add_stream(m_current_format->m_audio_codec_id);
+            if (ret < 0)
+            {
+                return ret;
+            }
+        }
+        else
+        {
+            Logging::info(filename(), "Copying audio stream.");
+
+            ret = add_stream_copy(m_current_format->m_audio_codec_id, AVMEDIA_TYPE_AUDIO);
+            if (ret < 0)
+            {
+                return ret;
+            }
         }
     }
 
@@ -1492,7 +1701,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     {
         for (size_t n = 0; n < m_in.m_album_art.size(); n++)
         {
-            //ret = add_albumart_stream(codec_id, m_in.m_album_art.at(n).m_codec_ctx->pix_fmt);
+            //ret = add_albumart_stream(codec_id, m_in.m_aAlbumArt.at(n).m_codec_ctx->pix_fmt);
             ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx);
             if (ret < 0)
             {
@@ -1528,7 +1737,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 // libswresample takes care of this, but requires initialization.
 int FFMPEG_Transcoder::init_resampler()
 {
-    // Fail save: if channel layout not know assume mono or stereo
+    // Fail save: if channel layout not known assume mono or stereo
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
         m_in.m_audio.m_codec_ctx->channel_layout = av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels);
@@ -2124,60 +2333,98 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     return ret;
 }
 
+int FFMPEG_Transcoder::store_packet(AVPacket *pkt)
+{
+    int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
+
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret));
+    }
+
+    return ret;
+}
+
 int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
 {
     int ret = 0;
 
     if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
     {
-        int decoded = 0;
-        ret = decode_audio_frame(pkt, &decoded);
+        if (!m_copy_audio)
+        {
+            int decoded = 0;
+            ret = decode_audio_frame(pkt, &decoded);
+        }
+        else
+        {
+            pkt->stream_index   = m_out.m_audio.m_stream_idx;
+            pkt->pts            = av_rescale_q_rnd(pkt->pts, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+            pkt->dts            = av_rescale_q_rnd(pkt->dts, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+            pkt->duration       = av_rescale_q(pkt->duration, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base);
+            pkt->pos            = -1;
+
+            ret = store_packet(pkt);
+        }
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
     {
-        int decoded = 0;
-#if LAVC_NEW_PACKET_INTERFACE
-        int lastret = 0;
-#endif
-
-        // Can someone tell me why this seems required??? If this is not done some videos become garbled.
-        do
+        if (!m_copy_video)
         {
-            // Decode one frame.
-            ret = decode_video_frame(pkt, &decoded);
+            int decoded = 0;
+#if LAVC_NEW_PACKET_INTERFACE
+            int lastret = 0;
+#endif
+
+            // Can someone tell me why this seems required??? If this is not done some videos become garbled.
+            do
+            {
+                // Decode one frame.
+                ret = decode_video_frame(pkt, &decoded);
 
 #if LAVC_NEW_PACKET_INTERFACE
-            if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
-            {
-                // If EAGAIN reported twice or stream at EOF
-                // quit loop, but this is not an error
-                // (must process all streams).
-                break;
-            }
+                if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
+                {
+                    // If EAGAIN reported twice or stream at EOF
+                    // quit loop, but this is not an error
+                    // (must process all streams).
+                    break;
+                }
 
-            if (ret < 0 && ret != AVERROR(EAGAIN))
-            {
-                Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
-                return ret;
-            }
+                if (ret < 0 && ret != AVERROR(EAGAIN))
+                {
+                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
+                    return ret;
+                }
 
-            lastret = ret;
+                lastret = ret;
 #else
-            if (ret < 0)
-            {
-                Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
-                return ret;
-            }
+                if (ret < 0)
+                {
+                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
+                    return ret;
+                }
 #endif
-            pkt->data += decoded;
-            pkt->size -= decoded;
+                pkt->data += decoded;
+                pkt->size -= decoded;
+            }
+#if LAVC_NEW_PACKET_INTERFACE
+            while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
+#else
+            while (pkt->size > 0);
+#endif
+            ret = 0;
         }
-#if LAVC_NEW_PACKET_INTERFACE
-        while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
-#else
-        while (pkt->size > 0);
-#endif
-        ret = 0;
+        else
+        {
+            pkt->stream_index   = m_out.m_video.m_stream_idx;
+            pkt->pts            = av_rescale_q_rnd(pkt->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+            pkt->dts            = av_rescale_q_rnd(pkt->dts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
+            pkt->duration       = av_rescale_q(pkt->duration, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+            pkt->pos            = -1;
+
+            ret = store_packet(pkt);
+        }
     }
     else
     {
@@ -2375,11 +2622,11 @@ int FFMPEG_Transcoder::flush_frames(int stream_index)
     {
         int (FFMPEG_Transcoder::*decode_frame_ptr)(AVPacket *pkt, int *decoded) = nullptr;
 
-        if (stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
+        if (!m_copy_audio && stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
         {
             decode_frame_ptr = &FFMPEG_Transcoder::decode_audio_frame;
         }
-        else if (stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
         {
             decode_frame_ptr = &FFMPEG_Transcoder::decode_video_frame;
         }
@@ -2974,7 +3221,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 
     try
     {
-        if (m_out.m_audio.m_stream_idx > -1)
+        if (!m_copy_audio && m_out.m_audio.m_stream_idx > -1)
         {
             int output_frame_size;
 
@@ -3083,65 +3330,68 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
             }
         }
 
-        while (!m_VideoFifo.empty())
+        if (!m_copy_video)
         {
-            AVFrame *output_frame = m_VideoFifo.front();
-            m_VideoFifo.pop();
-
-            // Encode one video frame.
-            int data_written = 0;
-            output_frame->key_frame = 0;    // Leave that decision to decoder
-            ret = encode_video_frame(output_frame, &data_written);
-#if !LAVC_NEW_PACKET_INTERFACE
-            if (ret < 0)
-#else
-            if (ret < 0 && ret != AVERROR(EAGAIN))
-#endif
+            while (!m_VideoFifo.empty())
             {
-                av_frame_free(&output_frame);
-                throw ret;
-            }
-            av_frame_free(&output_frame);
-        }
+                AVFrame *output_frame = m_VideoFifo.front();
+                m_VideoFifo.pop();
 
-#if LAVC_NEW_PACKET_INTERFACE
-        ret = 0;    // May be AVERROR(EAGAIN)
-#endif
-
-        // If we are at the end of the input file and have encoded
-        // all remaining samples, we can exit this loop and finish.
-
-        if (finished)
-        {
-            if (m_out.m_video.m_codec_ctx != nullptr)
-            {
-                // Flush the encoder as it may have delayed frames.
+                // Encode one video frame.
                 int data_written = 0;
-                do
-                {
-                    ret = encode_video_frame(nullptr, &data_written);
-#if LAVC_NEW_PACKET_INTERFACE
-                    if (ret == AVERROR_EOF)
-                    {
-                        // Not an error
-                        break;
-                    }
-                    if (ret < 0 && ret != AVERROR(EAGAIN))
-                    {
-                        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
-                        throw ret;
-                    }
+                output_frame->key_frame = 0;    // Leave that decision to decoder
+                ret = encode_video_frame(output_frame, &data_written);
+#if !LAVC_NEW_PACKET_INTERFACE
+                if (ret < 0)
 #else
-                    if (ret < 0)
-                    {
-                        throw ret;
-                    }
+                if (ret < 0 && ret != AVERROR(EAGAIN))
 #endif
+                {
+                    av_frame_free(&output_frame);
+                    throw ret;
                 }
-                while (data_written);
+                av_frame_free(&output_frame);
             }
 
-            status = 1;
+#if LAVC_NEW_PACKET_INTERFACE
+            ret = 0;    // May be AVERROR(EAGAIN)
+#endif
+
+            // If we are at the end of the input file and have encoded
+            // all remaining samples, we can exit this loop and finish.
+
+            if (finished)
+            {
+                if (m_out.m_video.m_codec_ctx != nullptr)
+                {
+                    // Flush the encoder as it may have delayed frames.
+                    int data_written = 0;
+                    do
+                    {
+                        ret = encode_video_frame(nullptr, &data_written);
+#if LAVC_NEW_PACKET_INTERFACE
+                        if (ret == AVERROR_EOF)
+                        {
+                            // Not an error
+                            break;
+                        }
+                        if (ret < 0 && ret != AVERROR(EAGAIN))
+                        {
+                            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
+                            throw ret;
+                        }
+#else
+                        if (ret < 0)
+                        {
+                            throw ret;
+                        }
+#endif
+                    }
+                    while (data_written);
+                }
+
+                status = 1;
+            }
         }
     }
     catch (int _ret)

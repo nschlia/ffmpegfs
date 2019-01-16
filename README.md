@@ -12,11 +12,9 @@ News
 ----
 
 * **Work on release 1.7 now in progress.**
-* Added MOV target format
-* Added AIFF target format
 * Added Apple Prores target format *(please read the ["A few words on Prores"](#a-few-words-on-prores) section)*.
 * Added smart transcoding feature, see ["Smart Transcoding"](#smart-transcoding) *(incomplete, work in progress)*.
-* Added support for DVD angles
+* Added auto stream copy feature, see ["Auto Copy"](#auto-copy).
 
 * See [NEWS](NEWS) for details.
 
@@ -142,14 +140,42 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
 Enable deinterlacing to enhance image quality.
 
+AUTO COPY
+---------
+
+"Auto copy" performs intelligent stream copy, e.g., if transcoding a
+transport stream that already represents a H264 video and/or AAC audio
+stream it would be possible to simply repackage it to a mp4 container
+without recoding.
+
+This is very efficient as it does not require much computing as de- and
+encoding does, and it also will not degrade quality as the original file
+basically stays the same.
+
+The function detects if the target format supports the source codec and
+simply remuxes the stream even if recoding from one format (e.g. TS) to
+another (e.g. MOV, MP4).
+
+There are three options:
+
+|OFF|no auto copy|
+|LIMIT|only auto copy if target file will not become significantly larger|
+|ALWAY|auto copy whenever possible even if the target file becomes larger|
+
 SMART TRANSCODING
 -----------------
 
-To use the new smart transcoding feature, simply specify a video and audio file
-type, separated by a "+" sign. For example, --desttype=mov+aiff will
-convert video files to Apple Quicktime MOV and audio only files to
-AIFF. This can be handy if the results are consumed by some Apple Editing
-software.
+Smart transcoding can create different output formats for video and
+audio files. For example, video files can be converted to ProRes and
+audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV
+are possible but do not make sense as MP4 or WebM work perfectly
+with audio only content.
+
+To use the new feature, simply specify a video and audio file type, 
+separated by a "+" sign. For example, --desttype=mov+aiff will convert 
+video files to Apple Quicktime MOV and audio only files to AIFF. This 
+can be handy if the results are consumed e.g. by some Apple Editing
+software which is very picky about the input format.
 
 A FEW WORDS ON PRORES
 ---------------------

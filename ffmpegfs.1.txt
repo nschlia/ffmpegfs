@@ -35,6 +35,12 @@ Mount IN_DIR on OUT_DIR, converting audio/video files to *MP4*, *MP3*, *OGG*, *W
     convert video files to Apple Quicktime MOV and audio only files to
     AIFF.
     Default: *mp4*
+*--autocopy*=NAME, *-oautocopy*=NAME::
+    Select auto copy option, can be:
+    OFF      off
+    LIMIT    limit file size about to predicted size
+    ALWAYS   always recode when possible even if target becomes larger
+    Default: OFF
 *--profile*=NAME, *-oprofile*=NAME::
     Set profile for target audience. Currently selectable:
     NONE     no profile
@@ -213,6 +219,11 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128,
     encoded audio or video but yet creating a valid file. When this option
     is set, transcoding will stop with an error.
     Default: Ignore errors
+*--win_smb_fix*, *-o win_smb_fix*
+    Windows seems to access the files on Samba drives starting at the last 64K
+    segment simply when the file is opened. Setting --win_smb_fix=1 will ignore
+    these attempts (not decode the file up to this point).
+    Default: off
 
 === Logging ===
 *--log_maxlevel*=LEVEL, *-o log_maxlevel*=LEVEL::

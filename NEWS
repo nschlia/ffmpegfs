@@ -1,5 +1,15 @@
 ffmpegfs NEWS
 
+Important changes in 1.7 (2019-01-XX) UNRELEASED
+
+* Feature: Windows seems to access the files on Samba drives starting at the last 64K segment
+           simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
+           file up to this point).
+* Feature: Add "Auto Stream Copy"
+* Feature:
+* Bugfix: 
+* Fix deprecation:
+
 Important changes in 1.6 (2019-01-11)
 
 * Feature: Made all parameters like --profile case insensitive.
@@ -19,9 +29,9 @@ Important changes in 1.6 (2019-01-11)
 * Feature: Add DVD angle support.Chapters with angles will show as separate files.
 * Feature: Speed up Bluray conversion significantly by using the directory instead of probing each chapter.
 * Feature: Speed up VCD conversion.
-* Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment 
-	  simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file 
-	  up to this point).
+* Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment
+           simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file
+           up to this point).
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
 * Bugfix: Fixed memory leak when using the deinterlace option.
 * Bugfix: Deinterlace did not always work.

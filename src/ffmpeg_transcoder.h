@@ -165,10 +165,10 @@ public:
 
 protected:
     bool                        is_video() const;
-    void                        limit_video_size(AVCodecContext *output_codec_ctx);
     int                         update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const;
     int                         prepare_codec(void *opt, FILETYPE filetype) const;
     int                         add_stream(AVCodecID codec_id);
+    int                         add_stream_copy(AVCodecID codec_id, AVMediaType codec_type);
     int                         add_albumart_stream(const AVCodecContext *input_codec_ctx);
     int                         add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
     int                         open_output_filestreams(Buffer *buffer);
@@ -180,6 +180,7 @@ protected:
     int                         update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
     int                         prepare_format(AVDictionary **dict,  FILETYPE filetype) const;
     int                         write_output_file_header();
+    int                         store_packet(AVPacket *pkt);
     int                         decode_audio_frame(AVPacket *pkt, int *decoded);
     int                         decode_video_frame(AVPacket *pkt, int *decoded);
     int                         decode_frame(AVPacket *pkt);
@@ -205,8 +206,9 @@ protected:
 
     static BITRATE              get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile);
     size_t                      calculate_predicted_filesize() const;
-    static bool                 get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate);
-    static bool                 get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate);
+    bool                        get_video_size(int *output_width, int *output_height) const;
+    static bool                 get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate = nullptr);
+    static bool                 get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate = nullptr);
     double                      get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const;
 
 #ifndef USING_LIBAV
@@ -214,6 +216,9 @@ protected:
     AVFrame *                   send_filters(AVFrame *srcframe, int &ret);
     void                        free_filters();
 #endif // !USING_LIBAV
+
+    bool                        can_copy_audio() const;
+    bool                        can_copy_video() const;
 
     bool                        close_resample();
 
@@ -246,6 +251,10 @@ private:
 
     INPUTFILE                   m_in;
     OUTPUTFILE                  m_out;
+
+    // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
+    bool                        m_copy_audio;
+    bool                        m_copy_video;
 
     ffmpegfs_format *           m_current_format;
 

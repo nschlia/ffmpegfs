@@ -67,6 +67,7 @@ ffmpegfs_params::ffmpegfs_params()
     : m_basepath("")                            // required parameter
     , m_mountpath("")                           // required parameter
 
+    , m_autocopy(AUTOCOPY_OFF)                // default: off
     , m_profile(PROFILE_NONE)                   // default: no profile
     , m_level(LEVEL_NONE)                       // default: no level
 
@@ -192,6 +193,7 @@ enum
     KEY_MIN_DISKSPACE_SIZE,
     KEY_CACHEPATH,
     KEY_CACHE_MAINTENANCE,
+    KEY_AUTOCOPY,
     KEY_PROFILE,
     KEY_LEVEL,
     KEY_LOG_MAXLEVEL,
@@ -207,6 +209,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("desttype=%s",                 KEY_DESTTYPE),
     FUSE_OPT_KEY("--profile=%s",                KEY_PROFILE),
     FUSE_OPT_KEY("profile=%s",                  KEY_PROFILE),
+    FUSE_OPT_KEY("--autocopy=%s",               KEY_AUTOCOPY),
+    FUSE_OPT_KEY("autocopy=%s",                 KEY_AUTOCOPY),
     FUSE_OPT_KEY("--level=%s",                  KEY_LEVEL),
     FUSE_OPT_KEY("level=%s",                    KEY_LEVEL),
 
@@ -289,8 +293,16 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
+typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;
 typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;
 typedef std::map<std::string, LEVEL, comp> LEVEL_MAP;
+
+static const AUTOCOPY_MAP autocopy_map =
+{
+    { "NONE",           AUTOCOPY_OFF },
+    { "LIMIT",         AUTOCOPY_LIMIT },
+    { "ALWAYS",         AUTOCOPY_ALWAYS },
+};
 
 static const PROFILE_MAP profile_map =
 {
@@ -318,21 +330,23 @@ static const LEVEL_MAP level_map =
     { "HQ",             LEVEL_PRORES_HQ },
 };
 
-static int get_bitrate(const std::string & arg, BITRATE *bitrate);
-static int get_samplerate(const std::string & arg, unsigned int *samplerate);
-static int get_time(const std::string & arg, time_t *time);
-static int get_size(const std::string & arg, size_t *size);
-static int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
-static int get_profile(const std::string & arg, PROFILE *profile);
-static std::string get_profile_text(PROFILE profile);
-static int get_level(const std::string & arg, LEVEL *level);
-static std::string get_level_text(LEVEL level);
-static int get_value(const std::string & arg, std::string *value);
+static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
+static int          get_samplerate(const std::string & arg, unsigned int *samplerate);
+static int          get_time(const std::string & arg, time_t *time);
+static int          get_size(const std::string & arg, size_t *size);
+static int          get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
+static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
+static std::string  get_autocopy_text(AUTOCOPY autocopy);
+static int          get_profile(const std::string & arg, PROFILE *profile);
+static std::string  get_profile_text(PROFILE profile);
+static int          get_level(const std::string & arg, LEVEL *level);
+static std::string  get_level_text(LEVEL level);
+static int          get_value(const std::string & arg, std::string *value);
 
-static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
-static int set_defaults(void);
-static void print_params(void);
-static void usage(char *name);
+static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
+static int          set_defaults(void);
+static void         print_params(void);
+static void         usage(char *name);
 
 static void usage(char *name)
 {
@@ -350,6 +364,12 @@ static void usage(char *name)
           "                           convert video files to Apple Quicktime MOV and audio only files to\n"
           "                           AIFF.\n"
           "                           Default: mp4\n"
+          "   --autocopy=NAME, -oautocopy=NAME\n"
+          "                           Select auto copy option, can be:\n"
+          "                           OFF      off\n"
+          "                           LIMIT    limit file size about to predicted size\n"
+          "                           ALWAYS   always recode when possible even if target becomes larger\n"
+          "                           Default: OFF\n"
           "    --profile=NAME, -o profile=NAME\n"
           "                           Set profile for target audience. Currently selectable:\n"
           "                           NONE     no profile\n"
@@ -533,6 +553,11 @@ static void usage(char *name)
           "                           encoded audio or video but yet creating a valid file. When this option\n"
           "                           is set, transcoding will stop with an error.\n"
           "                           Default: Ignore errors\n"
+          "     --win_smb_fix, -o win_smb_fix\n"
+          "                           Windows seems to access the files on Samba drives starting at the last 64K\n"
+          "                           segment simply when the file is opened. Setting --win_smb_fix=1 will ignore\n"
+          "                           these attempts (not decode the file up to this point).\n"
+          "                           Default: off\n"
           "\n"
           "Logging:\n"
           "\n"
@@ -898,6 +923,44 @@ int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegf
     return -1;
 }
 
+// Read autocopy:
+static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string data(arg.substr(pos + 1));
+
+        auto it = autocopy_map.find(data);
+
+        if (it == autocopy_map.end())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid autocopy option: %s\n", data.c_str());
+            return -1;
+        }
+
+        *autocopy = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing autocopy string\n");
+
+    return -1;
+}
+
+// Get autocopy text
+static std::string get_autocopy_text(AUTOCOPY autocopy)
+{
+    AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
+    if (it != autocopy_map.end())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
 // Read profile:
 static int get_profile(const std::string & arg, PROFILE *profile)
 {
@@ -1081,6 +1144,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_desttype(arg, &params.m_format[0], &params.m_format[1]);
     }
+    case KEY_AUTOCOPY:
+    {
+        return get_autocopy(arg, &params.m_autocopy);
+    }
     case KEY_PROFILE:
     {
         return get_profile(arg, &params.m_profile);
@@ -1177,48 +1244,51 @@ static void print_params(void)
                                          "Base Path         : %1\n"
                                          "Mount Path        : %2\n\n"
                                          "Smart Transcode   : %3\n"
-                                         "Audio File Type   : %4\n"
-                                         "Video File Type   : %5\n"
-                                         "Profile           : %6\n"
-                                         "Level             : %7\n"
+                                         "Auto Copy         : %4\n"
+                                         "Audio File Type   : %5\n"
+                                         "Video File Type   : %6\n"
+                                         "Profile           : %7\n"
+                                         "Level             : %8\n"
                                          "\nAudio\n\n"
-                                         "Audio Codecs      : %8+%9\n"
-                                         "Audio Bitrate     : %10\n"
-                                         "Audio Sample Rate : %11\n"
+                                         "Audio Codecs      : %9+%10\n"
+                                         "Audio Bitrate     : %11\n"
+                                         "Audio Sample Rate : %12\n"
                                          "\nVideo\n\n"
-                                         "Video Size/Pixels : width=%12 height=%13\n"
+                                         "Video Size/Pixels : width=%13 height=%14\n"
                #ifndef USING_LIBAV
-                                         "Deinterlace       : %14\n"
+                                         "Deinterlace       : %15\n"
                #endif  // !USING_LIBAV
-                                         "Remove Album Arts : %15\n"
-                                         "Video Codec       : %16\n"
-                                         "Video Bitrate     : %17\n"
+                                         "Remove Album Arts : %16\n"
+                                         "Video Codec       : %17\n"
+                                         "Video Bitrate     : %18\n"
                                          "\nVirtual Script\n\n"
-                                         "Create script     : %18\n"
-                                         "Script file name  : %19\n"
+                                         "Create script     : %19\n"
+                                         "Script file name  : %10\n"
                                          "Input file        : %20\n"
                                          "\nLogging\n\n"
-                                         "Max. Log Level    : %21\n"
-                                         "Log to stderr     : %22\n"
-                                         "Log to syslog     : %23\n"
-                                         "Logfile           : %24\n"
+                                         "Max. Log Level    : %22\n"
+                                         "Log to stderr     : %23\n"
+                                         "Log to syslog     : %24\n"
+                                         "Logfile           : %25\n"
                                          "\nCache Settings\n\n"
-                                         "Expiry Time       : %25\n"
-                                         "Inactivity Suspend: %26\n"
-                                         "Inactivity Abort  : %27\n"
-                                         "Pre-buffer size   : %28\n"
-                                         "Max. Cache Size   : %29\n"
-                                         "Min. Disk Space   : %30\n"
-                                         "Cache Path        : %31\n"
-                                         "Disable Cache     : %32\n"
-                                         "Maintenance Timer : %33\n"
-                                         "Clear Cache       : %34\n"
+                                         "Expiry Time       : %26\n"
+                                         "Inactivity Suspend: %27\n"
+                                         "Inactivity Abort  : %28\n"
+                                         "Pre-buffer size   : %29\n"
+                                         "Max. Cache Size   : %20\n"
+                                         "Min. Disk Space   : %31\n"
+                                         "Cache Path        : %32\n"
+                                         "Disable Cache     : %33\n"
+                                         "Maintenance Timer : %34\n"
+                                         "Clear Cache       : %35\n"
                                          "\nVarious Options\n\n"
-                                         "Max. Threads      : %35\n"
-                                         "Decoding Errors   : %36\n",
+                                         "Max. Threads      : %36\n"
+                                         "Decoding Errors   : %37\n"
+                                         "Windows 10 Fix    : %38\n",
                    params.m_basepath,
                    params.m_mountpath,
                    params.smart_transcode() ? "yes" : "no",
+                   get_autocopy_text(params.m_autocopy),
                    params.m_format[1].m_desttype,
             params.m_format[0].m_desttype,
             get_profile_text(params.m_profile),
@@ -1253,7 +1323,8 @@ static void print_params(void)
             params.m_cache_maintenance ? format_time(params.m_cache_maintenance) : "inactive",
             params.m_clear_cache ? "yes" : "no",
             format_number(params.m_max_threads),
-            params.m_decoding_errors ? "break transcode" : "ignore");
+            params.m_decoding_errors ? "break transcode" : "ignore",
+            params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
 }
 
 int main(int argc, char *argv[])

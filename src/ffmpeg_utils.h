@@ -1,7 +1,7 @@
 /*
  * FFmpeg decoder class header for ffmpegfs
  *
- * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,6 +189,13 @@ typedef enum _tagLEVEL
     LEVEL_PRORES_STANDARD,
     LEVEL_PRORES_HQ,
 } LEVEL;
+
+typedef enum _tagAUTOCOPY
+{
+    AUTOCOPY_OFF = 0,
+    AUTOCOPY_LIMIT,
+    AUTOCOPY_ALWAYS,
+} AUTOCOPY;
 
 class ffmpegfs_format
 {

@@ -47,6 +47,7 @@ extern struct ffmpegfs_params
     std::string         m_basepath;
     std::string         m_mountpath;
     // Output type
+    AUTOCOPY            m_autocopy;                 // Copy streams if codec matches
     PROFILE             m_profile;					// Target profile: Firefox, MS Edge/IE or other
     LEVEL               m_level;                    // Level, currently proxy/hq/lt/HQ (ProRes only)
     // Format

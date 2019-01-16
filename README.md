@@ -158,6 +158,8 @@ another (e.g. MOV, MP4).
 
 There are three options:
 
+|Option|Description|
+| ------------- | ------------- |
 |OFF|no auto copy|
 |LIMIT|only auto copy if target file will not become significantly larger|
 |ALWAY|auto copy whenever possible even if the target file becomes larger|

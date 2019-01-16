@@ -762,14 +762,14 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
     // find the encoder
     output_codec = avcodec_find_encoder(codec_id);
-    if (!output_codec)
+    if (output_codec == nullptr)
     {
         Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
         return AVERROR(EINVAL);
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
-    if (!output_stream)
+    if (output_stream == nullptr)
     {
         Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
@@ -778,7 +778,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     output_codec_ctx = avcodec_alloc_context3(output_codec);
-    if (!output_codec_ctx)
+    if (output_codec_ctx == nullptr)
     {
         Logging::error(destname(), "Could not alloc an encoding context.");
         return AVERROR(ENOMEM);
@@ -1190,7 +1190,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         output_codec_ctx->height,                   // height
                         output_codec_ctx->pix_fmt,                  // format
                         SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
-            if (!m_pSws_ctx)
+            if (m_pSws_ctx == nullptr)
             {
                 Logging::error(destname(), "Could not allocate scaling/conversion context.");
                 return AVERROR(ENOMEM);
@@ -1279,7 +1279,7 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     // find the encoder
     output_codec = avcodec_find_encoder(input_codec->id);
-    if (!output_codec)
+    if (output_codec == nullptr)
     {
         Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(input_codec->id));
         return AVERROR(EINVAL);
@@ -1293,7 +1293,7 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
-    if (!output_stream)
+    if (output_stream == nullptr)
     {
         Logging::error(destname(), "Could not allocate stream for encoder '%1'.", avcodec_get_name(input_codec->id));
         return AVERROR(ENOMEM);
@@ -1302,7 +1302,7 @@ int FFMPEG_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     output_codec_ctx = avcodec_alloc_context3(output_codec);
-    if (!output_codec_ctx)
+    if (output_codec_ctx == nullptr)
     {
         Logging::error(destname(), "Could not alloc an encoding context.");
         return AVERROR(ENOMEM);
@@ -1443,7 +1443,7 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
 
     // Create a new format context for the output container format.
     avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->m_format_name.c_str(), nullptr);
-    if (!m_out.m_format_ctx)
+    if (m_out.m_format_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate output format context.");
         return AVERROR(ENOMEM);
@@ -1581,7 +1581,7 @@ int FFMPEG_Transcoder::init_resampler()
                                                    m_in.m_audio.m_codec_ctx->sample_fmt,
                                                    m_in.m_audio.m_codec_ctx->sample_rate,
                                                    0, nullptr);
-        if (!m_pAudio_resample_ctx)
+        if (m_pAudio_resample_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate resample context.");
             return AVERROR(ENOMEM);
@@ -1599,7 +1599,7 @@ int FFMPEG_Transcoder::init_resampler()
 #else
         // Create a resampler context for the conversion.
         m_pAudio_resample_ctx = avresample_alloc_context();
-        if (!m_pAudio_resample_ctx)
+        if (m_pAudio_resample_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate resample context.");
             return AVERROR(ENOMEM);
@@ -1635,7 +1635,8 @@ int FFMPEG_Transcoder::init_resampler()
 int FFMPEG_Transcoder::init_fifo()
 {
     // Create the FIFO buffer based on the specified output sample format.
-    if (!(m_pAudioFifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, m_out.m_audio.m_codec_ctx->channels, 1)))
+    m_pAudioFifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, m_out.m_audio.m_codec_ctx->channels, 1);
+    if (m_pAudioFifo == nullptr)
     {
         Logging::error(destname(), "Could not allocate FIFO.");
         return AVERROR(ENOMEM);
@@ -1753,7 +1754,7 @@ AVFrame *FFMPEG_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
     int ret;
 
     picture = av_frame_alloc();
-    if (!picture)
+    if (picture == nullptr)
     {
         return nullptr;
     }
@@ -2060,7 +2061,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
 
                 AVFrame * tmp_frame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
-                if (!tmp_frame)
+                if (tmp_frame == nullptr)
                 {
                     return AVERROR(ENOMEM);
                 }
@@ -2482,7 +2483,8 @@ int FFMPEG_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     int ret;
 
     // Create a new frame to store the audio samples.
-    if (!(*frame = av_frame_alloc()))
+    *frame = av_frame_alloc();
+    if (*frame == nullptr)
     {
         Logging::error(destname(), "Could not allocate output frame.");
         return AVERROR_EXIT;

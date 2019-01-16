@@ -243,6 +243,7 @@ std::string         format_samplerate(unsigned int value);
 std::string         format_duration(int64_t value, int fracs = 1);
 std::string         format_time(time_t value);
 std::string         format_size(size_t value);
+std::string         format_size_ex(size_t value);
 
 void                exepath(std::string *path);
 

@@ -120,7 +120,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    Logging::debug(transcoder->destname(), "Predicted/final size: %1/%2 bytes, diff: %3 (%4%).", cache_entry->m_cache_info.m_predicted_filesize, cache_entry->m_cache_info.m_encoded_filesize, static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize), static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize), format_size_ex(cache_entry->m_cache_info.m_encoded_filesize), (static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize)), static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 
@@ -264,7 +264,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
         transcoder->close();
 
-        Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+        Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
 
         success = true;
     }
@@ -628,7 +628,7 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2 bytes.", params.current_format(cache_entry->virtualfile())->m_desttype, cache_entry->m_cache_info.m_predicted_filesize);
+        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->m_desttype, format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
 
         if (transcoder == nullptr)
         {

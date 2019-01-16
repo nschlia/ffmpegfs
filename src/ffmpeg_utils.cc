@@ -873,6 +873,11 @@ std::string format_size(size_t value)
     }
 }
 
+std::string format_size_ex(size_t value)
+{
+    return format_size(value) + string_format(" (%zu bytes)", value);
+}
+
 static void print_fps(double d, const char *postfix)
 {
     uint64_t v = lrint(d * 100);

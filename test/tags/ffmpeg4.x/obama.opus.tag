@@ -3,6 +3,7 @@ ARTIST=Barack Obama
 COPYRIGHT=Public Domain
 DATE=2011-01-25
 DISCTOTAL=0
+DURATION=6000000
 
 GENRE=Spoken
 TITLE=The Internet [excerpt]

@@ -286,37 +286,37 @@ int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
     return ret;
 }
 
-void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
+void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
     int64_t duration = AV_NOPTS_VALUE;
 
     if (stream->duration != AV_NOPTS_VALUE)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
     Logging::info(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
                   out_file ? "out" : "in",
-                  get_codec_name(codec->codec_id, false),
+                  get_codec_name(CODECPAR(stream)->codec_id, false),
                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
                   format_duration(duration));
 }
 
-void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream)
+void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
     int64_t duration = AV_NOPTS_VALUE;
 
     if (stream->duration != AV_NOPTS_VALUE)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), (AVRounding)(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
     Logging::info(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
                   out_file ? "out" : "in",
-                  get_codec_name(codec->codec_id, false),
+                  get_codec_name(CODECPAR(stream)->codec_id, false),
                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
-                  codec->channels,
-                  format_samplerate(codec->sample_rate),
+                  CODECPAR(stream)->channels,
+                  format_samplerate(CODECPAR(stream)->sample_rate),
                   format_duration(duration));
 }
 

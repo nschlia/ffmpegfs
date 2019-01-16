@@ -41,8 +41,8 @@ protected:
     void        video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational frame_rate) const;
     int         av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     int         av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
-    void        video_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
-    void        audio_info(bool out_file, const AVFormatContext *format_ctx, const AVCodecContext *codec, const AVStream *stream);
+    void        video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
+    void        audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     std::string get_pix_fmt_name(AVPixelFormat pix_fmt) const;
     std::string get_sample_fmt_name(AVSampleFormat sample_fmt) const;
     std::string get_channel_layout_name(int nb_channels, uint64_t channel_layout) const;

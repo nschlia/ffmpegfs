@@ -410,7 +410,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         }
 #endif // USE_LIBBLURAY
 
-        video_info(false, m_in.m_format_ctx, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream);
+        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
 
         m_is_video = is_video();
 
@@ -452,7 +452,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
         }
 #endif // USE_LIBBLURAY
 
-        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_codec_ctx, m_in.m_audio.m_stream);
+        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
     }
 
     if (m_in.m_audio.m_stream_idx == -1 && m_in.m_video.m_stream_idx == -1)
@@ -550,7 +550,7 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
     if (m_out.m_audio.m_stream_idx > -1)
     {
-        audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_codec_ctx, m_out.m_audio.m_stream);
+        audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_stream);
 
 #ifdef USING_LIBAV
         ret = init_resampler();
@@ -570,7 +570,7 @@ int FFMPEG_Transcoder::open_output_file(Buffer *buffer)
 
     if (m_out.m_video.m_stream_idx > -1)
     {
-        video_info(true, m_out.m_format_ctx, m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
+        video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
     }
 
     // Process metadata. The decoder will call the encoder to set appropriate

@@ -160,7 +160,7 @@ int transcoder_init(void)
 
         if (!cache->load_index())
         {
-            std::fprintf(stderr, "ERROR: Creating media file cache.\n");
+            std::fprintf(stderr, "ERROR: Creating media file cache failed.\n");
             return -1;
         }
     }
@@ -213,7 +213,7 @@ int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 // Set the file size
 bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, double frame_rate)
 {
-    Cache_Entry * cache_entry = cache->open(virtualfile);
+    Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
         Logging::error(cache_entry->filename(), "Out of memory getting file size.");

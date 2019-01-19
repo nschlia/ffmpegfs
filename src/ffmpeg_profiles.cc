@@ -19,6 +19,10 @@
  */
 
 #include "ffmpeg_transcoder.h"
+
+FFMPEG_Profiles::FFMPEG_Profiles() {}
+FFMPEG_Profiles::~FFMPEG_Profiles() {}
+
 /*
  * Make audience audience specific optimisations, see:
  *
@@ -173,7 +177,7 @@
 // ****************************************************************************************************************
 
 // No opimisations, just plain mp4.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_none[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 {
     // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
     { "profile",              "high",                       0,  0 },
@@ -181,13 +185,13 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_none[] =
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_none[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_none[] =
 {
     { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
@@ -195,7 +199,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_none[] =
 // Use: -movflags +empty_moov
 //      -frag_duration 1000000  (for audio files only)
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ff[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_ff[] =
 {
     // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
     { "profile",              "high",                       0,  0 },
@@ -203,40 +207,40 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ff[] =
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ff[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
 {
     { "frag_duration",          "1000000",                  0, OPT_AUDIO },     // microsenconds
     { "movflags",               "+empty_moov",              0, OPT_ALL },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
 // GOOD: Starts immediately while still decoding.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_edge[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_edge[] =
 {
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_edge[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
 {
     { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
     { "movflags",               "+empty_moov",              0, OPT_ALL },
     { "movflags",               "+separate_moof",           0, OPT_ALL },
     { "movflags",               "+faststart",               0, OPT_ALL },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ie[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_ie[] =
 {
     // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
     { "profile",              "high",                       0,  0 },
@@ -244,63 +248,63 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_ie[] =
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_ie[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_ie[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // NOT GOOD: Playback runs, but must wait until end of decode.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_chrome[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_chrome[] =
 {
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_chrome[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_safari[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_safari[] =
 {
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_safari[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_opera[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_opera[] =
 {
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_opera[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // TODO - maybe same as Chrome
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
 {
     // -profile:v high -level 3.1
     { "profile",              "high",                       0,  0 },
@@ -308,41 +312,41 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
 
     // Set speed (changes profile!)
     { "preset",               "ultrafast",                  0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mp4_format_maxthon[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mov_codec[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mov_codec[] =
 {
     // Set speed (changes profile!)
     { "preset",                 "ultrafast",                0,  0 },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_mov_format[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_mov_format[] =
 {
     { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
 // Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_codec[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_prores_codec[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_format[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_prores_format[] =
 {
     { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 /*
@@ -384,7 +388,7 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_prores_format[] =
  *
  */
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_codec_none[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_webm_codec_none[] =
 {
     { "deadline",               "realtime",                 0,  0 },
 
@@ -414,17 +418,17 @@ static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_codec_none[] =
     { "auto-alt-ref",           "1",                        0,  0 },
     { "lag-in-frames",          "25",                        0,  0 },
 
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
-static const FFMPEG_Transcoder::PROFILE_OPTION m_option_webm_format_none[] =
+static const FFMPEG_Profiles::PROFILE_OPTION m_option_webm_format_none[] =
 {
-    { nullptr, nullptr, 0, 0 }
+    { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
 
-const FFMPEG_Transcoder::PROFILE_LIST FFMPEG_Transcoder::m_profile[] =
+const FFMPEG_Profiles::PROFILE_LIST FFMPEG_Profiles::m_profile[] =
 {
     // MP4
 

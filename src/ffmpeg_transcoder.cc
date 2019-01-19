@@ -149,12 +149,12 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
     , m_cur_channel_layout(-1)
-    , m_pAudio_resample_ctx(nullptr)
-    , m_pAudioFifo(nullptr)
-    , m_pSws_ctx(nullptr)
-    , m_pBufferSinkContext(nullptr)
-    , m_pBufferSourceContext(nullptr)
-    , m_pFilterGraph(nullptr)
+    , m_audio_resample_ctx(nullptr)
+    , m_audio_fifo(nullptr)
+    , m_sws_ctx(nullptr)
+    , m_buffer_sink_context(nullptr)
+    , m_buffer_source_context(nullptr)
+    , m_filter_graph(nullptr)
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
     , m_copy_audio(false)
@@ -182,13 +182,13 @@ FFMPEG_Transcoder::~FFMPEG_Transcoder()
 // Try to find out if we have a video stream or a cover art.
 bool FFMPEG_Transcoder::is_video() const
 {
-    bool bIsVideo = false;
+    bool is_video = false;
 
     if (m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
         if (is_album_art(m_in.m_video.m_codec_ctx->codec_id))
         {
-            bIsVideo = false;
+            is_video = false;
 
 #ifdef USING_LIBAV
             if (m_in.m_video.m_stream->avg_frame_rate.den)
@@ -198,7 +198,7 @@ bool FFMPEG_Transcoder::is_video() const
                 // If frame rate is < 100 fps this should be a video
                 if (dbFrameRate < 100)
                 {
-                    bIsVideo = true;
+                    is_video = true;
                 }
             }
 #else
@@ -209,7 +209,7 @@ bool FFMPEG_Transcoder::is_video() const
                 // If frame rate is < 100 fps this should be a video
                 if (dbFrameRate < 100)
                 {
-                    bIsVideo = true;
+                    is_video = true;
                 }
             }
 #endif
@@ -217,11 +217,11 @@ bool FFMPEG_Transcoder::is_video() const
         else
         {
             // If the source codec is not PNG or JPG we can safely assume it's a video stream
-            bIsVideo = true;
+            is_video = true;
         }
     }
 
-    return bIsVideo;
+    return is_video;
 }
 
 bool FFMPEG_Transcoder::is_open() const
@@ -1264,7 +1264,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                                output_codec_ctx->width, output_codec_ctx->height);
             }
 
-            m_pSws_ctx = sws_getContext(
+            m_sws_ctx = sws_getContext(
                         // Source settings
                         CODECPAR(m_in.m_video.m_stream)->width,    // width
                         CODECPAR(m_in.m_video.m_stream)->height,   // height
@@ -1274,7 +1274,7 @@ int FFMPEG_Transcoder::add_stream(AVCodecID codec_id)
                         output_codec_ctx->height,                   // height
                         output_codec_ctx->pix_fmt,                  // format
                         SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
-            if (m_pSws_ctx == nullptr)
+            if (m_sws_ctx == nullptr)
             {
                 Logging::error(destname(), "Could not allocate scaling/conversion context.");
                 return AVERROR(ENOMEM);
@@ -1758,7 +1758,7 @@ int FFMPEG_Transcoder::init_resampler()
         return 0;
     }
 
-    if (m_pAudio_resample_ctx == nullptr ||
+    if (m_audio_resample_ctx == nullptr ||
             m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
             m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
             m_cur_channel_layout != m_in.m_audio.m_codec_ctx->channel_layout)
@@ -1782,7 +1782,7 @@ int FFMPEG_Transcoder::init_resampler()
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
 #if LAVR_DEPRECATE
-        m_pAudio_resample_ctx = swr_alloc_set_opts(nullptr,
+        m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
                                                    m_out.m_audio.m_codec_ctx->channel_layout,
                                                    m_out.m_audio.m_codec_ctx->sample_fmt,
                                                    m_out.m_audio.m_codec_ctx->sample_rate,
@@ -1790,25 +1790,25 @@ int FFMPEG_Transcoder::init_resampler()
                                                    m_in.m_audio.m_codec_ctx->sample_fmt,
                                                    m_in.m_audio.m_codec_ctx->sample_rate,
                                                    0, nullptr);
-        if (m_pAudio_resample_ctx == nullptr)
+        if (m_audio_resample_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate resample context.");
             return AVERROR(ENOMEM);
         }
 
         // Open the resampler with the specified parameters.
-        ret = swr_init(m_pAudio_resample_ctx);
+        ret = swr_init(m_audio_resample_ctx);
         if (ret < 0)
         {
             Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret));
-            swr_free(&m_pAudio_resample_ctx);
-            m_pAudio_resample_ctx = nullptr;
+            swr_free(&m_audio_resample_ctx);
+            m_audio_resample_ctx = nullptr;
             return ret;
         }
 #else
         // Create a resampler context for the conversion.
-        m_pAudio_resample_ctx = avresample_alloc_context();
-        if (m_pAudio_resample_ctx == nullptr)
+        m_audio_resample_ctx = avresample_alloc_context();
+        if (m_audio_resample_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate resample context.");
             return AVERROR(ENOMEM);
@@ -1819,20 +1819,20 @@ int FFMPEG_Transcoder::init_resampler()
         // are assumed for simplicity (they are sometimes not detected
         // properly by the demuxer and/or decoder).
 
-        av_opt_set_int(m_pAudio_resample_ctx, "in_channel_layout", av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels), 0);
-        av_opt_set_int(m_pAudio_resample_ctx, "out_channel_layout", av_get_default_channel_layout(m_out.m_audio.m_codec_ctx->channels), 0);
-        av_opt_set_int(m_pAudio_resample_ctx, "in_sample_rate", m_in.m_audio.m_codec_ctx->sample_rate, 0);
-        av_opt_set_int(m_pAudio_resample_ctx, "out_sample_rate", m_out.m_audio.m_codec_ctx->sample_rate, 0);
-        av_opt_set_int(m_pAudio_resample_ctx, "in_sample_fmt", m_in.m_audio.m_codec_ctx->sample_fmt, 0);
-        av_opt_set_int(m_pAudio_resample_ctx, "out_sample_fmt", m_out.m_audio.m_codec_ctx->sample_fmt, 0);
+        av_opt_set_int(m_audio_resample_ctx, "in_channel_layout", av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels), 0);
+        av_opt_set_int(m_audio_resample_ctx, "out_channel_layout", av_get_default_channel_layout(m_out.m_audio.m_codec_ctx->channels), 0);
+        av_opt_set_int(m_audio_resample_ctx, "in_sample_rate", m_in.m_audio.m_codec_ctx->sample_rate, 0);
+        av_opt_set_int(m_audio_resample_ctx, "out_sample_rate", m_out.m_audio.m_codec_ctx->sample_rate, 0);
+        av_opt_set_int(m_audio_resample_ctx, "in_sample_fmt", m_in.m_audio.m_codec_ctx->sample_fmt, 0);
+        av_opt_set_int(m_audio_resample_ctx, "out_sample_fmt", m_out.m_audio.m_codec_ctx->sample_fmt, 0);
 
         // Open the resampler with the specified parameters.
-        ret = avresample_open(m_pAudio_resample_ctx);
+        ret = avresample_open(m_audio_resample_ctx);
         if (ret < 0)
         {
             Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret));
-            avresample_free(&m_pAudio_resample_ctx);
-            m_pAudio_resample_ctx = nullptr;
+            avresample_free(&m_audio_resample_ctx);
+            m_audio_resample_ctx = nullptr;
             return ret;
         }
 #endif
@@ -1844,8 +1844,8 @@ int FFMPEG_Transcoder::init_resampler()
 int FFMPEG_Transcoder::init_fifo()
 {
     // Create the FIFO buffer based on the specified output sample format.
-    m_pAudioFifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, m_out.m_audio.m_codec_ctx->channels, 1);
-    if (m_pAudioFifo == nullptr)
+    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, m_out.m_audio.m_codec_ctx->channels, 1);
+    if (m_audio_fifo == nullptr)
     {
         Logging::error(destname(), "Could not allocate FIFO.");
         return AVERROR(ENOMEM);
@@ -2101,9 +2101,9 @@ int FFMPEG_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             uint8_t **converted_input_samples = nullptr;
             int nb_output_samples;
 #if LAVR_DEPRECATE
-            nb_output_samples = (m_pAudio_resample_ctx != nullptr) ? swr_get_out_samples(m_pAudio_resample_ctx, frame->nb_samples) : frame->nb_samples;
+            nb_output_samples = (m_audio_resample_ctx != nullptr) ? swr_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
 #else
-            nb_output_samples = (m_pAudio_resample_ctx != nullptr) ? avresample_get_out_samples(m_pAudio_resample_ctx, frame->nb_samples) : frame->nb_samples;
+            nb_output_samples = (m_audio_resample_ctx != nullptr) ? avresample_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
 #endif
 
             try
@@ -2265,7 +2265,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (data_present)
         {
-            if (m_pSws_ctx != nullptr)
+            if (m_sws_ctx != nullptr)
             {
                 AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
 
@@ -2275,7 +2275,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     return AVERROR(ENOMEM);
                 }
 
-                sws_scale(m_pSws_ctx,
+                sws_scale(m_sws_ctx,
                           static_cast<const uint8_t * const *>(frame->data), frame->linesize,
                           0, frame->height,
                           tmp_frame->data, tmp_frame->linesize);
@@ -2317,7 +2317,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             frame->quality = m_out.m_video.m_codec_ctx->global_quality;
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-            m_VideoFifo.push(send_filters(frame, ret));
+            m_video_fifo.push(send_filters(frame, ret));
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
             m_VideoFifo.push(frame);
@@ -2498,12 +2498,12 @@ int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 // specified by frame_size.
 int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
-    if (m_pAudio_resample_ctx != nullptr)
+    if (m_audio_resample_ctx != nullptr)
     {
         int ret;
 
         // Convert the samples using the resampler.
-        ret = swr_convert(m_pAudio_resample_ctx, converted_data, *out_samples, const_cast<const uint8_t **>(input_data), in_samples);
+        ret = swr_convert(m_audio_resample_ctx, converted_data, *out_samples, const_cast<const uint8_t **>(input_data), in_samples);
         if (ret  < 0)
         {
             Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret));
@@ -2536,12 +2536,12 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
 // by frame_size.
 int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
-    if (m_pAudio_resample_ctx != nullptr)
+    if (m_audio_resample_ctx != nullptr)
     {
         int ret;
 
         // Convert the samples using the resampler.
-        ret = avresample_convert(m_pAudio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples);
+        ret = avresample_convert(m_audio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples);
         if (ret < 0)
         {
             Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret));
@@ -2554,7 +2554,7 @@ int FFMPEG_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         // not greater than the number of samples to be converted.
         // If the sample rates differ, this case has to be handled differently
 
-        if (avresample_available(m_pAudio_resample_ctx))
+        if (avresample_available(m_audio_resample_ctx))
         {
             Logging::error(destname(), "Converted samples left over.");
             return AVERROR_EXIT;
@@ -2587,7 +2587,7 @@ int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, co
     // Make the FIFO as large as it needs to be to hold both,
     // the old and the new samples.
 
-    ret = av_audio_fifo_realloc(m_pAudioFifo, av_audio_fifo_size(m_pAudioFifo) + frame_size);
+    ret = av_audio_fifo_realloc(m_audio_fifo, av_audio_fifo_size(m_audio_fifo) + frame_size);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not reallocate FIFO.");
@@ -2595,7 +2595,7 @@ int FFMPEG_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, co
     }
 
     // Store the new samples in the FIFO buffer.
-    ret = av_audio_fifo_write(m_pAudioFifo, reinterpret_cast<void **>(converted_input_samples), frame_size);
+    ret = av_audio_fifo_write(m_audio_fifo, reinterpret_cast<void **>(converted_input_samples), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -2857,7 +2857,7 @@ int FFMPEG_Transcoder:: encode_audio_frame(AVFrame *frame, int *data_present)
         {
             pkt.stream_index = m_out.m_audio.m_stream_idx;
 
-            produce_audio_dts(&pkt, &m_out.m_nAudio_pts);
+            produce_audio_dts(&pkt, &m_out.m_audio_pts);
 
             ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
             if (ret < 0)
@@ -3025,7 +3025,7 @@ int FFMPEG_Transcoder::load_encode_and_write(int frame_size)
     // If there is less than the maximum possible frame size in the FIFO
     // buffer use this number. Otherwise, use the maximum possible frame size
 
-    frame_size = FFMIN(av_audio_fifo_size(m_pAudioFifo), frame_size);
+    frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);
     int data_written;
 
     // Initialise temporary storage for one output frame.
@@ -3038,7 +3038,7 @@ int FFMPEG_Transcoder::load_encode_and_write(int frame_size)
     // Read as many samples from the FIFO buffer as required to fill the frame.
     // The samples are stored in the frame temporarily.
 
-    ret = av_audio_fifo_read(m_pAudioFifo, reinterpret_cast<void **>(output_frame->data), frame_size);
+    ret = av_audio_fifo_read(m_audio_fifo, reinterpret_cast<void **>(output_frame->data), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -3242,7 +3242,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
             // need to FIFO buffer to store as many frames worth of input samples
             // that they make up at least one frame worth of output samples.
 
-            while (av_audio_fifo_size(m_pAudioFifo) < output_frame_size)
+            while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
             {
                 // Decode one frame worth of audio samples, convert it to the
                 // output sample format and put it into the FIFO buffer.
@@ -3266,7 +3266,7 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
             // At the end of the file, we pass the remaining samples to
             // the encoder.
 
-            while (av_audio_fifo_size(m_pAudioFifo) >= output_frame_size || (finished && av_audio_fifo_size(m_pAudioFifo) > 0))
+            while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (finished && av_audio_fifo_size(m_audio_fifo) > 0))
             {
                 // Take one frame worth of audio samples from the FIFO buffer,
                 // encode it and write it to the output file.
@@ -3318,6 +3318,8 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
         }
         else
         {
+            // If we have no audio stream, we'll only get video data
+            // or we simply copy audio and/or video frames into the packet queue
             ret = read_decode_convert_and_store(&finished);
             if (ret < 0)
             {
@@ -3332,10 +3334,10 @@ int FFMPEG_Transcoder::process_single_fr(int &status)
 
         if (!m_copy_video)
         {
-            while (!m_VideoFifo.empty())
+            while (!m_video_fifo.empty())
             {
-                AVFrame *output_frame = m_VideoFifo.front();
-                m_VideoFifo.pop();
+                AVFrame *output_frame = m_video_fifo.front();
+                m_video_fifo.pop();
 
                 // Encode one video frame.
                 int data_written = 0;
@@ -3770,15 +3772,15 @@ int64_t FFMPEG_Transcoder::seek(void * opaque, int64_t offset, int whence)
 // Close the open FFmpeg file
 bool FFMPEG_Transcoder::close_resample()
 {
-    if (m_pAudio_resample_ctx)
+    if (m_audio_resample_ctx)
     {
 #if LAVR_DEPRECATE
-        swr_free(&m_pAudio_resample_ctx);
+        swr_free(&m_audio_resample_ctx);
 #else
-        avresample_close(m_pAudio_resample_ctx);
-        avresample_free(&m_pAudio_resample_ctx);
+        avresample_close(m_audio_resample_ctx);
+        avresample_free(&m_audio_resample_ctx);
 #endif
-        m_pAudio_resample_ctx = nullptr;
+        m_audio_resample_ctx = nullptr;
         return true;
     }
 
@@ -3793,19 +3795,19 @@ void FFMPEG_Transcoder::close()
     std::string outfile;
     bool bClosed = false;
 
-    if (m_pAudioFifo)
+    if (m_audio_fifo)
     {
-        nAudioSamplesLeft = av_audio_fifo_size(m_pAudioFifo);
-        av_audio_fifo_free(m_pAudioFifo);
-        m_pAudioFifo = nullptr;
+        nAudioSamplesLeft = av_audio_fifo_size(m_audio_fifo);
+        av_audio_fifo_free(m_audio_fifo);
+        m_audio_fifo = nullptr;
         bClosed = true;
     }
 
-    nVideoFramesLeft = m_VideoFifo.size();
-    while (m_VideoFifo.size())
+    nVideoFramesLeft = m_video_fifo.size();
+    while (m_video_fifo.size())
     {
-        AVFrame *output_frame = m_VideoFifo.front();
-        m_VideoFifo.pop();
+        AVFrame *output_frame = m_video_fifo.front();
+        m_video_fifo.pop();
 
         av_frame_free(&output_frame);
         bClosed = true;
@@ -3816,10 +3818,10 @@ void FFMPEG_Transcoder::close()
         bClosed = true;
     }
 
-    if (m_pSws_ctx != nullptr)
+    if (m_sws_ctx != nullptr)
     {
-        sws_freeContext(m_pSws_ctx);
-        m_pSws_ctx = nullptr;
+        sws_freeContext(m_sws_ctx);
+        m_sws_ctx = nullptr;
         bClosed = true;
     }
 
@@ -4030,9 +4032,9 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
     //enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_GRAY8, AV_PIX_FMT_NONE };
     int ret = 0;
 
-    m_pBufferSinkContext = nullptr;
-    m_pBufferSourceContext = nullptr;
-    m_pFilterGraph = nullptr;
+    m_buffer_sink_context = nullptr;
+    m_buffer_source_context = nullptr;
+    m_filter_graph = nullptr;
 
     try
     {
@@ -4047,7 +4049,7 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
             throw static_cast<int>(AVERROR(EINVAL));
         }
 
-        m_pFilterGraph = avfilter_graph_alloc();
+        m_filter_graph = avfilter_graph_alloc();
 
         AVBufferSinkParams bufferSinkParams;
         enum AVPixelFormat aePixelFormat[3];
@@ -4057,7 +4059,7 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(pStream->codec->pix_fmt);
 #endif
 
-        if (pOutputs == nullptr || pInputs == nullptr || m_pFilterGraph == nullptr)
+        if (pOutputs == nullptr || pInputs == nullptr || m_filter_graph == nullptr)
         {
             throw static_cast<int>(AVERROR(ENOMEM));
         }
@@ -4076,7 +4078,7 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         //
         //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
-        ret = avfilter_graph_create_filter(&m_pBufferSourceContext, pBufferSrc, "in", args, nullptr, m_pFilterGraph);
+        ret = avfilter_graph_create_filter(&m_buffer_source_context, pBufferSrc, "in", args, nullptr, m_filter_graph);
         if (ret < 0)
         {
             Logging::error(destname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret));
@@ -4104,7 +4106,7 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         aePixelFormat[2] = AV_PIX_FMT_NONE;
 
         bufferSinkParams.pixel_fmts = aePixelFormat;
-        ret = avfilter_graph_create_filter(&m_pBufferSinkContext, pBufferSink, "out", nullptr, &bufferSinkParams, m_pFilterGraph);
+        ret = avfilter_graph_create_filter(&m_buffer_sink_context, pBufferSink, "out", nullptr, &bufferSinkParams, m_filter_graph);
 
         if (ret < 0)
         {
@@ -4128,11 +4130,11 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
 
         // Endpoints for the filter graph.
         pOutputs->name          = av_strdup("in");
-        pOutputs->filter_ctx    = m_pBufferSourceContext;
+        pOutputs->filter_ctx    = m_buffer_source_context;
         pOutputs->pad_idx       = 0;
         pOutputs->next          = nullptr;
         pInputs->name           = av_strdup("out");
-        pInputs->filter_ctx     = m_pBufferSinkContext;
+        pInputs->filter_ctx     = m_buffer_sink_context;
         pInputs->pad_idx        = 0;
         pInputs->next           = nullptr;
 
@@ -4147,14 +4149,14 @@ int FFMPEG_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         //filters = "kerndeint=thresh=10:map=0:order=0:sharp=1:twoway=1";
         //filters = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'";
 
-        ret = avfilter_graph_parse_ptr(m_pFilterGraph, filters, &pInputs, &pOutputs, nullptr);
+        ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &pInputs, &pOutputs, nullptr);
         if (ret < 0)
         {
             Logging::error(destname(), "avfilter_graph_parse_ptr failed (error '%1').", ffmpeg_geterror(ret));
             throw  ret;
         }
 
-        ret = avfilter_graph_config(m_pFilterGraph, nullptr);
+        ret = avfilter_graph_config(m_filter_graph, nullptr);
         if (ret < 0)
         {
             Logging::error(destname(), "avfilter_graph_config failed (error '%1').", ffmpeg_geterror(ret));
@@ -4186,7 +4188,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 
     ret = 0;
 
-    if (m_pBufferSourceContext != nullptr /*&& srcframe->interlaced_frame*/)
+    if (m_buffer_source_context != nullptr /*&& srcframe->interlaced_frame*/)
     {
         try
         {
@@ -4195,7 +4197,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             //pFrame->pts = av_frame_get_best_effort_timestamp(pFrame);
             // push the decoded frame into the filtergraph
 
-            if ((ret = ::av_buffersrc_add_frame_flags(m_pBufferSourceContext, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
+            if ((ret = ::av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
             {
                 Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret));
                 throw ret;
@@ -4210,7 +4212,7 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             }
 
             // pull filtered frames from the filtergraph
-            ret = ::av_buffersink_get_frame(m_pBufferSinkContext, filterframe);
+            ret = ::av_buffersink_get_frame(m_buffer_sink_context, filterframe);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 // Not an error, go on
@@ -4250,22 +4252,22 @@ AVFrame *FFMPEG_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 
 void FFMPEG_Transcoder::free_filters()
 {
-    if (m_pBufferSinkContext != nullptr)
+    if (m_buffer_sink_context != nullptr)
     {
-        ::avfilter_free(m_pBufferSinkContext);
-        m_pBufferSinkContext = nullptr;
+        ::avfilter_free(m_buffer_sink_context);
+        m_buffer_sink_context = nullptr;
     }
 
-    if (m_pBufferSourceContext != nullptr)
+    if (m_buffer_source_context != nullptr)
     {
-        ::avfilter_free(m_pBufferSourceContext);
-        m_pBufferSourceContext = nullptr;
+        ::avfilter_free(m_buffer_source_context);
+        m_buffer_source_context = nullptr;
     }
 
-    if (m_pFilterGraph != nullptr)
+    if (m_filter_graph != nullptr)
     {
-        ::avfilter_graph_free(&m_pFilterGraph);
-        m_pFilterGraph = nullptr;
+        ::avfilter_graph_free(&m_filter_graph);
+        m_filter_graph = nullptr;
     }
 }
 #endif  // !USING_LIBAV

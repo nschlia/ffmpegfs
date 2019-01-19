@@ -27,6 +27,7 @@
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
 #include "fileio.h"
+#include "ffmpeg_profiles.h"
 
 #include <queue>
 
@@ -42,33 +43,9 @@ struct AVFilterContext;
 struct AVFilterGraph;
 struct AVAudioFifo;
 
-class FFMPEG_Transcoder : public FFMPEG_Base
+class FFMPEG_Transcoder : public FFMPEG_Base, FFMPEG_Profiles
 {
 public:
-#define OPT_CODEC       0x80000000
-
-#define OPT_ALL         0x00000000  // All files
-#define OPT_AUDIO       0x00000001  // For audio only files
-#define OPT_VIDEO       0x00000002  // For videos (not audio only)
-
-    typedef struct _tagPROFILE_OPTION
-    {
-        const char *            m_key;
-        const char *            m_value;
-        const int               m_flags;
-        const int               m_options;
-    } PROFILE_OPTION, *LPPROFILE_OPTION;
-    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;
-
-    typedef struct _tagPROFILE_LIST
-    {
-        FILETYPE                m_filetype;
-        PROFILE                 m_profile;
-        LPCPROFILE_OPTION       m_option_codec;
-        LPCPROFILE_OPTION       m_option_format;
-    } PROFILE_LIST, *LPPROFILE_LIST;
-    typedef PROFILE_LIST const * LPCPROFILE_LIST;
-
 #define MAX_PRORES_FRAMERATE    2
 
     // Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
@@ -129,12 +106,12 @@ public:
     struct OUTPUTFILE : public INPUTFILE
     {
         OUTPUTFILE() :
-            m_nAudio_pts(0),
+            m_audio_pts(0),
             m_video_start_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
-        int64_t                 m_nAudio_pts;           // Global timestamp for the audio frames
+        int64_t                 m_audio_pts;            // Global timestamp for the audio frames
         int64_t                 m_video_start_pts;      // Video start PTS
         int64_t                 m_last_mux_dts;         // Last muxed DTS
 
@@ -234,18 +211,18 @@ private:
     int                         m_cur_sample_rate;
     uint64_t                    m_cur_channel_layout;
 #if LAVR_DEPRECATE
-    SwrContext *                m_pAudio_resample_ctx;
+    SwrContext *                m_audio_resample_ctx;
 #else
-    AVAudioResampleContext *    m_pAudio_resample_ctx;
+    AVAudioResampleContext *    m_audio_resample_ctx;
 #endif
-    AVAudioFifo *               m_pAudioFifo;
+    AVAudioFifo *               m_audio_fifo;
 
     // Video conversion and buffering
-    SwsContext *                m_pSws_ctx;
-    AVFilterContext *           m_pBufferSinkContext;
-    AVFilterContext *           m_pBufferSourceContext;
-    AVFilterGraph *             m_pFilterGraph;
-    std::queue<AVFrame*>        m_VideoFifo;
+    SwsContext *                m_sws_ctx;
+    AVFilterContext *           m_buffer_sink_context;
+    AVFilterContext *           m_buffer_source_context;
+    AVFilterGraph *             m_filter_graph;
+    std::queue<AVFrame*>        m_video_fifo;
     int64_t                     m_pts;
     int64_t                     m_pos;
 
@@ -257,8 +234,6 @@ private:
     bool                        m_copy_video;
 
     ffmpegfs_format *           m_current_format;
-
-    static const PROFILE_LIST   m_profile[];
 
     static const PRORES_BITRATE m_prores_bitrate[];
 };

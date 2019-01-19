@@ -2320,7 +2320,7 @@ int FFMPEG_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             m_video_fifo.push(send_filters(frame, ret));
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
-            m_VideoFifo.push(frame);
+            m_video_fifo.push(frame);
 #endif
         }
         else

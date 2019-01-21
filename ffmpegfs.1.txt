@@ -271,6 +271,10 @@ following entry in `/etc/fstab`:
 
     ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
 
+Another (more modern) form of this command:
+
+    /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
+
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.
 
@@ -389,6 +393,9 @@ If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
 == Future Plans ==
 * Create a windows version
 * Add DVD/Bluray support
+
+== FILES ==
+*/usr/local/bin/ffmpegfs*, */etc/fstab*
 
 == AUTHORS ==
 This fork with FFmpeg support is maintained by Norbert Schlia 

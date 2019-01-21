@@ -108,7 +108,11 @@ This will run ffmpegs in the foreground and print the log output to the screen:
 
 In recent versions of FUSE the same can be achieved with the following entry in `/etc/fstab`:
 
-    /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=1.5M 0 0
+    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
+
+Another (more modern) form of this command:
+
+    /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
 
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.

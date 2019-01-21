@@ -1255,16 +1255,14 @@ static void print_params(void)
                                          "Audio Sample Rate : %12\n"
                                          "\nVideo\n\n"
                                          "Video Size/Pixels : width=%13 height=%14\n"
-               #ifndef USING_LIBAV
                                          "Deinterlace       : %15\n"
-               #endif  // !USING_LIBAV
                                          "Remove Album Arts : %16\n"
                                          "Video Codec       : %17\n"
                                          "Video Bitrate     : %18\n"
                                          "\nVirtual Script\n\n"
                                          "Create script     : %19\n"
-                                         "Script file name  : %10\n"
-                                         "Input file        : %20\n"
+                                         "Script file name  : %20\n"
+                                         "Input file        : %21\n"
                                          "\nLogging\n\n"
                                          "Max. Log Level    : %22\n"
                                          "Log to stderr     : %23\n"
@@ -1301,6 +1299,8 @@ static void print_params(void)
             format_number(params.m_videoheight),
         #ifndef USING_LIBAV
             params.m_deinterlace ? "yes" : "no",
+        #else
+            "not supported",
         #endif  // !USING_LIBAV
             params.m_noalbumarts ? "yes" : "no",
             get_codec_name(params.m_format[0].m_video_codec_id, true),
@@ -1361,7 +1361,7 @@ int main(int argc, char *argv[])
 #endif
 
     // Set default
-    params.m_max_threads = static_cast<unsigned>(get_nprocs() * 16);
+    params.m_max_threads = static_cast<unsigned int>(get_nprocs() * 16);
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {

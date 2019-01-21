@@ -778,7 +778,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     ssize_t read = 0;
     Cache_Entry* cache_entry;
 
-	Logging::trace(path, "read %1 bytes from %2.", size, static_cast<intmax_t>(offset));
+    Logging::trace(path, "Reading %1 bytes from %2.", size, static_cast<intmax_t>(offset));
 
     translate_path(&origpath, path);
 

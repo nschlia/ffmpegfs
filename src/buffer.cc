@@ -112,7 +112,7 @@ bool Buffer::init(bool erase_cache)
 
         if (fstat(m_fd, &sb) == -1)
         {
-            Logging::error(m_cachefile, "File stat failed: %1", strerror(errno));
+            Logging::error(m_cachefile, "File stat failed: %1 (fd = %2)", strerror(errno), m_fd);
             throw false;
         }
 
@@ -131,7 +131,7 @@ bool Buffer::init(bool erase_cache)
 
             if (ftruncate(m_fd, filesize) == -1)
             {
-                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: %1", strerror(errno));
+                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: %1 (fd = %2)", strerror(errno), m_fd);
                 throw false;
             }
         }
@@ -143,7 +143,7 @@ bool Buffer::init(bool erase_cache)
         p = mmap(nullptr, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
         if (p == MAP_FAILED)
         {
-            Logging::error(m_cachefile,  "File mapping failed: %1", strerror(errno));
+            Logging::error(m_cachefile,  "File mapping failed: %1 (fd = %2)", strerror(errno), m_fd);
             throw false;
         }
 
@@ -207,7 +207,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (ftruncate(fd, m_buffer_watermark) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: %1", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: %1 (fd = %2)", strerror(errno), fd);
         success = false;
     }
 
@@ -262,7 +262,7 @@ bool Buffer::clear()
 
     if (ftruncate(m_fd, filesize) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: %1", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: %1 (fd = %2)", strerror(errno), m_fd);
         success = false;
     }
 
@@ -289,7 +289,7 @@ bool Buffer::reserve(size_t size)
 
     if (ftruncate(m_fd, m_buffer_size) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: %1", strerror(errno));
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: %1 (fd = %2)", strerror(errno), m_fd);
         success = false;
     }
 

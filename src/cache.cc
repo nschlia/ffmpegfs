@@ -681,7 +681,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     size_t free_bytes = buf.f_bfree * buf.f_bsize;
 
-    Logging::trace(m_cacheidx_file, "%1 disk space before prune.", format_size(free_bytes));
+    Logging::trace(cachepath, "%1 disk space before prune.", format_size(free_bytes));
     if (free_bytes < params.m_min_diskspace + predicted_filesize)
     {
         std::vector<cache_key_t> keys;
@@ -704,7 +704,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             filesizes.push_back(size);
         }
 
-        Logging::trace(m_cacheidx_file, "Pruning %1 of oldest cache entries to keep disk space above %2 limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes), format_size(params.m_min_diskspace));
+        Logging::trace(cachepath, "Pruning %1 of oldest cache entries to keep disk space above %2 limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes), format_size(params.m_min_diskspace));
 
         if (ret == SQLITE_DONE)
         {
@@ -713,7 +713,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             {
                 const cache_key_t & key = *it;
 
-                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first, key.second);
+                Logging::trace(cachepath, "Pruning: %1 Type: %2", key.first, key.second);
 
                 cache_t::iterator p = m_cache.find(key);
                 if (p != m_cache.end())
@@ -733,11 +733,11 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
                     break;
                 }
             }
-            Logging::trace(m_cacheidx_file, "Disk space after prune: %1", format_size(free_bytes));
+            Logging::trace(cachepath, "Disk space after prune: %1", format_size(free_bytes));
         }
         else
         {
-            Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
+            Logging::error(cachepath, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
         }
 
         sqlite3_finalize(stmt);

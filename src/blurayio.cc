@@ -238,7 +238,7 @@ int blurayio::seek(long offset, int whence)
 {
     long int seek_pos;
 
-//    Logging::error(m_path, "SEEK %<%11i>1", offset);
+    //Logging::error(m_path, "SEEK %<%11" PRId64 ">1", offset);
 
     switch (whence)
     {

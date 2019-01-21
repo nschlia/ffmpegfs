@@ -26,10 +26,10 @@
 #include <string.h>
 
 //Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
-Cache_Entry::Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile)
+Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     : m_owner(owner)
     , m_ref_count(0)
-    , m_virtualfile(nullptr)
+    , m_virtualfile(virtualfile)
     , m_thread_id(0)
 {
     m_cache_info.m_origfile = virtualfile->m_origfile;
@@ -71,6 +71,20 @@ Cache_Entry::~Cache_Entry()
     unlock();
 
     Logging::trace(filename(), "Deleted buffer.");
+}
+
+Cache_Entry * Cache_Entry::create(Cache *owner, LPVIRTUALFILE virtualfile)
+{
+    return new Cache_Entry(owner, virtualfile);
+}
+
+bool Cache_Entry::destroy()
+{
+    Logging::info(filename(), "TEST: Cache_Entry deleted.");
+
+    delete this;    // TODO: implement delete later mechanism
+
+    return true;    // TODO: Return true when deleted, false if kept for delete later
 }
 
 void Cache_Entry::clear(int fetch_file_time)

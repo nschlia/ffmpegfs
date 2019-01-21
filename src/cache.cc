@@ -44,7 +44,7 @@ Cache::~Cache()
     // Clean up memory
     for (cache_t::iterator p = m_cache.begin(); p != m_cache.end(); ++p)
     {
-        delete static_cast<Cache_Entry *>(p->second);
+        static_cast<Cache_Entry *>(p->second)->destroy();
     }
 
     m_cache.clear();
@@ -432,16 +432,16 @@ void Cache::close_index()
     sqlite3_shutdown();
 }
 
-Cache_Entry* Cache::create_entry(LPCVIRTUALFILE virtualfile, const std::string & desttype)
+Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype)
 {
-//    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
-    Cache_Entry* cache_entry = new Cache_Entry(this, virtualfile);
+    //    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
+    Cache_Entry* cache_entry = Cache_Entry::create(this, virtualfile);
     if (cache_entry == nullptr)
     {
         Logging::error(m_cacheidx_file, "Out of memory.");
         return nullptr;
     }
-//    m_cache.insert(make_pair(make_pair(filename, desttype), cache_entry));
+
     m_cache.insert(make_pair(make_pair(virtualfile->m_origfile, desttype), cache_entry));
 
     return cache_entry;
@@ -453,6 +453,8 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
     {
         return true;
     }
+	
+	bool deleted = false;
 
     if ((*cache_entry)->close(flags))
     {
@@ -461,14 +463,12 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
         {
             m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_origfile, (*cache_entry)->m_cache_info.m_desttype));
 
-            delete (*cache_entry);
+            deleted = (*cache_entry)->destroy();
             *cache_entry = nullptr;
-
-            return true; // Freed entry
         }
     }
 
-    return false;   // Kept entry
+    return deleted;
 }
 
 Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
@@ -487,13 +487,6 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
         cache_entry = p->second;
     }
 
-    if (cache_entry == nullptr)
-    {
-        return nullptr;
-    }
-
-    cache_entry->m_virtualfile = virtualfile;
-
     return cache_entry;
 }
 
@@ -504,21 +497,21 @@ bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_NOOPT*/)
         return true;
     }
 
-    bool bSuccess;
+    bool deleted;
 
     std::string filename((*cache_entry)->filename());
     if (delete_entry(cache_entry, flags))
     {
         Logging::trace(filename, "Freed cache entry.");
-        bSuccess = true;
+        deleted = true;
     }
     else
     {
         Logging::trace(filename, "Keeping cache entry.");
-        bSuccess = false;
+        deleted = false;
     }
 
-    return bSuccess;
+    return deleted;
 }
 
 bool Cache::prune_expired()

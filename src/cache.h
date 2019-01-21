@@ -87,7 +87,7 @@ protected:
     bool                    write_info(const t_cache_info & cache_info);
     bool                    delete_info(const std::string & filename, const std::string & desttype);
 
-    Cache_Entry*            create_entry(LPCVIRTUALFILE virtualfile, const std::string & desttype);
+    Cache_Entry*            create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype);
     bool                    delete_entry(Cache_Entry **cache_entry, int flags);
 
     void                    close_index();

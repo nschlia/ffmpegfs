@@ -31,13 +31,14 @@ class Buffer;
 
 class Cache_Entry
 {
-    friend class Cache;
-
-protected:
-    explicit Cache_Entry(Cache *owner, LPCVIRTUALFILE virtualfile);
+private:
+    explicit Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile);
     virtual ~Cache_Entry();
 
 public:
+    static Cache_Entry *    create(Cache *owner, LPVIRTUALFILE virtualfile);
+    bool                    destroy();
+
     bool                    open(bool create_cache = true);
     bool                    flush();
     void                    clear(int fetch_file_time = true);
@@ -61,8 +62,9 @@ public:
 
     LPVIRTUALFILE           virtualfile();
 
-protected:
     bool                    close(int flags);
+
+protected:
     void                    close_buffer(int flags);
 
     bool                    read_info();

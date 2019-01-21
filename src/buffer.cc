@@ -183,20 +183,20 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         return true;
     }
 
-    m_is_open = false;
+    m_is_open       = false;
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Write it now to disk
     flush();
 
-    void *p = m_buffer;
-    size_t size = m_buffer_size;
-    int fd = m_fd;
+    void *p         = m_buffer;
+    size_t size     = m_buffer_size;
+    int fd          = m_fd;
 
-    m_buffer = nullptr;
-    m_buffer_size = 0;
-    m_buffer_pos = 0;
+    m_buffer        = nullptr;
+    m_buffer_size   = 0;
+    m_buffer_pos    = 0;
     m_fd = -1;
 
     if (munmap(p, size) == -1)

@@ -477,13 +477,13 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
     cache_t::iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->m_desttype));
     if (p == m_cache.end())
     {
-//        Logging::trace(sanitised_name, "Created new transcoder.");
+        // Logging::trace(sanitised_name, "Created new transcoder.");
         Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
         cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->m_desttype);
     }
     else
     {
-//        Logging::trace(sanitised_name, "Reusing cached transcoder.");
+        // Logging::trace(sanitised_name, "Reusing cached transcoder.");
         cache_entry = p->second;
     }
 
@@ -497,7 +497,7 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
     return cache_entry;
 }
 
-bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_DELETE*/)
+bool Cache::close(Cache_Entry **cache_entry, int flags /*= CLOSE_CACHE_NOOPT*/)
 {
     if ((*cache_entry) == nullptr)
     {

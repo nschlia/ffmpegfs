@@ -3732,7 +3732,14 @@ int FFMPEG_Transcoder::output_write(void * opaque, unsigned char * data, int siz
         return AVERROR(EINVAL);
     }
 
-    return static_cast<int>(buffer->write(static_cast<const uint8_t*>(data), size));
+    size_t written = buffer->write(static_cast<const uint8_t*>(data), size);
+
+    if (static_cast<int>(written) != size)
+    {
+        // Write error
+        return (AVERROR(errno));
+    }
+    return static_cast<int>(written);
 }
 
 int64_t FFMPEG_Transcoder::seek(void * opaque, int64_t offset, int whence)

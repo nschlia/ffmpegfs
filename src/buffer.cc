@@ -229,11 +229,6 @@ bool Buffer::remove_cachefile()
 
 bool Buffer::flush()
 {
-    if (!m_is_open)
-    {
-        return false;
-    }
-
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
     if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
     {
@@ -247,6 +242,8 @@ bool Buffer::clear()
 {
     if (!m_is_open)
     {
+        Logging::error(m_cachefile, "Attempt to clear unopen cache file.");
+        errno = EBADF;
         return false;
     }
 
@@ -272,6 +269,13 @@ bool Buffer::clear()
 // Reserve memory without changing size to reduce re-allocations
 bool Buffer::reserve(size_t size)
 {
+    if (!m_is_open)
+    {
+        Logging::error(m_cachefile, "Attempt to reserve space in unopen cache file.");
+        errno = EBADF;
+        return false;
+    }
+
     bool success = true;
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
@@ -300,6 +304,13 @@ bool Buffer::reserve(size_t size)
 // will be updated.
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
+    if (!m_is_open)
+    {
+        Logging::error(m_cachefile, "Attempt to write to unopen cache file.");
+        errno = EBADF;
+        return 0;
+    }
+
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     uint8_t* write_ptr = write_prepare(length);
@@ -331,6 +342,7 @@ uint8_t* Buffer::write_prepare(size_t length)
     }
     else
     {
+        errno = ESPIPE;
         return nullptr;
     }
 }
@@ -345,6 +357,13 @@ void Buffer::increment_pos(ptrdiff_t increment)
 
 int Buffer::seek(long offset, int whence)
 {
+    if (!m_is_open)
+    {
+        Logging::error(m_cachefile, "Attempt to reserve seek in unopen cache file.");
+        errno = EBADF;
+        return -1;
+    }
+
     size_t pos;
 
     switch (whence)
@@ -411,6 +430,13 @@ size_t Buffer::buffer_watermark() const
 // Copy buffered data into output buffer.
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
+    if (!m_is_open)
+    {
+        Logging::error(m_cachefile, "Attempt to copy data from unopen cache file.");
+        errno = EBADF;
+        return false;
+    }
+
     bool success = true;
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);

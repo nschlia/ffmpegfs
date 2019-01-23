@@ -660,19 +660,25 @@ bool Cache::prune_cache_size()
 bool Cache::prune_disk_space(size_t predicted_filesize)
 {
     std::string cachepath;
-    struct statvfs buf;
 
     transcoder_cache_path(cachepath);
 
-    if (statvfs(cachepath.c_str(), &buf))
+    size_t free_bytes = get_disk_size(cachepath);
+
+    if (!free_bytes && errno)
     {
-        Logging::trace(m_cacheidx_file, "prune_disk_space() cannot determine free disk space: %1", strerror(errno));
+        Logging::error(cachepath, "prune_disk_space() cannot determine free disk space: %1", strerror(errno));
+        return false;
+    }
+
+    if (free_bytes < predicted_filesize)
+    {
+        Logging::error(cachepath, "prune_disk_space() : Insufficient disk space %1 on cache drive, at least %2 required.", format_size(free_bytes),  format_size(predicted_filesize));
+        errno = ENOSPC;
         return false;
     }
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
-
-    size_t free_bytes = buf.f_bfree * buf.f_bsize;
 
     Logging::trace(cachepath, "%1 disk space before prune.", format_size(free_bytes));
     if (free_bytes < params.m_min_diskspace + predicted_filesize)

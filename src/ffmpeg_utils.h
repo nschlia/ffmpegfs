@@ -309,4 +309,7 @@ struct comp {
     }
 };
 
+size_t              get_disk_size(std::string & file);
+
+
 #endif

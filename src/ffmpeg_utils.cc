@@ -1143,3 +1143,17 @@ bool is_album_art(AVCodecID codec_id)
 {
     return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
 }
+
+size_t get_disk_size(std::string & file)
+{
+    struct statvfs buf;
+
+    if (statvfs(file.c_str(), &buf))
+    {
+        return 0;
+    }
+
+    return (buf.f_bfree * buf.f_bsize);
+}
+
+

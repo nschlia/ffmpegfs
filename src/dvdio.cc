@@ -630,7 +630,11 @@ int dvdio::read(void * data, int size)
                 m_errno = EIO;
                 return -1;
             }
-            assert(is_nav_pack(m_buffer));
+
+            if (!is_nav_pack(m_buffer))
+            {
+                Logging::warning(m_path, "Blocks at %2 ist probably not a NAV packet. Transcode may fail.", m_cur_block);
+            }
 
             // Parse the contained dsi packet.
             dsitype = handle_DSI(&dsi_pack, cur_output_size, next_vobu, m_buffer);

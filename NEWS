@@ -56,6 +56,7 @@ Important changes in 1.6 (2019-01-11)
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 
         on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
 	the issue.
+* Bugfix: Fix crash when DVD nav packet is missing
 * Fix deprecation:
 
 Important changes in 1.5 (2018-06-08)

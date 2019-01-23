@@ -1377,7 +1377,7 @@ int FFMPEG_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
             return ret;
         }
 #else
-        output_codec_ctx = output_stream->codec;
+        AVCodecContext *output_codec_ctx = output_stream->codec;
 
         ret = avcodec_copy_context(output_codec_ctx /*output_stream->codec*/, m_in.m_audio.m_stream->codec);
         if (ret != 0)
@@ -1411,9 +1411,9 @@ int FFMPEG_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
             return ret;
         }
 #else
-        output_codec_ctx = output_stream->codec;
+        AVCodecContext *output_codec_ctx = output_stream->codec;
 
-        ret = avcodec_copy_context(output_codec_ctx /*output_stream->codec*/, m_in.in.m_video.m_stream->codec);
+        ret = avcodec_copy_context(output_codec_ctx /*output_stream->codec*/, m_in.m_video.m_stream->codec);
         if (ret != 0)
         {
             return ret;
@@ -3526,7 +3526,7 @@ bool FFMPEG_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+        *filesize += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
         break;
     }
     case AV_CODEC_ID_NONE:

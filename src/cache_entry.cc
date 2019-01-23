@@ -80,7 +80,7 @@ Cache_Entry * Cache_Entry::create(Cache *owner, LPVIRTUALFILE virtualfile)
 
 bool Cache_Entry::destroy()
 {
-    Logging::info(filename(), "TEST: Cache_Entry deleted.");
+    //Logging::info(filename(), "TEST: Cache_Entry deleted.");
 
     delete this;    // TODO: implement delete later mechanism
 

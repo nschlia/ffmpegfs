@@ -53,7 +53,7 @@ Important changes in 1.6 (2019-01-11)
 * Bugfix: Force mpegts format for Blurays to avoid misdetections.
 * Bugfix: Take DVD chapter duration from IFO as probed playtime from VOB segment is sometimes wrong.
 * Bugfix: Take Bluray chapter duration from directory as probed playtime from MTS segment is sometimes wrong.
-* Bugfix: This was a bad one: The application crashed with a protection fails if there was not enough disk space 
+* Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 
         on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
 	the issue.
 * Fix deprecation:

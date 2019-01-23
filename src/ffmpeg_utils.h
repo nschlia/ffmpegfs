@@ -218,7 +218,7 @@ public:
     {
         if (m_desttype == "prores")
         {
-            return "mov";
+            return "mov";                   // ProRes is actually a MOV container
         }
         return m_desttype;
     }

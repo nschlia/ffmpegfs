@@ -4012,7 +4012,7 @@ void FFMPEG_Transcoder::close()
         }
 
         // Closed anything...
-        Logging::info(p, "FFmpeg transcoder closed.");
+        Logging::trace(p, "FFmpeg transcoder closed.");
     }
 }
 

@@ -874,7 +874,9 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 
     Logging::log_with_level(ffmpegfs_level, "", line);
 
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
     av_free(line);
+#endif
 }
 #endif
 

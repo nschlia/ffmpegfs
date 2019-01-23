@@ -242,7 +242,6 @@ bool Buffer::clear()
 {
     if (!m_is_open)
     {
-        Logging::error(m_cachefile, "Attempt to clear unopen cache file.");
         errno = EBADF;
         return false;
     }
@@ -271,7 +270,6 @@ bool Buffer::reserve(size_t size)
 {
     if (!m_is_open)
     {
-        Logging::error(m_cachefile, "Attempt to reserve space in unopen cache file.");
         errno = EBADF;
         return false;
     }
@@ -306,7 +304,6 @@ size_t Buffer::write(const uint8_t* data, size_t length)
 {
     if (!m_is_open)
     {
-        Logging::error(m_cachefile, "Attempt to write to unopen cache file.");
         errno = EBADF;
         return 0;
     }
@@ -359,7 +356,6 @@ int Buffer::seek(long offset, int whence)
 {
     if (!m_is_open)
     {
-        Logging::error(m_cachefile, "Attempt to reserve seek in unopen cache file.");
         errno = EBADF;
         return -1;
     }
@@ -432,7 +428,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
     if (!m_is_open)
     {
-        Logging::error(m_cachefile, "Attempt to copy data from unopen cache file.");
         errno = EBADF;
         return false;
     }

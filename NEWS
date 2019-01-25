@@ -7,6 +7,7 @@ Important changes in 1.7 (2019-01-XX) UNRELEASED
            file up to this point).
 * Feature: Add "Auto Stream Copy"
 * Feature:
+* Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: 
 * Fix deprecation:
 

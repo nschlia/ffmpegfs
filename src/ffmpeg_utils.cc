@@ -768,21 +768,24 @@ std::string format_duration(int64_t value, int fracs /*= 1*/)
         return "unset";
     }
 
+#define STR_VALUE(arg)  #arg
+#define X(name)         STR_VALUE(name)
+
     std::string buffer;
-    int hours   = static_cast<int>((value / AV_TIME_BASE) / (3600));
-    int mins    = static_cast<int>(((value / AV_TIME_BASE) % 3600) / 60);
-    int secs    = static_cast<int>((value / AV_TIME_BASE) % 60);
+    unsigned hours   = static_cast<unsigned>((value / AV_TIME_BASE) / (3600));
+    unsigned mins    = static_cast<unsigned>(((value / AV_TIME_BASE) % 3600) / 60);
+    unsigned secs    = static_cast<unsigned>((value / AV_TIME_BASE) % 60);
 
     if (hours)
     {
-        buffer = string_format("%02i:", hours);
+        buffer = string_format("%02u:", hours);
     }
 
-    buffer += string_format("%02i:%02i", mins, secs);
+    buffer += string_format("%02u:%02u", mins, secs);
     if (fracs)
     {
-        int decimals    = static_cast<int>(value % AV_TIME_BASE);
-        buffer += string_format(".%5i", decimals).substr(0, fracs + 1);
+        unsigned decimals    = static_cast<unsigned>(value % AV_TIME_BASE);
+        buffer += string_format(".%0*u", sizeof(X(AV_TIME_BASE)) - 2, decimals).substr(0, fracs + 1);
     }
     return buffer;
 }

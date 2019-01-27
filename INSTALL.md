@@ -133,10 +133,6 @@ FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
 
-If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built 
-and installed libmp3lame you may find a solution here: 
-https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
-
 Installation
 ------------
 
@@ -163,6 +159,10 @@ disabled at the moment.
 
 Trouble Shooting
 ----------------
+
+If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built 
+and installed libmp3lame you may find a solution here: 
+https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
 **If you run into this error:**
     
@@ -208,7 +208,7 @@ On Ubuntu use the same command with `apt-get` in place of `aptitude`.
 
 **Songs get cut short**
 
-If songs do not play to the end and you are using SAMBA or NFS you're in trouble.
+If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.
 
 Happens when the files are transcoded on the fly, but never when file comes from
 cache. This is because the result is never exactly what was predicted.
@@ -225,7 +225,7 @@ to cope with that, but how to is unknown to me.
 
 ** Make reports "/bin/sh: a2x: command not found"**
 
-You need to install asciidoc, doing (or similar)
+You are missing out on asciidoc, to install do (or similar)
 
      aptitude install asciidoc
      
@@ -239,5 +239,5 @@ When you see this message accessing blurays:
     bdj.c:466: BD-J check: Failed to load libbluray.jar
 
 To get rid of this message simply install "libbluray-bdj", this will make it go away.
-This is not necessary, though, as to read the bluray tracks it is not nessessary, so
+Though not necessary, as to read the bluray tracks java support is not required, so
 this is simply cosmetical.

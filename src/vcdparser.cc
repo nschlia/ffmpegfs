@@ -88,15 +88,29 @@ int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "SVCD/INFO.SVD").c_str(), &st) == 0)
     {
-        Logging::trace(path, "VCD detected.");
-        res = parse_vcd(path, &st, buf, filler);
-        Logging::trace(nullptr, "Found %1 titles.", res);
+        if (!check_path(path))
+        {
+            Logging::trace(path, "VCD detected.");
+            res = parse_vcd(path, &st, buf, filler);
+            Logging::trace(nullptr, "Found %1 titles.", res);
+        }
+        else
+        {
+            res = load_path(path, &st, buf, filler);
+        }
     }
     else if (stat((path + "VCD/INFO.VCD").c_str(), &st) == 0)
     {
-        Logging::trace(path, "VCD detected.");
-        res = parse_vcd(path, &st, buf, filler);
-        Logging::trace(nullptr, "Found %1 titles.", res);
+        if (!check_path(path))
+        {
+            Logging::trace(path, "VCD detected.");
+            res = parse_vcd(path, &st, buf, filler);
+            Logging::trace(nullptr, "Found %1 titles.", res);
+        }
+        else
+        {
+            res = load_path(path, &st, buf, filler);
+        }
     }
     return res;
 }

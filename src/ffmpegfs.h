@@ -97,23 +97,32 @@ struct Cache_Entry;
 // Fuse operations struct
 extern fuse_operations ffmpegfs_ops;
 
-void        init_fuse_ops(void);
+void            init_fuse_ops(void);
 
 #ifndef USING_LIBAV
-void        ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
+void            ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 #endif
 
-int         init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog);
+int             init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog);
 
-void        transcoder_cache_path(std::string & path);
-int         transcoder_init(void);
-void        transcoder_free(void);
-int         transcoder_cache_maintenance(void);
-int         transcoder_cache_clear(void);
+void            transcoder_cache_path(std::string & path);
+int             transcoder_init(void);
+void            transcoder_free(void);
+int             transcoder_cache_maintenance(void);
+int             transcoder_cache_clear(void);
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string &filepath, const std::string & origfile, const struct stat *st);
-LPVIRTUALFILE find_file(const std::string &filepath);
-LPVIRTUALFILE find_original(std::string *filepath);
+// Add new virtual file to internal list
+// Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &filepath, const std::string & origfile, const struct stat *st);
+LPVIRTUALFILE   find_file(const std::string &filepath);
+// Check if path has already been parsed. Only useful if for DVD, Bluray or VCD where it is
+// guaranteed that all files have been parsed whenever the directory is in the hash.
+bool            check_path(const std::string & path);
+int             load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+// Given the destination (post-transcode) file name, determine the name of
+// the original file to be transcoded.
+// Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
+LPVIRTUALFILE   find_original(std::string *filepath);
 
 #endif // FFMPEGFS_H
 

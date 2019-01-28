@@ -6,6 +6,7 @@ Important changes in 1.7 (2019-01-XX) UNRELEASED
            simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
            file up to this point).
 * Feature: Add "Auto Stream Copy"
+* Feature: Speed up DVD/Bluray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.
 * Feature:
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 

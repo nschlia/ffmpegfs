@@ -127,7 +127,6 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     ifo_handle_t *ifo_file;
     tt_srpt_t *tt_srpt;
     int titles;
-    int i, j;
 
     Logging::debug(path, "Parsing DVD.");
 
@@ -151,22 +150,22 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
 
     Logging::debug(path, "There are %1 titles.", titles);
 
-    for(i = 0; i < titles; ++i)
+    for (int title_idx = 0; title_idx < titles; ++title_idx)
     {
         ifo_handle_t *vts_file;
         vts_ptt_srpt_t *vts_ptt_srpt;
         int vtsnum;
         int ttnnum;
         int pgcnum;
-        int chapts;
+        int chapters;
 
-        vtsnum = tt_srpt->title[i].title_set_nr;
-        ttnnum = tt_srpt->title[i].vts_ttn;
-        chapts = tt_srpt->title[i].nr_of_ptts;
+        vtsnum = tt_srpt->title[title_idx].title_set_nr;
+        ttnnum = tt_srpt->title[title_idx].vts_ttn;
+        chapters = tt_srpt->title[title_idx].nr_of_ptts;
 
-        Logging::trace(path, "Title : %1", i + 1);
+        Logging::trace(path, "Title : %1", title_idx + 1);
         Logging::trace(path, "In VTS: %1 [TTN %2]", vtsnum, ttnnum);
-        Logging::trace(path, "Title has %1 chapters and %2 angles", chapts, tt_srpt->title[i].nr_of_angles);
+        Logging::trace(path, "Title has %1 chapters and %2 angles", chapters, static_cast<int>(tt_srpt->title[title_idx].nr_of_angles));
 
         vts_file = ifoOpen(dvd, vtsnum);
         if (!vts_file)
@@ -222,27 +221,49 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
             }
         }
 
-        vts_ptt_srpt = vts_file->vts_ptt_srpt;
-        for(j = 0; j < chapts; ++j)
+        c_adt_t *c_adt = vts_file->menu_c_adt;
+        size_t  info_length = 0;
+
+        if (c_adt != nullptr)
         {
+            info_length = c_adt->last_byte + 1 - C_ADT_SIZE;
+        }
+
+        vts_ptt_srpt = vts_file->vts_ptt_srpt;
+        for (int chapter_idx = 0; chapter_idx < chapters; ++chapter_idx)
+        {
+            int title_no = title_idx + 1;
+            int chapter_no = chapter_idx + 1;
+            bool skip = false;
+
+            // Check if chapter is valid
+            for (unsigned int n = 0; n < info_length / sizeof(cell_adr_t) && !skip; n++)
+            {
+                skip = (c_adt->cell_adr_table[n].start_sector >= c_adt->cell_adr_table[n].last_sector);
+            }
+
+            if (skip)
+            {
+                Logging::info(path, "Title %<%3d>1 Chapter %<%3d>2 has invalid size, ignoring.", title_no, chapter_no);
+                continue;
+            }
+
             pgc_t *cur_pgc;
             int start_cell;
             int pgn;
-            int title_no = i + 1;
-            int chapter_no = j + 1;
 
-            pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[j].pgcn;
-            pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[j].pgn;
+            pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
+            pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
             cur_pgc     = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
             start_cell  = cur_pgc->program_map[pgn - 1] - 1;
 
-            Logging::trace(path, "Chapter %<%3d>1 [PGC %<%02d>2, PG %<%02d>3] starts at Cell %4 [sector %<%x>5-%<%x>6]",
-                           j, pgcnum, pgn, start_cell,
+            Logging::trace(path, "Title %<%3d>1 chapter %<%3d>2 [PGC %<%02d>3, PG %<%02d>4] starts at cell %5 [sector %<%x>6-%<%x>7]",
+                           title_no, chapter_no, pgcnum, pgn, start_cell,
                            static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].first_sector),
                            static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
 
             // Split file if chapter has several angles
-            for (int k = 0; k < tt_srpt->title[i].nr_of_angles; k++)
+            for (int k = 0; k < tt_srpt->title[title_idx].nr_of_angles; k++)
             {
                 char title_buf[PATH_MAX + 1];
                 std::string origfile;
@@ -251,8 +272,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                 int angle_no = k + 1;
                 //cur_pgc->playback_time;
 
-                //sprintf(title_buf, "Title %02d VTS %02d [TTN %02d] Chapter %03d [PGC %02d, PG %02d].%s", title_no, vtsnum, ttnnum, chapter_no, pgcnum, pgn, params.get_current_format().real_desttype());
-                if (k && tt_srpt->title[i].nr_of_angles > 1)
+                if (k && tt_srpt->title[title_idx].nr_of_angles > 1)
                 {
                     sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
                 }
@@ -330,8 +350,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     return titles;    // Number of titles on disk
 }
 
-// Returns -errno or number or titles on DVD
-int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
+ int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);
     struct stat st;
@@ -341,9 +360,16 @@ int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 
     if (stat((path + "VIDEO_TS.IFO").c_str(), &st) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &st) == 0)
     {
-        Logging::trace(path, "DVD detected.");
-        res = parse_dvd(path, &st, buf, filler);
-       	Logging::trace(path, "Found %1 titles.", res);
+        if (!check_path(path))
+        {
+            Logging::trace(path, "DVD detected.");
+            res = parse_dvd(path, &st, buf, filler);
+            Logging::trace(path, "Found %1 titles.", res);
+        }
+        else
+        {
+            res = load_path(path, &st, buf, filler);
+        }
     }
     return res;
 }

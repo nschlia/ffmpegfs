@@ -233,11 +233,22 @@ public:
     AVCodecID   m_audio_codec_id;
 };
 
+// Add / to the path if required
+// Returns: Constant reference to path
 const std::string & append_sep(std::string * path);
+// Add filename to path, adding a / to the path if required
+// Returns: Constant reference to path
 const std::string & append_filename(std::string * path, const std::string & filename);
+// Remove filename from path. Handy dirname alternative.
 const std::string & remove_filename(std::string *path);
+// Remove path from filename. Handy basename alternative.
 const std::string & remove_path(std::string *path);
+// Find extension in filename, if any
+// Returns: Constant true if extension was found, false if there was none
 bool                find_ext(std::string * ext, const std::string & filename);
+// Replace extension in filename. Take into account that there might
+// not be an extension already.
+// Returns: Constant reference to filename
 const std::string & replace_ext(std::string * filename, const std::string & ext);
 char *              new_strdup(const std::string & str);
 const std::string & get_destname(std::string *destname, const std::string & filename);

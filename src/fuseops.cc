@@ -44,10 +44,13 @@
 #include <assert.h>
 #include <signal.h>
 
+typedef std::map<std::string, VIRTUALFILE> filenamemap;
+
 static void init_stat(struct stat *st, size_t size, bool directory);
 static void prepare_script();
 static void translate_path(std::string *origpath, const char* path);
 static bool transcoded_name(std::string *filepath);
+static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
 
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -61,8 +64,8 @@ static void sighandler(int signum);
 static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
+static filenamemap filenames;
 static std::vector<char> index_buffer;
-static std::map<std::string, VIRTUALFILE> filenames;
 
 static struct sigaction oldHandler;
 
@@ -181,8 +184,20 @@ static bool transcoded_name(std::string * filepath)
     return false;
 }
 
-// Add new virtual file to internal list
-// Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
+static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for)
+{
+    filenamemap::const_iterator it = map.lower_bound(search_for);
+    if (it != map.end())
+    {
+        const std::string & key = it->first;
+        if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
+        {
+            return it;
+        }
+    }
+    return map.end();
+}
+
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const std::string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
@@ -195,13 +210,13 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const 
 
     filenames.insert(make_pair(filepath, virtualfile));
 
-    std::map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
+    filenamemap::iterator it = filenames.find(filepath);
     return &it->second;
 }
 
 LPVIRTUALFILE find_file(const std::string & filepath)
 {
-    std::map<std::string, VIRTUALFILE>::iterator it = filenames.find(filepath);
+    filenamemap::iterator it = filenames.find(filepath);
 
     errno = 0;
 
@@ -210,6 +225,48 @@ LPVIRTUALFILE find_file(const std::string & filepath)
         return &it->second;
     }
     return nullptr;
+}
+
+bool check_path(const std::string & path)
+{
+    filenamemap::const_iterator it = find_prefix(filenames, path);
+
+    return (it != filenames.end());
+}
+
+int load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
+{
+    int title_count = 0;
+
+    filenamemap::const_iterator it = filenames.lower_bound(path);
+    while (it != filenames.end())
+    {
+        const std::string & key = it->first;
+        if (key.compare(0, path.size(), path) == 0) // Really a prefix?
+        {
+            LPCVIRTUALFILE virtualfile = &it->second;
+            struct stat stbuf;
+            std::string destfile;
+
+            get_destname(&destfile, virtualfile->m_origfile);
+			remove_path(&destfile);
+
+            title_count++;
+
+            memcpy(&stbuf, statbuf, sizeof(struct stat));
+
+            stbuf.st_size   = virtualfile->m_st.st_size;
+            stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
+
+            if (buf != nullptr && filler(buf, destfile.c_str(), &stbuf, 0))
+            {
+                // break;
+            }
+        }
+        it++;
+    }
+
+    return 1; // title_count;
 }
 
 static int selector(const struct dirent * de)
@@ -226,9 +283,6 @@ static int selector(const struct dirent * de)
     }
 }
 
-// Given the destination (post-transcode) file name, determine the name of
-// the original file to be transcoded.
-// Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
 LPVIRTUALFILE find_original(std::string * filepath)
 {
     LPVIRTUALFILE virtualfile = find_file(*filepath);
@@ -435,9 +489,6 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     std::string origpath;
-#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
-    int res = 0;
-#endif
 
     Logging::trace(path, "getattr");
 
@@ -502,33 +553,40 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             {
                 int error = -errno;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
+                int res = 0;
+
                 // Returns -errno or number or titles on DVD
                 std::string _origpath(origpath);
 
                 remove_filename(&_origpath);
 
-#ifdef USE_LIBVCD
-                if (res <= 0)
+                virtualfile = find_original(&origpath);
+
+                if (virtualfile == nullptr)
                 {
-                    res = check_vcd(_origpath);
-                }
+#ifdef USE_LIBVCD
+                    if (res <= 0)
+                    {
+                        res = check_vcd(_origpath);
+                    }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-                if (res <= 0)
-                {
-                    res = check_dvd(_origpath);
-                }
+                    if (res <= 0)
+                    {
+                        res = check_dvd(_origpath);
+                    }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-                if (res <= 0)
-                {
-                    res = check_bluray(_origpath);
-                }
+                    if (res <= 0)
+                    {
+                        res = check_bluray(_origpath);
+                    }
 #endif // USE_LIBBLURAY
-                if (res <= 0)
-                {
-                    // No Bluray/DVD/VCD found or error reading disk
-                    return (!res ?  error : res);
+                    if (res <= 0)
+                    {
+                        // No Bluray/DVD/VCD found or error reading disk
+                        return (!res ?  error : res);
+                    }
                 }
 
                 virtualfile = find_original(&origpath);
@@ -754,7 +812,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         fi->fh = reinterpret_cast<uintptr_t>(cache_entry);
         // Need this because we do not know the exact size in advance.
         fi->direct_io = 1;
-//        fi->keep_cache = 1;
+        //        fi->keep_cache = 1;
 
         // Clear errors
         errno = 0;
@@ -943,9 +1001,9 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 
     // We need synchronous reads.
     conn->async_read = 0;
-//    conn->async_read = 1;
-//	conn->want |= FUSE_CAP_ASYNC_READ;
-//	conn->want |= FUSE_CAP_SPLICE_READ;
+    //    conn->async_read = 1;
+    //	conn->want |= FUSE_CAP_ASYNC_READ;
+    //	conn->want |= FUSE_CAP_SPLICE_READ;
 
     if (params.m_cache_maintenance)
     {

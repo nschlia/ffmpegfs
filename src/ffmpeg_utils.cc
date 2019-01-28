@@ -72,8 +72,6 @@ static int is_device(const AVClass *avclass);
 #define AV_ERROR_MAX_STRING_SIZE 128
 #endif // AV_ERROR_MAX_STRING_SIZE
 
-// Add / to the path if required
-// Returns: Constant reference to path
 const std::string & append_sep(std::string * path)
 {
     if (path->back() != '/')
@@ -84,8 +82,6 @@ const std::string & append_sep(std::string * path)
     return *path;
 }
 
-// Add filename to path, adding a / to the path if required
-// Returns: Constant reference to path
 const std::string & append_filename(std::string * path, const std::string & filename)
 {
     append_sep(path);
@@ -95,7 +91,6 @@ const std::string & append_filename(std::string * path, const std::string & file
     return *path;
 }
 
-// Remove filename from path. Handy dirname alternative.
 const std::string & remove_filename(std::string * path)
 {
     char *p = new_strdup(*path);
@@ -105,7 +100,6 @@ const std::string & remove_filename(std::string * path)
     return *path;
 }
 
-// Remove path from filename. Handy basename alternative.
 const std::string & remove_path(std::string *path)
 {
     char *p = new_strdup(*path);
@@ -114,8 +108,6 @@ const std::string & remove_path(std::string *path)
     return *path;
 }
 
-// Find extension in filename, if any
-// Returns: Constant true if extension was found, false if there was none
 bool find_ext(std::string * ext, const std::string & filename)
 {
     size_t found;
@@ -136,9 +128,6 @@ bool find_ext(std::string * ext, const std::string & filename)
     }
 }
 
-// Replace extension in filename. Take into account that there might
-// not be an extension already.
-// Returns: Constant reference to filename
 const std::string & replace_ext(std::string * filename, const std::string & ext)
 {
     size_t found;
@@ -1125,8 +1114,7 @@ std::vector<std::string> split(const std::string& input, const std::string & reg
 {
     // passing -1 as the submatch index parameter performs splitting
     std::regex re(regex);
-    std::sregex_token_iterator
-            first{input.begin(), input.end(), re, -1},
+    std::sregex_token_iterator first{input.begin(), input.end(), re, -1},
     last;
     return {first, last};
 }

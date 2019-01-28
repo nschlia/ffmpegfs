@@ -9,16 +9,32 @@ dist_man_MANS = ffmpegfs.1
 
 MAINTAINERCLEANFILES = ffmpegfs.1
 
-EXTRA_DIST = INSTALL.md README.md ffmpegfs.1.txt
+EXTRA_DIST = INSTALL.md README.md ffmpegfs.1.txt src/makehelp.sh
 
 ffmpegfs.1: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
-		-a revdate="$(shell date +'%B %Y')" -f manpage $<
+		-a revdate="$(shell date +'%B %Y')" -f manpage  --xsltproc-opts="-param ulink.show 1" $<
+
+# Just for the fun of it
+# PDF help - needs FOP
+ffmpegfs.1.pdf: ffmpegfs.1.txt
+	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
+		-a revdate="$(shell date +'%B %Y')" -f pdf --fop --xsltproc-opts="-param ulink.show 1" $<
+#--xsltproc-opts="-param ulink.show 0"
+
+help-pdf: ffmpegfs.1.pdf
+
+# HTML help
+ffmpegfs.1.htmlhelp: ffmpegfs.1.txt
+	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
+		-a revdate="$(shell date +'%B %Y')" -f htmlhelp $<
+		
+help-html: ffmpegfs.1.htmlhelp
 
 # Remove absolutely every generated file
 .PHONY: squeaky-clean
 squeaky-clean: maintainer-clean
-	rm -rf aclocal.m4 configure config Makefile.in src/Makefile.in test/Makefile.in
+	rm -rf aclocal.m4 configure config Makefile.in src/Makefile.in test/Makefile.in ffmpegfs.1 ffmpegfs.1.text src/ffmpegfshelp.h ffmpegfs.1.pdf ffmpegfs.1.htmlhelp ffmpegfs.1.hhcffmpegfs.1.hhp
 
 dist-hook:
 	@echo 'Creating ChangeLog file from git log'

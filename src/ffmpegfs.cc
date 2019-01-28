@@ -24,10 +24,13 @@
 
 #include "ffmpegfs.h"
 #include "logging.h"
+#include "ffmpegfshelp.h"
 
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
 #include <unistd.h>
+
+#include <iostream>
 
 #ifdef USE_LIBBLURAY
 #include <libbluray/bluray-version.h>
@@ -67,7 +70,7 @@ ffmpegfs_params::ffmpegfs_params()
     : m_basepath("")                            // required parameter
     , m_mountpath("")                           // required parameter
 
-    , m_autocopy(AUTOCOPY_OFF)                // default: off
+    , m_autocopy(AUTOCOPY_OFF)                  // default: off
     , m_profile(PROFILE_NONE)                   // default: no profile
     , m_level(LEVEL_NONE)                       // default: no level
 
@@ -300,7 +303,7 @@ typedef std::map<std::string, LEVEL, comp> LEVEL_MAP;
 static const AUTOCOPY_MAP autocopy_map =
 {
     { "NONE",           AUTOCOPY_OFF },
-    { "LIMIT",         AUTOCOPY_LIMIT },
+    { "LIMIT",          AUTOCOPY_LIMIT },
     { "ALWAYS",         AUTOCOPY_ALWAYS },
 };
 
@@ -346,238 +349,17 @@ static int          get_value(const std::string & arg, std::string *value);
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static int          set_defaults(void);
 static void         print_params(void);
-static void         usage(char *name);
+static void         usage();
 
-static void usage(char *name)
+static void usage()
 {
-    std::printf("Usage: %s [OPTION]... IN_DIR OUT_DIR\n\n", name);
-    fputs("Mount IN_DIR on OUT_DIR, converting audio/video files to MP4, MP3, OGG, WEBM, MOV/ProRes, AIFF, OPUS or WAV upon access.\n"
-          "\n"
-          "Encoding options:\n"
-          "\n"
-          "    --desttype=TYPE, -o desttype=TYPE\n"
-          "                           Select destination format. 'TYPE' can currently be\n"
-          "                           MP4, MP3, OGG, WEBM, MOV, PRORES, AIFF, OPUS or WAV. To stream videos,\n"
-          "                           MP4, OGG, WEBM or MOV/ProRes must be selected.\n"
-          "                           To use the smart transcoding feature, specify a video and audio file\n"
-          "                           type, separated by a \"+\" sign. For example, --desttype=mov+aiff will\n"
-          "                           convert video files to Apple Quicktime MOV and audio only files to\n"
-          "                           AIFF.\n"
-          "                           Default: mp4\n"
-          "   --autocopy=NAME, -oautocopy=NAME\n"
-          "                           Select auto copy option, can be:\n"
-          "                           OFF      off\n"
-          "                           LIMIT    limit file size about to predicted size\n"
-          "                           ALWAYS   always recode when possible even if target becomes larger\n"
-          "                           Default: OFF\n"
-          "    --profile=NAME, -o profile=NAME\n"
-          "                           Set profile for target audience. Currently selectable:\n"
-          "                           NONE     no profile\n"
-          "                           FF       optimise for Firefox\n"
-          "                           EDGE     optimise for MS Edge and Internet Explorer > 11\n"
-          "                           IE       optimise for MS Edge and Internet Explorer <= 11\n"
-          "                           CHROME   Google Chrome\n"
-          "                           SAFARI   Apple Safari\n"
-          "                           OPERA    Opera\n"
-          "                           MAXTHON  Maxthon\n"
-          "                           Default: NONE\n"
-          "    --level=NAME, -o level=NAME\n"
-          "                           Set level for output if available. Currently selectable:\n"
-          "                           Apple ProRes:\n"
-          "                           PROXY    Proxy – apco\n"
-          "                           LT       LT – apcs\n"
-          "                           STANDARD standard – apcn\n"
-          "                           HQ       HQ - apch\n"
-          "                           Default: HQ\n"
-          "\n", stdout);
-    fputs("Audio Options:\n"
-          "\n"
-          "    --audiobitrate=BITRATE, -o audiobitrate=BITRATE\n"
-          "                           Audio encoding bitrate.\n"
-          "                           Default: 128 kbit\n"
-          "    --audiosamplerate=SAMPLERATE, -o audiosamplerate=SAMPLERATE\n"
-          "                           Limits the output sample rate to SAMPLERATE. If the source file\n"
-          "                           sample rate is more it will be downsampled automatically.\n"
-          "                           Typical values are 8000, 11025, 22050, 44100,\n"
-          "                           48000, 96000, 192000. Set to 0 to keep source rate.\n"
-          "                           Default: 44.1 kHz\n"
-          "\n"
-          "Acceptable values for 'BITRATE':\n"
-          "\n"
-          "mp4: 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, \n"
-          "256, 288, 320, 352, 384, 416 and 448 kbps.\n"
-          "\n"
-          "mp3: For sampling frequencies of 32, 44.1, and 48 kHz, 'BITRATE' can be among 32,\n"
-          "40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, and 320 kbps.\n"
-          "\n"
-          "For sampling frequencies of 16, 22.05, and 24 kHz, 'BITRATE' can be among 8,\n"
-          "16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, and 160 kbps.\n"
-          "\n"
-          "When in doubt, it is recommended to choose a bitrate among 96, 112, 128,\n"
-          "160, 192, 224, 256, and 320 kbps.\n"
-          "\n"
-          "BITRATE can be defined as...\n"
-          " * n bit/s:  #  or #bps\n"
-          " * n kbit/s: #K or #Kbps\n"
-          " * n Mbit/s: #M or #Mbps\n"
-          "\n"
-          "SAMPLERATE can be defined as...\n"
-          " * In Hz:  #  or #Hz\n"
-          " * In kHz: #K or #KHz\n"
-          "\n", stdout);
-    fputs("Video Options:\n"
-          "\n"
-          "    --videobitrate=BITRATE, -o videobitrate=BITRATE\n"
-          "                           Video encoding bit rate. Setting this too high or low may\n"
-          "                           cause transcoding to fail.\n"
-          "                           Default: 2 Mbit\n"
-          "\n"
-          "mp4: May be specfied as 500 to 25000 kbit.\n"
-          "\n"
-          "    --videoheight=HEIGHT, -o videoheight=HEIGHT\n"
-          "                           Sets the height of the transcoded video.\n"
-          "                           When the video is rescaled the aspect ratio is\n"
-          "                           preserved if --width is not set at the same time.\n"
-          "                           Default: keep source video height\n"
-          "    --videowidth=WIDTH, -o videowidth=WIDTH\n"
-          "                           Sets the width of the transcoded video.\n"
-          "                           When the video is rescaled the aspect ratio is\n"
-          "                           preserved if --height is not set at the same time.\n"
-          "                           Default: keep source video width\n"
-          "    --deinterlace, -o deinterlace\n"
-          "                           Deinterlace video if necessary while transcoding.\n"
-          "                           May need higher bit rate, but will increase picture quality\n"
-          "                           when streaming via HTML5.\n"
-          "                           Default: no deinterlace\n"
-          "\n"
-          "BITRATE can be defined as...\n"
-          " * n bit/s:  #  or #bps\n"
-          " * n kbit/s: #K or #Kbps\n"
-          " * n Mbit/s: #M or #Mbps\n"
-          "\n", stdout);
-    fputs("Album Arts:\n"
-          "\n"
-          "    --noalbumarts, -o noalbumarts\n"
-          "                           Do not copy album arts into output file.\n"
-          "                           This will reduce the file size, may be useful when streaming via\n"
-          "                           HTML5 when album arts are not used anyway.\n"
-          "                           Default: add album arts\n"
-          "\n"
-          "Virtual Script:\n"
-          "\n"
-          "     --enablescript, -o enablescript\n"
-          "                           Added --enablescript option that will add virtual index.php to every\n"
-          "                           directory. It reads scripts/videotag.php from the ffmpegs binary directory.\n"
-          "                           This can be very handy to test video playback. Of course, feel free to\n"
-          "                           replace videotag.php with your own script.\n"
-          "                           Default: Do not generate script file\n"
-          "     --scriptfile, -o scriptfile\n"
-          "                           Set the name of the virtual script created in each directory.\n"
-          "                           Default: index.php\n"
-          "     --scriptsource, -o scriptsource\n"
-          "                           Take a different source file.\n"
-          "                           Default: scripts/videotag.php\n"
-          "\n", stdout);
-    fputs("Cache Options:\n"
-          "\n"
-          "     --expiry_time=TIME, -o expiry_time=TIME\n"
-          "                           Cache entries expire after TIME and will be deleted\n"
-          "                           to save disk space.\n"
-          "                           Default: 1 week\n"
-          "     --max_inactive_suspend=TIME, -o max_inactive_suspend=TIME\n"
-          "                           While being accessed the file is transcoded to the target format\n"
-          "                           in the background. When the client quits transcoding will continue\n"
-          "                           until this time out. Transcoding is suspended until it is\n"
-          "                           accessed again, and transcoding will continue.\n"
-          "                           Default: 15 seconds\n"
-          "     --max_inactive_abort=TIME, -o max_inactive_abort=TIME\n"
-          "                           While being accessed the file is transcoded to the target format\n"
-          "                           in the background. When the client quits transcoding will continue\n"
-          "                           until this time out, and the transcoder thread quits\n"
-          "                           Default: 30 seconds\n"
-          "     --prebuffer_size=SIZE, -o prebuffer_size=SIZE\n"
-          "                           Files will be decoded until the buffer contains this much bytes\n"
-          "                           allowing playback to start smoothly without lags.\n"
-          "                           Set to 0 to disable pre-buffering.\n"
-          "                           Default: 100 KB\n"
-          "     --max_cache_size=SIZE, -o max_cache_size=SIZE\n"
-          "                           Set the maximum diskspace used by the cache. If the cache would grow\n"
-          "                           beyond this limit when a file is transcoded, old entries will be deleted\n"
-          "                           to keep the cache within the size limit.\n"
-          "                           Default: unlimited\n"
-          "     --min_diskspace=SIZE, -o min_diskspace=SIZE\n"
-          "                           Set the required diskspace on the cachepath mount. If the remaining\n"
-          "                           space would fall below SIZE when a file is transcoded, old entries will\n"
-          "                           be deleted to keep the diskspace within the limit.\n"
-          "                           Default: 0 (no minimum space)\n"
-          "     --cachepath=DIR, -o cachepath=DIR\n"
-          "                           Sets the disk cache directory to DIR. Will be created if not existing.\n"
-          "                           The user running ffmpegfs must have write access to the location.\n"
-          "                           Default: temp directory, e.g. /tmp\n"
-          "     --disable_cache, -o disable_cache\n"
-          "                           Disable the cache functionality.\n"
-          "                           Default: enabled\n"
-          "     --cache_maintenance=TIME, -o cache_maintenance=TIME\n"
-          "                           Starts cache maintenance in TIME intervals. This will enforce the expery_time,\n"
-          "                           max_cache_size and min_diskspace settings. Do not set too low as this will slow\n"
-          "                           down transcoding.\n"
-          "                           Only one ffmpegfs process will do the maintenance.\n"
-          "                           Default: 1 hour\n"
-          "     --prune_cache\n"
-          "                           Prune cache immediately according to the above settings.\n"
-          "     --clear-cache, -o clear-cache\n"
-          "                           Clear cache on startup. All previously recoded files will be deleted.\n"
-          "\n"
-          "TIME can be defined as...\n"
-          " * Seconds: #\n"
-          " * Minutes: #m\n"
-          " * Hours:   #h\n"
-          " * Days:    #d\n"
-          " * Weeks:   #w\n"
-          "\n"
-          "SIZE can be defined as...\n"
-          " * n bytes:  # or #B\n"
-          " * n KBytes: #K or #KB\n"
-          " * n MBytes: #M or #MB\n"
-          " * n GBytes: #G or #GB\n"
-          " * n TBytes: #T or #TB\n"
-          "\n", stdout);
-    fputs("Other:\n"
-          "\n"
-          "     --max_threads=COUNT, -o max_threads=COUNT\n"
-          "                           Limit concurrent transcoder threads. Set to 0 for unlimited threads.\n"
-          "                           Recommended values are up to 16 times number of CPU cores.\n"
-          "                           Default: 16 times number of detected cpu cores\n"
-          "     --decoding_errors, -o decoding_errors\n"
-          "                           Decoding errors are normally ignored, leaving bloopers and hiccups in\n"
-          "                           encoded audio or video but yet creating a valid file. When this option\n"
-          "                           is set, transcoding will stop with an error.\n"
-          "                           Default: Ignore errors\n"
-          "     --win_smb_fix, -o win_smb_fix\n"
-          "                           Windows seems to access the files on Samba drives starting at the last 64K\n"
-          "                           segment simply when the file is opened. Setting --win_smb_fix=1 will ignore\n"
-          "                           these attempts (not decode the file up to this point).\n"
-          "                           Default: off\n"
-          "\n"
-          "Logging:\n"
-          "\n"
-          "    --log_maxlevel=LEVEL, -o log_maxlevel=LEVEL\n"
-          "                           Maximum level of messages to log, either ERROR, WARNING, INFO, DEBUG\n"
-          "                           or TRACE. Defaults to INFO, and always set to DEBUG in debug mode.\n"
-          "                           Note that the other log flags must also be set to enable logging.\n"
-          "    --log_stderr, -o log_stderr\n"
-          "                           Enable outputting logging messages to stderr.\n"
-          "                           Enabled in debug mode.\n"
-          "    --log_syslog, -o log_syslog\n"
-          "                           Enable outputting logging messages to syslog.\n"
-          "    --logfile=FILE, -o logfile=FILE\n"
-          "                           File to output log messages to. By default, no\n"
-          "                           file will be written.\n"
-          "\n"
-          "General/FUSE options:\n"
-          "    -h, --help             display this help and exit\n"
-          "    -V, --version          output version information and exit\n"
-          "\n", stdout);
+    std::string help;
+    size_t pos;
+
+    help.assign(reinterpret_cast<const char*>(ffmpegfshelp), ffmpegfshelp_len);
+    pos = help.find("OPTIONS\n");
+
+    std::cout << help.substr(pos + sizeof("OPTIONS\n"));
 }
 
 template <typename T>
@@ -1097,7 +879,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_HELP:
     {
-        usage(outargs->argv[0]);
+        usage();
         fuse_opt_add_arg(outargs, "-ho");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, nullptr);
         exit(1);

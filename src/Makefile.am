@@ -44,3 +44,14 @@ ffmpegfs_SOURCES += vcdio.cc vcdio.h vcdparser.cc vcdparser.h vcd/vcdchapter.cc 
 endif
 
 ffmpegfs_LDADD += $(sqlite3_LIBS)
+
+# Add conversion of manpages source. Will be used in binary.
+BUILT_SOURCES = ../ffmpegfs.1.text ffmpegfshelp.h
+
+../ffmpegfs.1.text: ../ffmpegfs.1.txt
+	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
+		-a revdate="$(shell date +'%B %Y')" -f text $<
+
+# sed in makefiles is a menace so we use a helper script
+ffmpegfshelp.h: ../ffmpegfs.1.text
+	$(AM_V_GEN)./makehelp.sh $@

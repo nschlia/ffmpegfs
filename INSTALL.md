@@ -41,7 +41,7 @@ If building from git, you'll also need:
 * automake
 * asciidoc
 * xmllint
-* xmlto
+* w3m
 
 The commands to install just the first prerequisites follow.
 

@@ -72,7 +72,32 @@ AC_RUN_IFELSE(
   [AC_MSG_RESULT(int)
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["x"], [format string for pthread_t])])
 
-# FFMPEG support checks
+#
+# Check for programs used when building manpages and help.
+#
+
+# Check for a2x (convert asciidoc to another format)
+AC_PATH_PROG(A2X, a2x)
+AC_CHECK_PROG(HAVE_A2X, a2x, "yes", "no")
+AS_IF([test "$HAVE_A2X" == "yes"], [], AC_MSG_ERROR([Missing a2x. Please install asciidoc to fix.]))
+
+# Check for w3m (html -> text)
+AC_PATH_PROG(W3M, w3m)
+AC_CHECK_PROG(HAVE_W3M, w3m, "yes", "no")
+AS_IF([test "$HAVE_W3M" == "yes"], [], AC_MSG_ERROR([Missing w3m. Please install w3m to fix.]))
+
+# Check for xmllint
+AC_PATH_PROG(XMLLINT, xmllint)
+AC_CHECK_PROG(HAVE_XMLLINT, xmllint, "yes", "no")
+AS_IF([test "$HAVE_XMLLINT" == "yes"], [], AC_MSG_ERROR([Missing xmlint. Please install libxml2-utils to fix.]))
+
+# xmlto seems not to be required
+# Check for xmlto
+#AC_PATH_PROG(XMLLTO, xmlto)
+#AC_CHECK_PROG(HAVE_XMLLTO, xmlto, "yes", "no")
+#AS_IF([test "$HAVE_XMLLTO" == "yes"], [], AC_MSG_ERROR([Missing xmlto. Please install xmlto to fix.]))
+
+dnl FFMPEG support checks
 
 # Tested with...
 #
@@ -109,7 +134,7 @@ PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
 # This is because the first PKG_CHECK_MODULES call is inside a conditional.
 PKG_PROG_PKG_CONFIG
 
-# Check for libswresample
+dnl Check for libswresample
 AC_ARG_WITH([libswresample],
   [AS_HELP_STRING([--with-libswresample],
     [support using libswresample @<:@default=check@:>@])],
@@ -121,7 +146,7 @@ AS_CASE(["$with_libswresample"],
   [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
 AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
 
-# Check for libavresample
+dnl Check for libavresample
 AC_ARG_WITH([libavresample],
   [AS_HELP_STRING([--with-libavresample],
     [support using libavresample @<:@default=check@:>@])],
@@ -148,7 +173,7 @@ AC_SEARCH_LIBS([sqlite3_db_cacheflush], [sqlite3], [AC_DEFINE([HAVE_SQLITE_CACHE
 AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPANDED_SQL], [1], [libsqlite3 has sqlite3_expanded_sql() function.])], [])
 
 # Optional libraries
-# Check for libdvdread and libdvdnav
+dnl Check for libdvdread and libdvdnav
 AC_ARG_WITH([libdvd],
   [AS_HELP_STRING([--with-libdvd],
     [support using libdvd @<:@default=check@:>@])],
@@ -168,7 +193,7 @@ AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD"
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 0])
 
-# libbluray
+dnl Check for libbluray
 AC_ARG_WITH([libbluray],
   [AS_HELP_STRING([--with-libbluray],
     [support using libbluray @<:@default=check@:>@])],
@@ -182,7 +207,7 @@ AS_CASE(["$with_libbluray"],
 AM_CONDITIONAL([USE_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 1])
 AM_CONDITIONAL([HINT_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 0])
 
-# libvcd
+# Check for libvcd
 AC_ARG_WITH([libvcd],
   [AS_HELP_STRING([--with-libvcd],
     [support using libvcd @<:@default=check@:>@])],

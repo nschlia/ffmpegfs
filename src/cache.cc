@@ -831,7 +831,7 @@ std::string Cache::expanded_sql(sqlite3_stmt *pStmt)
 #ifdef HAVE_SQLITE_EXPANDED_SQL
     char * p = sqlite3_expanded_sql(pStmt);
     sql = p;
-    free(p);
+    sqlite3_free(p);
 #else
     const char *p = sqlite3_sql(pStmt);
     if (p != nullptr)

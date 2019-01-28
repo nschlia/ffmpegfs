@@ -27,7 +27,7 @@
 
 #include <string>
 
-int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+// Returns -errno or number or titles on DVD
 int check_dvd(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBDVD

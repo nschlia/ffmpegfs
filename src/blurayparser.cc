@@ -28,10 +28,10 @@
 
 #include "libbluray/bluray.h"
 
-
 static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved);
 static int parse_find_best_audio_stream();
 static int parse_find_best_video_stream();
+static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved)
 {
@@ -226,7 +226,7 @@ static int parse_find_best_video_stream()
     return 0;
 }
 
-int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
+static int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;
     uint32_t title_count;

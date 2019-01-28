@@ -34,6 +34,7 @@
 //#include <dvdread/nav_read.h>
 //#include <dvdread/nav_print.h>
 
+static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
 
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
@@ -120,7 +121,7 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
     return best_stream;
 }
 
-int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
+static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     dvd_reader_t *dvd;
     ifo_handle_t *ifo_file;

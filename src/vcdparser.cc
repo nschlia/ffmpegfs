@@ -28,12 +28,14 @@
 
 #include "vcd/vcdentries.h"
 
-int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
+static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler);
+
+static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     VcdEntries vcd;
 
     vcd.load_file(path);
-	
+
     Logging::debug(path, "Parsing Video CD.");
 
     for (int chapter_no = 0; chapter_no < vcd.get_number_of_chapters(); chapter_no++)
@@ -76,7 +78,6 @@ int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf,
     return vcd.get_number_of_chapters();
 }
 
-// Returns -errno or number or titles on BLURAY
 int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);

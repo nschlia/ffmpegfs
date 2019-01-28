@@ -27,7 +27,7 @@
 
 #include <string>
 
-int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+// Returns -errno or number or titles on BLURAY
 int check_bluray(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBBLURAY

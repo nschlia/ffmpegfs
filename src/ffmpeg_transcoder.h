@@ -194,8 +194,7 @@ protected:
     void                        free_filters();
 #endif // !USING_LIBAV
 
-    bool                        can_copy_audio() const;
-    bool                        can_copy_video() const;
+    bool                        can_copy_stream(AVStream *stream) const;
 
     bool                        close_resample();
 

@@ -192,9 +192,11 @@ typedef enum _tagLEVEL
 
 typedef enum _tagAUTOCOPY
 {
-    AUTOCOPY_OFF = 0,
-    AUTOCOPY_LIMIT,
-    AUTOCOPY_ALWAYS,
+     AUTOCOPY_OFF = 0,      // Never copy streams, transcode always.
+     AUTOCOPY_MATCH,        // Copy stream if target supports codec.
+     AUTOCOPY_MATCHLIMIT,   // Same as MATCH, only copy if target not larger transcode otherwise.
+     AUTOCOPY_STRICT,       // Copy stream if codec matches desired target, transcode otherwise.
+     AUTOCOPY_STRICTLIMIT,  // Same as STRICT, only copy if target not larger, transcode otherwise.
 } AUTOCOPY;
 
 class ffmpegfs_format

@@ -41,15 +41,15 @@ Select auto copy option, 'NAME' can be:
 [width="100%"]
 |===================================================================================
 |*OFF* |Never copy streams, transcode always.
-|*MATCHING* |Copy stream if target supports codec.
-|*MATCHLIMIT* |Same as MATCHING, only copy if target not larger, transcode otherwise.
+|*MATCH* |Copy stream if target supports codec.
+|*MATCHLIMIT* |Same as MATCH, only copy if target not larger, transcode otherwise.
 |*STRICT* |Copy stream if codec matches desired target, transcode otherwise.
 |*STRICTLIMIT* |Same as STRICT, only copy if target not larger, transcode otherwise.
 |===================================================================================
 +
 This can speed up transcoding siginificantly as copying streams uses much less computing power as compared to transcoding.
 +
-MATCHING copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although ffmepeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
+MATCH copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although ffmepeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
 +
 STRICT would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to strictly adhere to the output format setting. This will create homogenous results which might prevent problems with picky playback software.
 +

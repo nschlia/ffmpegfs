@@ -534,7 +534,7 @@ int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
     return 0;
 }
 
-bool FFMPEG_Transcoder::can_copy_audio() const
+bool FFMPEG_Transcoder::can_copy_stream(AVStream *stream) const
 {
     if (params.m_autocopy == AUTOCOPY_OFF)
     {
@@ -542,50 +542,44 @@ bool FFMPEG_Transcoder::can_copy_audio() const
         return false;
     }
 
-    if (m_in.m_audio.m_stream == nullptr || CODECPAR(m_in.m_audio.m_stream)->codec_id != m_current_format->m_audio_codec_id)
+    if (stream == nullptr)
     {
-        // Different codecs, no auto copy
+        // Should normally not happen: Input stream stream unknown, no way to check - no auto copy
         return false;
     }
 
-    if (params.m_autocopy == AUTOCOPY_LIMIT)
+    if ((params.m_autocopy == AUTOCOPY_MATCH || params.m_autocopy == AUTOCOPY_MATCHLIMIT))
     {
-        BITRATE orig_bit_rate = (CODECPAR(m_in.m_audio.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
+        // Any codec supported by output format OK
+        AVOutputFormat* oformat = av_guess_format(nullptr, destname(), nullptr);
+        unsigned int codec_tag;
+        if (oformat->codec_tag == nullptr ||
+                av_codec_get_tag2(oformat->codec_tag, CODECPAR(stream)->codec_id, &codec_tag) <= 0)
+        {
+            // Codec not supported - no auto copy
+            return false;
+        }
+    }
+    else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
+    {
+        // Output codec must strictly match
+        if (CODECPAR(stream)->codec_id != m_current_format->m_audio_codec_id)
+        {
+            // Different codecs - no auto copy
+            return false;
+        }
+    }
+
+    if (params.m_autocopy == AUTOCOPY_MATCHLIMIT || params.m_autocopy == AUTOCOPY_STRICTLIMIT)
+    {
+        BITRATE orig_bit_rate = (CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : m_in.m_format_ctx->bit_rate;
         if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate))
         {
             // Bit rate changed, no auto copy
-            Logging::info(destname(), "Audio bit rate changed, no auto copy possible.");
+            Logging::info(destname(), "Bit rate changed, no auto copy possible.");
             return false;
         }
 
-    }
-
-    return true;
-}
-
-bool FFMPEG_Transcoder::can_copy_video() const
-{
-    if (params.m_autocopy == AUTOCOPY_OFF)
-    {
-        // Auto copy disabled
-        return false;
-    }
-
-    if (m_in.m_video.m_stream == nullptr || CODECPAR(m_in.m_video.m_stream)->codec_id != m_current_format->m_video_codec_id)
-    {
-        // Different codecs, no auto copy
-        return false;
-    }
-
-    if (params.m_autocopy == AUTOCOPY_LIMIT)
-    {
-        BITRATE orig_bit_rate = (CODECPAR(m_in.m_video.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
-        if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate))
-        {
-            // Bit rate changed, no auto copy
-            Logging::info(destname(), "Video bit rate changed, no auto copy possible.");
-            return false;
-        }
     }
 
     return true;
@@ -1618,8 +1612,8 @@ int FFMPEG_Transcoder::open_output_filestreams(Buffer *buffer)
     m_out.m_file_type = m_current_format->m_filetype;
 
     // Check if we can copy audio or video.
-    m_copy_video = can_copy_video();
-    m_copy_audio = can_copy_audio();
+    m_copy_audio = can_copy_stream(m_in.m_audio.m_stream);
+    m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype);
 
@@ -1783,13 +1777,13 @@ int FFMPEG_Transcoder::init_resampler()
         // Set the conversion parameters.
 #if LAVR_DEPRECATE
         m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
-                                                   m_out.m_audio.m_codec_ctx->channel_layout,
-                                                   m_out.m_audio.m_codec_ctx->sample_fmt,
-                                                   m_out.m_audio.m_codec_ctx->sample_rate,
-                                                   m_in.m_audio.m_codec_ctx->channel_layout,
-                                                   m_in.m_audio.m_codec_ctx->sample_fmt,
-                                                   m_in.m_audio.m_codec_ctx->sample_rate,
-                                                   0, nullptr);
+                                                  m_out.m_audio.m_codec_ctx->channel_layout,
+                                                  m_out.m_audio.m_codec_ctx->sample_fmt,
+                                                  m_out.m_audio.m_codec_ctx->sample_rate,
+                                                  m_in.m_audio.m_codec_ctx->channel_layout,
+                                                  m_in.m_audio.m_codec_ctx->sample_fmt,
+                                                  m_in.m_audio.m_codec_ctx->sample_rate,
+                                                  0, nullptr);
         if (m_audio_resample_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate resample context.");

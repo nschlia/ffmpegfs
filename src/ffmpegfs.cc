@@ -303,8 +303,10 @@ typedef std::map<std::string, LEVEL, comp> LEVEL_MAP;
 static const AUTOCOPY_MAP autocopy_map =
 {
     { "NONE",           AUTOCOPY_OFF },
-    { "LIMIT",          AUTOCOPY_LIMIT },
-    { "ALWAYS",         AUTOCOPY_ALWAYS },
+    { "MATCH",          AUTOCOPY_MATCH },
+    { "MATCHLIMIT",     AUTOCOPY_MATCHLIMIT },
+    { "STRICT",         AUTOCOPY_STRICT },
+    { "STRICTLIMIT",    AUTOCOPY_STRICTLIMIT },
 };
 
 static const PROFILE_MAP profile_map =

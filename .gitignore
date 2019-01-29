@@ -24,6 +24,6 @@ build
 /src/ffmpegfs
 core
 *.user
-/ffmpegfs.1.pdf
-/ffmpegfs.1.text
+ffmpegfs.1.pdf
+ffmpegfs.1.text
 /src/ffmpegfshelp.h

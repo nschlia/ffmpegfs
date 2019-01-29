@@ -14,7 +14,7 @@ ffmpegfs.1
 /src/ffmpegfs
 /src/config.h
 /src/config.h.in
-src/stamp-h1
+/src/stamp-h1
 /test/fpcompare
 /test/*.log
 /test/*.trs
@@ -27,3 +27,6 @@ core
 ffmpegfs.1.pdf
 ffmpegfs.1.text
 /src/ffmpegfshelp.h
+ffmpegfs.1.hhc
+ffmpegfs.1.hhp
+ffmpegfs.1.htmlhelp/

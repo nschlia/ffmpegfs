@@ -157,6 +157,16 @@ This will test audio conversion, tagging and size prediction.
 NOTE: Image embedding is not yet implemented. The test has been
 disabled at the moment.
 
+Documentation
+-------------
+
+The help can be created in doc or html format by running
+
+    make help-pdf
+    make help-html
+
+respectively.
+
 Trouble Shooting
 ----------------
 

@@ -62,8 +62,8 @@ then
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "obama" 85751 89365
-    check_filesize "raven" 126696 126937 
+    check_filesize "obama" 85751 89385
+    check_filesize "raven" 126696 126958 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov

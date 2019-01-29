@@ -552,9 +552,8 @@ bool FFMPEG_Transcoder::can_copy_stream(AVStream *stream) const
     {
         // Any codec supported by output format OK
         AVOutputFormat* oformat = av_guess_format(nullptr, destname(), nullptr);
-        unsigned int codec_tag;
         if (oformat->codec_tag == nullptr ||
-                av_codec_get_tag2(oformat->codec_tag, CODECPAR(stream)->codec_id, &codec_tag) <= 0)
+                av_codec_get_tag(oformat->codec_tag, CODECPAR(stream)->codec_id) <= 0)
         {
             // Codec not supported - no auto copy
             return false;

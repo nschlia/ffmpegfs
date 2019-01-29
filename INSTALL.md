@@ -10,7 +10,7 @@ See README.md for more information.
 Prerequisites
 -------------
 
-ffmpegfs uses FFMEG lib for decoding/encoding. It requires the following
+ffmpegfs uses FFmpeg lib for decoding/encoding. It requires the following
 libraries:
 
 * gcc and g++ compilers

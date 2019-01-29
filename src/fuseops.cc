@@ -273,9 +273,9 @@ static int selector(const struct dirent * de)
 {
     if (de->d_type & (DT_REG | DT_LNK))
     {
-        AVOutputFormat* format = av_guess_format(nullptr, de->d_name, nullptr);
+        AVOutputFormat* oformat = av_guess_format(nullptr, de->d_name, nullptr);
 
-        return (format != nullptr);
+        return (oformat != nullptr);
     }
     else
     {

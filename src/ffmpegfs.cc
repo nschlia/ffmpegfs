@@ -121,9 +121,9 @@ bool ffmpegfs_params::smart_transcode(void) const
 
 int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
 {
-    AVOutputFormat* format = av_guess_format(nullptr, filepath.c_str(), nullptr);
+    AVOutputFormat* oformat = av_guess_format(nullptr, filepath.c_str(), nullptr);
 
-    if (format != nullptr)
+    if (oformat != nullptr)
     {
         if (!params.smart_transcode())
         {
@@ -133,12 +133,12 @@ int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
         else
         {
             // Smart transcoding
-            if (params.m_format[0].m_video_codec_id != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE && !is_album_art(format->video_codec))
+            if (params.m_format[0].m_video_codec_id != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (params.m_format[1].m_audio_codec_id != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE)
+            else if (params.m_format[1].m_audio_codec_id != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;

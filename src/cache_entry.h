@@ -1,5 +1,5 @@
 /*
- * FFmpeg transcoder class header for ffmpegfs
+ * FFmpeg transcoder class header for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -62,6 +62,7 @@ public:
 
     LPVIRTUALFILE           virtualfile();
 
+    // Returns true if entry may be deleted, false if still in use
     bool                    close(int flags);
 
 protected:

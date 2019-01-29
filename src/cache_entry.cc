@@ -1,5 +1,5 @@
 /*
- * Cache entry object class for ffmpegfs
+ * Cache entry object class for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -220,7 +220,6 @@ void Cache_Entry::close_buffer(int flags)
     }
 }
 
-// Returns true if entry may be deleted, false if still in use
 bool Cache_Entry::close(int flags)
 {
     write_info();

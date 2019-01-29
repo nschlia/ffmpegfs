@@ -1,4 +1,4 @@
-ffmpegfs NEWS
+FFmpegfs NEWS
 
 Important changes in 1.7 (2019-01-XX) UNRELEASED
 
@@ -104,7 +104,7 @@ Important changes in 1.4 (2018-05-30)
 
 * Bugfix: Sometimes the pixel format could not be detected, raising an assert/application
           crash with newer FFmpeg API versions. Fixed by setting it to the output format.
-          This will mostly ever create defect encoder results, but at least the ffmpegfs
+          This will mostly ever create defect encoder results, but at least the FFmpegfs
           process will not be shut down writing a core file.
 * Bugfix: Set mp4 profile to high/3.1 to enable playback under enable playback under
           Win 7.
@@ -264,7 +264,7 @@ nschlia@oblivion-software.de
 Important changes in 0.94 (2017-12-19)
 
 Changes in this release:
-* Decided to rename mp3fs to ffmpegfs because the project has grown far beyond
+* Decided to rename mp3fs to FFmpegfs because the project has grown far beyond
   a simple clone of mp3fs and the changes it will surely never be pushed back
   to the parent project. A big random applause to the makers of mp3fs for giving
   me a good head start!

@@ -1,5 +1,5 @@
 /*
- * Logging class header for ffmpegfs
+ * Logging class header for FFmpegfs
  *
  * Copyright (C) 2017-2019 K. Henriksson
  *

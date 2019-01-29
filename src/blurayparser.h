@@ -1,5 +1,5 @@
 /*
- * dvdparser header for ffmpegfs
+ * dvdparser header for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

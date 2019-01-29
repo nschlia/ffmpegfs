@@ -1,5 +1,5 @@
 /*
- * DVD file I/O for ffmpegfs
+ * DVD file I/O for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -75,35 +75,6 @@ int dvdio::bufsize() const
 {
     return sizeof(m_data);
 }
-
-/*
-  static void print_time(dvd_time_t *dtime) {
-  const char *rate;
-
-  assert((dtime->hour>>4) < 0xa && (dtime->hour&0xf) < 0xa);
-  assert((dtime->minute>>4) < 0x7 && (dtime->minute&0xf) < 0xa);
-  assert((dtime->second>>4) < 0x7 && (dtime->second&0xf) < 0xa);
-  assert((dtime->frame_u&0xf) < 0xa);
-
-  fprintf(MSG_OUT,"%02x:%02x:%02x.%02x",
-         dtime->hour,
-         dtime->minute,
-         dtime->second,
-         dtime->frame_u & 0x3f);
-  switch((dtime->frame_u & 0xc0) >> 6) {
-  case 1:
-    rate = "25.00";
-    break;
-  case 3:
-    rate = "29.97";
-    break;
-  default:
-    rate = "(please send a bug report)";
-    break;
-  }
-  fprintf(MSG_OUT," @ %s fps", rate);
-}
-*/
 
 int dvdio::openX(const std::string & filename)
 {

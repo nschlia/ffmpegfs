@@ -1,5 +1,5 @@
 /*
- * Logging class source for ffmpegfs
+ * Logging class source for FFmpegfs
  *
  * Copyright (C) 2017-2019 K. Henriksson
  * Extensions (c) 2017 by Norbert Schlia (nschlia@oblivion-software.de)

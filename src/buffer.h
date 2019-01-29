@@ -1,5 +1,5 @@
 /*
- * cache class header for ffmpegfs
+ * cache class header for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -49,22 +49,30 @@ public:
     virtual int             read(void *data, int maxlen);
     virtual int             error() const;
     virtual int64_t         duration() const;
+    // Give the value of the internal buffer size pointer.
     virtual size_t          size() const;
+    // Give the value of the internal read position pointer.
     virtual size_t          tell() const;
     virtual int             seek(long offset, int whence);
     virtual bool            eof() const;
     virtual void            close();
 
+    // Write data to the current position in the Buffer. The position pointer
+    // will be updated.
     size_t                  write(const uint8_t* data, size_t length);
     bool                    flush();
     bool                    clear();
+    // Reserve memory without changing size to reduce re-allocations
     bool                    reserve(size_t size);
+    // Number of bytes written to buffer so far (may be less than m_buffer.size())
     size_t                  buffer_watermark() const;
+    // Copy buffered data into output buffer.
     bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize);
 
     const std::string &     filename() const;
     const std::string &     cachefile() const;
 
+    // Make up a cache file name including full path
     static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
     static bool             remove_file(const std::string & filename);
 

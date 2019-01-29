@@ -1,5 +1,5 @@
 /*
- * Bluray Disk file I/O for ffmpegfs
+ * Bluray Disk file I/O for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -26,8 +26,6 @@
 
 #include <libbluray/bluray.h>
 #include <assert.h>
-
-//#define MIN(a,b) (((a) < (b)) ? a : b)
 
 blurayio::blurayio()
     : m_bd(nullptr)

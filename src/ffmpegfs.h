@@ -1,5 +1,5 @@
 /*
- * Fuse interface for ffmpegfs
+ * Fuse interface for FFmpegfs
  *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2013 K. Henriksson
@@ -68,7 +68,7 @@ extern struct ffmpegfs_params
     int                 m_enablescript;             // Enable virtual script
     std::string         m_scriptfile;               // Script name
     std::string         m_scriptsource;             // Source script
-    // ffmpegfs options
+    // FFmpegfs options
     int                 m_debug;
     std::string         m_log_maxlevel;
     int                 m_log_stderr;

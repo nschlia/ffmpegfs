@@ -1,5 +1,5 @@
 /*
- * data buffer class source for ffmpegfs
+ * data buffer class source for FFmpegfs
  *
  * Copyright (C) 2013 K. Henriksson
  * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
@@ -265,7 +265,6 @@ bool Buffer::clear()
     return success;
 }
 
-// Reserve memory without changing size to reduce re-allocations
 bool Buffer::reserve(size_t size)
 {
     if (!m_is_open)
@@ -298,8 +297,6 @@ bool Buffer::reserve(size_t size)
     return ((m_buffer != nullptr) && success);
 }
 
-// Write data to the current position in the Buffer. The position pointer
-// will be updated.
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
     if (!m_is_open)
@@ -400,7 +397,6 @@ int Buffer::seek(long offset, int whence)
     }
 }
 
-// Give the value of the internal read position pointer.
 size_t Buffer::tell() const
 {
     return m_buffer_pos;
@@ -411,19 +407,16 @@ int64_t Buffer::duration() const
     return -1;  // not applicable
 }
 
-// Give the value of the internal buffer size pointer.
 size_t Buffer::size() const
 {
     return m_buffer_size;
 }
 
-// Number of bytes written to buffer so far (may be less than m_buffer.size())
 size_t Buffer::buffer_watermark() const
 {
     return m_buffer_watermark;
 }
 
-// Copy buffered data into output buffer.
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
     if (!m_is_open)
@@ -483,7 +476,6 @@ const std::string & Buffer::cachefile() const
     return m_cachefile;
 }
 
-// Make up a cache file name including full path
 const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype)
 {
     transcoder_cache_path(cachefile);

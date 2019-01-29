@@ -275,7 +275,7 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("decoding_errors=%u",          m_decoding_errors, 0),
     FFMPEGFS_OPT("--win_smb_fix=%u",            m_win_smb_fix, 0),
     FFMPEGFS_OPT("win_smb_fix=%u",              m_win_smb_fix, 0),
-    // ffmpegfs options
+    // FFmpegfs options
     FFMPEGFS_OPT("-d",                          m_debug, 1),
     FFMPEGFS_OPT("debug",                       m_debug, 1),
     FUSE_OPT_KEY("--log_maxlevel=%s",           KEY_LOG_MAXLEVEL),

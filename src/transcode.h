@@ -1,5 +1,5 @@
 /*
- * FileTranscoder interface for ffmpegfs
+ * FileTranscoder interface for FFmpegfs
  *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2013 K. Henriksson
@@ -30,13 +30,19 @@
 
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 int             transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf);
+// Set the file size
 bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, double frame_rate);
+// Predict file size
 bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry);
 
 // Functions for doing transcoding, called by main program body
+// Allocate and initialize the transcoder
 Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
+// Read some bytes into the internal buffer and into the given buffer.
 ssize_t         transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len);
+// Free the transcoder structure.
 void            transcoder_delete(Cache_Entry* cache_entry);
+// Return size of output file, as computed by Encoder.
 size_t          transcoder_get_size(Cache_Entry* cache_entry);
 size_t          transcoder_buffer_watermark(Cache_Entry* cache_entry);
 size_t          transcoder_buffer_tell(Cache_Entry* cache_entry);

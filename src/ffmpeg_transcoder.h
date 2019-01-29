@@ -1,5 +1,5 @@
 /*
- * FFmpeg decoder class header for ffmpegfs
+ * FFmpeg decoder class header for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -120,9 +120,13 @@ public:
 
 public:
     FFMPEG_Transcoder();
+    // Free the FFmpeg en/decoder
+    // after the transcoding process has finished.
     virtual ~FFMPEG_Transcoder();
 
     bool                        is_open() const;
+    // Open the given FFmpeg file and prepare for decoding. After this function,
+    // the other methods can be used to process the file.
     int                         open_input_file(LPVIRTUALFILE virtualfile, fileio * fio = nullptr);
     int                         open_output_file(Buffer* buffer);
     int                         process_single_fr(int & status);

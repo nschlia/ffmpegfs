@@ -1,11 +1,11 @@
 /*
- * Cache maintenance for ffmpegfs
+ * Cache maintenance for FFmpegfs
  *
  * Creates a POSIX timer that starts the cache maintenance in preset
- * intervals. To ensure that only one instance of ffmpegfs cleans up
+ * intervals. To ensure that only one instance of FFmpegfs cleans up
  * the cache a shared memory area and a named semaphore is also created.
  *
- * The first ffmpegfs process acts as master, all subsequently started
+ * The first FFmpegfs process acts as master, all subsequently started
  * instances will be clients. If the master process goes away one of
  * the clients will automatically take over as master.
  *

@@ -307,7 +307,7 @@ For example,
 
     ffmpegfs --audiobitrate 256K -videobitrate 2000000 /mnt/music /mnt/ffmpegfs -o allow_other,ro
 
-In recent versions of FUSE and ffmpegfs, the same can be achieved with the
+In recent versions of FUSE and FFmpegfs, the same can be achieved with the
 following entry in `/etc/fstab`:
 
     ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
@@ -320,11 +320,11 @@ At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.
 
 Note that the "allow_other" option by default can only be used by root.
-You must either run ffmpegfs as root or better add a "user_allow_other" key
+You must either run FFmpegfs as root or better add a "user_allow_other" key
 to /etc/fuse.conf.
 
 "allow_other" is required to allow any user access to the mount, by
-default this is only possible for the user who launched ffmpegfs.
+default this is only possible for the user who launched FFmpegfs.
 
 == HOW IT WORKS ==
 When a file is opened, the decoder and encoder are initialised and
@@ -384,7 +384,7 @@ with artist, album, etc.
 Subsequently many applications will go to the end of an *mp4* to read
 important information before going back to the head of the file and
 start playing. This will break the whole transcode-on-demand idea
-of ffmpegfs.
+of FFmpegfs.
 
 To get around the restriction several extensions have been developed,
 one of which is called "faststart" that relocates the afformentioned
@@ -418,12 +418,12 @@ The output format must be selectable for the desired audience, for
 streaming or opening the files locally, for example.
 
 == DEVELOPMENT ==
-ffmpegfs uses Git for revision control. You can obtain the full repository
+FFmpegfs uses Git for revision control. You can obtain the full repository
 with:
 
     git clone https://github.com/nschlia/ffmpegfs.git
 
-ffmpegfs is written in a mixture of C and C++ and uses the following libraries:
+FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
 
 * http://fuse.sourceforge.net/[FUSE]
 

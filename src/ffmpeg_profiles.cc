@@ -1,5 +1,5 @@
 /*
- * FFmpeg audience browser opmimisations source for ffmpegfs
+ * FFmpeg audience browser opmimisations source for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

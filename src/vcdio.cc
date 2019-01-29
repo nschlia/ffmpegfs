@@ -1,5 +1,5 @@
 /*
- * Video CD file I/O for ffmpegfs
+ * Video CD file I/O for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

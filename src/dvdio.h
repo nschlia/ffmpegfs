@@ -1,5 +1,5 @@
 /*
- * dvdio class header for ffmpegfs
+ * dvdio class header for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

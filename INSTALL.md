@@ -1,4 +1,4 @@
-Installation Instructions for ffmpegfs
+Installation Instructions for FFmpegfs
 ======================================
 
 Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
@@ -10,7 +10,7 @@ See README.md for more information.
 Prerequisites
 -------------
 
-ffmpegfs uses FFmpeg lib for decoding/encoding. It requires the following
+FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following
 libraries:
 
 * gcc and g++ compilers
@@ -136,7 +136,7 @@ formats should be used as source.
 Installation
 ------------
 
-ffmpegfs uses the GNU build system. If you are installing from git, you'll
+FFmpegfs uses the GNU build system. If you are installing from git, you'll
 need to first run:
 
     ./autogen.sh

@@ -1,5 +1,5 @@
 /*
- * Disk I/O base class for ffmpegfs
+ * Disk I/O base class for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

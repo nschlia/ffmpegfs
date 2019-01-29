@@ -1,5 +1,5 @@
 /*
- * FFmpeg decoder class header for ffmpegfs
+ * FFmpeg decoder class header for FFmpegfs
  *
  * Copyright (C) 2017-2018 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -280,7 +280,7 @@ std::string         ffmpeg_libinfo();
 int                 show_formats_devices(int device_only);
 const char *        get_codec_name(AVCodecID codec_id, bool long_name);
 int                 supports_albumart(FILETYPE filetype);
-// Get the ffmpegfs filetype, desttype mut be one of FFmpeg's "official" short names for formats.
+// Get the FFmpegfs filetype, desttype mut be one of FFmpeg's "official" short names for formats.
 FILETYPE            get_filetype(const std::string & desttype);
 // Same as get_filetype, but accepts a comma separated list.
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);

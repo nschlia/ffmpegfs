@@ -1,5 +1,5 @@
 /*
- * FFmpeg encoder profiles for ffmpegfs
+ * FFmpeg encoder profiles for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *

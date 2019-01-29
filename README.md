@@ -1,4 +1,4 @@
-ffmpegfs
+FFmpegfs
 ========
 
 | Compiler | Library | Build State |
@@ -24,7 +24,7 @@ About
 Web site:<br />
 https://nschlia.github.io/ffmpegfs/<br />
 
-ffmpegfs is a read-only FUSE filesystem which transcodes between audio
+FFmpegfs is a read-only FUSE filesystem which transcodes between audio
 and video formats on the fly when opened and read.
 
 Supported output formats:
@@ -58,7 +58,7 @@ Supported Linux Distributions
 -----------------------------
 
 **Suse** does not provide proprietary formats like AAC and H264, thus
-the distribution FFmpeg is crippled. ffmpegfs will not be able to encode
+the distribution FFmpeg is crippled. FFmpegfs will not be able to encode
 to H264 and AAC. End of story. 
 See https://en.opensuse.org/Restricted_formats.
 
@@ -68,7 +68,7 @@ This Libav version is far too old and will not work.
 
 **Debian 8** comes with Libav 11 clone of FFmpeg. 
 
-ffmpegfs compiles with Libav 11 and 12, but streaming directly while
+FFmpegfs compiles with Libav 11 and 12, but streaming directly while
 transcoding does not work. The first time a file is accessed playback 
 will fail. After it has been decoded fully to cache playback does work. 
 Playing the file via http may fail or it may take quite long until the
@@ -98,7 +98,7 @@ Mount your filesystem like this:
 
     ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 
-For example, to run ffmpegfs as daemon,
+For example, to run FFmpegfs as daemon,
 
     ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
 
@@ -121,17 +121,17 @@ Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source
 bitrate is less it will not be scaled up but rather left at the lower value.
 
 Note that the "allow_other" option by default can only be used by root.
-You must either run ffmpegfs as root or better add a "user_allow_other" key
+You must either run FFmpegfs as root or better add a "user_allow_other" key
 to /etc/fuse.conf.
 
 "allow_other" is required to allow any user access to the mount, by
-default this is only possible for the user who launched ffmpegfs.
+default this is only possible for the user who launched FFmpegfs.
 
 Examples:
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache
      
-Run ffmpegfs transcoding files from /test/in to /test/out, logging up to 
+Run FFmpegfs transcoding files from /test/in to /test/out, logging up to
 a chatty TRACE level to stderr. The cache resides in test/cache. All directories
 are under the current user's home directory.
 
@@ -300,7 +300,7 @@ with artist, album, etc.
 Subsequently many applications will go to the end of an MP4 to read
 important information before going back to the head of the file and
 start playing. This will break the whole transcode-on-demand idea
-of ffmpegfs.
+of FFmpegfs.
 
 To get around the restriction several extensions have been developed,
 one of which is called "faststart" that relocates the afformentioned
@@ -376,12 +376,12 @@ copy the predicted size first and not respond to size changes.
 DEVELOPMENT
 -----------
 
-ffmpegfs uses Git for revision control. You can obtain the full repository
+FFmpegfs uses Git for revision control. You can obtain the full repository
 with:
 
     git clone https://github.com/nschlia/ffmpegfs.git
 
-ffmpegfs is written in a mixture of C and C++ and uses the following libraries:
+FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
 
 * [FUSE](http://fuse.sourceforge.net/)
 
@@ -389,7 +389,7 @@ If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
 
 * [FFmpeg](https://www.FFmpeg.org/) or [Libav](https://www.Libav.org/)
 
-Please note that ffmpegfs is in active development, so the main branch may
+Please note that FFmpegfs is in active development, so the main branch may
 be unstable (but offer nice gimmicks, though). If you need a stable version
 please get one (preferrably the latest) release.
 

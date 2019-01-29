@@ -1,5 +1,5 @@
 ﻿/*
- * FileTranscoder interface for ffmpegfs
+ * FileTranscoder interface for FFmpegfs
  *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2013 K. Henriksson
@@ -97,7 +97,6 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 }
 
 // Close the input file and free everything but the initial buffer.
-
 static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transcoder)
 {
     int res = transcoder->encode_finish();
@@ -209,8 +208,6 @@ int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
     }
 }
 
-
-// Set the file size
 bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, double frame_rate)
 {
     Cache_Entry* cache_entry = cache->open(virtualfile);
@@ -246,7 +243,6 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
     return true;
 }
 
-// Predict file size
 bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
 {
     FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
@@ -274,7 +270,6 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
     return success;
 }
 
-// Allocate and initialize the transcoder
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     int _errno = 0;
@@ -460,8 +455,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     return cache_entry;
 }
 
-// Read some bytes into the internal buffer and into the given buffer.
-
 ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
 {
     Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
@@ -562,14 +555,11 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
     return len;
 }
 
-// Free the transcoder structure.
-
 void transcoder_delete(Cache_Entry* cache_entry)
 {
     cache->close(&cache_entry);
 }
 
-// Return size of output file, as computed by Encoder.
 size_t transcoder_get_size(Cache_Entry* cache_entry)
 {
     return cache_entry->size();

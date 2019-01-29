@@ -1,5 +1,5 @@
 /*
- * data buffer class header for ffmpegfs
+ * data buffer class header for FFmpegfs
  *
  * Copyright (C) 2013 K. Henriksson
  *

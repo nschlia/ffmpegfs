@@ -1,5 +1,5 @@
 /*
- * FFmpeg decoder class source for ffmpegfs
+ * FFmpeg decoder class source for FFmpegfs
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -168,8 +168,6 @@ FFMPEG_Transcoder::FFMPEG_Transcoder()
     init_id3v1(&m_out.m_id3v1);
 }
 
-// Free the FFmpeg en/decoder
-// after the transcoding process has finished.
 FFMPEG_Transcoder::~FFMPEG_Transcoder()
 {
     // Close fifo and resample context
@@ -229,8 +227,6 @@ bool FFMPEG_Transcoder::is_open() const
     return (m_in.m_format_ctx != nullptr);
 }
 
-// Open the given FFmpeg file and prepare for decoding. After this function,
-// the other methods can be used to process the file.
 int FFMPEG_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, fileio *fio)
 {
     AVDictionary * opt = nullptr;
@@ -2447,7 +2443,6 @@ int FFMPEG_Transcoder::decode_frame(AVPacket *pkt)
 // Initialise a temporary storage for the specified number of audio samples.
 // The conversion requires temporary storage due to the different format.
 // The number of audio samples to be allocated is specified in frame_size.
-
 int FFMPEG_Transcoder::init_converted_samples(uint8_t ***converted_input_samples, int frame_size)
 {
     int ret;

@@ -72,6 +72,25 @@ AC_RUN_IFELSE(
   [AC_MSG_RESULT(int)
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["x"], [format string for pthread_t])])
 
+# Checks for packages which use pkg-config.
+PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
+
+# Large file support
+AC_SYS_LARGEFILE
+
+# Define POSIX standard conformance
+AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
+
+# This is because the first PKG_CHECK_MODULES call is inside a conditional.
+PKG_PROG_PKG_CONFIG
+
+# Checks for sqlite3
+# API misses a lot of functionality if not fairly recent
+PKG_CHECK_MODULES([sqlite3], [sqlite3 >= 3.7.13])
+AC_SEARCH_LIBS([sqlite3_errstr], [sqlite3], [AC_DEFINE([HAVE_SQLITE_ERRSTR], [1], [libsqlite3 has sqlite3_errstr() function.])], [])
+AC_SEARCH_LIBS([sqlite3_db_cacheflush], [sqlite3], [AC_DEFINE([HAVE_SQLITE_CACHEFLUSH], [1], [libsqlite3 has sqlite3_db_cacheflush() function.])], [])
+AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPANDED_SQL], [1], [libsqlite3 has sqlite3_expanded_sql() function.])], [])
+
 #
 # Check for programs used when building manpages and help.
 #
@@ -131,9 +150,6 @@ PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
 	]
 )
 
-# This is because the first PKG_CHECK_MODULES call is inside a conditional.
-PKG_PROG_PKG_CONFIG
-
 dnl Check for libswresample
 AC_ARG_WITH([libswresample],
   [AS_HELP_STRING([--with-libswresample],
@@ -164,13 +180,6 @@ AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
         AC_MSG_ERROR([Either libswresample or libavresample must be present and enabled. Please make sure its development modules are installed. Do not use --without-libswresample and --without-libavresample at once.])
     )
 )
-
-# Checks for sqlite3
-# API misses a lot of functionality if not fairly recent
-PKG_CHECK_MODULES([sqlite3], [sqlite3 >= 3.7.13])
-AC_SEARCH_LIBS([sqlite3_errstr], [sqlite3], [AC_DEFINE([HAVE_SQLITE_ERRSTR], [1], [libsqlite3 has sqlite3_errstr() function.])], [])
-AC_SEARCH_LIBS([sqlite3_db_cacheflush], [sqlite3], [AC_DEFINE([HAVE_SQLITE_CACHEFLUSH], [1], [libsqlite3 has sqlite3_db_cacheflush() function.])], [])
-AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPANDED_SQL], [1], [libsqlite3 has sqlite3_expanded_sql() function.])], [])
 
 # Optional libraries
 dnl Check for libdvdread and libdvdnav
@@ -217,15 +226,6 @@ AM_CONDITIONAL([USE_LIBVCD], [test "$with_libvcd" != "no"])
 AM_COND_IF([USE_LIBVCD],
            [AC_MSG_RESULT([Internal S/VCD support enabled... yes])],
            [AC_MSG_RESULT([Internal S/VCD support enabled... no])])
-
-# Checks for packages which use pkg-config.
-PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
-
-# Large file support
-AC_SYS_LARGEFILE
-
-# Define POSIX standard conformance
-AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
 
 # Outputs resulting files.
 AC_CONFIG_FILES([Makefile

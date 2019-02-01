@@ -266,7 +266,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
         it++;
     }
 
-    return 1; // title_count;
+    return title_count;
 }
 
 static int selector(const struct dirent * de)

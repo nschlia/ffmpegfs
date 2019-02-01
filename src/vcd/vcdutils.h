@@ -14,9 +14,9 @@
 
 #include <string>
 
-#define     BCD2DEC(hex)    (((hex & 0xF0) >> 4) * 10 + (hex & 0x0F))
+#define     BCD2DEC(hex)        (((hex & 0xF0) >> 4) * 10 + (hex & 0x0F))
 
-#define     MAX_ENTRIES     500
+#define     VCD_MAX_CHAPTERS    500
 
 #pragma pack(push)
 #pragma pack(1)
@@ -56,7 +56,7 @@ typedef struct VCDENTRIES
     //    Entries (Entsprechend der Anzahl)
     //          1 Byte: Tracknummer
     //          3 Byte: Adresse MSF.
-    VCDCHAPTER  m_entry[MAX_ENTRIES];
+    VCDCHAPTER  m_chapter[VCD_MAX_CHAPTERS];
 
     uint8_t     reserved[36];           // RESERVED, must be 0x00
 

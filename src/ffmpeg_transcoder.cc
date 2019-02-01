@@ -3616,7 +3616,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     int input_sample_rate = 0;
     BITRATE input_video_bit_rate = 0;
 
-    if (m_fileio->duration() > -1)
+    if (m_fileio->duration() != AV_NOPTS_VALUE)
     {
         duration = static_cast<double>(m_fileio->duration()) / AV_TIME_BASE;
     }

@@ -27,9 +27,6 @@
 
 #include "fileio.h"
 
-//#define BLURAY_PKT_SIZE 192
-//#define BLURAY_BUF_SIZE (BLURAY_PKT_SIZE * 1024)
-
 typedef struct bluray BLURAY;
 
 class BlurayIO : public FileIO

@@ -1,5 +1,5 @@
 /*
- * Disk I/O base class for FFmpegfs
+ * Disk I/O base class
  *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -76,7 +76,7 @@ int DiskIO::error() const
 
 int64_t DiskIO::duration() const
 {
-    return -1;  // not applicable
+    return AV_NOPTS_VALUE;  // not applicable
 }
 
 size_t DiskIO::size() const

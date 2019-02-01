@@ -404,7 +404,7 @@ size_t Buffer::tell() const
 
 int64_t Buffer::duration() const
 {
-    return -1;  // not applicable
+    return AV_NOPTS_VALUE;  // not applicable
 }
 
 size_t Buffer::size() const

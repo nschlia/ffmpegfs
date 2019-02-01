@@ -290,7 +290,7 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
             sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
                     title_idx + 1,
                     chapter_idx + 1,
-                    format_duration(duration).c_str(),
+                    replace_all(format_duration(duration), ":", "-").c_str(),
                     (main_title >= 0 && title_idx == static_cast<uint32_t>(main_title)) ? "+" : "",
                     params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
 

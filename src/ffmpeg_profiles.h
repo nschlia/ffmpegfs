@@ -25,7 +25,7 @@
 
 #include "ffmpeg_utils.h"
 
-class FFMPEG_Profiles
+class FFmpeg_Profiles
 {
 public:
 #define OPT_CODEC       0x80000000
@@ -34,7 +34,7 @@ public:
 #define OPT_AUDIO       0x00000001  // For audio only files
 #define OPT_VIDEO       0x00000002  // For videos (not audio only)
 
-    typedef struct _tagPROFILE_OPTION
+    typedef struct PROFILE_OPTION
     {
         const char *            m_key;
         const char *            m_value;
@@ -43,7 +43,7 @@ public:
     } PROFILE_OPTION, *LPPROFILE_OPTION;
     typedef PROFILE_OPTION const * LPCPROFILE_OPTION;
 
-    typedef struct _tagPROFILE_LIST
+    typedef struct PROFILE_LIST
     {
         FILETYPE                m_filetype;
         PROFILE                 m_profile;
@@ -53,8 +53,8 @@ public:
     typedef PROFILE_LIST const * LPCPROFILE_LIST;
 
 protected:
-    FFMPEG_Profiles();
-    virtual ~FFMPEG_Profiles();
+    FFmpeg_Profiles();
+    virtual ~FFmpeg_Profiles();
 
 protected:    
     static const PROFILE_LIST   m_profile[];

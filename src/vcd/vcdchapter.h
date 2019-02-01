@@ -14,8 +14,8 @@
 
 #include <string>
 
-struct _tagVCDCHAPTER;
-typedef struct _tagVCDCHAPTER VCDCHAPTER;
+struct VCDCHAPTER;
+typedef struct VCDCHAPTER VCDCHAPTER;
 
 class VcdChapter
 {

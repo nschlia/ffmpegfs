@@ -25,8 +25,6 @@
 
 #ifdef USE_LIBVCD
 
-#include <string>
-
 // Returns -errno or number or titles on BLURAY
 int check_vcd(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 

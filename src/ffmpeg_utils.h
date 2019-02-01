@@ -140,7 +140,7 @@ const char *get_media_type_string(enum 		AVMediaType media_type);
 #define CODECPAR(s)     ((s)->codec)
 #endif
 
-typedef enum _tagFILETYPE
+typedef enum FILETYPE
 {
     FILETYPE_UNKNOWN,
     FILETYPE_MP3,
@@ -154,7 +154,7 @@ typedef enum _tagFILETYPE
     FILETYPE_PRORES
 } FILETYPE;
 
-typedef enum _tagPROFILE
+typedef enum PROFILE
 {
     PROFILE_INVALID = -1,
 
@@ -180,7 +180,7 @@ typedef enum _tagPROFILE
 
 } PROFILE;
 
-typedef enum _tagLEVEL
+typedef enum LEVEL
 {
     LEVEL_NONE = -1,
     // Prores profiles
@@ -190,7 +190,7 @@ typedef enum _tagLEVEL
     LEVEL_PRORES_HQ,
 } LEVEL;
 
-typedef enum _tagAUTOCOPY
+typedef enum AUTOCOPY
 {
      AUTOCOPY_OFF = 0,      // Never copy streams, transcode always.
      AUTOCOPY_MATCH,        // Copy stream if target supports codec.
@@ -199,17 +199,17 @@ typedef enum _tagAUTOCOPY
      AUTOCOPY_STRICTLIMIT,  // Same as STRICT, only copy if target not larger, transcode otherwise.
 } AUTOCOPY;
 
-class ffmpegfs_format
+class FFmpegfs_Format
 {
 public:
-    ffmpegfs_format()
+    FFmpegfs_Format()
         : m_format_name("")
         , m_filetype(FILETYPE_UNKNOWN)
         , m_video_codec_id(AV_CODEC_ID_NONE)
         , m_audio_codec_id(AV_CODEC_ID_NONE)
     {}
 
-    ffmpegfs_format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
+    FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
         : m_format_name(format_name)
         , m_filetype(filetype)
         , m_video_codec_id(video_codec_id)
@@ -284,7 +284,7 @@ int                 supports_albumart(FILETYPE filetype);
 FILETYPE            get_filetype(const std::string & desttype);
 // Same as get_filetype, but accepts a comma separated list.
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
-int                 get_codecs(const std::string & desttype, ffmpegfs_format *video_format);
+int                 get_codecs(const std::string & desttype, FFmpegfs_Format *video_format);
 
 int                 print_info(const AVStream* stream);
 

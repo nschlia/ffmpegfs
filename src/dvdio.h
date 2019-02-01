@@ -29,9 +29,9 @@
 
 #include <dvdread/ifo_read.h>
 
-class dvdio : public fileio
+class DvdIO : public FileIO
 {
-    typedef enum _tagDSITYPE
+    typedef enum DSITYPE
     {
         DSITYPE_CONTINUE,
         DSITYPE_EOF_CHAPTER,
@@ -39,13 +39,13 @@ class dvdio : public fileio
     } DSITYPE;
 
 public:
-    dvdio();
-    virtual ~dvdio();
+    DvdIO();
+    virtual ~DvdIO();
 
     virtual VIRTUALTYPE type() const;
 
     virtual int     bufsize() const;
-    virtual int     read(void *data, int maxlen);
+    virtual int     read(void *data, int size);
     virtual int     error() const;
     virtual int64_t duration() const;
     virtual size_t  size() const;

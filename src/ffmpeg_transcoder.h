@@ -43,17 +43,17 @@ struct AVFilterContext;
 struct AVFilterGraph;
 struct AVAudioFifo;
 
-class FFMPEG_Transcoder : public FFMPEG_Base, FFMPEG_Profiles
+class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
 public:
 #define MAX_PRORES_FRAMERATE    2
 
     // Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
-    typedef struct _tagPRORES_BITRATE
+    typedef struct PRORES_BITRATE
     {
         int                     m_width;
         int                     m_height;
-        struct _tagPRORES_FRAMERATE
+        struct PRORES_FRAMERATE
         {
             int                 m_framerate;
             int                 m_interleaved;
@@ -119,15 +119,15 @@ public:
     };
 
 public:
-    FFMPEG_Transcoder();
+    FFmpeg_Transcoder();
     // Free the FFmpeg en/decoder
     // after the transcoding process has finished.
-    virtual ~FFMPEG_Transcoder();
+    virtual ~FFmpeg_Transcoder();
 
     bool                        is_open() const;
     // Open the given FFmpeg file and prepare for decoding. After this function,
     // the other methods can be used to process the file.
-    int                         open_input_file(LPVIRTUALFILE virtualfile, fileio * fio = nullptr);
+    int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
     int                         open_output_file(Buffer* buffer);
     int                         process_single_fr(int & status);
     int                         encode_finish();
@@ -203,7 +203,7 @@ protected:
     bool                        close_resample();
 
 private:
-    fileio *                    m_fileio;
+    FileIO *                    m_fileio;
     bool                        m_close_fileio;
     time_t                      m_mtime;
     size_t                      m_predicted_size;         // Use this as the size instead of computing it.
@@ -236,7 +236,7 @@ private:
     bool                        m_copy_audio;
     bool                        m_copy_video;
 
-    ffmpegfs_format *           m_current_format;
+    FFmpegfs_Format *           m_current_format;
 
     static const PRORES_BITRATE m_prores_bitrate[];
 };

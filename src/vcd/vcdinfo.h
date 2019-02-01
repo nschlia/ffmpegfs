@@ -25,12 +25,12 @@ public:
 
     const time_t  &         get_file_date() const;
     int64_t                 get_disk_size() const;
-    const std::string   &    get_id() const;
+    const std::string   &   get_id() const;
     int                     get_type() const;
     std::string             get_type_str() const;
     int                     get_profile_tag() const;
-    std::string              get_profile_tag_str() const;
-    const std::string   &    get_album_id() const;
+    std::string             get_profile_tag_str() const;
+    const std::string   &   get_album_id() const;
     int                     get_number_of_cds() const;
     int                     get_cd_number() const;
 

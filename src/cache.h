@@ -28,7 +28,7 @@
 #include <map>
 #include <sqlite3.h>
 
-typedef struct
+typedef struct CACHE_INFO
 {
     std::string     m_origfile;
     std::string     m_destfile;
@@ -50,7 +50,9 @@ typedef struct
     time_t          m_access_time;
     time_t          m_file_time;
     size_t          m_file_size;
-} t_cache_info;
+} CACHE_INFO;
+typedef CACHE_INFO const *LPCCACHE_INFO;
+typedef CACHE_INFO *LPCACHE_INFO;
 
 class Cache_Entry;
 
@@ -83,8 +85,8 @@ public:
     bool                    remove_cachefile(const std::string & filename, const std::string &desttype);
 
 protected:
-    bool                    read_info(t_cache_info & cache_info);
-    bool                    write_info(const t_cache_info & cache_info);
+    bool                    read_info(LPCACHE_INFO cache_info);
+    bool                    write_info(LPCCACHE_INFO cache_info);
     bool                    delete_info(const std::string & filename, const std::string & desttype);
 
     Cache_Entry*            create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype);

@@ -27,11 +27,11 @@
 
 #define INVALID_STREAM  -1
 
-class FFMPEG_Base
+class FFmpeg_Base
 {
 public:
-    FFMPEG_Base();
-    virtual ~FFMPEG_Base();
+    FFmpeg_Base();
+    virtual ~FFmpeg_Base();
 
 protected:
     int         open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename = nullptr) const;

@@ -19,7 +19,7 @@
 class VcdEntries
 {
 public:
-    typedef enum _tagSEEKRES
+    typedef enum SEEKRES
     {
         SEEKRES_NOTFOUND,
         SEEKRES_FOUND,

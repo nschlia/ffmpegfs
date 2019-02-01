@@ -27,7 +27,7 @@
 #include <libbluray/bluray.h>
 #include <assert.h>
 
-blurayio::blurayio()
+BlurayIO::BlurayIO()
     : m_bd(nullptr)
     , m_is_eof(false)
     , m_errno(0)
@@ -44,22 +44,22 @@ blurayio::blurayio()
     memset(&m_data, 0, sizeof(m_data));
 }
 
-blurayio::~blurayio()
+BlurayIO::~BlurayIO()
 {
 
 }
 
-VIRTUALTYPE blurayio::type() const
+VIRTUALTYPE BlurayIO::type() const
 {
     return VIRTUALTYPE_BLURAY;
 }
 
-int blurayio::bufsize() const
+int BlurayIO::bufsize() const
 {
     return sizeof(m_data);
 }
 
-int blurayio::openX(const std::string & filename)
+int BlurayIO::openX(const std::string & filename)
 {
     const char *bdpath = nullptr;
     int title_count;
@@ -156,7 +156,7 @@ int blurayio::openX(const std::string & filename)
     return 0;
 }
 
-int blurayio::read(void * data, int size)
+int BlurayIO::read(void * data, int size)
 {
     int result_len = 0;
 
@@ -212,27 +212,27 @@ int blurayio::read(void * data, int size)
     return result_len;
 }
 
-int blurayio::error() const
+int BlurayIO::error() const
 {
     return m_errno;
 }
 
-int64_t blurayio::duration() const
+int64_t BlurayIO::duration() const
 {
     return m_duration;
 }
 
-size_t blurayio::size() const
+size_t BlurayIO::size() const
 {
     return (m_end_pos - m_start_pos);
 }
 
-size_t blurayio::tell() const
+size_t BlurayIO::tell() const
 {
     return (bd_tell(m_bd) - m_start_pos);
 }
 
-int blurayio::seek(long offset, int whence)
+int BlurayIO::seek(long offset, int whence)
 {
     long int seek_pos;
 
@@ -267,12 +267,12 @@ int blurayio::seek(long offset, int whence)
     return success;
 }
 
-bool blurayio::eof() const
+bool BlurayIO::eof() const
 {
     return (m_cur_pos >= m_end_pos);
 }
 
-void blurayio::close()
+void BlurayIO::close()
 {
     bd_close(m_bd);
 }

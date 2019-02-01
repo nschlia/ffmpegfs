@@ -34,24 +34,24 @@
 
 #include <assert.h>
 
-fileio::fileio()
+FileIO::FileIO()
     : m_virtualfile(nullptr)
 {
 
 }
 
-fileio::~fileio()
+FileIO::~FileIO()
 {
 
 }
 
-fileio * fileio::alloc(VIRTUALTYPE type)
+FileIO * FileIO::alloc(VIRTUALTYPE type)
 {
     switch (type)
     {
     case VIRTUALTYPE_REGULAR:
     {
-        return new diskio;
+        return new DiskIO;
     }
     case VIRTUALTYPE_BUFFER:
     {
@@ -60,19 +60,19 @@ fileio * fileio::alloc(VIRTUALTYPE type)
 #ifdef USE_LIBVCD
     case VIRTUALTYPE_VCD:
     {
-        return new vcdio;
+        return new VcdIO;
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
     {
-        return new dvdio;
+        return new DvdIO;
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
     {
-        return new blurayio;
+        return new BlurayIO;
     }
 #endif // USE_LIBBLURAY
     //case VIRTUALTYPE_PASSTHROUGH:
@@ -84,7 +84,7 @@ fileio * fileio::alloc(VIRTUALTYPE type)
     }
 }
 
-int fileio::open(LPCVIRTUALFILE virtualfile)
+int FileIO::open(LPCVIRTUALFILE virtualfile)
 {
 //    assert(virtualfile->m_type == type());
 
@@ -93,12 +93,12 @@ int fileio::open(LPCVIRTUALFILE virtualfile)
     return openX(virtualfile->m_origfile);
 }
 
-LPCVIRTUALFILE fileio::virtualfile() const
+LPCVIRTUALFILE FileIO::virtualfile() const
 {
     return m_virtualfile;
 }
 
-const std::string & fileio::set_path(const std::string & path)
+const std::string & FileIO::set_path(const std::string & path)
 {
     m_path = path;
 

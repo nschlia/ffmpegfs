@@ -21,7 +21,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-typedef struct _tagVCDINFO
+typedef struct VCDINFO
 {
 #pragma pack(1)
 

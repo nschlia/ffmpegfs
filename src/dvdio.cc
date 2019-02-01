@@ -36,7 +36,7 @@
 #include <dvdread/nav_read.h>
 //#include <dvdread/nav_print.h>
 
-dvdio::dvdio()
+DvdIO::DvdIO()
     : m_dvd(nullptr)
     , m_dvd_title(nullptr)
     , m_vmg_file(nullptr)
@@ -62,21 +62,21 @@ dvdio::dvdio()
     memset(&m_buffer, 0, sizeof(m_buffer));
 }
 
-dvdio::~dvdio()
+DvdIO::~DvdIO()
 {
 }
 
-VIRTUALTYPE dvdio::type() const
+VIRTUALTYPE DvdIO::type() const
 {
     return VIRTUALTYPE_DVD;
 }
 
-int dvdio::bufsize() const
+int DvdIO::bufsize() const
 {
     return sizeof(m_data);
 }
 
-int dvdio::openX(const std::string & filename)
+int DvdIO::openX(const std::string & filename)
 {
     int pgc_id;
     int ttn, pgn;
@@ -229,7 +229,7 @@ int dvdio::openX(const std::string & filename)
 #define PS_STREAM_ID                    3
 
 // return the size of the next packet
-bool dvdio::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const
+bool DvdIO::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const
 {
     if (peek < 4)
     {
@@ -278,7 +278,7 @@ bool dvdio::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *s
 }
 
 // return the id of a PES (should be valid)
-int dvdio::get_pes_id(const uint8_t *buffer, unsigned int size) const
+int DvdIO::get_pes_id(const uint8_t *buffer, unsigned int size) const
 {
     if (buffer[PS_STREAM_ID] == PS_STREAM_ID_PRIVATE_STREAM1)
     {
@@ -383,7 +383,7 @@ int dvdio::get_pes_id(const uint8_t *buffer, unsigned int size) const
 }
 
 // Extract only the interesting portion of the VOB input stream
-unsigned int dvdio::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const
+unsigned int DvdIO::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const
 {
     unsigned int netsize = 0;
     while (len > 0)
@@ -433,7 +433,7 @@ unsigned int dvdio::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len)
     return netsize;
 }
 
-dvdio::DSITYPE dvdio::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data)
+DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
     DSITYPE dsitype = DSITYPE_CONTINUE;
@@ -524,7 +524,7 @@ dvdio::DSITYPE dvdio::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
     return dsitype;
 }
 
-void dvdio::next_cell()
+void DvdIO::next_cell()
 {
     // Check if we're entering an angle block
     if (m_cur_pgc->cell_playback[m_cur_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
@@ -546,7 +546,7 @@ void dvdio::next_cell()
     }
 }
 
-int dvdio::read(void * data, int size)
+int DvdIO::read(void * data, int size)
 {
     unsigned int cur_output_size;
     ssize_t maxlen;
@@ -658,17 +658,17 @@ int dvdio::read(void * data, int size)
     return static_cast<int>(result_len);
 }
 
-int dvdio::error() const
+int DvdIO::error() const
 {
     return m_errno;
 }
 
-int64_t dvdio::duration() const
+int64_t DvdIO::duration() const
 {
     return m_duration;
 }
 
-size_t dvdio::size() const
+size_t DvdIO::size() const
 {
     if (m_cur_pgc == nullptr)
     {
@@ -680,12 +680,12 @@ size_t dvdio::size() const
     }
 }
 
-size_t dvdio::tell() const
+size_t DvdIO::tell() const
 {
     return m_cur_pos;
 }
 
-int dvdio::seek(long offset, int /*whence*/)
+int DvdIO::seek(long offset, int /*whence*/)
 {
     if (!offset)
     {
@@ -705,12 +705,12 @@ int dvdio::seek(long offset, int /*whence*/)
     return -1;
 }
 
-bool dvdio::eof() const
+bool DvdIO::eof() const
 {
     return m_is_eof;
 }
 
-void dvdio::close()
+void DvdIO::close()
 {
     if (m_vts_file != nullptr)
     {
@@ -737,7 +737,7 @@ void dvdio::close()
 
 // Returns true if the pack is a NAV pack. 
 // Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)
-bool dvdio::is_nav_pack(const unsigned char *buffer) const
+bool DvdIO::is_nav_pack(const unsigned char *buffer) const
 {
     /*
      * The NAV Pack is comprised of the PCI Packet and DSI Packet, both

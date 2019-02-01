@@ -30,23 +30,24 @@
 
 #include <unistd.h>
 
-typedef struct tagThread_Data
+typedef struct THREAD_DATA
 {
     pthread_mutex_t  m_mutex;
     pthread_cond_t   m_cond;
     bool             m_initialised;
     void *           m_arg;
-} Thread_Data;
+} THREAD_DATA;
 
 static Cache *cache;
 static volatile bool thread_exit;
 static volatile unsigned int thread_count;
 
-extern "C" {
+extern "C"
+{
 static void *decoder_thread(void *arg);
 }
 
-static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transcoder);
+static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
 
 // Transcode the buffer until the buffer has enough or until an error occurs.
 // The buffer needs at least 'end' bytes before transcoding stops. Returns true
@@ -97,7 +98,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 }
 
 // Close the input file and free everything but the initial buffer.
-static int transcode_finish(Cache_Entry* cache_entry, FFMPEG_Transcoder *transcoder)
+static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder)
 {
     int res = transcoder->encode_finish();
     if (res < 0)
@@ -217,7 +218,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
         return false;
     }
 
-    ffmpegfs_format *current_format = params.current_format(virtualfile);
+    FFmpegfs_Format *current_format = params.current_format(virtualfile);
     if (current_format == nullptr)
     {
         Logging::error(cache_entry->filename(), "Internal error getting file size.");
@@ -226,12 +227,12 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
 
     size_t filesize = 0;
 
-    if (!FFMPEG_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
+    if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
     {
         Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype);
     }
 
-    if (!FFMPEG_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
+    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
     {
         Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype);
     }
@@ -245,7 +246,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
 
 bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
 {
-    FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
+    FFmpeg_Transcoder *transcoder = new FFmpeg_Transcoder;
     bool success = false;
 
     if (transcoder == nullptr)
@@ -380,7 +381,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //  throw false;
                 //}
 
-                Thread_Data* thread_data = static_cast<Thread_Data*>(malloc(sizeof(Thread_Data)));  // TODO: replace with new/delete
+                THREAD_DATA* thread_data = static_cast<THREAD_DATA*>(malloc(sizeof(THREAD_DATA)));  // TODO: replace with new/delete
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;
@@ -606,9 +607,9 @@ int transcoder_cache_clear(void)
 
 static void *decoder_thread(void *arg)
 {
-    Thread_Data *thread_data = static_cast<Thread_Data*>(arg);
+    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
-    FFMPEG_Transcoder *transcoder = new FFMPEG_Transcoder;
+    FFmpeg_Transcoder *transcoder = new FFmpeg_Transcoder;
     int averror = 0;
     int syserror = 0;
     bool timeout = false;

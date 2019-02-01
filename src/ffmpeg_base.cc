@@ -48,16 +48,16 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
-FFMPEG_Base::FFMPEG_Base()
+FFmpeg_Base::FFmpeg_Base()
 {
 }
 
-FFMPEG_Base::~FFMPEG_Base()
+FFmpeg_Base::~FFmpeg_Base()
 {
 }
 
 // Open codec context for desired media type
-int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
+int FFmpeg_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     int ret;
 
@@ -76,7 +76,7 @@ int FFMPEG_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
     return open_codec_context(avctx, *stream_idx, fmt_ctx, type, filename);
 }
 
-int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
+int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     AVCodecContext *dec_ctx = nullptr;
     AVCodec *dec = nullptr;
@@ -141,7 +141,7 @@ int FFMPEG_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 }
 
 // Initialise one data packet for reading or writing.
-void FFMPEG_Base::init_packet(AVPacket *packet) const
+void FFmpeg_Base::init_packet(AVPacket *packet) const
 {
     av_init_packet(packet);
     // Set the packet data and size so that it is recognised as being empty.
@@ -150,7 +150,7 @@ void FFMPEG_Base::init_packet(AVPacket *packet) const
 }
 
 // Initialise one frame for reading from the input file
-int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
+int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 {
     *frame = ::av_frame_alloc();
     if (*frame == nullptr)
@@ -161,7 +161,7 @@ int FFMPEG_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational frame_rate) const
+void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational frame_rate) const
 {
     AVRational time_base;
 
@@ -262,7 +262,7 @@ void FFMPEG_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 
-int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_dict_set(pm, key, value, flags);
 
@@ -274,7 +274,7 @@ int FFMPEG_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
     return ret;
 }
 
-int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_opt_set(obj, key, value, flags);
 
@@ -286,7 +286,7 @@ int FFMPEG_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
     return ret;
 }
 
-void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
+void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
     int64_t duration = AV_NOPTS_VALUE;
 
@@ -302,7 +302,7 @@ void FFMPEG_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
                   format_duration(duration));
 }
 
-void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
+void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
     int64_t duration = AV_NOPTS_VALUE;
 
@@ -320,18 +320,18 @@ void FFMPEG_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
                   format_duration(duration));
 }
 
-std::string FFMPEG_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
+std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
 {
     const char *fmt_name = ::av_get_pix_fmt_name(pix_fmt);
     return (fmt_name != nullptr ? fmt_name : "none");
 }
 
-std::string FFMPEG_Base::get_sample_fmt_name(AVSampleFormat sample_fmt) const
+std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt) const
 {
     return av_get_sample_fmt_name(sample_fmt);
 }
 
-std::string FFMPEG_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout) const
+std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout) const
 {
     char buffer[1024];
 #ifndef USING_LIBAV

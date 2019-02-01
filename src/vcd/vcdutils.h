@@ -21,7 +21,7 @@
 #pragma pack(push)
 #pragma pack(1)
 
-typedef struct _tagVCDMSF
+typedef struct VCDMSF
 {
     // Note: the fields in this structure are BCD encoded
     uint8_t m_min;
@@ -31,7 +31,7 @@ typedef struct _tagVCDMSF
 } VCDMSF, *LPVCDMSF;
 typedef const VCDMSF * LPCVCDMSF;
 
-typedef struct _tagVCDCHAPTER
+typedef struct VCDCHAPTER
 {
     uint8_t m_track_no;
     VCDMSF  m_msf;
@@ -39,7 +39,7 @@ typedef struct _tagVCDCHAPTER
 } VCDCHAPTER, *LPVCDCHAPTER;
 typedef const VCDCHAPTER * LPCVCDCHAPTER;
 
-typedef struct _tagVCDENTRIES
+typedef struct VCDENTRIES
 {
     char        m_ID[8];                // 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD"
     uint8_t     m_type;                 // 1 Byte: CD type

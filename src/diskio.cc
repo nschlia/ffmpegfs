@@ -25,28 +25,28 @@
 #include <errno.h>
 #include <assert.h>
 
-diskio::diskio()
+DiskIO::DiskIO()
     : m_fpi(nullptr)
 {
 
 }
 
-diskio::~diskio()
+DiskIO::~DiskIO()
 {
     close();
 }
 
-VIRTUALTYPE diskio::type() const
+VIRTUALTYPE DiskIO::type() const
 {
     return VIRTUALTYPE_REGULAR;
 }
 
-int diskio::bufsize() const
+int DiskIO::bufsize() const
 {
     return (100 /* KB */ * 1024);
 }
 
-int diskio::openX(const std::string & filename)
+int DiskIO::openX(const std::string & filename)
 {
     Logging::info(filename, "Opening input file.");
 
@@ -64,22 +64,22 @@ int diskio::openX(const std::string & filename)
     }
 }
 
-int diskio::read(void * data, int maxlen)
+int DiskIO::read(void * data, int size)
 {
-    return static_cast<int>(fread(data, 1, static_cast<size_t>(maxlen), m_fpi));
+    return static_cast<int>(fread(data, 1, static_cast<size_t>(size), m_fpi));
 }
 
-int diskio::error() const
+int DiskIO::error() const
 {
     return ferror(m_fpi);
 }
 
-int64_t diskio::duration() const
+int64_t DiskIO::duration() const
 {
     return -1;  // not applicable
 }
 
-size_t diskio::size() const
+size_t DiskIO::size() const
 {
     if (m_fpi == nullptr)
     {
@@ -92,7 +92,7 @@ size_t diskio::size() const
     return st.st_size;
 }
 
-size_t diskio::tell() const
+size_t DiskIO::tell() const
 {
     // falls nicht möglich:
     // errno = EPERM;
@@ -100,17 +100,17 @@ size_t diskio::tell() const
     return static_cast<size_t>(ftell(m_fpi));
 }
 
-int diskio::seek(long offset, int whence)
+int DiskIO::seek(long offset, int whence)
 {
     return fseek(m_fpi, offset, whence);
 }
 
-bool diskio::eof() const
+bool DiskIO::eof() const
 {
     return feof(m_fpi) ? true : false;
 }
 
-void diskio::close()
+void DiskIO::close()
 {
     FILE *fpi = m_fpi;
     if (fpi != nullptr)

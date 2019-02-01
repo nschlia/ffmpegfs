@@ -85,7 +85,7 @@ public:
     bool                    m_is_decoding;
     pthread_t               m_thread_id;
 
-    t_cache_info            m_cache_info;
+    CACHE_INFO              m_cache_info;
 
     ID3v1                   m_id3v1;
 };

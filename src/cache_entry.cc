@@ -137,12 +137,12 @@ void Cache_Entry::clear(int fetch_file_time)
 
 bool Cache_Entry::read_info()
 {
-    return m_owner->read_info(m_cache_info);
+    return m_owner->read_info(&m_cache_info);
 }
 
 bool Cache_Entry::write_info()
 {
-    return m_owner->write_info(m_cache_info);
+    return m_owner->write_info(&m_cache_info);
 }
 
 bool Cache_Entry::delete_info()
@@ -156,7 +156,7 @@ bool Cache_Entry::update_access(bool bUpdateDB /*= false*/)
 
     if (bUpdateDB)
     {
-        return m_owner->write_info(m_cache_info);
+        return m_owner->write_info(&m_cache_info);
     }
     else
     {

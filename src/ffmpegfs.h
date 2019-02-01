@@ -34,14 +34,14 @@
 #include "fileio.h"
 
 // Global program parameters
-extern struct ffmpegfs_params
+extern struct FFMPEGFS_PARAMS
 {
-    ffmpegfs_params();
+    FFMPEGFS_PARAMS();
 
     bool                smart_transcode(void) const;
     int                 guess_format_idx(const std::string & filepath) const;
-    ffmpegfs_format *   current_format(const std::string & filepath);
-    ffmpegfs_format *   current_format(LPCVIRTUALFILE virtualfile);
+    FFmpegfs_Format *   current_format(const std::string & filepath);
+    FFmpegfs_Format *   current_format(LPCVIRTUALFILE virtualfile);
 
     // Paths
     std::string         m_basepath;
@@ -51,7 +51,7 @@ extern struct ffmpegfs_params
     PROFILE             m_profile;					// Target profile: Firefox, MS Edge/IE or other
     LEVEL               m_level;                    // Level, currently proxy/hq/lt/HQ (ProRes only)
     // Format
-    ffmpegfs_format     m_format[2];
+    FFmpegfs_Format     m_format[2];
     // Audio
     BITRATE             m_audiobitrate;
     unsigned int        m_audiosamplerate;

@@ -502,7 +502,7 @@ bool Buffer::remove_file(const std::string & filename)
     }
 }
 
-int Buffer::read(void * /*data*/, int /*maxlen*/)
+int Buffer::read(void * /*data*/, int /*size*/)
 {
     // Not implemented
     errno = EPERM;

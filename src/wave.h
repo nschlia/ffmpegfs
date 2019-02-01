@@ -25,7 +25,8 @@
 
 // WAVE header structure
 
-typedef struct _tagWAV_HEADER {
+typedef struct WAV_HEADER
+{
     // RIFF Header
     char riff_header[4];    // Contains "RIFF"
     int wav_size;           // Size of the wav portion of the file, which follows the first 8 bytes. File size - 8
@@ -42,18 +43,20 @@ typedef struct _tagWAV_HEADER {
     short bit_depth;        // Number of bits per sample
 } WAV_HEADER;
 
-typedef struct _tagLIST_HEADER {
+typedef struct WAV_LIST_HEADER
+{
     // Data
     char list_header[4];    // Contains "list" (0x6C696E74)
     int data_bytes;         // Number of bytes in list.
     char list_type[4];      // Contains "adtl" (0x6164746C)
-} LIST_HEADER;
+} WAV_LIST_HEADER;
 
-typedef struct _tagDATA_HEADER {
+typedef struct WAV_DATA_HEADER
+{
     // Data
     char data_header[4];    // Contains "data"
     int data_bytes;         // Number of bytes in data. Number of samples * num_channels * sample byte size
     // uint8_t bytes[];     // Remainder of wave file
-} DATA_HEADER;
+} WAV_DATA_HEADER;
 
 #endif // WAVE_H

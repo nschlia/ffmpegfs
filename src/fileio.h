@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 #include <string>
 
-typedef enum _tagVIRTUALTYPE
+typedef enum VIRTUALTYPE
 {
     VIRTUALTYPE_PASSTHROUGH,        // passthrough file, not used
     VIRTUALTYPE_REGULAR,            // Regular file to transcode
@@ -49,9 +49,9 @@ typedef enum _tagVIRTUALTYPE
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;
 typedef VIRTUALTYPE LPVIRTUALTYPE;
 
-typedef struct _tagVIRTUALFILE
+typedef struct VIRTUALFILE
 {
-    _tagVIRTUALFILE()
+    VIRTUALFILE()
         : m_type(VIRTUALTYPE_REGULAR)
         , m_format_idx(0)
     {
@@ -117,13 +117,13 @@ typedef struct _tagVIRTUALFILE
 typedef VIRTUALFILE const *LPCVIRTUALFILE;
 typedef VIRTUALFILE *LPVIRTUALFILE;
 
-class fileio
+class FileIO
 {
 public:
-    fileio();
-    virtual ~fileio();
+    FileIO();
+    virtual ~FileIO();
 
-    static fileio * alloc(VIRTUALTYPE type);
+    static FileIO * alloc(VIRTUALTYPE type);
 
     virtual VIRTUALTYPE type() const = 0;
 

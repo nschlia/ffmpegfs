@@ -27,16 +27,16 @@
 
 #include "fileio.h"
 
-class vcdio : public fileio
+class VcdIO : public FileIO
 {
 public:
-    vcdio();
-    virtual ~vcdio();
+    VcdIO();
+    virtual ~VcdIO();
 
     virtual VIRTUALTYPE type() const;
 
     virtual int     bufsize() const;
-    virtual int     read(void *data, int maxlen);
+    virtual int     read(void *data, int size);
     virtual int     error() const;
     virtual int64_t duration() const;
     virtual size_t  size() const;

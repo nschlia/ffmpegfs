@@ -64,9 +64,9 @@ extern "C" {
 
 #include "ffmpeg_utils.h"
 
-ffmpegfs_params     params;
+FFMPEGFS_PARAMS     params;
 
-ffmpegfs_params::ffmpegfs_params()
+FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                            // required parameter
     , m_mountpath("")                           // required parameter
 
@@ -114,12 +114,12 @@ ffmpegfs_params::ffmpegfs_params()
 {
 }
 
-bool ffmpegfs_params::smart_transcode(void) const
+bool FFMPEGFS_PARAMS::smart_transcode(void) const
 {
     return (params.m_format[1].m_filetype != FILETYPE_UNKNOWN && params.m_format[0].m_filetype != params.m_format[1].m_filetype);
 }
 
-int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
+int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
 {
     AVOutputFormat* oformat = av_guess_format(nullptr, filepath.c_str(), nullptr);
 
@@ -150,7 +150,7 @@ int ffmpegfs_params::guess_format_idx(const std::string & filepath) const
 }
 
 
-ffmpegfs_format * ffmpegfs_params::current_format(const std::string & filepath)
+FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 {
     LPCVIRTUALFILE virtualfile = find_file(filepath);
 
@@ -171,7 +171,7 @@ ffmpegfs_format * ffmpegfs_params::current_format(const std::string & filepath)
     return nullptr;
 }
 
-ffmpegfs_format *ffmpegfs_params::current_format(LPCVIRTUALFILE virtualfile)
+FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)
 {
     return &m_format[virtualfile->m_format_idx];
 }
@@ -203,7 +203,7 @@ enum
     KEY_LOGFILE
 };
 
-#define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(struct ffmpegfs_params, param), value }
+#define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(FFMPEGFS_PARAMS, param), value }
 
 static struct fuse_opt ffmpegfs_opts[] =
 {
@@ -339,7 +339,7 @@ static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int          get_samplerate(const std::string & arg, unsigned int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
-static int          get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format *audio_format);
+static int          get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegfs_Format *audio_format);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
@@ -671,7 +671,7 @@ static int get_size(const std::string & arg, size_t *size)
 }
 
 // Read destination type
-int get_desttype(const std::string & arg, ffmpegfs_format *video_format, ffmpegfs_format * audio_format)
+int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegfs_Format * audio_format)
 {
     // TODO: evaluate
     size_t pos = arg.find('=');

@@ -27,7 +27,7 @@
 
 #include <assert.h>
 
-vcdio::vcdio()
+VcdIO::VcdIO()
     : m_fpi(nullptr)
     , m_track_no(0)
     , m_chapter_no(0)
@@ -37,22 +37,22 @@ vcdio::vcdio()
 
 }
 
-vcdio::~vcdio()
+VcdIO::~VcdIO()
 {
     close();
 }
 
-VIRTUALTYPE vcdio::type() const
+VIRTUALTYPE VcdIO::type() const
 {
     return VIRTUALTYPE_VCD;
 }
 
-int vcdio::bufsize() const
+int VcdIO::bufsize() const
 {
     return (32 * 1024);
 }
 
-int vcdio::openX(const std::string & filename)
+int VcdIO::openX(const std::string & filename)
 {
     std::string src_filename;
 
@@ -87,32 +87,32 @@ int vcdio::openX(const std::string & filename)
     return seek(0, SEEK_SET);
 }
 
-int vcdio::read(void * data, int maxlen)
+int VcdIO::read(void * data, int size)
 {
-    if (ftell(m_fpi) + static_cast<uint64_t>(maxlen) > m_end_pos)
+    if (ftell(m_fpi) + static_cast<uint64_t>(size) > m_end_pos)
     {
-        maxlen = static_cast<int>(m_end_pos - ftell(m_fpi));
+        size = static_cast<int>(m_end_pos - ftell(m_fpi));
     }
 
-    if (!maxlen)
+    if (!size)
     {
         return 0;
     }
 
-    return static_cast<int>(fread(data, 1, maxlen, m_fpi));
+    return static_cast<int>(fread(data, 1, size, m_fpi));
 }
 
-int vcdio::error() const
+int VcdIO::error() const
 {
     return ferror(m_fpi);
 }
 
-int64_t vcdio::duration() const
+int64_t VcdIO::duration() const
 {
     return -1;  // TODO
 }
 
-size_t vcdio::size() const
+size_t VcdIO::size() const
 {
     if (m_fpi == nullptr)
     {
@@ -130,12 +130,12 @@ size_t vcdio::size() const
     return static_cast<size_t>(st.st_size);
 }
 
-size_t vcdio::tell() const
+size_t VcdIO::tell() const
 {
     return (ftell(m_fpi) - m_start_pos);
 }
 
-int vcdio::seek(long offset, int whence)
+int VcdIO::seek(long offset, int whence)
 {
     long int seek_pos;
     switch (whence)
@@ -171,12 +171,12 @@ int vcdio::seek(long offset, int whence)
     return fseek(m_fpi, seek_pos, SEEK_SET);
 }
 
-bool vcdio::eof() const
+bool VcdIO::eof() const
 {
     return ((feof(m_fpi) || (static_cast<uint64_t>(ftell(m_fpi)) >= m_end_pos)) ? true : false);
 }
 
-void vcdio::close()
+void VcdIO::close()
 {
     FILE *fpi = m_fpi;
     if (fpi != nullptr)

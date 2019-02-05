@@ -140,7 +140,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     ifo_file = ifoOpen(dvd, 0);
     if (!ifo_file)
     {
-        Logging::error(path, "Can't open VMG info.");
+        Logging::error(path, "Can't open VMG info for DVD.");
         DVDClose(dvd);
         return EINVAL;
     }
@@ -148,7 +148,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
 
     titles = tt_srpt->nr_of_srpts;
 
-    Logging::debug(path, "There are %1 titles.", titles);
+    Logging::debug(path, "There are %1 titles on this DVD.", titles);
 
     for (int title_idx = 0; title_idx < titles; ++title_idx)
     {
@@ -163,9 +163,8 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         ttnnum = tt_srpt->title[title_idx].vts_ttn;
         chapters = tt_srpt->title[title_idx].nr_of_ptts;
 
-        Logging::trace(path, "Title : %1", title_idx + 1);
-        Logging::trace(path, "In VTS: %1 [TTN %2]", vtsnum, ttnnum);
-        Logging::trace(path, "Title has %1 chapters and %2 angles", chapters, static_cast<int>(tt_srpt->title[title_idx].nr_of_angles));
+        Logging::trace(path, "Title: %1 VTS: %2 TTN: %3", title_idx + 1, vtsnum, ttnnum);
+        Logging::trace(path, "DVD title has %1 chapters and %2 angles.", chapters, static_cast<int>(tt_srpt->title[title_idx].nr_of_angles));
 
         vts_file = ifoOpen(dvd, vtsnum);
         if (!vts_file)

@@ -179,7 +179,7 @@ void transcoder_free(void)
     }
 }
 
-int transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
+bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 {
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)

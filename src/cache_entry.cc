@@ -25,7 +25,6 @@
 
 #include <string.h>
 
-//Cache_Entry::Cache_Entry(Cache *owner, const string & filename)
 Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     : m_owner(owner)
     , m_ref_count(0)
@@ -258,7 +257,7 @@ bool Cache_Entry::flush()
     }
 
     m_buffer->flush();
-//    write_info();
+    //write_info();
 
     return true;
 }

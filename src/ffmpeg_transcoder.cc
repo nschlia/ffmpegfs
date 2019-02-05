@@ -1257,11 +1257,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                         // Source settings
                         CODECPAR(m_in.m_video.m_stream)->width,    // width
                         CODECPAR(m_in.m_video.m_stream)->height,   // height
-                        src_pix_fmt,                                    // format
+                        src_pix_fmt,                               // format
                         // Target settings
-                        output_codec_ctx->width,                    // width
-                        output_codec_ctx->height,                   // height
-                        output_codec_ctx->pix_fmt,                  // format
+                        output_codec_ctx->width,                   // width
+                        output_codec_ctx->height,                  // height
+                        output_codec_ctx->pix_fmt,                 // format
                         SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
             if (m_sws_ctx == nullptr)
             {
@@ -2805,7 +2805,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 }
 
 // Encode one frame worth of audio to the output file.
-int FFmpeg_Transcoder:: encode_audio_frame(AVFrame *frame, int *data_present)
+int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
     AVPacket pkt;

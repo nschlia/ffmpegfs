@@ -76,14 +76,14 @@ int BlurayIO::openX(const std::string & filename)
         m_title_no      = virtualfile()->bluray.m_title_no - 1;
         m_chapter_no    = virtualfile()->bluray.m_chapter_no - 1;
         m_angle_no      = virtualfile()->bluray.m_angle_no - 1;
-        m_duration     = virtualfile()->bluray.m_duration;
+        m_duration      = virtualfile()->bluray.m_duration;
     }
     else
     {
         m_title_no      = 0;
         m_chapter_no    = 0;
         m_angle_no      = 0;
-        m_duration     = -1;
+        m_duration      = -1;
     }
 
     chapter_end = m_chapter_no + 1;
@@ -183,8 +183,6 @@ int BlurayIO::read(void * data, int size)
         {
             maxsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
-
-//        Logging::error(m_path, "READ %<%11lli>1", m_cur_pos);
 
         bytes = bd_read(m_bd, m_data, maxsize);
         if (bytes <= 0)

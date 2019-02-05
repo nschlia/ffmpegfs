@@ -30,7 +30,7 @@
 class VcdIO : public FileIO
 {
 public:
-    VcdIO();
+    explicit VcdIO();
     virtual ~VcdIO();
 
     virtual VIRTUALTYPE type() const;

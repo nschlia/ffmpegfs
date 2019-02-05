@@ -39,7 +39,7 @@ class DvdIO : public FileIO
     } DSITYPE;
 
 public:
-    DvdIO();
+    explicit DvdIO();
     virtual ~DvdIO();
 
     virtual VIRTUALTYPE type() const;

@@ -120,7 +120,7 @@ typedef VIRTUALFILE *LPVIRTUALFILE;
 class FileIO
 {
 public:
-    FileIO();
+    explicit FileIO();
     virtual ~FileIO();
 
     static FileIO * alloc(VIRTUALTYPE type);

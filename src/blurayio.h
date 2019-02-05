@@ -32,7 +32,7 @@ typedef struct bluray BLURAY;
 class BlurayIO : public FileIO
 {
 public:
-    BlurayIO();
+    explicit BlurayIO();
     virtual ~BlurayIO();
 
     virtual VIRTUALTYPE type() const;

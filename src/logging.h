@@ -50,12 +50,9 @@ public:
      */
     explicit Logging(const std::string & logfile, level max_level, bool to_stderr, bool to_syslog);
 
-    bool GetFail() const
-    {
-        return m_logfile.fail();
-    }
+    bool GetFail() const;
 
-    //private:
+private:
     class Logger : public std::ostringstream
     {
     public:
@@ -77,6 +74,7 @@ public:
         static const std::map<level, std::string>   m_level_name_map;
         static const std::map<level, std::string>   m_level_colour_map;
     };
+
 public:
     static bool init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
 
@@ -135,7 +133,7 @@ public:
         log_with_level(Logging::level::ERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
-    static void log_with_level(Logging::level level, const std::string & filename, const std::string & message);
+    static void log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message);
 
 protected:
     static std::string format_helper(
@@ -196,7 +194,7 @@ protected:
     }
 
 protected:
-    friend Logger Log(level lev, const std::string & filename);
+    friend Logger Log(level loglevel, const std::string & filename);
     friend Logger;
 
     std::ofstream   m_logfile;

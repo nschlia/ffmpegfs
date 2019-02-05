@@ -122,6 +122,11 @@ Logging::Logger::~Logger()
     }
 }
 
+bool Logging::GetFail() const
+{
+    return m_logfile.fail();
+}
+
 const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
 {
     {ERROR,     LOG_ERR},
@@ -149,9 +154,9 @@ const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map 
     {TRACE,     COLOUR_BLUE},
 };
 
-Logging::Logger Log(Logging::level lev, const std::string & filename)
+Logging::Logger Log(Logging::level loglevel, const std::string & filename)
 {
-    return {lev, filename, logging};
+    return {loglevel, filename, logging};
 }
 
 bool Logging::init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog)
@@ -160,9 +165,9 @@ bool Logging::init_logging(const std::string & logfile, Logging::level max_level
     return !logging->GetFail();
 }
 
-void Logging::log_with_level(Logging::level level, const std::string & filename, const std::string & message)
+void Logging::log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message)
 {
-    Log(level, filename) << message;
+    Log(loglevel, filename) << message;
 }
 
 std::string Logging::format_helper(

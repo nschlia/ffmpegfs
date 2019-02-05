@@ -271,22 +271,6 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
                 continue;
             }
 
-            //            sprintf(title_buf, "index%c%02d duration %02" PRIu64 "-%02" PRIu64 "-%02" PRIu64 " chapters %3d angles %2u clips %3u (playlist %05d.mpls) V %d A %-2d PG %-2d IG %-2d SV %d SA %d",
-            //                    (title_no == main_title) ? '+' : ' ',
-            //                    title_no + 1,
-            //                    (ti->duration / 90000) / (3600),
-            //                    ((ti->duration / 90000) % 3600) / 60,
-            //                    ((ti->duration / 90000) % 60),
-            //                    ti->chapter_count, ti->angle_count, ti->clip_count, ti->playlist,
-            //                    clip->video_stream_count,
-            //                    clip->audio_stream_count,
-            //                    clip->pg_stream_count,
-            //                    clip->ig_stream_count,
-            //                    clip->sec_video_stream_count,
-            //                    clip->sec_audio_stream_count
-            //                    );
-            //            fprintf(stderr, "%s\n", title_buf);
-
             sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
                     title_idx + 1,
                     chapter_idx + 1,
@@ -357,7 +341,7 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
                 Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "i" : "p", format_size(size), format_duration(duration));
                 if (audio > -1)
                 {
-                    Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", channels, sample_rate);
+                    Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)));
                 }
 
                 transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);

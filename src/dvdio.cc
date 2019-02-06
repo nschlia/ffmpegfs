@@ -53,9 +53,9 @@ DvdIO::DvdIO()
     , m_rest_size(0)
     , m_rest_pos(0)
     , m_cur_pos(0)
-    , m_title_no(0)
-    , m_chapter_no(0)
-    , m_angle_no(0)
+    , m_title_idx(0)
+    , m_chapter_idx(0)
+    , m_angle_idx(0)
     , m_duration(-1)
 {
     memset(&m_data, 0, sizeof(m_data));
@@ -87,17 +87,17 @@ int DvdIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
-        m_title_no     = virtualfile()->dvd.m_title_no - 1;
-        m_chapter_no   = virtualfile()->dvd.m_chapter_no - 1;
-        m_angle_no     = virtualfile()->dvd.m_angle_no - 1;
-        m_duration     = virtualfile()->dvd.m_duration;
+        m_title_idx     = virtualfile()->m_dvd.m_title_no - 1;
+        m_chapter_idx   = virtualfile()->m_dvd.m_chapter_no - 1;
+        m_angle_idx     = virtualfile()->m_dvd.m_angle_no - 1;
+        m_duration      = virtualfile()->m_dvd.m_duration;
     }
     else
     {
-        m_title_no     = 0;
-        m_chapter_no   = 0;
-        m_angle_no     = 0;
-        m_duration     = -1;
+        m_title_idx     = 0;
+        m_chapter_idx   = 0;
+        m_angle_idx     = 0;
+        m_duration      = -1;
     }
 
     Logging::debug(m_path, "Opening input DVD.");
@@ -123,59 +123,59 @@ int DvdIO::openX(const std::string & filename)
     // Make sure our title number is valid.
     Logging::trace(m_path, "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts));
 
-    if (m_title_no < 0 || m_title_no >= tt_srpt->nr_of_srpts)
+    if (m_title_idx < 0 || m_title_idx >= tt_srpt->nr_of_srpts)
     {
-        Logging::error(m_path, "Invalid title %1.", m_title_no + 1);
+        Logging::error(m_path, "Invalid title %1.", m_title_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Make sure the chapter number is valid for this title.
-    Logging::trace(nullptr, "There are %1 chapters in this title.", static_cast<uint16_t>(tt_srpt->title[m_title_no].nr_of_ptts));
+    Logging::trace(nullptr, "There are %1 chapters in this title.", static_cast<uint16_t>(tt_srpt->title[m_title_idx].nr_of_ptts));
 
-    if (m_chapter_no < 0 || m_chapter_no >= tt_srpt->title[m_title_no].nr_of_ptts)
+    if (m_chapter_idx < 0 || m_chapter_idx >= tt_srpt->title[m_title_idx].nr_of_ptts)
     {
-        Logging::error(m_path, "Invalid chapter %1", m_chapter_no + 1);
+        Logging::error(m_path, "Invalid chapter %1", m_chapter_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Make sure the angle number is valid for this title.
-    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[m_title_no].nr_of_angles);
+    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[m_title_idx].nr_of_angles);
 
-    if (m_angle_no < 0 || m_angle_no >= tt_srpt->title[m_title_no].nr_of_angles)
+    if (m_angle_idx < 0 || m_angle_idx >= tt_srpt->title[m_title_idx].nr_of_angles)
     {
-        Logging::error(nullptr, "Invalid angle %1", m_angle_no + 1);
+        Logging::error(nullptr, "Invalid angle %1", m_angle_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Load the VTS information for the title set our title is in.
-    m_vts_file = ifoOpen(m_dvd, tt_srpt->title[m_title_no].title_set_nr);
+    m_vts_file = ifoOpen(m_dvd, tt_srpt->title[m_title_idx].title_set_nr);
     if (!m_vts_file)
     {
-        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[m_title_no].title_set_nr);
+        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Determine which program chain we want to watch.  This is based on the chapter number.
-    ttn                 = tt_srpt->title[m_title_no].vts_ttn;
+    ttn                 = tt_srpt->title[m_title_idx].vts_ttn;
     vts_ptt_srpt        = m_vts_file->vts_ptt_srpt;
-    pgc_id              = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_no].pgcn;
-    pgn                 = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_no].pgn;
+    pgc_id              = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_idx].pgcn;
+    pgn                 = vts_ptt_srpt->title[ttn - 1].ptt[m_chapter_idx].pgn;
     m_cur_pgc           = m_vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
     m_start_cell        = m_cur_pgc->program_map[pgn - 1] - 1;
 
     // We've got enough info, time to open the title set data.
-    m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_no].title_set_nr, DVD_READ_TITLE_VOBS);
+    m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_idx].title_set_nr, DVD_READ_TITLE_VOBS);
     if (!m_dvd_title)
     {
-        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_no].title_set_nr);
+        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vts_file);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
@@ -193,7 +193,7 @@ int DvdIO::openX(const std::string & filename)
         // Check if we're entering an angle block.
         if (m_cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
         {
-            first_cell += m_angle_no;
+            first_cell += m_angle_idx;
         }
 
         int framerate   = ((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6);
@@ -453,7 +453,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
 
     next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
 
-    if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_no > 1)
+    if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_idx > 1)
     {
         switch ((dsi_pack->sml_pbi.category & 0xf000) >> 12)
         {
@@ -478,9 +478,9 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
         case 0x5:
         {
             // vobu is end of ilvu
-            if (dsi_pack->sml_agli.data[m_angle_no].address)
+            if (dsi_pack->sml_agli.data[m_angle_idx].address)
             {
-                next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_no].address;
+                next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
                 cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
                 break;
             }
@@ -529,7 +529,7 @@ void DvdIO::next_cell()
     // Check if we're entering an angle block
     if (m_cur_pgc->cell_playback[m_cur_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
     {
-        m_cur_cell += m_angle_no;
+        m_cur_cell += m_angle_idx;
 
         for (int i = 0;; ++i)
         {
@@ -648,7 +648,7 @@ int DvdIO::read(void * data, int size)
 
     // DSITYPE_EOF_TITLE - end of title
     // DSITYPE_EOF_CHAPTER - end of chapter
-    if (dsitype != DSITYPE_CONTINUE) //if (hargn == DSITYPE_EOF_TITLE)
+    if (dsitype != DSITYPE_CONTINUE)
     {
         m_is_eof = true;
     }

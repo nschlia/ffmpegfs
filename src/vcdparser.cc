@@ -69,10 +69,10 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
         // Video CD is video format anyway
         virtualfile->m_format_idx       = 0;
         // Mark title/chapter/angle
-        virtualfile->vcd.m_track_no     = chapter.get_track_no();
-        virtualfile->vcd.m_chapter_no   = chapter_no;
-        virtualfile->vcd.m_start_pos    = chapter.get_start_pos();
-        virtualfile->vcd.m_end_pos      = chapter.get_end_pos();
+        virtualfile->m_vcd.m_track_no     = chapter.get_track_no();
+        virtualfile->m_vcd.m_chapter_no   = chapter_no;
+        virtualfile->m_vcd.m_start_pos    = chapter.get_start_pos();
+        virtualfile->m_vcd.m_end_pos      = chapter.get_end_pos();
     }
 
     return vcd.get_number_of_chapters();

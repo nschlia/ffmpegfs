@@ -83,9 +83,9 @@ protected:
     size_t          m_rest_pos;
     size_t          m_cur_pos;
 
-    int             m_title_no;
-    int             m_chapter_no;
-    int             m_angle_no;
+    int             m_title_idx;
+    int             m_chapter_idx;
+    int             m_angle_idx;
 
     unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];
     unsigned char   m_buffer[1024 * DVD_VIDEO_LB_LEN];

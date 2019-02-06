@@ -36,9 +36,9 @@ BlurayIO::BlurayIO()
     , m_cur_pos(0)
     , m_start_pos(0)
     , m_end_pos(-1)
-    , m_title_no(0)
-    , m_chapter_no(0)
-    , m_angle_no(0)
+    , m_title_idx(0)
+    , m_chapter_idx(0)
+    , m_angle_idx(0)
     , m_duration(-1)
 {
     memset(&m_data, 0, sizeof(m_data));
@@ -73,20 +73,20 @@ int BlurayIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
-        m_title_no      = virtualfile()->bluray.m_title_no - 1;
-        m_chapter_no    = virtualfile()->bluray.m_chapter_no - 1;
-        m_angle_no      = virtualfile()->bluray.m_angle_no - 1;
-        m_duration      = virtualfile()->bluray.m_duration;
+        m_title_idx     = virtualfile()->m_bluray.m_title_no - 1;
+        m_chapter_idx   = virtualfile()->m_bluray.m_chapter_no - 1;
+        m_angle_idx     = virtualfile()->m_bluray.m_angle_no - 1;
+        m_duration      = virtualfile()->m_bluray.m_duration;
     }
     else
     {
-        m_title_no      = 0;
-        m_chapter_no    = 0;
-        m_angle_no      = 0;
+        m_title_idx     = 0;
+        m_chapter_idx   = 0;
+        m_angle_idx     = 0;
         m_duration      = -1;
     }
 
-    chapter_end = m_chapter_no + 1;
+    chapter_end = m_chapter_idx + 1;
 	
     Logging::debug(bdpath, "Opening input Bluray.");
 
@@ -106,26 +106,26 @@ int BlurayIO::openX(const std::string & filename)
 
 //    if (m_title_no >= 0)
     {
-        if (!bd_select_title(m_bd, m_title_no))
+        if (!bd_select_title(m_bd, m_title_idx))
         {
-            Logging::error(bdpath, "Failed to open title: %1", m_title_no);
+            Logging::error(bdpath, "Failed to open title: %1", m_title_idx);
             return 1;
         }
-        ti = bd_get_title_info(m_bd, m_title_no, m_angle_no);
+        ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
 
     }
 
-    if (m_angle_no >= ti->angle_count)
+    if (m_angle_idx >= ti->angle_count)
     {
-        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_no + 1, ti->angle_count);
-        m_angle_no = 0;
+        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
+        m_angle_idx = 0;
     }
 
-    bd_select_angle(m_bd, m_angle_no);
+    bd_select_angle(m_bd, m_angle_idx);
 
-    if (m_chapter_no >= ti->chapter_count)
+    if (m_chapter_idx >= ti->chapter_count)
     {
-        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_no + 1, ti->chapter_count);
+        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_idx + 1, ti->chapter_count);
         return 1;
     }
 
@@ -143,12 +143,12 @@ int BlurayIO::openX(const std::string & filename)
         m_end_pos = bd_get_title_size(m_bd);
     }
 
-    BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_no];
+    BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_idx];
     m_duration = chapter->duration * AV_TIME_BASE / 90000;
 
     bd_free_title_info(ti);
 
-    m_start_pos = bd_seek_chapter(m_bd, m_chapter_no);
+    m_start_pos = bd_seek_chapter(m_bd, m_chapter_idx);
 
     m_rest_size = 0;
     m_rest_pos = 0;

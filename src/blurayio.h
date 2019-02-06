@@ -37,35 +37,35 @@ public:
 
     virtual VIRTUALTYPE type() const;
 
-    virtual int         bufsize() const;
-    virtual int         read(void *data, int size);
-    virtual int         error() const;
-    virtual int64_t     duration() const;
-    virtual size_t      size() const;
-    virtual size_t      tell() const;
-    virtual int         seek(long offset, int whence);
-    virtual bool        eof() const;
-    virtual void        close();
+    virtual int     bufsize() const;
+    virtual int     read(void *data, int size);
+    virtual int     error() const;
+    virtual int64_t duration() const;
+    virtual size_t  size() const;
+    virtual size_t  tell() const;
+    virtual int     seek(long offset, int whence);
+    virtual bool    eof() const;
+    virtual void    close();
 
 protected:
-    virtual int         openX(const std::string & filename);
+    virtual int     openX(const std::string & filename);
 
 protected:
-    BLURAY *            m_bd;
+    BLURAY *        m_bd;
 
-    bool                m_is_eof;
-    int                 m_errno;
-    size_t              m_rest_size;
-    size_t              m_rest_pos;
-    int64_t             m_cur_pos;
-    uint64_t            m_start_pos;
-    int64_t             m_end_pos;
+    bool            m_is_eof;
+    int             m_errno;
+    size_t          m_rest_size;
+    size_t          m_rest_pos;
+    int64_t         m_cur_pos;
+    uint64_t        m_start_pos;
+    int64_t         m_end_pos;
 
-    uint32_t			m_title_no;
-    unsigned            m_chapter_no;
-    unsigned            m_angle_no;
+    uint32_t        m_title_idx;
+    unsigned        m_chapter_idx;
+    unsigned        m_angle_idx;
 
-    uint8_t             m_data[192 * 1024];
+    uint8_t         m_data[192 * 1024];
 
     int64_t         m_duration;
 };

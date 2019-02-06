@@ -52,6 +52,7 @@ protected:
     FILE *          m_fpi;
     int             m_track_no;
     int             m_chapter_no;
+
     uint64_t        m_start_pos;
     uint64_t        m_end_pos;
 

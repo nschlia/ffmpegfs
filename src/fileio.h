@@ -65,52 +65,58 @@ typedef struct VIRTUALFILE
     struct stat     m_st;
 
 #ifdef USE_LIBVCD
-    struct VCD
+    struct VCD_CHAPTER
     {
-        VCD()
-            : m_track_no(0)
+        VCD_CHAPTER()
+            : m_full_title(false)
+            , m_track_no(0)
             , m_chapter_no(0)
             , m_start_pos(0)
             , m_end_pos(0)
         {}
+        bool        m_full_title;
         int         m_track_no;
         int         m_chapter_no;
         uint64_t    m_start_pos;
         uint64_t    m_end_pos;
 
-    } vcd;
+    }               m_vcd;
 #endif //USE_LIBVCD
 #ifdef USE_LIBDVD
-    struct DVD
+    struct DVD_CHAPTER
     {
-        DVD()
-            : m_title_no(0)
+        DVD_CHAPTER()
+            : m_full_title(false)
+            , m_title_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
             , m_duration(0)
         {}
+        bool        m_full_title;
         int         m_title_no;
         int         m_chapter_no;
         int         m_angle_no;
         int64_t     m_duration;
-    } dvd;
+    }               m_dvd;
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    struct BLURAY
+    struct BLURAY_CHAPTER
     {
-        BLURAY()
-            : m_title_no(0)
+        BLURAY_CHAPTER()
+            : m_full_title(false)
+            , m_title_no(0)
             , m_playlist_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
             , m_duration(0)
         {}
+        bool        m_full_title;
         uint32_t    m_title_no;
         uint32_t    m_playlist_no;
         unsigned    m_chapter_no;
         unsigned    m_angle_no;
         int64_t     m_duration;
-    } bluray;
+    }               m_bluray;
 #endif // USE_LIBBLURAY
 
 } VIRTUALFILE;

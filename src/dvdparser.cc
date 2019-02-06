@@ -26,16 +26,11 @@
 #include "ffmpeg_utils.h"
 #include "logging.h"
 
-//#include <dvdnav/dvdnav.h>
 #include <dvdread/dvd_reader.h>
-//#include <dvdread/ifo_types.h>
 #include <dvdread/ifo_read.h>
-//#include <dvdread/dvd_udf.h>
-//#include <dvdread/nav_read.h>
-//#include <dvdread/nav_print.h>
 
-static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
+static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
 {
@@ -60,7 +55,8 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
                 && attr->unknown1 == 0
                 && attr->channels == 0
                 && attr->lang_extension == 0
-                && attr->unknown3 == 0) {
+                && attr->unknown3 == 0)
+        {
             // Unspecified
             continue;
         }
@@ -154,24 +150,20 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     {
         ifo_handle_t *vts_file;
         vts_ptt_srpt_t *vts_ptt_srpt;
-        int vtsnum;
-        int ttnnum;
-        int pgcnum;
-        int chapters;
-
-        vtsnum = tt_srpt->title[title_idx].title_set_nr;
-        ttnnum = tt_srpt->title[title_idx].vts_ttn;
-        chapters = tt_srpt->title[title_idx].nr_of_ptts;
+        int vtsnum      = tt_srpt->title[title_idx].title_set_nr;
+        int ttnnum      = tt_srpt->title[title_idx].vts_ttn;
+        int chapters    = tt_srpt->title[title_idx].nr_of_ptts;
+        int angles      = tt_srpt->title[title_idx].nr_of_angles;
 
         Logging::trace(path, "Title: %1 VTS: %2 TTN: %3", title_idx + 1, vtsnum, ttnnum);
-        Logging::trace(path, "DVD title has %1 chapters and %2 angles.", chapters, static_cast<int>(tt_srpt->title[title_idx].nr_of_angles));
+        Logging::trace(path, "DVD title has %1 chapters and %2 angles.", chapters, angles);
 
         vts_file = ifoOpen(dvd, vtsnum);
         if (!vts_file)
         {
             Logging::error(path, "Can't open info file for title %1.", vtsnum);
             DVDClose(dvd);
-            return EINVAL;
+            return -EINVAL;
         }
 
         // Set reasonable defaults
@@ -250,6 +242,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
             pgc_t *cur_pgc;
             int start_cell;
             int pgn;
+    		int pgcnum;
 
             pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
             pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
@@ -262,7 +255,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                            static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
 
             // Split file if chapter has several angles
-            for (int k = 0; k < tt_srpt->title[title_idx].nr_of_angles; k++)
+            for (int k = 0; k < angles; k++)
             {
                 char title_buf[PATH_MAX + 1];
                 std::string origfile;
@@ -271,7 +264,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                 int angle_no = k + 1;
                 //cur_pgc->playback_time;
 
-                if (k && tt_srpt->title[title_idx].nr_of_angles > 1)
+                if (k && angles > 1)
                 {
                     sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
                 }
@@ -301,9 +294,9 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                 // DVD is video format anyway
                 virtualfile->m_format_idx       = 0;
                 // Mark title/chapter/angle
-                virtualfile->dvd.m_title_no     = title_no;
-                virtualfile->dvd.m_chapter_no   = chapter_no;
-                virtualfile->dvd.m_angle_no     = angle_no;
+                virtualfile->m_dvd.m_title_no     = title_no;
+                virtualfile->m_dvd.m_chapter_no   = chapter_no;
+                virtualfile->m_dvd.m_angle_no     = angle_no;
 
                 if (!transcoder_cached_filesize(virtualfile, &stbuf))
                 {
@@ -312,7 +305,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                     // Check if we're entering an angle block.
                     if (cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
                     {
-                        first_cell += virtualfile->dvd.m_angle_no;
+                        first_cell += virtualfile->m_dvd.m_angle_no;
                     }
 
                     double frame_rate       = (((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
@@ -322,7 +315,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                     int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
                     double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
 
-                    virtualfile->dvd.m_duration = duration;
+                    virtualfile->m_dvd.m_duration = duration;
 
                     if (secsduration != 0.)
                     {
@@ -349,7 +342,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     return titles;    // Number of titles on disk
 }
 
- int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
+int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);
     struct stat st;

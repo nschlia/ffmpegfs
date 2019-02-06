@@ -120,10 +120,10 @@ int VcdInfo::load_file(const std::string & path)
 
     if (fread(reinterpret_cast<char *>(&vi), 1, sizeof(vi), fpi) == sizeof(vi))
     {
-        m_id            = VCDUTILS::convert_psz2string(vi.m_ID, sizeof(vi.m_ID));
+        m_id            = VCDUTILS::convert_txt2string(vi.m_ID, sizeof(vi.m_ID));
         m_type          = static_cast<int>(vi.m_type);
         m_profile_tag   = static_cast<int>(vi.m_profile_tag);
-        m_album_id      = VCDUTILS::convert_psz2string(vi.m_albumid, sizeof(vi.m_albumid));
+        m_album_id      = VCDUTILS::convert_txt2string(vi.m_albumid, sizeof(vi.m_albumid));
         m_number_of_cds = htons(static_cast<uint16_t>(vi.m_numberof_cds));
         m_cd_number     = htons(static_cast<uint16_t>(vi.m_cd_number));
     }

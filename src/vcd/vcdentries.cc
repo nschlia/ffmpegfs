@@ -89,7 +89,7 @@ int VcdEntries::load_file(const std::string & path)
             throw static_cast<int>(ferror(fpi));
         }
 
-        m_id            = VCDUTILS::convert_psz2string(reinterpret_cast<const char *>(vcdentry.m_ID), sizeof(vcdentry.m_ID));
+        m_id            = VCDUTILS::convert_txt2string(reinterpret_cast<const char *>(vcdentry.m_ID), sizeof(vcdentry.m_ID));
         m_type          = static_cast<int>(vcdentry.m_type);
         m_profile_tag   = static_cast<int>(vcdentry.m_profile_tag);
         num_entries     = htons(vcdentry.m_num_entries);

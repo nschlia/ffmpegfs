@@ -170,7 +170,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         BITRATE audio_bit_rate = 256000;
         int channels = 2;
         int sample_rate = 48000;
-        int audio = 0;
+        int audio_stream = 0;
 
         BITRATE video_bit_rate = 8000000;
         int width = 720;
@@ -178,7 +178,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
 
         if (vts_file->vtsi_mat)
         {
-            audio = dvd_find_best_audio_stream(vts_file->vtsi_mat, &channels, &sample_rate);
+            audio_stream = dvd_find_best_audio_stream(vts_file->vtsi_mat, &channels, &sample_rate);
 
             height = (vts_file->vtsi_mat->vts_video_attr.video_format != 0) ? 576 : 480;
 
@@ -235,14 +235,15 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         else
         {
             vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
-            for (int chapter_idx = 0; chapter_idx < chapters; ++chapter_idx)
+            for (int chapter_idx = 0; chapter_idx < chapters && success; ++chapter_idx)
             {
                 int title_no = title_idx + 1;
                 int chapter_no = chapter_idx + 1;
+                int pgcnum;
+
                 pgc_t *cur_pgc;
                 int start_cell;
                 int pgn;
-                int pgcnum;
 
                 pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
                 pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
@@ -255,16 +256,16 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                                static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
 
                 // Split file if chapter has several angles
-                for (int k = 0; k < angles; k++)
+                for (int angle_idx = 0; angle_idx < angles; angle_idx++)
                 {
                     char title_buf[PATH_MAX + 1];
                     std::string origfile;
                     struct stat stbuf;
                     size_t size = (cur_pgc->cell_playback[start_cell].last_sector - cur_pgc->cell_playback[start_cell].first_sector) * DVD_VIDEO_LB_LEN;
-                    int angle_no = k + 1;
+                    int angle_no = angle_idx + 1;
                     //cur_pgc->playback_time;
 
-                    if (k && angles > 1)
+                    if (angle_idx && angles > 1)
                     {
                         sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
                     }
@@ -323,7 +324,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
                         }
 
                         Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "i" : "p", format_size(size), format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)));
-                        if (audio > -1)
+                        if (audio_stream > -1)
                         {
                             Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", channels, sample_rate);
                         }

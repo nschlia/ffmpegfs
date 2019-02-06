@@ -16,14 +16,14 @@
 
 namespace VCDUTILS
 {
-std::string convert_psz2string(const char * psz, int size, bool trimmed)
+std::string convert_txt2string(const char * txt, int size, bool trimmed)
 {
     char * buffer = new char[size + 1];
     std::string ret_value;
 
     if (buffer != nullptr)
     {
-        memcpy(buffer, psz, static_cast<size_t>(size));
+        memcpy(buffer, txt, static_cast<size_t>(size));
         *(buffer + size) = '\0';
 
         ret_value = buffer;

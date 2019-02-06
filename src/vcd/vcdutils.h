@@ -68,7 +68,7 @@ extern const char SYNC[12];
 
 namespace VCDUTILS
 {
-std::string convert_psz2string(const char * psz, int size, bool trimmed = true);
+std::string convert_txt2string(const char * txt, int size, bool trimmed = true);
 bool        locate_file(const std::string & path, const std::string & filename, std::string & fullname, bool & is_vcd);
 int         locate_video(const std::string & path, int track_no, std::string & fullname);
 std::string get_type_str(int type);

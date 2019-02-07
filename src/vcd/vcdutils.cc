@@ -50,7 +50,6 @@ bool locate_file(const std::string & path, const std::string & filename, std::st
 
     if (!access(fullname.c_str(), F_OK))
     {
-        fullname = fullname;
         return true;
     }
 
@@ -59,7 +58,6 @@ bool locate_file(const std::string & path, const std::string & filename, std::st
 
     if (!access(fullname.c_str(), F_OK))
     {
-        fullname = fullname;
         is_vcd = true;
         return true;
     }

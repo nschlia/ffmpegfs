@@ -28,35 +28,35 @@
 typedef struct WAV_HEADER
 {
     // RIFF Header
-    char riff_header[4];    // Contains "RIFF"
-    int wav_size;           // Size of the wav portion of the file, which follows the first 8 bytes. File size - 8
-    char wave_header[4];    // Contains "WAVE"
+    char    m_riff_header[4];
+    int     m_wav_size;
+    char    m_wave_header[4];
 
     // Format Header
-    char fmt_header[4];     // Contains "fmt " (includes trailing space)
-    int fmt_chunk_size;     // Should be 16 for PCM
-    short audio_format;     // Should be 1 for PCM. 3 for IEEE Float
-    short num_channels;
-    int sample_rate;
-    int byte_rate;          // Number of bytes per second. sample_rate * num_channels * Bytes Per Sample
-    short sample_alignment; // num_channels * Bytes Per Sample
-    short bit_depth;        // Number of bits per sample
+    char    m_fmt_header[4];
+    int     m_fmt_chunk_size;
+    short   m_audio_format;
+    short   m_num_channels;
+    int     m_sample_rate;
+    int     m_byte_rate;
+    short   m_sample_alignment;
+    short   m_bit_depth;
 } WAV_HEADER;
 
 typedef struct WAV_LIST_HEADER
 {
     // Data
-    char list_header[4];    // Contains "list" (0x6C696E74)
-    int data_bytes;         // Number of bytes in list.
-    char list_type[4];      // Contains "adtl" (0x6164746C)
+    char    m_list_header[4];
+    int     m_data_bytes;
+    char    m_list_type[4];
 } WAV_LIST_HEADER;
 
 typedef struct WAV_DATA_HEADER
 {
     // Data
-    char data_header[4];    // Contains "data"
-    int data_bytes;         // Number of bytes in data. Number of samples * num_channels * sample byte size
-    // uint8_t bytes[];     // Remainder of wave file
+    char    m_data_header[4];
+    int     m_data_bytes;
+    // uint8_t m_bytes[];     // Remainder of wave file
 } WAV_DATA_HEADER;
 
 #endif // WAVE_H

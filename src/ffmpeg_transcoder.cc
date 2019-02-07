@@ -1931,14 +1931,14 @@ int FFmpeg_Transcoder::write_output_file_header()
 
         buffer->copy(reinterpret_cast<uint8_t*>(&wav_header), 0, sizeof(WAV_HEADER));
         buffer->copy(reinterpret_cast<uint8_t*>(&list_header), sizeof(WAV_HEADER), sizeof(WAV_LIST_HEADER));
-        buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.data_bytes - 4, sizeof(WAV_DATA_HEADER));
+        buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, sizeof(WAV_DATA_HEADER));
 
-        wav_header.wav_size = static_cast<int>(m_predicted_size - 8);
-        data_header.data_bytes = static_cast<int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.data_bytes - 4));
+        wav_header.m_wav_size = static_cast<int>(m_predicted_size - 8);
+        data_header.m_data_bytes = static_cast<int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
 
         buffer->seek(0, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
-        buffer->seek(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.data_bytes - 4, SEEK_SET);
+        buffer->seek(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
         buffer->seek(pos, SEEK_SET);
     }

@@ -149,7 +149,7 @@ int VcdEntries::scan_chapters()
                 int _errno = VCDUTILS::locate_video(m_disk_path, last_track_no, fullname);
                 if (_errno != 0)
                 {
-                    throw static_cast<int>(errno);
+                    throw static_cast<int>(_errno);
                 }
 
                 if (chapter_no)
@@ -205,7 +205,7 @@ int VcdEntries::scan_chapters()
                 int _errno = buffer.read(fpi, last_track_no);
                 if (_errno)
                 {
-                    throw static_cast<int>(errno);
+                    throw static_cast<int>(_errno);
                 }
 
                 if (buffer < m_chapters[chapter_no])

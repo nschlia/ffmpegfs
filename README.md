@@ -3,9 +3,9 @@ FFmpegfs
 
 | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- |
-| gcc 6.3.0 | FFmpeg 3.4 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg))](https://nschlia.github.io/ffmpegfs/) |
-| clang 3.8.1 | FFmpeg 3.4 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang))](https://nschlia.github.io/ffmpegfs/) |
-| gcc 6.3.0 | Libav 12.2 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav))](https://nschlia.github.io/ffmpegfs/) |
+| gcc 8.2.0 | FFmpeg 4.1 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg))](https://nschlia.github.io/ffmpegfs/) |
+| clang 3.8.1 | FFmpeg 4.1 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang))](https://nschlia.github.io/ffmpegfs/) |
+| gcc 8.2.0 | Libav 12.2 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav))](https://nschlia.github.io/ffmpegfs/) |
 | clang 3.8.1 | Libav 12.2 | [![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libavl-clang))](https://nschlia.github.io/ffmpegfs/) |
 
 News

@@ -32,6 +32,7 @@ public:
     int         get_min() const;        // MSF minute
     int         get_sec() const;        // MSF second
     int         get_frame() const;      // MSF frame
+    int64_t     get_start_time() const;
 
     std::string get_filename() const;   // File name and path (e.g. MPEG/AVSEQ##.MPG)
     uint64_t    get_start_pos() const;  // File position of chapter in bytes

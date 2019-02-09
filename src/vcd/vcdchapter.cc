@@ -10,6 +10,7 @@
 
 #include "vcdchapter.h"
 #include "vcdutils.h"
+#include "ffmpeg_utils.h"
 
 #include <string.h>
 #include <limits.h>
@@ -111,6 +112,11 @@ int VcdChapter::get_frame() const
     return m_frame;
 }
 
+int64_t VcdChapter::get_start_time() const
+{
+    return static_cast<int64_t>(m_min * 60 + m_sec) * AV_TIME_BASE;
+}
+
 std::string VcdChapter::get_filename() const
 {
     char buffer[PATH_MAX + 1];
@@ -160,9 +166,9 @@ VcdChapter & VcdChapter::operator= (VcdChapter const & other)
     {
         m_is_svcd   = other.m_is_svcd;
         m_track_no  = other.m_track_no;
-        m_min   = other.m_min;
-        m_sec   = other.m_sec;
-        m_frame    = other.m_frame;
+        m_min       = other.m_min;
+        m_sec       = other.m_sec;
+        m_frame     = other.m_frame;
         m_start_pos = other.m_start_pos;
     }
 

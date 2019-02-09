@@ -10,9 +10,22 @@ TOOLKIT=$2
 FFMPEGVER=$3
 CONFIGUREOPT=$4
 
-echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} (configure ${CONFIGUREOPT})"
+if [ -z ${CONFIGUREOPT} ];
+then
+    echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER}"
+else
+    echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} (configure ${CONFIGUREOPT})"
+fi
 
 FFMPEG_BUILD="$HOME/dev/builds/$TOOLKIT-$FFMPEGVER"
+
+if [ ! -d ${FFMPEG_BUILD} ];
+then
+    echo "*** ERROR *** FFmpeg not found in ${FFMPEG_BUILD}"
+    exit 99
+fi
+
+echo "Using FFmpeg in ${FFMPEG_BUILD}"
 
 # 32+64 bit
 #export LIB32="${FFMPEG_BUILD}/lib"
@@ -31,20 +44,19 @@ export CPLUS_INCLUDE_PATH="${FFMPEG_BUILD}/include"
 export CFLAGS=-I"${FFMPEG_BUILD}/include"
 export CPPFLAGS=-I"${FFMPEG_BUILD}/include"
 
-
 rm -Rf autom4te.cache config
 ./autogen.sh
 if [ ${COMPILER} = "clang" ];
 then
     echo "Using clang"
-	CC=clang CXX=clang++ ./configure ${CONFIGUREOPT}
+    CC=clang CXX=clang++ ./configure ${CONFIGUREOPT}
 elif [ ${COMPILER} = "gcc" ];
 then
     echo "Using gcc"
-	CC=gcc  CXX="g++" ./configure ${CONFIGUREOPT}
+    CC=gcc  CXX="g++" ./configure ${CONFIGUREOPT}
 else
     echo "Using default compiler"
-	./configure ${CONFIGUREOPT}
+    ./configure ${CONFIGUREOPT}
 fi
 
 make -s clean all check

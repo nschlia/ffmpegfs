@@ -29,7 +29,26 @@
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_read.h>
 
+typedef struct AUDIO_SETTINGS
+{
+    BITRATE m_audio_bit_rate;
+    int     m_channels;
+    int     m_sample_rate;
+} AUDIO_SETTINGS;
+typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;
+typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;
+
+typedef struct VIDEO_SETTINGS
+{
+    BITRATE m_video_bit_rate;
+    int     m_width;
+    int     m_height;
+} VIDEO_SETTINGS;
+typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;
+typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;
+
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
+static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
 static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
@@ -117,6 +136,109 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
     return best_stream;
 }
 
+static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
+{
+    vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
+    int title_no = title_idx + 1;
+    int chapter_no = chapter_idx + 1;
+    int pgcnum;
+
+    pgc_t *cur_pgc;
+    int start_cell;
+    int pgn;
+
+    pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
+    pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
+    cur_pgc     = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
+    start_cell  = cur_pgc->program_map[pgn - 1] - 1;
+
+    Logging::trace(path, "Title %<%3d>1 chapter %<%3d>2 [PGC %<%02d>3, PG %<%02d>4] starts at cell %5 [sector %<%x>6-%<%x>7]",
+                   title_no, chapter_no, pgcnum, pgn, start_cell,
+                   static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].first_sector),
+                   static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
+
+    // Split file if chapter has several angles
+    for (int angle_idx = 0; angle_idx < angles; angle_idx++)
+    {
+        char title_buf[PATH_MAX + 1];
+        std::string origfile;
+        struct stat stbuf;
+        size_t size = (cur_pgc->cell_playback[start_cell].last_sector - cur_pgc->cell_playback[start_cell].first_sector) * DVD_VIDEO_LB_LEN;
+        int angle_no = angle_idx + 1;
+        //cur_pgc->playback_time;
+
+            if (angle_idx && angles > 1)
+            {
+                sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
+            }
+            else
+            {
+                sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
+            }
+
+        std::string filename(title_buf);
+
+        origfile = path + filename;
+
+        memcpy(&stbuf, statbuf, sizeof(struct stat));
+
+        stbuf.st_size   = static_cast<__off_t>(size);
+        stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
+
+        //init_stat(&st, size, false);
+
+        if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
+        {
+            // break;
+        }
+
+        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &stbuf);
+
+        // DVD is video format anyway
+        virtualfile->m_format_idx       = 0;
+        // Mark title/chapter/angle
+        virtualfile->m_dvd.m_title_no     = title_no;
+        virtualfile->m_dvd.m_chapter_no   = chapter_no;
+        virtualfile->m_dvd.m_angle_no     = angle_no;
+
+        if (!transcoder_cached_filesize(virtualfile, &stbuf))
+        {
+            int first_cell = start_cell;
+
+            // Check if we're entering an angle block.
+            if (cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
+            {
+                first_cell += virtualfile->m_dvd.m_angle_no;
+            }
+
+            double frame_rate       = (((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
+            int64_t frac            = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / frame_rate);
+            int64_t duration        = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
+            uint64_t size           = (cur_pgc->cell_playback[first_cell].last_sector - cur_pgc->cell_playback[first_cell].first_sector) * 2048;
+            int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
+            double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
+
+            virtualfile->m_dvd.m_duration = duration;
+
+            BITRATE video_bit_rate = video_settings.m_video_bit_rate;
+            if (secsduration != 0.)
+            {
+                video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
+            }
+
+            Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate).c_str(), video_settings.m_width, video_settings.m_height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)).c_str());
+            if (audio_stream > -1)
+            {
+                Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", audio_settings.m_channels, audio_settings.m_sample_rate);
+            }
+
+            transcoder_set_filesize(virtualfile, secsduration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, frame_rate);
+        }
+    }
+
+    return true;
+}
+
 static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     dvd_reader_t *dvd;
@@ -167,42 +289,44 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         }
 
         // Set reasonable defaults
-        BITRATE audio_bit_rate = 256000;
-        int channels = 2;
-        int sample_rate = 48000;
+        AUDIO_SETTINGS audio_settings;
+        audio_settings.m_audio_bit_rate   = 256000;
+        audio_settings.m_channels         = 2;
+        audio_settings.m_sample_rate      = 48000;
         int audio_stream = 0;
 
-        BITRATE video_bit_rate = 8000000;
-        int width = 720;
-        int height = 576;
+        VIDEO_SETTINGS video_settings;
+        video_settings.m_video_bit_rate   = 8000000;
+        video_settings.m_width            = 720;
+        video_settings.m_height           = 576;
 
         if (vts_file->vtsi_mat)
         {
-            audio_stream = dvd_find_best_audio_stream(vts_file->vtsi_mat, &channels, &sample_rate);
+            audio_stream = dvd_find_best_audio_stream(vts_file->vtsi_mat, &audio_settings.m_channels, &audio_settings.m_sample_rate);
 
-            height = (vts_file->vtsi_mat->vts_video_attr.video_format != 0) ? 576 : 480;
+            video_settings.m_height = (vts_file->vtsi_mat->vts_video_attr.video_format != 0) ? 576 : 480;
 
             switch(vts_file->vtsi_mat->vts_video_attr.picture_size)
             {
             case 0:
             {
-                width = 720;
+                video_settings.m_width = 720;
                 break;
             }
             case 1:
             {
-                width = 704;
+                video_settings.m_width = 704;
                 break;
             }
             case 2:
             {
-                width = 352;
+                video_settings.m_width = 352;
                 break;
             }
             case 3:
             {
-                width = 352;
-                height /= 2;
+                video_settings.m_width = 352;
+                video_settings.m_height /= 2;
                 break;
             }
             default:
@@ -234,104 +358,10 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         }
         else
         {
-            vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
+            // Add separate chapters
             for (int chapter_idx = 0; chapter_idx < chapters && success; ++chapter_idx)
             {
-                int title_no = title_idx + 1;
-                int chapter_no = chapter_idx + 1;
-                int pgcnum;
-
-                pgc_t *cur_pgc;
-                int start_cell;
-                int pgn;
-
-                pgcnum      = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
-                pgn         = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
-                cur_pgc     = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
-                start_cell  = cur_pgc->program_map[pgn - 1] - 1;
-
-                Logging::trace(path, "Title %<%3d>1 chapter %<%3d>2 [PGC %<%02d>3, PG %<%02d>4] starts at cell %5 [sector %<%x>6-%<%x>7]",
-                               title_no, chapter_no, pgcnum, pgn, start_cell,
-                               static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].first_sector),
-                               static_cast<uint32_t>(cur_pgc->cell_playback[start_cell].last_sector));
-
-                // Split file if chapter has several angles
-                for (int angle_idx = 0; angle_idx < angles; angle_idx++)
-                {
-                    char title_buf[PATH_MAX + 1];
-                    std::string origfile;
-                    struct stat stbuf;
-                    size_t size = (cur_pgc->cell_playback[start_cell].last_sector - cur_pgc->cell_playback[start_cell].first_sector) * DVD_VIDEO_LB_LEN;
-                    int angle_no = angle_idx + 1;
-                    //cur_pgc->playback_time;
-
-                    if (angle_idx && angles > 1)
-                    {
-                        sprintf(title_buf, "%02d. Chapter %03d [Angle %d].%s", title_no, chapter_no, angle_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
-                    }
-                    else
-                    {
-                        sprintf(title_buf, "%02d. Chapter %03d.%s", title_no, chapter_no, params.m_format[0].real_desttype().c_str());   // can safely assume this a video
-                    }
-
-                    std::string filename(title_buf);
-
-                    origfile = path + filename;
-
-                    memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-                    stbuf.st_size   = static_cast<__off_t>(size);
-                    stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
-
-                    //init_stat(&st, size, false);
-
-                    if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
-                    {
-                        // break;
-                    }
-
-                    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &stbuf);
-
-                    // DVD is video format anyway
-                    virtualfile->m_format_idx       = 0;
-                    // Mark title/chapter/angle
-                    virtualfile->m_dvd.m_title_no     = title_no;
-                    virtualfile->m_dvd.m_chapter_no   = chapter_no;
-                    virtualfile->m_dvd.m_angle_no     = angle_no;
-
-                    if (!transcoder_cached_filesize(virtualfile, &stbuf))
-                    {
-                        int first_cell = start_cell;
-
-                        // Check if we're entering an angle block.
-                        if (cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
-                        {
-                            first_cell += virtualfile->m_dvd.m_angle_no;
-                        }
-
-                        double frame_rate       = (((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6) == 1) ? 25 : 29.97;
-                        int64_t frac            = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / frame_rate);
-                        int64_t duration        = static_cast<int64_t>((cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
-                        uint64_t size           = (cur_pgc->cell_playback[first_cell].last_sector - cur_pgc->cell_playback[first_cell].first_sector) * 2048;
-                        int interleaved         = cur_pgc->cell_playback[first_cell].interleaved;
-                        double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
-
-                        virtualfile->m_dvd.m_duration = duration;
-
-                        if (secsduration != 0.)
-                        {
-                            video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
-                        }
-
-                        Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(static_cast<int64_t>(secsduration * AV_TIME_BASE)).c_str());
-                        if (audio_stream > -1)
-                        {
-                            Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", channels, sample_rate);
-                        }
-
-                        transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
-                    }
-                }
+                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);
             }
         }
 

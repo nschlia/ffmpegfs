@@ -36,6 +36,9 @@ then
 	then
 		echo "FFmpeg Nightly Build"
 		VERSION=N
+        elif (( $(echo "${FFMPEGVERSION} >= 4.0" | bc -l) )); then
+                echo "FFmpeg > 4.x"
+                VERSION=4.x
         elif (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
                 echo "FFmpeg > 3.2.x"
 		VERSION=3.2+

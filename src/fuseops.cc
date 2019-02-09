@@ -990,7 +990,7 @@ static void sighandler(int signum)
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
-    Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath, params.m_mountpath);
+    Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
 
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));

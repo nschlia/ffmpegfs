@@ -120,7 +120,11 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize), format_size_ex(cache_entry->m_cache_info.m_encoded_filesize), (static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize)), static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
+                   format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
+                   format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
+                   (static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize)),
+                   static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
 
@@ -229,12 +233,12 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
 
     if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
     {
-        Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype);
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype.c_str());
     }
 
     if (!FFmpeg_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
     {
-        Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype);
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype.c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
@@ -261,7 +265,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
         transcoder->close();
 
-        Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
+        Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         success = true;
     }
@@ -619,7 +623,7 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->m_desttype, format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
+        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->m_desttype.c_str(), format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         if (transcoder == nullptr)
         {
@@ -779,7 +783,7 @@ static void *decoder_thread(void *arg)
             }
             if (cache_entry->m_cache_info.m_averror)
             {
-                Logging::error(cache_entry->destname(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror), cache_entry->m_cache_info.m_averror);
+                Logging::error(cache_entry->destname(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str(), cache_entry->m_cache_info.m_averror);
             }
         }
     }

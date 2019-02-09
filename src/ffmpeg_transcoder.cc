@@ -340,7 +340,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
     if (ret < 0)
     {
-        Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -367,7 +367,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     ret = avformat_find_stream_info(m_in.m_format_ctx, nullptr);
     if (ret < 0)
     {
-        Logging::error(filename(), "Could not find stream info (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not find stream info (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -390,7 +390,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     ret = open_bestmatch_codec_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
     {
-        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -432,7 +432,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     ret = open_bestmatch_codec_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_AUDIO, filename());
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
     {
-        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -514,7 +514,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 ret = open_codec_context(&input_codec_ctx, stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
                 if (ret < 0)
                 {
-                    Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret));
+                    Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
 
@@ -869,8 +869,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             // Limit bit rate
             Logging::trace(destname(), "Limiting audio bit rate from %1 to %2.",
-                           format_bitrate(orig_bit_rate),
-                           format_bitrate(output_codec_ctx->bit_rate));
+                           format_bitrate(orig_bit_rate).c_str(),
+                           format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         output_codec_ctx->channels              = m_in.m_audio.m_codec_ctx->channels > 2 ? 2 : m_in.m_audio.m_codec_ctx->channels;
@@ -881,8 +881,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             // Limit sample rate
             Logging::trace(destname(), "Limiting audio sample rate from %1 to %2.",
-                           format_samplerate(orig_sample_rate),
-                           format_samplerate(output_codec_ctx->sample_rate));
+                           format_samplerate(orig_sample_rate).c_str(),
+                           format_samplerate(output_codec_ctx->sample_rate).c_str());
             orig_sample_rate = output_codec_ctx->sample_rate;
         }
 
@@ -949,13 +949,13 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 else
                 {
                     // Should never happen... There must at least be one.
-                    Logging::error(destname(), "Audio sample rate to %1 not supported by codec.", format_samplerate(output_codec_ctx->sample_rate));
+                    Logging::error(destname(), "Audio sample rate to %1 not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
                     return AVERROR(EINVAL);
                 }
 
                 Logging::info(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
-                              format_samplerate(orig_sample_rate),
-                              format_samplerate(output_codec_ctx->sample_rate));
+                              format_samplerate(orig_sample_rate).c_str(),
+                              format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
         }
 
@@ -1030,8 +1030,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             // Limit sample rate
             Logging::trace(destname(), "Limiting video bit rate from %1 to %2.",
-                           format_bitrate(orig_bit_rate),
-                           format_bitrate(output_codec_ctx->bit_rate));
+                           format_bitrate(orig_bit_rate).c_str(),
+                           format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
         int width = 0;
@@ -1086,7 +1086,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_MP4);
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
 
@@ -1194,7 +1194,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_WEBM);
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
             break;
@@ -1204,7 +1204,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_PRORES);
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
 
@@ -1241,7 +1241,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // Rescale image if required
             if (src_pix_fmt != output_codec_ctx->pix_fmt)
             {
-                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(src_pix_fmt), get_pix_fmt_name(output_codec_ctx->pix_fmt));
+                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(src_pix_fmt).c_str(), get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
             }
 
             if (CODECPAR(m_in.m_video.m_stream)->width != output_codec_ctx->width ||
@@ -1321,7 +1321,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not open %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not open %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -1331,7 +1331,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not initialise stream parameters (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not initialise stream parameters (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 #endif
@@ -1362,7 +1362,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_audio.m_stream->codecpar);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 #else
@@ -1396,7 +1396,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_video.m_stream->codecpar);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 #else
@@ -1522,7 +1522,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id, false), output_stream->index, ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -1532,7 +1532,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not initialise stream parameters stream #%1 (error '%2').", output_stream->index, ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not initialise stream parameters stream #%1 (error '%2').", output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 #endif
@@ -1558,7 +1558,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
     if (tmp_pkt == nullptr)
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 #else
@@ -1569,7 +1569,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
     ret = av_copy_packet(tmp_pkt, pkt_in);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 #endif
@@ -1585,7 +1585,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt
 
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
 #if LAVF_DEP_AV_COPY_PACKET
@@ -1610,7 +1610,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_copy_audio = can_copy_stream(m_in.m_audio.m_stream);
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
-    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype);
+    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype.c_str());
 
     // Create a new format context for the output container format.
     avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->m_format_name.c_str(), nullptr);
@@ -1706,7 +1706,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 buf_size,
                 1,
                 static_cast<void *>(buffer),
-                nullptr,           // read
+                nullptr,        // read
                 output_write,   // write
                 (m_current_format->m_audio_codec_id != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
@@ -1755,12 +1755,12 @@ int FFmpeg_Transcoder::init_resampler()
         int ret;
 
         Logging::info(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
-                      get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt),
-                      get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt),
-                      format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate),
-                      format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate),
-                      get_channel_layout_name(m_in.m_audio.m_codec_ctx->channels, m_in.m_audio.m_codec_ctx->channel_layout),
-                      get_channel_layout_name(m_out.m_audio.m_codec_ctx->channels, m_out.m_audio.m_codec_ctx->channel_layout));
+                      get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                      get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                      format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),
+                      format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate).c_str(),
+                      get_channel_layout_name(m_in.m_audio.m_codec_ctx->channels, m_in.m_audio.m_codec_ctx->channel_layout).c_str(),
+                      get_channel_layout_name(m_out.m_audio.m_codec_ctx->channels, m_out.m_audio.m_codec_ctx->channel_layout).c_str());
 
         close_resample();
 
@@ -1789,7 +1789,7 @@ int FFmpeg_Transcoder::init_resampler()
         ret = swr_init(m_audio_resample_ctx);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret).c_str());
             swr_free(&m_audio_resample_ctx);
             m_audio_resample_ctx = nullptr;
             return ret;
@@ -1819,7 +1819,7 @@ int FFmpeg_Transcoder::init_resampler()
         ret = avresample_open(m_audio_resample_ctx);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret).c_str());
             avresample_free(&m_audio_resample_ctx);
             m_audio_resample_ctx = nullptr;
             return ret;
@@ -1915,7 +1915,7 @@ int FFmpeg_Transcoder::write_output_file_header()
     ret = avformat_write_header(m_out.m_format_ctx, &dict);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -1991,7 +1991,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(filename(), "Could not send packet to decoder (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(filename(), "Could not send packet to decoder (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
     }
@@ -1999,7 +1999,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
     ret = avcodec_receive_frame(avctx, frame);
     if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
     {
-        Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
     *got_frame = (ret >= 0) ? 1 : 0;
@@ -2036,7 +2036,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
 
     if (ret < 0 && ret != AVERROR(EINVAL))
     {
-        Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
         // unused frame
         av_frame_free(&frame);
         return ret;
@@ -2073,7 +2073,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         if (ret < 0)
         {
             // Anything else is an error, report it!
-            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
             // unused frame
             av_frame_free(&frame);
             break;
@@ -2182,7 +2182,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
     if (ret < 0 && ret != AVERROR(EINVAL))
     {
-        Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
         // unused frame
         av_frame_free(&frame);
         return ret;
@@ -2219,7 +2219,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         if (ret < 0)
         {
             // Anything else is an error, report it!
-            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
             // unused frame
             av_frame_free(&frame);
             break;
@@ -2328,7 +2328,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt)
 
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -2391,7 +2391,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
+                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
 
@@ -2399,7 +2399,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #else
                 if (ret < 0)
                 {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret));
+                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
 #endif
@@ -2490,7 +2490,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
                            m_out.m_audio.m_codec_ctx->sample_fmt, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not allocate converted input samples (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not allocate converted input samples (error '%1').", ffmpeg_geterror(ret).c_str());
         av_freep(&(*converted_input_samples)[0]);
         av_free(*converted_input_samples);
         return ret;
@@ -2512,7 +2512,7 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         ret = swr_convert(m_audio_resample_ctx, converted_data, *out_samples, const_cast<const uint8_t **>(input_data), in_samples);
         if (ret  < 0)
         {
-            Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
@@ -2550,7 +2550,7 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         ret = avresample_convert(m_audio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
@@ -2606,7 +2606,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, co
     {
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not write data to FIFO (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not write data to FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         }
         else
         {
@@ -2685,7 +2685,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             }
             else
             {
-                Logging::error(destname(), "Could not read frame (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not read frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
         }
@@ -2760,7 +2760,7 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     ret = av_frame_get_buffer(*frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could allocate output frame samples (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could allocate output frame samples (error '%1').", ffmpeg_geterror(ret).c_str());
         av_frame_free(frame);
         return ret;
     }
@@ -2820,7 +2820,7 @@ int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -2833,7 +2833,7 @@ int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
     ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
     if (ret < 0 && ret != AVERROR_EOF)
     {
-        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -2851,7 +2851,7 @@ int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
         }
         else if (ret < 0)
         {
-            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
             av_packet_unref(&pkt);
             return ret;
         }
@@ -2868,7 +2868,7 @@ int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
             ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 av_packet_unref(&pkt);
                 return ret;
             }
@@ -2917,7 +2917,7 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -2930,7 +2930,7 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
     ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
     if (ret < 0 && ret != AVERROR_EOF)
     {
-        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -2948,7 +2948,7 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
         }
         else if (ret < 0)
         {
-            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
             av_packet_unref(&pkt);
             return ret;
         }
@@ -3006,7 +3006,7 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
             ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not write video frame (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(destname(), "Could not write video frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 av_packet_unref(&pkt);
                 return ret;
             }
@@ -3049,7 +3049,7 @@ int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
     {
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not read data from FIFO (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Could not read data from FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         }
         else
         {
@@ -3083,7 +3083,7 @@ int FFmpeg_Transcoder::write_output_file_trailer()
     ret = av_write_trailer(m_out.m_format_ctx);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write output file trailer (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Could not write output file trailer (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -3305,13 +3305,13 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         if (ret < 0 && ret != AVERROR(EAGAIN))
                         {
-                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret));
+                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
                             throw ret;
                         }
 #else
                         if (ret < 0)
                         {
-                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret));
+                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
                             throw ret;
                         }
 #endif
@@ -3385,7 +3385,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         }
                         if (ret < 0 && ret != AVERROR(EAGAIN))
                         {
-                            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret));
+                            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
                             throw ret;
                         }
 #else
@@ -3638,7 +3638,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
         if (!audio_size(&filesize, m_current_format->m_audio_codec_id, input_audio_bit_rate, duration, channels, input_sample_rate))
         {
-            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype);
+            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype.c_str());
         }
     }
 
@@ -3660,7 +3660,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 #endif
             if (!video_size(&filesize, m_current_format->m_video_codec_id, input_video_bit_rate, duration, width, height, interleaved, frame_rate))
             {
-                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype);
+                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype.c_str());
             }
         }
         // else      // TODO #2260: Add picture size
@@ -3692,7 +3692,7 @@ int FFmpeg_Transcoder::encode_finish()
     ret = write_output_file_trailer();
     if (ret < 0)
     {
-        Logging::error(destname(), "Error writing trailer (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "Error writing trailer (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -4094,7 +4094,7 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         ret = avfilter_graph_create_filter(&m_buffer_source_context, pBufferSrc, "in", args, nullptr, m_filter_graph);
         if (ret < 0)
         {
-            Logging::error(destname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret).c_str());
             throw  ret;
         }
 
@@ -4123,21 +4123,21 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
 
         if (ret < 0)
         {
-            Logging::error(destname(), "Cannot create buffer sink (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "Cannot create buffer sink (error '%1').", ffmpeg_geterror(ret).c_str());
             throw  ret;
         }
 
         //ret = av_opt_set_int_list(m_pBufferSinkContext, "pix_fmts", pix_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
         //if (ret < 0)
         //{
-        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret));
+        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
         //    throw  ret;
         //}
 
         //ret = av_opt_set_bin(m_pBufferSinkContext, "pix_fmts", reinterpret_cast<uint8_t*>(&pCodecContext->pix_fmt), sizeof(pCodecContext->pix_fmt), AV_OPT_SEARCH_CHILDREN);
         //if (ret < 0)
         //{
-        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret));
+        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
         //    throw  ret;
         //}
 
@@ -4165,14 +4165,14 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &pInputs, &pOutputs, nullptr);
         if (ret < 0)
         {
-            Logging::error(destname(), "avfilter_graph_parse_ptr failed (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "avfilter_graph_parse_ptr failed (error '%1').", ffmpeg_geterror(ret).c_str());
             throw  ret;
         }
 
         ret = avfilter_graph_config(m_filter_graph, nullptr);
         if (ret < 0)
         {
-            Logging::error(destname(), "avfilter_graph_config failed (error '%1').", ffmpeg_geterror(ret));
+            Logging::error(destname(), "avfilter_graph_config failed (error '%1').", ffmpeg_geterror(ret).c_str());
             throw  ret;
         }
 
@@ -4212,7 +4212,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 
             if ((ret = ::av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
             {
-                Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret));
+                Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
@@ -4220,7 +4220,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             if (filterframe == nullptr)
             {
                 ret = AVERROR(ENOMEM);
-                Logging::error(destname(), "Unable to allocate filter frame (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(destname(), "Unable to allocate filter frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
@@ -4234,7 +4234,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             }
             else if (ret < 0)
             {
-                Logging::error(destname(), "Error while getting frame from filtergraph (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(destname(), "Error while getting frame from filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
                 ::av_frame_free(&filterframe);
                 throw ret;
             }

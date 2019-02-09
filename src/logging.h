@@ -162,10 +162,10 @@ protected:
             if (res[2].length())
             {
                 // Found match with printf format in res[2]
-                size_t size = std::snprintf(nullptr, 0, res[2].str().c_str(), val);
+                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, res[2].str().c_str(), val)) + 1;
                 std::vector<char> buffer;
-                buffer.resize(size + 1);
-                std::snprintf(buffer.data(), size + 1, res[2].str().c_str(), val);
+                buffer.resize(size);
+                std::snprintf(buffer.data(), size, res[2].str().c_str(), val);
                 ostr << buffer.data();
             }
             else
@@ -174,7 +174,7 @@ protected:
                 ostr << val;
             }
 
-            string_to_update.replace(res.position() + offset, res[0].length(), ostr.str());
+            string_to_update.replace(static_cast<size_t>(res.position()) + offset, static_cast<size_t>(res[0].length()), ostr.str());
 
             offset += static_cast<size_t>(res.position()) + ostr.str().length();
 

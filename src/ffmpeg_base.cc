@@ -66,7 +66,7 @@ int FFmpeg_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *strea
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            Logging::error(filename, "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret));
+            Logging::error(filename, "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
         }
         return ret;
     }
@@ -129,7 +129,7 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
     if (ret < 0)
     {
-        Logging::error(filename, "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret));
+        Logging::error(filename, "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -268,7 +268,7 @@ int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -280,7 +280,7 @@ int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -298,8 +298,8 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
     Logging::info(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
                   out_file ? "out" : "in",
                   get_codec_name(CODECPAR(stream)->codec_id, false),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
-                  format_duration(duration));
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                  format_duration(duration).c_str());
 }
 
 void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
@@ -314,10 +314,10 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
     Logging::info(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
                   out_file ? "out" : "in",
                   get_codec_name(CODECPAR(stream)->codec_id, false),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate),
+                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
                   CODECPAR(stream)->channels,
-                  format_samplerate(CODECPAR(stream)->sample_rate),
-                  format_duration(duration));
+                  format_samplerate(CODECPAR(stream)->sample_rate).c_str(),
+                  format_duration(duration).c_str());
 }
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const

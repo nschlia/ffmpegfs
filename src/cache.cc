@@ -527,7 +527,7 @@ bool Cache::prune_expired()
     time_t now = time(nullptr);
     char sql[1024];
 
-    Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time));
+    Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
     
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
@@ -543,7 +543,7 @@ bool Cache::prune_expired()
 
         keys.push_back(std::make_pair(filename, desttype));
 
-        Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))));
+        Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))).c_str());
     }
 
     Logging::trace(m_cacheidx_file, "%1 expired cache entries found.", keys.size());
@@ -553,7 +553,7 @@ bool Cache::prune_expired()
         for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
         {
             const cache_key_t & key = *it;
-            Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.first, key.second);
+            Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.first.c_str(), key.second.c_str());
 
             cache_t::iterator p = m_cache.find(key);
             if (p != m_cache.end())
@@ -569,7 +569,7 @@ bool Cache::prune_expired()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
+        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -590,7 +590,7 @@ bool Cache::prune_cache_size()
     sqlite3_stmt * stmt;
     const char * sql;
 
-    Logging::trace(m_cacheidx_file, "Pruning oldest cache entries exceeding %1 cache size...", format_size(params.m_max_cache_size));
+    Logging::trace(m_cacheidx_file, "Pruning oldest cache entries exceeding %1 cache size...", format_size(params.m_max_cache_size).c_str());
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
@@ -611,11 +611,11 @@ bool Cache::prune_cache_size()
         total_size += size;
     }
 
-    Logging::trace(m_cacheidx_file, "%1 in cache.", format_size(total_size));
+    Logging::trace(m_cacheidx_file, "%1 in cache.", format_size(total_size).c_str());
 
     if (total_size > params.m_max_cache_size)
     {
-        Logging::trace(m_cacheidx_file, "Pruning %1 of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size));
+        Logging::trace(m_cacheidx_file, "Pruning %1 of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size).c_str());
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
@@ -623,7 +623,7 @@ bool Cache::prune_cache_size()
             {
                 const cache_key_t & key = *it;
 
-                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first, key.second);
+                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
 
                 cache_t::iterator p = m_cache.find(key);
                 if (p != m_cache.end())
@@ -644,11 +644,11 @@ bool Cache::prune_cache_size()
                 }
             }
 
-            Logging::trace(m_cacheidx_file, "%1 left in cache.", format_size(total_size));
+            Logging::trace(m_cacheidx_file, "%1 left in cache.", format_size(total_size).c_str());
         }
         else
         {
-            Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
+            Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
     }
 
@@ -673,14 +673,14 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     if (free_bytes < predicted_filesize)
     {
-        Logging::error(cachepath, "prune_disk_space() : Insufficient disk space %1 on cache drive, at least %2 required.", format_size(free_bytes),  format_size(predicted_filesize));
+        Logging::error(cachepath, "prune_disk_space() : Insufficient disk space %1 on cache drive, at least %2 required.", format_size(free_bytes).c_str(), format_size(predicted_filesize).c_str());
         errno = ENOSPC;
         return false;
     }
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    Logging::trace(cachepath, "%1 disk space before prune.", format_size(free_bytes));
+    Logging::trace(cachepath, "%1 disk space before prune.", format_size(free_bytes).c_str());
     if (free_bytes < params.m_min_diskspace + predicted_filesize)
     {
         std::vector<cache_key_t> keys;
@@ -703,7 +703,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             filesizes.push_back(size);
         }
 
-        Logging::trace(cachepath, "Pruning %1 of oldest cache entries to keep disk space above %2 limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes), format_size(params.m_min_diskspace));
+        Logging::trace(cachepath, "Pruning %1 of oldest cache entries to keep disk space above %2 limit...", format_size(params.m_min_diskspace + predicted_filesize - free_bytes).c_str(), format_size(params.m_min_diskspace).c_str());
 
         if (ret == SQLITE_DONE)
         {
@@ -712,7 +712,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             {
                 const cache_key_t & key = *it;
 
-                Logging::trace(cachepath, "Pruning: %1 Type: %2", key.first, key.second);
+                Logging::trace(cachepath, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
 
                 cache_t::iterator p = m_cache.find(key);
                 if (p != m_cache.end())
@@ -732,11 +732,11 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
                     break;
                 }
             }
-            Logging::trace(cachepath, "Disk space after prune: %1", format_size(free_bytes));
+            Logging::trace(cachepath, "Disk space after prune: %1", format_size(free_bytes).c_str());
         }
         else
         {
-            Logging::error(cachepath, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
+            Logging::error(cachepath, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
 
         sqlite3_finalize(stmt);
@@ -792,7 +792,7 @@ bool Cache::clear()
         {
             const cache_key_t & key = *it;
 
-            Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first, key.second);
+            Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
 
             cache_t::iterator p = m_cache.find(key);
             if (p != m_cache.end())
@@ -808,7 +808,7 @@ bool Cache::clear()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt));
+        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);

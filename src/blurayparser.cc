@@ -9,7 +9,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; without even the impli388ed warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -385,10 +385,10 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
                 stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
                 stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
 
-                Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate), width, height, frame_rate, interleaved ? "i" : "p", format_size(size), format_duration(duration));
+                Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
                 if (audio > -1)
                 {
-                    Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)));
+            Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)).c_str());
                 }
 
                 transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);

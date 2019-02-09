@@ -92,7 +92,7 @@ extern struct FFMPEGFS_PARAMS
     int                 m_win_smb_fix;              // Experimental Windows fix for access to EOF at file open
 } params;
 
-struct Cache_Entry;
+class Cache_Entry;
 
 // Fuse operations struct
 extern fuse_operations ffmpegfs_ops;

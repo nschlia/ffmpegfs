@@ -8,6 +8,7 @@ Important changes in 1.7 (2019-01-XX) UNRELEASED
 * Feature: Add "Auto Stream Copy"
 * Feature: Speed up DVD/Bluray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.
 * Feature: Extended stream copy: now any codec can be copied if supported by target container using --autocopy=MATCH option.
+* Feature: Fixed clang compatiblity. Project did not build with clang, this has gone unnoticed for a while...
 * Feature:
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 

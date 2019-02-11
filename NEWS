@@ -1,22 +1,22 @@
 FFmpegfs NEWS
 
-Important changes in 1.7 (2019-01-XX) UNRELEASED
+Important changes in 1.7 (2019-02-XX) YET UNRELEASED
 
 * Feature: Windows seems to access the files on Samba drives starting at the last 64K segment
            simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
            file up to this point).
-* Feature: Add "Auto Stream Copy"
+* Feature: Added "Auto Stream Copy"
 * Feature: Speed up DVD/Bluray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.
 * Feature: Extended stream copy: now any codec can be copied if supported by target container using --autocopy=MATCH option.
 * Feature: Fixed clang compatiblity. Project did not build with clang, this has gone unnoticed for a while...
 * Feature:
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 
-        on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
-	the issue.
-* Bugfix: Fix crash when DVD nav packet is missing
+          on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
+          the issue.
+* Bugfix: Fixed crash when DVD nav packet was missing
 * Bugfix: 
-* Fix deprecation:
+* Fixed deprecation:
 
 Important changes in 1.6 (2019-01-11)
 
@@ -27,45 +27,45 @@ Important changes in 1.6 (2019-01-11)
            to AIFF.
 * Feature: New parameter --level allows selecting a profile for Prores: proxy, lt, standard
            or hq.
-* Feature: Add MOV target format
-* Feature: Add AIFF target format
+* Feature: Added MOV target format
+* Feature: Added AIFF target format
 * Feature: Smart conversion option ("Smart Transcode")
-* Feature: Add level option for Prores
-* Feature: Add Apple Prores support
+* Feature: Added level option for Prores
+* Feature: Added Apple Prores support
 * Feature: Do not "upgrade" mono audio to stereo. Create mono audio stream.
 * Feature: Speed up DVD conversion significantly by using IFO data instead of probing each chapter.
-* Feature: Add DVD angle support.Chapters with angles will show as separate files.
+* Feature: Added DVD angle support.Chapters with angles will show as separate files.
 * Feature: Speed up Bluray conversion significantly by using the directory instead of probing each chapter.
 * Feature: Speed up VCD conversion.
 * Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment 
-	  simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file 
-	  up to this point).
+           simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file
+           up to this point).
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
 * Bugfix: Fixed memory leak when using the deinterlace option.
 * Bugfix: Deinterlace did not always work.
 * Bugfix: Fixed memory leaks.
 * Bugfix: Report correct error if directory mounted twice.
 * Bugfix: Silence chatty log outputs.
-* Bugfix: Fix GPF when accessed.
-* Bugfix: Fix GPF when channel layout changed during playback.
+* Bugfix: Fixed GPF when accessed.
+* Bugfix: Fixed GPF when channel layout changed during playback.
 * Bugfix: If transcode failed, the error was sometimes not reported to the client process, causing it to hang.
 * Bugfix: Sometimes tried to create WebM files with zero width (failed to transcode).
 * Bugfix: Avoid mpeg-4 profile/pixel format mismatches.
-* Bugfix: Fix creating zero sized files from DVDs when chapter playtime < 1 s.
+* Bugfix: Fixed creating zero sized files from DVDs when chapter playtime < 1 s.
 * Bugfix: Update timeout when client just holds the file open without reading.
 * Bugfix: Properly honour client exit (end wait for data).
 * Bugfix: Issue #23: do not block open with a read waiting for data.
 * Bugfix; WebM files had no duration. Added duration to Matroska container.
-* Bugfix: Fix EOF detection for Bluray chapters.
+* Bugfix: Fixed EOF detection for Bluray chapters.
 * Bugfix: Force mpeg format for DVDs to avoid misdetections.
 * Bugfix: Force mpegts format for Blurays to avoid misdetections.
 * Bugfix: Take DVD chapter duration from IFO as probed playtime from VOB segment is sometimes wrong.
 * Bugfix: Take Bluray chapter duration from directory as probed playtime from MTS segment is sometimes wrong.
-* Fix deprecation:
+* Fixed deprecation:
 
 Important changes in 1.5 (2018-06-08)
 
-* Feature: Add WebM output format using VP9 video and Opus audio codec.
+* Feature: Added WebM output format using VP9 video and Opus audio codec.
 * Feature: Input format check is now done by FFmpeg, that means if the input file is
            supported by FFmpeg, it will be transcoded. For performance, files are not
            opened and scanned, the file's extension is checked only (e.g. mp3, wav, rm etc.).
@@ -109,25 +109,25 @@ Important changes in 1.4 (2018-05-30)
           process will not be shut down writing a core file.
 * Bugfix: Set mp4 profile to high/3.1 to enable playback under enable playback under
           Win 7.
-* Bugfix: Fix formatting of help text.
+* Bugfix: Fixed formatting of help text.
 
 * Workaround: Fixed Libav support: Deinterlace code did not compile. Should be possible
               to get it working, but for now it is simply disabled.
               But honestly I don't want to get it working. I am thinking of dropping
               Libav completely.
 
-* Fix deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
+* Fixed deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
     Deprecate use of  av_iformat_next(), av_oformat_next().
 
 Important changes in 1.3 (2018-05-04)
 
 Changes in this release:
 
-* Feature: Add option to deinterlace video if required (will improve picture
+* Feature: Added option to deinterlace video if required (will improve picture
            quality when viewed in browsers via HTML5.
 * Feature: Set stream duration from source file as hint for encoder.
 * Feature: Enhanced logging output for better readability.
-* Feature: Add pre-buffer option. Files will be decoded up to this limit first
+* Feature: Added pre-buffer option. Files will be decoded up to this limit first
            before made accessible. This ensures smooth startup.
 * Feature: Enhanced configure that checks whether libavresample or libswresample 
            is present.
@@ -151,11 +151,11 @@ Changes in this release:
 * Bugfix: Only four lines of code: Avoid locking other clients when trying to get
           the size of a file currently being decoded. Also speeds up directory 
           access quite significantly.
-* Bugfix: Fix lost frames at end of files (files where cut short)
-* Bugfix: Fix crash when video files were transcoded to audio only (e.g. mp3)
+* Bugfix: Fixed lost frames at end of files (files where cut short)
+* Bugfix: Fixed crash when video files were transcoded to audio only (e.g. mp3)
 * Bugfix: Make WAV size prediction more accurate
 * Bugfix: Recode existing cache files if not found in database (handle database inconsistencies).
-* Bugfix: Fix sharing problems with sqlite database when accessed by multiple instances.
+* Bugfix: Fixed sharing problems with sqlite database when accessed by multiple instances.
 * Bugfix: Files were truncated (mostly mp3) when cp'ed directly while transcoding. Now files
           will have the final size as expected.
 * Bugfix: Create valid WAV header for files transcoded on-the-fly.
@@ -167,42 +167,42 @@ FFMpeg has evolved, many API parts have been deprecated and will be dropped
 soon. This release adopts these changes by conditionally using the new
 APIs from the FFMpeg version on that they are available.
 
-* Fix deprecation: 2017-xx-xx - xxxxxxx - lavr 4.0.0 - avresample.h
+* Fixed deprecation: 2017-xx-xx - xxxxxxx - lavr 4.0.0 - avresample.h
     Deprecate the entire library. Merged years ago to provide compatibility
     with Libav, it remained unmaintained by the FFmpeg project and duplicated
     functionality provided by libswresample.
     swresample is the preferred library in FFMpeg, so it will be used if compiled
     with FFMpeg by default, even before being deprecated. With libav, which
     makes libavresample available only, the latter will be used.
-* Fix deprecation: 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
-    Add a new audio/video encoding and decoding API with decoupled input
+* Fixed deprecation: 2016-04-21 - 7fc329e - lavc 57.37.100 - avcodec.h
+    Added a new audio/video encoding and decoding API with decoupled input
     and output -- avcodec_send_packet(), avcodec_receive_frame(),
     avcodec_send_frame() and avcodec_receive_packet().
-* Fix deprecation: 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
+* Fixed deprecation: 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h
     Deprecate AVFormatContext filename field which had limited length, use the
     new dynamically allocated url field instead.
-* Fix deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
+* Fixed deprecation: 2018-xx-xx - xxxxxxx - lavf 58.9.100 - avformat.h
     Deprecate use of av_register_input_format(), av_register_output_format(),
     av_register_all(), av_iformat_next(), av_oformat_next().
     NOTE: av_iformat_next/av_oformat_next() lack a replacement (currently
     still used in tools/probetest.c "static void probe" in 58.10.100)
-* Fix deprecation: 2018-xx-xx - xxxxxxx - lavc 58.10.100 - avcodec.h
+* Fixed deprecation: 2018-xx-xx - xxxxxxx - lavc 58.10.100 - avcodec.h
     Deprecate use of avcodec_register(), avcodec_register_all(),
     av_codec_next(), av_register_codec_parser(), and av_parser_next().
-    Add av_codec_iterate() and av_parser_iterate().
-* Fix deprecation: 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
-    Add AVStream.codecpar, deprecate AVStream.codec.
-* Fix deprecation: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
+    Added av_codec_iterate() and av_parser_iterate().
+* Fixed deprecation: 2016-04-11 - 6f69f7a / 9200514 - lavf 57.33.100 / 57.5.0 - avformat.h
+    Added AVStream.codecpar, deprecate AVStream.codec.
+* Fixed deprecation: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
     Deprecate use of avfilter_register(), avfilter_register_all(),
-    avfilter_next(). Add av_filter_iterate().
+    avfilter_next(). Added av_filter_iterate().
 
 nschlia@oblivion-software.de
 
 Important changes in 1.2 (2018-04-03)
 
 Changes in this release:
-* Fix issue #4: File size was wrong when file was first accessed.
-* Fix issue #5: Fix crashes when transcoding.
+* Fixed issue #4: File size was wrong when file was first accessed.
+* Fixed issue #5: Fixed crashes when transcoding.
 * Feature: None. This a bug fix release.
 
 nschlia@oblivion-software.de
@@ -210,12 +210,12 @@ nschlia@oblivion-software.de
 Important changes in 1.1 (2018-03-19)
 
 Changes in this release:
-* Fix: make clean for checks did not delete all logs
+* Fixed: make clean for checks did not delete all logs
 * Feature request #1: WAV output support (by github user Avuton)
 * Feature: OGG output support
-* Fix: Did not write correct ID3v2 headers (thanks for the fix to gitbug user sdrik)
+* Fixed: Did not write correct ID3v2 headers (thanks for the fix to gitbug user sdrik)
 * Feature: Include configure command line arguments and host OS in "-V" option.
-* Feature: Add --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
+* Feature: Added --videoheight=HEIGHT and --videowidth=WIDTH parameters to allow
   video size change. If source video is larger it will be scaled down.
   If already smaller the size will be left as is. You should only set
   one parameter, if both are set the aspect ratio may be changed and the
@@ -271,12 +271,12 @@ Changes in this release:
   me a good head start!
 * Cache management: Keep cache size within limit, ensure min. disk space, prune
   oldest entries
-* Fix many crashes
-* Fix memory leaks   
-* Fix mp4 check suite
-* Add mp3 check suite
-* Add --disable_cache parameter
-* Add --prune_cache parameter. Starts cache pruning manually.
+* Fixed many crashes
+* Fixed memory leaks
+* Fixed mp4 check suite
+* Added mp3 check suite
+* Added --disable_cache parameter
+* Added --prune_cache parameter. Starts cache pruning manually.
 * TODO: Add intelligent stream copy, e.g., if transcoding a transport stream
   that already represents a H264 video stream it would be possible to
   simply repackage it to a mp4 container without recoding.
@@ -322,10 +322,10 @@ Changes in this release:
 * See manual or run "mp3fs -h" for even more new options.
 * Run "mp3fs -f" to get a list of all supported input formats.
 * Caching of file attributes is now the default as if
-  "--statcachesize=500" was given. Add "--statcachesize=0" to turn off
+  "--statcachesize=500" was given. Added "--statcachesize=0" to turn off
   (not really a bright idea, though).
 * TODO: Files will now be decoded to /tmp/ instead of memory if larger
-  than 100MB. Add "--maxmemcache=X" to change. Examples for X: 80000,
+  than 100MB. Added "--maxmemcache=X" to change. Examples for X: 80000,
   80MB or 1GB. Do not set to a too large value as you may run out of
   memory.
 * TODO: Support for video files.

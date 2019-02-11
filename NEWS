@@ -17,6 +17,7 @@ Important changes in 1.7 (2019-02-XX) YET UNRELEASED
 * Bugfix: Fixed clang compatiblity. Project did not build with clang, this has gone unnoticed for a while...
 * Bugfix: Fixed terrible miscalculation of DVD play time. No one told me the values are BCD, not decimal...
 * Bugfix: Fixed conversion of DVD chapters consisting of more than one cell.
+* Bugfix: Fixed pts/dts generation
 * Fixed deprecation:
 
 Important changes in 1.6 (2019-01-11)

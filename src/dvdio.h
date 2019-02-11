@@ -72,6 +72,7 @@ protected:
     ifo_handle_t *  m_vts_file;
     pgc_t *         m_cur_pgc;
     int             m_start_cell;
+    int             m_end_cell;
     int             m_cur_cell;
     int             m_next_cell;
     int             m_last_cell;

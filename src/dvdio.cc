@@ -43,6 +43,7 @@ DvdIO::DvdIO()
     , m_vts_file(nullptr)
     , m_cur_pgc(nullptr)
     , m_start_cell(0)
+    , m_end_cell(0)
     , m_cur_cell(0)
     , m_next_cell(0)
     , m_last_cell(0)
@@ -171,6 +172,15 @@ int DvdIO::openX(const std::string & filename)
     m_cur_pgc           = m_vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
     m_start_cell        = m_cur_pgc->program_map[pgn - 1] - 1;
 
+    if (pgn < m_cur_pgc->nr_of_programs)
+    {
+        m_end_cell      = m_cur_pgc->program_map[pgn] - 1;
+    }
+    else
+    {
+        m_end_cell      = m_cur_pgc->nr_of_cells;
+    }
+
     // We've got enough info, time to open the title set data.
     m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_idx].title_set_nr, DVD_READ_TITLE_VOBS);
     if (!m_dvd_title)
@@ -186,20 +196,20 @@ int DvdIO::openX(const std::string & filename)
     m_last_cell         = m_cur_pgc->nr_of_cells;
     m_cur_cell          = m_start_cell;
 
-    if (!m_duration)
-    {
-        int first_cell = m_next_cell;
+    //    if (!m_duration)
+    //    {
+    //        int first_cell = m_next_cell;
 
-        // Check if we're entering an angle block.
-        if (m_cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
-        {
-            first_cell += m_angle_idx;
-        }
+    //        // Check if we're entering an angle block.
+    //        if (m_cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
+    //        {
+    //            first_cell += m_angle_idx;
+    //        }
 
-        int framerate   = ((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6);
-        int64_t frac    = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
-        m_duration      = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
-    }
+    //        int framerate   = ((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6);
+    //        int64_t frac    = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
+    //        m_duration      = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
+    //    }
 
     m_goto_next_cell    = true;
     m_is_eof            = false;
@@ -506,16 +516,21 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
         }
         else
         {
-            next_vobu = m_cur_pgc->cell_playback[m_next_cell].first_sector;
+            //            next_vobu = m_cur_pgc->cell_playback[m_next_cell].first_sector;
 
-            if (next_vobu >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
-            {
-                dsitype = DSITYPE_EOF_CHAPTER;
-            }
+            //            if (next_vobu >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
+            //            {
+            //                dsitype = DSITYPE_EOF_CHAPTER;
+            //            }
 
             m_cur_cell = m_next_cell;
 
             next_cell();
+
+            if (m_cur_cell >= m_end_cell)
+            {
+                dsitype = DSITYPE_EOF_CHAPTER;
+            }
 
             next_vobu = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
         }
@@ -648,7 +663,7 @@ int DvdIO::read(void * data, int size)
 
     // DSITYPE_EOF_TITLE - end of title
     // DSITYPE_EOF_CHAPTER - end of chapter
-    if (dsitype != DSITYPE_CONTINUE)
+ 	if (dsitype != DSITYPE_CONTINUE)
     {
         m_is_eof = true;
     }
@@ -676,7 +691,7 @@ size_t DvdIO::size() const
     }
     else
     {
-        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;
+        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;  // TODO: FALSCH!!!!
     }
 }
 

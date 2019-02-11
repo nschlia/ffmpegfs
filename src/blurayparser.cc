@@ -31,6 +31,7 @@
 static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved);
 static int parse_find_best_audio_stream();
 static int parse_find_best_video_stream();
+static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, uint32_t title_idx, uint32_t chapter_idx);
 static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved)
@@ -273,6 +274,115 @@ static int parse_find_best_video_stream()
     return 0;
 }
 
+/**
+ * @brief Create a virtual file entry of a bluray chapter or title
+ * @param[in] bd - Bluray disk clip info
+ * @param[in] ti - Bluray disk title info
+ * @param[in] path - path to check
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] is_main_title - true if title_idx is the main title
+ * @param[in] title_idx - Zero-based title index on Bluray
+ * @param[in] chapter_idx - Zero-based chapter index on Bluray
+ * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
+ * @return On error, returns false. On success, returns true.
+ */
+static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, uint32_t title_idx, uint32_t chapter_idx)
+{
+    BLURAY_CLIP_INFO     *clip = &ti->clips[0];
+    BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
+    char title_buf[PATH_MAX + 1];
+    std::string origfile;
+    struct stat stbuf;
+
+    int64_t duration  = static_cast<int64_t>(chapter->duration) * AV_TIME_BASE / 90000;
+
+    if (duration < AV_TIME_BASE)
+    {
+        Logging::debug(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
+        return true;
+    }
+
+    sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
+            title_idx + 1,
+            chapter_idx + 1,
+            replace_all(format_duration(duration), ":", "-").c_str(),
+            is_main_title ? "+" : "",
+            params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+
+    std::string filename(title_buf);
+
+    origfile = path + filename;
+
+    memcpy(&stbuf, statbuf, sizeof(struct stat));
+
+    stbuf.st_size   = 0; //static_cast<__off_t>(size);
+    stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
+
+    if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
+    {
+        // break;
+    }
+
+    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &stbuf);
+
+    // Bluray is video format anyway
+    virtualfile->m_format_idx           = 0;
+    // Mark title/chapter/angle
+    // ti->chapter_count
+    virtualfile->m_bluray.m_title_no      = title_idx + 1;
+    virtualfile->m_bluray.m_playlist_no   = ti->playlist;
+    virtualfile->m_bluray.m_chapter_no    = chapter_idx + 1;
+    virtualfile->m_bluray.m_angle_no      = 1;
+
+    if (!transcoder_cached_filesize(virtualfile, &stbuf))
+    {
+        BITRATE video_bit_rate   = 1024*1024;
+        BITRATE audio_bit_rate   = 256*1024;
+
+        int channels            = 0;
+        int sample_rate         = 0;
+        int audio               = 0;
+
+        int width               = 0;
+        int height              = 0;
+        double frame_rate       = 0;
+        int interleaved         = 0;
+
+        if (!bd_select_title(bd, title_idx))
+        {
+            Logging::error(path, "Failed to open title: %1", title_idx);
+            errno = EIO;
+            return false;
+        }
+
+        uint64_t size           = bd_get_title_size(bd);
+
+        double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
+
+        virtualfile->m_bluray.m_duration = duration;
+
+        if (secsduration != 0.)
+        {
+            video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
+        }
+
+        // Get details
+        stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
+        stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
+
+        Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+        if (audio > -1)
+        {
+            Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)).c_str());
+        }
+
+        transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
+    }
+
+    return true;
+}
+
 static int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;
@@ -281,6 +391,7 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
     unsigned int seconds = 0;
     uint8_t flags = TITLES_RELEVANT;
     const char *bd_dir = nullptr;
+    bool success = true;
 
     bd_dir = path.c_str();
 
@@ -295,104 +406,15 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
         Logging::trace(path, "Main title: %1", main_title + 1);
     }
 
-    for (uint32_t title_idx = 0; title_idx < title_count; title_idx++)
+
+    for (uint32_t title_idx = 0; title_idx < title_count && success; title_idx++)
     {
-        BLURAY_TITLE_INFO* ti;
+        BLURAY_TITLE_INFO* ti = bd_get_title_info(bd, title_idx, 0);
+        bool is_main_title = (main_title >= 0 && title_idx == static_cast<uint32_t>(main_title));
 
-        ti = bd_get_title_info(bd, title_idx, 0);
-
-        //ti->clip_count
-        for (uint32_t chapter_idx = 0; chapter_idx < ti->chapter_count; chapter_idx++)
+        for (uint32_t chapter_idx = 0; chapter_idx < ti->chapter_count && success; chapter_idx++)
         {
-            BLURAY_CLIP_INFO     *clip = &ti->clips[0];
-            BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
-            char title_buf[PATH_MAX + 1];
-            std::string origfile;
-            struct stat stbuf;
-
-            int64_t duration  = static_cast<int64_t>(chapter->duration) * AV_TIME_BASE / 90000;
-
-            if (duration < AV_TIME_BASE)
-            {
-                Logging::debug(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
-                continue;
-            }
-
-            sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
-                    title_idx + 1,
-                    chapter_idx + 1,
-                    replace_all(format_duration(duration), ":", "-").c_str(),
-                    (main_title >= 0 && title_idx == static_cast<uint32_t>(main_title)) ? "+" : "",
-                    params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
-
-            std::string filename(title_buf);
-
-            origfile = path + filename;
-
-            memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-            stbuf.st_size   = 0; //static_cast<__off_t>(size);
-            stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
-
-            if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
-            {
-                // break;
-            }
-
-            LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &stbuf);
-
-            // Bluray is video format anyway
-            virtualfile->m_format_idx       = 0;
-            // Mark title/chapter/angle
-            // ti->chapter_count
-    		virtualfile->m_bluray.m_title_no      = title_idx + 1;
-    		virtualfile->m_bluray.m_playlist_no   = ti->playlist;
-    		virtualfile->m_bluray.m_chapter_no    = chapter_idx + 1;
-    		virtualfile->m_bluray.m_angle_no      = 1;
-
-            if (!transcoder_cached_filesize(virtualfile, &stbuf))
-            {
-                BITRATE video_bit_rate   = 1024*1024;
-                BITRATE audio_bit_rate   = 256*1024;
-
-                int channels            = 0;
-                int sample_rate         = 0;
-                int audio               = 0;
-
-                int width               = 0;
-                int height              = 0;
-                double frame_rate       = 0;
-                int interleaved         = 0;
-
-                if (!bd_select_title(bd, title_idx))
-                {
-                    Logging::error(path, "Failed to open title: %1", title_idx);
-                    return 0;
-                }
-
-                uint64_t size           = bd_get_title_size(bd);
-
-                double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
-
-                virtualfile->m_bluray.m_duration = duration;
-
-                if (secsduration != 0.)
-                {
-                    video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
-                }
-
-                // Get details
-                stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
-                stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
-
-                Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
-                if (audio > -1)
-                {
-            Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)).c_str());
-                }
-
-                transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
-            }
+            success = create_bluray_virtualfile(bd, ti, path, statbuf, buf, filler, is_main_title, title_idx, chapter_idx);
         }
 
         bd_free_title_info(ti);
@@ -400,7 +422,14 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
 
     bd_close(bd);
 
-    return static_cast<int>(title_count);
+    if (success)
+    {
+        return static_cast<int>(title_count);
+    }
+    else
+    {
+        return -errno;
+    }
 }
 
 int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)

@@ -2986,7 +2986,8 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 
                 if (pkt.dts != static_cast<int64_t>(AV_NOPTS_VALUE) && m_out.m_last_mux_dts != static_cast<int64_t>(AV_NOPTS_VALUE))
                 {
-                    int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                    //int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, (AVRational){m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num}, m_out.m_video.m_stream->time_base);
 
                     if (pkt.dts < max)
                     {

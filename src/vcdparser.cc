@@ -33,7 +33,7 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
 
 static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)
 {
-    const VcdChapter & chapter1 = vcd.get_chapter(chapter_no);
+    const VcdChapter * chapter1 = vcd.get_chapter(chapter_no);
     char title_buf[PATH_MAX + 1];
     std::string origfile;
     struct stat st;
@@ -42,15 +42,15 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
 
     if (!full_title)
     {
-        size = chapter1.get_size();
-        duration = chapter1.get_duration();
-        sprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1.get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
+        size = chapter1->get_size();
+        duration = chapter1->get_duration();
+        sprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
     }
     else
     {
         size = vcd.get_size();
         duration = vcd.get_duration();
-        sprintf(title_buf, "%02d. Title [%s].%s", chapter1.get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
+        sprintf(title_buf, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
     }
 
     std::string filename(title_buf);
@@ -75,12 +75,12 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
     virtualfile->m_format_idx       = 0;
     // Mark title/chapter/angle
     virtualfile->m_vcd.m_full_title = full_title;
-    virtualfile->m_vcd.m_track_no   = chapter1.get_track_no();
+    virtualfile->m_vcd.m_track_no       = chapter1->get_track_no();
     virtualfile->m_vcd.m_chapter_no = chapter_no;
-    virtualfile->m_vcd.m_start_pos  = chapter1.get_start_pos();
+    virtualfile->m_vcd.m_start_pos      = chapter1->get_start_pos();
     if (!full_title)
     {
-        virtualfile->m_vcd.m_end_pos    = chapter1.get_end_pos();
+        virtualfile->m_vcd.m_end_pos    = chapter1->get_end_pos();
     }
     else
     {

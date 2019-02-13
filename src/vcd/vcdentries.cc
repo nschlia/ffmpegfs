@@ -374,9 +374,13 @@ int VcdEntries::get_number_of_chapters() const
     return static_cast<int>(m_chapters.size());
 }
 
-const VcdChapter & VcdEntries::get_chapter(int chapter_no) const
+const VcdChapter *VcdEntries::get_chapter(int chapter_idx) const
 {
-    return m_chapters[static_cast<size_t>(chapter_no)];
+    if (chapter_idx < 0 || chapter_idx >= get_number_of_chapters())
+    {
+        return nullptr;
+    }
+    return &m_chapters[static_cast<size_t>(chapter_idx)];
 }
 
 int64_t VcdEntries::get_duration() const

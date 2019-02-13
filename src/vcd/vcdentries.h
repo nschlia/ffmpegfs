@@ -50,7 +50,7 @@ public:
     VCDPROFILETAG           get_profile_tag() const;
     std::string             get_profile_tag_str() const;
     int                     get_number_of_chapters() const;
-    const VcdChapter  &     get_chapter(int chapter_no) const;
+    const VcdChapter  *     get_chapter(int chapter_idx) const;
     int64_t                 get_duration() const;
     uint64_t                get_size() const;                   // Get disk size (DAT/MPEG only)
 

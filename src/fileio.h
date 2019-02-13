@@ -68,27 +68,32 @@ typedef struct VIRTUALFILE
     struct VCD_CHAPTER
     {
         VCD_CHAPTER()
-            : m_track_no(0)
+            : m_full_title(false)
+            , m_track_no(0)
             , m_chapter_no(0)
             , m_start_pos(0)
             , m_end_pos(0)
+            , m_duration(0)
         {}
+        bool        m_full_title;
         int         m_track_no;
         int         m_chapter_no;
         uint64_t    m_start_pos;
         uint64_t    m_end_pos;
-
+        int64_t     m_duration;
     }               m_vcd;
 #endif //USE_LIBVCD
 #ifdef USE_LIBDVD
     struct DVD_CHAPTER
     {
         DVD_CHAPTER()
-            : m_title_no(0)
+            : m_full_title(false)
+            , m_title_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
             , m_duration(0)
         {}
+        bool        m_full_title;
         int         m_title_no;
         int         m_chapter_no;
         int         m_angle_no;
@@ -99,12 +104,14 @@ typedef struct VIRTUALFILE
     struct BLURAY_CHAPTER
     {
         BLURAY_CHAPTER()
-            : m_title_no(0)
+            : m_full_title(false)
+            , m_title_no(0)
             , m_playlist_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
             , m_duration(0)
         {}
+        bool        m_full_title;
         uint32_t    m_title_no;
         uint32_t    m_playlist_no;
         unsigned    m_chapter_no;

@@ -50,6 +50,8 @@ protected:
 
 protected:
     FILE *          m_fpi;
+
+    bool            m_full_title;
     int             m_track_no;
     int             m_chapter_no;
 

@@ -31,7 +31,7 @@
 static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved);
 static int parse_find_best_audio_stream();
 static int parse_find_best_video_stream();
-static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, uint32_t title_idx, uint32_t chapter_idx);
+static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx);
 static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved)
@@ -287,28 +287,49 @@ static int parse_find_best_video_stream()
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, uint32_t title_idx, uint32_t chapter_idx)
+static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx)
 {
     BLURAY_CLIP_INFO     *clip = &ti->clips[0];
     BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
     char title_buf[PATH_MAX + 1];
     std::string origfile;
     struct stat stbuf;
+    int64_t duration;
 
-    int64_t duration  = static_cast<int64_t>(chapter->duration) * AV_TIME_BASE / 90000;
-
-    if (duration < AV_TIME_BASE)
+    if (full_title)
     {
-        Logging::debug(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
-        return true;
-    }
+        duration  = static_cast<int64_t>(ti->duration) * AV_TIME_BASE / 90000;
 
-    sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
-            title_idx + 1,
-            chapter_idx + 1,
-            replace_all(format_duration(duration), ":", "-").c_str(),
-            is_main_title ? "+" : "",
-            params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+        if (duration < AV_TIME_BASE)
+        {
+            Logging::debug(path, "Title %1: skipping empty title", title_idx + 1);
+            return true;
+        }
+
+        sprintf(title_buf, "%02d. Title [%s]%s.%s",
+                title_idx + 1,
+                replace_all(format_duration(duration), ":", "-").c_str(),
+                is_main_title ? "+" : "",
+                params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+    }
+    else
+    {
+        duration  = static_cast<int64_t>(chapter->duration) * AV_TIME_BASE / 90000;
+
+        if (duration < AV_TIME_BASE)
+        {
+            Logging::debug(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
+            return true;
+        }
+
+        sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
+                title_idx + 1,
+                chapter_idx + 1,
+                replace_all(format_duration(duration), ":", "-").c_str(),
+                is_main_title ? "+" : "",
+                params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+
+    }
 
     std::string filename(title_buf);
 
@@ -329,16 +350,16 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     // Bluray is video format anyway
     virtualfile->m_format_idx           = 0;
     // Mark title/chapter/angle
-    // ti->chapter_count
-    virtualfile->m_bluray.m_title_no      = title_idx + 1;
-    virtualfile->m_bluray.m_playlist_no   = ti->playlist;
-    virtualfile->m_bluray.m_chapter_no    = chapter_idx + 1;
-    virtualfile->m_bluray.m_angle_no      = 1;
+    virtualfile->m_bluray.m_full_title  = full_title;
+    virtualfile->m_bluray.m_title_no    = title_idx + 1;
+    virtualfile->m_bluray.m_playlist_no = ti->playlist;
+    virtualfile->m_bluray.m_chapter_no  = chapter_idx + 1;
+    virtualfile->m_bluray.m_angle_no    = 1;
 
     if (!transcoder_cached_filesize(virtualfile, &stbuf))
     {
-        BITRATE video_bit_rate   = 1024*1024;
-        BITRATE audio_bit_rate   = 256*1024;
+        BITRATE video_bit_rate  = 1024*1024;
+        BITRATE audio_bit_rate  = 256*1024;
 
         int channels            = 0;
         int sample_rate         = 0;
@@ -406,16 +427,23 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
         Logging::trace(path, "Main title: %1", main_title + 1);
     }
 
-
     for (uint32_t title_idx = 0; title_idx < title_count && success; title_idx++)
     {
         BLURAY_TITLE_INFO* ti = bd_get_title_info(bd, title_idx, 0);
         bool is_main_title = (main_title >= 0 && title_idx == static_cast<uint32_t>(main_title));
 
+        // Add separate chapters
         for (uint32_t chapter_idx = 0; chapter_idx < ti->chapter_count && success; chapter_idx++)
         {
-            success = create_bluray_virtualfile(bd, ti, path, statbuf, buf, filler, is_main_title, title_idx, chapter_idx);
+            success = create_bluray_virtualfile(bd, ti, path, statbuf, buf, filler, is_main_title, false, title_idx, chapter_idx);
         }
+
+        if (success && ti->chapter_count > 1)
+        {
+            // If more than 1 chapter, add full title as well
+            success = create_bluray_virtualfile(bd, ti, path, statbuf, buf, filler, is_main_title, true, title_idx, 0);
+        }
+
 
         bd_free_title_info(ti);
     }

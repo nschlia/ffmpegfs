@@ -36,6 +36,7 @@ BlurayIO::BlurayIO()
     , m_cur_pos(0)
     , m_start_pos(0)
     , m_end_pos(-1)
+    , m_full_title(false)
     , m_title_idx(0)
     , m_chapter_idx(0)
     , m_angle_idx(0)
@@ -73,6 +74,7 @@ int BlurayIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
+        m_full_title    = virtualfile()->m_bluray.m_full_title;
         m_title_idx     = virtualfile()->m_bluray.m_title_no - 1;
         m_chapter_idx   = virtualfile()->m_bluray.m_chapter_no - 1;
         m_angle_idx     = virtualfile()->m_bluray.m_angle_no - 1;
@@ -80,6 +82,7 @@ int BlurayIO::openX(const std::string & filename)
     }
     else
     {
+        m_full_title    = false;
         m_title_idx     = 0;
         m_chapter_idx   = 0;
         m_angle_idx     = 0;
@@ -87,7 +90,7 @@ int BlurayIO::openX(const std::string & filename)
     }
 
     chapter_end = m_chapter_idx + 1;
-	
+
     Logging::debug(bdpath, "Opening input Bluray.");
 
     m_bd = bd_open(bdpath, keyfile);
@@ -104,16 +107,12 @@ int BlurayIO::openX(const std::string & filename)
         return 1;
     }
 
-//    if (m_title_no >= 0)
+    if (!bd_select_title(m_bd, m_title_idx))
     {
-        if (!bd_select_title(m_bd, m_title_idx))
-        {
-            Logging::error(bdpath, "Failed to open title: %1", m_title_idx);
-            return 1;
-        }
-        ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
-
+        Logging::error(bdpath, "Failed to open title: %1", m_title_idx);
+        return 1;
     }
+    ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
 
     if (m_angle_idx >= ti->angle_count)
     {
@@ -134,7 +133,7 @@ int BlurayIO::openX(const std::string & filename)
         chapter_end = -1;
     }
 
-    if (chapter_end >= 0)
+    if (chapter_end >= 0 && !m_full_title)
     {
         m_end_pos = bd_chapter_pos(m_bd, chapter_end);
     }
@@ -143,8 +142,15 @@ int BlurayIO::openX(const std::string & filename)
         m_end_pos = bd_get_title_size(m_bd);
     }
 
-    BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_idx];
-    m_duration = chapter->duration * AV_TIME_BASE / 90000;
+    if (m_full_title)
+    {
+        m_duration = ti->duration * AV_TIME_BASE / 90000;
+    }
+    else
+    {
+        BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_idx];
+        m_duration = chapter->duration * AV_TIME_BASE / 90000;
+    }
 
     bd_free_title_info(ti);
 

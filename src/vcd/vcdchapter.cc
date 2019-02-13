@@ -1,12 +1,20 @@
-// -------------------------------------------------------------------------------
-//  Project:		Bully's Media Player
-//
-//  File:		VcdChapter.cpp
-//
-// (c) 1984-2017 by Oblivion Software/Norbert Schlia
-// All rights reserved.
-// -------------------------------------------------------------------------------
-//
+/*
+ * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #include "vcdchapter.h"
 #include "vcdutils.h"
@@ -21,6 +29,7 @@ VcdChapter::VcdChapter(bool is_svcd) :
     m_min(0),
     m_sec(0),
     m_frame(0),
+    m_duration(0),
     m_start_pos(0)
 {
 
@@ -32,17 +41,19 @@ VcdChapter::VcdChapter(const VCDCHAPTER & VcdChapter, bool is_svcd) :
     m_min(BCD2DEC(VcdChapter.m_msf.m_min)),
     m_sec(BCD2DEC(VcdChapter.m_msf.m_sec)),
     m_frame(BCD2DEC(VcdChapter.m_msf.m_frame)),
+    m_duration(0),
     m_start_pos(0)
 {
 
 }
 
-VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd) :
+VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, int64_t duration) :
     m_is_svcd(is_svcd),
     m_track_no(track_no),
     m_min(min),
     m_sec(sec),
     m_frame(frame),
+    m_duration(duration),
     m_start_pos(0),
     m_end_pos(0)
 {
@@ -112,9 +123,9 @@ int VcdChapter::get_frame() const
     return m_frame;
 }
 
-int64_t VcdChapter::get_start_time() const
+int64_t VcdChapter::get_duration() const
 {
-    return static_cast<int64_t>(m_min * 60 + m_sec) * AV_TIME_BASE;
+    return m_duration;
 }
 
 std::string VcdChapter::get_filename() const
@@ -140,6 +151,17 @@ uint64_t VcdChapter::get_start_pos() const
 uint64_t VcdChapter::get_end_pos() const
 {
     return m_end_pos;
+}
+
+uint64_t VcdChapter::get_size() const
+{
+    return (m_end_pos - m_start_pos);
+}
+
+// MSF format: minutes, seconds, and fractional seconds called frames. Each timecode frame is one seventy-fifth of a second.
+int64_t VcdChapter::get_start_time() const
+{
+    return static_cast<int64_t>(m_min * 60 + m_sec) * AV_TIME_BASE + (static_cast<int64_t>(m_frame) * AV_TIME_BASE / 75);
 }
 
 //Conversion from MSF to LBA
@@ -170,6 +192,7 @@ VcdChapter & VcdChapter::operator= (VcdChapter const & other)
         m_sec       = other.m_sec;
         m_frame     = other.m_frame;
         m_start_pos = other.m_start_pos;
+        m_duration  = other.m_duration;
     }
 
     return *this; //Referenz auf das Objekt selbst zurückgeben

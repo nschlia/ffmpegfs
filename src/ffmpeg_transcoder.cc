@@ -2356,9 +2356,9 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             {
                 pkt->dts            = av_rescale_q_rnd(pkt->dts, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
             }
-            if (pkt->duration != AV_NOPTS_VALUE)
+            if (pkt->duration)
             {
-                pkt->duration       = av_rescale_q(pkt->duration, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base);
+                pkt->duration       = static_cast<int>(av_rescale_q(pkt->duration, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base));
             }
             pkt->pos            = -1;
 
@@ -2424,9 +2424,9 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             {
                 pkt->dts            = av_rescale_q_rnd(pkt->dts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
             }
-            if (pkt->duration != AV_NOPTS_VALUE)
+            if (pkt->duration)
             {
-                pkt->duration       = av_rescale_q(pkt->duration, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+                pkt->duration       = static_cast<int>(av_rescale_q(pkt->duration, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base));
             }
             pkt->pos            = -1;
 
@@ -2772,7 +2772,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
-        int64_t duration;
+        int duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)

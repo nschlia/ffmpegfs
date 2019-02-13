@@ -249,7 +249,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
             std::string destfile;
 
             get_destname(&destfile, virtualfile->m_origfile);
-			remove_path(&destfile);
+            remove_path(&destfile);
 
             title_count++;
 
@@ -534,16 +534,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
-        // Issues:
-        // Warning: unannotated fall-through between switch labels
-        //      insert '[[clang::fallthrough]];' to silence this warning
-        // Adding this:
-        //      [[clang::fallthrough]];
-        // issues for a change:
-        // Warning: attributes at the beginning of statement are ignored [-Wattributes]
-        //                 [[clang::fallthrough]];
-        //                 ^
-        // Useless.
+        [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
@@ -693,16 +684,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_lstat = true;
-        // Issues:
-        // Warning: unannotated fall-through between switch labels
-        //      insert '[[clang::fallthrough]];' to silence this warning
-        // Adding this:
-        //      [[clang::fallthrough]];
-        // issues for a change:
-        // Warning: attributes at the beginning of statement are ignored [-Wattributes]
-        //                 [[clang::fallthrough]];
-        //                 ^
-        // Useless.
+        [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {

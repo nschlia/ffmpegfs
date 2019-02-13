@@ -50,7 +50,7 @@ typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;
 static int      dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
 static double   frameRate(const uint8_t * ptr);
 static int64_t  BCDtime(const dvd_time_t * dvd_time);
-static bool     create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
+static bool     create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
 static int      parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
@@ -189,7 +189,8 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
 
     return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / frame_rate));
 }
-static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
+
+static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
 {
     vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
     int title_no        = title_idx + 1;
@@ -204,7 +205,7 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
     int start_cell      = cur_pgc->program_map[pgn - 1] - 1;
     int end_cell        = 0;
 
-    if (pgn < cur_pgc->nr_of_programs)
+    if (pgn < cur_pgc->nr_of_programs && !full_title)
     {
         end_cell    = cur_pgc->program_map[pgn] - 1;
     }
@@ -250,6 +251,8 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
         int angle_no        = angle_idx + 1;
 
         // can safely assume this a video
+        if (!full_title)
+        {
             // Single chapter
             if (angles > 1)
             {
@@ -268,6 +271,26 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
                         replace_all(format_duration(duration), ":", "-").c_str(),
                         params.m_format[0].real_desttype().c_str());
             }
+        }
+        else
+        {
+            // Full title
+            if (angles > 1)
+            {
+                sprintf(title_buf, "%02d. Title (Angle %d) [%s].%s",
+                        title_no,
+                        angle_no,
+                        replace_all(format_duration(duration), ":", "-").c_str(),
+                        params.m_format[0].real_desttype().c_str());
+            }
+            else
+            {
+                sprintf(title_buf, "%02d. Title [%s].%s",
+                        title_no,
+                        replace_all(format_duration(duration), ":", "-").c_str(),
+                        params.m_format[0].real_desttype().c_str());
+            }
+        }
 
         std::string filename(title_buf);
 
@@ -290,6 +313,7 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
         // DVD is video format anyway
         virtualfile->m_format_idx       = 0;
         // Mark title/chapter/angle
+        virtualfile->m_dvd.m_full_title = full_title;
         virtualfile->m_dvd.m_title_no   = title_no;
         virtualfile->m_dvd.m_chapter_no = chapter_no;
         virtualfile->m_dvd.m_angle_no   = angle_no;
@@ -441,7 +465,13 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
             // Add separate chapters
             for (int chapter_idx = 0; chapter_idx < chapters && success; ++chapter_idx)
             {
-                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);
+                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, false, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);
+            }
+
+            if (success && chapters > 1)
+            {
+                // If more than 1 chapter, add full title as well
+                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, true, title_idx, 0, 1, ttnnum, audio_stream, audio_settings, video_settings);
             }
         }
 

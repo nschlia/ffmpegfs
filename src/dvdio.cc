@@ -54,6 +54,7 @@ DvdIO::DvdIO()
     , m_rest_size(0)
     , m_rest_pos(0)
     , m_cur_pos(0)
+    , m_full_title(false)
     , m_title_idx(0)
     , m_chapter_idx(0)
     , m_angle_idx(0)
@@ -88,6 +89,7 @@ int DvdIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
+        m_full_title    = virtualfile()->m_dvd.m_full_title;
         m_title_idx     = virtualfile()->m_dvd.m_title_no - 1;
         m_chapter_idx   = virtualfile()->m_dvd.m_chapter_no - 1;
         m_angle_idx     = virtualfile()->m_dvd.m_angle_no - 1;
@@ -95,6 +97,7 @@ int DvdIO::openX(const std::string & filename)
     }
     else
     {
+        m_full_title    = false;
         m_title_idx     = 0;
         m_chapter_idx   = 0;
         m_angle_idx     = 0;
@@ -663,7 +666,8 @@ int DvdIO::read(void * data, int size)
 
     // DSITYPE_EOF_TITLE - end of title
     // DSITYPE_EOF_CHAPTER - end of chapter
- 	if (dsitype != DSITYPE_CONTINUE)
+    if ((dsitype != DSITYPE_CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
+            (dsitype == DSITYPE_EOF_TITLE))                     // Stop at end of title
     {
         m_is_eof = true;
     }

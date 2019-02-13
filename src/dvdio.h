@@ -84,6 +84,7 @@ protected:
     size_t          m_rest_pos;
     size_t          m_cur_pos;
 
+    bool            m_full_title;
     int             m_title_idx;
     int             m_chapter_idx;
     int             m_angle_idx;

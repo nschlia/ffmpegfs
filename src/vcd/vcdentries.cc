@@ -1,12 +1,21 @@
-// -------------------------------------------------------------------------------
-//  Project:		Bully's Media Player
-//
-//  File:		vcdentries.cpp
-//
-// (c) 1984-2017 by Oblivion Software/Norbert Schlia
-// All rights reserved.
-// -------------------------------------------------------------------------------
-//
+/*
+ * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 #include <string>
 
 #ifdef _WIN32
@@ -17,6 +26,7 @@
 
 #include "vcdentries.h"
 #include "vcdutils.h"
+#include "ffmpegfs.h"
 
 #include <string.h>
 #include <sys/stat.h>
@@ -40,12 +50,13 @@ VcdEntries::~VcdEntries()
 
 void VcdEntries::clear()
 {
-    m_file_date = -1;
+    m_file_date     = -1;
     m_id.clear();
-    m_type = 0;
-    m_profile_tag = 0;
+    m_type          = VCDTYPE_UNKNOWN;
+    m_profile_tag   = VCDPROFILETAG_UNKNOWN;
     m_chapters.clear();
     m_disk_path.clear();
+    m_duration      = 0;
 }
 
 int VcdEntries::load_file(const std::string & path)
@@ -90,24 +101,38 @@ int VcdEntries::load_file(const std::string & path)
         }
 
         m_id            = VCDUTILS::convert_txt2string(reinterpret_cast<const char *>(vcdentry.m_ID), sizeof(vcdentry.m_ID));
-        m_type          = static_cast<int>(vcdentry.m_type);
-        m_profile_tag   = static_cast<int>(vcdentry.m_profile_tag);
+        m_type          = static_cast<VCDTYPE>(vcdentry.m_type);
+        m_profile_tag   = static_cast<VCDPROFILETAG>(vcdentry.m_profile_tag);
         num_entries     = htons(vcdentry.m_num_entries);
+        m_duration      = 0;
 
         int sec = BCD2DEC(vcdentry.m_chapter[0].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[0].m_msf.m_sec);
-        for (int chapter_num = 0, total = num_entries; chapter_num < total; chapter_num++)
+        for (int chapter_no = 0, total = num_entries; chapter_no < total; chapter_no++)
         {
-            if (chapter_num && BCD2DEC(vcdentry.m_chapter[chapter_num].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[chapter_num].m_msf.m_sec) - sec < 1)
+            if (chapter_no && BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_sec) - sec < 1)
             {
                 // Skip chapters shorter than 1 second
-                sec = BCD2DEC(vcdentry.m_chapter[chapter_num].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[chapter_num].m_msf.m_sec);
+                sec = BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_sec);
                 --num_entries;
                 continue;
             }
 
-            VcdChapter chapter(vcdentry.m_chapter[chapter_num], is_vcd);
+            VcdChapter chapter(vcdentry.m_chapter[chapter_no], is_vcd);
 
             m_chapters.push_back(chapter);
+        }
+
+        // Calculate durations of all chapters until last. This will be done later as we do not yet know the duration of the stream
+        for (size_t chapter_no = 0; chapter_no < m_chapters.size() - 1; chapter_no++)
+        {
+            VcdChapter & chapter1 = m_chapters[chapter_no];
+            const VcdChapter & chapter2 = m_chapters[chapter_no + 1];
+            int64_t chapter_duration = chapter2.get_start_time() - chapter1.get_start_time();
+
+            // Chapter duration
+            chapter1.m_duration = chapter_duration;
+            // Total duration
+            m_duration += chapter_duration;
         }
     }
     catch (int _errno)
@@ -126,10 +151,10 @@ int VcdEntries::load_file(const std::string & path)
 
 int VcdEntries::scan_chapters()
 {
-    FILE *  fpi = nullptr;
-    std::string  fullname;
-    int     last_track_no = -1;
-    int64_t first_sync = -1;
+    FILE *      fpi = nullptr;
+    std::string fullname;
+    int         last_track_no = -1;
+    int64_t     first_sync = -1;
     struct stat st;
 
     if (!m_chapters.size())
@@ -154,7 +179,7 @@ int VcdEntries::scan_chapters()
 
                 if (chapter_no)
                 {
-                    m_chapters[chapter_no - 1].m_end_pos = st.st_size;
+                    m_chapters[chapter_no - 1].m_end_pos = static_cast<uint64_t>(st.st_size);
                 }
 
                 if (fpi != nullptr)
@@ -182,20 +207,19 @@ int VcdEntries::scan_chapters()
                     throw static_cast<int>(EIO);
                 }
 
-                first_sync = ftell(fpi) - sizeof(SYNC);
+                first_sync = ftell(fpi) - static_cast<int64_t>(sizeof(SYNC));
             }
 
-            int64_t total_chunks = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
+            int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
+            int64_t first           = 0;
+            int64_t last            = total_chunks - 1;
+            int64_t middle          = (first + last) / 2;
 
-            int64_t first = 0;
-            int64_t last = total_chunks - 1;
-            int64_t middle = (first + last) / 2;
-
-            // Locate sector at with correct start time
+            // Locate sector with correct start time
             while (first <= last)
             {
                 VcdChapter buffer(m_chapters[chapter_no].get_is_vcd());
-                int64_t file_pos = first_sync + middle * VCD_SECTOR_SIZE;
+                __off_t file_pos = first_sync + middle * VCD_SECTOR_SIZE;
 
                 if (fseek(fpi, file_pos, SEEK_SET))
                 {
@@ -214,11 +238,11 @@ int VcdEntries::scan_chapters()
                 }
                 else if (buffer == m_chapters[chapter_no])
                 {
-                    m_chapters[chapter_no].m_start_pos = file_pos;
+                    m_chapters[chapter_no].m_start_pos = static_cast<uint64_t>(file_pos);
 
                     if (chapter_no)
                     {
-                        m_chapters[chapter_no - 1].m_end_pos = file_pos;
+                        m_chapters[chapter_no - 1].m_end_pos = static_cast<uint64_t>(file_pos);
                     }
                     break;
                 }
@@ -229,6 +253,31 @@ int VcdEntries::scan_chapters()
 
                 middle = (first + last) / 2;
             }
+        }
+
+        {
+            VcdChapter buffer(m_chapters[m_chapters.size() - 1].get_is_vcd());
+            int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
+
+            // Read time stamp of last sector
+            if (fseek(fpi, first_sync + (total_chunks - 1) * VCD_SECTOR_SIZE, SEEK_SET))
+            {
+                throw static_cast<int>(ferror(fpi));
+            }
+
+            int _errno = buffer.read(fpi, last_track_no);
+            if (_errno)
+            {
+                throw static_cast<int>(_errno);
+            }
+
+            VcdChapter & chapter1 = m_chapters[m_chapters.size() - 1];
+            int64_t chapter_duration = buffer.get_start_time() - chapter1.get_start_time();
+
+            // Chapter duration
+            chapter1.m_duration = chapter_duration;
+            // Total duration
+            m_duration += chapter_duration;
         }
     }
     catch (int _errno)
@@ -241,7 +290,7 @@ int VcdEntries::scan_chapters()
     }
 
     // End of last chapter
-    m_chapters[m_chapters.size() - 1].m_end_pos = st.st_size;
+    m_chapters[m_chapters.size() - 1].m_end_pos = static_cast<uint64_t>(st.st_size);
 
     if (fpi != nullptr)
     {
@@ -300,7 +349,7 @@ const std::string & VcdEntries::get_id() const
     return m_id;
 }
 
-int VcdEntries::get_type() const
+VCDTYPE VcdEntries::get_type() const
 {
     return m_type;
 }
@@ -310,7 +359,7 @@ std::string VcdEntries::get_type_str() const
     return VCDUTILS::get_type_str(m_type);
 }
 
-int VcdEntries::get_profile_tag() const
+VCDPROFILETAG VcdEntries::get_profile_tag() const
 {
     return m_profile_tag;
 }
@@ -329,3 +378,21 @@ const VcdChapter & VcdEntries::get_chapter(int chapter_no) const
 {
     return m_chapters[static_cast<size_t>(chapter_no)];
 }
+
+int64_t VcdEntries::get_duration() const
+{
+    return m_duration;
+}
+
+uint64_t VcdEntries::get_size() const
+{
+    size_t chapters = static_cast<size_t>(get_number_of_chapters());
+
+    if (!chapters)
+    {
+        return 0;
+    }
+
+    return (m_chapters[chapters - 1].get_end_pos() - m_chapters[0].get_start_pos());
+}
+

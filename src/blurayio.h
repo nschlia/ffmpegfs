@@ -61,6 +61,7 @@ protected:
     uint64_t        m_start_pos;
     int64_t         m_end_pos;
 
+    bool            m_full_title;
     uint32_t        m_title_idx;
     unsigned        m_chapter_idx;
     unsigned        m_angle_idx;

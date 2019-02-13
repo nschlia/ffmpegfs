@@ -1,12 +1,21 @@
-// -------------------------------------------------------------------------------
-//  Project:		Bully's Media Player
-//
-//  File:		vcdinfo.cpp
-//
-// (c) 1984-2017 by Oblivion Software/Norbert Schlia
-// All rights reserved.
-// -------------------------------------------------------------------------------
-//
+/*
+ * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 #include <string>
 
 #ifdef _WIN32
@@ -76,8 +85,8 @@ void VcdInfo::clear()
     m_disk_path.clear();
     m_file_date     = -1;
     m_id.clear();
-    m_type          = 0;
-    m_profile_tag   = 0;
+    m_type          = VCDTYPE_UNKNOWN;
+    m_profile_tag   = VCDPROFILETAG_UNKNOWN;
     m_album_id.clear();
     m_number_of_cds = 0;
     m_cd_number     = 0;
@@ -121,8 +130,8 @@ int VcdInfo::load_file(const std::string & path)
     if (fread(reinterpret_cast<char *>(&vi), 1, sizeof(vi), fpi) == sizeof(vi))
     {
         m_id            = VCDUTILS::convert_txt2string(vi.m_ID, sizeof(vi.m_ID));
-        m_type          = static_cast<int>(vi.m_type);
-        m_profile_tag   = static_cast<int>(vi.m_profile_tag);
+        m_type          = static_cast<VCDTYPE>(vi.m_type);
+        m_profile_tag   = static_cast<VCDPROFILETAG>(vi.m_profile_tag);
         m_album_id      = VCDUTILS::convert_txt2string(vi.m_albumid, sizeof(vi.m_albumid));
         m_number_of_cds = htons(static_cast<uint16_t>(vi.m_numberof_cds));
         m_cd_number     = htons(static_cast<uint16_t>(vi.m_cd_number));
@@ -155,7 +164,7 @@ const std::string & VcdInfo::get_id() const
     return m_id;
 }
 
-int VcdInfo::get_type() const
+VCDTYPE VcdInfo::get_type() const
 {
     return m_type;
 }
@@ -165,7 +174,7 @@ std::string VcdInfo::get_type_str() const
     return VCDUTILS::get_type_str(m_type);
 }
 
-int VcdInfo::get_profile_tag() const
+VCDPROFILETAG VcdInfo::get_profile_tag() const
 {
     return m_profile_tag;
 }

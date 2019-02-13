@@ -29,6 +29,7 @@
 
 VcdIO::VcdIO()
     : m_fpi(nullptr)
+    , m_full_title(false)
     , m_track_no(0)
     , m_chapter_no(0)
     , m_start_pos(0)
@@ -60,6 +61,7 @@ int VcdIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
+        m_full_title    = virtualfile()->m_vcd.m_full_title;
         m_track_no      = virtualfile()->m_vcd.m_track_no;
         m_chapter_no    = virtualfile()->m_vcd.m_chapter_no;
         m_start_pos     = virtualfile()->m_vcd.m_start_pos;
@@ -67,6 +69,7 @@ int VcdIO::openX(const std::string & filename)
     }
     else
     {
+        m_full_title    = false;
         m_track_no      = 1;
         m_chapter_no    = 0;
         m_start_pos     = 0;

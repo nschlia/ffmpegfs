@@ -48,7 +48,7 @@ VIRTUALTYPE VcdIO::type() const
     return VIRTUALTYPE_VCD;
 }
 
-int VcdIO::bufsize() const
+size_t VcdIO::bufsize() const
 {
     return (32 * 1024);
 }

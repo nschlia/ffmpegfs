@@ -41,7 +41,7 @@ VIRTUALTYPE DiskIO::type() const
     return VIRTUALTYPE_REGULAR;
 }
 
-int DiskIO::bufsize() const
+size_t DiskIO::bufsize() const
 {
     return (100 /* KB */ * 1024);
 }
@@ -89,7 +89,7 @@ size_t DiskIO::size() const
 
     struct stat st;
     fstat(fileno(m_fpi), &st);
-    return st.st_size;
+    return static_cast<size_t>(st.st_size);
 }
 
 size_t DiskIO::tell() const

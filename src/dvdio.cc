@@ -73,7 +73,7 @@ VIRTUALTYPE DvdIO::type() const
     return VIRTUALTYPE_DVD;
 }
 
-int DvdIO::bufsize() const
+size_t DvdIO::bufsize() const
 {
     return sizeof(m_data);
 }

@@ -249,10 +249,10 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             
             //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info->m_audiobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 2);
-            cache_info->m_audiosamplerate    = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 3));
+            cache_info->m_audiosamplerate    = sqlite3_column_int(m_cacheidx_select_stmt, 3);
             cache_info->m_videobitrate       = sqlite3_column_int(m_cacheidx_select_stmt, 4);
-            cache_info->m_videowidth         = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 5));
-            cache_info->m_videoheight        = static_cast<unsigned int>(sqlite3_column_int(m_cacheidx_select_stmt, 6));
+            cache_info->m_videowidth         = sqlite3_column_int(m_cacheidx_select_stmt, 5);
+            cache_info->m_videoheight        = sqlite3_column_int(m_cacheidx_select_stmt, 6);
             cache_info->m_deinterlace        = sqlite3_column_int(m_cacheidx_select_stmt, 7);
             cache_info->m_predicted_filesize = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 8));
             cache_info->m_encoded_filesize   = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 9));
@@ -324,7 +324,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info->m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
         SQLBINDNUM(sqlite3_bind_int64,  4,  cache_info->m_audiobitrate);
-        SQLBINDNUM(sqlite3_bind_int,    5,  static_cast<int>(cache_info->m_audiosamplerate));
+        SQLBINDNUM(sqlite3_bind_int,    5,  cache_info->m_audiosamplerate);
         SQLBINDNUM(sqlite3_bind_int64,  6,  cache_info->m_videobitrate);
         SQLBINDNUM(sqlite3_bind_int,    7,  static_cast<int>(cache_info->m_videowidth));
         SQLBINDNUM(sqlite3_bind_int,    8,  static_cast<int>(cache_info->m_videoheight));

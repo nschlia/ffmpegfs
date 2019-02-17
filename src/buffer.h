@@ -45,7 +45,7 @@ public:
     bool                    init(bool erase_cache = false);                         // Initialise cache, if erase_cache = true delete old file before opening
     bool                    release(int flags = CLOSE_CACHE_NOOPT);
 
-    virtual int             bufsize() const;
+    virtual size_t          bufsize() const;
     virtual int             read(void *data, int size);                             // Not implemented
     virtual int             error() const;
     virtual int64_t         duration() const;
@@ -75,7 +75,7 @@ protected:
 
 private:
     uint8_t*                write_prepare(size_t length);
-    void                    increment_pos(ptrdiff_t increment);
+    void                    increment_pos(size_t increment);
     bool                    reallocate(size_t newsize);
 
 private:

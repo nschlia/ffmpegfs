@@ -148,7 +148,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
-    , m_cur_channel_layout(-1)
+    , m_cur_channel_layout(0)
     , m_audio_resample_ctx(nullptr)
     , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
@@ -302,7 +302,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     AVIOContext * pb = avio_alloc_context(
                 static_cast<unsigned char *>(::av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE)),
-                m_fileio->bufsize(),
+                static_cast<int>(m_fileio->bufsize()),
                 0,
                 static_cast<void *>(m_fileio),
                 input_read,
@@ -499,7 +499,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     {
         Logging::trace(filename(), "Processing album arts.");
 
-        for (unsigned int stream_idx = 0; stream_idx < m_in.m_format_ctx->nb_streams; stream_idx++)
+        for (int stream_idx = 0; stream_idx < static_cast<int>(m_in.m_format_ctx->nb_streams); stream_idx++)
         {
             AVStream *input_stream = m_in.m_format_ctx->streams[stream_idx];
             AVCodecID codec_id;
@@ -752,7 +752,7 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
 
         *output_width      = params.m_videowidth;
 
-        if (!ratio)
+        if (ratio == 0.)
         {
             *output_height = input_height;
         }
@@ -767,7 +767,7 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
         // Only video height
         double ratio = get_aspect_ratio(input_width, input_height, sample_aspect_ratio);
 
-        if (!ratio)
+        if (ratio == 0.)
         {
             *output_width  = input_width;
         }
@@ -843,7 +843,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
-    output_stream->id = m_out.m_format_ctx->nb_streams - 1;
+    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     output_codec_ctx = avcodec_alloc_context3(output_codec);
@@ -874,7 +874,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         output_codec_ctx->channels              = m_in.m_audio.m_codec_ctx->channels > 2 ? 2 : m_in.m_audio.m_codec_ctx->channels;
-        output_codec_ctx->channel_layout        = av_get_default_channel_layout(output_codec_ctx->channels);
+        output_codec_ctx->channel_layout        = static_cast<uint64_t>(av_get_default_channel_layout(output_codec_ctx->channels));
         output_codec_ctx->sample_rate           = m_in.m_audio.m_codec_ctx->sample_rate;
         orig_sample_rate                        = m_in.m_audio.m_codec_ctx->sample_rate;
         if (get_output_sample_rate(CODECPAR(m_in.m_audio.m_stream)->sample_rate, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
@@ -1351,7 +1351,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
-    output_stream->id = m_out.m_format_ctx->nb_streams - 1;
+    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
 
     switch (codec_type)
     {
@@ -1465,7 +1465,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
         Logging::error(destname(), "Could not allocate stream for encoder '%1'.", avcodec_get_name(input_codec->id));
         return AVERROR(ENOMEM);
     }
-    output_stream->id = m_out.m_format_ctx->nb_streams - 1;
+    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
 
 #if FFMPEG_VERSION3 // Check for FFmpeg 3
     output_codec_ctx = avcodec_alloc_context3(output_codec);
@@ -1729,7 +1729,7 @@ int FFmpeg_Transcoder::init_resampler()
     // Fail save: if channel layout not known assume mono or stereo
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
-        m_in.m_audio.m_codec_ctx->channel_layout = av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels);
+        m_in.m_audio.m_codec_ctx->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels));
     }
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
@@ -1772,10 +1772,10 @@ int FFmpeg_Transcoder::init_resampler()
         // Set the conversion parameters.
 #if LAVR_DEPRECATE
         m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
-                                                  m_out.m_audio.m_codec_ctx->channel_layout,
+                                                  static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
                                                   m_out.m_audio.m_codec_ctx->sample_fmt,
                                                   m_out.m_audio.m_codec_ctx->sample_rate,
-                                                  m_in.m_audio.m_codec_ctx->channel_layout,
+                                                  static_cast<int64_t>(m_in.m_audio.m_codec_ctx->channel_layout),
                                                   m_in.m_audio.m_codec_ctx->sample_fmt,
                                                   m_in.m_audio.m_codec_ctx->sample_rate,
                                                   0, nullptr);
@@ -1933,14 +1933,14 @@ int FFmpeg_Transcoder::write_output_file_header()
         buffer->copy(reinterpret_cast<uint8_t*>(&list_header), sizeof(WAV_HEADER), sizeof(WAV_LIST_HEADER));
         buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, sizeof(WAV_DATA_HEADER));
 
-        wav_header.m_wav_size = static_cast<int>(m_predicted_size - 8);
-        data_header.m_data_bytes = static_cast<int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
+        wav_header.m_wav_size = static_cast<unsigned int>(m_predicted_size - 8);
+        data_header.m_data_bytes = static_cast<unsigned int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
 
         buffer->seek(0, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
         buffer->seek(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
-        buffer->seek(pos, SEEK_SET);
+        buffer->seek(static_cast<long>(pos), SEEK_SET);
     }
 
     return 0;
@@ -2470,7 +2470,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // channels (although it may be nullptr for interleaved formats).
 
 #ifndef USING_LIBAV
-    *converted_input_samples = static_cast<uint8_t **>(av_calloc(m_out.m_audio.m_codec_ctx->channels, sizeof(**converted_input_samples)));
+    *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(m_out.m_audio.m_codec_ctx->channels), sizeof(**converted_input_samples)));
 #else
     // Libav does not provide av_calloc
     *converted_input_samples = static_cast<uint8_t **>(av_malloc(m_out.m_audio.m_codec_ctx->channels * sizeof(**converted_input_samples)));
@@ -2523,11 +2523,11 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
         // No resampling, just copy samples
         if (!av_sample_fmt_is_planar(m_in.m_audio.m_codec_ctx->sample_fmt))
         {
-            memcpy(converted_data[0], input_data[0], in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * m_in.m_audio.m_codec_ctx->channels);
+            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * m_in.m_audio.m_codec_ctx->channels));
         }
         else
         {
-            int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt);
+            size_t samples = static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
             for (int n = 0; n < m_in.m_audio.m_codec_ctx->channels; n++)
             {
                 memcpy(converted_data[n], input_data[n], samples);
@@ -2772,7 +2772,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
-        int duration;
+        int64_t duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)
@@ -2991,7 +2991,7 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
 
                     if (pkt.dts < max)
                     {
-                        Logging::warning(destname(), "Non-monotonous DTS in video output stream; previous: %1, current: %2; changing to %3. This may result in incorrect timestamps in the output.", m_out.m_last_mux_dts, pkt.dts, max);
+                        Logging::trace(destname(), "Non-monotonous DTS in video output stream; previous: %1, current: %2; changing to %3. This may result in incorrect timestamps in the output.", m_out.m_last_mux_dts, pkt.dts, max);
 
                         if (pkt.pts >= pkt.dts)
                         {
@@ -3421,8 +3421,8 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, double fram
     mindist = UINT_MAX;
     for (int i = 0; m_prores_bitrate[i].m_width; i++)
     {
-        int x = (width - m_prores_bitrate[i].m_width);
-        int y = (height - m_prores_bitrate[i].m_height);;
+        unsigned int x = static_cast<unsigned int>(width - m_prores_bitrate[i].m_width);
+        unsigned int y = static_cast<unsigned int>(height - m_prores_bitrate[i].m_height);;
         unsigned int dist = (x * x) + (y * y);
 
         if (dist < mindist)
@@ -3448,8 +3448,8 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, double fram
         unsigned int dist = UINT_MAX;
         for (int j = 0; j < MAX_PRORES_FRAMERATE && m_prores_bitrate[i].m_framerate[j].m_framerate; j++)
         {
-            int x = static_cast<int>(framerate - m_prores_bitrate[i].m_framerate[j].m_framerate);
-            int y = (interleaved - m_prores_bitrate[i].m_framerate[j].m_interleaved);
+            unsigned int x = static_cast<unsigned int>(framerate - m_prores_bitrate[i].m_framerate[j].m_framerate);
+            unsigned int y = static_cast<unsigned int>(interleaved - m_prores_bitrate[i].m_framerate[j].m_interleaved);
 
             dist = (x * x) + (y * y);
 
@@ -3739,14 +3739,13 @@ int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int siz
         return AVERROR(EINVAL);
     }
 
-    size_t written = buffer->write(static_cast<const uint8_t*>(data), size);
-
-    if (static_cast<int>(written) != size)
+    int written = static_cast<int>(buffer->write(static_cast<const uint8_t*>(data), static_cast<size_t>(size)));
+    if (written != size)
     {
         // Write error
         return (AVERROR(errno));
     }
-    return static_cast<int>(written);
+    return written;
 }
 
 int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
@@ -3762,7 +3761,7 @@ int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
     if (whence & AVSEEK_SIZE)
     {
         // Return file size
-        res_offset = io->size();
+        res_offset = static_cast<int64_t>(io->size());
     }
     else
     {

@@ -50,7 +50,7 @@ VIRTUALTYPE Buffer::type() const
     return VIRTUALTYPE_BUFFER;
 }
 
-int Buffer::bufsize() const
+size_t Buffer::bufsize() const
 {
     return 0;   // Not applicable
 }
@@ -122,21 +122,21 @@ bool Buffer::init(bool erase_cache)
             throw false;
         }
 
-        filesize = sb.st_size;
-
-        if (!filesize)
+        if (!sb.st_size)
         {
             // If empty set file size to 1 page
-            filesize = sysconf (_SC_PAGESIZE);
+            off_t pagesize = sysconf (_SC_PAGESIZE);
 
-            if (ftruncate(m_fd, filesize) == -1)
+            if (ftruncate(m_fd, pagesize) == -1)
             {
                 Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: %1 (fd = %2)", strerror(errno), m_fd);
                 throw false;
             }
+            filesize = static_cast<size_t>(pagesize);
         }
         else
         {
+            filesize = static_cast<size_t>(sb.st_size);
             m_buffer_pos = m_buffer_watermark = filesize;
         }
 
@@ -205,7 +205,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         success = false;
     }
 
-    if (ftruncate(fd, m_buffer_watermark) == -1)
+    if (ftruncate(fd, static_cast<off_t>(m_buffer_watermark)) == -1)
     {
         Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: %1 (fd = %2)", strerror(errno), fd);
         success = false;
@@ -288,7 +288,7 @@ bool Buffer::reserve(size_t size)
         m_buffer_size = size;
     }
 
-    if (ftruncate(m_fd, m_buffer_size) == -1)
+    if (ftruncate(m_fd, static_cast<off_t>(m_buffer_size)) == -1)
     {
         Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: %1 (fd = %2)", strerror(errno), m_fd);
         success = false;
@@ -344,7 +344,7 @@ uint8_t* Buffer::write_prepare(size_t length)
 // Increment the location of the internal pointer. This cannot fail and so
 // returns void. It does not ensure the position is valid memory because
 // that is done by the write_prepare methods via reallocate.
-void Buffer::increment_pos(ptrdiff_t increment)
+void Buffer::increment_pos(size_t increment)
 {
     m_buffer_pos += increment;
 }

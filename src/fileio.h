@@ -135,7 +135,7 @@ public:
     virtual VIRTUALTYPE type() const = 0;
 
     // Ideal buffer size, may be 0 if no recommendation.
-    virtual int     bufsize() const = 0;
+    virtual size_t  bufsize() const = 0;
     // Open virtual file
     virtual int     open(LPCVIRTUALFILE virtualfile);
     // Read data

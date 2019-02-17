@@ -58,8 +58,8 @@ public:
 
     std::string get_filename() const;   // File name and path (e.g. MPEG/AVSEQ##.MPG)
     uint64_t    get_start_pos() const;  // File position of chapter in bytes
-    int64_t     get_start_time() const; // Start position of chapter in AV_TIME_BASE units
     uint64_t    get_end_pos() const;    // End position of chapter in bytes
+    int64_t     get_start_time() const; // Start position of chapter in AV_TIME_BASE units
     uint64_t    get_size() const;       // Get chapter size
     int         get_lba() const;        // LBA (large block address)
 

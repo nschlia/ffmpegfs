@@ -395,7 +395,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
         if (audio > -1)
         {
-            Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(static_cast<unsigned int>(sample_rate)).c_str());
+            Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
         }
 
         transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);

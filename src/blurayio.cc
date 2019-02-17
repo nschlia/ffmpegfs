@@ -55,7 +55,7 @@ VIRTUALTYPE BlurayIO::type() const
     return VIRTUALTYPE_BLURAY;
 }
 
-int BlurayIO::bufsize() const
+size_t BlurayIO::bufsize() const
 {
     return sizeof(m_data);
 }

@@ -47,14 +47,15 @@ extern "C"
 static void *decoder_thread(void *arg);
 }
 
+static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
 
 // Transcode the buffer until the buffer has enough or until an error occurs.
 // The buffer needs at least 'end' bytes before transcoding stops. Returns true
 // if no errors and false otherwise.
-static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
+static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
 {
-    size_t end = static_cast<size_t>(offset) + len;
+    size_t end = offset + len; // Cast OK: offset will never be < 0.
     bool success = true;
 
     if (cache_entry->m_cache_info.m_finished || cache_entry->m_buffer->tell() >= end)
@@ -82,7 +83,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 
             if (!reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %<%11zd>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+                Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
                 reported = true;
             }
             sleep(0);
@@ -90,7 +91,7 @@ static bool transcode_until(Cache_Entry* cache_entry, off_t offset, size_t len)
 
         if (reported)
         {
-            Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %<%11zd>3.", offset, len, static_cast<ssize_t>(cache_entry->m_buffer->size()) - end);
+            Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
         }
         success = !cache_entry->m_cache_info.m_error;
     }
@@ -123,7 +124,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
     Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
                    format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
                    format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
-                   (static_cast<int64_t>(cache_entry->m_cache_info.m_encoded_filesize) - static_cast<int64_t>(cache_entry->m_cache_info.m_predicted_filesize)),
+                   format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
                    static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
 
     cache_entry->flush();
@@ -460,11 +461,11 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     return cache_entry;
 }
 
-ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len)
+bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int * bytes_read)
 {
-    Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, static_cast<intmax_t>(offset));
+    bool success = true;
 
-    //    cache_entry->lock();
+    Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, offset);
 
     // Store access time
     cache_entry->update_access();
@@ -481,7 +482,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
                 // at the end of the file, do not encode data first up to that position.
                 // This optimises the case where applications read the end of the file
                 // first to read the ID3v1 tag.
-                if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
+                if ((offset > cache_entry->m_buffer->tell()) &&
                         ((offset + len) > (cache_entry->size() - ID3V1_TAG_LENGTH)))
                 {
 
@@ -489,7 +490,7 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
 
                     errno = 0;
 
-                    throw static_cast<ssize_t>(len);
+                    throw true; // OK
                 }
                 break;
             }
@@ -500,16 +501,18 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
                 // to this point).
                 if (params.m_win_smb_fix)
                 {
-                    if ((static_cast<size_t>(offset) > cache_entry->m_buffer->tell()) &&
+                    if ((offset > cache_entry->m_buffer->tell()) &&
                             (len <= 65536) &&
-                            ((static_cast<size_t>(offset) % 65536) == 0) &&
+                            check_ignore(cache_entry->size(), offset) &&
                             ((offset + len) > (cache_entry->size())))
                     {
-                        Logging::error(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 64K boundary of file.");
+                        Logging::warning(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 8K boundary of file.");
 
                         errno = 0;
+                        *bytes_read = 0;  // We've read nothing
+                        len = 0;
 
-                        throw static_cast<ssize_t>(0);
+                        throw true; // OK
                     }
                 }
                 break;
@@ -525,11 +528,11 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         if (!success)
         {
             errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
-            throw static_cast<ssize_t>(-1);
+            throw false;
         }
 
         // truncate if we didn't actually get len
-        if (cache_entry->m_buffer->buffer_watermark() < static_cast<size_t>(offset))
+        if (cache_entry->m_buffer->buffer_watermark() < offset)
         {
             len = 0;
         }
@@ -541,23 +544,24 @@ ssize_t transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size
         if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
         {
             len = 0;
-            // throw static_cast<ssize_t>(-1);
         }
 
         if (cache_entry->m_cache_info.m_error)
         {
             errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
-            throw static_cast<ssize_t>(-1);
+            throw false;
         }
 
         errno = 0;
     }
-    catch (ssize_t _len)
+    catch (bool _success)
     {
-        len = _len;
+        success = _success;
     }
 
-    return len;
+    *bytes_read = static_cast<int>(len);
+
+    return success;
 }
 
 void transcoder_delete(Cache_Entry* cache_entry)

@@ -733,7 +733,7 @@ std::string format_bitrate(BITRATE value)
     }
 }
 
-std::string format_samplerate(unsigned int value)
+std::string format_samplerate(int value)
 {
     if (value == static_cast<unsigned int>(AV_NOPTS_VALUE))
     {
@@ -868,6 +868,34 @@ std::string format_size(size_t value)
 std::string format_size_ex(size_t value)
 {
     return format_size(value) + string_format(" (%zu bytes)", value);
+}
+
+std::string format_result_size(size_t size_resulting, size_t size_predicted)
+{
+    if (size_resulting >= size_predicted)
+    {
+        size_t value = size_resulting - size_predicted;
+        return format_size(value);
+    }
+    else
+    {
+        size_t value = size_predicted - size_resulting;
+        return "-" + format_size(value);
+    }
+}
+
+std::string format_result_size_ex(size_t size_resulting, size_t size_predicted)
+{
+    if (size_resulting >= size_predicted)
+    {
+        size_t value = size_resulting - size_predicted;
+        return format_size(value) + string_format(" (%zu bytes)", value);
+    }
+    else
+    {
+        size_t value = size_predicted - size_resulting;
+        return "-" + format_size(value) + string_format(" (-%zu bytes)", value);
+    }
 }
 
 static void print_fps(double d, const char *postfix)
@@ -1147,4 +1175,26 @@ size_t get_disk_size(std::string & file)
     return (buf.f_bfree * buf.f_bsize);
 }
 
+bool check_ignore(size_t size, size_t offset)
+{
+    size_t blocksize[] = { 0x2000, 0x8000, 0x10000, 0 };
+    bool ignore = false;
+
+    for (int n = 0; blocksize[n] && !ignore; n++)
+    {
+        size_t rest;
+        bool match;
+
+        match = !(offset % blocksize[n]);           // Must be multiple of block size
+        if (!match)
+        {
+            continue;
+        }
+
+        rest = size % offset;                       // Calculate rest. Cast OK, offset can never be < 0.
+        ignore = match && (rest < blocksize[n]);    // Ignore of rest is less than block size
+    }
+
+    return ignore;
+}
 

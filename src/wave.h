@@ -23,39 +23,41 @@
 
 #pragma once
 
+#include <stdint.h>
+
 // WAVE header structure
 
 typedef struct WAV_HEADER
 {
     // RIFF Header
-    char    m_riff_header[4];
-    int     m_wav_size;
-    char    m_wave_header[4];
+    uint8_t     m_riff_header[4];
+    uint32_t    m_wav_size;
+    uint8_t     m_wave_header[4];
 
     // Format Header
-    char    m_fmt_header[4];
-    int     m_fmt_chunk_size;
-    short   m_audio_format;
-    short   m_num_channels;
-    int     m_sample_rate;
-    int     m_byte_rate;
-    short   m_sample_alignment;
-    short   m_bit_depth;
+    uint8_t     m_fmt_header[4];
+    uint32_t    m_fmt_chunk_size;
+    uint16_t    m_audio_format;
+    uint16_t    m_num_channels;
+    uint32_t    m_sample_rate;
+    uint32_t    m_byte_rate;
+    uint16_t    m_sample_alignment;
+    uint16_t    m_bit_depth;
 } WAV_HEADER;
 
 typedef struct WAV_LIST_HEADER
 {
     // Data
-    char    m_list_header[4];
-    int     m_data_bytes;
-    char    m_list_type[4];
+    uint8_t    m_list_header[4];
+    uint32_t    m_data_bytes;
+    uint8_t    m_list_type[4];
 } WAV_LIST_HEADER;
 
 typedef struct WAV_DATA_HEADER
 {
     // Data
-    char    m_data_header[4];
-    int     m_data_bytes;
+    uint8_t    m_data_header[4];
+    uint32_t    m_data_bytes;
     // uint8_t m_bytes[];     // Remainder of wave file
 } WAV_DATA_HEADER;
 

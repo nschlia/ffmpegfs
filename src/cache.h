@@ -35,10 +35,10 @@ typedef struct CACHE_INFO
     char            m_desttype[11];
     //bool            m_enable_ismv;
     int64_t         m_audiobitrate;
-    unsigned int    m_audiosamplerate;
+    int             m_audiosamplerate;
     int64_t         m_videobitrate;
-    unsigned int    m_videowidth;
-    unsigned int    m_videoheight;
+    int             m_videowidth;
+    int             m_videoheight;
     bool            m_deinterlace;
     size_t          m_predicted_filesize;
     size_t          m_encoded_filesize;

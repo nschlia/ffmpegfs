@@ -811,14 +811,15 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
-static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset, struct fuse_file_info *fi)
 {
     std::string origpath;
     int fd;
-    ssize_t read = 0;
+    size_t offset = static_cast<size_t>(_offset);  // Cast OK: offset can never be < 0.
+    int bytes_read = 0;
     Cache_Entry* cache_entry;
 
-    Logging::trace(path, "Reading %1 bytes from %2.", size, static_cast<intmax_t>(offset));
+    Logging::trace(path, "Reading %1 bytes from %2.", size, offset);
 
     translate_path(&origpath, path);
 
@@ -826,11 +827,11 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     if (fd != -1)
     {
         // If this is a real file, pass the call through.
-        read = pread(fd, buf, size, offset);
+        bytes_read = static_cast<int>(pread(fd, buf, size, _offset));
         close(fd);
-        if (read >= 0)
+        if (bytes_read >= 0)
         {
-            return static_cast<int>(read);
+            return bytes_read;
         }
         else
         {
@@ -849,6 +850,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     }
 
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    bool success = true;
 
     assert(virtualfile != nullptr);
 
@@ -857,17 +859,17 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     case VIRTUALTYPE_SCRIPT:
     {
         size_t bytes = size;
-        if (static_cast<size_t>(offset) + bytes > index_buffer.size())
+        if (offset + bytes > index_buffer.size())
         {
-            bytes = index_buffer.size() - static_cast<size_t>(offset);
+            bytes = index_buffer.size() - offset;
         }
 
         if (bytes)
         {
-            memcpy(buf, &index_buffer[static_cast<size_t>(offset)], bytes);
+            memcpy(buf, &index_buffer[offset], bytes);
         }
 
-        read = static_cast<ssize_t>(bytes);
+        bytes_read = static_cast<int>(bytes);
         break;
     }
 #ifdef USE_LIBVCD
@@ -889,7 +891,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
             return -errno;
         }
 
-        read = transcoder_read(cache_entry, buf, offset, size);
+        success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);
 
         break;
     }
@@ -901,9 +903,9 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     }
     }
 
-    if (read >= 0)
+    if (success)
     {
-        return static_cast<int>(read);
+        return bytes_read;
     }
     else
     {

@@ -336,7 +336,7 @@ static const LEVEL_MAP level_map =
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
-static int          get_samplerate(const std::string & arg, unsigned int *samplerate);
+static int          get_samplerate(const std::string & arg, int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegfs_Format *audio_format);
@@ -445,7 +445,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
 // Get sample rate:
 // In Hz:  #  or #Hz
 // In kHz: #K or #KHz
-static int get_samplerate(const std::string & arg, unsigned int * samplerate)
+static int get_samplerate(const std::string & arg, int * samplerate)
 {
     size_t pos = arg.find('=');
 
@@ -463,7 +463,7 @@ static int get_samplerate(const std::string & arg, unsigned int * samplerate)
         }
         else if (!reti)
         {
-            *samplerate = static_cast<unsigned int>(atol(data.c_str()));
+            *samplerate = atoi(data.c_str());
             return 0;   // OK
         }
 
@@ -476,7 +476,7 @@ static int get_samplerate(const std::string & arg, unsigned int * samplerate)
         }
         else if (!reti)
         {
-            *samplerate = static_cast<unsigned int>(atof(data.c_str()) * 1000);
+            *samplerate = static_cast<int>(atof(data.c_str()) * 1000);
             return 0;   // OK
         }
 

@@ -39,7 +39,7 @@ bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Ent
 // Allocate and initialize the transcoder
 Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
 // Read some bytes into the internal buffer and into the given buffer.
-ssize_t         transcoder_read(Cache_Entry* cache_entry, char* buff, off_t offset, size_t len);
+bool            transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int *bytes_read);
 // Free the transcoder structure.
 void            transcoder_delete(Cache_Entry* cache_entry);
 // Return size of output file, as computed by Encoder.

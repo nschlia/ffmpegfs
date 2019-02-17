@@ -54,11 +54,11 @@ extern struct FFMPEGFS_PARAMS
     FFmpegfs_Format     m_format[2];
     // Audio
     BITRATE             m_audiobitrate;
-    unsigned int        m_audiosamplerate;
+    int                 m_audiosamplerate;
     // Video
     BITRATE             m_videobitrate;
-    unsigned int        m_videowidth;               // set video width
-    unsigned int        m_videoheight;              // set video height
+    int                 m_videowidth;               // set video width
+    int                 m_videoheight;              // set video height
 #ifndef USING_LIBAV
     int                 m_deinterlace;              // deinterlace video
 #endif // !USING_LIBAV

@@ -12,6 +12,7 @@ Important changes in 1.7 (2019-02-XX) YET UNRELEASED
 * Feature: Added full virtual titles to DVD, Bluray and Video CD. Creating one virtual file per chapter is very nice for 
 	   music disks as it allows access to every single title very easily. For movies it is better to have it in one
 	   piece.
+* Feature: Enhanced win_smb_fix=1 functionality to hopefully catch all Windows incidents.
 * Feature:
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 

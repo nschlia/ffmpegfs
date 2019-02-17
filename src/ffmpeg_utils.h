@@ -259,11 +259,13 @@ double              ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
 
 std::string         format_number(int64_t value);
 std::string         format_bitrate(BITRATE value);
-std::string         format_samplerate(unsigned int value);
+std::string         format_samplerate(int value);
 std::string         format_duration(int64_t value, int fracs = 3);
 std::string         format_time(time_t value);
 std::string         format_size(size_t value);
 std::string         format_size_ex(size_t value);
+std::string         format_result_size(size_t size_resulting, size_t size_predicted);
+std::string         format_result_size_ex(size_t size_resulting, size_t size_predicted);
 
 void                exepath(std::string *path);
 
@@ -324,5 +326,12 @@ struct comp {
 
 size_t              get_disk_size(std::string & file);
 
+/**
+ * @brief For use with win_smb_fix=1: Check if this an illegal access oofset by Windows
+ * @param size - sizeof of the file
+ * @param offset - offset at which file is accessed
+ * @return If request should be ignored, returns true; otherwise false
+ */
+bool                check_ignore(size_t size, size_t offset);
 
 #endif

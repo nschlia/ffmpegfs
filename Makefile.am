@@ -1,7 +1,8 @@
 # Definitions for sub-makes
-export WARNINGS = -Wall -Wextra -Wconversion 
-export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) -D_GNU_SOURCE
-export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) -D_GNU_SOURCE
+export OPTIMISATION = -Ofast -g
+export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -W
+export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
+export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 
 SUBDIRS = src test
 

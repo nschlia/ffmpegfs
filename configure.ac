@@ -18,9 +18,9 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
 
-# Optimisation
-CXXFLAGS="-Ofast -g -Wextra -Wconversion -Wall -W"
-CFLAGS="-Ofast -g -Wextra -Wconversion -Wall -W"
+# compiler flags
+CFLAGS=""
+CXXFLAGS=""
 
 # Checks for programs.
 AC_PROG_CC

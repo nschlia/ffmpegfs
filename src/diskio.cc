@@ -64,9 +64,9 @@ int DiskIO::openX(const std::string & filename)
     }
 }
 
-int DiskIO::read(void * data, int size)
+size_t DiskIO::read(void * data, size_t size)
 {
-    return static_cast<int>(fread(data, 1, static_cast<size_t>(size), m_fpi));
+    return fread(data, 1, size, m_fpi);
 }
 
 int DiskIO::error() const

@@ -58,7 +58,7 @@ DvdIO::DvdIO()
     , m_title_idx(0)
     , m_chapter_idx(0)
     , m_angle_idx(0)
-    , m_duration(-1)
+    , m_duration(AV_NOPTS_VALUE)
 {
     memset(&m_data, 0, sizeof(m_data));
     memset(&m_buffer, 0, sizeof(m_buffer));
@@ -101,7 +101,7 @@ int DvdIO::openX(const std::string & filename)
         m_title_idx     = 0;
         m_chapter_idx   = 0;
         m_angle_idx     = 0;
-        m_duration      = -1;
+        m_duration      = AV_NOPTS_VALUE;
     }
 
     Logging::debug(m_path, "Opening input DVD.");
@@ -242,7 +242,7 @@ int DvdIO::openX(const std::string & filename)
 #define PS_STREAM_ID                    3
 
 // return the size of the next packet
-bool DvdIO::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const
+bool DvdIO::get_packet_size(const uint8_t *p, size_t peek, size_t *size) const
 {
     if (peek < 4)
     {
@@ -263,7 +263,7 @@ bool DvdIO::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *s
         {
             if (peek >= 14 && (p[4] >> 6) == 0x01)
             {
-                *size = 14 + (p[13] & 0x07); // Byte 13 Bit 0..2: Pack stuffing length
+                *size = static_cast<size_t>(14 + (p[13] & 0x07)); // Byte 13 Bit 0..2: Pack stuffing length
                 return true;
             }
             else if (peek >= 12 && (p[4] >> 4) == 0x02)
@@ -291,14 +291,14 @@ bool DvdIO::get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *s
 }
 
 // return the id of a PES (should be valid)
-int DvdIO::get_pes_id(const uint8_t *buffer, unsigned int size) const
+int DvdIO::get_pes_id(const uint8_t *buffer, size_t size) const
 {
     if (buffer[PS_STREAM_ID] == PS_STREAM_ID_PRIVATE_STREAM1)
     {
         uint8_t sub_id = 0;
         if (size >= 9 && size >= static_cast<unsigned int>(9 + buffer[8]))
         {
-            const unsigned int start = 9 + buffer[8];
+            const size_t start = static_cast<size_t>(9 + buffer[8]);
             sub_id = buffer[start];
 
             if ((sub_id & 0xfe) == 0xa0 &&
@@ -323,7 +323,7 @@ int DvdIO::get_pes_id(const uint8_t *buffer, unsigned int size) const
     {
         // ISO 13818 amendment 2 and SMPTE RP 227
         const uint8_t flags = buffer[7];
-        unsigned int skip = 9;
+        size_t skip = 9;
 
         // Find PES extension
         if ((flags & 0x80))
@@ -367,7 +367,7 @@ int DvdIO::get_pes_id(const uint8_t *buffer, unsigned int size) const
             }
             if ((flags2 & 0x40) && skip < size)
             {
-                skip += 1 + buffer[skip];
+                skip += static_cast<size_t>(1 + buffer[skip]);
             }
             if (flags2 & 0x20)
             {
@@ -396,12 +396,12 @@ int DvdIO::get_pes_id(const uint8_t *buffer, unsigned int size) const
 }
 
 // Extract only the interesting portion of the VOB input stream
-unsigned int DvdIO::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const
+size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
 {
-    unsigned int netsize = 0;
+    size_t netsize = 0;
     while (len > 0)
     {
-        unsigned int size = 0;
+        size_t size = 0;
         if (!get_packet_size(in, len, &size) || size > len)
         {
             break;
@@ -446,7 +446,7 @@ unsigned int DvdIO::demux_pes(uint8_t *out, const uint8_t *in, unsigned int len)
     return netsize;
 }
 
-DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data)
+DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int & next_vobu, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
     DSITYPE dsitype = DSITYPE_CONTINUE;
@@ -455,8 +455,8 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
 
     // Determine where we go next.  These values are the ones we mostly
     // care about.
-    m_cur_block     = dsi_pack->dsi_gi.nv_pck_lbn;
-    cur_output_size = dsi_pack->dsi_gi.vobu_ea;
+    m_cur_block         = dsi_pack->dsi_gi.nv_pck_lbn;
+    *cur_output_size    = dsi_pack->dsi_gi.vobu_ea;
 
     // If we're not at the end of this cell, we can determine the next
     // VOBU to display using the VOBU_SRI information section of the
@@ -480,7 +480,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
             if (dsi_pack->sml_pbi.ilvu_sa != 0 && dsi_pack->sml_pbi.ilvu_sa != 0xffffffff)
             {
                 next_vobu = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
-                cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
+                *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
             }
             else
             {
@@ -494,7 +494,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, unsigned int & cur_output_size
             if (dsi_pack->sml_agli.data[m_angle_idx].address)
             {
                 next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
-                cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
+                *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
                 break;
             }
         }
@@ -564,24 +564,24 @@ void DvdIO::next_cell()
     }
 }
 
-int DvdIO::read(void * data, int size)
+size_t DvdIO::read(void * data, size_t size)
 {
-    unsigned int cur_output_size;
+    size_t cur_output_size;
     ssize_t maxlen;
-    unsigned int result_len = 0;
+    size_t result_len = 0;
     DSITYPE dsitype;
 
     if (m_rest_size)
     {
         size_t rest_size = m_rest_size;
 
-        assert(rest_size < static_cast<size_t>(size));
+        assert(rest_size < size);
 
         memcpy(data, &m_data[m_rest_pos], rest_size);
 
         m_rest_size = m_rest_pos = 0;
 
-        return static_cast<int>(rest_size);
+        return rest_size;
     }
 
     // Playback by cell in this pgc, starting at the cell for our chapter.
@@ -617,7 +617,7 @@ int DvdIO::read(void * data, int size)
             {
                 Logging::error(m_path, "Read failed for block %1", m_cur_block);
                 m_errno = EIO;
-                return -1;
+                return 0;
             }
 
             if (!is_nav_pack(m_buffer))
@@ -626,7 +626,7 @@ int DvdIO::read(void * data, int size)
             }
 
             // Parse the contained dsi packet.
-            dsitype = handle_DSI(&dsi_pack, cur_output_size, next_vobu, m_buffer);
+            dsitype = handle_DSI(&dsi_pack, &cur_output_size, next_vobu, m_buffer);
             assert(m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn);
             assert(cur_output_size < 1024);
             m_cur_block++;
@@ -638,20 +638,20 @@ int DvdIO::read(void * data, int size)
             {
                 Logging::error(m_path, "Read failed for %1 blocks at %2", cur_output_size, m_cur_block);
                 m_errno = EIO;
-                return -1;
+                return 0;
             }
 
-            unsigned int netsize = cur_output_size * DVD_VIDEO_LB_LEN;
+            size_t netsize = cur_output_size * DVD_VIDEO_LB_LEN;
 
             netsize = demux_pes(m_data, m_buffer, netsize);
 
-            if (netsize > static_cast<unsigned int>(size))
+            if (netsize > size)
             {
-                result_len = static_cast<unsigned int>(size);
+                result_len = size;
                 memcpy(data, m_data, result_len);
 
-                m_rest_size = netsize - static_cast<unsigned int>(size);
-                m_rest_pos = static_cast<unsigned int>(size);
+                m_rest_size = netsize - size;
+                m_rest_pos = size;
             }
             else
             {
@@ -674,7 +674,7 @@ int DvdIO::read(void * data, int size)
 
     m_cur_pos += result_len;
 
-    return static_cast<int>(result_len);
+    return result_len;
 }
 
 int DvdIO::error() const
@@ -704,20 +704,21 @@ size_t DvdIO::tell() const
     return m_cur_pos;
 }
 
-int DvdIO::seek(long offset, int /*whence*/)
+int DvdIO::seek(long offset, int whence)
 {
-    if (!offset)
+    if (!offset && whence == SEEK_SET)
     {
-        m_next_cell = m_start_cell;
-        m_last_cell = m_cur_pgc->nr_of_cells;
-        m_cur_cell = m_start_cell;
+        // Only rewind (seek(0, SEEK_SET) is implemented yet
+        m_next_cell         = m_start_cell;
+        m_last_cell         = m_cur_pgc->nr_of_cells;
+        m_cur_cell          = m_start_cell;
 
-        m_goto_next_cell = true;
-        m_is_eof = false;
-        m_errno = 0;
-        m_rest_size = 0;
-        m_rest_pos = 0;
-        m_cur_pos = 0;
+        m_goto_next_cell    = true;
+        m_is_eof            = false;
+        m_errno             = 0;
+        m_rest_size         = 0;
+        m_rest_pos          = 0;
+        m_cur_pos           = 0;
         return 0;
     }
     errno = EPERM;

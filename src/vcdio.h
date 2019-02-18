@@ -36,7 +36,7 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual size_t  bufsize() const;
-    virtual int     read(void *data, int size);
+    virtual size_t  read(void *data, size_t size);
     virtual int     error() const;
     virtual int64_t duration() const;
     virtual size_t  size() const;

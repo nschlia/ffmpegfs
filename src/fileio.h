@@ -139,7 +139,7 @@ public:
     // Open virtual file
     virtual int     open(LPCVIRTUALFILE virtualfile);
     // Read data
-    virtual int     read(void *data, int size) = 0;
+    virtual size_t  read(void *data, size_t size) = 0;
     // If error occurred return number
     virtual int     error() const = 0;
     // Get play time in ms

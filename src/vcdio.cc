@@ -90,11 +90,11 @@ int VcdIO::openX(const std::string & filename)
     return seek(0, SEEK_SET);
 }
 
-int VcdIO::read(void * data, int size)
+size_t VcdIO::read(void * data, size_t size)
 {
-    if (ftell(m_fpi) + static_cast<uint64_t>(size) > m_end_pos)
+    if (static_cast<size_t>(ftell(m_fpi)) + size > m_end_pos)
     {
-        size = static_cast<int>(m_end_pos - ftell(m_fpi));
+        size = m_end_pos - static_cast<size_t>(ftell(m_fpi));
     }
 
     if (!size)
@@ -102,7 +102,7 @@ int VcdIO::read(void * data, int size)
         return 0;
     }
 
-    return static_cast<int>(fread(data, 1, size, m_fpi));
+    return fread(data, 1, size, m_fpi);
 }
 
 int VcdIO::error() const
@@ -135,37 +135,42 @@ size_t VcdIO::size() const
 
 size_t VcdIO::tell() const
 {
-    return (ftell(m_fpi) - m_start_pos);
+    return (static_cast<size_t>(ftell(m_fpi)) - m_start_pos);
 }
 
 int VcdIO::seek(long offset, int whence)
 {
-    long int seek_pos;
+    off_t seek_pos;
     switch (whence)
     {
     case SEEK_SET:
     {
-        seek_pos = m_start_pos + offset;
+        seek_pos = static_cast<off_t>(m_start_pos) + offset;
         break;
     }
     case SEEK_CUR:
     {
-        seek_pos = m_start_pos + offset + ftell(m_fpi);
+        seek_pos = static_cast<off_t>(m_start_pos) + ftell(m_fpi) + offset;
         break;
     }
     case SEEK_END:
     {        
-        seek_pos = m_end_pos - offset;
+        seek_pos = static_cast<off_t>(m_end_pos) - offset;
         break;
     }
     default:
     {
         errno = EINVAL;
-        return 0;
+        return -1;
     }
     }
 
     if (static_cast<uint64_t>(seek_pos) > m_end_pos)
+    {
+        seek_pos = static_cast<off_t>(m_end_pos);           // Cannot go beyond EOF. Set position to end, leave errno untouched.
+    }
+
+    if (static_cast<uint64_t>(seek_pos) < m_start_pos)      // Cannot go before head, leave position untouched, set errno.
     {
         errno = EINVAL;
         return -1;

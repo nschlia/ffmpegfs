@@ -45,7 +45,7 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual size_t  bufsize() const;
-    virtual int     read(void *data, int size);
+    virtual size_t  read(void *data, size_t size);
     virtual int     error() const;
     virtual int64_t duration() const;
     virtual size_t  size() const;
@@ -59,10 +59,10 @@ protected:
 
 private:
     bool            is_nav_pack(const unsigned char *buffer) const;
-    bool            get_packet_size(const uint8_t *p, unsigned int peek, unsigned int *size) const;
-    int             get_pes_id(const uint8_t *buffer, unsigned int size) const;
-    unsigned int    demux_pes(uint8_t *out, const uint8_t *in, unsigned int len) const;
-    DSITYPE         handle_DSI(void * _dsi_pack, unsigned int & cur_output_size, unsigned int & next_vobu, uint8_t *data);
+    bool            get_packet_size(const uint8_t *p, size_t peek, size_t *size) const;
+    int             get_pes_id(const uint8_t *buffer, size_t size) const;
+    size_t          demux_pes(uint8_t *out, const uint8_t *in, size_t len) const;
+    DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int & next_vobu, uint8_t *data);
     void            next_cell();
     
 protected:

@@ -1938,7 +1938,7 @@ int FFmpeg_Transcoder::write_output_file_header()
 
         buffer->seek(0, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
-        buffer->seek(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, SEEK_SET);
+        buffer->seek(static_cast<long>(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4), SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
         buffer->seek(static_cast<long>(pos), SEEK_SET);
     }
@@ -2772,7 +2772,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
-        int64_t duration;
+        int duration;
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)
@@ -2987,7 +2987,8 @@ int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
                 if (pkt.dts != static_cast<int64_t>(AV_NOPTS_VALUE) && m_out.m_last_mux_dts != static_cast<int64_t>(AV_NOPTS_VALUE))
                 {
                     //int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
-                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, (AVRational){m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num}, m_out.m_video.m_stream->time_base);
+                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
+                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
 
                     if (pkt.dts < max)
                     {
@@ -3719,7 +3720,7 @@ int FFmpeg_Transcoder::input_read(void * opaque, unsigned char * data, int size)
         return AVERROR_EOF;
     }
 
-    int read = io->read(reinterpret_cast<char *>(data), size);
+    int read = static_cast<int>(io->read(reinterpret_cast<char *>(data), static_cast<size_t>(size)));
 
     if (read != size && io->error())
     {

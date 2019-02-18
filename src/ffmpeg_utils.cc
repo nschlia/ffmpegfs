@@ -735,7 +735,7 @@ std::string format_bitrate(BITRATE value)
 
 std::string format_samplerate(int value)
 {
-    if (value == static_cast<unsigned int>(AV_NOPTS_VALUE))
+    if (value == static_cast<int>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -750,7 +750,7 @@ std::string format_samplerate(int value)
     }
 }
 
-std::string format_duration(int64_t value, int fracs /*= 1*/)
+std::string format_duration(int64_t value, uint32_t fracs /*= 3*/)
 {
     if (value == AV_NOPTS_VALUE)
     {
@@ -900,7 +900,7 @@ std::string format_result_size_ex(size_t size_resulting, size_t size_predicted)
 
 static void print_fps(double d, const char *postfix)
 {
-    uint64_t v = lrint(d * 100);
+    long v = lrint(d * 100);
     if (!v)
     {
         std::printf("%1.4f %s\n", d, postfix);
@@ -1026,7 +1026,7 @@ int strcasecmp(const std::string & s1, const std::string & s2)
 template<typename ... Args>
 std::string string_format(const std::string& format, Args ... args)
 {
-    size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+    size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...) + 1); // Extra space for '\0'
     std::unique_ptr<char[]> buf(new char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside

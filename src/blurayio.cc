@@ -35,12 +35,12 @@ BlurayIO::BlurayIO()
     , m_rest_pos(0)
     , m_cur_pos(0)
     , m_start_pos(0)
-    , m_end_pos(-1)
+    , m_end_pos(AV_NOPTS_VALUE)
     , m_full_title(false)
     , m_title_idx(0)
     , m_chapter_idx(0)
     , m_angle_idx(0)
-    , m_duration(-1)
+    , m_duration(AV_NOPTS_VALUE)
 {
     memset(&m_data, 0, sizeof(m_data));
 }
@@ -63,8 +63,8 @@ size_t BlurayIO::bufsize() const
 int BlurayIO::openX(const std::string & filename)
 {
     const char *bdpath = nullptr;
-    int title_count;
-    int chapter_end = -1;
+    uint32_t title_count;
+    uint32_t chapter_end;
     char *keyfile = nullptr;
     BLURAY_TITLE_INFO *ti;
 
@@ -86,7 +86,7 @@ int BlurayIO::openX(const std::string & filename)
         m_title_idx     = 0;
         m_chapter_idx   = 0;
         m_angle_idx     = 0;
-        m_duration      = -1;
+        m_duration      = AV_NOPTS_VALUE;
     }
 
     chapter_end = m_chapter_idx + 1;
@@ -101,7 +101,7 @@ int BlurayIO::openX(const std::string & filename)
     }
 
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
-    if (title_count <= 0)
+    if (title_count == 0)
     {
         Logging::error(bdpath, "No titles found.");
         return 1;
@@ -128,28 +128,28 @@ int BlurayIO::openX(const std::string & filename)
         return 1;
     }
 
-    if (chapter_end >= static_cast<int>(ti->chapter_count))
+    if (chapter_end >= ti->chapter_count)
     {
-        chapter_end = -1;
+        chapter_end = 0;
     }
 
-    if (chapter_end >= 0 && !m_full_title)
+    if (chapter_end > 0 && !m_full_title)
     {
         m_end_pos = bd_chapter_pos(m_bd, chapter_end);
     }
     else
     {
-        m_end_pos = bd_get_title_size(m_bd);
+        m_end_pos = static_cast<int64_t>(bd_get_title_size(m_bd));
     }
 
     if (m_full_title)
     {
-        m_duration = ti->duration * AV_TIME_BASE / 90000;
+        m_duration = static_cast<int64_t>(ti->duration * AV_TIME_BASE / 90000);
     }
     else
     {
         BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[m_chapter_idx];
-        m_duration = chapter->duration * AV_TIME_BASE / 90000;
+        m_duration = static_cast<int64_t>(chapter->duration * AV_TIME_BASE / 90000);
     }
 
     bd_free_title_info(ti);
@@ -162,15 +162,15 @@ int BlurayIO::openX(const std::string & filename)
     return 0;
 }
 
-int BlurayIO::read(void * data, int size)
+size_t BlurayIO::read(void * data, size_t size)
 {
-    int result_len = 0;
+    size_t result_len = 0;
 
     if (m_rest_size)
     {
-        result_len = static_cast<int>(m_rest_size);
+        result_len = m_rest_size;
 
-        assert(m_rest_size < static_cast<size_t>(size));
+        assert(m_rest_size < size);
 
         memcpy(data, &m_data[m_rest_pos], m_rest_size);
 
@@ -179,24 +179,26 @@ int BlurayIO::read(void * data, int size)
         return result_len;
     }
 
-    m_cur_pos = bd_tell(m_bd);
+    m_cur_pos = static_cast<int64_t>(bd_tell(m_bd));
     if (m_end_pos < 0 || m_cur_pos < m_end_pos)
     {
-        int bytes;
-        int maxsize = static_cast<int>(sizeof(m_data));
+        int maxsize = sizeof(m_data);
 
         if (maxsize > (m_end_pos - m_cur_pos))
         {
             maxsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
 
-        bytes = bd_read(m_bd, m_data, maxsize);
-        if (bytes <= 0)
+        int res = bd_read(m_bd, m_data, maxsize);
+        if (res < 0)
         {
-            Logging::error(m_path, "bd_read fail ret = %1", bytes);
+            Logging::error(m_path, "bd_read fail");
             return 0;
         }
-        m_cur_pos = bd_tell(m_bd);
+
+        size_t bytes = static_cast<size_t>(res);
+
+        m_cur_pos = static_cast<int64_t>(bd_tell(m_bd));
 
         if (bytes > size)
         {
@@ -228,19 +230,17 @@ int64_t BlurayIO::duration() const
 
 size_t BlurayIO::size() const
 {
-    return (m_end_pos - m_start_pos);
+    return static_cast<size_t>(m_end_pos - m_start_pos);
 }
 
 size_t BlurayIO::tell() const
 {
-    return (bd_tell(m_bd) - m_start_pos);
+    return static_cast<size_t>(static_cast<int64_t>(bd_tell(m_bd)) - m_start_pos);
 }
 
 int BlurayIO::seek(long offset, int whence)
 {
-    long int seek_pos;
-
-    //Logging::error(m_path, "SEEK %<%11" PRId64 ">1", offset);
+    int64_t seek_pos;
 
     switch (whence)
     {
@@ -251,24 +251,36 @@ int BlurayIO::seek(long offset, int whence)
     }
     case SEEK_CUR:
     {
-        seek_pos = m_start_pos + offset + bd_tell(m_bd);
+        seek_pos = m_start_pos + offset + static_cast<int64_t>(bd_tell(m_bd));
         break;
     }
     case SEEK_END:
     {
-        seek_pos = m_end_pos - offset;
+        seek_pos = m_end_pos + offset;
         break;
     }
     default:
     {
         errno = EINVAL;
-        return 0;
+        return -1;
     }
     }
 
-    bool success = (bd_seek(m_bd, seek_pos) != seek_pos);
-    m_cur_pos = bd_tell(m_bd);
-    return success;
+    if (seek_pos > m_end_pos)
+    {
+        m_cur_pos = m_end_pos;  // Cannot go beyond EOF. Set position to end, leave errno untouched.
+        return 0;
+    }
+
+    if (seek_pos < 0)           // Cannot go before head, set errno.
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    int64_t found_pos = bd_seek(m_bd, static_cast<uint64_t>(seek_pos));
+    m_cur_pos = static_cast<int64_t>(bd_tell(m_bd));
+    return (found_pos == seek_pos ? 0 : -1);
 }
 
 bool BlurayIO::eof() const

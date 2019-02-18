@@ -357,44 +357,46 @@ int Buffer::seek(long offset, int whence)
         return -1;
     }
 
-    size_t pos;
+    off_t seek_pos;
 
     switch (whence)
     {
+    case SEEK_SET:
+    {
+        seek_pos = offset;
+        break;
+    }
     case SEEK_CUR:
     {
-        pos = tell() + offset;
+        seek_pos = static_cast<off_t>(tell()) + offset;
         break;
     }
     case SEEK_END:
     {
-        if (size() > static_cast<size_t>(offset))
-        {
-            pos = size() - offset;
-        }
-        else
-        {
-            pos = 0;
-        }
+        seek_pos = static_cast<off_t>(size()) + offset;
         break;
     }
-    default: // SEEK_SET
+    default:
     {
-        pos = offset;
-        break;
+        errno = EINVAL;
+        return -1;
     }
     }
 
-    if (pos <= size())
+    if (seek_pos > static_cast<off_t>(size()))
     {
-        m_buffer_pos = pos;
+        m_buffer_pos = size();  // Cannot go beyond EOF. Set position to end, leave errno untouched.
         return 0;
     }
-    else
+
+    if (seek_pos < 0)           // Cannot go before head, leave position untouched, set errno.
     {
-        m_buffer_pos = size();
+        errno = EINVAL;
         return -1;
     }
+
+    m_buffer_pos = static_cast<uint64_t>(seek_pos);
+    return 0;
 }
 
 size_t Buffer::tell() const
@@ -502,11 +504,11 @@ bool Buffer::remove_file(const std::string & filename)
     }
 }
 
-int Buffer::read(void * /*data*/, int /*size*/)
+size_t Buffer::read(void * /*data*/, size_t /*size*/)
 {
     // Not implemented
     errno = EPERM;
-    return -1;
+    return 0;
 }
 
 int Buffer::error() const

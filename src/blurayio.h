@@ -38,7 +38,7 @@ public:
     virtual VIRTUALTYPE type() const;
 
     virtual size_t  bufsize() const;
-    virtual int     read(void *data, int size);
+    virtual size_t  read(void *data, size_t size);
     virtual int     error() const;
     virtual int64_t duration() const;
     virtual size_t  size() const;
@@ -58,7 +58,7 @@ protected:
     size_t          m_rest_size;
     size_t          m_rest_pos;
     int64_t         m_cur_pos;
-    uint64_t        m_start_pos;
+    int64_t         m_start_pos;
     int64_t         m_end_pos;
 
     bool            m_full_title;

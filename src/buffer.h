@@ -46,7 +46,7 @@ public:
     bool                    release(int flags = CLOSE_CACHE_NOOPT);
 
     virtual size_t          bufsize() const;
-    virtual int             read(void *data, int size);                             // Not implemented
+    virtual size_t          read(void *data, size_t size);                          // Not implemented
     virtual int             error() const;
     virtual int64_t         duration() const;
     virtual size_t          size() const;                                           // Give the value of the internal buffer size pointer.

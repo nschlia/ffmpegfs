@@ -141,8 +141,8 @@ public:
     virtual const char *        filename() const;
     virtual const char *        destname() const;
     
-    static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int channels, int sample_rate);
-    static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, const AVRational & framerate);
+    static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate);
+    static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
 
 protected:
     bool                        is_video() const;

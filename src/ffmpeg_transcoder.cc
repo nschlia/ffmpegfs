@@ -3494,7 +3494,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
     return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
 }
 
-bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int channels, int sample_rate)
+bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate)
 {
     BITRATE output_audio_bit_rate;
     int output_sample_rate;
@@ -3508,7 +3508,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_AAC:
     {
         // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
-        *filesize += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8); // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));        // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_MP3:
@@ -3519,7 +3519,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // but in practice gives excellent answers, usually exactly correct.
         // Cast to 64-bit int to avoid overflow.
 
-        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) + ID3V1_TAG_LENGTH;
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8 * AV_TIME_BASE)) + ID3V1_TAG_LENGTH;
         break;
     }
     case AV_CODEC_ID_PCM_S16LE:
@@ -3534,19 +3534,19 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
         break;
     }
     case AV_CODEC_ID_VORBIS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-        *filesize += static_cast<size_t>(duration * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));    // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-        *filesize += static_cast<size_t>(duration * 1.025 * static_cast<double>(output_audio_bit_rate) / 8) /*+ ID3V1_TAG_LENGTH*/;// TODO ???
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));    // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -3562,7 +3562,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     return success;
 }
 
-bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, const AVRational &framerate)
+bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational &framerate)
 {
     BITRATE out_video_bit_rate;
     bool success = true;
@@ -3573,7 +3573,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
     case AV_CODEC_ID_H264:
     {
-        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_MJPEG:
@@ -3583,17 +3583,17 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_THEORA:
     {
-        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_VP9:
     {
-        *filesize += static_cast<size_t>(duration * 1.025  * static_cast<double>(out_video_bit_rate) / 8); // ??? // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
     {
-        *filesize += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, framerate, interleaved, params.m_level)) / 8);
+        *filesize += static_cast<size_t>(duration * get_prores_bitrate(width, height, framerate, interleaved, params.m_level) / (8LL * AV_TIME_BASE));
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -3625,14 +3625,14 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
     size_t filesize = 0;
 
-    double duration = ffmpeg_cvttime(m_in.m_format_ctx->duration, av_get_time_base_q());
+    int64_t duration = m_in.m_format_ctx->duration != AV_NOPTS_VALUE ? m_in.m_format_ctx->duration : 0;
     BITRATE input_audio_bit_rate = 0;
     int input_sample_rate = 0;
     BITRATE input_video_bit_rate = 0;
 
     if (m_fileio->duration() != AV_NOPTS_VALUE)
     {
-        duration = static_cast<double>(m_fileio->duration()) / AV_TIME_BASE;
+        duration = m_fileio->duration();
     }
 
     if (m_in.m_audio.m_stream_idx > -1)

@@ -377,15 +377,13 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return false;
         }
 
-        uint64_t size           = bd_get_title_size(bd);
-
-        double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
+        uint64_t size           = bd_get_title_size(bd);;
 
         virtualfile->m_duration = duration;
 
-        if (secsduration != 0.)
+        if (duration)
         {
-            video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
+            video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
         }
 
         // Get details
@@ -398,7 +396,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
         }
 
-        transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
+        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
     }
 
     return true;

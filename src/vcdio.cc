@@ -61,7 +61,7 @@ int VcdIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
-        m_full_title    = virtualfile()->m_vcd.m_full_title;
+        m_full_title    = virtualfile()->m_full_title;
         m_track_no      = virtualfile()->m_vcd.m_track_no;
         m_chapter_no    = virtualfile()->m_vcd.m_chapter_no;
         m_start_pos     = virtualfile()->m_vcd.m_start_pos;

@@ -300,9 +300,20 @@ int                 mktree(const std::string & filename, mode_t mode);
 void                tempdir(std::string & dir);
 
 #ifdef USING_LIBAV
-// Libav does not have these functions
+// Libav is missing these functions
 int                 avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename);
 const char *        avcodec_get_name(AVCodecID id);
+
+/**
+ * Create a rational.
+ * Useful for compilers that do not support compound literals.
+ * @note  The return value is not reduced.
+ */
+static inline AVRational av_make_q(int num, int den)
+{
+    AVRational r = { num, den };
+    return r;
+}
 #endif
 
 std::vector<std::string> split(const std::string& input, const std::string & regex);

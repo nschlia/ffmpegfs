@@ -29,6 +29,11 @@
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_read.h>
 
+extern "C" {
+#include <libavutil/rational.h>
+}
+//#pragma GCC diagnostic pop
+
 typedef struct AUDIO_SETTINGS
 {
     BITRATE m_audio_bit_rate;
@@ -47,11 +52,11 @@ typedef struct VIDEO_SETTINGS
 typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;
 typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;
 
-static int      dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
-static double   frameRate(const uint8_t * ptr);
-static int64_t  BCDtime(const dvd_time_t * dvd_time);
-static bool     create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
-static int      parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+static int          dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
+static AVRational   dvd_frame_rate(const uint8_t * ptr);
+static int64_t      BCDtime(const dvd_time_t * dvd_time);
+static bool         create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
+static int          parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
 {
@@ -138,9 +143,9 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
     return best_stream;
 }
 
-static double frameRate(const uint8_t * ptr)
+static AVRational dvd_frame_rate(const uint8_t * ptr)
 {
-    double frame_rate = 0;
+    AVRational framerate = { 0, 0 };
 
     // 11 = 30 fps, 10 = illegal, 01 = 25 fps, 00 = illegal
     unsigned fps = ((ptr[3] & 0xC0) >> 6) & 0x03;
@@ -149,32 +154,32 @@ static double frameRate(const uint8_t * ptr)
     {
     case 3: // PAL
     {
-        frame_rate = 30;
+        framerate = av_make_q(30000, 1000);
         break;
     }
     case 1: // NTSC
     {
-        frame_rate = 29.97;
+        framerate = av_make_q(30000, 10001);
         break;
     }
     default:
     {
-        frame_rate = 0;
+        framerate = { 0, 0};
         break;
     }
     }
 
-    return frame_rate;
+    return framerate;
 }
 
 static int64_t BCDtime(const dvd_time_t * dvd_time)
 {
     int64_t time[4];
-    double  frame_rate = frameRate(&dvd_time->frame_u);
+    AVRational  framerate = dvd_frame_rate(&dvd_time->frame_u);
 	
-    if (frame_rate == .0)
+    if (!framerate.den)
     {
-        frame_rate = 25;                    // Avoid divisions by 0
+        framerate = av_make_q(25000, 1000);                    // Avoid divisions by 0
     }
     time[0] = dvd_time->hour;
     time[1] = dvd_time->minute;
@@ -187,23 +192,23 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
         time[i] = ((time[i] & 0xf0) >> 4) * 10 + (time[i] & 0x0f);
     }
 
-    return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / frame_rate));
+    return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / av_q2d(framerate)));
 }
 
 static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
 {
     vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
-    int title_no        = title_idx + 1;
-    int chapter_no      = chapter_idx + 1;
-    int pgcnum          = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
-    int pgn             = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
-    pgc_t *cur_pgc      = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
-    double frame_rate   = 0;
-    int64_t duration    = 0;
-    uint64_t size       = 0;
-    int interleaved     = 0;
-    int start_cell      = cur_pgc->program_map[pgn - 1] - 1;
-    int end_cell        = 0;
+    int title_no            = title_idx + 1;
+    int chapter_no          = chapter_idx + 1;
+    int pgcnum              = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
+    int pgn                 = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
+    pgc_t *cur_pgc          = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
+    AVRational framerate    = { 0, 0 };
+    int64_t duration        = 0;
+    uint64_t size           = 0;
+    int interleaved         = 0;
+    int start_cell          = cur_pgc->program_map[pgn - 1] - 1;
+    int end_cell            = 0;
 
     if (pgn < cur_pgc->nr_of_programs && !full_title)
     {
@@ -215,7 +220,7 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
     }
 
     interleaved         = cur_pgc->cell_playback[start_cell].interleaved;
-    frame_rate          = frameRate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
+    framerate          = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
 
     bool has_angles = false;
 
@@ -313,7 +318,7 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
         // DVD is video format anyway
         virtualfile->m_format_idx       = 0;
         // Mark title/chapter/angle
-        virtualfile->m_dvd.m_full_title = full_title;
+        virtualfile->m_full_title       = full_title;
         virtualfile->m_dvd.m_title_no   = title_no;
         virtualfile->m_dvd.m_chapter_no = chapter_no;
         virtualfile->m_dvd.m_angle_no   = angle_no;
@@ -322,7 +327,7 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
         {
             double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
 
-            virtualfile->m_dvd.m_duration = duration;
+            virtualfile->m_duration = duration;
 
             BITRATE video_bit_rate = video_settings.m_video_bit_rate;
             if (secsduration != 0.)
@@ -330,13 +335,13 @@ static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & p
                 video_bit_rate      = static_cast<BITRATE>(static_cast<double>(size) * 8 / secsduration);   // calculate bitrate in bps
             }
 
-            Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate).c_str(), video_settings.m_width, video_settings.m_height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+            Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate).c_str(), video_settings.m_width, video_settings.m_height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
             if (audio_stream > -1)
             {
                 Logging::debug(virtualfile->m_origfile, "Audio %1 Channels %2", audio_settings.m_channels, audio_settings.m_sample_rate);
             }
 
-            transcoder_set_filesize(virtualfile, secsduration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, frame_rate);
+            transcoder_set_filesize(virtualfile, secsduration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
         }
     }
 

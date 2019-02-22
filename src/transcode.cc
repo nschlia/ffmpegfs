@@ -214,7 +214,7 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
     }
 }
 
-bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, double frame_rate)
+bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational &framerate)
 {
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
@@ -237,7 +237,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE
         Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype.c_str());
     }
 
-    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, frame_rate))
+    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, framerate))
     {
         Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype.c_str());
     }

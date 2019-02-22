@@ -344,7 +344,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
-    m_in.m_file_type = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
+    m_in.m_filetype = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
 
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
     if (ret < 0)
@@ -495,7 +495,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr &&
-            supports_albumart(m_in.m_file_type) && supports_albumart(get_filetype(m_current_format->m_desttype)))
+            supports_albumart(m_in.m_filetype) && supports_albumart(get_filetype(m_current_format->m_desttype)))
     {
         Logging::trace(filename(), "Processing album arts.");
 
@@ -695,36 +695,47 @@ bool FFmpeg_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_
     }
 }
 
-double FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sample_aspect_ratio) const
+bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational & sar, AVRational *ar) const
 {
-    double dblAspectRatio = 0;
-
     // Try to determine display aspect ratio
     AVRational dar;
     ::av_reduce(&dar.num, &dar.den,
-                width  * sample_aspect_ratio.num,
-                height * sample_aspect_ratio.den,
+                width  * sar.num,
+                height * sar.den,
                 1024 * 1024);
+
+    ar->num = ar->den = 0;
 
     if (dar.num && dar.den)
     {
-        dblAspectRatio = ::av_q2d(dar);
+        *ar = dar;
     }
 
     // If that fails, try sample aspect ratio instead
-    if (dblAspectRatio <= 0.0 && sample_aspect_ratio.num != 0)
+    if (!ar->den && sar.num != 0 && sar.den != 0)
     {
-        dblAspectRatio = ::av_q2d(sample_aspect_ratio);
+        *ar = sar;
     }
 
     // If even that fails, try to use video size
-    if (dblAspectRatio <= 0.0 && height)
+    if (!ar->den && height)
     {
-        dblAspectRatio = static_cast<double>(width) / static_cast<double>(height);
+        ar->num = width;
+        ar->den = height;
     }
 
-    // Return value or 0 if all above failed
-    return dblAspectRatio;
+    if (!ar->den)
+    {
+        // Return false if all above failed
+        return false;
+    }
+
+    ::av_reduce(&ar->num, &ar->den,
+                ar->num,
+                ar->den,
+                1024 * 1024);
+
+    return true;
 }
 
 bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) const
@@ -735,46 +746,46 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
         return false;
     }
 
-    int input_width                 = CODECPAR(m_in.m_video.m_stream)->width;
-    int input_height                = CODECPAR(m_in.m_video.m_stream)->height;
-    AVRational sample_aspect_ratio  = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
+    int input_width     = CODECPAR(m_in.m_video.m_stream)->width;
+    int input_height    = CODECPAR(m_in.m_video.m_stream)->height;
+    AVRational sar      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
 
     if (params.m_videowidth && params.m_videoheight)
     {
         // Both width/source set. May look strange, but this is an order...
-        *output_width      = params.m_videowidth;
-        *output_height     = params.m_videoheight;
+        *output_width   = params.m_videowidth;
+        *output_height  = params.m_videoheight;
     }
     else if (params.m_videowidth)
     {
         // Only video width
-        double ratio = get_aspect_ratio(input_width, input_height, sample_aspect_ratio);
+        AVRational ar;
 
         *output_width      = params.m_videowidth;
 
-        if (ratio == 0.)
+        if (!get_aspect_ratio(input_width, input_height, sar, &ar))
         {
             *output_height = input_height;
         }
         else
         {
-            *output_height = static_cast<int>(params.m_videowidth / ratio);
-            *output_height &= ~(static_cast<int>(0x1));
+            *output_height = static_cast<int>(params.m_videowidth / av_q2d(ar));
+            *output_height &= ~(static_cast<int>(0x1)); // height must be multiple of 2
         }
     }
     else //if (params.m_videoheight)
     {
         // Only video height
-        double ratio = get_aspect_ratio(input_width, input_height, sample_aspect_ratio);
+        AVRational ar;
 
-        if (ratio == 0.)
+        if (!get_aspect_ratio(input_width, input_height, sar, &ar))
         {
             *output_width  = input_width;
         }
         else
         {
-            *output_width  = static_cast<int>(params.m_videoheight * ratio);
-            *output_width  &= ~(static_cast<int>(0x1));
+            *output_width  = static_cast<int>(params.m_videoheight / av_q2d(ar));
+            *output_width  &= ~(static_cast<int>(0x1)); // width must be multiple of 2
         }
         *output_height     = params.m_videoheight;
     }
@@ -1604,7 +1615,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     int             ret = 0;
 
-    m_out.m_file_type = m_current_format->m_filetype;
+    m_out.m_filetype = m_current_format->m_filetype;
 
     // Check if we can copy audio or video.
     m_copy_audio = can_copy_stream(m_in.m_audio.m_stream);
@@ -1906,7 +1917,7 @@ int FFmpeg_Transcoder::write_output_file_header()
     AVDictionary* dict = nullptr;
     int ret;
 
-    ret = prepare_format(&dict, m_out.m_file_type);
+    ret = prepare_format(&dict, m_out.m_filetype);
     if (ret < 0)
     {
         return ret;
@@ -1919,7 +1930,7 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-    if (m_out.m_file_type == FILETYPE_WAV)
+    if (m_out.m_filetype == FILETYPE_WAV)
     {
         // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
         AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
@@ -3115,7 +3126,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
     {
         av_dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
 
-        if (m_out.m_file_type == FILETYPE_MP3)
+        if (m_out.m_filetype == FILETYPE_MP3)
         {
             // For MP3 fill in ID3v1 structure
             if (!strcasecmp(tag->key, "ARTIST"))
@@ -3413,7 +3424,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
     return 0;
 }
 
-BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, double framerate, int interleaved, int profile)
+BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRational &framerate, int interleaved, int profile)
 {
     unsigned int mindist;
     int match = -1;
@@ -3443,13 +3454,14 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, double fram
     height  = m_prores_bitrate[match].m_height;
 
     // Find best match framerate
+    double framerateX = av_q2d(framerate);
     mindist = UINT_MAX;
     for (int i = match; width == m_prores_bitrate[i].m_width && height == m_prores_bitrate[i].m_height; i++)
     {
         unsigned int dist = UINT_MAX;
         for (int j = 0; j < MAX_PRORES_FRAMERATE && m_prores_bitrate[i].m_framerate[j].m_framerate; j++)
         {
-            unsigned int x = static_cast<unsigned int>(framerate - m_prores_bitrate[i].m_framerate[j].m_framerate);
+            unsigned int x = static_cast<unsigned int>(framerateX - m_prores_bitrate[i].m_framerate[j].m_framerate);
             unsigned int y = static_cast<unsigned int>(interleaved - m_prores_bitrate[i].m_framerate[j].m_interleaved);
 
             dist = (x * x) + (y * y);
@@ -3550,7 +3562,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     return success;
 }
 
-bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, double frame_rate)
+bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, double duration, int width, int height, int interleaved, const AVRational &framerate)
 {
     BITRATE out_video_bit_rate;
     bool success = true;
@@ -3581,7 +3593,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
     {
-        *filesize += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, frame_rate, interleaved, params.m_level)) / 8);
+        *filesize += static_cast<size_t>(duration * static_cast<double>(get_prores_bitrate(width, height, framerate, interleaved, params.m_level)) / 8);
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -3656,11 +3668,11 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
             int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
 #endif // !USING_LIBAV
 #if LAVF_DEP_AVSTREAM_CODEC
-            double frame_rate = av_q2d(m_in.m_video.m_stream->avg_frame_rate);
+            AVRational framerate = m_in.m_video.m_stream->avg_frame_rate;
 #else
-            double frame_rate = av_q2d(m_in.m_video.m_stream->codec->framerate);
+            AVRational framerate = m_in.m_video.m_stream->codec->framerate;
 #endif
-            if (!video_size(&filesize, m_current_format->m_video_codec_id, input_video_bit_rate, duration, width, height, interleaved, frame_rate))
+            if (!video_size(&filesize, m_current_format->m_video_codec_id, input_video_bit_rate, duration, width, height, interleaved, framerate))
             {
                 Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype.c_str());
             }
@@ -4087,7 +4099,7 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pS
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)
         //{
-        //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":frame_rate=%d/%d", fr.num, fr.den);
+        //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":framerate=%d/%d", fr.num, fr.den);
         //}
         //
         //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?

@@ -31,7 +31,7 @@
 // Simply get encoded file size (do not create the whole encoder/decoder objects)
 bool            transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf);
 // Set the file size
-bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, double frame_rate);
+bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, double duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational & framerate);
 // Predict file size
 bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry);
 

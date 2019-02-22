@@ -54,6 +54,8 @@ typedef struct VIRTUALFILE
     VIRTUALFILE()
         : m_type(VIRTUALTYPE_REGULAR)
         , m_format_idx(0)
+        , m_full_title(false)
+        , m_duration(0)
     {
 
     }
@@ -64,59 +66,50 @@ typedef struct VIRTUALFILE
     std::string     m_origfile;     // Sanitised original file name
     struct stat     m_st;
 
+    bool            m_full_title;
+    int64_t         m_duration;
+
 #ifdef USE_LIBVCD
     struct VCD_CHAPTER
     {
         VCD_CHAPTER()
-            : m_full_title(false)
-            , m_track_no(0)
+            : m_track_no(0)
             , m_chapter_no(0)
             , m_start_pos(0)
             , m_end_pos(0)
-            , m_duration(0)
         {}
-        bool        m_full_title;
         int         m_track_no;
         int         m_chapter_no;
         uint64_t    m_start_pos;
         uint64_t    m_end_pos;
-        int64_t     m_duration;
     }               m_vcd;
 #endif //USE_LIBVCD
 #ifdef USE_LIBDVD
     struct DVD_CHAPTER
     {
         DVD_CHAPTER()
-            : m_full_title(false)
-            , m_title_no(0)
+            : m_title_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
-            , m_duration(0)
         {}
-        bool        m_full_title;
         int         m_title_no;
         int         m_chapter_no;
         int         m_angle_no;
-        int64_t     m_duration;
     }               m_dvd;
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     struct BLURAY_CHAPTER
     {
         BLURAY_CHAPTER()
-            : m_full_title(false)
-            , m_title_no(0)
+            : m_title_no(0)
             , m_playlist_no(0)
             , m_chapter_no(0)
             , m_angle_no(0)
-            , m_duration(0)
         {}
-        bool        m_full_title;
         uint32_t    m_title_no;
         uint32_t    m_playlist_no;
         unsigned    m_chapter_no;
         unsigned    m_angle_no;
-        int64_t     m_duration;
     }               m_bluray;
 #endif // USE_LIBBLURAY
 
@@ -130,34 +123,34 @@ public:
     explicit FileIO();
     virtual ~FileIO();
 
-    static FileIO * alloc(VIRTUALTYPE type);
+    static FileIO *     alloc(VIRTUALTYPE type);
 
     virtual VIRTUALTYPE type() const = 0;
 
     // Ideal buffer size, may be 0 if no recommendation.
-    virtual size_t  bufsize() const = 0;
+    virtual size_t      bufsize() const = 0;
     // Open virtual file
-    virtual int     open(LPCVIRTUALFILE virtualfile);
+    virtual int         open(LPCVIRTUALFILE virtualfile);
     // Read data
-    virtual size_t  read(void *data, size_t size) = 0;
+    virtual size_t      read(void *data, size_t size) = 0;
     // If error occurred return number
-    virtual int     error() const = 0;
+    virtual int         error() const = 0;
     // Get play time in ms
     // This is only possible for file formats that are aware
     // of the play time. May be -1 if the time is not known.
-    virtual int64_t  duration() const = 0;
+    virtual int64_t     duration() const = 0;
     // Get file size
-    virtual size_t  size() const = 0;
+    virtual size_t      size() const = 0;
     // Get current read position
-    virtual size_t  tell() const = 0;
+    virtual size_t      tell() const = 0;
     // Seek to position
-    virtual int     seek(long offset, int whence) = 0;
+    virtual int         seek(long offset, int whence) = 0;
     // Return true if at end of file
-    virtual bool    eof() const = 0;
+    virtual bool        eof() const = 0;
     // Close virtual file
-    virtual void    close() = 0;
+    virtual void        close() = 0;
 
-    LPCVIRTUALFILE  virtualfile() const;
+    LPCVIRTUALFILE      virtualfile() const;
 
 protected:
     // Open with file name

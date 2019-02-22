@@ -89,11 +89,11 @@ int DvdIO::openX(const std::string & filename)
 
     if (virtualfile() != nullptr)
     {
-        m_full_title    = virtualfile()->m_dvd.m_full_title;
+        m_full_title    = virtualfile()->m_full_title;
         m_title_idx     = virtualfile()->m_dvd.m_title_no - 1;
         m_chapter_idx   = virtualfile()->m_dvd.m_chapter_no - 1;
         m_angle_idx     = virtualfile()->m_dvd.m_angle_no - 1;
-        m_duration      = virtualfile()->m_dvd.m_duration;
+        m_duration      = virtualfile()->m_duration;
     }
     else
     {

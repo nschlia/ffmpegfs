@@ -161,14 +161,14 @@ int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational frame_rate) const
+void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const
 {
     AVRational time_base;
 
-    if (!frame_rate.num || !frame_rate.den)
+    if (!framerate.num || !framerate.den)
     {
-        frame_rate.num = 25;
-        frame_rate.den = 1;
+        framerate.num = 25;
+        framerate.den = 1;
         Logging::warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
     }
 
@@ -185,7 +185,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     case AV_CODEC_ID_MPEG1VIDEO:
     case AV_CODEC_ID_MPEG2VIDEO:
     {
-        time_base                               = av_inv_q(frame_rate);
+        time_base                               = av_inv_q(framerate);
         break;
     }
     case AV_CODEC_ID_VP9:           // webm
@@ -219,8 +219,8 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
 
     // fps
-    output_stream->avg_frame_rate               = frame_rate;
-    output_codec_ctx->framerate                 = frame_rate;
+    output_stream->avg_frame_rate               = framerate;
+    output_codec_ctx->framerate                 = framerate;
 #endif
     int alpha = 0;
     int loss = 0;

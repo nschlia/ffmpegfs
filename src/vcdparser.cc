@@ -72,11 +72,11 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
     LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, path + filename, origfile, &st);
 
     // Video CD is video format anyway
-    virtualfile->m_format_idx       = 0;
+    virtualfile->m_format_idx           = 0;
     // Mark title/chapter/angle
-    virtualfile->m_vcd.m_full_title = full_title;
+    virtualfile->m_full_title           = full_title;
     virtualfile->m_vcd.m_track_no       = chapter1->get_track_no();
-    virtualfile->m_vcd.m_chapter_no = chapter_no;
+    virtualfile->m_vcd.m_chapter_no     = chapter_no;
     virtualfile->m_vcd.m_start_pos      = chapter1->get_start_pos();
     if (!full_title)
     {
@@ -86,7 +86,7 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
     {
         virtualfile->m_vcd.m_end_pos    = size;
     }
-    virtualfile->m_vcd.m_duration   = duration;
+    virtualfile->m_duration             = duration;
 
     return true;
 }

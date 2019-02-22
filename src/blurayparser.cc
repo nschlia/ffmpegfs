@@ -28,13 +28,13 @@
 
 #include "libbluray/bluray.h"
 
-static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved);
+static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved);
 static int parse_find_best_audio_stream();
 static int parse_find_best_video_stream();
 static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx);
 static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
-static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, double *frame_rate, int *interleaved)
+static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved)
 {
     switch (ss->coding_type)
     {
@@ -137,32 +137,32 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         {
         case BLURAY_VIDEO_RATE_24000_1001:
         {
-            *frame_rate = 23.976;
+            *framerate = av_make_q(24000, 1001);
             break;
         }
         case BLURAY_VIDEO_RATE_24:
         {
-            *frame_rate = 24;
+            *framerate = av_make_q(24000, 1000);
             break;
         }
         case BLURAY_VIDEO_RATE_25:
         {
-            *frame_rate = 25;
+            *framerate = av_make_q(25000, 1000);
             break;
         }
         case BLURAY_VIDEO_RATE_30000_1001:
         {
-            *frame_rate = 29.97;
+            *framerate = av_make_q(30000, 1001);
             break;
         }
         case BLURAY_VIDEO_RATE_50:
         {
-            *frame_rate = 50;
+            *framerate = av_make_q(50000, 1000);
             break;
         }
         case BLURAY_VIDEO_RATE_60000_1001:
         {
-            *frame_rate = 59.94;
+            *framerate = av_make_q(60000, 1001);
             break;
         }
         }
@@ -350,7 +350,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     // Bluray is video format anyway
     virtualfile->m_format_idx           = 0;
     // Mark title/chapter/angle
-    virtualfile->m_bluray.m_full_title  = full_title;
+    virtualfile->m_full_title           = full_title;
     virtualfile->m_bluray.m_title_no    = title_idx + 1;
     virtualfile->m_bluray.m_playlist_no = ti->playlist;
     virtualfile->m_bluray.m_chapter_no  = chapter_idx + 1;
@@ -367,7 +367,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         int width               = 0;
         int height              = 0;
-        double frame_rate       = 0;
+        AVRational framerate    = { 0, 0 };
         int interleaved         = 0;
 
         if (!bd_select_title(bd, title_idx))
@@ -381,7 +381,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         double secsduration     = static_cast<double>(duration) / AV_TIME_BASE;
 
-        virtualfile->m_bluray.m_duration = duration;
+        virtualfile->m_duration = duration;
 
         if (secsduration != 0.)
         {
@@ -389,16 +389,16 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         }
 
         // Get details
-        stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
-        stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &frame_rate, &interleaved);
+        stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+        stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
 
-        Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, frame_rate, interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+        Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
         if (audio > -1)
         {
             Logging::debug(virtualfile->m_origfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
         }
 
-        transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, frame_rate);
+        transcoder_set_filesize(virtualfile, secsduration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
     }
 
     return true;

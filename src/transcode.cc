@@ -244,7 +244,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
 
-    Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1 bytes.", cache_entry->m_cache_info.m_predicted_filesize);
+    Logging::debug(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
     return true;
 }

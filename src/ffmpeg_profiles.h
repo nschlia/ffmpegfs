@@ -28,9 +28,7 @@
 class FFmpeg_Profiles
 {
 public:
-#define OPT_CODEC       0x80000000
-
-#define OPT_ALL         0x00000000  // All files
+#define OPT_ALL         0x00000000                      /**< All files */
 #define OPT_AUDIO       0x00000001  // For audio only files
 #define OPT_VIDEO       0x00000002  // For videos (not audio only)
 
@@ -40,7 +38,8 @@ public:
         const char *            m_value;
         const int               m_flags;
         const int               m_options;
-    } PROFILE_OPTION, *LPPROFILE_OPTION;
+    } PROFILE_OPTION;                                   /**< Profile option */
+    typedef PROFILE_OPTION * LPPROFILE_OPTION;          /**< Pointer version */
     typedef PROFILE_OPTION const * LPCPROFILE_OPTION;
 
     typedef struct PROFILE_LIST
@@ -49,7 +48,8 @@ public:
         PROFILE                 m_profile;
         LPCPROFILE_OPTION       m_option_codec;
         LPCPROFILE_OPTION       m_option_format;
-    } PROFILE_LIST, *LPPROFILE_LIST;
+    } PROFILE_LIST;                                     /**< Profile list */
+    typedef PROFILE_LIST * LPPROFILE_LIST;              /**< Pointer version */
     typedef PROFILE_LIST const * LPCPROFILE_LIST;
 
 protected:

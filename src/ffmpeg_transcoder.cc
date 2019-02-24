@@ -1559,7 +1559,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     return 0;
 }
 
-int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket* pkt_in)
+int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in)
 {
     AVPacket *tmp_pkt;
     int ret = 0;
@@ -3508,7 +3508,8 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_AAC:
     {
         // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
-        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));        // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_MP3:
@@ -3519,7 +3520,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // but in practice gives excellent answers, usually exactly correct.
         // Cast to 64-bit int to avoid overflow.
 
-        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8 * AV_TIME_BASE)) + ID3V1_TAG_LENGTH;
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE)) + ID3V1_TAG_LENGTH;
         break;
     }
     case AV_CODEC_ID_PCM_S16LE:
@@ -3540,13 +3541,15 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_VORBIS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));    // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
-        *filesize += static_cast<size_t>(duration * output_audio_bit_rate * 1025 / (8000LL * AV_TIME_BASE));    // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -3573,7 +3576,8 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
     case AV_CODEC_ID_H264:
     {
-        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_MJPEG:
@@ -3583,12 +3587,14 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_THEORA:
     {
-        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_VP9:
     {
-        *filesize += static_cast<size_t>(duration * out_video_bit_rate * 1025 / (8000LL * AV_TIME_BASE));       // add 2.5% for overhead
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
     case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen

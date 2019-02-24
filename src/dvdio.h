@@ -75,7 +75,6 @@ protected:
     int             m_end_cell;
     int             m_cur_cell;
     int             m_next_cell;
-    int             m_last_cell;
     bool            m_goto_next_cell;
     unsigned int    m_cur_block;
     bool            m_is_eof;

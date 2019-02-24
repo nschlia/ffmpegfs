@@ -46,7 +46,6 @@ DvdIO::DvdIO()
     , m_end_cell(0)
     , m_cur_cell(0)
     , m_next_cell(0)
-    , m_last_cell(0)
     , m_goto_next_cell(false)
     , m_cur_block(0)
     , m_is_eof(false)
@@ -196,7 +195,6 @@ int DvdIO::openX(const std::string & filename)
     }
 
     m_next_cell         = m_start_cell;
-    m_last_cell         = m_cur_pgc->nr_of_cells;
     m_cur_cell          = m_start_cell;
 
     //    if (!m_duration)
@@ -710,7 +708,6 @@ int DvdIO::seek(long offset, int whence)
     {
         // Only rewind (seek(0, SEEK_SET) is implemented yet
         m_next_cell         = m_start_cell;
-        m_last_cell         = m_cur_pgc->nr_of_cells;
         m_cur_cell          = m_start_cell;
 
         m_goto_next_cell    = true;

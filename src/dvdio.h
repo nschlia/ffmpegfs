@@ -62,7 +62,7 @@ private:
     bool            get_packet_size(const uint8_t *p, size_t peek, size_t *size) const;
     int             get_pes_id(const uint8_t *buffer, size_t size) const;
     size_t          demux_pes(uint8_t *out, const uint8_t *in, size_t len) const;
-    DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int & next_vobu, uint8_t *data);
+    DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int * next_vobu, uint8_t *data);
     void            next_cell();
     
 protected:

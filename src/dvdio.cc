@@ -444,7 +444,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
     return netsize;
 }
 
-DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int & next_vobu, uint8_t *data)
+DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int *next_vobu, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
     DSITYPE dsitype = DSITYPE_CONTINUE;
@@ -462,7 +462,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
     // avoiding the doubled scenes in The Matrix, and makes our life
     // really happy.
 
-    next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+    *next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
 
     if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_idx > 1)
     {
@@ -477,12 +477,12 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
             // ff ff ff ff for the last interleaved block, indicating the end of interleaving
             if (dsi_pack->sml_pbi.ilvu_sa != 0 && dsi_pack->sml_pbi.ilvu_sa != 0xffffffff)
             {
-                next_vobu = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
+                *next_vobu = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
                 *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
             }
             else
             {
-                next_vobu = m_cur_block + dsi_pack->dsi_gi.vobu_ea + 1;
+                *next_vobu = m_cur_block + dsi_pack->dsi_gi.vobu_ea + 1;
             }
             break;
         }
@@ -491,7 +491,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
             // vobu is end of ilvu
             if (dsi_pack->sml_agli.data[m_angle_idx].address)
             {
-                next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
+                *next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
                 *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
                 break;
             }
@@ -503,7 +503,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
         case 0x8:   // non interleaved cells in interleaved section
         default:
         {
-            next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+            *next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
             break;
         }
         }
@@ -512,18 +512,11 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
     {
         if (m_next_cell >= m_cur_pgc->nr_of_cells)
         {
-            next_vobu = 0;
+            *next_vobu = 0;
             dsitype = DSITYPE_EOF_TITLE;
         }
         else
         {
-            //            next_vobu = m_cur_pgc->cell_playback[m_next_cell].first_sector;
-
-            //            if (next_vobu >= m_cur_pgc->cell_playback[m_cur_cell].last_sector)
-            //            {
-            //                dsitype = DSITYPE_EOF_CHAPTER;
-            //            }
-
             m_cur_cell = m_next_cell;
 
             next_cell();
@@ -533,7 +526,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
                 dsitype = DSITYPE_EOF_CHAPTER;
             }
 
-            next_vobu = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
+            *next_vobu = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
         }
     }
 
@@ -613,20 +606,32 @@ size_t DvdIO::read(void * data, size_t size)
             maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
             if (maxlen != 1)
             {
-                Logging::error(m_path, "Read failed for block %1", m_cur_block);
+                Logging::error(m_path, "Read failed for block at %1", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
 
             if (!is_nav_pack(m_buffer))
             {
-                Logging::warning(m_path, "Blocks at %2 ist probably not a NAV packet. Transcode may fail.", m_cur_block);
+                Logging::warning(m_path, "Block at %1 is probably not a NAV packet. Transcode may fail.", m_cur_block);
             }
 
             // Parse the contained dsi packet.
-            dsitype = handle_DSI(&dsi_pack, &cur_output_size, next_vobu, m_buffer);
-            assert(m_cur_block == dsi_pack.dsi_gi.nv_pck_lbn);
-            assert(cur_output_size < 1024);
+            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_vobu, m_buffer);
+            if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
+            {
+                Logging::error(m_path, "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", cur_output_size);
+                m_errno = EIO;
+                return 0;
+            }
+
+            if (cur_output_size >= 1024)
+            {
+                Logging::error(m_path, "Read failed at %1 because current output size >= 1024", cur_output_size);
+                m_errno = EIO;
+                return 0;
+            }
+
             m_cur_block++;
 
             // Read in and output cur_output_size packs.

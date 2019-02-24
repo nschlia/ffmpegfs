@@ -149,11 +149,11 @@ bool Cache_Entry::delete_info()
     return m_owner->delete_info(filename(), m_cache_info.m_desttype);
 }
 
-bool Cache_Entry::update_access(bool bUpdateDB /*= false*/)
+bool Cache_Entry::update_access(bool update_database /*= false*/)
 {
     m_cache_info.m_access_time = time(nullptr);
 
-    if (bUpdateDB)
+    if (update_database)
     {
         return m_owner->write_info(&m_cache_info);
     }

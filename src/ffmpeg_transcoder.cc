@@ -530,7 +530,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     return 0;
 }
 
-bool FFmpeg_Transcoder::can_copy_stream(AVStream *stream) const
+bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 {
     if (params.m_autocopy == AUTOCOPY_OFF)
     {
@@ -794,16 +794,16 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
 }
 
 // Prepare codec optimisations
-int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const
+int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option) const
 {
     int ret = 0;
 
-    if (mp4_opt == nullptr)
+    if (profile_option == nullptr)
     {
         return 0;
     }
 
-    for (LPCPROFILE_OPTION p = mp4_opt; p->m_key != nullptr; p++)
+    for (LPCPROFILE_OPTION p = profile_option; p->m_key != nullptr; p++)
     {
         Logging::trace(destname(), "Profile codec option -%1%2%3.", p->m_key, *p->m_value ? " " : "", p->m_value);
 
@@ -1989,7 +1989,7 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
 // There is the following difference: if you got a frame, you must call
 // it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
 // (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
-int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, AVPacket *pkt) const
+int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
 {
     int ret;
 
@@ -2513,7 +2513,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 // Convert the input audio samples into the output sample format.
 // The conversion happens on a per-frame basis, the size of which is
 // specified by frame_size.
-int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
+int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_audio_resample_ctx != nullptr)
     {
@@ -2597,7 +2597,7 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
 #endif
 
 // Add converted input audio samples to the FIFO buffer for later processing.
-int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size)
+int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size)
 {
     int ret;
 
@@ -2816,7 +2816,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 }
 
 // Encode one frame worth of audio to the output file.
-int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
+int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
     AVPacket pkt;
@@ -2892,7 +2892,7 @@ int FFmpeg_Transcoder::encode_audio_frame(AVFrame *frame, int *data_present)
 }
 
 // Encode one frame worth of audio to the output file.
-int FFmpeg_Transcoder::encode_video_frame(AVFrame *frame, int *data_present)
+int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
     AVPacket pkt;
@@ -4047,7 +4047,7 @@ const char *FFmpeg_Transcoder::destname() const
 
 #ifndef USING_LIBAV
 // create
-int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, AVStream * pStream)
+int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStream *pStream)
 {
     const char * filters;
     char args[1024];

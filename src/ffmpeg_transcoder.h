@@ -146,7 +146,7 @@ public:
 
 protected:
     bool                        is_video() const;
-    int                         update_codec(void *opt, LPCPROFILE_OPTION mp4_opt) const;
+    int                         update_codec(void *opt, LPCPROFILE_OPTION profile_option) const;
     int                         prepare_codec(void *opt, FILETYPE filetype) const;
     int                         add_stream(AVCodecID codec_id);
     int                         add_stream_copy(AVCodecID codec_id, AVMediaType codec_type);
@@ -166,18 +166,18 @@ protected:
     int                         decode_video_frame(AVPacket *pkt, int *decoded);
     int                         decode_frame(AVPacket *pkt);
     int                         init_converted_samples(uint8_t ***converted_input_samples, int frame_size);
-    int                         convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples);
-    int                         add_samples_to_fifo(uint8_t **converted_input_samples, const int frame_size);
+    int                         convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples);
+    int                         add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size);
     int                         flush_frames(int stream_index);
     int                         read_decode_convert_and_store(int *finished);
     int                         init_audio_output_frame(AVFrame **frame, int frame_size);
     AVFrame *                   alloc_picture(AVPixelFormat pix_fmt, int width, int height);
     void                        produce_audio_dts(AVPacket * pkt, int64_t *pts);
 #if LAVC_NEW_PACKET_INTERFACE
-    int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, AVPacket *pkt) const;
+    int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
 #endif
-    int                         encode_audio_frame(AVFrame *frame, int *data_present);
-    int                         encode_video_frame(AVFrame *frame, int *data_present);
+    int                         encode_audio_frame(const AVFrame *frame, int *data_present);
+    int                         encode_video_frame(const AVFrame *frame, int *data_present);
     int                         load_encode_and_write(int frame_size);
     int                         write_output_file_trailer();
 
@@ -193,12 +193,12 @@ protected:
     bool                        get_aspect_ratio(int width, int height, const AVRational & sar, AVRational * ar) const;
 
 #ifndef USING_LIBAV
-    int                         init_filters(AVCodecContext *pCodecContext, AVStream *pStream);
+    int                         init_filters(AVCodecContext *pCodecContext, const AVStream *pStream);
     AVFrame *                   send_filters(AVFrame *srcframe, int &ret);
     void                        free_filters();
 #endif // !USING_LIBAV
 
-    bool                        can_copy_stream(AVStream *stream) const;
+    bool                        can_copy_stream(const AVStream *stream) const;
 
     bool                        close_resample();
 

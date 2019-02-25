@@ -1,6 +1,4 @@
 /*
- * FFmpeg utilities for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief FFmpegfs utility set implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "ffmpeg_utils.h"
@@ -69,7 +77,7 @@ extern "C" {
 static int is_device(const AVClass *avclass);
 
 #ifndef AV_ERROR_MAX_STRING_SIZE
-#define AV_ERROR_MAX_STRING_SIZE 128
+#define AV_ERROR_MAX_STRING_SIZE 128                    /**< @brief Max. length of a FFmpeg error string */
 #endif // AV_ERROR_MAX_STRING_SIZE
 
 const std::string & append_sep(std::string * path)
@@ -235,12 +243,12 @@ static std::string ffmpeg_libinfo(
     return info;
 }
 
-std::string ffmpeg_libinfo()
-{
 #define PRINT_LIB_INFO(libname, LIBNAME) \
     ffmpeg_libinfo(true, libname##_version(), libname##_configuration(), \
-    LIB##LIBNAME##_VERSION_MAJOR, LIB##LIBNAME##_VERSION_MINOR, LIB##LIBNAME##_VERSION_MICRO, #libname)
+    LIB##LIBNAME##_VERSION_MAJOR, LIB##LIBNAME##_VERSION_MINOR, LIB##LIBNAME##_VERSION_MICRO, #libname)     /**< @brief Print info about a FFmpeg library */
 
+std::string ffmpeg_libinfo()
+{
     std::string info;
 
 #ifdef USING_LIBAV
@@ -755,15 +763,15 @@ std::string format_samplerate(int value)
     }
 }
 
+#define STR_VALUE(arg)  #arg                                /**< @brief Convert macro to string */
+#define X(name)         STR_VALUE(name)                     /**< @brief Convert macro to string */
+
 std::string format_duration(int64_t value, uint32_t fracs /*= 3*/)
 {
     if (value == AV_NOPTS_VALUE)
     {
         return "unset";
     }
-
-#define STR_VALUE(arg)  #arg
-#define X(name)         STR_VALUE(name)
 
     std::string buffer;
     unsigned hours   = static_cast<unsigned>((value / AV_TIME_BASE) / (3600));
@@ -992,21 +1000,18 @@ void exepath(std::string * path)
     }
 }
 
-// trim from start
 std::string &ltrim(std::string &s)
 {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
 }
 
-// trim from end
 std::string &rtrim(std::string &s)
 {
     s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
 }
 
-// trim from both ends
 std::string &trim(std::string &s)
 {
     return ltrim(rtrim(s));
@@ -1037,11 +1042,6 @@ std::string string_format(const std::string& format, Args ... args)
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-// Compare value with pattern
-// Returns:
-// -1 if pattern is no valid regex
-// 0 if pattern matches
-// 1 if not
 int compare(const std::string & value, const std::string & pattern)
 {
     regex_t regex;

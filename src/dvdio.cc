@@ -1,6 +1,4 @@
 /*
- * DVD file I/O for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,6 +17,16 @@
  */
 
 #ifdef USE_LIBDVD
+
+/**
+ * @file
+ * @brief DvdIO class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
 
 #include "dvdio.h"
 #include "ffmpegfs.h"
@@ -225,21 +233,20 @@ int DvdIO::openX(const std::string & filename)
 // Demux and cell navigation nicked from https://www.videolan.org/vlc/download-sources.html
 // More details see http://stnsoft.com/DVD/vobov.html
 
-#define PS_STREAM_ID_END_STREAM         0xB9
-#define PS_STREAM_ID_PACK_HEADER        0xBA    // MPEG-2 Pack Header
-#define PS_STREAM_ID_SYSTEM_HEADER      0xBB    // Program Stream System Header
-#define PS_STREAM_ID_MAP                0xBC
-#define PS_STREAM_ID_PRIVATE_STREAM1    0xBD    // Private stream 1 (non MPEG audio, subpictures)
-#define PS_STREAM_ID_PADDING            0xBE    // Padding stream
-#define PS_STREAM_ID_PRIVATE            0xBF    // Private stream 2 (navigation data)
-#define PS_STREAM_ID_AUDIO              0xC0    // - 0xDF	MPEG-1 or MPEG-2 audio stream number (note: DVD allows only 8 audio streams)
-#define PS_STREAM_ID_VIDEO              0xE0    // - 0xEF	MPEG-1 or MPEG-2 video stream number (note: DVD allows only 1 video stream)
-#define PS_STREAM_ID_EXTENDED           0xFD
-#define PS_STREAM_ID_DIRECTORY          0xFF
+#define PS_STREAM_ID_END_STREAM         0xB9    /**< @brief ??? */
+#define PS_STREAM_ID_PACK_HEADER        0xBA    /**< @brief MPEG-2 Pack Header */
+#define PS_STREAM_ID_SYSTEM_HEADER      0xBB    /**< @brief Program Stream System Header */
+#define PS_STREAM_ID_MAP                0xBC    /**< @brief ??? */
+#define PS_STREAM_ID_PRIVATE_STREAM1    0xBD    /**< @brief Private stream 1 (non MPEG audio, subpictures) */
+#define PS_STREAM_ID_PADDING            0xBE    /**< @brief Padding stream */
+#define PS_STREAM_ID_PRIVATE            0xBF    /**< @brief Private stream 2 (navigation data) */
+#define PS_STREAM_ID_AUDIO              0xC0    /**< @brief - 0xDF	MPEG-1 or MPEG-2 audio stream number (note: DVD allows only 8 audio streams) */
+#define PS_STREAM_ID_VIDEO              0xE0    /**< @brief - 0xEF	MPEG-1 or MPEG-2 video stream number (note: DVD allows only 1 video stream) */
+#define PS_STREAM_ID_EXTENDED           0xFD    /**< @brief ??? */
+#define PS_STREAM_ID_DIRECTORY          0xFF    /**< @brief ??? */
 
-#define PS_STREAM_ID                    3
+#define PS_STREAM_ID                    3       /**< @brief ??? */
 
-// return the size of the next packet
 bool DvdIO::get_packet_size(const uint8_t *p, size_t peek, size_t *size) const
 {
     if (peek < 4)
@@ -288,7 +295,6 @@ bool DvdIO::get_packet_size(const uint8_t *p, size_t peek, size_t *size) const
     return false;   // unknown ID
 }
 
-// return the id of a PES (should be valid)
 int DvdIO::get_pes_id(const uint8_t *buffer, size_t size) const
 {
     if (buffer[PS_STREAM_ID] == PS_STREAM_ID_PRIVATE_STREAM1)
@@ -393,7 +399,6 @@ int DvdIO::get_pes_id(const uint8_t *buffer, size_t size) const
     return buffer[PS_STREAM_ID];
 }
 
-// Extract only the interesting portion of the VOB input stream
 size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
 {
     size_t netsize = 0;
@@ -757,7 +762,6 @@ void DvdIO::close()
 
 }
 
-// Returns true if the pack is a NAV pack. 
 // Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)
 bool DvdIO::is_nav_pack(const unsigned char *buffer) const
 {

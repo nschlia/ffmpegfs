@@ -50,6 +50,7 @@ typedef struct CACHE_INFO
     time_t          m_access_time;
     time_t          m_file_time;
     size_t          m_file_size;
+    unsigned int    m_access_count;
 } CACHE_INFO;
 typedef CACHE_INFO const *LPCCACHE_INFO;
 typedef CACHE_INFO *LPCACHE_INFO;

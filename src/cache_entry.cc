@@ -110,7 +110,8 @@ void Cache_Entry::clear(int fetch_file_time)
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;
     m_cache_info.m_averror              = 0;
-    m_cache_info.m_access_time = m_cache_info.m_creation_time = time(nullptr);
+    m_cache_info.m_access_time          = m_cache_info.m_creation_time = time(nullptr);
+    m_cache_info.m_access_count         = 0;
 
     if (fetch_file_time)
     {
@@ -392,3 +393,14 @@ LPVIRTUALFILE Cache_Entry::virtualfile()
 {
     return m_virtualfile;
 }
+
+void Cache_Entry::update_read_count()
+{
+    m_cache_info.m_access_count++;
+}
+
+unsigned int Cache_Entry::read_count() const
+{
+    return m_cache_info.m_access_count;
+}
+

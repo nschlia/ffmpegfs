@@ -470,6 +470,9 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
     // Store access time
     cache_entry->update_access();
 
+    // Update read counter
+    cache_entry->update_read_count();
+
     try
     {
         if (!cache_entry->m_cache_info.m_finished)
@@ -496,27 +499,29 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             }
             default:
             {
-                // Windows seems to access the files on Samba drives starting at the last 64K segment simply when
-                // the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file up
-                // to this point).
-                if (params.m_win_smb_fix)
-                {
-                    if ((offset > cache_entry->m_buffer->tell()) &&
-                            (len <= 65536) &&
-                            check_ignore(cache_entry->size(), offset) &&
-                            ((offset + len) > (cache_entry->size())))
-                    {
-                        Logging::warning(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 8K boundary of file.");
-
-                        errno = 0;
-                        *bytes_read = 0;  // We've read nothing
-                        len = 0;
-
-                        throw true; // OK
-                    }
-                }
                 break;
             }
+            }
+
+            // Windows seems to access the files on Samba drives starting at the last 64K segment simply when
+            // the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file up
+            // to this point).
+            // Access will only be ignored if occurring at the second access.
+            if (params.m_win_smb_fix && cache_entry->read_count() == 2)
+            {
+                if ((offset > cache_entry->m_buffer->tell()) &&
+                        (len <= 65536) &&
+                        check_ignore(cache_entry->size(), offset) &&
+                        ((offset + len) > (cache_entry->size())))
+                {
+                    Logging::warning(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 8K boundary of file.");
+
+                    errno = 0;
+                    *bytes_read = 0;  // We've read nothing
+                    len = 0;
+
+                    throw true; // OK
+                }
             }
         }
 

@@ -65,6 +65,9 @@ public:
     // Returns true if entry may be deleted, false if still in use
     bool                    close(int flags);
 
+    void                    update_read_count();
+    unsigned int            read_count() const;
+
 protected:
     void                    close_buffer(int flags);
 

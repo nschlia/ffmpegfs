@@ -62,7 +62,7 @@ Important changes in 1.6 (2019-01-11)
 * Bugfix: Update timeout when client just holds the file open without reading.
 * Bugfix: Properly honour client exit (end wait for data).
 * Bugfix: Issue #23: do not block open with a read waiting for data.
-* Bugfix; WebM files had no duration. Added duration to Matroska container.
+* Bugfix: WebM files had no duration. Added duration to Matroska container.
 * Bugfix: Fixed EOF detection for Bluray chapters.
 * Bugfix: Force mpeg format for DVDs to avoid misdetections.
 * Bugfix: Force mpegts format for Blurays to avoid misdetections.

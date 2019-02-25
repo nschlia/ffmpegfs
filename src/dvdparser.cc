@@ -219,8 +219,8 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         end_cell    = cur_pgc->nr_of_cells;
     }
 
-    interleaved         = cur_pgc->cell_playback[start_cell].interleaved;
-    framerate          = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
+    interleaved     = cur_pgc->cell_playback[start_cell].interleaved;
+    framerate       = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
 
     bool has_angles = false;
 
@@ -239,6 +239,12 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         {
             has_angles = true;
         }
+    }
+
+    if (duration < params.m_min_dvd_chapter_duration * AV_TIME_BASE)
+    {
+        Logging::debug(nullptr, "Skipping short DVD chapter.");
+        return true;
     }
 
     if (!has_angles)

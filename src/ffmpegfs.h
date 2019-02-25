@@ -87,8 +87,10 @@ extern struct FFMPEGFS_PARAMS
     int                 m_prune_cache;              // Prune cache immediately
     int                 m_clear_cache;              // Clear cache on start up
     unsigned int        m_max_threads;              // Max. number of recoder threads
+    // Miscellanous options
     int                 m_decoding_errors;          // Break transcoding on decoding error
-    // experimental
+    int                 m_min_dvd_chapter_duration; // Min. DVD chapter duration. Shorter chapters will be ignored. */
+    // Experimental options
     int                 m_win_smb_fix;              // Experimental Windows fix for access to EOF at file open
 } params;
 

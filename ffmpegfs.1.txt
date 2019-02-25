@@ -262,6 +262,12 @@ Decoding errors are normally ignored, leaving bloopers and hiccups in encoded au
 +
 Default: Ignore errors
 
+*--min_dvd_chapter_duration*=SECONDS, *-o min_dvd_chapter_duration*=SECONDS::
+Ignores DVD chapters shorter than SECONDS. Set to 0 to disable. This avoids transcoding errors for DVD chapters too
+short to detect its streams.
++
+Default: 1 second
+
 *--win_smb_fix*, *-o win_smb_fix*::
 Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
 +

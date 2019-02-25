@@ -110,6 +110,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_clear_cache(0)                          // default: Do not clear cache on startup
     , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
     , m_decoding_errors(0)                      // default: ignore errors
+    , m_min_dvd_chapter_duration(1)             // default: 1 second
     , m_win_smb_fix(0)                          // default: no fix
 {
 }
@@ -208,91 +209,93 @@ enum
 static struct fuse_opt ffmpegfs_opts[] =
 {
     // Output type
-    FUSE_OPT_KEY("--desttype=%s",               KEY_DESTTYPE),
-    FUSE_OPT_KEY("desttype=%s",                 KEY_DESTTYPE),
-    FUSE_OPT_KEY("--profile=%s",                KEY_PROFILE),
-    FUSE_OPT_KEY("profile=%s",                  KEY_PROFILE),
-    FUSE_OPT_KEY("--autocopy=%s",               KEY_AUTOCOPY),
-    FUSE_OPT_KEY("autocopy=%s",                 KEY_AUTOCOPY),
-    FUSE_OPT_KEY("--level=%s",                  KEY_LEVEL),
-    FUSE_OPT_KEY("level=%s",                    KEY_LEVEL),
+    FUSE_OPT_KEY("--desttype=%s",                   KEY_DESTTYPE),
+    FUSE_OPT_KEY("desttype=%s",                     KEY_DESTTYPE),
+    FUSE_OPT_KEY("--profile=%s",                    KEY_PROFILE),
+    FUSE_OPT_KEY("profile=%s",                      KEY_PROFILE),
+    FUSE_OPT_KEY("--autocopy=%s",                   KEY_AUTOCOPY),
+    FUSE_OPT_KEY("autocopy=%s",                     KEY_AUTOCOPY),
+    FUSE_OPT_KEY("--level=%s",                      KEY_LEVEL),
+    FUSE_OPT_KEY("level=%s",                        KEY_LEVEL),
 
     // Audio
-    FUSE_OPT_KEY("--audiobitrate=%s",           KEY_AUDIO_BITRATE),
-    FUSE_OPT_KEY("audiobitrate=%s",             KEY_AUDIO_BITRATE),
-    FUSE_OPT_KEY("--audiosamplerate=%s",        KEY_AUDIO_SAMPLERATE),
-    FUSE_OPT_KEY("audiosamplerate=%s",          KEY_AUDIO_SAMPLERATE),
+    FUSE_OPT_KEY("--audiobitrate=%s",               KEY_AUDIO_BITRATE),
+    FUSE_OPT_KEY("audiobitrate=%s",                 KEY_AUDIO_BITRATE),
+    FUSE_OPT_KEY("--audiosamplerate=%s",            KEY_AUDIO_SAMPLERATE),
+    FUSE_OPT_KEY("audiosamplerate=%s",              KEY_AUDIO_SAMPLERATE),
 
     // Video
-    FUSE_OPT_KEY("--videobitrate=%s",           KEY_VIDEO_BITRATE),
-    FUSE_OPT_KEY("videobitrate=%s",             KEY_VIDEO_BITRATE),
-    FFMPEGFS_OPT("--videoheight=%u",            m_videoheight, 0),
-    FFMPEGFS_OPT("videoheight=%u",              m_videoheight, 0),
-    FFMPEGFS_OPT("--videowidth=%u",             m_videowidth, 0),
-    FFMPEGFS_OPT("videowidth=%u",               m_videowidth, 0),
+    FUSE_OPT_KEY("--videobitrate=%s",               KEY_VIDEO_BITRATE),
+    FUSE_OPT_KEY("videobitrate=%s",                 KEY_VIDEO_BITRATE),
+    FFMPEGFS_OPT("--videoheight=%u",                m_videoheight, 0),
+    FFMPEGFS_OPT("videoheight=%u",                  m_videoheight, 0),
+    FFMPEGFS_OPT("--videowidth=%u",                 m_videowidth, 0),
+    FFMPEGFS_OPT("videowidth=%u",                   m_videowidth, 0),
 #ifndef USING_LIBAV
-    FFMPEGFS_OPT("--deinterlace",               m_deinterlace, 1),
-    FFMPEGFS_OPT("deinterlace",                 m_deinterlace, 1),
+    FFMPEGFS_OPT("--deinterlace",                   m_deinterlace, 1),
+    FFMPEGFS_OPT("deinterlace",                     m_deinterlace, 1),
 #endif  // !USING_LIBAV
     // Album arts
-    FFMPEGFS_OPT("--noalbumarts",               m_noalbumarts, 1),
-    FFMPEGFS_OPT("noalbumarts",                 m_noalbumarts, 1),
+    FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
+    FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
     // Virtual script
-    FFMPEGFS_OPT("--enablescript",              m_enablescript, 1),
-    FFMPEGFS_OPT("enablescript",                m_enablescript, 1),
-    FUSE_OPT_KEY("--scriptfile=%s",             KEY_SCRIPTFILE),
-    FUSE_OPT_KEY("scriptfile=%s",               KEY_SCRIPTFILE),
-    FUSE_OPT_KEY("--scriptsource=%s",           KEY_SCRIPTSOURCE),
-    FUSE_OPT_KEY("scriptsource=%s",             KEY_SCRIPTSOURCE),
+    FFMPEGFS_OPT("--enablescript",                  m_enablescript, 1),
+    FFMPEGFS_OPT("enablescript",                    m_enablescript, 1),
+    FUSE_OPT_KEY("--scriptfile=%s",                 KEY_SCRIPTFILE),
+    FUSE_OPT_KEY("scriptfile=%s",                   KEY_SCRIPTFILE),
+    FUSE_OPT_KEY("--scriptsource=%s",               KEY_SCRIPTSOURCE),
+    FUSE_OPT_KEY("scriptsource=%s",                 KEY_SCRIPTSOURCE),
     // Background recoding/caching
     // Cache
-    FUSE_OPT_KEY("--expiry_time=%s",            KEY_EXPIRY_TIME),
-    FUSE_OPT_KEY("expiry_time=%s",              KEY_EXPIRY_TIME),
-    FUSE_OPT_KEY("--max_inactive_suspend=%s",   KEY_MAX_INACTIVE_SUSPEND_TIME),
-    FUSE_OPT_KEY("max_inactive_suspend=%s",     KEY_MAX_INACTIVE_SUSPEND_TIME),
-    FUSE_OPT_KEY("--max_inactive_abort=%s",     KEY_MAX_INACTIVE_ABORT_TIME),
-    FUSE_OPT_KEY("max_inactive_abort=%s",       KEY_MAX_INACTIVE_ABORT_TIME),
-    FUSE_OPT_KEY("--prebuffer_size=%s",         KEY_PREBUFFER_SIZE),
-    FUSE_OPT_KEY("prebuffer_size=%s",           KEY_PREBUFFER_SIZE),
-    FUSE_OPT_KEY("--max_cache_size=%s",         KEY_MAX_CACHE_SIZE),
-    FUSE_OPT_KEY("max_cache_size=%s",           KEY_MAX_CACHE_SIZE),
-    FUSE_OPT_KEY("--min_diskspace=%s",          KEY_MIN_DISKSPACE_SIZE),
-    FUSE_OPT_KEY("min_diskspace=%s",            KEY_MIN_DISKSPACE_SIZE),
-    FUSE_OPT_KEY("--cachepath=%s",              KEY_CACHEPATH),
-    FUSE_OPT_KEY("cachepath=%s",                KEY_CACHEPATH),
-    FFMPEGFS_OPT("--disable_cache",             m_disable_cache, 1),
-    FFMPEGFS_OPT("disable_cache",               m_disable_cache, 1),
-    FUSE_OPT_KEY("--cache_maintenance=%s",      KEY_CACHE_MAINTENANCE),
-    FUSE_OPT_KEY("cache_maintenance=%s",        KEY_CACHE_MAINTENANCE),
-    FFMPEGFS_OPT("--prune_cache",               m_prune_cache, 1),
-    FFMPEGFS_OPT("--clear_cache",               m_clear_cache, 1),
-    FFMPEGFS_OPT("clear_cache",                 m_clear_cache, 1),
+    FUSE_OPT_KEY("--expiry_time=%s",                KEY_EXPIRY_TIME),
+    FUSE_OPT_KEY("expiry_time=%s",                  KEY_EXPIRY_TIME),
+    FUSE_OPT_KEY("--max_inactive_suspend=%s",       KEY_MAX_INACTIVE_SUSPEND_TIME),
+    FUSE_OPT_KEY("max_inactive_suspend=%s",         KEY_MAX_INACTIVE_SUSPEND_TIME),
+    FUSE_OPT_KEY("--max_inactive_abort=%s",         KEY_MAX_INACTIVE_ABORT_TIME),
+    FUSE_OPT_KEY("max_inactive_abort=%s",           KEY_MAX_INACTIVE_ABORT_TIME),
+    FUSE_OPT_KEY("--prebuffer_size=%s",             KEY_PREBUFFER_SIZE),
+    FUSE_OPT_KEY("prebuffer_size=%s",               KEY_PREBUFFER_SIZE),
+    FUSE_OPT_KEY("--max_cache_size=%s",             KEY_MAX_CACHE_SIZE),
+    FUSE_OPT_KEY("max_cache_size=%s",               KEY_MAX_CACHE_SIZE),
+    FUSE_OPT_KEY("--min_diskspace=%s",              KEY_MIN_DISKSPACE_SIZE),
+    FUSE_OPT_KEY("min_diskspace=%s",                KEY_MIN_DISKSPACE_SIZE),
+    FUSE_OPT_KEY("--cachepath=%s",                  KEY_CACHEPATH),
+    FUSE_OPT_KEY("cachepath=%s",                    KEY_CACHEPATH),
+    FFMPEGFS_OPT("--disable_cache",                 m_disable_cache, 1),
+    FFMPEGFS_OPT("disable_cache",                   m_disable_cache, 1),
+    FUSE_OPT_KEY("--cache_maintenance=%s",          KEY_CACHE_MAINTENANCE),
+    FUSE_OPT_KEY("cache_maintenance=%s",            KEY_CACHE_MAINTENANCE),
+    FFMPEGFS_OPT("--prune_cache",                   m_prune_cache, 1),
+    FFMPEGFS_OPT("--clear_cache",                   m_clear_cache, 1),
+    FFMPEGFS_OPT("clear_cache",                     m_clear_cache, 1),
 
     // Other
-    FFMPEGFS_OPT("--max_threads=%u",            m_max_threads, 0),
-    FFMPEGFS_OPT("max_threads=%u",              m_max_threads, 0),
-    FFMPEGFS_OPT("--decoding_errors=%u",        m_decoding_errors, 0),
-    FFMPEGFS_OPT("decoding_errors=%u",          m_decoding_errors, 0),
-    FFMPEGFS_OPT("--win_smb_fix=%u",            m_win_smb_fix, 0),
-    FFMPEGFS_OPT("win_smb_fix=%u",              m_win_smb_fix, 0),
+    FFMPEGFS_OPT("--max_threads=%u",                m_max_threads, 0),
+    FFMPEGFS_OPT("max_threads=%u",                  m_max_threads, 0),
+    FFMPEGFS_OPT("--decoding_errors=%u",            m_decoding_errors, 0),
+    FFMPEGFS_OPT("decoding_errors=%u",              m_decoding_errors, 0),
+    FFMPEGFS_OPT("--min_dvd_chapter_duration=%u",   m_min_dvd_chapter_duration, 0),
+    FFMPEGFS_OPT("min_dvd_chapter_duration=%u",     m_min_dvd_chapter_duration, 0),
+    FFMPEGFS_OPT("--win_smb_fix=%u",                m_win_smb_fix, 0),
+    FFMPEGFS_OPT("win_smb_fix=%u",                  m_win_smb_fix, 0),
     // FFmpegfs options
-    FFMPEGFS_OPT("-d",                          m_debug, 1),
-    FFMPEGFS_OPT("debug",                       m_debug, 1),
-    FUSE_OPT_KEY("--log_maxlevel=%s",           KEY_LOG_MAXLEVEL),
-    FUSE_OPT_KEY("log_maxlevel=%s",             KEY_LOG_MAXLEVEL),
-    FFMPEGFS_OPT("--log_stderr",                m_log_stderr, 1),
-    FFMPEGFS_OPT("log_stderr",                  m_log_stderr, 1),
-    FFMPEGFS_OPT("--log_syslog",                m_log_syslog, 1),
-    FFMPEGFS_OPT("log_syslog",                  m_log_syslog, 1),
-    FUSE_OPT_KEY("--logfile=%s",                KEY_LOGFILE),
-    FUSE_OPT_KEY("logfile=%s",                  KEY_LOGFILE),
+    FFMPEGFS_OPT("-d",                              m_debug, 1),
+    FFMPEGFS_OPT("debug",                           m_debug, 1),
+    FUSE_OPT_KEY("--log_maxlevel=%s",               KEY_LOG_MAXLEVEL),
+    FUSE_OPT_KEY("log_maxlevel=%s",                 KEY_LOG_MAXLEVEL),
+    FFMPEGFS_OPT("--log_stderr",                    m_log_stderr, 1),
+    FFMPEGFS_OPT("log_stderr",                      m_log_stderr, 1),
+    FFMPEGFS_OPT("--log_syslog",                    m_log_syslog, 1),
+    FFMPEGFS_OPT("log_syslog",                      m_log_syslog, 1),
+    FUSE_OPT_KEY("--logfile=%s",                    KEY_LOGFILE),
+    FUSE_OPT_KEY("logfile=%s",                      KEY_LOGFILE),
 
-    FUSE_OPT_KEY("-h",                          KEY_HELP),
-    FUSE_OPT_KEY("--help",                      KEY_HELP),
-    FUSE_OPT_KEY("-V",                          KEY_VERSION),
-    FUSE_OPT_KEY("--version",                   KEY_VERSION),
-    FUSE_OPT_KEY("-d",                          KEY_KEEP_OPT),
-    FUSE_OPT_KEY("debug",                       KEY_KEEP_OPT),
+    FUSE_OPT_KEY("-h",                              KEY_HELP),
+    FUSE_OPT_KEY("--help",                          KEY_HELP),
+    FUSE_OPT_KEY("-V",                              KEY_VERSION),
+    FUSE_OPT_KEY("--version",                       KEY_VERSION),
+    FUSE_OPT_KEY("-d",                              KEY_KEEP_OPT),
+    FUSE_OPT_KEY("debug",                           KEY_KEEP_OPT),
     FUSE_OPT_END
 };
 
@@ -1066,7 +1069,9 @@ static void print_params(void)
                                          "\nVarious Options\n\n"
                                          "Max. Threads      : %36\n"
                                          "Decoding Errors   : %37\n"
-                                         "Windows 10 Fix    : %38\n",
+                                         "Min. DVD chapter  : %38\n"
+                                         "\nExperimental Options\n\n"
+                                         "Windows 10 Fix    : %39\n",
                    params.m_basepath.c_str(),
                    params.m_mountpath.c_str(),
                    params.smart_transcode() ? "yes" : "no",
@@ -1108,6 +1113,7 @@ static void print_params(void)
             params.m_clear_cache ? "yes" : "no",
             format_number(params.m_max_threads).c_str(),
             params.m_decoding_errors ? "break transcode" : "ignore",
+            format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str(),
             params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
 }
 

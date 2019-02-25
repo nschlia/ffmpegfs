@@ -1282,7 +1282,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #ifdef _DEBUG
-        print_info(output_stream);
+        print_stream_info(output_stream);
 #endif // _DEBUG
 
         // Set duration as hint for muxer
@@ -1422,7 +1422,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         output_stream->time_base                = m_in.m_video.m_stream->time_base;
 
 #ifdef _DEBUG
-        print_info(output_stream);
+        print_stream_info(output_stream);
 #endif // _DEBUG
 
         // Set duration as hint for muxer
@@ -2241,7 +2241,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 #endif
 
         // Sometimes only a few packets contain valid dts/pts/pos data, so we keep it
-        if (pkt->dts != static_cast<int64_t>(AV_NOPTS_VALUE))
+        if (pkt->dts != AV_NOPTS_VALUE)
         {
             int64_t pts = pkt->dts;
             if (pts > m_pts)
@@ -2249,7 +2249,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 m_pts = pts;
             }
         }
-        else if (pkt->pts != static_cast<int64_t>(AV_NOPTS_VALUE))
+        else if (pkt->pts != AV_NOPTS_VALUE)
         {
             int64_t pts = pkt->pts;
             if (pts > m_pts)
@@ -2297,19 +2297,19 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
 #endif
 
-            if (best_effort_timestamp != static_cast<int64_t>(AV_NOPTS_VALUE))
+            if (best_effort_timestamp != AV_NOPTS_VALUE)
             {
                 frame->pts = best_effort_timestamp;
             }
 #endif
 
-            if (frame->pts == static_cast<int64_t>(AV_NOPTS_VALUE))
+            if (frame->pts == AV_NOPTS_VALUE)
             {
                 frame->pts = m_pts;
             }
 
             // Rescale to our time base, but only of nessessary
-            if (frame->pts != static_cast<int64_t>(AV_NOPTS_VALUE) && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+            if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
             {
                 frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
             }
@@ -2970,20 +2970,20 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         // Write one video frame from the temporary packet to the output file.
         if (*data_present)
         {
-            if (pkt.pts != static_cast<int64_t>(AV_NOPTS_VALUE))
+            if (pkt.pts != AV_NOPTS_VALUE)
             {
                 pkt.pts -=  m_out.m_video_start_pts;
             }
 
-            if (pkt.dts != static_cast<int64_t>(AV_NOPTS_VALUE))
+            if (pkt.dts != AV_NOPTS_VALUE)
             {
                 pkt.dts -=  m_out.m_video_start_pts;
             }
 
             if (!(m_out.m_format_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
             {
-                if (pkt.dts != static_cast<int64_t>(AV_NOPTS_VALUE) &&
-                        pkt.pts != static_cast<int64_t>(AV_NOPTS_VALUE) &&
+                if (pkt.dts != AV_NOPTS_VALUE &&
+                        pkt.pts != AV_NOPTS_VALUE &&
                         pkt.dts > pkt.pts)
                 {
 
@@ -2995,7 +2995,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                             - FFMAX3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1);
                 }
 
-                if (pkt.dts != static_cast<int64_t>(AV_NOPTS_VALUE) && m_out.m_last_mux_dts != static_cast<int64_t>(AV_NOPTS_VALUE))
+                if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                 {
                     //int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
                     AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };

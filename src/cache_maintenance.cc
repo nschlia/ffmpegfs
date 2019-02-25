@@ -50,11 +50,11 @@ static pid_t *pid_master;
 static int master;
 
 static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, __attribute__((unused)) void *uc);
-static int start_timer(time_t interval);
-static int stop_timer();
-static int link_up();
+static bool start_timer(time_t interval);
+static bool stop_timer();
+static bool link_up();
 static void master_check();
-static int link_down();
+static bool link_down();
 
 static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, __attribute__((unused)) void *uc)
 {
@@ -73,7 +73,7 @@ static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, 
     }
 }
 
-static int start_timer(time_t interval)
+static bool start_timer(time_t interval)
 {
     struct sigevent sev;
     struct itimerspec its;
@@ -91,7 +91,7 @@ static int start_timer(time_t interval)
     if (sigaction(SIGMAINT, &sa, nullptr) == -1)
     {
         Logging::error(nullptr, "start_timer(): sigaction failed: %1", strerror(errno));
-        return -1;
+        return false;
     }
 
     // Block timer signal temporarily
@@ -100,7 +100,7 @@ static int start_timer(time_t interval)
     if (sigprocmask(SIG_SETMASK, &mask, nullptr) == -1)
     {
         Logging::error(nullptr, "start_timer(): sigprocmask(SIG_SETMASK) failed: %1", strerror(errno));
-        return -1;
+        return false;
     }
 
     // Create the timer
@@ -110,7 +110,7 @@ static int start_timer(time_t interval)
     if (timer_create(CLOCKID, &sev, &timerid) == -1)
     {
         Logging::error(nullptr, "start_timer(): timer_create failed: %1", strerror(errno));
-        return -1;
+        return false;
     }
 
     // Start the timer
@@ -122,7 +122,7 @@ static int start_timer(time_t interval)
     if (timer_settime(timerid, 0, &its, nullptr) == -1)
     {
         Logging::error(nullptr, "start_timer(): timer_settime failed: %1", strerror(errno));
-        return -1;
+        return false;
     }
 
     if (sigprocmask(SIG_UNBLOCK, &mask, nullptr) == -1)
@@ -132,23 +132,23 @@ static int start_timer(time_t interval)
 
     Logging::trace(nullptr, "Maintenance timer started successfully.");
 
-    return 0;
+    return true;
 }
 
-static int stop_timer()
+static bool stop_timer()
 {
     Logging::info(nullptr, "Stopping maintenance timer.");
 
     if (timer_delete(timerid) == -1)
     {
         Logging::error(nullptr, "stop_timer(): timer_delete failed: %1", strerror(errno));
-        return -1;
+        return false;
     }
 
-    return 0;
+    return true;
 }
 
-static int link_up()
+static bool link_up()
 {
     key_t shmkey;
 
@@ -160,7 +160,7 @@ static int link_up()
     if (shmkey == -1)
     {
         Logging::error(nullptr, "link_up(): ftok error %1", strerror(errno));
-        return -1;
+        return false;
     }
 
     // First try to open existing memory.
@@ -182,7 +182,7 @@ static int link_up()
         else
         {
             Logging::error(nullptr, "link_up(): shmget error %1", strerror(errno));
-            return -1;
+            return false;
         }
     }
 
@@ -214,11 +214,11 @@ static int link_up()
         {
             Logging::error(nullptr, "link_up(): sem_open error %1", strerror(errno));
             link_down();
-            return -1;
+            return false;
         }
     }
 
-    return 0;
+    return true;
 }
 
 static void master_check()
@@ -250,30 +250,30 @@ static void master_check()
     sem_post(sem);
 }
 
-static int link_down()
+static bool link_down()
 {
     struct shmid_ds buf;
-    int ret = 0;
+    bool success = true;
 
     Logging::info(nullptr, "Shutting " PACKAGE " inter-process link down.");
 
     if (sem_close(sem))
     {
         Logging::error(nullptr, "link_down(): sem_close error %1", strerror(errno));
-        ret = -1;
+        success = false;
     }
 
     // shared memory detach
     if (shmdt (pid_master))
     {
         Logging::error(nullptr, "link_down(): shmdt error %1", strerror(errno));
-        ret = -1;
+        success = false;
     }
 
     if (shmctl(shmid, IPC_STAT, &buf))
     {
         Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
-        ret = -1;
+        success = false;
     }
     else
     {
@@ -282,7 +282,7 @@ static int link_down()
             if (shmctl (shmid, IPC_RMID, nullptr))
             {
                 Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
-                ret = -1;
+                success = false;
             }
 
             // unlink prevents the semaphore existing forever
@@ -290,41 +290,41 @@ static int link_down()
             if (sem_unlink(SEM_OPEN_FILE))
             {
                 Logging::error(nullptr, "link_down(): sem_unlink error %1", strerror(errno));
-                ret = -1;
+                success = false;
             }
         }
     }
 
-    return ret;
+    return success;
 }
 
-int start_cache_maintenance(time_t interval)
+bool start_cache_maintenance(time_t interval)
 {
     // Start link
-    if (link_up() == -1)
+    if (!link_up())
     {
-        return -1;
+        return false;
     }
 
     // Now start timer
     return start_timer(interval);
 }
 
-int stop_cache_maintenance()
+bool stop_cache_maintenance()
 {
-    int ret = 0;
+    bool success = true;
 
     // Stop timer first
-    if (stop_timer() == -1)
+    if (!stop_timer())
     {
-        ret = -1;
+        success = false;
     }
 
     // Now shut down link
-    if (link_down() == -1)
+    if (!link_down())
     {
-        ret = -1;
+        success = false;
     }
 
-    return ret;
+    return success;
 }

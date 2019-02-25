@@ -16,10 +16,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#pragma once
 
 #ifndef VCDENTRIES_H
 #define VCDENTRIES_H
+
+#pragma once
 
 #include "vcdchapter.h"
 

@@ -52,13 +52,13 @@ typedef struct VIDEO_SETTINGS
 typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;
 typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;
 
-static int          dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
+static int          dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
 static AVRational   dvd_frame_rate(const uint8_t * ptr);
 static int64_t      BCDtime(const dvd_time_t * dvd_time);
-static bool         create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
+static bool         create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
 static int          parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
-static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
+static int dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
 {
     int best_stream = -1;
     int best_application_mode = INT_MAX;
@@ -70,7 +70,7 @@ static int dvd_find_best_audio_stream(vtsi_mat_t *vtsi_mat, int *best_channels, 
 
     for(int i = 0; i < vtsi_mat->nr_of_vts_audio_streams; i++)
     {
-        audio_attr_t *attr = &vtsi_mat->vts_audio_attr[i];
+        const audio_attr_t *attr = &vtsi_mat->vts_audio_attr[i];
 
         if (attr->audio_format == 0
                 && attr->multichannel_extension == 0
@@ -195,14 +195,14 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
     return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / av_q2d(framerate)));
 }
 
-static bool create_dvd_virtualfile(ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
+static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
 {
-    vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
+    const vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
     int title_no            = title_idx + 1;
     int chapter_no          = chapter_idx + 1;
     int pgcnum              = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
     int pgn                 = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
-    pgc_t *cur_pgc          = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
+    const pgc_t *cur_pgc    = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
     AVRational framerate    = { 0, 0 };
     int64_t duration        = 0;
     uint64_t size           = 0;

@@ -91,21 +91,21 @@ const std::string & append_filename(std::string * path, const std::string & file
     return *path;
 }
 
-const std::string & remove_filename(std::string * path)
+const std::string & remove_filename(std::string * filepath)
 {
-    char *p = new_strdup(*path);
-    *path = dirname(p);
+    char *p = new_strdup(*filepath);
+    *filepath = dirname(p);
     delete [] p;
-    append_sep(path);
-    return *path;
+    append_sep(filepath);
+    return *filepath;
 }
 
-const std::string & remove_path(std::string *path)
+const std::string & remove_path(std::string *filepath)
 {
-    char *p = new_strdup(*path);
-    *path = basename(p);
+    char *p = new_strdup(*filepath);
+    *filepath = basename(p);
     delete [] p;
-    return *path;
+    return *filepath;
 }
 
 bool find_ext(std::string * ext, const std::string & filename)
@@ -128,26 +128,26 @@ bool find_ext(std::string * ext, const std::string & filename)
     }
 }
 
-const std::string & replace_ext(std::string * filename, const std::string & ext)
+const std::string & replace_ext(std::string * filepath, const std::string & ext)
 {
     size_t found;
 
-    found = filename->rfind('.');
+    found = filepath->rfind('.');
 
     if (found == std::string::npos)
     {
         // No extension, just add
-        *filename += '.';
+        *filepath += '.';
     }
     else
     {
         // Have extension, so replace
-        *filename = filename->substr(0, found + 1);
+        *filepath = filepath->substr(0, found + 1);
     }
 
-    *filename += ext;
+    *filepath += ext;
 
-    return *filename;
+    return *filepath;
 }
 
 char * new_strdup(const std::string & str)
@@ -158,14 +158,14 @@ char * new_strdup(const std::string & str)
     return p;
 }
 
-const std::string & get_destname(std::string *destname, const std::string & filename)
+const std::string & get_destname(std::string *destfilepath, const std::string & filepath)
 {
-    *destname = filename;
-    remove_path(destname);
-    replace_ext(destname, params.current_format(filename)->m_format_name);
-    *destname = params.m_mountpath + *destname;
+    *destfilepath = filepath;
+    remove_path(destfilepath);
+    replace_ext(destfilepath, params.current_format(filepath)->real_desttype());
+    *destfilepath = params.m_mountpath + *destfilepath;
 
-    return *destname;
+    return *destfilepath;
 }
 
 std::string ffmpeg_geterror(int errnum)
@@ -175,16 +175,19 @@ std::string ffmpeg_geterror(int errnum)
     return error;
 }
 
-double ffmpeg_cvttime(int64_t ts, const AVRational & time_base)
+int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)
 {
-    if (ts != 0 && ts != static_cast<int64_t>(AV_NOPTS_VALUE))
+    if (ts != AV_NOPTS_VALUE)
     {
-        return (static_cast<double>(ts) * ::av_q2d(time_base));
+        return AV_NOPTS_VALUE;
     }
-    else
+
+    if (ts == 0)
     {
         return 0;
     }
+
+    return av_rescale_q(ts, av_get_time_base_q(), time_base);
 }
 
 #if !HAVE_MEDIA_TYPE_STRING
@@ -385,17 +388,17 @@ const char * get_codec_name(AVCodecID codec_id, bool long_name)
     return psz;
 }
 
-int mktree(const std::string &filename, mode_t mode)
+int mktree(const std::string & path, mode_t mode)
 {
-    char *path = new_strdup(filename);
+    char *buffer = new_strdup(path);
 
-    if (path == nullptr)
+    if (buffer == nullptr)
     {
         return ENOMEM;
     }
 
     char dir[PATH_MAX] = "\0";
-    char *p = strtok (path, "/");
+    char *p = strtok (buffer, "/");
     int status = 0;
 
     while (p != nullptr)
@@ -420,29 +423,29 @@ int mktree(const std::string &filename, mode_t mode)
         p = strtok (nullptr, "/");
     }
 
-    delete [] path;
+    delete [] buffer;
 
     return status;
 }
 
-void tempdir(std::string & dir)
+void tempdir(std::string & path)
 {
     const char *temp = getenv("TMPDIR");
 
     if (temp != nullptr)
     {
-        dir = temp;
+        path = temp;
         return;
     }
 
-    dir = P_tmpdir;
+    path = P_tmpdir;
 
-    if (!dir.empty())
+    if (!path.empty())
     {
         return;
     }
 
-    dir = "/tmp";
+    path = "/tmp";
 }
 
 int supports_albumart(FILETYPE filetype)
@@ -508,101 +511,103 @@ FILETYPE get_filetype_from_list(const std::string & desttypelist)
     return filetype;
 }
 
-int get_codecs(const std::string & desttype, FFmpegfs_Format *format)
+bool get_format(const std::string & desttype, FFmpegfs_Format *format)
 {
-    int ret = -1;
+    int found = true;
 
+    // Please note that m_format_name should be the extension for the target file. It is also used to select the FFmpeg container
+    // by passing it to avformat_alloc_output_context2().
     switch (get_filetype(desttype))
     {
     case FILETYPE_MP3:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_MP3;
-        format->m_video_codec_id = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
-        format->m_filetype      = FILETYPE_MP3;
-        format->m_format_name   = "mp3";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_MP3;
+        format->m_video_codec_id    = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        format->m_filetype          = FILETYPE_MP3;
+        format->m_format_name       = "mp3";
         break;
     }
     case FILETYPE_MP4:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_AAC;
-        format->m_video_codec_id = AV_CODEC_ID_H264;
-        format->m_filetype      = FILETYPE_MP4;
-        format->m_format_name   = "mp4";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_AAC;
+        format->m_video_codec_id    = AV_CODEC_ID_H264;
+        format->m_filetype          = FILETYPE_MP4;
+        format->m_format_name       = "mp4";
         break;
     }
     case FILETYPE_WAV:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codec_id = AV_CODEC_ID_NONE;
-        format->m_filetype      =  FILETYPE_WAV;
-        format->m_format_name   = "wav";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codec_id    = AV_CODEC_ID_NONE;
+        format->m_filetype          = FILETYPE_WAV;
+        format->m_format_name       = "wav";
         break;
     }
     case FILETYPE_OGG:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_VORBIS;
-        format->m_video_codec_id = AV_CODEC_ID_THEORA;
-        format->m_filetype      = FILETYPE_OGG;
-        format->m_format_name   = "ogg";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_VORBIS;
+        format->m_video_codec_id    = AV_CODEC_ID_THEORA;
+        format->m_filetype          = FILETYPE_OGG;
+        format->m_format_name       = "ogg";
         break;
     }
     case FILETYPE_WEBM:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_OPUS;
-        format->m_video_codec_id = AV_CODEC_ID_VP9;
-        format->m_filetype      = FILETYPE_WEBM;
-        format->m_format_name   = "webm";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_OPUS;
+        format->m_video_codec_id    = AV_CODEC_ID_VP9;
+        format->m_filetype          = FILETYPE_WEBM;
+        format->m_format_name       = "webm";
         break;
     }
     case FILETYPE_MOV:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_AAC;
-        format->m_video_codec_id = AV_CODEC_ID_H264;
-        format->m_filetype      = FILETYPE_MOV;
-        format->m_format_name   = "mov";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_AAC;
+        format->m_video_codec_id    = AV_CODEC_ID_H264;
+        format->m_filetype          = FILETYPE_MOV;
+        format->m_format_name       = "mov";
         break;
     }
     case FILETYPE_AIFF:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16BE;
-        format->m_video_codec_id = AV_CODEC_ID_NONE;
-        format->m_filetype      = FILETYPE_AIFF;
-        format->m_format_name   = "aiff";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
+        format->m_video_codec_id    = AV_CODEC_ID_NONE;
+        format->m_filetype          = FILETYPE_AIFF;
+        format->m_format_name       = "aiff";
         break;
     }
     case FILETYPE_OPUS:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_OPUS;
-        format->m_video_codec_id = AV_CODEC_ID_NONE;
-        format->m_filetype      = FILETYPE_OPUS;
-        format->m_format_name   = "opus";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_OPUS;
+        format->m_video_codec_id    = AV_CODEC_ID_NONE;
+        format->m_filetype          = FILETYPE_OPUS;
+        format->m_format_name       = "opus";
         break;
     }
     case FILETYPE_PRORES:
     {
-        format->m_desttype      = desttype;
-        format->m_audio_codec_id = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codec_id = AV_CODEC_ID_PRORES;
-        format->m_filetype      = FILETYPE_PRORES;
-        format->m_format_name   = "mov";
+        format->m_desttype          = desttype;
+        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
+        format->m_video_codec_id    = AV_CODEC_ID_PRORES;
+        format->m_filetype          = FILETYPE_PRORES;
+        format->m_format_name       = "mov";
         break;
     }
     case FILETYPE_UNKNOWN:
     {
-        ret = 0;
+        found = false;
         break;
     }
     }
 
-    return ret;
+    return found;
 }
 
 #ifdef USING_LIBAV
@@ -704,7 +709,7 @@ std::string format_number(int64_t value)
         return "unlimited";
     }
 
-    if (value == static_cast<int64_t>(AV_NOPTS_VALUE))
+    if (value == AV_NOPTS_VALUE)
     {
         return "unset";
     }
@@ -919,7 +924,7 @@ static void print_fps(double d, const char *postfix)
     }
 }
 
-int print_info(const AVStream* stream)
+int print_stream_info(const AVStream* stream)
 {
     int ret = 0;
 
@@ -1072,7 +1077,7 @@ const std::string & expand_path(std::string *tgt, const std::string & src)
     return *tgt;
 }
 
-int is_mount(const std::string & filename)
+int is_mount(const std::string & path)
 {
     char* orig_name = nullptr;
     int ret = 0;
@@ -1083,13 +1088,13 @@ int is_mount(const std::string & filename)
         struct stat parent_stat;
         char * parent_name = nullptr;
 
-        orig_name = new_strdup(filename);
+        orig_name = new_strdup(path);
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);
 
         // get the file's stat info
-        if (-1 == stat(filename.c_str(), &file_stat))
+        if (-1 == stat(path.c_str(), &file_stat))
         {
             std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
             throw -1;
@@ -1099,7 +1104,7 @@ int is_mount(const std::string & filename)
         // if it isn't, then it can't be a mountpoint.
         if (!(file_stat.st_mode & S_IFDIR))
         {
-            std::fprintf(stderr, "is_mount(): %s is not a directory.\n", filename.c_str());
+            std::fprintf(stderr, "is_mount(): %s is not a directory.\n", path.c_str());
             throw -1;
         }
 
@@ -1147,15 +1152,15 @@ std::vector<std::string> split(const std::string& input, const std::string & reg
     return {first, last};
 }
 
-std::string sanitise_name(const std::string & filename)
+std::string sanitise_name(const std::string & filepath)
 {
     char resolved_name[PATH_MAX + 1];
 
-    if (realpath(filename.c_str(), resolved_name) != nullptr)
+    if (realpath(filepath.c_str(), resolved_name) != nullptr)
     {
         return resolved_name;
     }
-    return filename;
+    return filepath;
 }
 
 bool is_album_art(AVCodecID codec_id)
@@ -1163,11 +1168,11 @@ bool is_album_art(AVCodecID codec_id)
     return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
 }
 
-size_t get_disk_size(std::string & file)
+size_t get_disk_free(std::string & path)
 {
     struct statvfs buf;
 
-    if (statvfs(file.c_str(), &buf))
+    if (statvfs(path.c_str(), &buf))
     {
         return 0;
     }

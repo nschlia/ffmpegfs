@@ -31,9 +31,9 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#define VCD_SECTOR_SIZE 2352
-//#define VCD_SECTOR_OFFS 24
-//#define VCD_SECTOR_DATA 2324
+#define VCD_SECTOR_SIZE 2352                /**< Video CD sector size */
+#define VCD_SECTOR_OFFS 24                  /**< Video CD sector offset */
+#define VCD_SECTOR_DATA 2324                /**< Video CD data sector size */
 
 const char SYNC[12]              = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' };
 //static const char PICTURE_START_CODE[4] = { '\x00', '\x00', '\x01', '\x00' };

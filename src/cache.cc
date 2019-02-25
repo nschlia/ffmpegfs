@@ -663,7 +663,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     transcoder_cache_path(cachepath);
 
-    size_t free_bytes = get_disk_size(cachepath);
+    size_t free_bytes = get_disk_free(cachepath);
 
     if (!free_bytes && errno)
     {

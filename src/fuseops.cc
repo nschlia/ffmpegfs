@@ -991,7 +991,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 
     if (params.m_cache_maintenance)
     {
-        if (start_cache_maintenance(params.m_cache_maintenance))
+        if (!start_cache_maintenance(params.m_cache_maintenance))
         {
             exit(1);
         }

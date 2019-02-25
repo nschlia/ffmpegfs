@@ -683,7 +683,7 @@ int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegf
         if (results.size() > 0 && results.size() < 3)
         {
             // Check for valid destination type and obtain codecs and file type.
-            if (!get_codecs(results[0], video_format))
+            if (!get_format(results[0], video_format))
             {
                 std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[0].c_str());
                 return 1;
@@ -691,7 +691,7 @@ int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegf
 
             if (results.size() == 2)
             {
-                if (!get_codecs(results[1], audio_format))
+                if (!get_format(results[1], audio_format))
                 {
                     std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[1].c_str());
                     return 1;

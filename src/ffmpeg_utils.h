@@ -216,13 +216,9 @@ public:
         , m_audio_codec_id(audio_codec_id)
     {}
 
-    std::string real_desttype() const
+    const std::string & real_desttype() const
     {
-        if (m_desttype == "prores")
-        {
-            return "mov";                   // ProRes is actually a MOV container
-        }
-        return m_desttype;
+        return m_format_name;               // Format name and extension are basically the same
     }
 
 public:
@@ -242,20 +238,20 @@ const std::string & append_sep(std::string * path);
 // Returns: Constant reference to path
 const std::string & append_filename(std::string * path, const std::string & filename);
 // Remove filename from path. Handy dirname alternative.
-const std::string & remove_filename(std::string *path);
+const std::string & remove_filename(std::string *filepath);
 // Remove path from filename. Handy basename alternative.
-const std::string & remove_path(std::string *path);
+const std::string & remove_path(std::string *filepath);
 // Find extension in filename, if any
 // Returns: Constant true if extension was found, false if there was none
 bool                find_ext(std::string * ext, const std::string & filename);
 // Replace extension in filename. Take into account that there might
 // not be an extension already.
 // Returns: Constant reference to filename
-const std::string & replace_ext(std::string * filename, const std::string & ext);
+const std::string & replace_ext(std::string * filepath, const std::string & ext);
 char *              new_strdup(const std::string & str);
-const std::string & get_destname(std::string *destname, const std::string & filename);
+const std::string & get_destname(std::string *destfilepath, const std::string & filepath);
 std::string         ffmpeg_geterror(int errnum);
-double              ffmpeg_cvttime(int64_t ts, const AVRational & time_base);
+int64_t             ffmpeg_rescale(int64_t ts, const AVRational & time_base);
 
 std::string         format_number(int64_t value);
 std::string         format_bitrate(BITRATE value);
@@ -273,8 +269,8 @@ std::string &       ltrim(std::string &s);
 std::string &       rtrim(std::string &s);
 std::string &       trim(std::string &s);
 
-std::string         replace_all(std::string str, const std::string& from, const std::string& to);
-template<typename ... Args> std::string string_format(const std::string& format, Args ... args);
+std::string         replace_all(std::string str, const std::string & from, const std::string& to);
+template<typename ... Args> std::string string_format(const std::string & format, Args ... args);
 
 int                 strcasecmp(const std::string & s1, const std::string & s2);
 
@@ -286,18 +282,18 @@ int                 supports_albumart(FILETYPE filetype);
 FILETYPE            get_filetype(const std::string & desttype);
 // Same as get_filetype, but accepts a comma separated list.
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
-int                 get_codecs(const std::string & desttype, FFmpegfs_Format *video_format);
+bool                get_format(const std::string & desttype, FFmpegfs_Format *video_format);
 
-int                 print_info(const AVStream* stream);
+int                 print_stream_info(const AVStream* stream);
 
-int                 compare(const std::string &value, const std::string &pattern);
+int                 compare(const std::string & value, const std::string & pattern);
 
-const std::string & expand_path(std::string *tgt, const std::string &src);
+const std::string & expand_path(std::string *tgt, const std::string & src);
 
-int                 is_mount(const std::string &filename);
+int                 is_mount(const std::string & path);
 
-int                 mktree(const std::string & filename, mode_t mode);
-void                tempdir(std::string & dir);
+int                 mktree(const std::string & path, mode_t mode);
+void                tempdir(std::string & path);
 
 #ifdef USING_LIBAV
 // Libav is missing these functions
@@ -324,7 +320,7 @@ constexpr std::size_t countof(T const (&)[N]) noexcept
     return N;
 }
 
-std::string         sanitise_name(const std::string & filename);
+std::string         sanitise_name(const std::string & filepath);
 
 bool                is_album_art(AVCodecID codec_id);
 
@@ -335,7 +331,7 @@ struct comp {
     }
 };
 
-size_t              get_disk_size(std::string & file);
+size_t              get_disk_free(std::string & path);
 
 /**
  * @brief For use with win_smb_fix=1: Check if this an illegal access oofset by Windows

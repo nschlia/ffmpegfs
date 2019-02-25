@@ -25,7 +25,7 @@
 
 #include <time.h>
 
-int start_cache_maintenance(time_t interval);
-int stop_cache_maintenance();
+bool start_cache_maintenance(time_t interval);
+bool stop_cache_maintenance();
 
 #endif // CACHE_MAINTENANCE_H

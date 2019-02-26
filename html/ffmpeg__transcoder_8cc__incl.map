@@ -1,0 +1,14 @@
+<map id="src/ffmpeg_transcoder.cc" name="src/ffmpeg_transcoder.cc">
+<area shape="rect" id="node2" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="395,80,537,107"/>
+<area shape="rect" id="node18" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="646,80,737,107"/>
+<area shape="rect" id="node19" href="$buffer_8h.html" title="Buffer class. " alt="" coords="819,80,886,107"/>
+<area shape="rect" id="node22" href="$wave_8h.html" title="WAVE file structures. " alt="" coords="955,80,1019,107"/>
+<area shape="rect" id="node24" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="1043,80,1118,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="305,155,413,181"/>
+<area shape="rect" id="node10" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="198,155,281,181"/>
+<area shape="rect" id="node11" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="519,155,603,181"/>
+<area shape="rect" id="node14" href="$fileio_8h.html" title="FileIO class. " alt="" coords="620,229,680,256"/>
+<area shape="rect" id="node16" href="$ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="51,155,174,181"/>
+<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="309,229,413,256"/>
+<area shape="rect" id="node5" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="301,304,423,331"/>
+</map>

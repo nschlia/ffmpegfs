@@ -1,0 +1,7 @@
+<map id="src/ffmpeg_base.h" name="src/ffmpeg_base.h">
+<area shape="rect" id="node2" href="$ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation. " alt="" coords="23,80,160,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="185,80,347,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations. " alt="" coords="5,155,156,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="181,155,351,181"/>
+<area shape="rect" id="node6" href="$transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="376,155,495,181"/>
+</map>

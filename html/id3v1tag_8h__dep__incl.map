@@ -1,0 +1,10 @@
+<map id="src/id3v1tag.h" name="src/id3v1tag.h">
+<area shape="rect" id="node2" href="$cache__entry_8h.html" title="Cache entry " alt="" coords="165,80,292,107"/>
+<area shape="rect" id="node6" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="386,80,549,107"/>
+<area shape="rect" id="node9" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation. " alt="" coords="573,80,706,107"/>
+<area shape="rect" id="node3" href="$cache_8cc.html" title="Cache class implementation. " alt="" coords="5,155,103,181"/>
+<area shape="rect" id="node4" href="$cache__entry_8cc.html" title="Cache_Entry class implementation. " alt="" coords="127,155,261,181"/>
+<area shape="rect" id="node5" href="$transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="285,155,404,181"/>
+<area shape="rect" id="node7" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations. " alt="" coords="428,155,579,181"/>
+<area shape="rect" id="node8" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="603,155,774,181"/>
+</map>

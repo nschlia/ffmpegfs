@@ -1,6 +1,4 @@
 /*
- * data buffer class source for FFmpegfs
- *
  * Copyright (C) 2013 K. Henriksson
  * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -17,6 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief Buffer class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "buffer.h"
@@ -321,9 +329,6 @@ size_t Buffer::write(const uint8_t* data, size_t length)
     return length;
 }
 
-// Ensure the Buffer has sufficient space for a quantity of data and
-// return a pointer where the data may be written. The position pointer
-// should be updated afterward with increment_pos().
 uint8_t* Buffer::write_prepare(size_t length)
 {
     if (reallocate(m_buffer_pos + length))
@@ -341,9 +346,6 @@ uint8_t* Buffer::write_prepare(size_t length)
     }
 }
 
-// Increment the location of the internal pointer. This cannot fail and so
-// returns void. It does not ensure the position is valid memory because
-// that is done by the write_prepare methods via reallocate.
 void Buffer::increment_pos(size_t increment)
 {
     m_buffer_pos += increment;
@@ -449,9 +451,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     return success;
 }
 
-// Ensure the allocation has at least size bytes available. If not,
-// reallocate memory to make more available. Fill the newly allocated memory
-// with zeroes.
 bool Buffer::reallocate(size_t newsize)
 {
     if (newsize > size())

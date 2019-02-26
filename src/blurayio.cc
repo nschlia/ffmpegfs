@@ -1,6 +1,4 @@
 /*
- * Bluray Disk file I/O for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,6 +17,17 @@
  */
 
 #ifdef USE_LIBBLURAY
+
+/**
+ * @file
+ * @brief BlurayIO class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #include "blurayio.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_utils.h"

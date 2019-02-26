@@ -1,6 +1,4 @@
 /*
- * Cache controller class for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +16,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief Cache class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #include "cache.h"
 #include "cache_entry.h"
 #include "ffmpegfs.h"
@@ -28,7 +36,7 @@
 #include <assert.h>
 
 #ifndef HAVE_SQLITE_ERRSTR
-#define sqlite3_errstr(rc)  ""
+#define sqlite3_errstr(rc)  ""              /**< @brief If our version of SQLite hasn't go this function */
 #endif // HAVE_SQLITE_ERRSTR
 
 Cache::Cache()
@@ -291,14 +299,14 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
 { \
     Logging::error(m_cacheidx_file, "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
-    }
+    }       /**< @brief Bind text column to SQLite statement */
 
 #define SQLBINDNUM(func, idx, var) \
     if (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \
 { \
     Logging::error(m_cacheidx_file, "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
-    }
+    }       /**< @brief Bind numeric column to SQLite statement */
 
 bool Cache::write_info(LPCCACHE_INFO cache_info)
 {

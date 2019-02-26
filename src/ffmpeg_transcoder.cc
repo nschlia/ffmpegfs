@@ -1,6 +1,4 @@
 /*
- * FFmpeg decoder class source for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief FFmpeg_Transcoder class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "ffmpeg_transcoder.h"
@@ -176,8 +184,6 @@ FFmpeg_Transcoder::~FFmpeg_Transcoder()
     Logging::trace(nullptr, "FFmpeg trancoder object destroyed.");
 }
 
-// FFmpeg handles cover arts like video streams.
-// Try to find out if we have a video stream or a cover art.
 bool FFmpeg_Transcoder::is_video() const
 {
     bool is_video = false;
@@ -574,7 +580,6 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
             Logging::info(destname(), "Bit rate changed, no auto copy possible.");
             return false;
         }
-
     }
 
     return true;
@@ -793,7 +798,6 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
     return (input_width > *output_width || input_height > *output_height);
 }
 
-// Prepare codec optimisations
 int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option) const
 {
     int ret = 0;
@@ -1608,9 +1612,6 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     return ret;
 }
 
-// Open an output file and the required encoder.
-// Also set some basic encoder parameters.
-// Some of these parameters are based on the input file's parameters.
 int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     int             ret = 0;
@@ -1732,9 +1733,6 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     return 0;
 }
 
-// Initialize the audio resampler based on the input and output codec settings.
-// If the input and output sample formats differ, a conversion is required
-// libswresample takes care of this, but requires initialization.
 int FFmpeg_Transcoder::init_resampler()
 {
     // Fail save: if channel layout not known assume mono or stereo
@@ -1840,7 +1838,6 @@ int FFmpeg_Transcoder::init_resampler()
     return 0;
 }
 
-// Initialise a FIFO buffer for the audio samples to be encoded.
 int FFmpeg_Transcoder::init_fifo()
 {
     // Create the FIFO buffer based on the specified output sample format.
@@ -1853,7 +1850,6 @@ int FFmpeg_Transcoder::init_fifo()
     return 0;
 }
 
-// Prepare format optimisations
 int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const
 {
     int ret = 0;
@@ -1911,7 +1907,6 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict,  FILETYPE filetype) c
     return ret;
 }
 
-// Write the header of the output file container.
 int FFmpeg_Transcoder::write_output_file_header()
 {
     AVDictionary* dict = nullptr;
@@ -1985,10 +1980,6 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
 }
 
 #if LAVC_NEW_PACKET_INTERFACE
-// This does not quite work like avcodec_decode_audio4/avcodec_decode_video2.
-// There is the following difference: if you got a frame, you must call
-// it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
-// (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
 int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
 {
     int ret;
@@ -2469,9 +2460,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     return ret;
 }
 
-// Initialise a temporary storage for the specified number of audio samples.
-// The conversion requires temporary storage due to the different format.
-// The number of audio samples to be allocated is specified in frame_size.
 int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples, int frame_size)
 {
     int ret;
@@ -2510,9 +2498,6 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
 }
 
 #if LAVR_DEPRECATE
-// Convert the input audio samples into the output sample format.
-// The conversion happens on a per-frame basis, the size of which is
-// specified by frame_size.
 int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_audio_resample_ctx != nullptr)
@@ -2548,9 +2533,6 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
     return 0;
 }
 #else
-// Convert the input audio samples into the output sample format.
-// The conversion happens on a per-frame basis, the size of which is specified
-// by frame_size.
 int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_audio_resample_ctx != nullptr)
@@ -2596,7 +2578,6 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_sample
 }
 #endif
 
-// Add converted input audio samples to the FIFO buffer for later processing.
 int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size)
 {
     int ret;
@@ -2630,7 +2611,6 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     return 0;
 }
 
-// Flush the remaining frames
 int FFmpeg_Transcoder::flush_frames(int stream_index)
 {
     int ret = 0;
@@ -2739,9 +2719,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     return ret;
 }
 
-// Initialise one input frame for writing to the output file.
-// The frame will be exactly frame_size samples large.
-
 int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
 {
     int ret;
@@ -2815,7 +2792,6 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
     }
 }
 
-// Encode one frame worth of audio to the output file.
 int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
@@ -2891,7 +2867,6 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     return 0;
 }
 
-// Encode one frame worth of audio to the output file.
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
@@ -3031,9 +3006,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     return 0;
 }
 
-// Load one audio frame from the FIFO buffer, encode and write it to the
-// output file.
-
 int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
 {
     // Temporary storage of the output samples of the frame written to the file.
@@ -3088,7 +3060,6 @@ int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
     return 0;
 }
 
-// Write the trailer of the output file container.
 int FFmpeg_Transcoder::write_output_file_trailer()
 {
     int ret;
@@ -3108,15 +3079,9 @@ time_t FFmpeg_Transcoder::mtime() const
     return m_mtime;
 }
 
-// Process the metadata in the FFmpeg file. This should be called at the
-// beginning, before reading audio data. The set_text_tag() and
-// set_picture_tag() methods of the given Encoder will be used to set the
-// metadata, with results going into the given Buffer. This function will also
-// read the actual PCM stream parameters.
-
 #define tagcpy(dst, src)    \
     for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
-    *p1 = *p2;
+    *p1 = *p2;      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
 
 void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in)
 {
@@ -3156,12 +3121,6 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
         }
     }
 }
-
-// Copy metadata from source to target
-//
-// Returns:
-//  0   if OK
-//  <0  ffmepg error
 
 int FFmpeg_Transcoder::process_metadata()
 {
@@ -3221,15 +3180,6 @@ int FFmpeg_Transcoder::process_albumarts()
 
     return ret;
 }
-
-// Process a single frame of audio data. The encode_pcm_data() method
-// of the Encoder will be used to process the resulting audio data, with the
-// result going into the given Buffer.
-//
-// Returns:
-//  0   if decoding was OK
-//  1   if EOF reached
-//  -1  error
 
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
@@ -3615,7 +3565,6 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     return success;
 }
 
-// Try to predict final file size.
 size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 {
     if (m_in.m_format_ctx == nullptr)
@@ -3700,9 +3649,6 @@ size_t FFmpeg_Transcoder::predicted_filesize()
 
     return m_predicted_size;
 }
-
-// Encode any remaining PCM data to the given Buffer. This should be called
-// after all input data has already been passed to encode_pcm_data().
 
 int FFmpeg_Transcoder::encode_finish()
 {
@@ -3801,7 +3747,6 @@ int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
     return res_offset;
 }
 
-// Close the open FFmpeg file
 bool FFmpeg_Transcoder::close_resample()
 {
     if (m_audio_resample_ctx)

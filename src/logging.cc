@@ -1,6 +1,4 @@
 /*
- * Logging class source for FFmpegfs
- *
  * Copyright (C) 2017-2019 K. Henriksson
  * Extensions (c) 2017 by Norbert Schlia (nschlia@oblivion-software.de)
  *
@@ -19,6 +17,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief Log facilities implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author K. Henriksson, Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017 Original author K. Henriksson @n
+ * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #include "logging.h"
 #include "ffmpeg_utils.h"
 
@@ -27,23 +36,23 @@
 #include <syslog.h>
 #include <ostream>
 
-#define COLOUR_BLACK        "\033[0;30m"
-#define COLOUR_DARK_GRAY    "\033[1;30m"
-#define COLOUR_LIGHT_GRAY   "\033[0;37m"
-#define COLOUR_RED          "\033[0;31m"
-#define COLOUR_LIGHT_RED    "\033[1;31m"
-#define COLOUR_GREEN        "\033[0;32m"
-#define COLOUR_LIGHT_GREEN  "\033[1;32m"
-#define COLOUR_BROWN_ORANGE "\033[0;33m"
-#define COLOUR_YELLOW       "\033[1;33m"
-#define COLOUR_BLUE         "\033[0;34m"
-#define COLOUR_LIGHT_BLUE   "\033[1;34m"
-#define COLOUR_PURPLE       "\033[0;35m"
-#define COLOUR_LIGHT_PURPLE "\033[1;35m"
-#define COLOUR_CYAN         "\033[0;36m"
-#define COLOUR_LIGHT_CYAN   "\033[1;36m"
-#define COLOUR_WHITE        "\033[1;37m"
-#define COLOUR_RESET        "\033[0m"
+#define COLOUR_BLACK        "\033[0;30m"        /**< @brief ANSI ESC for black foreground */
+#define COLOUR_DARK_GRAY    "\033[1;30m"        /**< @brief ANSI ESC for dark gray foreground */
+#define COLOUR_LIGHT_GRAY   "\033[0;37m"        /**< @brief ANSI ESC for light gray foreground */
+#define COLOUR_RED          "\033[0;31m"        /**< @brief ANSI ESC for red foreground */
+#define COLOUR_LIGHT_RED    "\033[1;31m"        /**< @brief ANSI ESC for light red foreground */
+#define COLOUR_GREEN        "\033[0;32m"        /**< @brief ANSI ESC for green foreground */
+#define COLOUR_LIGHT_GREEN  "\033[1;32m"        /**< @brief ANSI ESC for light green foreground */
+#define COLOUR_BROWN_ORANGE "\033[0;33m"        /**< @brief ANSI ESC for brown orange foreground */
+#define COLOUR_YELLOW       "\033[1;33m"        /**< @brief ANSI ESC for yellow foreground */
+#define COLOUR_BLUE         "\033[0;34m"        /**< @brief ANSI ESC for blue foreground */
+#define COLOUR_LIGHT_BLUE   "\033[1;34m"        /**< @brief ANSI ESC for light blue foreground */
+#define COLOUR_PURPLE       "\033[0;35m"        /**< @brief ANSI ESC for purple foreground */
+#define COLOUR_LIGHT_PURPLE "\033[1;35m"        /**< @brief ANSI ESC for light purple foreground */
+#define COLOUR_CYAN         "\033[0;36m"        /**< @brief ANSI ESC for cyan foreground */
+#define COLOUR_LIGHT_CYAN   "\033[1;36m"        /**< @brief ANSI ESC for light cyan foreground */
+#define COLOUR_WHITE        "\033[1;37m"        /**< @brief ANSI ESC for white foreground */
+#define COLOUR_RESET        "\033[0m"           /**< @brief ANSI ESC to reset the foreground colour */
 
 namespace
 {

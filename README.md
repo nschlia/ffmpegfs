@@ -11,10 +11,8 @@ FFmpegfs
 News
 ----
 
-* **Work on release 1.7 now in progress.**
-* Added Apple Prores target format *(please read the ["A few words on Prores"](#a-few-words-on-prores) section)*.
-* Added smart transcoding feature, see ["Smart Transcoding"](#smart-transcoding) *(incomplete, work in progress)*.
-* Added auto stream copy feature, see ["Auto Copy"](#auto-copy).
+* **Work on release 1.8 now in progress.**
+* Currently preparing Doxygen documentation.
 
 * See [NEWS](NEWS) for details.
 

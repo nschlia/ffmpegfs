@@ -1,6 +1,4 @@
 ﻿/*
- * FileTranscoder interface for FFmpegfs
- *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2013 K. Henriksson
  * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
@@ -20,6 +18,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief File transcoder interface implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2006-2008 David Collett @n
+ * Copyright (C) 2008-2013 K. Henriksson @n
+ * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #include "transcode.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_transcoder.h"
@@ -30,12 +40,15 @@
 
 #include <unistd.h>
 
+/**
+  * @brief THREAD_DATA struct to pass data from parent to child thread
+  */
 typedef struct THREAD_DATA
 {
-    pthread_mutex_t  m_mutex;
-    pthread_cond_t   m_cond;
-    bool             m_initialised;
-    void *           m_arg;
+    pthread_mutex_t  m_mutex;                   /**< @brief Signal mutex when thread is running */
+    pthread_cond_t   m_cond;                    /**< @brief Signal mutex when thread is running  */
+    bool             m_initialised;             /**< @brief True when this object is completely initialised */
+    void *           m_arg;                     /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
 static Cache *cache;
@@ -378,6 +391,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     throw false;
                 }
 
+                /** @bug Perils of the sun: If started in detached state, threads cannot be joined. Not starting in detached state creates a tiny little memory leak. */
                 //ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
                 //if (ret != 0)
                 //{
@@ -386,7 +400,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //  throw false;
                 //}
 
-                THREAD_DATA* thread_data = static_cast<THREAD_DATA*>(malloc(sizeof(THREAD_DATA)));  // TODO: replace with new/delete
+                THREAD_DATA* thread_data = static_cast<THREAD_DATA*>(malloc(sizeof(THREAD_DATA)));  /** @todo Replace malloc/free with new/delete */
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;

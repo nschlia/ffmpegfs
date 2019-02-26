@@ -1,14 +1,4 @@
 /*
- * Cache maintenance for FFmpegfs
- *
- * Creates a POSIX timer that starts the cache maintenance in preset
- * intervals. To ensure that only one instance of FFmpegfs cleans up
- * the cache a shared memory area and a named semaphore is also created.
- *
- * The first FFmpegfs process acts as master, all subsequently started
- * instances will be clients. If the master process goes away one of
- * the clients will automatically take over as master.
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +16,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief #Cache maintenance implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #include "cache_maintenance.h"
 #include "ffmpegfs.h"
 #include "ffmpeg_utils.h"
@@ -36,10 +36,10 @@
 #include <sys/shm.h>        /* shmat(), IPC_RMID        */
 #include <semaphore.h>      /* sem_open(), sem_destroy(), sem_wait().. */
 
-#define CLOCKID         CLOCK_REALTIME
-#define SIGMAINT        SIGRTMIN
+#define CLOCKID         CLOCK_REALTIME          /**< @brief Use real time clock here. */
+#define SIGMAINT        SIGRTMIN                /**< @brief Map maintenance signal. */
 
-#define SEM_OPEN_FILE   "/" PACKAGE_NAME "_04806785-b5fb-4615-ba56-b30a2946e80b"
+#define SEM_OPEN_FILE   "/" PACKAGE_NAME "_04806785-b5fb-4615-ba56-b30a2946e80b"    /**< @brief Shared semaphore name, should be unique system wide. */
 
 static sigset_t mask;
 static timer_t timerid;

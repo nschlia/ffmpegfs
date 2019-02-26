@@ -1,8 +1,4 @@
 /*
- * FFmpeg decoder class header for FFmpegfs
- *
- * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,6 +12,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief FFmpeg transcoder
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #ifndef FFMPEG_TRANSCODER_H
@@ -43,33 +49,40 @@ struct AVFilterContext;
 struct AVFilterGraph;
 struct AVAudioFifo;
 
+/**
+ * @brief The #FFmpeg_Transcoder class
+ */
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
 public:
-#define MAX_PRORES_FRAMERATE    2
+#define MAX_PRORES_FRAMERATE    2                                       /**< @brief Number of selectable fram rates */
 
-    // Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
-    typedef struct PRORES_BITRATE
+    /** @brief Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
+      *
+      */
+    typedef struct PRORES_BITRATE                                       /**< @brief List of ProRes bit rates */
     {
-        int                     m_width;
-        int                     m_height;
-        struct PRORES_FRAMERATE
+        int                     m_width;                                /**< @brief Resolution: width */
+        int                     m_height;                               /**< @brief Resolution: height */
+        struct PRORES_FRAMERATE                                         /**< @brief List of ProRes frame rates */
         {
-            int                 m_framerate;
-            int                 m_interleaved;
-        }                       m_framerate[MAX_PRORES_FRAMERATE];
-        // Bitrates in MB/s
-        // 0: ProRes 422 Proxy
-        // 1: ProRes 422 LT
-        // 2: ProRes 422 standard
-        // 3: ProRes 422 HQ
-        // 4: ProRes 4444 (no alpha)
-        // 5: ProRes 4444 XQ (no alpha)
-        int                     m_bitrate[6];
-    } PRORES_BITRATE, *LPPRORES_BITRATE;
-    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;
+            int                 m_framerate;                            /**< @brief Frame rate */
+            int                 m_interleaved;                          /**< @brief Format is interleaved */
+        }                       m_framerate[MAX_PRORES_FRAMERATE];      /**< @brief Array of frame rates */
+        /**
+         * Bitrates in MB/s
+         * 0: ProRes 422 Proxy
+         * 1: ProRes 422 LT
+         * 2: ProRes 422 standard
+         * 3: ProRes 422 HQ
+         * 4: ProRes 4444 (no alpha)
+         * 5: ProRes 4444 XQ (no alpha)
+         */
+        int                     m_bitrate[6];                           /**< @brief Bitrate of this format */
+    } PRORES_BITRATE, *LPPRORES_BITRATE;                                /**< @brief Pointer version */
+    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;                   /**< @brief Pointer to const version */
 
-    struct STREAMREF
+    struct STREAMREF                                    /**< @brief In/output stream reference data */
     {
         STREAMREF() :
             m_codec_ctx(nullptr),
@@ -77,13 +90,12 @@ public:
             m_stream_idx(INVALID_STREAM)
         {}
 
-        AVCodecContext *        m_codec_ctx;
-        AVStream *              m_stream;
-        int                     m_stream_idx;
+        AVCodecContext *        m_codec_ctx;            /**< @brief AVCodecContext for this encoder stream */
+        AVStream *              m_stream;               /**< @brief AVStream for this encoder stream */
+        int                     m_stream_idx;           /**< @brief Stream index in AVFormatContext */
     };
 
-    // Input file
-    struct INPUTFILE
+    struct INPUTFILE                                    /**< @brief Input file definition */
     {
         INPUTFILE() :
             m_filetype(FILETYPE_UNKNOWN),
@@ -91,19 +103,19 @@ public:
             m_format_ctx(nullptr)
         {}
 
-        FILETYPE                m_filetype;
-        std::string             m_filename;
+        FILETYPE                m_filetype;             /**< @brief File type, MP3, MP4, OPUS etc. */
+        std::string             m_filename;             /**< @brief Output filename */
 
-        AVFormatContext *       m_format_ctx;
+        AVFormatContext *       m_format_ctx;           /**< @brief Output format context */
 
-        STREAMREF               m_audio;
-        STREAMREF               m_video;
+        STREAMREF               m_audio;                /**< @brief Audio stream information */
+        STREAMREF               m_video;                /**< @brief Video stream information */
 
-        std::vector<STREAMREF>  m_album_art;
+        std::vector<STREAMREF>  m_album_art;            /**< @brief Album art stream */
     };
 
     // Output file
-    struct OUTPUTFILE : public INPUTFILE
+    struct OUTPUTFILE : public INPUTFILE                /**< @brief Output file definition */
     {
         OUTPUTFILE() :
             m_audio_pts(0),
@@ -111,134 +123,490 @@ public:
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
-        int64_t                 m_audio_pts;            // Global timestamp for the audio frames
-        int64_t                 m_video_start_pts;      // Video start PTS
-        int64_t                 m_last_mux_dts;         // Last muxed DTS
+        int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames */
+        int64_t                 m_video_start_pts;      /**< @brief Video start PTS */
+        int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
 
-        ID3v1                   m_id3v1;                // mp3 only, can be referenced at any time
+        ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */
     };
 
 public:
+    /**
+     * Construct FFmpeg_Transcoder object
+     */
     FFmpeg_Transcoder();
-    // Free the FFmpeg en/decoder
-    // after the transcoding process has finished.
+    /**
+     * Destroy FFMPEG_Transcoder object
+     * Close and free all internal structures.
+     */
     virtual ~FFmpeg_Transcoder();
 
+    /**
+     * Check if input file is already open.
+     *
+     * @return true if open; false if closed
+     */
     bool                        is_open() const;
-    // Open the given FFmpeg file and prepare for decoding. After this function,
-    // the other methods can be used to process the file.
+    /**
+     * Open the given FFmpeg file and prepare for decoding. 
+     * Collect information for the file (duration, bitrate, etc.).
+     * After this function, the other methods can be used to process the file. 
+     *
+     * @param[in,out] virtualfile - Virtualfile object for desired file. May be a physical file, a DVD, Bluray or video CD
+     * @param[in,out] fio - Pass an already open fileio object. Normally the file is opened, but if this parameter is not nullptr the already existing object is used.
+     *
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
+    /**
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         open_output_file(Buffer* buffer);
+    /**
+     * Process a single frame of audio data. The encode_pcm_data() method
+     * of the Encoder will be used to process the resulting audio data, with the
+     * result going into the given Buffer.
+     * @param[out] status - On success, returns 0; if at EOF, returns 1; on error, returns -1
+     * @return On success returns 0; on error negative AVERROR. 1 if EOF reached
+     */
     int                         process_single_fr(int & status);
+    /**
+     * Encode any remaining PCM data to the given Buffer. This should be called
+     * after all input data has already been passed to encode_pcm_data().
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         encode_finish();
+    /**
+     * @brief Close transcoder, free all ressources.
+     */
     void                        close();
-
+    /**
+     * @brief Get last modification time of file.
+     * @return Modification time (seconds since epoch)
+     */
     time_t                      mtime() const;
+    /**
+     * @brief Try to predict the recoded file size. This may (better will surely) be inaccurate.
+     * @return Predicted file size in bytes.
+     */
     size_t                      predicted_filesize();
-
+    /**
+     * @brief Assemble an ID3v1 file tag
+     * @return Returns an ID3v1 file tag.
+     */
     const ID3v1 *               id3v1tag() const;
-
+    /**
+     * @brief Return source filename. Must be implemented in child class.
+     * @return Returns filename.
+     */
     virtual const char *        filename() const;
+    /**
+     * @brief Return destination filename. Must be implemented in child class.
+     * @return Returns filename.
+     */
     virtual const char *        destname() const;
-    
+    /**
+     * @brief Predict audio file size. This may (better will surely) be inaccurate.
+     * @param filesize - Predicted file size in bytes.
+     * @param codec_id - Target codec ID
+     * @param bit_rate - Target bit rate.
+     * @param duration - File duration.
+     * @param channels - Number of channels in target file.
+     * @param sample_rate - Sample rate of target file.
+     * @return On success, returns true; on failure, returns false.
+     */
     static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate);
+    /**
+     * @brief Predict video file size. This may (better will surely) be inaccurate.
+     * @param filesize - Predicted file size in bytes.
+     * @param codec_id - Target codec ID
+     * @param bit_rate - Target bit rate.
+     * @param duration - File duration.
+     * @param width - Target video width.
+     * @param height- Target video height.
+     * @param interleaved - 1 if target video is interleaved.
+     * @param framerate - Frame rate of target video.
+     * @return On success, returns true; on failure, returns false.
+     */
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
 
 protected:
+
+    /**
+     * FFmpeg handles cover arts like video streams.
+     * Try to find out if we have a video stream or a cover art.
+     * @return Return true if file contains a video stream.
+     */
     bool                        is_video() const;
+    /**
+     * @brief Prepare codec options.
+     * @param opt - Codec private data.
+     * @param profile_option - Selected profile option.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         update_codec(void *opt, LPCPROFILE_OPTION profile_option) const;
+    /**
+     * @brief Prepare codec options for a file type.
+     * @param opt - Codec private data.
+     * @param filetype - File type: MP3, MP4 etc.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         prepare_codec(void *opt, FILETYPE filetype) const;
+    /**
+     * @brief Add new stream to output file.
+     * @param codec_id - Codec for this stream.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         add_stream(AVCodecID codec_id);
+    /**
+     * @brief Add new stream copy to output file.
+     * @param codec_id - Codec for this stream.
+     * @param codec_type - Codec type: audio or video.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         add_stream_copy(AVCodecID codec_id, AVMediaType codec_type);
+    /**
+     * @brief Add a stream for an album art.
+     * @param input_codec_ctx - Input codec context.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         add_albumart_stream(const AVCodecContext *input_codec_ctx);
+    /**
+     * @brief Add album art to stream.
+     * @param output_stream - Output stream.
+     * @param pkt_in - Packet with album art.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
+    /**
+     * @brief Open an output file and the required encoder.
+     * Also set some basic encoder parameters.
+     * Some of these parameters are based on the input file's parameters.
+     */
     int                         open_output_filestreams(Buffer *buffer);
+    /**
+     * @brief copy_metadataBluray I/O class
+     *
+     * Process the metadata in the FFmpeg file. This should be called at the
+     * beginning, before reading audio data. The set_text_tag() and
+     * set_picture_tag() methods of the given Encoder will be used to set the
+     * metadata, with results going into the given Buffer. This function will also
+     * read the actual PCM stream parameters.
+     */
     void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
+    /**
+     * @brief Copy metadata from source to target
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         process_metadata();
+    /**
+     * @brief Copy all album arts from source to target.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         process_albumarts();
+    /**
+     * @brief Initialize the audio resampler based on the input and output codec settings.
+     * If the input and output sample formats differ, a conversion is required
+     * libswresample takes care of this, but requires initialization.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         init_resampler();
+    /**
+     * @brief Initialise a FIFO buffer for the audio samples to be encoded.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         init_fifo();
+    /**
+     * @brief Update format options
+     * @param dict - Dictionary to update.
+     * @param option - Profile option to set.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
-    int                         prepare_format(AVDictionary **dict,  FILETYPE filetype) const;
+    /**
+     * @brief Prepare format optimisations
+     * @param dict - Dictionary to update.
+     * @param filetype - File type: MP3, MP4 etc.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         prepare_format(AVDictionary **dict, FILETYPE filetype) const;
+    /**
+     * @brief Write the header of the output file container.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         write_output_file_header();
+    /**
+     * @brief Store packet in output stream.
+     * @param pkt - Packet to store.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         store_packet(AVPacket *pkt);
+    /**
+     * @brief Decode one audio frame
+     * @param pkt - Packet to decode.
+     * @param decoded - 1 if packet was decoded, 0 if it did not contain data.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         decode_audio_frame(AVPacket *pkt, int *decoded);
+    /**
+     * @brief Decode one video frame
+     * @param pkt - Packet to decode.
+     * @param decoded - 1 if packet was decoded, 0 if it did not contain data.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         decode_video_frame(AVPacket *pkt, int *decoded);
+    /**
+     * @brief Decode one frame.
+     * @param pkt - Packet to decode.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         decode_frame(AVPacket *pkt);
+    /**
+     * @brief Initialise a temporary storage for the specified number of audio samples.
+     * The conversion requires temporary storage due to the different format.
+     * The number of audio samples to be allocated is specified in frame_size.
+     * @param[out] converted_input_samples - Memory for input samples.
+     * @param frame_size - Size of one frame.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         init_converted_samples(uint8_t ***converted_input_samples, int frame_size);
+    /**
+     * @brief Convert the input audio samples into the output sample format.
+     * The conversion happens on a per-frame basis, the size of which is
+     * specified by frame_size.
+     * @param input_data - Input data.
+     * @param in_samples - Number of input samples.
+     * @param[out] converted_data - Converted data.
+     * @param[out] out_samples - Number of output samples
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples);
+    /**
+     * @brief Add converted input audio samples to the FIFO buffer for later processing.
+     * @param converted_input_samples - Samples to add.
+     * @param frame_size - Frame size
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size);
+    /**
+     * @brief Flush the remaining frames
+     * @param stream_index - Stream index to flush.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         flush_frames(int stream_index);
+    /**
+     * @brief Read frame from source file, decode and store in FIFO.
+     * @param finished - 1 if at EOF.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         read_decode_convert_and_store(int *finished);
+    /**
+     * @brief Initialise one input frame for writing to the output file.
+     * The frame will be exactly frame_size samples large.
+     * @param[out] frame - Newly initialised frame.
+     * @param frame_size - Size of new frame.
+     * @return On success returns 0; on error negative AVERROR.
+     */
     int                         init_audio_output_frame(AVFrame **frame, int frame_size);
+    /**
+     * @brief Allocate memory for one picture.
+     * @param pix_fmt - Pixel format
+     * @param width - Picture width
+     * @param height - Picture height
+     * @return On success returns new AVFrame or nullptr on error
+     */
     AVFrame *                   alloc_picture(AVPixelFormat pix_fmt, int width, int height);
+    /**
+     * @brief Produce audio dts/pts. This is required because the target codec usually has a different
+     * frame size than the source, so the number of packets will not match 1:1.
+     * @param pkt - Packet to add dts/pts to.
+     * @param pts - pts for next packet.
+     */
     void                        produce_audio_dts(AVPacket * pkt, int64_t *pts);
 #if LAVC_NEW_PACKET_INTERFACE
+    /**
+     * This does not quite work like avcodec_decode_audio4/avcodec_decode_video2.
+     * There is the following difference: if you got a frame, you must call
+     * it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
+     * (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
     int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
 #endif
+    /**
+     * @brief Encode one frame worth of audio to the output file.
+     * @param frame - Audio frame to encode
+     * @param data_present - 1 if frame contained data that could be encoded, 0 if not.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
     int                         encode_audio_frame(const AVFrame *frame, int *data_present);
+    /**
+     * @brief Encode one frame worth of video to the output file.
+     * @param frame - Video frame to encode
+     * @param data_present - 1 if frame contained data that could be encoded, 0 if not.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
+    /**
+     * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
+     * @param frame_size . Size of frame.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
     int                         load_encode_and_write(int frame_size);
+    /**
+     * @brief Write the trailer of the output file container.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
     int                         write_output_file_trailer();
-
+    /**
+     * @brief Custom read function for FFmpeg
+     *
+     * Read from virtual files, may be a physical file but also a DVD, VCD or Bluray chapter.
+     *
+     * @param opaque - Payload given to FFmpeg, basically the FileIO object
+     * @param data - Returned data read from file.
+     * @param size - Size of data buffer.
+     * @return On success returns bytes read. May be less than size or even 0. On error, returns a negative AVERROR value.
+     */
     static int                  input_read(void * opaque, unsigned char * data, int size);
+    /**
+     * @brief Custom write function for FFmpeg
+     * @param opaque - Payload given to FFmpeg, basically the FileIO object
+     * @param data - Data to be written
+     * @param size - Size of data block.
+     * @return On success returns bytes written. On error, returns a negative AVERROR value.
+     */
     static int                  output_write(void * opaque, unsigned char * data, int size);
+    /**
+     * @brief Custom seek function for FFmpeg
+     *
+     * Write to virtual files, currently only physical files.
+     *
+     * @param opaque - Payload given to FFmpeg, basically the FileIO object
+     * @param offset - Offset to seek to.
+     * @param whence - One of the regular seek() constants like SEEK_SET/SEEK_END. Additionally FFmpeg constants like AVSEEK_SIZE are supported.
+     * @return On successs returns 0. On error returns -1 and sets errno accordingly.
+     */
     static int64_t              seek(void * opaque, int64_t offset, int whence);
 
+    /**
+     * @brief Calculate the appropriate bitrate for a ProRes file given several parameters.
+     * @param width - Video width in pixels.
+     * @param height - Video height in pixels.
+     * @param framerate - Video frame rate.
+     * @param interleaved - If 1, video is interleaved; 0 if not.
+     * @param profile - Selected ProRes profile.
+     * @return Bitrate in bit/s.
+     */
     static BITRATE              get_prores_bitrate(int width, int height, const AVRational &framerate, int interleaved, int profile);
+    /**
+     * @brief Try to predict final file size.
+     */
     size_t                      calculate_predicted_filesize() const;
+    /**
+     * @brief Get the size of the output video based on user selection and apsect ratio.
+     * @param output_width - Output video width.
+     * @param output_height - Output video height.
+     * @return Returns true if video height/width was reduces; false if not.
+     */
     bool                        get_video_size(int *output_width, int *output_height) const;
+    /**
+     * @brief Calculate output sample rate based on user option.
+     * @param input_sample_rate - Sample rate from input file.
+     * @param max_sample_rate - Max. sample rate if set by user
+     * @param output_sample_rate - Selected output sample rate.
+     * @return Returns true if sample rate was changed; false if not.
+     */
     static bool                 get_output_sample_rate(int input_sample_rate, int max_sample_rate, int * output_sample_rate = nullptr);
+    /**
+     * @brief Calculate output bit rate based on user option.
+     * @param input_bit_rate - Bit rate from input file.
+     * @param max_bit_rate - Max. bit rate if set by user.
+     * @param output_bit_rate - Selected output bit rate.
+     * @return Returns true if bit rate was changed; false if not.
+     */
     static bool                 get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate = nullptr);
+    /**
+     * @brief Calculate aspect ratio for width/height and sample aspect ratio (sar).
+     * @param width - Video width in pixels.
+     * @param height - Video height in pixels.
+     * @param sar - Aspect ratio of input video.
+     * @param ar - Calulcated aspect ratio, if computeable.
+     * @return On success returns true; if false is returned ar may not be used.
+     */
     bool                        get_aspect_ratio(int width, int height, const AVRational & sar, AVRational * ar) const;
 
 #ifndef USING_LIBAV
+    /**
+     * @brief Initialise video filters
+     * @param pCodecContext - AVCodecContext object of output video.
+     * @param pStream - Output video stream.
+     * @return Returns 0 if OK, or negative AVERROR value.
+     */
     int                         init_filters(AVCodecContext *pCodecContext, const AVStream *pStream);
+    /**
+     * @brief Send video frame to the filters.
+     * @param srcframe - Input video frame.
+     * @param ret - 0 if OK, or negative AVERROR value.
+     * @return Pointer to video frame. May be a simple pointer copy of srcframe.
+     */
     AVFrame *                   send_filters(AVFrame *srcframe, int &ret);
+    /**
+     * @brief Free filter sinks.
+     */
     void                        free_filters();
 #endif // !USING_LIBAV
 
+    /**
+     * @brief Check if stream can be copied from input to output (AUTOCOPY option).
+     * @param stream - Input stream to check.
+     * @return Returns true if stream can be copied; false if not.
+     */
     bool                        can_copy_stream(const AVStream *stream) const;
 
+    /**
+     * @brief Close and free the resampler context.
+     * @return If an open context was closed, returns true; if nothing had been done returns false.
+     */
     bool                        close_resample();
 
 private:
-    FileIO *                    m_fileio;
-    bool                        m_close_fileio;
-    time_t                      m_mtime;
-    size_t                      m_predicted_size;         // Use this as the size instead of computing it.
-    bool                        m_is_video;
+    FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
+    bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
+    time_t                      m_mtime;                    /**< @brief Modified time of input file */
+    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it. */
+    bool                        m_is_video;                 /**< @brief true if input is a video file */
 
-    // Audio conversion and buffering    
-    AVSampleFormat              m_cur_sample_fmt;
-    int                         m_cur_sample_rate;
-    uint64_t                    m_cur_channel_layout;
+    // Audio conversion and buffering
+    AVSampleFormat              m_cur_sample_fmt;           /**< @brief Currently selected audio sample format */
+    int                         m_cur_sample_rate;          /**< @brief Currently selected audio sample rate */
+    uint64_t                    m_cur_channel_layout;       /**< @brief Currently selected audio channel layout */
 #if LAVR_DEPRECATE
-    SwrContext *                m_audio_resample_ctx;
+    SwrContext *                m_audio_resample_ctx;       /**< @brief SwResample context for audio resampling */
 #else
-    AVAudioResampleContext *    m_audio_resample_ctx;
+    AVAudioResampleContext *    m_audio_resample_ctx;       /**< @brief AVResample context for audio resampling */
 #endif
-    AVAudioFifo *               m_audio_fifo;
+    AVAudioFifo *               m_audio_fifo;               /**< @brief Audio sample FIFO */
 
     // Video conversion and buffering
-    SwsContext *                m_sws_ctx;
-    AVFilterContext *           m_buffer_sink_context;
-    AVFilterContext *           m_buffer_source_context;
-    AVFilterGraph *             m_filter_graph;
-    std::queue<AVFrame*>        m_video_fifo;
-    int64_t                     m_pts;
-    int64_t                     m_pos;
+    SwsContext *                m_sws_ctx;                  /**< @brief Context for video filtering */
+    AVFilterContext *           m_buffer_sink_context;      /**< @brief Video filter sink context */
+    AVFilterContext *           m_buffer_source_context;    /**< @brief Video filter source context */
+    AVFilterGraph *             m_filter_graph;             /**< @brief Video filter graph */
+    std::queue<AVFrame*>        m_video_fifo;               /**< @brief Video frame FIFO */
+    int64_t                     m_pts;                      /**< @brief Generated PTS */
+    int64_t                     m_pos;                      /**< @brief Generated position */
 
-    INPUTFILE                   m_in;
-    OUTPUTFILE                  m_out;
+    INPUTFILE                   m_in;                       /**< @brief Input file information */
+    OUTPUTFILE                  m_out;                      /**< @brief Output file information */
 
     // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
-    bool                        m_copy_audio;
-    bool                        m_copy_video;
+    bool                        m_copy_audio;               /**< @brief If true, copy audio stream from source to target (just remux, no recode). */
+    bool                        m_copy_video;               /**< @brief If true, copy video stream from source to target (just remux, no recode). */
 
-    FFmpegfs_Format *           m_current_format;
+    FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
 
-    static const PRORES_BITRATE m_prores_bitrate[];
+    static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };
 
 #endif // FFMPEG_TRANSCODER_H

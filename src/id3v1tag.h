@@ -1,8 +1,4 @@
 /*
- * ID3v1 tag structure
- *
- * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -18,26 +14,38 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief %ID3v1 tag structure
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #ifndef ID3V1TAG_H
 #define ID3V1TAG_H
 
 #pragma once
 
+/** @brief %ID3 version 1 tag
+ */
 struct ID3v1
 {
-    char m_tag[3];          // Contains "TAG"
-    char m_title[30];       // Title of sound track
-    char m_artist[30];      // Artist Name
-    char m_album[30];       // Album Name
-    char m_year[4];         // Year of publishing
-    char m_comment[28];     // Any user comments
-    char m_padding;         // Must be '\0'
-    char m_title_no;
-    char m_genre;           // Type of music
+    char m_tag[3];                      /**< @brief Contains "TAG" */
+    char m_title[30];                   /**< @brief Title of sound track */
+    char m_artist[30];                  /**< @brief Artist name */
+    char m_album[30];                   /**< @brief Album name */
+    char m_year[4];                     /**< @brief Year of publishing */
+    char m_comment[28];                 /**< @brief Any user comments */
+    char m_padding;                     /**< @brief Must be '\0' */
+    char m_title_no;                    /**< @brief Title number */
+    char m_genre;                       /**< @brief Type of music */
 };
 
-extern void init_id3v1(ID3v1 *id3v1);
+extern void init_id3v1(ID3v1 *id3v1);   /**< @brief Initialise ID3v1 tag */
 
-#define ID3V1_TAG_LENGTH sizeof(ID3v1)  // 128 bytes
+#define ID3V1_TAG_LENGTH sizeof(ID3v1)  /**< @brief Fixed 128 bytes */
 
 #endif // ID3V1TAG_H

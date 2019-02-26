@@ -16,6 +16,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief S/VCD VcdEntries class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2013-2019 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2017 by Oblivion Software/Norbert Schlia
+ */
+
 #include <string>
 
 #ifdef _WIN32
@@ -31,12 +42,21 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#define VCD_SECTOR_SIZE 2352                /**< Video CD sector size */
-#define VCD_SECTOR_OFFS 24                  /**< Video CD sector offset */
-#define VCD_SECTOR_DATA 2324                /**< Video CD data sector size */
+#define VCD_SECTOR_SIZE 2352                /**< @brief Video CD sector size */
+#define VCD_SECTOR_OFFS 24                  /**< @brief Video CD sector offset */
+#define VCD_SECTOR_DATA 2324                /**< @brief Video CD data sector size */
 
+/**
+  * Sync bytes for a Video CD sector.
+  */
 const char SYNC[12]              = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' };
+/**
+  * Sync bytes for a Video CD picture start.
+  */
 //static const char PICTURE_START_CODE[4] = { '\x00', '\x00', '\x01', '\x00' };
+/**
+  * Sync bytes for a Video CD video stream.
+  */
 //static const char VIDEO_STREAM_1[4]     = { '\x00', '\x00', '\x01', '\xE0' };
 
 VcdEntries::VcdEntries()

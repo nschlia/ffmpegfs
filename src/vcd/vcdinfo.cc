@@ -16,6 +16,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief S/VCD VcdInfo class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2013-2019 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2017 by Oblivion Software/Norbert Schlia
+ */
+
 #include <string>
 
 #ifdef _WIN32
@@ -30,46 +41,76 @@
 #include <string.h>
 #include <sys/stat.h>
 
+/**
+  * @brief VCDINFO structure of INFO.VCD/SVD file
+  */
 typedef struct VCDINFO
 {
 #pragma pack(1)
 
-    char    m_ID[8];                // 8 Byte: ID fuer die CD.
-    //      Die ID ist vom CD-Typ abhaengig: VIDEO_CD, SUPERVCD oder HQ-VCD. Sie ist immer 8 Byte lang.
-    char    m_type;                // 1 Byte: Type der CD.
-    //      1 fuer VCD 1.0, VCD 1.1, SVCD 1.0 und HQVCD
-    //      2 fuer VCD 2.0
-    char    m_profile_tag;         // 1 Byte: System Profile Tag.
-    //      0 fuer VCD 1.0, VCD 2.0, SVCD und HQVCD
-    //      1 fuer VCD 1.1
-    char    m_albumid[16];          // 16 Byte: Album ID
-    //      Bei der Album ID handelt es sich um den Namen des Albums.
-    short   m_numberof_cds;         // 2 Byte: Anzahl der CDs im Set
-    //      Gibt an, wieviele CDs zu dem Film/Set gehoeren.
-    short   m_cd_number;            // 2 Byte: Nummer der CD im Set
-    //      Gibt an, die wievielte CD des Films/Sets dies ist.
-    char    m_palflags[98];         // 98 Byte: PAL Flags
+    /**
+     * @brief 8 Byte: ID for this CD
+     *
+     * This ID is CD type dependant: VIDEO_CD, SUPERVCD or HQ-VCD. It is always 8 bytes long.
+     */
+    char    m_ID[8];
+    /**
+     * @brief 1 Byte: CD type
+     *
+     * 1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD
+     * 2 for VCD 2.0
+     */
+    char    m_type;
+    /**
+     * @brief 1 Byte: System profile tag
+     *
+     * 0 fuer VCD 1.0, VCD 2.0, SVCD und HQVCD
+     * 1 fuer VCD 1.1
+     */
+    char    m_profile_tag;
+    /**
+     * @brief 16 Byte: Album ID
+     *
+     * The album ID is the name of this album.
+     */
+    char    m_albumid[16];
+    /**
+     * @brief 2 Byte: Number of CDs in set
+     *
+     * Total number of CDs in this set.
+     */
+    short   m_numberof_cds;
+    /**
+     * @brief 2 Byte: Number of this CD
+     *
+     * Defines which number this CD is in this set.
+     */
+    short   m_cd_number;
+    /**
+     * @brief 98 Byte: PAL Flags
+     *
+     * The meaning of these flags is unknown to me.
+     */
+    char    m_palflags[98];
 
-    // Wie und welche Flags gesetzt werden, ist mir nicht bekannt. Die obigen Angaben sind aus einem C-Quelltext
+    // reserved1:
+    // restriction:
+    // special info:
+    // user data cc:
+    // start lid #2:
+    // start track #2:
+    // reserved2:
+    // psd size:
+    // first segment addr:
+    // offset multiplier:
+    // maximum lid:
+    // maximum segment number:
+    //      SEGMENT[1]: audio: video:
+    //      volume start time[0]:
+    //      ...
 
-    //        reserved1:
-    //        restriction:
-    //        special info:
-    //        user data cc:
-    //        start lid #2:
-    //        start track #2:
-    //        reserved2:
-    //    psd size:
-    //    first segment addr:
-    //    offset multiplier:
-    //    maximum lid:
-    //    maximum segment number:
-    //        SEGMENT[1]: audio: video:
-    //    volume start time[0]:
-    //    ...
-
-} VCDINFO, *LPVCDINFO;
-typedef const VCDINFO * LPCVCDINFO;
+} VCDINFO, *LPVCDINFO;                  /**< @brief Pointer version */
+typedef const VCDINFO * LPCVCDINFO;     /**< @brief Pointer to const version */
 
 VcdInfo::VcdInfo()
 {

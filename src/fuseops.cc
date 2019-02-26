@@ -1,8 +1,4 @@
 /*
- * FFMPEGFS: A read-only FUSE filesystem which transcodes audio formats
- * to MP3/MP4 on the fly when opened and read. See README
- * for more details.
- *
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2012 K. Henriksson
  * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
@@ -20,6 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief Fuse operations implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2006-2008 David Collett @n
+ * Copyright (C) 2008-2013 K. Henriksson @n
+ * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "transcode.h"
@@ -44,6 +52,9 @@
 #include <assert.h>
 #include <signal.h>
 
+/**
+ * @brief Map source file names to virtual file objects.
+ */
 typedef std::map<std::string, VIRTUALFILE> filenamemap;
 
 static void init_stat(struct stat *st, size_t size, bool directory);

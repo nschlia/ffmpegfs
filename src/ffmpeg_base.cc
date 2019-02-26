@@ -1,6 +1,4 @@
 /*
- * FFmpeg decoder base class source for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief FFmpeg_Base class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "ffmpeg_base.h"
@@ -56,7 +64,6 @@ FFmpeg_Base::~FFmpeg_Base()
 {
 }
 
-// Open codec context for desired media type
 int FFmpeg_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
 {
     int ret;
@@ -140,7 +147,6 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     return 0;
 }
 
-// Initialise one data packet for reading or writing.
 void FFmpeg_Base::init_packet(AVPacket *packet) const
 {
     av_init_packet(packet);
@@ -149,7 +155,6 @@ void FFmpeg_Base::init_packet(AVPacket *packet) const
     packet->size = 0;
 }
 
-// Initialise one frame for reading from the input file
 int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 {
     *frame = ::av_frame_alloc();

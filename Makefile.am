@@ -47,3 +47,39 @@ dist-hook:
 		-e 's|^ \(.*\)||' ) > ChangeLog.tmp \
 		&& mv -f ChangeLog.tmp $(top_distdir)/ChangeLog \
 		|| ( rm -f ChangeLog.tmp ; exit 1 )
+
+SRCS =  $(OBJS:.o=.c)
+
+#.PHONY: all distclean doxy
+
+# If makefile changes, maybe the list of sources has changed, so update doxygens list
+doxyfile.inc: Doxyfile Makefile
+	@echo "PROJECT_NAME           = \"FFmpegfs Fuse Multi Media Filesystem\"" > doxyfile.inc
+	@echo "OUTPUT_DIRECTORY       = doxygen" >> doxyfile.inc
+	@echo "PREDEFINED             = USE_LIBBLURAY" >> doxyfile.inc
+	@echo "PREDEFINED             += USE_LIBDVD" >> doxyfile.inc
+	@echo "PREDEFINED             += USE_LIBVCD" >> doxyfile.inc
+	@echo "INPUT                  = $(SUBDIRS)" >> doxyfile.inc
+	@echo "FILE_PATTERNS          = *.h *.cc $(SRCS)" >> doxyfile.inc
+	@echo "EXCLUDE                = src/config.h" >> doxyfile.inc
+	@echo "EXCLUDE                += src/ffmpegfshelp.h" >> doxyfile.inc
+	@echo "EXCLUDE                += doxyfile.inc" >> doxyfile.inc
+	@echo "INPUT                  += README.md" >> doxyfile.inc
+	@echo "INPUT	              += INSTALL.md" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += NEWS" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += TODO" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += COPYING.DOC" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc
+	@echo "RECURSIVE              = YES" >> doxyfile.inc
+	@echo "SOURCE_BROWSER         = YES" >> doxyfile.inc
+	@echo "DISTRIBUTE_GROUP_DOC   = YES" >> doxyfile.inc
+	@echo "REFERENCED_BY_RELATION = YES" >> doxyfile.inc
+	@echo "REFERENCES_RELATION    = YES" >> doxyfile.inc
+
+# Run doxygen, first render Github markdown documents, see https://developer.github.com/v3/markdown/#render-an-arbitrary-markdown-document
+doxy: doxyfile.inc $(SRCS)
+	@doxygen Doxyfile
+
+doxy-clean:
+	rm -Rf doxyfile.inc doxygen

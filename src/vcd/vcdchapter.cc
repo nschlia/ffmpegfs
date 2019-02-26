@@ -16,6 +16,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief S/VCD VcdChapter class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2013-2019 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2017 by Oblivion Software/Norbert Schlia
+ */
+
 #include "vcdchapter.h"
 #include "vcdutils.h"
 #include "ffmpeg_utils.h"

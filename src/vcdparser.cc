@@ -1,6 +1,4 @@
 /*
- * BLURAY parser for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,6 +17,16 @@
  */
 
 #ifdef USE_LIBVCD
+
+/**
+ * @file
+ * @brief Video/Super Video CD parser implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
 
 #include "ffmpegfs.h"
 #include "vcdparser.h"

@@ -1,8 +1,4 @@
 /*
- * dvdparser header for FFmpegfs
- *
- * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -18,6 +14,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/**
+ * @file
+ * @brief Bluray disk parser
+ *
+ * This is only available if built with -DUSE_LIBBLURAY parameter.
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2018-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #ifndef BLURAYPARSER_H
 #define BLURAYPARSER_H
 
@@ -27,7 +35,13 @@
 
 #include <string>
 
-// Returns -errno or number or titles on BLURAY
+/** @brief Get number of titles on Bluray
+ *  @param[in] path - path to check
+ *  @param[in, out] buf - the buffer passed to the readdir() operation.
+ *  @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ *	@note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
+ *  @return -errno or number or titles on Bluray
+ */
 int check_bluray(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 
 #endif // USE_LIBBLURAY

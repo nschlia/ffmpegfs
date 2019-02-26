@@ -2,7 +2,7 @@
 
 # Sets up package and initializes build system.
 AC_PREREQ(2.57)
-AC_INIT([FFMPEGFS], [1.7])
+AC_INIT([FFMPEGFS], [1.8])
 AC_CONFIG_SRCDIR([src/ffmpegfs.cc])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([config])
@@ -226,6 +226,18 @@ AM_CONDITIONAL([USE_LIBVCD], [test "$with_libvcd" != "no"])
 AM_COND_IF([USE_LIBVCD],
            [AC_MSG_RESULT([Internal S/VCD support enabled... yes])],
            [AC_MSG_RESULT([Internal S/VCD support enabled... no])])
+
+# Check for doxygen. If not installed, go on, but make doxy won't work
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+if test -z "$DOXYGEN";
+   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support. If you intend to use "make doxy" you should install it.])
+fi
+
+# Check for curl. If not installed, go on, but make doxy won't work
+AC_CHECK_PROGS([CURL], [curl])
+if test -z "$CURL";
+   then AC_MSG_WARN([curl not found - continuing without curl support. If you intend to use "make doxy" you should install it.])
+fi
 
 # Outputs resulting files.
 AC_CONFIG_FILES([Makefile

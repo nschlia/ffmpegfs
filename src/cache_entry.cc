@@ -1,6 +1,4 @@
 /*
- * Cache entry object class for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/**
+ * @file
+ * @brief Cache_Entry class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "cache_entry.h"
@@ -81,9 +89,9 @@ bool Cache_Entry::destroy()
 {
     //Logging::info(filename(), "TEST: Cache_Entry deleted.");
 
-    delete this;    // TODO: implement delete later mechanism
+    delete this;    /** @todo implement delete later mechanism */
 
-    return true;    // TODO: Return true when deleted, false if kept for delete later
+    return true;    /** @todo Return true when deleted, false if kept for delete later */
 }
 
 void Cache_Entry::clear(int fetch_file_time)

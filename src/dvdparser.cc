@@ -1,6 +1,4 @@
 /*
- * DVD parser for FFmpegfs
- *
  * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +16,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+
 #ifdef USE_LIBDVD
+
+/**
+ * @file
+ * @brief dvdparser class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
+ */
 
 #include "ffmpegfs.h"
 #include "dvdparser.h"
@@ -34,26 +43,43 @@ extern "C" {
 }
 //#pragma GCC diagnostic pop
 
-typedef struct AUDIO_SETTINGS
+typedef struct AUDIO_SETTINGS                       /**< @brief Audio stream settings */
 {
-    BITRATE m_audio_bit_rate;
-    int     m_channels;
-    int     m_sample_rate;
+    BITRATE m_audio_bit_rate;                       /**< @brief average bitrate of audio data (in bits per second) */
+    int     m_channels;                             /**< @brief number of channels (1: mono, 2: stereo, or more) */
+    int     m_sample_rate;                          /**< @brief number of audio samples per second */
 } AUDIO_SETTINGS;
-typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;
-typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;
+typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;    /**< @brief Pointer to const version */
+typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;           /**< @brief Pointer version */
 
-typedef struct VIDEO_SETTINGS
+typedef struct VIDEO_SETTINGS                       /**< @brief Video stream settings */
 {
-    BITRATE m_video_bit_rate;
-    int     m_width;
-    int     m_height;
+    BITRATE m_video_bit_rate;                       /**< @brief average bitrate of video data (in bits per second) */
+    int     m_width;                                /**< @brief video width in pixels */
+    int     m_height;                               /**< @brief video height in pixels */
 } VIDEO_SETTINGS;
-typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;
-typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;
+typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;    /**< @brief Pointer to const version */
+typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;           /**< @brief Pointer version */
 
+/**
+ * @brief Locate best matching audio stream.
+ * @param vtsi_mat - Video Title Set Information (VTSI)
+ * @param[out] best_channels - Number of channels in best stream.
+ * @param[out] best_sample_frequency - Sample frequency in best stream.
+ * @return Returns number of best stream (0..8).
+ */
 static int          dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
+/**
+ * @brief Get the frame rate of the DVD. Can be 25 fps (PAL) or  29.97 (NTCS).
+ * @param ptr - Pointer to frame_u element in dvd_time_t structure.
+ * @return On success returns AVRational with frame rate. On error returns frame rate { 0, 0 }.
+ */
 static AVRational   dvd_frame_rate(const uint8_t * ptr);
+/**
+ * @brief Convert a time in BCD format into AV_TIMEBASE fractional seconds.
+ * @param dvd_time - dvd_time_t object.
+ * @return Time in AV_TIMEBASE fractional seconds.
+ */
 static int64_t      BCDtime(const dvd_time_t * dvd_time);
 static bool         create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
 static int          parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
@@ -164,7 +190,7 @@ static AVRational dvd_frame_rate(const uint8_t * ptr)
     }
     default:
     {
-        framerate = { 0, 0};
+        framerate = { 0, 0 };
         break;
     }
     }
@@ -219,8 +245,8 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         end_cell    = cur_pgc->nr_of_cells;
     }
 
-    interleaved     = cur_pgc->cell_playback[start_cell].interleaved;
-    framerate       = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
+    interleaved         = cur_pgc->cell_playback[start_cell].interleaved;
+    framerate          = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
 
     bool has_angles = false;
 

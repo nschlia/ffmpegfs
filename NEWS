@@ -1,6 +1,11 @@
 FFmpegfs NEWS
 
-Important changes in 1.7 (2019-02-XX) YET UNRELEASED
+Important changes in 1.8 (2019-02-XX) YET UNRELEASED
+
+* Feature:
+* Bugfix:
+
+Important changes in 1.7 (2019-02-26)
 
 * Feature: Windows seems to access the files on Samba drives starting at the last 64K segment
            simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
@@ -14,7 +19,6 @@ Important changes in 1.7 (2019-02-XX) YET UNRELEASED
 	   piece.
 * Feature: Enhanced win_smb_fix=1 functionality to hopefully catch all Windows incidents.
 * Feature: Added min_dvd_chapter_duration parameter. DVD chapters shorter than this will be ignored. Defaults to 1 second.
-* Feature:
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
 * Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 
           on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
@@ -24,7 +28,8 @@ Important changes in 1.7 (2019-02-XX) YET UNRELEASED
 * Bugfix: Fixed terrible miscalculation of DVD play time. No one told me the values are BCD, not decimal...
 * Bugfix: Fixed conversion of DVD chapters consisting of more than one cell.
 * Bugfix: Fixed pts/dts generation
-* Fixed deprecation:
+* Known bug: Some Blurays are not recoded properly. The resulting files are much larger than expected, as a matter of
+             fact larger than the source (birates > 27 MBit). Happens only for some sources.
 
 Important changes in 1.6 (2019-01-11)
 

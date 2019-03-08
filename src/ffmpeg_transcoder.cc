@@ -274,11 +274,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //    }
 
     //  5000000 by default.
-    //    ret = av_dict_set_with_check(&opt, "probesize", "5000000", 0);          // <<== honored;
-    //    if (ret < 0)
-    //    {
-    //        return ret;
-    //    }
+    ret = av_dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     // using own I/O
     if (fio == nullptr)
@@ -1655,7 +1655,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-                ret = init_filters(m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
+                ret = init_deinterlace_filters(m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
                 if (ret < 0)
                 {
                     return ret;
@@ -2975,8 +2975,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                 {
                     int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
-//                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
-//                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
+                    //                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
+                    //                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
 
                     if (pkt.dts < max)
                     {
@@ -4000,14 +4000,14 @@ const char *FFmpeg_Transcoder::destname() const
 
 #ifndef USING_LIBAV
 // create
-int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStream *pStream)
+int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_context, const AVStream *output_stream)
 {
     const char * filters;
     char args[1024];
-    const AVFilter * pBufferSrc     = avfilter_get_by_name("buffer");
-    const AVFilter * pBufferSink    = avfilter_get_by_name("buffersink");
-    AVFilterInOut * pOutputs        = avfilter_inout_alloc();
-    AVFilterInOut * pInputs         = avfilter_inout_alloc();
+    const AVFilter * buffer_src     = avfilter_get_by_name("buffer");
+    const AVFilter * buffer_sink    = avfilter_get_by_name("buffersink");
+    AVFilterInOut * outputs         = avfilter_inout_alloc();
+    AVFilterInOut * inputs          = avfilter_inout_alloc();
     //enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_GRAY8, AV_PIX_FMT_NONE };
     int ret = 0;
 
@@ -4017,12 +4017,12 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
 
     try
     {
-        if (pStream == nullptr)
+        if (output_stream == nullptr)
         {
             throw static_cast<int>(AVERROR(EINVAL));
         }
 
-        if (!pStream->avg_frame_rate.den && !pStream->avg_frame_rate.num)
+        if (!output_stream->avg_frame_rate.den && !output_stream->avg_frame_rate.num)
         {
             // No framerate, so this video "stream" has only one picture
             throw static_cast<int>(AVERROR(EINVAL));
@@ -4030,24 +4030,24 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
 
         m_filter_graph = avfilter_graph_alloc();
 
-        AVBufferSinkParams bufferSinkParams;
-        enum AVPixelFormat aePixelFormat[3];
+        AVBufferSinkParams buffer_sink_params;
+        enum AVPixelFormat pixel_formats[3];
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(pStream->codecpar->format);
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(output_stream->codecpar->format);
 #else
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(pStream->codec->pix_fmt);
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(output_stream->codec->pix_fmt);
 #endif
 
-        if (pOutputs == nullptr || pInputs == nullptr || m_filter_graph == nullptr)
+        if (outputs == nullptr || inputs == nullptr || m_filter_graph == nullptr)
         {
             throw static_cast<int>(AVERROR(ENOMEM));
         }
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
         sprintf(args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-                pCodecContext->width, pCodecContext->height, pCodecContext->pix_fmt,
-                pStream->time_base.num, pStream->time_base.den,
-                pCodecContext->sample_aspect_ratio.num, FFMAX(pCodecContext->sample_aspect_ratio.den, 1));
+                output_codec_context->width, output_codec_context->height, output_codec_context->pix_fmt,
+                output_stream->time_base.num, output_stream->time_base.den,
+                output_codec_context->sample_aspect_ratio.num, FFMAX(output_codec_context->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)
@@ -4057,7 +4057,7 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
         //
         //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
-        ret = avfilter_graph_create_filter(&m_buffer_source_context, pBufferSrc, "in", args, nullptr, m_filter_graph);
+        ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args, nullptr, m_filter_graph);
         if (ret < 0)
         {
             Logging::error(destname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -4072,20 +4072,20 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
 
         if (pix_fmt == AV_PIX_FMT_NV12)
         {
-            aePixelFormat[0] = AV_PIX_FMT_NV12;
-            aePixelFormat[1] = AV_PIX_FMT_YUV420P;
+            pixel_formats[0] = AV_PIX_FMT_NV12;
+            pixel_formats[1] = AV_PIX_FMT_YUV420P;
         }
 
         else
         {
-            aePixelFormat[0] = pix_fmt;
-            aePixelFormat[1] = AV_PIX_FMT_NONE;
+            pixel_formats[0] = pix_fmt;
+            pixel_formats[1] = AV_PIX_FMT_NONE;
         }
 
-        aePixelFormat[2] = AV_PIX_FMT_NONE;
+        pixel_formats[2] = AV_PIX_FMT_NONE;
 
-        bufferSinkParams.pixel_fmts = aePixelFormat;
-        ret = avfilter_graph_create_filter(&m_buffer_sink_context, pBufferSink, "out", nullptr, &bufferSinkParams, m_filter_graph);
+        buffer_sink_params.pixel_fmts = pixel_formats;
+        ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, &buffer_sink_params, m_filter_graph);
 
         if (ret < 0)
         {
@@ -4108,14 +4108,14 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
         //}
 
         // Endpoints for the filter graph.
-        pOutputs->name          = av_strdup("in");
-        pOutputs->filter_ctx    = m_buffer_source_context;
-        pOutputs->pad_idx       = 0;
-        pOutputs->next          = nullptr;
-        pInputs->name           = av_strdup("out");
-        pInputs->filter_ctx     = m_buffer_sink_context;
-        pInputs->pad_idx        = 0;
-        pInputs->next           = nullptr;
+        outputs->name          = av_strdup("in");
+        outputs->filter_ctx    = m_buffer_source_context;
+        outputs->pad_idx       = 0;
+        outputs->next          = nullptr;
+        inputs->name           = av_strdup("out");
+        inputs->filter_ctx     = m_buffer_sink_context;
+        inputs->pad_idx        = 0;
+        inputs->next           = nullptr;
 
         // args "null"      passthrough (dummy) filter for video
         // args "anull"     passthrough (dummy) filter for audio
@@ -4128,7 +4128,7 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
         //filters = "kerndeint=thresh=10:map=0:order=0:sharp=1:twoway=1";
         //filters = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'";
 
-        ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &pInputs, &pOutputs, nullptr);
+        ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &inputs, &outputs, nullptr);
         if (ret < 0)
         {
             Logging::error(destname(), "avfilter_graph_parse_ptr failed (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -4149,13 +4149,13 @@ int FFmpeg_Transcoder::init_filters(AVCodecContext *pCodecContext, const AVStrea
         ret = _ret;
     }
 
-    if (pInputs != nullptr)
+    if (inputs != nullptr)
     {
-        avfilter_inout_free(&pInputs);
+        avfilter_inout_free(&inputs);
     }
-    if (pOutputs != nullptr)
+    if (outputs != nullptr)
     {
-        avfilter_inout_free(&pOutputs);
+        avfilter_inout_free(&outputs);
     }
 
     return ret;

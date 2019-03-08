@@ -231,7 +231,6 @@ public:
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
 
 protected:
-
     /**
      * FFmpeg handles cover arts like video streams.
      * Try to find out if we have a video stream or a cover art.
@@ -543,7 +542,7 @@ protected:
      * @param pStream - Output video stream.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
-    int                         init_filters(AVCodecContext *pCodecContext, const AVStream *pStream);
+    int                         init_deinterlace_filters(AVCodecContext *output_codec_context, const AVStream *stream);
     /**
      * @brief Send video frame to the filters.
      * @param srcframe - Input video frame.

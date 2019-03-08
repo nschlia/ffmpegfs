@@ -482,12 +482,12 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
 Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = nullptr;
-    cache_t::iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->m_desttype));
+    cache_t::iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->desttype()));
     if (p == m_cache.end())
     {
         // Logging::trace(sanitised_name, "Created new transcoder.");
         Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
-        cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->m_desttype);
+        cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->desttype());
     }
     else
     {

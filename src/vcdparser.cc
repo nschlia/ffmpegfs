@@ -52,13 +52,13 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
     {
         size = chapter1->get_size();
         duration = chapter1->get_duration();
-        sprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
+        sprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].format_name().c_str()); // can safely assume this a video
     }
     else
     {
         size = vcd.get_size();
         duration = vcd.get_duration();
-        sprintf(title_buf, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].real_desttype().c_str()); // can safely assume this a video
+        sprintf(title_buf, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].format_name().c_str()); // can safely assume this a video
     }
 
     std::string filename(title_buf);

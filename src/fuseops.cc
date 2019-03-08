@@ -185,10 +185,10 @@ static bool transcoded_name(std::string * filepath)
     
     if (format != nullptr)
     {
-        if ((params.current_format(*filepath)->m_audio_codec_id != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                (params.current_format(*filepath)->m_video_codec_id != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((params.current_format(*filepath)->audio_codec_id() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                (params.current_format(*filepath)->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
-            replace_ext(filepath, params.current_format(*filepath)->real_desttype());
+            replace_ext(filepath, params.current_format(*filepath)->format_name());
             return true;
         }
     }
@@ -284,9 +284,7 @@ static int selector(const struct dirent * de)
 {
     if (de->d_type & (DT_REG | DT_LNK))
     {
-        AVOutputFormat* oformat = av_guess_format(nullptr, de->d_name, nullptr);
-
-        return (oformat != nullptr);
+        return (av_guess_format(nullptr, de->d_name, nullptr) != nullptr);
     }
     else
     {
@@ -309,7 +307,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].real_desttype()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].real_desttype()) == 0)))
+        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].format_name()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].format_name()) == 0)))
         {
             std::string dir(*filepath);
             std::string filename(*filepath);

@@ -125,7 +125,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
 
 bool FFMPEGFS_PARAMS::smart_transcode(void) const
 {
-    return (params.m_format[1].m_filetype != FILETYPE_UNKNOWN && params.m_format[0].m_filetype != params.m_format[1].m_filetype);
+    return (params.m_format[1].filetype() != FILETYPE_UNKNOWN && params.m_format[0].filetype() != params.m_format[1].filetype());
 }
 
 int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
@@ -142,12 +142,12 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
         else
         {
             // Smart transcoding
-            if (params.m_format[0].m_video_codec_id != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
+            if (params.m_format[0].video_codec_id() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (params.m_format[1].m_audio_codec_id != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
+            else if (params.m_format[1].audio_codec_id() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;
@@ -697,7 +697,7 @@ int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegf
         if (results.size() > 0 && results.size() < 3)
         {
             // Check for valid destination type and obtain codecs and file type.
-            if (!get_format(results[0], video_format))
+            if (!video_format->init(results[0]))
             {
                 std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[0].c_str());
                 return 1;
@@ -705,7 +705,7 @@ int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegf
 
             if (results.size() == 2)
             {
-                if (!get_format(results[1], audio_format))
+                if (!audio_format->init(results[1]))
                 {
                     std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[1].c_str());
                     return 1;
@@ -1021,7 +1021,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 
 static int set_defaults(void)
 {
-    if (params.m_format[0].m_video_codec_id == AV_CODEC_ID_PRORES)
+    if (params.m_format[0].video_codec_id() == AV_CODEC_ID_PRORES)
     {
         if (params.m_level == LEVEL_NONE)
         {
@@ -1087,12 +1087,12 @@ static void print_params(void)
                    params.m_mountpath.c_str(),
                    params.smart_transcode() ? "yes" : "no",
                    get_autocopy_text(params.m_autocopy).c_str(),
-                   params.m_format[1].m_desttype.c_str(),
-            params.m_format[0].m_desttype.c_str(),
+                   params.m_format[1].desttype().c_str(),
+            params.m_format[0].desttype().c_str(),
             get_profile_text(params.m_profile).c_str(),
             get_level_text(params.m_level).c_str(),
-            get_codec_name(params.m_format[0].m_audio_codec_id, true),
-            get_codec_name(params.m_format[1].m_audio_codec_id, true),
+            get_codec_name(params.m_format[0].audio_codec_id(), true),
+            get_codec_name(params.m_format[1].audio_codec_id(), true),
             format_bitrate(params.m_audiobitrate).c_str(),
             format_samplerate(params.m_audiosamplerate).c_str(),
             format_number(params.m_videowidth).c_str(),
@@ -1103,7 +1103,7 @@ static void print_params(void)
             "not supported",
         #endif  // !USING_LIBAV
             params.m_noalbumarts ? "yes" : "no",
-            get_codec_name(params.m_format[0].m_video_codec_id, true),
+            get_codec_name(params.m_format[0].video_codec_id(), true),
             format_bitrate(params.m_videobitrate).c_str(),
             params.m_enablescript ? "yes" : "no",
             params.m_scriptfile.c_str(),

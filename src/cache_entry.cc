@@ -44,7 +44,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     get_destname(&m_cache_info.m_destfile, m_cache_info.m_origfile);
 
     m_cache_info.m_desttype[0] = '\0';
-    strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->m_desttype.c_str(), sizeof(m_cache_info.m_desttype) - 1);
+    strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->desttype().c_str(), sizeof(m_cache_info.m_desttype) - 1);
 
     m_buffer = new Buffer;
     m_buffer->open(virtualfile);

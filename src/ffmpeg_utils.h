@@ -172,7 +172,7 @@ typedef enum FILETYPE
     FILETYPE_MOV,
     FILETYPE_AIFF,
     FILETYPE_OPUS,
-    FILETYPE_PRORES
+    FILETYPE_PRORES,
 } FILETYPE;
 
 /**
@@ -237,13 +237,7 @@ public:
     /**
      * @brief Construct FFmpegfs_Format object
      */
-    FFmpegfs_Format()
-        : m_format_name("")
-        , m_filetype(FILETYPE_UNKNOWN)
-        , m_video_codec_id(AV_CODEC_ID_NONE)
-        , m_audio_codec_id(AV_CODEC_ID_NONE)
-    {}
-
+    FFmpegfs_Format();
     /**
      * @brief Construct FFmpegfs_Format object
      * @param format_name - Name of this format, e.g. "MP4 file"
@@ -251,24 +245,43 @@ public:
      * @param video_codec_id - AVCodec used for video encoding
      * @param audio_codec_id - AVCodec used for audio encoding
      */
-    FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
-        : m_format_name(format_name)
-        , m_filetype(filetype)
-        , m_video_codec_id(video_codec_id)
-        , m_audio_codec_id(audio_codec_id)
-    {}
+    FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id);
 
+    /**
+     * @brief Get codecs for the selected destination type.
+     * @param desttype - Destination type (MP4, WEBM etc.).
+     * @param video_format - FFmpegfs_Format info for destination type.
+     * @return Returns true if format was found; false if not.
+     */
+    bool                init(const std::string & desttype);
     /**
      * @brief Convert destination type to "real" type, i.e., the file extension to be used.
      * @note Currently "prores" is mapped to "mov".
      * @return Destination type
      */
-    const std::string & real_desttype() const
-    {
-        return m_format_name;               // Format name and extension are basically the same
-    }
+    const std::string & format_name() const;
+    /**
+     * @brief Get destination type
+     * @return Destination type
+     */
+    const std::string & desttype() const;
+    /**
+     * @brief Get selected filetype.
+     * @return Returns selected filetype.
+     */
+    FILETYPE            filetype() const;
+    /**
+     * @brief Get video codec_id
+     * @return Returns video codec_id
+     */
+    AVCodecID           video_codec_id() const;
+    /**
+     * @brief Get audio codec_id
+     * @return Returns audio codec_id
+     */
+    AVCodecID           audio_codec_id() const;
 
-public:
+protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
     std::string m_desttype;                 /**< @brief Destination type: mp4, mp3 or other */
     FILETYPE    m_filetype;                 /**< @brief File type, MP3, MP4, OPUS etc. */
@@ -489,13 +502,6 @@ FILETYPE            get_filetype(const std::string & desttype);
  * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
-/**
- * @brief Get codecs for the selected destination type.
- * @param desttype - Destination type (MP4, WEBM etc.).
- * @param video_format - FFmpegfs_Format info for destination type.
- * @return Returns true if format was found; false if not.
- */
-bool                get_format(const std::string & desttype, FFmpegfs_Format *video_format);
 
 /**
  * @brief Print info about an AVStream.

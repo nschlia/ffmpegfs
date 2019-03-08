@@ -80,6 +80,141 @@ static int is_device(const AVClass *avclass);
 #define AV_ERROR_MAX_STRING_SIZE 128                    /**< @brief Max. length of a FFmpeg error string */
 #endif // AV_ERROR_MAX_STRING_SIZE
 
+FFmpegfs_Format::FFmpegfs_Format()
+    : m_format_name("")
+    , m_filetype(FILETYPE_UNKNOWN)
+    , m_video_codec_id(AV_CODEC_ID_NONE)
+    , m_audio_codec_id(AV_CODEC_ID_NONE)
+{
+
+}
+
+FFmpegfs_Format::FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
+    : m_format_name(format_name)
+    , m_filetype(filetype)
+    , m_video_codec_id(video_codec_id)
+    , m_audio_codec_id(audio_codec_id)
+{
+
+}
+
+bool FFmpegfs_Format::init(const std::string & desttype)
+{
+    int found = true;
+
+    m_filetype              = get_filetype(desttype);
+
+    // Please note that m_format_name should be the extension for the target file. It is also used to select the FFmpeg container
+    // by passing it to avformat_alloc_output_context2().
+    switch (m_filetype)
+    {
+    case FILETYPE_MP3:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_MP3;
+        m_video_codec_id    = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        m_format_name       = "mp3";
+        break;
+    }
+    case FILETYPE_MP4:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_AAC;
+        m_video_codec_id    = AV_CODEC_ID_H264;
+        m_format_name       = "mp4";
+        break;
+    }
+    case FILETYPE_WAV:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
+        m_video_codec_id    = AV_CODEC_ID_NONE;
+        m_format_name       = "wav";
+        break;
+    }
+    case FILETYPE_OGG:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_VORBIS;
+        m_video_codec_id    = AV_CODEC_ID_THEORA;
+        m_format_name       = "ogg";
+        break;
+    }
+    case FILETYPE_WEBM:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_OPUS;
+        m_video_codec_id    = AV_CODEC_ID_VP9;
+        m_format_name       = "webm";
+        break;
+    }
+    case FILETYPE_MOV:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_AAC;
+        m_video_codec_id    = AV_CODEC_ID_H264;
+        m_format_name       = "mov";
+        break;
+    }
+    case FILETYPE_AIFF:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
+        m_video_codec_id    = AV_CODEC_ID_NONE;
+        m_format_name       = "aiff";
+        break;
+    }
+    case FILETYPE_OPUS:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_OPUS;
+        m_video_codec_id    = AV_CODEC_ID_NONE;
+        m_format_name       = "opus";
+        break;
+    }
+    case FILETYPE_PRORES:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
+        m_video_codec_id    = AV_CODEC_ID_PRORES;
+        m_format_name       = "mov";
+        break;
+    }
+    case FILETYPE_UNKNOWN:
+    {
+        found = false;
+        break;
+    }
+    }
+
+    return found;
+}
+
+const std::string & FFmpegfs_Format::desttype() const
+{
+    return m_desttype;
+}
+
+const std::string & FFmpegfs_Format::format_name() const
+{
+    return m_format_name;               // Format name and extension are basically the same
+}
+
+FILETYPE FFmpegfs_Format::filetype() const
+{
+    return m_filetype;
+}
+
+AVCodecID FFmpegfs_Format::video_codec_id() const
+{
+    return m_video_codec_id;
+}
+
+AVCodecID FFmpegfs_Format::audio_codec_id() const
+{
+    return m_audio_codec_id;
+}
+
 const std::string & append_sep(std::string * path)
 {
     if (path->back() != '/')
@@ -170,7 +305,7 @@ const std::string & get_destname(std::string *destfilepath, const std::string & 
 {
     *destfilepath = filepath;
     remove_path(destfilepath);
-    replace_ext(destfilepath, params.current_format(filepath)->real_desttype());
+    replace_ext(destfilepath, params.current_format(filepath)->format_name());
     *destfilepath = params.m_mountpath + *destfilepath;
 
     return *destfilepath;
@@ -464,44 +599,26 @@ int supports_albumart(FILETYPE filetype)
 
 FILETYPE get_filetype(const std::string & desttype)
 {
-    if (!strcasecmp(desttype, "mp3"))
+    const std::map<std::string, FILETYPE, comp> m_filetype_map =
     {
-        return FILETYPE_MP3;
+        { "mp3",    FILETYPE_MP3 },
+        { "mp4",    FILETYPE_MP4 },
+        { "wav",    FILETYPE_WAV },
+        { "ogg",    FILETYPE_OGG },
+        { "webm",   FILETYPE_WEBM },
+        { "mov",    FILETYPE_MOV },
+        { "aiff",   FILETYPE_AIFF },
+        { "opus",   FILETYPE_OPUS },
+        { "prores", FILETYPE_PRORES },
+    };
+
+    try
+    {
+        return (m_filetype_map.at(desttype));
     }
-    else if (!strcasecmp(desttype, "mp4"))
+    catch (const std::out_of_range& /*oor*/)
     {
-        return FILETYPE_MP4;
-    }
-    else if (!strcasecmp(desttype, "wav"))
-    {
-        return FILETYPE_WAV;
-    }
-    else if (!strcasecmp(desttype, "ogg"))
-    {
-        return FILETYPE_OGG;
-    }
-    else if (!strcasecmp(desttype, "webm"))
-    {
-        return FILETYPE_WEBM;
-    }
-    else if (!strcasecmp(desttype, "mov"))
-    {
-        return FILETYPE_MOV;
-    }
-    else if (!strcasecmp(desttype, "aiff"))
-    {
-        return FILETYPE_AIFF;
-    }
-    else if (!strcasecmp(desttype, "opus"))
-    {
-        return FILETYPE_OPUS;
-    }
-    else if (!strcasecmp(desttype, "prores"))
-    {
-        return FILETYPE_PRORES;
-    }
-    else
-    {
+        //std::cerr << "Out of Range error: " << oor.what() << std::endl;
         return FILETYPE_UNKNOWN;
     }
 }
@@ -517,105 +634,6 @@ FILETYPE get_filetype_from_list(const std::string & desttypelist)
         filetype = get_filetype(desttype[n]);
     }
     return filetype;
-}
-
-bool get_format(const std::string & desttype, FFmpegfs_Format *format)
-{
-    int found = true;
-
-    // Please note that m_format_name should be the extension for the target file. It is also used to select the FFmpeg container
-    // by passing it to avformat_alloc_output_context2().
-    switch (get_filetype(desttype))
-    {
-    case FILETYPE_MP3:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_MP3;
-        format->m_video_codec_id    = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
-        format->m_filetype          = FILETYPE_MP3;
-        format->m_format_name       = "mp3";
-        break;
-    }
-    case FILETYPE_MP4:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_AAC;
-        format->m_video_codec_id    = AV_CODEC_ID_H264;
-        format->m_filetype          = FILETYPE_MP4;
-        format->m_format_name       = "mp4";
-        break;
-    }
-    case FILETYPE_WAV:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codec_id    = AV_CODEC_ID_NONE;
-        format->m_filetype          = FILETYPE_WAV;
-        format->m_format_name       = "wav";
-        break;
-    }
-    case FILETYPE_OGG:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_VORBIS;
-        format->m_video_codec_id    = AV_CODEC_ID_THEORA;
-        format->m_filetype          = FILETYPE_OGG;
-        format->m_format_name       = "ogg";
-        break;
-    }
-    case FILETYPE_WEBM:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_OPUS;
-        format->m_video_codec_id    = AV_CODEC_ID_VP9;
-        format->m_filetype          = FILETYPE_WEBM;
-        format->m_format_name       = "webm";
-        break;
-    }
-    case FILETYPE_MOV:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_AAC;
-        format->m_video_codec_id    = AV_CODEC_ID_H264;
-        format->m_filetype          = FILETYPE_MOV;
-        format->m_format_name       = "mov";
-        break;
-    }
-    case FILETYPE_AIFF:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
-        format->m_video_codec_id    = AV_CODEC_ID_NONE;
-        format->m_filetype          = FILETYPE_AIFF;
-        format->m_format_name       = "aiff";
-        break;
-    }
-    case FILETYPE_OPUS:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_OPUS;
-        format->m_video_codec_id    = AV_CODEC_ID_NONE;
-        format->m_filetype          = FILETYPE_OPUS;
-        format->m_format_name       = "opus";
-        break;
-    }
-    case FILETYPE_PRORES:
-    {
-        format->m_desttype          = desttype;
-        format->m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
-        format->m_video_codec_id    = AV_CODEC_ID_PRORES;
-        format->m_filetype          = FILETYPE_PRORES;
-        format->m_format_name       = "mov";
-        break;
-    }
-    case FILETYPE_UNKNOWN:
-    {
-        found = false;
-        break;
-    }
-    }
-
-    return found;
 }
 
 #ifdef USING_LIBAV

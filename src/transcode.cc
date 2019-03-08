@@ -245,14 +245,14 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     size_t filesize = 0;
 
-    if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->m_audio_codec_id, audio_bit_rate, duration, channels, sample_rate))
+    if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec_id(), audio_bit_rate, duration, channels, sample_rate))
     {
-        Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->m_audio_codec_id, 0), current_format->m_desttype.c_str());
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype().c_str());
     }
 
-    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->m_video_codec_id, video_bit_rate, duration, width, height, interleaved, framerate))
+    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec_id(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->m_video_codec_id, 0), current_format->m_desttype.c_str());
+        Logging::warning(cache_entry->filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
@@ -491,7 +491,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
     {
         if (!cache_entry->m_cache_info.m_finished)
         {
-            switch (params.current_format(cache_entry->virtualfile())->m_filetype)
+            switch (params.current_format(cache_entry->virtualfile())->filetype())
             {
             case FILETYPE_MP3:
             {
@@ -646,7 +646,7 @@ static void *decoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->m_desttype.c_str(), format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
+        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->desttype().c_str(), format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         if (transcoder == nullptr)
         {

@@ -66,7 +66,7 @@ size_t Buffer::bufsize() const
 int Buffer::openX(const std::string & filename)
 {
     m_filename = filename;
-    make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->m_desttype);
+    make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->desttype());
     return 0;
 }
 

@@ -503,7 +503,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr &&
-            supports_albumart(m_in.m_filetype) && supports_albumart(get_filetype(m_current_format->m_desttype)))
+            supports_albumart(m_in.m_filetype) && supports_albumart(get_filetype(m_current_format->desttype())))
     {
         Logging::trace(filename(), "Processing album arts.");
 
@@ -566,7 +566,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
     else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
     {
         // Output codec must strictly match
-        if (CODECPAR(stream)->codec_id != m_current_format->m_audio_codec_id)
+        if (CODECPAR(stream)->codec_id != m_current_format->audio_codec_id())
         {
             // Different codecs - no auto copy
             return false;
@@ -1618,16 +1618,16 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     int             ret = 0;
 
-    m_out.m_filetype = m_current_format->m_filetype;
+    m_out.m_filetype = m_current_format->filetype();
+
+    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
 
     // Check if we can copy audio or video.
     m_copy_audio = can_copy_stream(m_in.m_audio.m_stream);
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
-    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->m_desttype.c_str());
-
     // Create a new format context for the output container format.
-    avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->m_format_name.c_str(), nullptr);
+    avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
     if (m_out.m_format_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate output format context.");
@@ -1641,11 +1641,11 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     //video_codec_id = m_out.m_format_ctx->oformat->video_codec;
 
-    if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->m_video_codec_id != AV_CODEC_ID_NONE)
+    if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
     {
         if (!m_copy_video)
         {
-            ret = add_stream(m_current_format->m_video_codec_id);
+            ret = add_stream(m_current_format->video_codec_id());
             if (ret < 0)
             {
                 return ret;
@@ -1668,7 +1668,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             Logging::info(filename(), "Copying video stream.");
 
-            ret = add_stream_copy(m_current_format->m_video_codec_id, AVMEDIA_TYPE_VIDEO);
+            ret = add_stream_copy(m_current_format->video_codec_id(), AVMEDIA_TYPE_VIDEO);
             if (ret < 0)
             {
                 return ret;
@@ -1676,13 +1676,11 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    //m_current_format->m_audio_codec_id = m_out.m_format_ctx->oformat->audio_codec;
-
-    if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->m_audio_codec_id != AV_CODEC_ID_NONE)
+    if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->audio_codec_id() != AV_CODEC_ID_NONE)
     {
         if (!m_copy_audio)
         {
-            ret = add_stream(m_current_format->m_audio_codec_id);
+            ret = add_stream(m_current_format->audio_codec_id());
             if (ret < 0)
             {
                 return ret;
@@ -1692,7 +1690,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             Logging::info(filename(), "Copying audio stream.");
 
-            ret = add_stream_copy(m_current_format->m_audio_codec_id, AVMEDIA_TYPE_AUDIO);
+            ret = add_stream_copy(m_current_format->audio_codec_id(), AVMEDIA_TYPE_AUDIO);
             if (ret < 0)
             {
                 return ret;
@@ -1720,9 +1718,9 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 buf_size,
                 1,
                 static_cast<void *>(buffer),
-                nullptr,        // read
+                nullptr,        // read not required
                 output_write,   // write
-                (m_current_format->m_audio_codec_id != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
+                (m_current_format->audio_codec_id() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
     // Some formats require the time stamps to start at 0, so if there is a difference between
     // the streams we need to drop audio or video until we are in sync.
@@ -2301,13 +2299,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = m_pts;
             }
 
-            // Rescale to our time base, but only of nessessary
-            if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
-            {
-                frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-            }
-
-            frame->quality = m_out.m_video.m_codec_ctx->global_quality;
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(send_filters(frame, ret));
@@ -3607,9 +3598,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     {
         int channels = m_in.m_audio.m_codec_ctx->channels;
 
-        if (!audio_size(&filesize, m_current_format->m_audio_codec_id, input_audio_bit_rate, duration, channels, input_sample_rate))
+        if (!audio_size(&filesize, m_current_format->audio_codec_id(), input_audio_bit_rate, duration, channels, input_sample_rate))
         {
-            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->m_audio_codec_id, 0), m_current_format->m_desttype.c_str());
+            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec_id(), 0), m_current_format->desttype().c_str());
         }
     }
 
@@ -3629,9 +3620,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 #else
             AVRational framerate = m_in.m_video.m_stream->codec->framerate;
 #endif
-            if (!video_size(&filesize, m_current_format->m_video_codec_id, input_video_bit_rate, duration, width, height, interleaved, framerate))
+            if (!video_size(&filesize, m_current_format->video_codec_id(), input_video_bit_rate, duration, width, height, interleaved, framerate))
             {
-                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->m_video_codec_id, 0), m_current_format->m_desttype.c_str());
+                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
             }
         }
         // else      // TODO #2260: Add picture size

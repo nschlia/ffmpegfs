@@ -318,7 +318,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
                 title_idx + 1,
                 replace_all(format_duration(duration), ":", "-").c_str(),
                 is_main_title ? "+" : "",
-                params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+                params.m_format[0].format_name().c_str()); // can safely assume this is a video format
     }
     else
     {
@@ -335,7 +335,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
                 chapter_idx + 1,
                 replace_all(format_duration(duration), ":", "-").c_str(),
                 is_main_title ? "+" : "",
-                params.m_format[0].real_desttype().c_str()); // can safely assume this is a video format
+                params.m_format[0].format_name().c_str()); // can safely assume this is a video format
 
     }
 

@@ -138,29 +138,29 @@ bool Logging::GetFail() const
 
 const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
 {
-    {ERROR,     LOG_ERR},
-    {WARNING,   LOG_WARNING},
-    {INFO,      LOG_INFO},
-    {DEBUG,     LOG_DEBUG},
-    {TRACE,     LOG_DEBUG},
+    { ERROR,     LOG_ERR },
+    { WARNING,   LOG_WARNING },
+    { INFO,      LOG_INFO },
+    { DEBUG,     LOG_DEBUG },
+    { TRACE,     LOG_DEBUG },
 };
 
 const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
 {
-    {ERROR,     "ERROR  "},
-    {WARNING,   "WARNING"},
-    {INFO,      "INFO   "},
-    {DEBUG,     "DEBUG  "},
-    {TRACE,     "TRACE  "},
+    { ERROR,     "ERROR  " },
+    { WARNING,   "WARNING" },
+    { INFO,      "INFO   " },
+    { DEBUG,     "DEBUG  " },
+    { TRACE,     "TRACE  " },
 };
 
 const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map =
 {
-    {ERROR,     COLOUR_RED},
-    {WARNING,   COLOUR_YELLOW},
-    {INFO,      COLOUR_WHITE},
-    {DEBUG,     COLOUR_GREEN},
-    {TRACE,     COLOUR_BLUE},
+    { ERROR,     COLOUR_RED },
+    { WARNING,   COLOUR_YELLOW },
+    { INFO,      COLOUR_WHITE },
+    { DEBUG,     COLOUR_GREEN },
+    { TRACE,     COLOUR_BLUE },
 };
 
 Logging::Logger Log(Logging::level loglevel, const std::string & filename)

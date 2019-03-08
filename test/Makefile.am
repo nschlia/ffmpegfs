@@ -10,7 +10,7 @@ TESTS += test_audio_webm test_filenames_webm test_filesize_webm test_tags_webm
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 
 EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize
-EXTRA_DIST += $(shell ls -dr tags/)
+EXTRA_DIST += $(wildcard tags/*)
 # NOT IN RELEASE 1.0! Add later: test_picture 
 
 CLEANFILES = $(patsubst %,%.builtin.log,$(TESTS))

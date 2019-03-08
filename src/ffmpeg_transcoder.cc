@@ -160,9 +160,11 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_audio_resample_ctx(nullptr)
     , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
+    #ifndef USING_LIBAV
     , m_buffer_sink_context(nullptr)
     , m_buffer_source_context(nullptr)
     , m_filter_graph(nullptr)
+    #endif
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
     , m_copy_audio(false)

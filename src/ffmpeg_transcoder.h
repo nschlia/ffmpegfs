@@ -590,9 +590,11 @@ private:
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                  /**< @brief Context for video filtering */
+#ifndef USING_LIBAV
     AVFilterContext *           m_buffer_sink_context;      /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;    /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;             /**< @brief Video filter graph */
+#endif
     std::queue<AVFrame*>        m_video_fifo;               /**< @brief Video frame FIFO */
     int64_t                     m_pts;                      /**< @brief Generated PTS */
     int64_t                     m_pos;                      /**< @brief Generated position */

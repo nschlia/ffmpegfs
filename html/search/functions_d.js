@@ -4,7 +4,6 @@ var searchData=
   ['read_5fcount',['read_count',['../classCache__Entry.html#aa85a7c229617d801fd5086b4defb7aa6',1,'Cache_Entry']]],
   ['read_5fdecode_5fconvert_5fand_5fstore',['read_decode_convert_and_store',['../classFFmpeg__Transcoder.html#a6afa2189ecd068bcbaa1054835db27c4',1,'FFmpeg_Transcoder']]],
   ['read_5finfo',['read_info',['../classCache.html#aa4d8e6534895ca7691f19d4bcf8e3cf6',1,'Cache::read_info()'],['../classCache__Entry.html#af0fe994643b46dd551e2f93323fdf14e',1,'Cache_Entry::read_info()']]],
-  ['real_5fdesttype',['real_desttype',['../classFFmpegfs__Format.html#a650f0eac053a47aedccda0df306accfb',1,'FFmpegfs_Format']]],
   ['ref_5fcount',['ref_count',['../classCache__Entry.html#a50ae5e8cf89329bd1e37ca42abc38564',1,'Cache_Entry']]],
   ['release',['release',['../classBuffer.html#a1f397a10d7394421738814aa0102d181',1,'Buffer']]],
   ['remove_5fcachefile',['remove_cachefile',['../classBuffer.html#a8825bd1ed9f973556e9e156e01a54a56',1,'Buffer::remove_cachefile()'],['../classCache.html#ada47915e682fb328570f3abfffb57e7f',1,'Cache::remove_cachefile()']]],

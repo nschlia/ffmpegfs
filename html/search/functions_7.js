@@ -2,7 +2,7 @@ var searchData=
 [
   ['id3v1tag',['id3v1tag',['../classFFmpeg__Transcoder.html#a84df98a3cadf75bd48b2bdc6afbd4846',1,'FFmpeg_Transcoder']]],
   ['info',['info',['../classLogging.html#a61245156bad50e71fee169c78247172e',1,'Logging::info(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a9fa4045909c4557c32154457df3257b8',1,'Logging::info(const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)']]],
-  ['init',['init',['../classBuffer.html#a7666cfb24110cf46c289cb860f79b197',1,'Buffer']]],
+  ['init',['init',['../classBuffer.html#a7666cfb24110cf46c289cb860f79b197',1,'Buffer::init()'],['../classFFmpegfs__Format.html#a4c1701c8bda95271b3bdf167aae24e63',1,'FFmpegfs_Format::init()']]],
   ['init_5faudio_5foutput_5fframe',['init_audio_output_frame',['../classFFmpeg__Transcoder.html#ae459f2a8794c63f7ff38fd9c80fcfb45',1,'FFmpeg_Transcoder']]],
   ['init_5fconverted_5fsamples',['init_converted_samples',['../classFFmpeg__Transcoder.html#a509e0e8082e8f270388ebb6abad29907',1,'FFmpeg_Transcoder']]],
   ['init_5ffifo',['init_fifo',['../classFFmpeg__Transcoder.html#a3b4c7914aec45cde0303a6ecf2b03357',1,'FFmpeg_Transcoder']]],

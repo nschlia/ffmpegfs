@@ -10,6 +10,7 @@ var searchData=
   ['delete_5finfo',['delete_info',['../classCache.html#a1107ff969324acfe917c50778b8c2b02',1,'Cache::delete_info()'],['../classCache__Entry.html#ae72fc5ad3b253637356fab3245213184',1,'Cache_Entry::delete_info()']]],
   ['destname',['destname',['../classCache__Entry.html#a827c48d20c17655b8ee9366fa4586e7a',1,'Cache_Entry::destname()'],['../classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf',1,'FFmpeg_Base::destname()'],['../classFFmpeg__Transcoder.html#af7b3727646f64c05617759abd08a7075',1,'FFmpeg_Transcoder::destname()']]],
   ['destroy',['destroy',['../classCache__Entry.html#a6b32137876a33aba00724cd594dd1fad',1,'Cache_Entry']]],
+  ['desttype',['desttype',['../classFFmpegfs__Format.html#a00e5c92b14e8554d62c816a754df5eeb',1,'FFmpegfs_Format']]],
   ['diskio',['DiskIO',['../classDiskIO.html',1,'']]],
   ['diskio_2ecc',['diskio.cc',['../diskio_8cc.html',1,'']]],
   ['diskio_2eh',['diskio.h',['../diskio_8h.html',1,'']]],

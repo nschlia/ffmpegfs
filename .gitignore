@@ -30,3 +30,11 @@ ffmpegfs.1.text
 ffmpegfs.1.hhc
 ffmpegfs.1.hhp
 ffmpegfs.1.htmlhelp/
+debian
+deb HOWTO.txt
+doxyfile.inc
+doxygen.log
+doxygen/
+gh-pages/
+mkdeb
+mkdoxy

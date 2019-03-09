@@ -420,3 +420,7 @@ uint64_t VcdEntries::get_size() const
     return (m_chapters[chapters - 1].get_end_pos() - m_chapters[0].get_start_pos());
 }
 
+const std::string & VcdEntries::get_disk_path() const
+{
+    return m_disk_path;
+}

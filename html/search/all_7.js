@@ -10,6 +10,7 @@ var searchData=
   ['get_5fdestname',['get_destname',['../ffmpeg__utils_8cc.html#a9bd2354f910caaf96d9cd533a8a0ff6a',1,'get_destname(std::string *destfilepath, const std::string &amp;filepath):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a9bd2354f910caaf96d9cd533a8a0ff6a',1,'get_destname(std::string *destfilepath, const std::string &amp;filepath):&#160;ffmpeg_utils.cc']]],
   ['get_5fdirectory',['get_directory',['../namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13',1,'VCDUTILS']]],
   ['get_5fdisk_5ffree',['get_disk_free',['../ffmpeg__utils_8cc.html#a7ec1cf4d66baa6146d5a408adc6424d8',1,'get_disk_free(std::string &amp;path):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a7ec1cf4d66baa6146d5a408adc6424d8',1,'get_disk_free(std::string &amp;path):&#160;ffmpeg_utils.cc']]],
+  ['get_5fdisk_5fpath',['get_disk_path',['../classVcdEntries.html#a6f971f38a16b6860d3b49fc70acfc9e9',1,'VcdEntries']]],
   ['get_5fduration',['get_duration',['../classVcdChapter.html#af3c7d3a38de583c61bb36039c06424da',1,'VcdChapter::get_duration()'],['../classVcdEntries.html#ae4153efec4880b30dfd57eeb558d0d13',1,'VcdEntries::get_duration()']]],
   ['get_5fend_5fpos',['get_end_pos',['../classVcdChapter.html#aa3c5cfe0980a4a07b66bc61391ea87c2',1,'VcdChapter']]],
   ['get_5ffile_5fdate',['get_file_date',['../classVcdEntries.html#a63e87c775c9e38b0989129203ed93fbd',1,'VcdEntries::get_file_date()'],['../classVcdInfo.html#acfc1859847cf48c881c5e923e0cd240d',1,'VcdInfo::get_file_date()']]],

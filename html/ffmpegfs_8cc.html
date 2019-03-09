@@ -118,10 +118,10 @@ typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a9f5
 typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22">PROFILE</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a4f6570ac7d0db3dc140741b7a2d575ca">PROFILE_MAP</a></td></tr>
 <tr class="memdesc:a4f6570ac7d0db3dc140741b7a2d575ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to PROFILE enum. <br /></td></tr>
 <tr class="separator:a4f6570ac7d0db3dc140741b7a2d575ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fe3d1e4f6d4f275b3fc68fa830cf379"><td class="memItemLeft" align="right" valign="top"><a id="a0fe3d1e4f6d4f275b3fc68fa830cf379"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a526fd8626902411d5c8bf3b6ca134a12">LEVEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a0fe3d1e4f6d4f275b3fc68fa830cf379">LEVEL_MAP</a></td></tr>
-<tr class="memdesc:a0fe3d1e4f6d4f275b3fc68fa830cf379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to LEVEL enum. <br /></td></tr>
-<tr class="separator:a0fe3d1e4f6d4f275b3fc68fa830cf379"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="memItemLeft" align="right" valign="top"><a id="af172b8e8afed8fa4d2fac41aa85d7b23"></a>
+typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfda">PRORESLEVEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#af172b8e8afed8fa4d2fac41aa85d7b23">LEVEL_MAP</a></td></tr>
+<tr class="memdesc:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to LEVEL enum. <br /></td></tr>
+<tr class="separator:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -212,7 +212,7 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </div><div class="memdoc">
 <p>Map FFmpegfs options to FUSE parameters </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00218">218</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00222">222</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 </div>
 </div>
@@ -246,14 +246,14 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 <p>Main program entry point. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">argc</td><td>- Number of command line arguments. </td></tr>
-    <tr><td class="paramname">argv</td><td>- Command line argument array. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">argc</td><td>- Number of command line arguments. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">argv</td><td>- Command line argument array. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Return value will be the errorlevel of the executable. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Return value will be the errorlevel of the executable. Returns 0 on success, 1 on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01137">1137</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01252">1252</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00085">init_fuse_ops()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00160">FFMPEGFS_PARAMS::m_max_threads</a>.</p>
 

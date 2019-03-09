@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['level',['LEVEL',['../ffmpeg__utils_8h.html#adca76b17d1d46d13c7f6df1bb8bcde1b',1,'ffmpeg_utils.h']]],
-  ['level_5fmap',['LEVEL_MAP',['../ffmpegfs_8cc.html#a0fe3d1e4f6d4f275b3fc68fa830cf379',1,'ffmpegfs.cc']]],
+  ['level_5fmap',['LEVEL_MAP',['../ffmpegfs_8cc.html#af172b8e8afed8fa4d2fac41aa85d7b23',1,'ffmpegfs.cc']]],
   ['lpaudio_5fsettings',['LPAUDIO_SETTINGS',['../dvdparser_8cc.html#a2eb718e9c69f88711fe51dc4ea01ea90',1,'dvdparser.cc']]],
   ['lpcache_5finfo',['LPCACHE_INFO',['../cache_8h.html#accca8545f2916e87affc07c189306ce1',1,'cache.h']]],
   ['lpcaudio_5fsettings',['LPCAUDIO_SETTINGS',['../dvdparser_8cc.html#a284c86eaa4b7f0afa5c9fc859c85e494',1,'dvdparser.cc']]],

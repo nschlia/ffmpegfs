@@ -185,16 +185,16 @@ Protected Member Functions</h2></td></tr>
 <p>Print info of audio stream to log. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">out_file</td><td>- true if file is output. </td></tr>
-    <tr><td class="paramname">format_ctx</td><td>- AVFormatContext belonging to stream. </td></tr>
-    <tr><td class="paramname">stream</td><td>- Stream to show information for. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">out_file</td><td>- true if file is output. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_ctx</td><td>- AVFormatContext belonging to stream. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">stream</td><td>- Stream to show information for. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00310">310</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00120">AV_ROUND_PASS_MINMAX</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00156">CODECPAR</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00748">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00789">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00769">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00513">get_codec_name()</a>, and <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00120">AV_ROUND_PASS_MINMAX</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00156">CODECPAR</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00800">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00780">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00524">get_codec_name()</a>, and <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00590">FFmpeg_Transcoder::open_output_file()</a>.</p>
 
@@ -255,10 +255,10 @@ Protected Member Functions</h2></td></tr>
 <p>Call av_dict_set and check result code. Displays an error message if appropriate. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">pm</td><td>- pointer to a pointer to a dictionary struct. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">key</td><td>- entry key to add to *pm. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">value</td><td>- entry value to add to *pm. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">flags</td><td>- AV_DICT_* flags. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pm</td><td>- pointer to a pointer to a dictionary struct. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>- entry key to add to *pm. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- entry value to add to *pm. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- AV_DICT_* flags. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Filename this frame is created for. Used for logging only, may be nullptr. </td></tr>
   </table>
   </dd>
@@ -267,7 +267,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00270">270</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00314">ffmpeg_geterror()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00315">ffmpeg_geterror()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03081">FFmpeg_Transcoder::copy_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01853">FFmpeg_Transcoder::update_format()</a>.</p>
 
@@ -340,7 +340,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00282">282</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00314">ffmpeg_geterror()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00315">ffmpeg_geterror()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00803">FFmpeg_Transcoder::update_codec()</a>.</p>
 
@@ -447,8 +447,8 @@ Protected Member Functions</h2></td></tr>
 <p>Calls av_get_channel_layout_string and returns a std::string with the channel layout. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nb_channels</td><td>- Number of channels. </td></tr>
-    <tr><td class="paramname">channel_layout</td><td>- Channel layout index. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_channels</td><td>- Number of channels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">channel_layout</td><td>- Channel layout index. </td></tr>
   </table>
   </dd>
 </dl>
@@ -487,7 +487,7 @@ Protected Member Functions</h2></td></tr>
 <p>Calls av_get_pix_fmt_name and returns a std::string with the pix format name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pix_fmt</td><td>- AVPixelFormat enum to convert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pix_fmt</td><td>- AVPixelFormat enum to convert. </td></tr>
   </table>
   </dd>
 </dl>
@@ -524,7 +524,7 @@ Protected Member Functions</h2></td></tr>
 <p>Calls av_get_sample_fmt_name and returns a std::string with the format name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sample_fmt</td><td>- AVSampleFormat enum to convert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sample_fmt</td><td>- AVSampleFormat enum to convert. </td></tr>
   </table>
   </dd>
 </dl>
@@ -693,7 +693,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00067">67</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00314">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00337">get_media_type_string()</a>, <a class="el" href="ffmpeg__base_8h_source.html#l00034">INVALID_STREAM</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00086">open_codec_context()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00315">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00338">get_media_type_string()</a>, <a class="el" href="ffmpeg__base_8h_source.html#l00034">INVALID_STREAM</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00086">open_codec_context()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -766,7 +766,7 @@ Protected Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00086">86</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00314">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00513">get_codec_name()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00337">get_media_type_string()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00315">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00524">get_codec_name()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00338">get_media_type_string()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00067">open_bestmatch_codec_context()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -815,16 +815,16 @@ Protected Member Functions</h2></td></tr>
 <p>Print info of video stream to log. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">out_file</td><td>- true if file is output. </td></tr>
-    <tr><td class="paramname">format_ctx</td><td>- AVFormatContext belonging to stream. </td></tr>
-    <tr><td class="paramname">stream</td><td>- Stream to show information for. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">out_file</td><td>- true if file is output. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_ctx</td><td>- AVFormatContext belonging to stream. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">stream</td><td>- Stream to show information for. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00294">294</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00120">AV_ROUND_PASS_MINMAX</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00156">CODECPAR</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00748">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00789">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00513">get_codec_name()</a>, and <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00120">AV_ROUND_PASS_MINMAX</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00156">CODECPAR</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00800">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00524">get_codec_name()</a>, and <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00590">FFmpeg_Transcoder::open_output_file()</a>.</p>
 
@@ -879,10 +879,10 @@ Protected Member Functions</h2></td></tr>
 <p>Set up video stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">output_codec_ctx</td><td>- Output codec context. </td></tr>
-    <tr><td class="paramname">output_stream</td><td>- Output stream object. </td></tr>
-    <tr><td class="paramname">input_codec_ctx</td><td>- Input codec context. </td></tr>
-    <tr><td class="paramname">framerate</td><td>- Frame rate of input stream. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">output_codec_ctx</td><td>- Output codec context. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">output_stream</td><td>- Output stream object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">input_codec_ctx</td><td>- Input codec context. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">framerate</td><td>- Frame rate of input stream. </td></tr>
   </table>
   </dd>
 </dl>

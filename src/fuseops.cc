@@ -181,8 +181,8 @@ static void prepare_script()
 
 /**
  * @brief Translate file names from FUSE to the original absolute path.
- * @param[in] origpath - Name of destination file, contains the original name on return.
- * @param[in] path - Filename and path of the original file.
+ * @param[out] origpath - Upon return, contains the name and path of the original file.
+ * @param[in] path - Filename and relative path of the original file.
  */
 static void translate_path(std::string *origpath, const char* path)
 {
@@ -519,7 +519,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 {
                     if (transcoded_name(&filename))
                     {
-                        insert_file(VIRTUALTYPE_REGULAR, origfile, origfile, &st);
+                        insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
                     }
                 }
 

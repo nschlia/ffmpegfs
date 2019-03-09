@@ -320,7 +320,7 @@ std::string ffmpeg_geterror(int errnum)
 
 int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)
 {
-    if (ts != AV_NOPTS_VALUE)
+    if (ts == AV_NOPTS_VALUE)
     {
         return AV_NOPTS_VALUE;
     }

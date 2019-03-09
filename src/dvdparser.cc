@@ -43,7 +43,7 @@ extern "C" {
 }
 //#pragma GCC diagnostic pop
 
-typedef struct AUDIO_SETTINGS                       /**< @brief Audio stream settings */
+typedef struct AUDIO_SETTINGS                       /** @brief Audio stream settings */
 {
     BITRATE m_audio_bit_rate;                       /**< @brief average bitrate of audio data (in bits per second) */
     int     m_channels;                             /**< @brief number of channels (1: mono, 2: stereo, or more) */
@@ -52,7 +52,7 @@ typedef struct AUDIO_SETTINGS                       /**< @brief Audio stream set
 typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;    /**< @brief Pointer to const version */
 typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;           /**< @brief Pointer version */
 
-typedef struct VIDEO_SETTINGS                       /**< @brief Video stream settings */
+typedef struct VIDEO_SETTINGS                       /** @brief Video stream settings */
 {
     BITRATE m_video_bit_rate;                       /**< @brief average bitrate of video data (in bits per second) */
     int     m_width;                                /**< @brief video width in pixels */
@@ -283,7 +283,6 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     for (int angle_idx = 0; angle_idx < angles; angle_idx++)
     {
         char title_buf[PATH_MAX + 1];
-        std::string origfile;
         struct stat stbuf;
         int angle_no        = angle_idx + 1;
 
@@ -331,8 +330,6 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
         std::string filename(title_buf);
 
-        origfile = path + filename;
-
         memcpy(&stbuf, statbuf, sizeof(struct stat));
 
         stbuf.st_size   = static_cast<__off_t>(size);
@@ -340,12 +337,12 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
         //init_stat(&st, size, false);
 
-        if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
+        if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
         {
             // break;
         }
 
-        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, origfile, &stbuf);
+        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
 
         // DVD is video format anyway
         virtualfile->m_format_idx       = 0;
@@ -359,9 +356,11 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         {
             virtualfile->m_duration = duration;
 
-            BITRATE video_bit_rate = video_settings.m_video_bit_rate;
+            BITRATE video_bit_rate = 8*1024*1024;   // In case the real bitrate cannot be calculated later, assume 8 Mbit video bitrate
             if (duration)
             {
+                /** @todo We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should
+                 * be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. */
                 video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
             }
 

@@ -209,9 +209,15 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
     return map.end();
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const std::string & origfile, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st)
+{
+    return insert_file(type, virtfilepath, virtfilepath, st);
+}
+
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
+    std::string sanitised_filepath = sanitise_name(virtfilepath);
 
     virtualfile.m_type          = type;
     virtualfile.m_format_idx    = params.guess_format_idx(origfile);
@@ -219,15 +225,15 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & filepath, const 
 
     memcpy(&virtualfile.m_st, st, sizeof(struct stat));
 
-    filenames.insert(make_pair(filepath, virtualfile));
+    filenames.insert(make_pair(sanitised_filepath, virtualfile));
 
-    filenamemap::iterator it = filenames.find(filepath);
+    filenamemap::iterator it = filenames.find(sanitised_filepath);
     return &it->second;
 }
 
-LPVIRTUALFILE find_file(const std::string & filepath)
+LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
-    filenamemap::iterator it = filenames.find(filepath);
+    filenamemap::iterator it = filenames.find(sanitise_name(virtfilepath));
 
     errno = 0;
 
@@ -410,10 +416,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     if (params.m_enablescript)
     {
         std::string filename(params.m_scriptfile);
-        std::string origfile;
         struct stat st;
-
-        origfile = origpath + filename;
 
         init_stat(&st, index_buffer.size(), false);
 
@@ -422,7 +425,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             // break;
         }
 
-        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, origfile, &st);
+        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, &st);
     }
 
 #ifdef USE_LIBVCD
@@ -472,7 +475,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 {
                     if (transcoded_name(&filename))
                     {
-                        insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
+                        insert_file(VIRTUALTYPE_REGULAR, origfile, origfile, &st);
                     }
                 }
 

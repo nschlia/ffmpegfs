@@ -223,19 +223,30 @@ int             transcoder_cache_maintenance(void);
 int             transcoder_cache_clear(void);
 /**
  * @brief Add new virtual file to internal list.
+ *
+ * For Bluray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
+ *
  * @param[in] type - Type of virtual file.
- * @param[in] filepath - Name of virtual file.
+ * @param[in] virtfilepath - Name of virtual file.
+ * @param[in] st - stat buffer with file size, time etc.
+ * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
+ */
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st);
+/**
+ * @brief Add new virtual file to internal list.
+ * @param[in] type - Type of virtual file.
+ * @param[in] virtfilepath - Name of virtual file.
  * @param[in] origfile - Original file name.
  * @param[in] st - stat buffer with file size, time etc.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &filepath, const std::string & origfile, const struct stat *st);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *st);
 /**
  * @brief Find file in cache.
- * @param filepath - Filename and path of file to find.
+ * @param virtfilepath - Virtual filename and path of file to find.
  * @return If found, returns VIRTUALFILE object, if not found returns nullptr.
  */
-LPVIRTUALFILE   find_file(const std::string &filepath);
+LPVIRTUALFILE   find_file(const std::string &virtfilepath);
 /**
  * @brief Check if path has already been parsed.
  * Only useful if for DVD, Bluray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.

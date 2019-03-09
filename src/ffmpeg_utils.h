@@ -250,7 +250,6 @@ public:
     /**
      * @brief Get codecs for the selected destination type.
      * @param desttype - Destination type (MP4, WEBM etc.).
-     * @param video_format - FFmpegfs_Format info for destination type.
      * @return Returns true if format was found; false if not.
      */
     bool                init(const std::string & desttype);

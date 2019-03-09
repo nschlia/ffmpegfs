@@ -37,13 +37,22 @@
 #include "vcd/vcdentries.h"
 
 static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler);
-static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no);
+static bool create_vcd_virtualfile(const VcdEntries &vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no);
 
-static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)
+/**
+ * @brief Creat a virtual file for a video CD.
+ * @param vcd - Video CD handle.
+ * @param statbuf
+ * @param buf
+ * @param filler
+ * @param full_title
+ * @param chapter_no
+ * @return
+ */
+static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)
 {
     const VcdChapter * chapter1 = vcd.get_chapter(chapter_no);
     char title_buf[PATH_MAX + 1];
-    std::string origfile;
     struct stat st;
     size_t size;
     int64_t duration;
@@ -63,8 +72,6 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
 
     std::string filename(title_buf);
 
-    origfile = path + filename;
-
     memcpy(&st, statbuf, sizeof(struct stat));
 
     st.st_size = static_cast<__off_t>(size);
@@ -72,12 +79,12 @@ static bool create_vcd_virtualfile(VcdEntries & vcd, const std::string & path, c
 
     //init_stat(&st, size, false);
 
-    if (buf != nullptr && filler(buf, filename.c_str(), &st, 0))
+    if (buf != nullptr && filler(buf, title_buf, &st, 0))
     {
         // break;
     }
 
-    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, path + filename, origfile, &st);
+    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &st);
 
     // Video CD is video format anyway
     virtualfile->m_format_idx           = 0;
@@ -110,12 +117,12 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
 
     for (int chapter_no = 0; chapter_no < vcd.get_number_of_chapters() && success; chapter_no++)
     {
-        success = create_vcd_virtualfile(vcd, path, statbuf, buf, filler, false, chapter_no);
+        success = create_vcd_virtualfile(vcd, statbuf, buf, filler, false, chapter_no);
     }
 
     if (success && vcd.get_number_of_chapters() > 1)
     {
-        success = create_vcd_virtualfile(vcd, path, statbuf, buf, filler, true, 0);
+        success = create_vcd_virtualfile(vcd, statbuf, buf, filler, true, 0);
     }
 
     if (success)

@@ -300,7 +300,6 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     BLURAY_CLIP_INFO     *clip = &ti->clips[0];
     BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
     char title_buf[PATH_MAX + 1];
-    std::string origfile;
     struct stat stbuf;
     int64_t duration;
 
@@ -341,19 +340,17 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
     std::string filename(title_buf);
 
-    origfile = path + filename;
-
     memcpy(&stbuf, statbuf, sizeof(struct stat));
 
     stbuf.st_size   = 0; //static_cast<__off_t>(size);
     stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
-    if (buf != nullptr && filler(buf, filename.c_str(), &stbuf, 0))
+    if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
     {
         // break;
     }
 
-    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, origfile, &stbuf);
+    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
 
     // Bluray is video format anyway
     virtualfile->m_format_idx           = 0;
@@ -366,8 +363,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
     if (!transcoder_cached_filesize(virtualfile, &stbuf))
     {
-        BITRATE video_bit_rate  = 1024*1024;
-        BITRATE audio_bit_rate  = 256*1024;
+        BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
+        BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate
 
         int channels            = 0;
         int sample_rate         = 0;
@@ -391,6 +388,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration)
         {
+            /** @todo We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should
+             * be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. */
             video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
         }
 

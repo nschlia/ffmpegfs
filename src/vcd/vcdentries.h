@@ -66,7 +66,7 @@ public:
     void                        clear();
     /**
      * @brief Load VCD from path
-     * @param path - path to locate VCD in
+     * @param[in] path - path to locate VCD in
      * @return On success, returns 0; in case of error returns errno
      */
     int                         load_file(const std::string & path);
@@ -81,7 +81,7 @@ public:
     /**
      * @brief Get chapter object.
      * @note At least 1 chapter is guaranteed to exist if a disk was sucessfully read.
-     * @param chapter_idx - 0..number of chapters - 1
+     * @param[in] chapter_idx - 0..number of chapters - 1
      * @return VcdChapter object with this chapter, nullptr if chapter_idx is invalid
      */
     const VcdChapter  *         get_chapter(int chapter_idx) const;
@@ -97,9 +97,9 @@ protected:
     int                         scan_chapters();
     /**
      * @brief Seek for sync bytes
-     * @param fpi - file pointer of open file
-     * @param sync - sync bytes
-     * @param len - length of sync bytes
+     * @param[in] fpi - file pointer of open file
+     * @param[in] sync - sync bytes
+     * @param[in] len - length of sync bytes
      * @return SEEKRES result code
      */
     SEEKRES                     seek_sync(FILE *fpi, const char * sync, int len) const;

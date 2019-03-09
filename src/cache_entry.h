@@ -43,8 +43,8 @@ class Cache_Entry
 private:
     /**
      * @brief Create Cache_Entry object.
-     * @param owner - Cache object of owner.
-     * @param virtualfile - Requesting virtual file.
+     * @param[in] owner - Cache object of owner.
+     * @param[in] virtualfile - Requesting virtual file.
      */
     explicit Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile);
     /**
@@ -55,8 +55,8 @@ private:
 public:
     /**
      * @brief Create a new Cache_Entry object.
-     * @param owner - Cache object of owner.
-     * @param virtualfile - Requesting virtual file.
+     * @param[in] owner - Cache object of owner.
+     * @param[in] virtualfile - Requesting virtual file.
      * @return On success, returns a Cache_Entry object; on error (out of memory) returns a nullptr
      */
     static Cache_Entry *    create(Cache *owner, LPVIRTUALFILE virtualfile);
@@ -68,7 +68,7 @@ public:
 
     /**
      * @brief Open the cache file.
-     * @param create_cache - If true, the cache will be created if it does not yet exist.
+     * @param[in] create_cache - If true, the cache will be created if it does not yet exist.
      * @return On success returns true; on error returns false and errno contains the error code.
      */
     bool                    open(bool create_cache = true);
@@ -79,7 +79,7 @@ public:
     bool                    flush();
     /**
      * @brief Clear the cache entry
-     * @param fetch_file_time - If true, the entry file time will be filled in from the source file.
+     * @param[in] fetch_file_time - If true, the entry file time will be filled in from the source file.
      */
     void                    clear(int fetch_file_time = true);
     /** @brief Return size of output file, as computed by encoder.
@@ -130,7 +130,7 @@ public:
     const std::string &     destname() const;
     /**
      * @brief Update last access time.
-     * @param update_database - If true, also persist in SQL database.
+     * @param[in] update_database - If true, also persist in SQL database.
      * @return If update was successful, returns true; returns false on error.
      */
     bool                    update_access(bool update_database = false);

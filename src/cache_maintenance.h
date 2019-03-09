@@ -41,7 +41,7 @@
 
 /**
  * @brief Start cache maintenance timer.
- * @param interval - Interval in seconds to run timer at.
+ * @param[in] interval - Interval in seconds to run timer at.
  * @return On success, returns true. On error, returns false. Check errno for details.
  */
 bool start_cache_maintenance(time_t interval);

@@ -272,7 +272,7 @@ public:
 protected:
     /**
      * @brief Standard format_helper without parameters
-     * @param string_to_update - original string
+     * @param[in] string_to_update - original string
      * @return Original string
      */
     static std::string format_helper(
@@ -284,10 +284,10 @@ protected:
      *
      * Calls itself recurisively until all tokens are replaced.
      *
-     * @param string_to_search - format string to be searched
-     * @param index_to_replace - index numer (%n) to be replaced. May be present 0...x times.
-     * @param val - replace value to fill into tokens
-     * @param args - further arguments
+     * @param[in] string_to_search - format string to be searched
+     * @param[in] index_to_replace - index numer (%n) to be replaced. May be present 0...x times.
+     * @param[in] val - replace value to fill into tokens
+     * @param[in] args - further arguments
      * @return Contents of string_to_search with all tokens replaced.
      */
     template <typename T, typename... Args>
@@ -340,8 +340,8 @@ protected:
     /**
      * @brief format string with single token
      *
-     * @param format_string - format string to be searched
-     * @param args - arguments
+     * @param[in] format_string - format string to be searched
+     * @param[in] args - arguments
      * @return Contents of format_string with all tokens replaced.
      */
     template <typename... Args>
@@ -353,8 +353,8 @@ protected:
 protected:
     /**
      * @brief Make logger class our friend for our constructor
-     * @param loglevel - Selected loglevel.
-     * @param filename - If logging to file, use this file name.
+     * @param[in] loglevel - Selected loglevel.
+     * @param[in] filename - If logging to file, use this file name.
      */
     friend Logger Log(level loglevel, const std::string & filename);
     friend Logger;                                                      /**< @brief Make logger class our friend */

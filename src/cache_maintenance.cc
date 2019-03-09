@@ -41,13 +41,13 @@
 
 #define SEM_OPEN_FILE   "/" PACKAGE_NAME "_04806785-b5fb-4615-ba56-b30a2946e80b"    /**< @brief Shared semaphore name, should be unique system wide. */
 
-static sigset_t mask;
-static timer_t timerid;
+static sigset_t mask;           /**< @brief Process mask for timer */
+static timer_t  timerid;        /**< @brief Timer id */
 
-static sem_t * sem;
-static int shmid;
-static pid_t *pid_master;
-static int master;
+static sem_t *  sem;            /**< @brief Semaphore used to synchronise between master and slave processes */
+static int      shmid;          /**< @brief Shared memory segment ID */
+static pid_t *  pid_master;     /**< @brief PID of master process */
+static bool     master;         /**< @brief If true, we are master */
 
 static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, __attribute__((unused)) void *uc);
 static bool start_timer(time_t interval);
@@ -56,6 +56,12 @@ static bool link_up();
 static void master_check();
 static bool link_down();
 
+/**
+  * @brief Run maintenance handler
+  * @param[in] sig - Signal, must be SIGMAINT.
+  * @param[in] si
+  * @param[in] uc
+  */
 static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, __attribute__((unused)) void *uc)
 {
     if (sig != SIGMAINT)
@@ -73,6 +79,11 @@ static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, 
     }
 }
 
+/**
+ * @brief Start the maintenance timer at predefined interval.
+ * @param[in] interval - Timer interval in seconds.
+ * @return On success, returns true. On error, returns false. Check errno for details.
+ */
 static bool start_timer(time_t interval)
 {
     struct sigevent sev;
@@ -135,6 +146,10 @@ static bool start_timer(time_t interval)
     return true;
 }
 
+/**
+ * @brief Stop the maintenance timer.
+ * @return On success, returns true. On error, returns false. Check errno for details.
+ */
 static bool stop_timer()
 {
     Logging::info(nullptr, "Stopping maintenance timer.");
@@ -148,6 +163,10 @@ static bool stop_timer()
     return true;
 }
 
+/**
+ * @brief Set system wide inter process link up.
+ * @return On success, returns true. On error, returns false. Check errno for details.
+ */
 static bool link_up()
 {
     key_t shmkey;
@@ -168,7 +187,7 @@ static bool link_up()
     if (shmid != -1)
     {
         // Shared memory already exists, seems we are client.
-        master = 0;
+        master = false;
     }
     else
     {
@@ -177,7 +196,7 @@ static bool link_up()
         if (shmid != -1)
         {
             // Shared memory freshly created, seems we are master.
-            master = 1;
+            master = true;
         }
         else
         {
@@ -221,6 +240,9 @@ static bool link_up()
     return true;
 }
 
+/**
+ * @brief Check if a master is already running. We become master if not.
+ */
 static void master_check()
 {
     pid_t pid_self = getpid();
@@ -244,12 +266,16 @@ static void master_check()
 
         // Register us as master
         *pid_master = pid_self;
-        master = 1;
+        master = true;
     }
 
     sem_post(sem);
 }
 
+/**
+ * @brief Set system wide inter process link down.
+ * @return On success, returns true. On error, returns false. Check errno for details.
+ */
 static bool link_down()
 {
     struct shmid_ds buf;

@@ -83,18 +83,18 @@ protected:
     int         init_frame(AVFrame **frame, const char *filename = nullptr) const;
     /**
      * @brief Set up video stream
-     * @param output_codec_ctx - Output codec context.
-     * @param output_stream - Output stream object.
-     * @param input_codec_ctx - Input codec context.
-     * @param framerate - Frame rate of input stream.
+     * @param[in] output_codec_ctx - Output codec context.
+     * @param[in] output_stream - Output stream object.
+     * @param[in] input_codec_ctx - Input codec context.
+     * @param[in] framerate - Frame rate of input stream.
      */
     void        video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const;
     /**
      * @brief Call av_dict_set and check result code. Displays an error message if appropriate.
-     * @param pm - pointer to a pointer to a dictionary struct.
-     * @param key - entry key to add to *pm.
-     * @param value - entry value to add to *pm.
-     * @param flags - AV_DICT_* flags.
+     * @param[in] pm - pointer to a pointer to a dictionary struct.
+     * @param[in] key - entry key to add to *pm.
+     * @param[in] value - entry value to add to *pm.
+     * @param[in] flags - AV_DICT_* flags.
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
      * @return On success returns 0; on error negative AVERROR.
      */
@@ -111,34 +111,34 @@ protected:
     int         av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
      * @brief Print info of video stream to log.
-     * @param out_file - true if file is output.
-     * @param format_ctx - AVFormatContext belonging to stream.
-     * @param stream - Stream to show information for.
+     * @param[in] out_file - true if file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to stream.
+     * @param[in] stream - Stream to show information for.
      */
     void        video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
      * @brief Print info of audio stream to log.
-     * @param out_file - true if file is output.
-     * @param format_ctx - AVFormatContext belonging to stream.
-     * @param stream - Stream to show information for.
+     * @param[in] out_file - true if file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to stream.
+     * @param[in] stream - Stream to show information for.
      */
     void        audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
      * @brief Calls av_get_pix_fmt_name and returns a std::string with the pix format name.
-     * @param pix_fmt - AVPixelFormat enum to convert.
+     * @param[in] pix_fmt - AVPixelFormat enum to convert.
      * @return Returns a std::string with the pix format name.
      */
     std::string get_pix_fmt_name(AVPixelFormat pix_fmt) const;
     /**
      * @brief Calls av_get_sample_fmt_name and returns a std::string with the format name.
-     * @param sample_fmt - AVSampleFormat  enum to convert.
+     * @param[in] sample_fmt - AVSampleFormat  enum to convert.
      * @return Returns a std::string with the format name.
      */
     std::string get_sample_fmt_name(AVSampleFormat sample_fmt) const;
     /**
      * @brief Calls av_get_channel_layout_string and returns a std::string with the channel layout.
-     * @param nb_channels - Number of channels.
-     * @param channel_layout - Channel layout index.
+     * @param[in] nb_channels - Number of channels.
+     * @param[in] channel_layout - Channel layout index.
      * @return Returns a std::string with the channel layout.
      */
     std::string get_channel_layout_name(int nb_channels, uint64_t channel_layout) const;

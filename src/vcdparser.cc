@@ -40,14 +40,14 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
 static bool create_vcd_virtualfile(const VcdEntries &vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no);
 
 /**
- * @brief Creat a virtual file for a video CD.
- * @param vcd - Video CD handle.
- * @param statbuf
- * @param buf
- * @param filler
- * @param full_title
- * @param chapter_no
- * @return
+ * @brief Create a virtual file for a video CD.
+ * @param[in] vcd - Video CD handle.
+ * @param[in] statbuf - File status structure of original file.
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
+ * @param[in] chapter_no - Chapter number of virtual file.
+ * @return Returns true if successful. Returns false on error.
  */
 static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)
 {
@@ -106,6 +106,14 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     return true;
 }
 
+/**
+ * @brief Parse VCD directory and get all VCD chapters as virtual files.
+ * @param[in] path - path to check.
+ * @param[in] statbuf - File status structure of original file.
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @return On success, returns number of chapters found. On error, returns -errno.
+ */
 static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     VcdEntries vcd;

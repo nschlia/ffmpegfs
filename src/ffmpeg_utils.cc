@@ -74,7 +74,8 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
-static int is_device(const AVClass *avclass);
+static int is_device(__attribute__((unused)) const AVClass *avclass);
+static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsigned int version, __attribute__((unused)) const char *cfg, int version_minor, int version_major, int version_micro, const char * libname);
 
 #ifndef AV_ERROR_MAX_STRING_SIZE
 #define AV_ERROR_MAX_STRING_SIZE 128                    /**< @brief Max. length of a FFmpeg error string */
@@ -354,25 +355,29 @@ const char *get_media_type_string(enum AVMediaType media_type)
 }
 #endif
 
-static std::string ffmpeg_libinfo(
-        bool bLibExists,
-        unsigned int /*nVersion*/,
-        const char * /*pszCfg*/,
-        int nVersionMinor,
-        int nVersionMajor,
-        int nVersionMicro,
-        const char * pszLibname)
+/**
+ * @brief Get FFmpeg library info.
+ * @param[in] lib_exists - Set to true if library exists.
+ * @param[in] version - Library version number.
+ * @param[in] cfg - Library configuration.
+ * @param[in] version_minor - Library version minor.
+ * @param[in] version_major - Library version major.
+ * @param[in] version_micro - Library version micro.
+ * @param[in] libname - Name of the library.
+ * @return Formatted library information.
+ */
+static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsigned int version, __attribute__((unused)) const char *cfg, int version_minor, int version_major, int version_micro, const char * libname)
 {
     std::string info;
 
-    if (bLibExists)
+    if (lib_exists)
     {
         string_format(info,
                       "lib%-17s: %d.%d.%d\n",
-                      pszLibname,
-                      nVersionMinor,
-                      nVersionMajor,
-                      nVersionMicro);
+                      libname,
+                      version_minor,
+                      version_major,
+                      version_micro);
     }
 
     return info;
@@ -408,10 +413,16 @@ std::string ffmpeg_libinfo()
     return info;
 }
 
-static int is_device(const AVClass *avclass)
+/**
+ * @brief Check if class is a FMmpeg device
+ * @todo Currently always returns 0. Must implement real check.
+ * @param[in] avclass - Private class object
+ * @return Returns 1 if object is a device, 0 if not.
+ */
+static int is_device(__attribute__((unused)) const AVClass *avclass)
 {
-    if (!avclass)
-        return 0;
+    //if (!avclass)
+    //    return 0;
 
     return 0;
     //return AV_IS_INPUT_DEVICE(avclass->category) || AV_IS_OUTPUT_DEVICE(avclass->category);
@@ -929,6 +940,11 @@ std::string format_result_size_ex(size_t size_resulting, size_t size_predicted)
     }
 }
 
+/**
+ * @brief Print frames per second.
+ * @param[in] d - Frames per second.
+ * @param[in] postfix - Postfix text.
+ */
 static void print_fps(double d, const char *postfix)
 {
     long v = lrint(d * 100);

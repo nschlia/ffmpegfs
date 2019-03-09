@@ -42,6 +42,18 @@ static int parse_find_best_video_stream();
 static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx);
 static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
+/**
+ * @brief Get information about Bluray stream
+ * @param[in] path - Path to Bluray disk.
+ * @param[in] ss - BLURAY_STREAM_INFO object.
+ * @param[out] channels - Number of audio channels in stream.
+ * @param[out] sample_rate - Sample rate of stream.
+ * @param[out] audio - 1: stream contains audio, 0: no audio
+ * @param[out] width - Width of video stream.
+ * @param[out] height - Height of video stream.
+ * @param[out] framerate - Frame rate of video stream.
+ * @param[out] interleaved - 1: video stream is interleaved, 0: video stream is not interleaved.
+ */
 static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved)
 {
     switch (ss->coding_type)
@@ -270,26 +282,36 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
     }
 }
 
+/**
+ * @brief Find best match audio stream.
+ * @todo is 0 really OK or shall we better parse?
+ * @return Returns index of best match stream.
+ */
 static int parse_find_best_audio_stream()
 {
-    // TODO: is 0 really OK or shall we better parse?
-    return 0;
-}
-
-static int parse_find_best_video_stream()
-{
-    // TODO: is 0 really OK or shall we better parse?
     return 0;
 }
 
 /**
- * @brief Create a virtual file entry of a bluray chapter or title
- * @param[in] bd - Bluray disk clip info
- * @param[in] ti - Bluray disk title info
- * @param[in] path - path to check
+ * @brief Find best match video stream.
+ * @todo is 0 really OK or shall we better parse?
+ * @return Returns index of best match stream.
+ */
+static int parse_find_best_video_stream()
+{
+    return 0;
+}
+
+/**
+ * @brief Create a virtual file entry of a bluray chapter or title.
+ * @param[in] bd - Bluray disk clip info.
+ * @param[in] ti - Bluray disk title info.
+ * @param[in] path - path to check.
+ * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - the buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] is_main_title - true if title_idx is the main title
+ * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
  * @param[in] title_idx - Zero-based title index on Bluray
  * @param[in] chapter_idx - Zero-based chapter index on Bluray
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
@@ -409,6 +431,14 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     return true;
 }
 
+/**
+ * @brief Parse Bluray directory and get all Bluray titles and chapters as virtual files.
+ * @param[in] path - path to check.
+ * @param[in] statbuf - File status structure of original file.
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @return On success, returns number of chapters found. On error, returns -errno.
+ */
 static int parse_bluray(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler)
 {
     BLURAY *bd;

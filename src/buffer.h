@@ -69,7 +69,7 @@ public:
     bool                    init(bool erase_cache = false);
     /**
      * @brief Release cache buffer.
-     * @param flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CLOSE_CACHE_* flags.
      * @return Returns true on success; false on error.
      */
     bool                    release(int flags = CLOSE_CACHE_NOOPT);
@@ -159,13 +159,13 @@ public:
      * @brief Make up a cache file name including full path
      * @param[out] cachefile - Name of cache file.
      * @param[in] filename - Source file name.
-     * @param desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns the name of the cache file.
      */
     static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
     /**
      * @brief Remove (unlink) file.
-     * @param filename - Name of file to remove.
+     * @param[in] filename - Name of file to remove.
      * @return Returns true on success; false on error.
      */
     static bool             remove_file(const std::string & filename);
@@ -173,7 +173,7 @@ public:
 protected:
     /**
      * @brief Open the cache file by name.
-     * @param filename - Name of file to open.
+     * @param[in] filename - Name of file to open.
      * @return Returns true on success; false on error.
      */
     virtual int             openX(const std::string & filename);

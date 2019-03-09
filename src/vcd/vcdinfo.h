@@ -53,7 +53,7 @@ public:
     void                    clear();
     /**
      * @brief Load VCD from path
-     * @param path - path to locate VCD in
+     * @param[in] path - path to locate VCD in
      * @return On success, returns 0; in case of error returns errno
      */
     int                     load_file(const std::string & path);

@@ -80,7 +80,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
 
     , m_autocopy(AUTOCOPY_OFF)                  // default: off
     , m_profile(PROFILE_NONE)                   // default: no profile
-    , m_level(LEVEL_NONE)                       // default: no level
+    , m_level(PRORESLEVEL_NONE)                       // default: no level
 
     // Format
     , m_audiobitrate(128*1024)                  // default: 128 kBit
@@ -182,6 +182,10 @@ FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 
 FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)
 {
+    if (virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)
+    {
+        return nullptr;
+    }
     return &m_format[virtualfile->m_format_idx];
 }
 
@@ -217,6 +221,9 @@ enum
   */
 #define FFMPEGFS_OPT(templ, param, value) { templ, offsetof(FFMPEGFS_PARAMS, param), value }
 
+/**
+ * FUSE option descriptions
+ */
 static struct fuse_opt ffmpegfs_opts[] =
 {
     // Output type
@@ -312,8 +319,11 @@ static struct fuse_opt ffmpegfs_opts[] =
 
 typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;     /**< @brief Map command line option to AUTOCOPY enum */
 typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map command line option to PROFILE enum  */
-typedef std::map<std::string, LEVEL, comp> LEVEL_MAP;           /**< @brief Map command line option to LEVEL enum  */
+typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;           /**< @brief Map command line option to LEVEL enum  */
 
+/**
+  * List of AUTOCOPY options
+  */
 static const AUTOCOPY_MAP autocopy_map =
 {
     { "NONE",           AUTOCOPY_OFF },
@@ -323,6 +333,9 @@ static const AUTOCOPY_MAP autocopy_map =
     { "STRICTLIMIT",    AUTOCOPY_STRICTLIMIT },
 };
 
+/**
+  * List if MP4 profiles
+  */
 static const PROFILE_MAP profile_map =
 {
     { "NONE",           PROFILE_NONE },
@@ -340,13 +353,16 @@ static const PROFILE_MAP profile_map =
     // WEBM
 };
 
+/**
+  * List if ProRes levels.
+  */
 static const LEVEL_MAP level_map =
 {
     // ProRes
-    { "PROXY",          LEVEL_PRORES_PROXY },
-    { "LT",             LEVEL_PRORES_LT },
-    { "STANDARD",       LEVEL_PRORES_STANDARD },
-    { "HQ",             LEVEL_PRORES_HQ },
+    { "PROXY",          PRORESLEVEL_PRORES_PROXY },
+    { "LT",             PRORESLEVEL_PRORES_LT },
+    { "STANDARD",       PRORESLEVEL_PRORES_STANDARD },
+    { "HQ",             PRORESLEVEL_PRORES_HQ },
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
@@ -358,15 +374,18 @@ static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
 static std::string  get_profile_text(PROFILE profile);
-static int          get_level(const std::string & arg, LEVEL *level);
-static std::string  get_level_text(LEVEL level);
+static int          get_level(const std::string & arg, PRORESLEVEL *level);
+static std::string  get_level_text(PRORESLEVEL level);
 static int          get_value(const std::string & arg, std::string *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
-static int          set_defaults(void);
+static bool         set_defaults(void);
 static void         print_params(void);
 static void         usage();
 
+/**
+ * @brief Print program usage info.
+ */
 static void usage()
 {
     std::string help;
@@ -378,10 +397,15 @@ static void usage()
     std::cout << help.substr(pos + sizeof("OPTIONS\n"));
 }
 
+/**
+ * @brief Iterate through all elements in map and search for the passed element.
+ * @param[in] mapOfWords - map to search.
+ * @param[in] value - Search value
+ * @return If found, retuns const_iterator to element. Returns mapOfWords.end() if not.
+ */
 template <typename T>
 static typename std::map<std::string, T, comp>::const_iterator search_by_value(const std::map<std::string, T, comp> & mapOfWords, T value)
 {
-    // Iterate through all elements in map and search for the passed element
     typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.begin();
     while (it != mapOfWords.end())
     {
@@ -394,10 +418,18 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
     return mapOfWords.end();
 }
 
-// Get bitrate:
-// In bit/s:  #  or #bps
-// In kbit/s: #M or #Mbps
-// In Mbit/s: #M or #Mbps
+/**
+ * @brief Get formatted bitrate.
+ @verbatim
+ Supported formats:
+ In bit/s:  #  or #bps
+ In kbit/s: #M or #Mbps
+ In Mbit/s: #M or #Mbps
+ @endverbatim
+ * @param[in] arg - Bitrate as string.
+ * @param[in] bitrate - On return, contains parsed bitrate.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_bitrate(const std::string & arg, BITRATE *bitrate)
 {
     size_t pos = arg.find('=');
@@ -456,9 +488,17 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
     return -1;
 }
 
-// Get sample rate:
-// In Hz:  #  or #Hz
-// In kHz: #K or #KHz
+/**
+ * @brief Get formatted sample rate.
+ @verbatim
+ Supported formats:
+ In Hz:  #  or #Hz
+ In kHz: #K or #KHz
+ @endverbatim
+ * @param[in] arg - Samplerate as string.
+ * @param[in] samplerate - On return, contains parsed sample rate.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_samplerate(const std::string & arg, int * samplerate)
 {
     size_t pos = arg.find('=');
@@ -504,12 +544,21 @@ static int get_samplerate(const std::string & arg, int * samplerate)
     return -1;
 }
 
-// Get time in format
-// Seconds: #
-// Minutes: #m
-// Hours:   #h
-// Days:    #d
-// Weeks:   #w
+
+/**
+ * @brief Get formatted time,
+ @verbatim
+ Supported formats:
+ Seconds: # @n
+ Minutes: #m @n
+ Hours:   #h @n
+ Days:    #d @n
+ Weeks:   #w
+ @endverbatim
+ * @param[in] arg - Time as string.
+ * @param[in] time - On return, contains parsed time.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_time(const std::string & arg, time_t *time)
 {
     size_t pos = arg.find('=');
@@ -594,12 +643,20 @@ static int get_time(const std::string & arg, time_t *time)
     return -1;
 }
 
-// Read size:
-// In bytes:  # or #B
-// In KBytes: #K or #KB
-// In MBytes: #B or #MB
-// In GBytes: #G or #GB
-// In TBytes: #T or #TB
+/**
+ * @brief Read size: @n
+ @verbatim
+ Supported formats:
+ In bytes:  # or #B @n
+ In KBytes: #K or #KB @n
+ In MBytes: #B or #MB @n
+ In GBytes: #G or #GB @n
+ In TBytes: #T or #TB
+ @endverbatim
+ * @param[in] arg - Time as string.
+ * @param[out] size - On return, contains parsed size.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_size(const std::string & arg, size_t *size)
 {
     size_t pos = arg.find('=');
@@ -684,10 +741,16 @@ static int get_size(const std::string & arg, size_t *size)
     return -1;
 }
 
-// Read destination type
+/**
+ * @brief Get destination type.
+ * @param[in] arg - Format as string (MP4, OGG etc.).
+ * @param[out] video_format - Selected video format.
+ * @param[out] audio_format - Selected audio format.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegfs_Format * audio_format)
 {
-    // TODO: evaluate
+    /** @todo: evaluate this function */
     size_t pos = arg.find('=');
 
     if (pos != std::string::npos)
@@ -721,7 +784,12 @@ int get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegf
     return -1;
 }
 
-// Read autocopy:
+/**
+ * @brief Get autocopy option.
+ * @param[in] arg - One of the auto copy options.
+ * @param[out] autocopy - Upon return contains selected AUTOCOPY enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 {
     size_t pos = arg.find('=');
@@ -748,7 +816,11 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
     return -1;
 }
 
-// Get autocopy text
+/**
+ * @brief Convert AUTOCOPY enum to human readable text.
+ * @param[in] autocopy - AUTOCOPY enum value to convert.
+ * @return AUTOCOPY enum as text or "INVALID" if not known.
+ */
 static std::string get_autocopy_text(AUTOCOPY autocopy)
 {
     AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
@@ -759,7 +831,12 @@ static std::string get_autocopy_text(AUTOCOPY autocopy)
     return "INVALID";
 }
 
-// Read profile:
+/**
+ * @brief Get profile option.
+ * @param[in] arg - One of the auto profile options.
+ * @param[out] profile - Upon return contains selected PROFILE enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_profile(const std::string & arg, PROFILE *profile)
 {
     size_t pos = arg.find('=');
@@ -786,7 +863,11 @@ static int get_profile(const std::string & arg, PROFILE *profile)
     return -1;
 }
 
-// Get profile text
+/**
+ * @brief Convert PROFILE enum to human readable text.
+ * @param[in] profile - PROFILE enum value to convert.
+ * @return PROFILE enum as text or "INVALID" if not known.
+ */
 static std::string get_profile_text(PROFILE profile)
 {
     PROFILE_MAP::const_iterator it = search_by_value(profile_map, profile);
@@ -798,7 +879,13 @@ static std::string get_profile_text(PROFILE profile)
 }
 
 // Read level
-static int get_level(const std::string & arg, LEVEL *level)
+/**
+ * @brief Get ProRes level
+ * @param[in] arg - One of the ProRes levels.
+ * @param[out] level - Upon return contains selected PRORESLEVEL enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_level(const std::string & arg, PRORESLEVEL *level)
 {
     size_t pos = arg.find('=');
 
@@ -825,7 +912,12 @@ static int get_level(const std::string & arg, LEVEL *level)
 }
 
 // Get level text
-static std::string get_level_text(LEVEL level)
+/**
+ * @brief Convert PRORESLEVEL enum to human readable text.
+ * @param[in] level - PRORESLEVEL enum value to convert.
+ * @return PRORESLEVEL enum as text or "INVALID" if not known.
+ */
+static std::string get_level_text(PRORESLEVEL level)
 {
     LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
     if (it != level_map.end())
@@ -835,6 +927,13 @@ static std::string get_level_text(LEVEL level)
     return "INVALID";
 }
 
+/**
+ * @brief Get value form command line string.
+ * Finds whatever is after the "=" sign.
+ * @param[in] arg - Command line option.
+ * @param[in] value - Upon returnm, contains the value after the "=" sign.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_value(const std::string & arg, std::string *value)
 {
     size_t pos = arg.find('=');
@@ -851,6 +950,14 @@ static int get_value(const std::string & arg, std::string *value)
     return -1;
 }
 
+/**
+ * @brief FUSE option parsing function.
+ * @param[in] data - is the user data passed to the fuse_opt_parse() function
+ * @param[in] arg - is the whole argument or option
+ * @param[in] key - determines why the processing function was called
+ * @param[in] outargs - the current output argument list
+ * @return -1 on error, 0 if arg is to be discarded, 1 if arg should be kept
+ */
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs)
 {
     static int n;
@@ -1019,19 +1126,26 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     return 1;
 }
 
-static int set_defaults(void)
+/**
+ * @brief Set default values.
+ * @return Returns true if options are OK, false if option combination is invalid.
+ */
+static bool set_defaults(void)
 {
     if (params.m_format[0].video_codec_id() == AV_CODEC_ID_PRORES)
     {
-        if (params.m_level == LEVEL_NONE)
+        if (params.m_level == PRORESLEVEL_NONE)
         {
-            params.m_level = LEVEL_PRORES_HQ;
+            params.m_level = PRORESLEVEL_PRORES_HQ;
         }
     }
 
-    return 0;
+    return true;
 }
 
+/**
+ * @brief Print currently selected parameters.
+ */
 static void print_params(void)
 {
     std::string cachepath;
@@ -1130,9 +1244,10 @@ static void print_params(void)
 
 /**
  * @brief Main program entry point.
- * @param argc - Number of command line arguments.
- * @param argv - Command line argument array.
+ * @param[in] argc - Number of command line arguments.
+ * @param[in] argv - Command line argument array.
  * @return Return value will be the errorlevel of the executable.
+ * Returns 0 on success, 1 on error.
  */
 int main(int argc, char *argv[])
 {
@@ -1197,7 +1312,7 @@ int main(int argc, char *argv[])
         av_log_set_level(AV_LOG_QUIET);
     }
 
-    if (!init_logging(params.m_logfile, params.m_log_maxlevel, params.m_log_stderr, params.m_log_syslog))
+    if (!init_logging(params.m_logfile, params.m_log_maxlevel, params.m_log_stderr ? true : false, params.m_log_syslog ? true : false))
     {
         std::fprintf(stderr, "ERROR: Failed to initialise logging module.\n");
         std::fprintf(stderr, "Maybe log file couldn't be opened for writing?\n\n");
@@ -1262,7 +1377,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (set_defaults())
+    if (!set_defaults())
     {
         return 1;
     }

@@ -60,6 +60,10 @@ Cache::~Cache()
     close_index();
 }
 
+/**
+ * @brief SQLite callback function. Not used.
+ * @return Returns 0,
+ */
 static int callback(void * /*NotUsed*/, int /*argc*/, char ** /*argv*/, char ** /*azColName*/)
 {
     return 0;

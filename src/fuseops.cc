@@ -75,12 +75,12 @@ static void sighandler(int signum);
 static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
-static filenamemap filenames;
-static std::vector<char> index_buffer;
+static filenamemap filenames;                   /**< @brief Map files to virtual files */
+static std::vector<char> index_buffer;          /**< @brief Buffer for the virtual script if enabled */
 
-static struct sigaction oldHandler;
+static struct sigaction oldHandler;             /**< @brief Saves old SIGINT handler to restore on shutdown */
 
-fuse_operations ffmpegfs_ops;
+fuse_operations ffmpegfs_ops;                   /**< @brief FUSE file system operations */
 
 void init_fuse_ops(void)
 {
@@ -97,6 +97,12 @@ void init_fuse_ops(void)
     ffmpegfs_ops.destroy  = ffmpegfs_destroy;
 }
 
+/**
+ * @brief Initialise a stat structure.
+ * @param[in] st - struct stat to fill in.
+ * @param[in] size - size of the corresponding file.
+ * @param[in] directory - If true, the structure is set up for a directory.
+ */
 static void init_stat(struct stat * st, size_t size, bool directory)
 {
     memset(st, 0, sizeof(struct stat));
@@ -128,6 +134,9 @@ static void init_stat(struct stat * st, size_t size, bool directory)
     st->st_atime = st->st_mtime = st->st_ctime = time(nullptr);
 }
 
+/**
+ * @brief Read the virtual script file into memory and store in buffer.
+ */
 static void prepare_script()
 {
     std::string scriptsource;
@@ -170,15 +179,22 @@ static void prepare_script()
     }
 }
 
-// Translate file names from FUSE to the original absolute path.
+/**
+ * @brief Translate file names from FUSE to the original absolute path.
+ * @param[in] origpath - Name of destination file, contains the original name on return.
+ * @param[in] path - Filename and path of the original file.
+ */
 static void translate_path(std::string *origpath, const char* path)
 {
     *origpath = params.m_basepath;
     *origpath += path;
 }
 
-// Convert file name from source to destination name.
-// Returns true if filename has been changed
+/**
+ * @brief Convert file name from source to destination name.
+ * @param[in] filepath - Name of source file, will be changed to destination name.
+ * @return Returns true if filename has been changed, false if not.
+ */
 static bool transcoded_name(std::string * filepath)
 {
     AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
@@ -195,6 +211,12 @@ static bool transcoded_name(std::string * filepath)
     return false;
 }
 
+/**
+ * @brief Find mapped file by prefix. Normally used to find a path.
+ * @param[in] map - File map with virtual files.
+ * @param[in] search_for - Prefix (path) to search for.
+ * @return If found, returns const_iterator to map entry. Returns map.end() if not found.
+ */
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for)
 {
     filenamemap::const_iterator it = map.lower_bound(search_for);
@@ -286,6 +308,14 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
     return title_count;
 }
 
+/**
+ * @brief Filter function used for scandir.
+ *
+ * Selects files that can be processed with FFmpeg API.
+ *
+ * @param[in] de - dirent to check
+ * @return Returns nonzero if dirent matches, 0 if not.
+ */
 static int selector(const struct dirent * de)
 {
     if (de->d_type & (DT_REG | DT_LNK))
@@ -369,6 +399,13 @@ LPVIRTUALFILE find_original(std::string * filepath)
     return nullptr;
 }
 
+/**
+ * @brief Read the target of a symbolic link
+ * @param[in] path
+ * @param[in] buf
+ * @param[in] size
+ * @return
+ */
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
     std::string origpath;
@@ -398,6 +435,13 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
     return -errno;
 }
 
+/**
+ * @brief Read directory
+ * @param[in] path
+ * @param[in] buf
+ * @param[in] filler
+ * @return
+ */
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
     std::string origpath;
@@ -498,6 +542,12 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     return -errno;
 }
 
+/**
+ * @brief Get file attributes.
+ * @param[in] path - Path of virtual file.
+ * @param[in] stbuf - Buffer to store information.
+ * @return On success, returns 0. On error, returns -errno.
+ */
 static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     std::string origpath;
@@ -645,6 +695,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     return 0;
 }
 
+/**
+ * @brief Get attributes from an open file
+ * @param[in] path
+ * @param[in] stbuf
+ * @param[in] fi
+ * @return
+ */
 static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
 {
     std::string origpath;
@@ -742,6 +799,12 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     return 0;
 }
 
+/**
+ * @brief File open operation
+ * @param[in] path
+ * @param[in] fi
+ * @return
+ */
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     std::string origpath;
@@ -823,6 +886,15 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
+/**
+ * @brief Read data from an open file
+ * @param[in] path
+ * @param[in] buf
+ * @param[in] size
+ * @param[in] _offset
+ * @param[in] fi
+ * @return
+ */
 static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset, struct fuse_file_info *fi)
 {
     std::string origpath;
@@ -925,6 +997,12 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     }
 }
 
+/**
+ * @brief Get file system statistics
+ * @param[in] path
+ * @param[in] stbuf
+ * @return
+ */
 static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
     std::string origpath;
@@ -953,6 +1031,12 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
     return 0;
 }
 
+/**
+ * @brief Release an open file
+ * @param[in] path
+ * @param[in] fi
+ * @return
+ */
 static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
     Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
@@ -967,6 +1051,15 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
     return 0;
 }
 
+/**
+ * @brief Replacement SIGINT handler.
+ *
+ * FUSE handles SIGINT internally, but because there are extra threads running while transcoding this
+ * mechanism does not properly work. We implement our own SIGINT handler to ensure proper shutdown of
+ * all threads. Next we restore the original handler and dispatch the signal to it.
+ *
+ * @param[in] signum - Signal to handle. Must be SIGINT.
+ */
 static void sighandler(int signum)
 {
     assert(signum == SIGINT);
@@ -983,6 +1076,11 @@ static void sighandler(int signum)
     }
 }
 
+/**
+ * @brief Initialise filesystem
+ * @param[in] conn
+ * @return
+ */
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
@@ -1017,6 +1115,10 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
     return nullptr;
 }
 
+/**
+ * @brief Clean up filesystem
+ * @param[in] p
+ */
 static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
     Logging::info(nullptr, "%1 V%2 terminating", PACKAGE_NAME, PACKAGE_VERSION);

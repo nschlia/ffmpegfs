@@ -140,10 +140,10 @@ private:
     size_t          demux_pes(uint8_t *out, const uint8_t *in, size_t len) const;
     /**
      * @brief Handle DSI (Data Search Information) packet
-     * @param _dsi_pack - buffer with DSI packet.
+     * @param[in] _dsi_pack - buffer with DSI packet.
      * @param[out] cur_output_size - Net size of packet.
-     * @param next_vobu - Address of next VOBU (Video Object Unit).
-     * @param data - Data extracted from DSI packet.
+     * @param[in] next_vobu - Address of next VOBU (Video Object Unit).
+     * @param[in] data - Data extracted from DSI packet.
      * @return
      */
     DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int * next_vobu, uint8_t *data);

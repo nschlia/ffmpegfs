@@ -64,23 +64,23 @@ class VcdChapter
 public:
     /**
      * @brief Construct VcdChapter object
-     * @param is_svcd - true for SVCD CD, false for VCD
+     * @param[in] is_svcd - true for SVCD CD, false for VCD
      */
     explicit VcdChapter(bool is_svcd);
     /**
      * @brief Construct VcdChapter object
-     * @param VcdChapter - source object to copy from
-     * @param is_svcd - true for SVCD CD, false for VCD
+     * @param[in] VcdChapter - source object to copy from
+     * @param[in] is_svcd - true for SVCD CD, false for VCD
      */
     explicit VcdChapter(const VCDCHAPTER & VcdChapter, bool is_svcd);
     /**
      * @brief Construct VcdChapter object
-     * @param track_no - track number 1..
-     * @param min - Start minute
-     * @param sec - Start second
-     * @param frame - Start frame
-     * @param is_svcd - true for SVCD CD, false for VCD
-     * @param duration - Chapter duration, in AV_TIME_BASE fractional seconds
+     * @param[in] track_no - track number 1..
+     * @param[in] min - Start minute
+     * @param[in] sec - Start second
+     * @param[in] frame - Start frame
+     * @param[in] is_svcd - true for SVCD CD, false for VCD
+     * @param[in] duration - Chapter duration, in AV_TIME_BASE fractional seconds
      */
     explicit VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, int64_t duration);
     /**
@@ -104,44 +104,44 @@ public:
 
     /**
      * @brief operator =
-     * @param other
+     * @param[in] other
      * @return this
      */
     VcdChapter & operator= (VcdChapter const & other);
 
     /**
      * @brief operator ==
-     * @param other
+     * @param[in] other
      * @return Nonzero if equal, 0 if not
      */
     int operator==(const VcdChapter & other) const;
     /**
      * @brief operator <
-     * @param other
+     * @param[in] other
      * @return Nonzero if this object is smaller, 0 if not
      */
     int operator<(const VcdChapter & other) const;
     /**
      * @brief operator <=
-     * @param other
+     * @param[in] other
      * @return Nonzero if this object is smaller or equal, 0 if not
      */
     int operator<=(const VcdChapter & other) const;
     /**
      * @brief operator >
-     * @param other
+     * @param[in] other
      * @return Nonzero if this object is greater, 0 if not
      */
     int operator>(const VcdChapter & other) const;
     /**
      * @brief operator >=
-     * @param other
+     * @param[in] other
      * @return Nonzero if this object is greater or equal, 0 if not
      */
     int operator>=(const VcdChapter & other) const;
     /**
      * @brief operator !=
-     * @param other
+     * @param[in] other
      * @return Nonzero if this object is not equal, 0 if equal
      */
     int operator!=(const VcdChapter & other) const;
@@ -149,8 +149,8 @@ public:
 protected:
     /**
      * @brief Read file from disk
-     * @param fpi - Open file object to read from
-     * @param track_no - Track number 1...
+     * @param[in] fpi - Open file object to read from
+     * @param[in] track_no - Track number 1...
      * @return
      */
     int         read(FILE *fpi, int track_no);

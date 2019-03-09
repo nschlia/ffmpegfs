@@ -97,20 +97,20 @@ extern struct FFMPEGFS_PARAMS
     bool                smart_transcode(void) const;
     /**
      * @brief Try to guess the format index (audio or video) for a file.
-     * @param filepath - Name of the file, path my be included, but not required.
+     * @param[in] filepath - Name of the file, path my be included, but not required.
      * @return Index 0 or 1
      */
     int                 guess_format_idx(const std::string & filepath) const;
     /**
      * @brief Get FFmpegfs_Format for ae file.
-     * @param filepath - Name of the file, path my be included, but not required.
-     * @return On success, returns pointer to format. On error, returns null_ptr.
+     * @param[in] filepath - Name of the file, path my be included, but not required.
+     * @return On success, returns pointer to format. On error, returns nullptr.
      */
     FFmpegfs_Format *   current_format(const std::string & filepath);
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
-     * @param virtualfile - virtualfile struct of a file.
-     * @return On success, returns pointer to format. On error, returns null_ptr.
+     * @param[in] virtualfile - virtualfile struct of a file.
+     * @return On success, returns pointer to format. On error, returns nullptr.
      */
     FFmpegfs_Format *   current_format(LPCVIRTUALFILE virtualfile);
 
@@ -120,7 +120,7 @@ extern struct FFMPEGFS_PARAMS
     // Output type
     AUTOCOPY            m_autocopy;                 /**< @brief Copy streams if codec matches */
     PROFILE             m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */
-    LEVEL               m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
+    PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Format
     FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file  */
     // Audio
@@ -180,47 +180,47 @@ void            init_fuse_ops(void);
 #ifndef USING_LIBAV
 /**
  * @brief Custom FFmpeg log function. Used with av_log_set_callback().
- * @param ptr - See av_log_set_callback() in FFmpeg API.
- * @param level - See av_log_set_callback() in FFmpeg API.
- * @param fmt - See av_log_set_callback() in FFmpeg API.
- * @param vl - See av_log_set_callback() in FFmpeg API.
+ * @param[in] ptr - See av_log_set_callback() in FFmpeg API.
+ * @param[in] level - See av_log_set_callback() in FFmpeg API.
+ * @param[in] fmt - See av_log_set_callback() in FFmpeg API.
+ * @param[in] vl - See av_log_set_callback() in FFmpeg API.
  */
 void            ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 #endif
 
 /**
  * @brief Inititalise logging facility
- * @param logfile - Name of log file if file writing is selected.
- * @param max_level - Maximum level to log.
- * @param to_stderr - If true, log to stderr.
- * @param to_syslog - If true, log to syslog.
- * @return On success, returns true; on failure returns false.
+ * @param[in] logfile - Name of log file if file writing is selected.
+ * @param[in] max_level - Maximum level to log.
+ * @param[in] to_stderr - If true, log to stderr.
+ * @param[in] to_syslog - If true, log to syslog.
+ * @return Returns true on success; false on error.
  */
-int             init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog);
+bool            init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog);
 /**
  * @brief Get transcoder cache path.
  * @param[out] path - Path to transcoder cache.
  */
 void            transcoder_cache_path(std::string & path);
 /**
- * @brief Initialize transcoder, create cache.
- * @return Returns 0 on success; -1 on error. Check errno for details.
+ * @brief Initialise transcoder, create cache.
+ * @return Returns true on success; false on error. Check errno for details.
  */
-int             transcoder_init(void);
+bool            transcoder_init(void);
 /**
  * @brief Free transcoder.
  */
 void            transcoder_free(void);
 /**
  * @brief Run cache maintenance.
- * @return Returns 0 on success; -1 on error. Check errno for details.
+ * @return Returns true on success; false on error. Check errno for details.
  */
-int             transcoder_cache_maintenance(void);
+bool            transcoder_cache_maintenance(void);
 /**
  * @brief Clear transcoder cache.
- * @return Returns 0 on success; -1 on error. Check errno for details.
+ * @return Returns true on success; false on error. Check errno for details.
  */
-int             transcoder_cache_clear(void);
+bool            transcoder_cache_clear(void);
 /**
  * @brief Add new virtual file to internal list.
  *
@@ -243,7 +243,7 @@ LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, 
 LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *st);
 /**
  * @brief Find file in cache.
- * @param virtfilepath - Virtual filename and path of file to find.
+ * @param[in] virtfilepath - Virtual filename and path of file to find.
  * @return If found, returns VIRTUALFILE object, if not found returns nullptr.
  */
 LPVIRTUALFILE   find_file(const std::string &virtfilepath);
@@ -256,10 +256,10 @@ LPVIRTUALFILE   find_file(const std::string &virtfilepath);
 bool            check_path(const std::string & path);
 /**
  * @brief Load a path with virtual files for FUSE.
- * @param path - Physical path to load.
- * @param statbuf - stat buffer to load.
- * @param buf - FUSE buffer to fill.
- * @param filler - Filler function.
+ * @param[in] path - Physical path to load.
+ * @param[in] statbuf - stat buffer to load.
+ * @param[in] buf - FUSE buffer to fill.
+ * @param[in] filler - Filler function.
  * @return Returns number of files found.
  */
 int             load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);

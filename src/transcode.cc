@@ -51,21 +51,27 @@ typedef struct THREAD_DATA
     void *           m_arg;                     /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *cache;
-static volatile bool thread_exit;
-static volatile unsigned int thread_count;
+static Cache *cache;                            /**< @brief Global cache manager object */
+static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
+static volatile unsigned int thread_count;      /**< @brief Number of currently active threads */
 
 extern "C"
 {
-static void *decoder_thread(void *arg);
+static void *transcoder_thread(void *arg);
 }
 
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
 
-// Transcode the buffer until the buffer has enough or until an error occurs.
-// The buffer needs at least 'end' bytes before transcoding stops. Returns true
-// if no errors and false otherwise.
+/**
+ * @brief Transcode the buffer until the buffer has enough or until an error occurs.
+ * The buffer needs at least 'end' bytes before transcoding stops. Returns true
+ * if no errors and false otherwise.
+ *  @param[in] cache_entry - corresponding cache entry
+ *  @param[in] offset - byte offset to start reading at
+ *  @param[in] len - length of data chunk to be read.
+ * @return On success, returns true. Returns false if an error occurred.
+ */
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
 {
     size_t end = offset + len; // Cast OK: offset will never be < 0.
@@ -111,7 +117,12 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
     return success;
 }
 
-// Close the input file and free everything but the initial buffer.
+/**
+ * @brief Close the input file and free everything but the initial buffer.
+ * @param[in] cache_entry - corresponding cache entry
+ * @param[in] transcoder - Current FFmpeg_Transcoder object.
+ * @return On success returns 0; on error negative AVERROR.
+ */
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder)
 {
     int res = transcoder->encode_finish();
@@ -163,7 +174,7 @@ void transcoder_cache_path(std::string & path)
     append_sep(&path);
 }
 
-int transcoder_init(void)
+bool transcoder_init(void)
 {
     if (cache == nullptr)
     {
@@ -173,16 +184,16 @@ int transcoder_init(void)
         {
             Logging::error(nullptr, "Unable to create media file cache. Out of memory.");
             std::fprintf(stderr, "ERROR: Creating media file cache. Out of memory.\n");
-            return -1;
+            return false;
         }
 
         if (!cache->load_index())
         {
             std::fprintf(stderr, "ERROR: Creating media file cache failed.\n");
-            return -1;
+            return false;
         }
     }
-    return 0;
+    return true;
 }
 
 void transcoder_free(void)
@@ -409,7 +420,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 pthread_cond_init (&thread_data->m_cond, nullptr);
 
                 pthread_mutex_lock(&thread_data->m_mutex);
-                ret = pthread_create(&cache_entry->m_thread_id, &attr, &decoder_thread, thread_data);
+                ret = pthread_create(&cache_entry->m_thread_id, &attr, &transcoder_thread, thread_data);
                 if (ret == 0)
                 {
                     pthread_cond_wait(&thread_data->m_cond, &thread_data->m_mutex);
@@ -608,7 +619,7 @@ void transcoder_exit(void)
     thread_exit = true;
 }
 
-int transcoder_cache_maintenance(void)
+bool transcoder_cache_maintenance(void)
 {
     if (cache != nullptr)
     {
@@ -620,7 +631,7 @@ int transcoder_cache_maintenance(void)
     }
 }
 
-int transcoder_cache_clear(void)
+bool transcoder_cache_clear(void)
 {
     if (cache != nullptr)
     {
@@ -632,7 +643,12 @@ int transcoder_cache_clear(void)
     }
 }
 
-static void *decoder_thread(void *arg)
+/**
+ * @brief Transcoding thread
+ * @param[in] arg - Corresponding Cache_Entry object.
+ * @return Returns nullptr.
+ */
+static void *transcoder_thread(void *arg)
 {
     THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
@@ -898,7 +914,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 }
 #endif
 
-int init_logging(const std::string &logfile, const std::string & max_level, int to_stderr, int to_syslog)
+bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
 {
     static const std::map<std::string, Logging::level, comp> level_map =
     {

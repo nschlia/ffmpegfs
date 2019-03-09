@@ -88,8 +88,8 @@ public:
      *
      * Opens a cache entry and opens the cache file.
      *
-     * @param virtualfile - virtualfile struct of a file.
-     * @return On success, returns pointer to a Cache_Entry. On error, returns null_ptr.
+     * @param[in] virtualfile - virtualfile struct of a file.
+     * @return On success, returns pointer to a Cache_Entry. On error, returns nullptr.
      */
     Cache_Entry *           open(LPVIRTUALFILE virtualfile);
     /**
@@ -98,7 +98,7 @@ public:
      * If the cache entry is in use will not be deleted.
      *
      * @param[in, out] cache_entry - Cache entry object to be closed.
-     * @param flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CLOSE_CACHE_* flags.
      * @return Returns true if the object was deleted; false if not.
      */
     bool                    close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
@@ -120,7 +120,7 @@ public:
      * Can be done before a new file is added. Set predicted_filesize to make sure disk space
      * or cache size will be kept within limits.
      *
-     * @param predicted_filesize - Size of new file
+     * @param[in] predicted_filesize - Size of new file
      * @return Returns true on success; false on error.
      */
     bool                    maintenance(size_t predicted_filesize = 0);
@@ -146,8 +146,8 @@ public:
     bool                    prune_disk_space(size_t predicted_filesize);
     /**
      * @brief Remove a cache file from disk.
-     * @param filename - Source file name.
-     * @param desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] filename - Source file name.
+     * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(const std::string & filename, const std::string &desttype);
@@ -155,34 +155,34 @@ public:
 protected:
     /**
      * @brief Read cache file info.
-     * @param cache_info - Structure with cache info data.
+     * @param[in] cache_info - Structure with cache info data.
      * @return Returns true on success; false on error.
      */
     bool                    read_info(LPCACHE_INFO cache_info);
     /**
      * @brief Write cache file info.
-     * @param cache_info - Structure with cache info data.
+     * @param[in] cache_info - Structure with cache info data.
      * @return Returns true on success; false on error.
      */
     bool                    write_info(LPCCACHE_INFO cache_info);
     /**
      * @brief Delete cache file info.
-     * @param filename - Source file name.
-     * @param desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] filename - Source file name.
+     * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns true on success; false on error.
      */
     bool                    delete_info(const std::string & filename, const std::string & desttype);
     /**
      * @brief Create cache entry object for a VIRTUALFILE.
-     * @param virtualfile - virtualfile struct of a file.
-     * @param desttype - Destination type (MP4, WEBM etc.).
-     * @return On success, returns pointer to a Cache_Entry. On error, returns null_ptr.
+     * @param[in] virtualfile - virtualfile struct of a file.
+     * @param[in] desttype - Destination type (MP4, WEBM etc.).
+     * @return On success, returns pointer to a Cache_Entry. On error, returns nullptr.
      */
     Cache_Entry*            create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype);
     /**
      * @brief Delete cache entry object.
      * @param[in, out] cache_entry - Cache entry object to be closed.
-     * @param flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CLOSE_CACHE_* flags.
      * @return Returns true if the object was deleted; false if not.
      */
     bool                    delete_entry(Cache_Entry **cache_entry, int flags);
@@ -192,7 +192,7 @@ protected:
     void                    close_index();
     /**
      * @brief Get expanded SQL string for a statement.
-     * @param pStmt - SQLite statement handle.
+     * @param[in] pStmt - SQLite statement handle.
      * @return Returns the SQL string bound to the statement handle.
      */
     std::string             expanded_sql(sqlite3_stmt *pStmt);

@@ -61,29 +61,19 @@ typedef struct VIDEO_SETTINGS                       /** @brief Video stream sett
 typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;    /**< @brief Pointer to const version */
 typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;           /**< @brief Pointer version */
 
-/**
- * @brief Locate best matching audio stream.
- * @param vtsi_mat - Video Title Set Information (VTSI)
- * @param[out] best_channels - Number of channels in best stream.
- * @param[out] best_sample_frequency - Sample frequency in best stream.
- * @return Returns number of best stream (0..8).
- */
 static int          dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
-/**
- * @brief Get the frame rate of the DVD. Can be 25 fps (PAL) or  29.97 (NTCS).
- * @param ptr - Pointer to frame_u element in dvd_time_t structure.
- * @return On success returns AVRational with frame rate. On error returns frame rate { 0, 0 }.
- */
 static AVRational   dvd_frame_rate(const uint8_t * ptr);
-/**
- * @brief Convert a time in BCD format into AV_TIMEBASE fractional seconds.
- * @param dvd_time - dvd_time_t object.
- * @return Time in AV_TIMEBASE fractional seconds.
- */
 static int64_t      BCDtime(const dvd_time_t * dvd_time);
 static bool         create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings);
 static int          parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
+/**
+ * @brief Locate best matching audio stream.
+ * @param[in] vtsi_mat - Video Title Set Information (VTSI)
+ * @param[out] best_channels - Number of channels in best stream.
+ * @param[out] best_sample_frequency - Sample frequency in best stream.
+ * @return Returns number of best stream (0..8).
+ */
 static int dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)
 {
     int best_stream = -1;
@@ -169,6 +159,11 @@ static int dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_chan
     return best_stream;
 }
 
+/**
+ * @brief Get the frame rate of the DVD. Can be 25 fps (PAL) or  29.97 (NTCS).
+ * @param[in] ptr - Pointer to frame_u element in dvd_time_t structure.
+ * @return On success returns AVRational with frame rate. On error returns frame rate { 0, 0 }.
+ */
 static AVRational dvd_frame_rate(const uint8_t * ptr)
 {
     AVRational framerate = { 0, 0 };
@@ -198,6 +193,11 @@ static AVRational dvd_frame_rate(const uint8_t * ptr)
     return framerate;
 }
 
+/**
+ * @brief Convert a time in BCD format into AV_TIMEBASE fractional seconds.
+ * @param[in] dvd_time - dvd_time_t object.
+ * @return Time in AV_TIMEBASE fractional seconds.
+ */
 static int64_t BCDtime(const dvd_time_t * dvd_time)
 {
     int64_t time[4];
@@ -221,6 +221,23 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
     return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / av_q2d(framerate)));
 }
 
+/**
+ * @brief Create a virtual file for a DVD.
+ * @param[in] vts_file - Structure defines an IFO file
+ * @param[in] path - Path to DVD files.
+ * @param[in] statbuf - File status structure of original file.
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
+ * @param[in] title_idx - Index of DVD title.
+ * @param[in] chapter_idx - Index of DVD chapter.
+ * @param[in] angles - Number of angles.
+ * @param[in] ttnnum  - DVD title number.
+ * @param[in] audio_stream  - Audio stream index.
+ * @param[in] audio_settings - Audio stream settings.
+ * @param[in] video_settings - Video stream settings.
+ * @return Returns true if successful. Returns false on error.
+ */
 static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const AUDIO_SETTINGS & audio_settings, const VIDEO_SETTINGS & video_settings)
 {
     const vts_ptt_srpt_t *vts_ptt_srpt = vts_file->vts_ptt_srpt;
@@ -377,6 +394,14 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     return true;
 }
 
+/**
+ * @brief Parse DVD directory and get all DVD titles and chapters as virtual files.
+ * @param[in] path - path to check.
+ * @param[in] statbuf - File status structure of original file.
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @return On success, returns number of chapters found. On error, returns -errno.
+ */
 static int parse_dvd(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     dvd_reader_t *dvd;

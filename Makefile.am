@@ -29,7 +29,7 @@ help-pdf: ffmpegfs.1.pdf
 ffmpegfs.1.htmlhelp: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
 		-a revdate="$(shell date +'%B %Y')" -f htmlhelp $<
-		
+
 help-html: ffmpegfs.1.htmlhelp
 
 # Remove absolutely every generated file
@@ -76,6 +76,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "DISTRIBUTE_GROUP_DOC   = YES" >> doxyfile.inc
 	@echo "REFERENCED_BY_RELATION = YES" >> doxyfile.inc
 	@echo "REFERENCES_RELATION    = YES" >> doxyfile.inc
+	@echo "EXTRACT_STATIC         = YES" >> doxyfile.inc
 	@echo "PROJECT_NUMBER         = ${VERSION}" >> doxyfile.inc
 
 # Run doxygen, first render Github markdown documents, see https://developer.github.com/v3/markdown/#render-an-arbitrary-markdown-document

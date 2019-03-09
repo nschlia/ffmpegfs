@@ -107,7 +107,7 @@ extern "C" {
 #else
 /**
  * @brief av_get_media_type_string is missing, so we provide our own.
- * @param media_type - Media type to map.
+ * @param[in] media_type - Media type to map.
  * @return Pointer to media type string.
  */
 const char *get_media_type_string(enum AVMediaType media_type);
@@ -206,15 +206,15 @@ typedef enum PROFILE
 /**
   * Prores levels
   */
-typedef enum LEVEL
+typedef enum PRORESLEVEL
 {
-    LEVEL_NONE = -1,            /**< @brief No level */
+    PRORESLEVEL_NONE = -1,          /**< @brief No level */
     // Prores profiles
-    LEVEL_PRORES_PROXY = 0,     /**< @brief Prores Level: PROXY */
-    LEVEL_PRORES_LT,            /**< @brief Prores Level: LT */
-    LEVEL_PRORES_STANDARD,      /**< @brief Prores Level: STANDARD */
-    LEVEL_PRORES_HQ,            /**< @brief Prores Level: HQ */
-} LEVEL;
+    PRORESLEVEL_PRORES_PROXY = 0,   /**< @brief Prores Level: PROXY */
+    PRORESLEVEL_PRORES_LT,          /**< @brief Prores Level: LT */
+    PRORESLEVEL_PRORES_STANDARD,    /**< @brief Prores Level: STANDARD */
+    PRORESLEVEL_PRORES_HQ,          /**< @brief Prores Level: HQ */
+} PRORESLEVEL;
 
 /**
   * Auto copy options
@@ -240,16 +240,16 @@ public:
     FFmpegfs_Format();
     /**
      * @brief Construct FFmpegfs_Format object
-     * @param format_name - Name of this format, e.g. "MP4 file"
-     * @param filetype - File type, MP3, MP4, OPUS etc.
-     * @param video_codec_id - AVCodec used for video encoding
-     * @param audio_codec_id - AVCodec used for audio encoding
+     * @param[in] format_name - Name of this format, e.g. "MP4 file"
+     * @param[in] filetype - File type, MP3, MP4, OPUS etc.
+     * @param[in] video_codec_id - AVCodec used for video encoding
+     * @param[in] audio_codec_id - AVCodec used for audio encoding
      */
     FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id);
 
     /**
      * @brief Get codecs for the selected destination type.
-     * @param desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns true if format was found; false if not.
      */
     bool                init(const std::string & desttype);
@@ -290,59 +290,59 @@ protected:
 
 /**
  * @brief Add / to the path if required
- * @param path - Path to add separator to.
+ * @param[in] path - Path to add separator to.
  * @return Returns constant reference to path.
  */
 const std::string & append_sep(std::string * path);
 /**
  * @brief Add filename to path, including / after the path if required
- * @param path - Path to add filename to.
- * @param filename - File name to add.
+ * @param[in] path - Path to add filename to.
+ * @param[in] filename - File name to add.
  * @return Returns constant reference to path.
  */
 const std::string & append_filename(std::string * path, const std::string & filename);
 /**
  * @brief Remove filename from path. Handy dirname alternative.
- * @param filepath - Path to remove filename from.
+ * @param[in] filepath - Path to remove filename from.
  * @return Returns constant reference to path.
  */
 const std::string & remove_filename(std::string *filepath);
 /**
  * @brief Remove path from filename. Handy basename alternative.
- * @param filepath - Filename to remove path from.
+ * @param[in] filepath - Filename to remove path from.
  * @return Returns constant reference to filename.
  */
 const std::string & remove_path(std::string *filepath);
 /**
  * @brief Find extension in filename, if existing.
- * @param ext - Extension, if found.
- * @param filename - Filename to inspect.
+ * @param[in] ext - Extension, if found.
+ * @param[in] filename - Filename to inspect.
  * @return Returns true if extension was found, false if there was none
  */
 bool                find_ext(std::string * ext, const std::string & filename);
 /**
  * @brief Replace extension in filename, taking into account that there might not be an extension already.
- * @param filepath - Filename to add extension to.
- * @param ext - Extension to add.
+ * @param[in] filepath - Filename to add extension to.
+ * @param[in] ext - Extension to add.
  * @return Returns constant reference to filename.
  */
 const std::string & replace_ext(std::string * filepath, const std::string & ext);
 /**
  * @brief strdup() variant taking a std::string as input.
- * @param str - String to duplicate.
+ * @param[in] str - String to duplicate.
  * @return Copy of the input string. Remember to delete the allocated memory.
  */
 char *              new_strdup(const std::string & str);
 /**
  * @brief Get destination filename. Replaces extension and path.
- * @param destfilepath - Destination name and path.
- * @param filepath - Source filename and path.
+ * @param[in] destfilepath - Destination name and path.
+ * @param[in] filepath - Source filename and path.
  * @return Returns constant reference to destfilepath.
  */
 const std::string & get_destname(std::string *destfilepath, const std::string & filepath);
 /**
  * @brief Get FFmpeg error string for errnum. Internally calls av_strerror().
- * @param errnum - FFmpeg error code.
+ * @param[in] errnum - FFmpeg error code.
  * @return Returns std::string with the error defined by errnum.
  */
 std::string         ffmpeg_geterror(int errnum);
@@ -351,115 +351,115 @@ std::string         ffmpeg_geterror(int errnum);
  *
  * Avoids conversion of AV_NOPTS_VALUE.
  *
- * @param ts - Source time.
- * @param time_base - Time base of source.
+ * @param[in] ts - Source time.
+ * @param[in] time_base - Time base of source.
  * @return Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE.
  */
 int64_t             ffmpeg_rescale(int64_t ts, const AVRational & time_base);
 
 /**
  * @brief Format numeric value.
- * @param value - Value to format.
+ * @param[in] value - Value to format.
  * @return Returns std::string with formatted value; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_number(int64_t value);
 /**
  * @brief Format a bit rate.
- * @param value - Bit rate to format.
+ * @param[in] value - Bit rate to format.
  * @return Returns std::string with formatted value in bit/s, kbit/s or Mbit/s. If value == AV_NOPTS_VALUE returns "unset".
  */
 std::string         format_bitrate(BITRATE value);
 /**
  * @brief Format a samplerate.
- * @param value - Sample rate to format.
+ * @param[in] value - Sample rate to format.
  * @return Returns std::string with formatted value in Hz or kHz. If value == AV_NOPTS_VALUE returns "unset".
  */
 std::string         format_samplerate(int value);
 /**
  * @brief Format a time in format HH:MM:SS.fract
- * @param value - Time value in AV_TIME_BASE factional seconds.
- * @param fracs - Fractional digits.
+ * @param[in] value - Time value in AV_TIME_BASE factional seconds.
+ * @param[in] fracs - Fractional digits.
  * @return Returns std::string with formatted value. If value == AV_NOPTS_VALUE returns "unset".
  */
 std::string         format_duration(int64_t value, uint32_t fracs = 3);
 /**
  * @brief Format a time in format "w d m s".
- * @param value - Time value in AV_TIME_BASE factional seconds.
+ * @param[in] value - Time value in AV_TIME_BASE factional seconds.
  * @return Returns std::string with formatted value. If value == AV_NOPTS_VALUE returns "unset".
  */
 std::string         format_time(time_t value);
 /**
  * @brief Format size.
- * @param value - Size to format.
+ * @param[in] value - Size to format.
  * @return Returns std::string with formatted value in bytes, KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_size(size_t value);
 /**
  * @brief Format size.
- * @param value - Size to format.
+ * @param[in] value - Size to format.
  * @return Returns std::string with formatted value in bytes plus KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_size_ex(size_t value);
 /**
  * @brief Format size of transcoded file including difference between predicted and resulting size.
- * @param size_resulting - Resulting size.
- * @param size_predicted - Predicted size.
+ * @param[in] size_resulting - Resulting size.
+ * @param[in] size_predicted - Predicted size.
  * @return Returns std::string with formatted value in bytes plus difference; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_result_size(size_t size_resulting, size_t size_predicted);
 /**
  * @brief Format size of transcoded file including difference between predicted and resulting size.
- * @param size_resulting - Resulting size.
- * @param size_predicted - Predicted size.
+ * @param[in] size_resulting - Resulting size.
+ * @param[in] size_predicted - Predicted size.
  * @return Returns std::string with formatted value in bytes plus KB, MB or TB and difference; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_result_size_ex(size_t size_resulting, size_t size_predicted);
 
 /**
  * @brief Path to FFmpegfs binary.
- * @param path - Path to FFmpegfs binary.
+ * @param[in] path - Path to FFmpegfs binary.
  */
 void                exepath(std::string *path);
 
 /**
  * @brief trim from start
- * @param s - String to trim.
+ * @param[in] s - String to trim.
  * @return Reference to string s.
  */
 std::string &       ltrim(std::string &s);
 /**
  * @brief trim from end
- * @param s - String to trim.
+ * @param[in] s - String to trim.
  * @return Reference to string s.
  */
 std::string &       rtrim(std::string &s);
 /**
  * @brief trim from both ends
- * @param s - String to trim.
+ * @param[in] s - String to trim.
  * @return Reference to string s.
  */
 std::string &       trim(std::string &s);
 
 /**
  * @brief Same as std::string replace(), but replaces all occurrences.
- * @param str - Source string.
- * @param from - String to replace.
- * @param to - Replacement string.
+ * @param[in] str - Source string.
+ * @param[in] from - String to replace.
+ * @param[in] to - Replacement string.
  * @return Source string with all occurrences of from replaced with to.
  */
 std::string         replace_all(std::string str, const std::string& from, const std::string& to);
 /**
  * @brief Format a std::string sprintf-like.
- * @param format - sprintf-like format string.
- * @param args - Arguments.
+ * @param[in] format - sprintf-like format string.
+ * @param[in] args - Arguments.
  * @return Returns the formatted string.
  */
 template<typename ... Args> std::string string_format(const std::string& format, Args ... args);
 
 /**
  * @brief strcasecmp() equivalent for std::string.
- * @param s1 - std:string #1
- * @param s2 - std:string #2
+ * @param[in] s1 - std:string #1
+ * @param[in] s2 - std:string #2
  * @return Returns same as strcasecmp() for char *.
  */
 int                 strcasecmp(const std::string & s1, const std::string & s2);
@@ -471,48 +471,48 @@ int                 strcasecmp(const std::string & s1, const std::string & s2);
 std::string         ffmpeg_libinfo();
 /**
  * @brief Lists all supported codecs and devices.
- * @param device_only - If true lists devices only.
+ * @param[in] device_only - If true lists devices only.
  * @return On success returns 0; on error negative AVERROR.
  */
 int                 show_formats_devices(int device_only);
 /**
  * @brief Safe way to get the codec name. Function never fails, will return "unknown" on error.
- * @param codec_id - ID of codec
- * @param long_name - If true, gets the long name.
+ * @param[in] codec_id - ID of codec
+ * @param[in] long_name - If true, gets the long name.
  * @return Returns the codec name or "unknown" on error.
  */
 const char *        get_codec_name(AVCodecID codec_id, bool long_name);
 /**
  * @brief Check if file type supports album arts.
- * @param filetype - File type: MP3, MP4 etc.
+ * @param[in] filetype - File type: MP3, MP4 etc.
  * @return Returns true if album arts are supported, false if not.
  */
 int                 supports_albumart(FILETYPE filetype);
 /**
  * @brief Get the FFmpegfs filetype, desttype must be one of FFmpeg's "official" short names for formats.
- * @param desttype - Destination type (MP4, WEBM etc.).
+ * @param[in] desttype - Destination type (MP4, WEBM etc.).
  * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype(const std::string & desttype);
 /**
  * @brief Get the FFmpegfs filetype, desttypelist must be a comma separated list of FFmpeg's "official" short names for formats.
  * Will return the first match. Same as get_filetype, but accepts a comma separated list.
- * @param desttypelist - Destination type list (MP4, WEBM etc.) separated by commas.
+ * @param[in] desttypelist - Destination type list (MP4, WEBM etc.) separated by commas.
  * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
 
 /**
  * @brief Print info about an AVStream.
- * @param stream - Stream to print.
+ * @param[in] stream - Stream to print.
  * @return On success returns 0; on error negative AVERROR.
  */
 int                 print_stream_info(const AVStream* stream);
 
 /**
  * @brief Compare value with pattern.
- * @param value - Value to check.
- * @param pattern - Regexp pattern to match.
+ * @param[in] value - Value to check.
+ * @param[in] pattern - Regexp pattern to match.
  * @return Returns 0 if pattern matches; 1 if not; -1 if pattern is no valid regex
  */
 int                 compare(const std::string &value, const std::string &pattern);
@@ -520,22 +520,22 @@ int                 compare(const std::string &value, const std::string &pattern
 /**
  * @brief Expand path, e.g., expand ~/ to home directory.
  * @param[out] tgt - Expanded source path.
- * @param src - Path to expand.
+ * @param[in] src - Path to expand.
  * @return Omn success, returns expanded source path.
  */
 const std::string & expand_path(std::string *tgt, const std::string &src);
 
 /**
  * @brief Check if path is a mount.
- * @param path - Path to check.
+ * @param[in] path - Path to check.
  * @return Returns 1 if path is a mount point; 0 if not. On error returns -1. Check errorno for details.
  */
 int                 is_mount(const std::string & path);
 
 /**
  * @brief Make directory tree.
- * @param path - Path to create
- * @param mode - Directory mode, see mkdir() function.
+ * @param[in] path - Path to create
+ * @param[in] mode - Directory mode, see mkdir() function.
  * @return On success, returns 0; on error, returns non-zero errno value.
  */
 int                 mktree(const std::string & path, mode_t mode);
@@ -548,16 +548,16 @@ void                tempdir(std::string & path);
 #ifdef USING_LIBAV
 /**
  * @brief Implement missing avformat_alloc_output_context2() for Libav.
- * @param avctx - See FFmpeg avformat_alloc_output_context2() function.
- * @param oformat - See FFmpeg avformat_alloc_output_context2() function.
- * @param format - See FFmpeg avformat_alloc_output_context2() function.
- * @param filename - See FFmpeg avformat_alloc_output_context2() function.
+ * @param[in] avctx - See FFmpeg avformat_alloc_output_context2() function.
+ * @param[in] oformat - See FFmpeg avformat_alloc_output_context2() function.
+ * @param[in] format - See FFmpeg avformat_alloc_output_context2() function.
+ * @param[in] filename - See FFmpeg avformat_alloc_output_context2() function.
  * @return See FFmpeg avformat_alloc_output_context2() function.
  */
 int                 avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename);
 /**
  * @brief Implement missing avcodec_get_name for Libav.
- * @param id - See FFmpeg avformat_alloc_output_context2() function.
+ * @param[in] id - See FFmpeg avformat_alloc_output_context2() function.
  * @return See FFmpeg avformat_alloc_output_context2() function.
  */
 const char *        avcodec_get_name(AVCodecID id);
@@ -576,8 +576,8 @@ static inline AVRational av_make_q(int num, int den)
 
 /**
  * @brief Split string into an array delimited by a regular expression.
- * @param input - Input string.
- * @param regex - Regular expression to match.
+ * @param[in] input - Input string.
+ * @param[in] regex - Regular expression to match.
  * @return Returns an array with separate elements.
  */
 std::vector<std::string> split(const std::string& input, const std::string & regex);
@@ -593,14 +593,14 @@ constexpr std::size_t countof(T const (&)[N]) noexcept
 
 /**
  * @brief Sanitise file name. Calls realpath() to remove duplicate // or resolve ../.. etc.
- * @param filepath - File name and path to sanitise.
+ * @param[in] filepath - File name and path to sanitise.
  * @return Returns sanitised file name and path.
  */
 std::string         sanitise_name(const std::string & filepath);
 
 /**
  * @brief Minimal check if codec is an album art.
- * @param codec_id - ID of codec.
+ * @param[in] codec_id - ID of codec.
  * @return Returns true if codec is for an image; false if not.
  */
 bool                is_album_art(AVCodecID codec_id);
@@ -611,8 +611,8 @@ bool                is_album_art(AVCodecID codec_id);
 struct comp {
     /**
      * @brief operator () to make std::string find operations case insenistive
-     * @param lhs - left hand string
-     * @param rhs - right hand string
+     * @param[in] lhs - left hand string
+     * @param[in] rhs - right hand string
      * @return -1 if lhs < rhs; 0 if lhs == rhs and 1 if lhs > rhs
      */
     bool operator() (const std::string& lhs, const std::string& rhs) const {
@@ -622,15 +622,15 @@ struct comp {
 
 /**
  * @brief Get free disk space.
- * @param path - Path or file on disk.
+ * @param[in] path - Path or file on disk.
  * @return Returns the free disk space.
  */
 size_t              get_disk_free(std::string & path);
 
 /**
  * @brief For use with win_smb_fix=1: Check if this an illegal access offset by Windows
- * @param size - sizeof of the file
- * @param offset - offset at which file is accessed
+ * @param[in] size - sizeof of the file
+ * @param[in] offset - offset at which file is accessed
  * @return If request should be ignored, returns true; otherwise false
  */
 bool                check_ignore(size_t size, size_t offset);

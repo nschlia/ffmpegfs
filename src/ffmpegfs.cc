@@ -1332,7 +1332,7 @@ int main(int argc, char *argv[])
         }
 
         // Prune cache and exit
-        if (transcoder_init())
+        if (!transcoder_init())
         {
             return 1;
         }
@@ -1382,7 +1382,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (transcoder_init())
+    if (!transcoder_init())
     {
         return 1;
     }

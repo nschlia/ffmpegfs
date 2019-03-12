@@ -400,11 +400,11 @@ LPVIRTUALFILE find_original(std::string * filepath)
 }
 
 /**
- * @brief Read the target of a symbolic link
+ * @brief Read the target of a symbolic link.
  * @param[in] path
  * @param[in] buf
  * @param[in] size
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 {
@@ -437,10 +437,10 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 
 /**
  * @brief Read directory
- * @param[in] path
- * @param[in] buf
- * @param[in] filler
- * @return
+ * @param[in] path - Physical path to load.
+ * @param[in] buf - FUSE buffer to fill.
+ * @param[in] filler - Filler function.
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
@@ -608,7 +608,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 int res = 0;
 
-                // Returns -errno or number or titles on DVD
                 std::string _origpath(origpath);
 
                 remove_filename(&_origpath);
@@ -620,18 +619,21 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #ifdef USE_LIBVCD
                     if (res <= 0)
                     {
+                        // Returns -errno or number or titles on VCD
                         res = check_vcd(_origpath);
                     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
                     if (res <= 0)
                     {
+                        // Returns -errno or number or titles on DVD
                         res = check_dvd(_origpath);
                     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
                     if (res <= 0)
                     {
+                        // Returns -errno or number or titles on Bluray
                         res = check_bluray(_origpath);
                     }
 #endif // USE_LIBBLURAY
@@ -646,7 +648,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 if (virtualfile == nullptr)
                 {
-                    // Not a DVD file
+                    // Not a DVD/VCD/Bluray file
                     return -ENOENT;
                 }
 
@@ -700,7 +702,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
  * @param[in] path
  * @param[in] stbuf
  * @param[in] fi
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
 {
@@ -803,7 +805,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
  * @brief File open operation
  * @param[in] path
  * @param[in] fi
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
@@ -816,7 +818,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     translate_path(&origpath, path);
 
     fd = open(origpath.c_str(), fi->flags);
-
     if (fd == -1 && errno != ENOENT)
     {
         // File does exist, but can't be opened.
@@ -893,7 +894,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
  * @param[in] size
  * @param[in] _offset
  * @param[in] fi
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset, struct fuse_file_info *fi)
 {
@@ -1001,7 +1002,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
  * @brief Get file system statistics
  * @param[in] path
  * @param[in] stbuf
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 {
@@ -1035,7 +1036,7 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
  * @brief Release an open file
  * @param[in] path
  * @param[in] fi
- * @return
+ * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {

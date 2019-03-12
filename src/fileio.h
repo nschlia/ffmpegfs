@@ -43,22 +43,22 @@
  */
 typedef enum VIRTUALTYPE
 {
-    VIRTUALTYPE_PASSTHROUGH,                /**< @brief passthrough file, not used */
-    VIRTUALTYPE_REGULAR,                    /**< @brief Regular file to transcode */
-    VIRTUALTYPE_SCRIPT,                     /**< @brief Virtual script */
-    VIRTUALTYPE_BUFFER,                     /**< @brief Buffer file */
+    VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
+    VIRTUALTYPE_REGULAR,                                            /**< @brief Regular file to transcode */
+    VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
+    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 #ifdef USE_LIBVCD
-    VIRTUALTYPE_VCD,                        /**< @brief Video CD file */
+    VIRTUALTYPE_VCD,                                                /**< @brief Video CD file */
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    VIRTUALTYPE_DVD,                        /**< @brief DVD file */
+    VIRTUALTYPE_DVD,                                                /**< @brief DVD file */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    VIRTUALTYPE_BLURAY,                     /**< @brief Bluray disk file */
+    VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
 } VIRTUALTYPE;
-typedef VIRTUALTYPE const *LPCVIRTUALTYPE;  /**< @brief Pointer version */
-typedef VIRTUALTYPE LPVIRTUALTYPE;          /**< @brief Pointer to const version */
+typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version */
+typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version */
 
 /** @brief Virtual file definition
  */
@@ -73,14 +73,14 @@ typedef struct VIRTUALFILE
 
     }
 
-    VIRTUALTYPE     m_type;                 /**< @brief Type of this virtual file */
+    VIRTUALTYPE     m_type;                                         /**< @brief Type of this virtual file */
 
-    int             m_format_idx;           /**< @brief Index into params.format[] array */
-    std::string     m_origfile;             /**< @brief Sanitised original file name */
-    struct stat     m_st;                   /**< @brief stat structure with size etc. */
+    int             m_format_idx;                                   /**< @brief Index into params.format[] array */
+    std::string     m_origfile;                                     /**< @brief Sanitised original file name */
+    struct stat     m_st;                                           /**< @brief stat structure with size etc. */
 
-    bool        m_full_title;                 /**< @brief If true, ignore m_chapter_no and provide full track */
-	int64_t     m_duration;                  /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
+    int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs

@@ -60,7 +60,7 @@ typedef std::map<std::string, VIRTUALFILE> filenamemap;
 static void init_stat(struct stat *st, size_t size, bool directory);
 static void prepare_script();
 static void translate_path(std::string *origpath, const char* path);
-static bool transcoded_name(std::string *filepath);
+static bool transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
 
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
@@ -193,9 +193,10 @@ static void translate_path(std::string *origpath, const char* path)
 /**
  * @brief Convert file name from source to destination name.
  * @param[in] filepath - Name of source file, will be changed to destination name.
- * @return Returns true if filename has been changed, false if not.
+ * @param[out] ffmpegfs_format - If format has been found points to format info, nullptr if not.
+ * @return Returns true if format has been found and filename changed, false if not.
  */
-static bool transcoded_name(std::string * filepath)
+static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
 {
     AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
     
@@ -204,10 +205,14 @@ static bool transcoded_name(std::string * filepath)
         if ((params.current_format(*filepath)->audio_codec_id() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
                 (params.current_format(*filepath)->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
-            replace_ext(filepath, params.current_format(*filepath)->format_name());
+            *current_format = params.current_format(*filepath);
+            replace_ext(filepath, (*current_format)->format_name());
             return true;
         }
     }
+
+    *current_format = nullptr;
+
     return false;
 }
 
@@ -517,7 +522,9 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                 if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
                 {
-                    if (transcoded_name(&filename))
+                    FFmpegfs_Format *current_format = nullptr;
+
+                    if (transcoded_name(&filename, &current_format))
                     {
                         insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
                     }

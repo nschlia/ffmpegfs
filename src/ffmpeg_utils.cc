@@ -235,6 +235,16 @@ const std::string & append_filename(std::string * path, const std::string & file
     return *path;
 }
 
+const std::string & remove_sep(std::string * path)
+{
+    if (path->back() == '/')
+    {
+        (*path).pop_back();
+    }
+
+    return *path;
+}
+
 const std::string & remove_filename(std::string * filepath)
 {
     char *p = new_strdup(*filepath);
@@ -249,6 +259,20 @@ const std::string & remove_path(std::string *filepath)
     char *p = new_strdup(*filepath);
     *filepath = basename(p);
     delete [] p;
+    return *filepath;
+}
+
+const std::string & remove_ext(std::string *filepath)
+{
+    size_t found;
+
+    found = filepath->rfind('.');
+
+    if (found != std::string::npos)
+    {
+        // Have extension
+        *filepath = filepath->substr(0, found);
+    }
     return *filepath;
 }
 

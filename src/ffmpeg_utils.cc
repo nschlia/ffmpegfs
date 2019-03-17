@@ -1218,7 +1218,11 @@ std::string sanitise_name(const std::string & filepath)
     {
         return resolved_name;
     }
-    return filepath;
+
+    // If realpath fails, at least remove trailing slash
+    std::string _filepath(filepath);
+    remove_sep(&_filepath);
+    return _filepath;
 }
 
 bool is_album_art(AVCodecID codec_id)

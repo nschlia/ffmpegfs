@@ -188,6 +188,7 @@ static void translate_path(std::string *origpath, const char* path)
 {
     *origpath = params.m_basepath;
     *origpath += path;
+    *origpath = sanitise_name(*origpath);
 }
 
 /**
@@ -335,6 +336,8 @@ static int selector(const struct dirent * de)
 
 LPVIRTUALFILE find_original(std::string * filepath)
 {
+    *filepath = sanitise_name(*filepath);
+
     LPVIRTUALFILE virtualfile = find_file(*filepath);
 
     errno = 0;

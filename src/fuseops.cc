@@ -407,7 +407,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 /**
  * @brief Read the target of a symbolic link.
  * @param[in] path
- * @param[in] buf
+ * @param[in] buf - FUSE buffer to fill.
  * @param[in] size
  * @return On success, returns 0. On error, returns -errno.
  */
@@ -818,13 +818,12 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     std::string origpath;
     Cache_Entry* cache_entry;
-    int fd;
 
     Logging::trace(path, "open");
 
     translate_path(&origpath, path);
 
-    fd = open(origpath.c_str(), fi->flags);
+    int fd = open(origpath.c_str(), fi->flags);
     if (fd == -1 && errno != ENOENT)
     {
         // File does exist, but can't be opened.
@@ -906,7 +905,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset, struct fuse_file_info *fi)
 {
     std::string origpath;
-    int fd;
     size_t offset = static_cast<size_t>(_offset);  // Cast OK: offset can never be < 0.
     int bytes_read = 0;
     Cache_Entry* cache_entry;
@@ -915,7 +913,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
     translate_path(&origpath, path);
 
-    fd = open(origpath.c_str(), O_RDONLY);
+    int fd = open(origpath.c_str(), O_RDONLY);
     if (fd != -1)
     {
         // If this is a real file, pass the call through.

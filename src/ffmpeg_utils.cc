@@ -113,7 +113,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     {
         m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_MP3;
-        m_video_codec_id    = AV_CODEC_ID_NONE; //AV_CODEC_ID_MJPEG;
+        m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "mp3";
         break;
     }
@@ -445,7 +445,7 @@ std::string ffmpeg_libinfo()
  */
 static int is_device(__attribute__((unused)) const AVClass *avclass)
 {
-    //if (!avclass)
+    //if (avclass == nullptr)
     //    return 0;
 
     return 0;
@@ -678,15 +678,15 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
     int ret = 0;
 
     *avctx = nullptr;
-    if (!s)
+    if (s == nullptr)
         goto nomem;
 
-    if (!oformat)
+    if (oformat == nullptr)
     {
-        if (format)
+        if (format != nullptr)
         {
             oformat = av_guess_format(format, nullptr, nullptr);
-            if (!oformat)
+            if (oformat == nullptr)
             {
                 av_log(s, AV_LOG_ERROR, "Requested output format '%s' is not a suitable output format\n", format);
                 ret = AVERROR(EINVAL);
@@ -696,7 +696,7 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
         else
         {
             oformat = av_guess_format(nullptr, filename, nullptr);
-            if (!oformat)
+            if (oformat == nullptr)
             {
                 ret = AVERROR(EINVAL);
                 av_log(s, AV_LOG_ERROR, "%s * Unable to find a suitable output format\n", filename);
@@ -709,9 +709,9 @@ int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *ofor
     if (s->oformat->priv_data_size > 0)
     {
         s->priv_data = av_mallocz(s->oformat->priv_data_size);
-        if (!s->priv_data)
+        if (s->priv_data == nullptr)
             goto nomem;
-        if (s->oformat->priv_class)
+        if (s->oformat->priv_class != nullptr)
         {
             *(const AVClass**)s->priv_data= s->oformat->priv_class;
             av_opt_set_defaults(s->priv_data);
@@ -996,7 +996,7 @@ int print_stream_info(const AVStream* stream)
 
 #if LAVF_DEP_AVSTREAM_CODEC
     AVCodecContext *avctx = avcodec_alloc_context3(nullptr);
-    if (!avctx)
+    if (avctx == nullptr)
     {
         return AVERROR(ENOMEM);
     }

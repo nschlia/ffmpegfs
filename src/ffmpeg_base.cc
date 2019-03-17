@@ -100,7 +100,7 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 #if LAVF_DEP_AVSTREAM_CODEC
     // allocate a new decoding context
     dec_ctx = avcodec_alloc_context3(dec);
-    if (!dec_ctx)
+    if (dec_ctx == nullptr)
     {
         Logging::error(filename, "Could not allocate a decoding context.");
         return AVERROR(ENOMEM);
@@ -122,7 +122,7 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
     // Find a decoder for the stream.
     dec = avcodec_find_decoder(codec_id);
-    if (!dec)
+    if (dec == nullptr)
     {
         Logging::error(filename, "Failed to find %1 input codec.", get_media_type_string(type));
         return AVERROR(EINVAL);

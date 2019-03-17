@@ -109,8 +109,8 @@ typedef struct VCDINFO
     //      volume start time[0]:
     //      ...
 
-} VCDINFO, *LPVCDINFO;                  /**< @brief Pointer version */
-typedef const VCDINFO * LPCVCDINFO;     /**< @brief Pointer to const version */
+} VCDINFO, *LPVCDINFO;                  /**< @brief Pointer version of VCDINFO */
+typedef const VCDINFO * LPCVCDINFO;     /**< @brief Pointer to const version of VCDINFO */
 
 VcdInfo::VcdInfo()
 {

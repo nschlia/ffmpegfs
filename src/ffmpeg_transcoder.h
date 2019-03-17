@@ -79,8 +79,8 @@ public:
          * 5: ProRes 4444 XQ (no alpha)
          */
         int                     m_bitrate[6];                           /**< @brief Bitrate of this format */
-    } PRORES_BITRATE, *LPPRORES_BITRATE;                                /**< @brief Pointer version */
-    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;                   /**< @brief Pointer to const version */
+    } PRORES_BITRATE, *LPPRORES_BITRATE;                                /**< @brief Pointer version of PRORES_BITRATE */
+    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;                   /**< @brief Pointer to const version of PRORES_BITRATE */
 
     struct STREAMREF                                    /**< @brief In/output stream reference data */
     {

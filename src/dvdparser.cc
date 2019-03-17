@@ -49,8 +49,8 @@ typedef struct AUDIO_SETTINGS                       /** @brief Audio stream sett
     int     m_channels;                             /**< @brief number of channels (1: mono, 2: stereo, or more) */
     int     m_sample_rate;                          /**< @brief number of audio samples per second */
 } AUDIO_SETTINGS;
-typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;    /**< @brief Pointer to const version */
-typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;           /**< @brief Pointer version */
+typedef AUDIO_SETTINGS const *LPCAUDIO_SETTINGS;    /**< @brief Pointer to const version of AUDIO_SETTINGS */
+typedef AUDIO_SETTINGS *LPAUDIO_SETTINGS;           /**< @brief Pointer version of AUDIO_SETTINGS */
 
 typedef struct VIDEO_SETTINGS                       /** @brief Video stream settings */
 {
@@ -58,8 +58,8 @@ typedef struct VIDEO_SETTINGS                       /** @brief Video stream sett
     int     m_width;                                /**< @brief video width in pixels */
     int     m_height;                               /**< @brief video height in pixels */
 } VIDEO_SETTINGS;
-typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;    /**< @brief Pointer to const version */
-typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;           /**< @brief Pointer version */
+typedef VIDEO_SETTINGS const *LPCVIDEO_SETTINGS;    /**< @brief Pointer to const version of VIDEO_SETTINGS */
+typedef VIDEO_SETTINGS *LPVIDEO_SETTINGS;           /**< @brief Pointer version of VIDEO_SETTINGS */
 
 static int          dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency);
 static AVRational   dvd_frame_rate(const uint8_t * ptr);

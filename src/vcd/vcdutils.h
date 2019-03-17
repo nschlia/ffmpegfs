@@ -55,8 +55,8 @@ typedef struct VCDMSF
     uint8_t m_sec;                          /**< @brief Second in BCD code */
     uint8_t m_frame;                        /**< @brief Number of frames, for a 25 frames per second movie 0...24. */
 
-} VCDMSF, *LPVCDMSF;                        /**< @brief Pointer version */
-typedef const VCDMSF * LPCVCDMSF;           /**< @brief Pointer to const version */
+} VCDMSF, *LPVCDMSF;                        /**< @brief Pointer version of VCDMSF */
+typedef const VCDMSF * LPCVCDMSF;           /**< @brief Pointer to const version of VCDMSF */
 
 /** @brief Video CD chapter
  */
@@ -65,8 +65,8 @@ typedef struct VCDCHAPTER
     uint8_t m_track_no;                     /**< @brief Track number */
     VCDMSF  m_msf;                          /**< @brief MSF position of chapter in file */
 
-} VCDCHAPTER, *LPVCDCHAPTER;                /**< @brief Pointer version */
-typedef const VCDCHAPTER * LPCVCDCHAPTER;   /**< @brief Pointer to const version */
+} VCDCHAPTER, *LPVCDCHAPTER;                /**< @brief Pointer version of VCDCHAPTER */
+typedef const VCDCHAPTER * LPCVCDCHAPTER;   /**< @brief Pointer to const version of VCDCHAPTER */
 
 /** @brief Video CD entry
  */
@@ -103,8 +103,8 @@ typedef struct VCDENTRIES
 
     uint8_t     reserved[36];               /**< @brief RESERVED, must be 0x00 */
 
-} VCDENTRY, *LPVCDENTRIES;                  /**< @brief Pointer version */
-typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version */
+} VCDENTRY, *LPVCDENTRIES;                  /**< @brief Pointer version of VCDENTRY */
+typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version of VCDENTRY */
 #pragma pack(pop)
 
 extern const char SYNC[12];                 /**< @brief Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) */

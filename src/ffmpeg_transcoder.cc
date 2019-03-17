@@ -3600,7 +3600,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
         if (!audio_size(&filesize, m_current_format->audio_codec_id(), input_audio_bit_rate, duration, channels, input_sample_rate))
         {
-            Logging::warning(filename(), "Internal error - unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec_id(), 0), m_current_format->desttype().c_str());
+            Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec_id(), 0), m_current_format->desttype().c_str());
         }
     }
 
@@ -3622,7 +3622,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 #endif
             if (!video_size(&filesize, m_current_format->video_codec_id(), input_video_bit_rate, duration, width, height, interleaved, framerate))
             {
-                Logging::warning(filename(), "Internal error - unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
+                Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
             }
         }
         // else      // TODO #2260: Add picture size

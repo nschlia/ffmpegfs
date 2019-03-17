@@ -302,6 +302,12 @@ const std::string & append_sep(std::string * path);
  */
 const std::string & append_filename(std::string * path, const std::string & filename);
 /**
+ * @brief Remove / from the path
+ * @param[in] path - Path to remove separator from.
+ * @return Returns constant reference to path.
+ */
+const std::string & remove_sep(std::string * path);
+/**
  * @brief Remove filename from path. Handy dirname alternative.
  * @param[in] filepath - Path to remove filename from.
  * @return Returns constant reference to path.
@@ -313,6 +319,12 @@ const std::string & remove_filename(std::string *filepath);
  * @return Returns constant reference to filename.
  */
 const std::string & remove_path(std::string *filepath);
+/**
+ * @brief Remove extension from filename.
+ * @param[in] filepath - Filename to remove path from.
+ * @return Returns constant reference to filename.
+ */
+const std::string & remove_ext(std::string *filepath);
 /**
  * @brief Find extension in filename, if existing.
  * @param[in] ext - Extension, if found.
@@ -356,7 +368,6 @@ std::string         ffmpeg_geterror(int errnum);
  * @return Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE.
  */
 int64_t             ffmpeg_rescale(int64_t ts, const AVRational & time_base);
-
 /**
  * @brief Format numeric value.
  * @param[in] value - Value to format.
@@ -414,13 +425,11 @@ std::string         format_result_size(size_t size_resulting, size_t size_predic
  * @return Returns std::string with formatted value in bytes plus KB, MB or TB and difference; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
 std::string         format_result_size_ex(size_t size_resulting, size_t size_predicted);
-
 /**
  * @brief Path to FFmpegfs binary.
  * @param[in] path - Path to FFmpegfs binary.
  */
 void                exepath(std::string *path);
-
 /**
  * @brief trim from start
  * @param[in] s - String to trim.
@@ -439,7 +448,6 @@ std::string &       rtrim(std::string &s);
  * @return Reference to string s.
  */
 std::string &       trim(std::string &s);
-
 /**
  * @brief Same as std::string replace(), but replaces all occurrences.
  * @param[in] str - Source string.
@@ -455,7 +463,6 @@ std::string         replace_all(std::string str, const std::string& from, const 
  * @return Returns the formatted string.
  */
 template<typename ... Args> std::string string_format(const std::string& format, Args ... args);
-
 /**
  * @brief strcasecmp() equivalent for std::string.
  * @param[in] s1 - std:string #1
@@ -463,7 +470,6 @@ template<typename ... Args> std::string string_format(const std::string& format,
  * @return Returns same as strcasecmp() for char *.
  */
 int                 strcasecmp(const std::string & s1, const std::string & s2);
-
 /**
  * @brief Get info about the FFmpeg libraries used.
  * @return std::tring with info about the linked FFmpeg libraries.
@@ -501,14 +507,12 @@ FILETYPE            get_filetype(const std::string & desttype);
  * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
-
 /**
  * @brief Print info about an AVStream.
  * @param[in] stream - Stream to print.
  * @return On success returns 0; on error negative AVERROR.
  */
 int                 print_stream_info(const AVStream* stream);
-
 /**
  * @brief Compare value with pattern.
  * @param[in] value - Value to check.
@@ -516,7 +520,6 @@ int                 print_stream_info(const AVStream* stream);
  * @return Returns 0 if pattern matches; 1 if not; -1 if pattern is no valid regex
  */
 int                 compare(const std::string &value, const std::string &pattern);
-
 /**
  * @brief Expand path, e.g., expand ~/ to home directory.
  * @param[out] tgt - Expanded source path.
@@ -524,14 +527,12 @@ int                 compare(const std::string &value, const std::string &pattern
  * @return Omn success, returns expanded source path.
  */
 const std::string & expand_path(std::string *tgt, const std::string &src);
-
 /**
  * @brief Check if path is a mount.
  * @param[in] path - Path to check.
  * @return Returns 1 if path is a mount point; 0 if not. On error returns -1. Check errorno for details.
  */
 int                 is_mount(const std::string & path);
-
 /**
  * @brief Make directory tree.
  * @param[in] path - Path to create

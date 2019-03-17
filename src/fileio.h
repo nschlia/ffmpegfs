@@ -57,8 +57,8 @@ typedef enum VIRTUALTYPE
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
 } VIRTUALTYPE;
-typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version */
-typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version */
+typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
+typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
 
 /** @brief Virtual file definition
  */
@@ -136,8 +136,8 @@ typedef struct VIRTUALFILE
 #endif // USE_LIBBLURAY
 
 } VIRTUALFILE;
-typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version */
-typedef VIRTUALFILE *LPVIRTUALFILE;                                 /**< @brief Pointer version */
+typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */
+typedef VIRTUALFILE *LPVIRTUALFILE;                                 /**< @brief Pointer version of VIRTUALFILE */
 
 /** @brief Base class for I/O
  */

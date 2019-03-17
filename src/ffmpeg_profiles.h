@@ -58,8 +58,8 @@ public:
         LPCPROFILE_OPTION       m_option_codec;         /**< @brief av_opt_set() options */
         LPCPROFILE_OPTION       m_option_format;        /**< @brief av_dict_set() options */
     } PROFILE_LIST;                                     /**< @brief Profile list */
-    typedef PROFILE_LIST * LPPROFILE_LIST;              /**< @brief Pointer version */
-    typedef PROFILE_LIST const * LPCPROFILE_LIST;       /**< @brief Pointer to const version */
+    typedef PROFILE_LIST * LPPROFILE_LIST;              /**< @brief Pointer version of PROFILE_LIST */
+    typedef PROFILE_LIST const * LPCPROFILE_LIST;       /**< @brief Pointer to const version of PROFILE_LIST */
 
 protected:
     /**

@@ -59,8 +59,8 @@ typedef struct CACHE_INFO
     size_t          m_file_size;                /**< @brief Source file file size */
     unsigned int    m_access_count;             /**< @brief Read access counter */
 } CACHE_INFO;
-typedef CACHE_INFO const *LPCCACHE_INFO;        /**< @brief Pointer version */
-typedef CACHE_INFO *LPCACHE_INFO;               /**< @brief Pointer to const version */
+typedef CACHE_INFO const *LPCCACHE_INFO;        /**< @brief Pointer version of CACHE_INFO */
+typedef CACHE_INFO *LPCACHE_INFO;               /**< @brief Pointer to const version of CACHE_INFO */
 
 class Cache_Entry;
 

@@ -255,12 +255,18 @@ Functions</h2></td></tr>
 <tr class="memitem:ad189b50c12a861feddd90fa3163c9660"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#ad189b50c12a861feddd90fa3163c9660">append_filename</a> (std::string *path, const std::string &amp;filename)</td></tr>
 <tr class="memdesc:ad189b50c12a861feddd90fa3163c9660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add filename to path, including / after the path if required.  <a href="#ad189b50c12a861feddd90fa3163c9660">More...</a><br /></td></tr>
 <tr class="separator:ad189b50c12a861feddd90fa3163c9660"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cee56a92d834749bb6d1217c3a2f580"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a7cee56a92d834749bb6d1217c3a2f580">remove_sep</a> (std::string *path)</td></tr>
+<tr class="memdesc:a7cee56a92d834749bb6d1217c3a2f580"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove / from the path.  <a href="#a7cee56a92d834749bb6d1217c3a2f580">More...</a><br /></td></tr>
+<tr class="separator:a7cee56a92d834749bb6d1217c3a2f580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c874ce9c4af45f171a70ab203eb9444"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a6c874ce9c4af45f171a70ab203eb9444">remove_filename</a> (std::string *filepath)</td></tr>
 <tr class="memdesc:a6c874ce9c4af45f171a70ab203eb9444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove filename from path. Handy dirname alternative.  <a href="#a6c874ce9c4af45f171a70ab203eb9444">More...</a><br /></td></tr>
 <tr class="separator:a6c874ce9c4af45f171a70ab203eb9444"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe6adc9fa61cd71af02c687341c90d62"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#afe6adc9fa61cd71af02c687341c90d62">remove_path</a> (std::string *filepath)</td></tr>
 <tr class="memdesc:afe6adc9fa61cd71af02c687341c90d62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove path from filename. Handy basename alternative.  <a href="#afe6adc9fa61cd71af02c687341c90d62">More...</a><br /></td></tr>
 <tr class="separator:afe6adc9fa61cd71af02c687341c90d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f1dabfad48c9fad38d421b3c1f7ef38"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a8f1dabfad48c9fad38d421b3c1f7ef38">remove_ext</a> (std::string *filepath)</td></tr>
+<tr class="memdesc:a8f1dabfad48c9fad38d421b3c1f7ef38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove extension from filename.  <a href="#a8f1dabfad48c9fad38d421b3c1f7ef38">More...</a><br /></td></tr>
+<tr class="separator:a8f1dabfad48c9fad38d421b3c1f7ef38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeedcdfb26eb9b3c723c8b563d302a848"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#aeedcdfb26eb9b3c723c8b563d302a848">find_ext</a> (std::string *ext, const std::string &amp;filename)</td></tr>
 <tr class="memdesc:aeedcdfb26eb9b3c723c8b563d302a848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find extension in filename, if existing.  <a href="#aeedcdfb26eb9b3c723c8b563d302a848">More...</a><br /></td></tr>
 <tr class="separator:aeedcdfb26eb9b3c723c8b563d302a848"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -699,7 +705,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">219</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00229">append_filename()</a>, <a class="el" href="blurayparser_8cc_source.html#l00498">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00553">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00146">check_vcd()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">remove_filename()</a>, and <a class="el" href="transcode_8cc_source.html#l00159">transcoder_cache_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00229">append_filename()</a>, <a class="el" href="blurayparser_8cc_source.html#l00498">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00553">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00146">check_vcd()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00248">remove_filename()</a>, and <a class="el" href="transcode_8cc_source.html#l00159">transcoder_cache_path()</a>.</p>
 
 </div>
 </div>
@@ -728,7 +734,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>See FFmpeg <a class="el" href="ffmpeg__utils_8h.html#a362281b46aba7bbcd154f4a6aa8b64fc" title="Implement missing avformat_alloc_output_context2() for Libav. ">avformat_alloc_output_context2()</a> function. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00713">713</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00737">737</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01455">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01359">FFmpeg_Transcoder::add_stream_copy()</a>.</p>
 
@@ -784,7 +790,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>See FFmpeg <a class="el" href="ffmpeg__utils_8h.html#a362281b46aba7bbcd154f4a6aa8b64fc" title="Implement missing avformat_alloc_output_context2() for Libav. ">avformat_alloc_output_context2()</a> function. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00653">653</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00677">677</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01617">FFmpeg_Transcoder::open_output_filestreams()</a>.</p>
 
@@ -826,9 +832,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If request should be ignored, returns true; otherwise false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01219">1219</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01247">1247</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00618">comp::operator()()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00619">comp::operator()()</a>.</p>
 
 </div>
 </div>
@@ -868,9 +874,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if pattern matches; 1 if not; -1 if pattern is no valid regex </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01081">1081</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01105">1105</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01100">expand_path()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01124">expand_path()</a>.</p>
 
 </div>
 </div>
@@ -901,9 +907,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </div><div class="memdoc">
 <p>Safe <a class="el" href="ffmpeg__utils_8h.html#a830b8db3b94d028c275c4dc1b63d7c28">countof()</a> implementation: Retuns number of elements in an array. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00589">589</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00590">590</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01202">is_album_art()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01191">sanitise_name()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01230">is_album_art()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01215">sanitise_name()</a>.</p>
 
 </div>
 </div>
@@ -931,7 +937,7 @@ template&lt;typename T , std::size_t N&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01024">1024</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01048">1048</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -971,11 +977,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Omn success, returns expanded source path. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01100">1100</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01124">1124</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01116">is_mount()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01140">is_mount()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01081">compare()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01105">compare()</a>.</p>
 
 </div>
 </div>
@@ -1004,7 +1010,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with the error defined by errnum. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00315">315</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00339">339</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00081">AV_ERROR_MAX_STRING_SIZE</a>.</p>
 
@@ -1030,9 +1036,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 <p>Get info about the FFmpeg libraries used. </p>
 <dl class="section return"><dt>Returns</dt><dd>std::tring with info about the linked FFmpeg libraries. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00392">392</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00416">416</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00338">get_media_type_string()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00362">get_media_type_string()</a>.</p>
 
 </div>
 </div>
@@ -1073,7 +1079,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00322">322</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00346">346</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -1113,9 +1119,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if extension was found, false if there was none </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00255">255</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00279">279</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00336">find_original()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00337">find_original()</a>.</p>
 
 </div>
 </div>
@@ -1144,11 +1150,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in bit/s, kbit/s or Mbit/s. If value == AV_NOPTS_VALUE returns "unset". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">759</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00783">783</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00780">format_samplerate()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00804">format_samplerate()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00744">format_number()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00294">FFmpeg_Base::video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00768">format_number()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00294">FFmpeg_Base::video_info()</a>.</p>
 
 </div>
 </div>
@@ -1188,9 +1194,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value. If value == AV_NOPTS_VALUE returns "unset". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00800">800</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00824">824</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00826">format_time()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00798">X</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00850">format_time()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00822">X</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00294">FFmpeg_Base::video_info()</a>.</p>
 
@@ -1221,9 +1227,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00744">744</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00768">768</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00151">BITRATE</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">format_bitrate()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00151">BITRATE</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00783">format_bitrate()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
 </div>
 </div>
@@ -1263,9 +1269,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in bytes plus difference; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00917">917</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00941">941</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00931">format_result_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">format_size()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00955">format_result_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">format_size()</a>.</p>
 
 </div>
 </div>
@@ -1305,11 +1311,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in bytes plus KB, MB or TB and difference; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00931">931</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00955">955</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">format_size()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">format_size()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00917">format_result_size()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00941">format_result_size()</a>.</p>
 
 </div>
 </div>
@@ -1338,11 +1344,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in Hz or kHz. If value == AV_NOPTS_VALUE returns "unset". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00780">780</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00804">804</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">format_bitrate()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01736">FFmpeg_Transcoder::init_resampler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00841">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00783">format_bitrate()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01736">FFmpeg_Transcoder::init_resampler()</a>.</p>
 
 </div>
 </div>
@@ -1371,11 +1377,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in bytes, KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">878</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">902</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00912">format_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00936">format_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00917">format_result_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00931">format_result_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00826">format_time()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00941">format_result_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00955">format_result_size_ex()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00850">format_time()</a>.</p>
 
 </div>
 </div>
@@ -1404,9 +1410,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value in bytes plus KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00912">912</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00936">936</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">format_size()</a>, <a class="el" href="transcode_8cc_source.html#l00276">transcoder_predict_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00241">transcoder_set_filesize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">format_size()</a>, <a class="el" href="transcode_8cc_source.html#l00276">transcoder_predict_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00241">transcoder_set_filesize()</a>.</p>
 
 </div>
 </div>
@@ -1435,11 +1441,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns std::string with formatted value. If value == AV_NOPTS_VALUE returns "unset". </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00826">826</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00850">850</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">format_size()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">format_size()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00800">format_duration()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00824">format_duration()</a>.</p>
 
 </div>
 </div>
@@ -1479,7 +1485,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the codec name or "unknown" on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00524">524</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00548">548</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01455">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00310">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03563">FFmpeg_Transcoder::calculate_predicted_filesize()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00086">FFmpeg_Base::open_codec_context()</a>, <a class="el" href="transcode_8cc_source.html#l00241">transcoder_set_filesize()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00294">FFmpeg_Base::video_info()</a>.</p>
 
@@ -1521,11 +1527,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant reference to destfilepath. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00305">305</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00329">329</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00162">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00119">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00075">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00247">remove_path()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00275">replace_ext()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00162">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00119">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00075">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00257">remove_path()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00299">replace_ext()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00281">load_path()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00590">FFmpeg_Transcoder::open_output_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00282">load_path()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00590">FFmpeg_Transcoder::open_output_file()</a>.</p>
 
 </div>
 </div>
@@ -1554,9 +1560,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the free disk space. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01207">1207</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01235">1235</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00618">comp::operator()()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00619">comp::operator()()</a>.</p>
 
 </div>
 </div>
@@ -1585,7 +1591,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00613">613</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00637">637</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00102">FFmpegfs_Format::init()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -1616,7 +1622,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00639">639</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00663">663</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -1647,9 +1653,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to media type string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00338">338</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00362">362</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00392">ffmpeg_libinfo()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">string_format()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00416">ffmpeg_libinfo()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">string_format()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01455">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00067">FFmpeg_Base::open_bestmatch_codec_context()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00086">FFmpeg_Base::open_codec_context()</a>.</p>
 
@@ -1680,9 +1686,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if codec is for an image; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01202">1202</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01230">1230</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00589">countof()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00131">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00189">FFmpeg_Transcoder::is_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01191">sanitise_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00590">countof()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00131">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00189">FFmpeg_Transcoder::is_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01215">sanitise_name()</a>.</p>
 
 </div>
 </div>
@@ -1711,11 +1717,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 1 if path is a mount point; 0 if not. On error returns -1. Check errorno for details. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01116">1116</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01140">1140</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00297">new_strdup()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01182">split()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00321">new_strdup()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01206">split()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01100">expand_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01124">expand_path()</a>.</p>
 
 </div>
 </div>
@@ -1744,7 +1750,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to string s. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01039">1039</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01063">1063</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -1784,7 +1790,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0; on error, returns non-zero errno value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00547">547</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00571">571</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00073">Buffer::init()</a>, and <a class="el" href="cache_8cc_source.html#l00072">Cache::load_index()</a>.</p>
 
@@ -1815,9 +1821,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Copy of the input string. Remember to delete the allocated memory. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00297">297</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00321">321</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00073">Buffer::init()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01116">is_mount()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">remove_filename()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00247">remove_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00073">Buffer::init()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01140">is_mount()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00248">remove_filename()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00257">remove_path()</a>.</p>
 
 </div>
 </div>
@@ -1846,9 +1852,38 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success returns 0; on error negative AVERROR. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00971">971</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00995">995</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01359">FFmpeg_Transcoder::add_stream_copy()</a>.</p>
+
+</div>
+</div>
+<a id="a8f1dabfad48c9fad38d421b3c1f7ef38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f1dabfad48c9fad38d421b3c1f7ef38">&#9670;&nbsp;</a></span>remove_ext()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string&amp; remove_ext </td>
+          <td>(</td>
+          <td class="paramtype">std::string *&#160;</td>
+          <td class="paramname"><em>filepath</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove extension from filename. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">filepath</td><td>- Filename to remove path from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns constant reference to filename. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00265">265</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -1877,11 +1912,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant reference to path. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">238</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00248">248</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00297">new_strdup()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00321">new_strdup()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00336">find_original()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, and <a class="el" href="fileio_8cc_source.html#l00109">FileIO::set_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00337">find_original()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, and <a class="el" href="fileio_8cc_source.html#l00109">FileIO::set_path()</a>.</p>
 
 </div>
 </div>
@@ -1910,11 +1945,42 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant reference to filename. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00247">247</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00257">257</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00297">new_strdup()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00321">new_strdup()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00305">get_destname()</a>, and <a class="el" href="fuseops_8cc_source.html#l00281">load_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00329">get_destname()</a>, and <a class="el" href="fuseops_8cc_source.html#l00282">load_path()</a>.</p>
+
+</div>
+</div>
+<a id="a7cee56a92d834749bb6d1217c3a2f580"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cee56a92d834749bb6d1217c3a2f580">&#9670;&nbsp;</a></span>remove_sep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string&amp; remove_sep </td>
+          <td>(</td>
+          <td class="paramtype">std::string *&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove / from the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to remove separator from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns constant reference to path. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">238</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01215">sanitise_name()</a>.</p>
 
 </div>
 </div>
@@ -1961,9 +2027,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Source string with all occurrences of from replaced with to. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01056">1056</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01080">1080</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01067">strcasecmp()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01091">strcasecmp()</a>.</p>
 
 </div>
 </div>
@@ -2003,9 +2069,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant reference to filename. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00275">275</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00299">299</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00305">get_destname()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00329">get_destname()</a>.</p>
 
 </div>
 </div>
@@ -2034,7 +2100,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to string s. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01045">1045</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01069">1069</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00062">Logging::Logging()</a>.</p>
 
@@ -2065,11 +2131,11 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns sanitised file name and path. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01191">1191</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01215">1215</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01202">is_album_art()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01230">is_album_art()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">remove_sep()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00589">countof()</a>, <a class="el" href="fuseops_8cc_source.html#l00261">find_file()</a>, and <a class="el" href="fuseops_8cc_source.html#l00244">insert_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00590">countof()</a>, <a class="el" href="fuseops_8cc_source.html#l00262">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00337">find_original()</a>, and <a class="el" href="fuseops_8cc_source.html#l00245">insert_file()</a>.</p>
 
 </div>
 </div>
@@ -2098,7 +2164,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success returns 0; on error negative AVERROR. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00433">433</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00457">457</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -2138,9 +2204,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns an array with separate elements. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01182">1182</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01206">1206</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01116">is_mount()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l01140">is_mount()</a>.</p>
 
 </div>
 </div>
@@ -2180,9 +2246,9 @@ template&lt;typename T , std::size_t N&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns same as <a class="el" href="ffmpeg__utils_8h.html#a5556ab43e73af369eeabee0371364b61" title="strcasecmp() equivalent for std::string. ">strcasecmp()</a> for char *. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01067">1067</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01091">1091</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00336">find_original()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00618">comp::operator()()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01056">replace_all()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00337">find_original()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00619">comp::operator()()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01080">replace_all()</a>.</p>
 
 </div>
 </div>
@@ -2224,9 +2290,9 @@ template&lt;typename ... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the formatted string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01073">1073</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01097">1097</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00759">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00800">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00744">format_number()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00931">format_result_size_ex()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00780">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">format_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00826">format_time()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00338">get_media_type_string()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00783">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00824">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00768">format_number()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00955">format_result_size_ex()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00804">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00902">format_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00850">format_time()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00362">get_media_type_string()</a>.</p>
 
 </div>
 </div>
@@ -2255,7 +2321,7 @@ template&lt;typename ... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if album arts are supported, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00607">607</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00631">631</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00238">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -2285,7 +2351,7 @@ template&lt;typename ... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00587">587</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00611">611</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00159">transcoder_cache_path()</a>.</p>
 
@@ -2316,7 +2382,7 @@ template&lt;typename ... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to string s. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01051">1051</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01075">1075</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="vcdutils_8cc_source.html#l00039">VCDUTILS::convert_txt2string()</a>.</p>
 

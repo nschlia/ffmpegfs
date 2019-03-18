@@ -48,8 +48,8 @@ public:
         const int               m_flags;                /**< @brief Flags, see av_opt_set() and av_dict_set() FFmpeg API function */
         const int               m_options;              /**< @brief One of the OPT_* flags */
     } PROFILE_OPTION;                                   /**< @brief Profile option */
-    typedef PROFILE_OPTION * LPPROFILE_OPTION;          /**< @brief Pointer version */
-    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;   /**< @brief Pointer to const version */
+    typedef PROFILE_OPTION * LPPROFILE_OPTION;          /**< @brief Pointer version of PROFILE_OPTION */
+    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;   /**< @brief Pointer to const version of PROFILE_OPTION */
 
     typedef struct PROFILE_LIST                         /**< @brief List of profiles */
     {

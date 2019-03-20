@@ -5,8 +5,7 @@
 :man manual:    User Commands
 
 == NAME ==
-ffmpegfs - mounts and transcodes a multitude of formats like FLACs or OGGs
-to mp3s or mp4s on the fly
+ffmpegfs - mounts and transcodes a multitude of formats to one of the target formats on the fly
 
 == SYNOPSIS ==
 *ffmpegfs* ['OPTION']... 'IN_DIR' 'OUT_DIR'
@@ -15,15 +14,27 @@ to mp3s or mp4s on the fly
 == DESCRIPTION ==
 The ffmpegfs(1) command will mount the directory 'IN_DIR' on 'OUT_DIR'.
 Thereafter, accessing 'OUT_DIR' will show the contents of 'IN_DIR', with
-all supported media files transparently renamed and transcoded to *mp3*/*mp4*
-format upon access.
+all supported media files transparently renamed and transcoded to one of
+the supported target formats upon access.
+
+Supported output formats:
+
+ * MP4 (audio & video)
+ * WebM (audio & video)
+ * OGG (audio & video)
+ * MOV (audio & video)
+ * Prores (a MOV container for Apple Prores video & PCM audio)
+ * Opus (audio only)
+ * MP3 (audio only)
+ * WAV (audio only)
+ * AIFF (audio only)
 
 
 == OPTIONS ==
 
 Usage: ffmpegfs [OPTION]... IN_DIR OUT_DIR
 
-Mount IN_DIR on OUT_DIR, converting audio/video files to *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*/*ProRes*, *AIFF*, *OPUS* or *WAV* upon access.
+Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 
 === Encoding options === 
 *--desttype*=TYPE, *-odesttype*=TYPE::
@@ -35,8 +46,8 @@ To use the smart transcoding feature, specify a video and audio file type, separ
 +
 Default: *mp4*
 
-*--autocopy*=NAME, *-oautocopy*=NAME::
-Select auto copy option, 'NAME' can be:
+*--autocopy*=OPTION, *-oautocopy*=OPTION::
+Select auto copy option, 'OPTION' can be:
 +
 [width="100%"]
 |===================================================================================

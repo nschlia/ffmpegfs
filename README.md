@@ -42,9 +42,10 @@ and/or hardware which only understands one of the supported output
 formats, or transcode files through simple drag-and-drop in a file 
 browser.
 
-For live streaming select MP4 for best results. If video transcoding
-is not required MP3 will also do. The OGG encoder is not fast enough
-for real-time recoding files.
+For live streaming select WebM or MP4 for best results. If video 
+transcoding is not required MP3 will also do, but WebM and MP4 will
+create better results. The OGG encoder is not fast enough for real-time 
+recoding files.
 
 For installation instructions see the [install](INSTALL.md) file.
 
@@ -275,8 +276,8 @@ file size. This header will be replaced when the file is finished. It
 does not seem necessary, though, as most modern players obviously
 ignore this information and play the file anyway.
 
-SUPPORTED OUTPUT FORMATS
-------------------------
+ABOUT OUTPUT FORMATS
+--------------------
 
 A few words to the supported output formats. There is not much to say 
 about the MP3 output as these are regular MP3 files with no strings 
@@ -327,11 +328,6 @@ Playback cannot be positioned past the current playback position, only
 backwards.
 
 But that's the price of starting playback fast.
-
-So there is a lot of work to be put into MP4 support, still.
-
-The output format must be selectable for the desired audience, for
-streaming or opening the files locally, for example.
 
 FIXING PROBLEMS
 ---------------

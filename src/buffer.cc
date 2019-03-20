@@ -35,7 +35,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
-#include <assert.h>
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()

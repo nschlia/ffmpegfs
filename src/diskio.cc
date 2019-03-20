@@ -31,7 +31,6 @@
 #include "logging.h"
 
 #include <errno.h>
-#include <assert.h>
 
 DiskIO::DiskIO()
     : m_fpi(nullptr)

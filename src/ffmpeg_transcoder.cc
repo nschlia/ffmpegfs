@@ -32,8 +32,6 @@
 #include "wave.h"
 #include "logging.h"
 
-#include <assert.h>
-
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"

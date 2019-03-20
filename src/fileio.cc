@@ -40,7 +40,7 @@
 #include "blurayio.h"
 #endif // USE_LIBBLURAY
 
-#include <assert.h>
+//#include <assert.h>
 
 FileIO::FileIO()
     : m_virtualfile(nullptr)

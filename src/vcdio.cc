@@ -30,11 +30,8 @@
 
 #include "vcdio.h"
 #include "vcd/vcdutils.h"
-//#include "ffmpeg_utils.h"
 #include "ffmpegfs.h"
 #include "logging.h"
-
-#include <assert.h>
 
 VcdIO::VcdIO()
     : m_fpi(nullptr)

@@ -118,6 +118,7 @@ void Cache_Entry::clear(int fetch_file_time)
 #endif  // USING_LIBAV
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
+    m_cache_info.m_video_frame_count    = 0;
     m_cache_info.m_finished             = false;
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;

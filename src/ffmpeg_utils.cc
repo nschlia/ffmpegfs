@@ -181,6 +181,32 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_format_name       = "mov";
         break;
     }
+    // TEST Issue #26
+    case FILETYPE_PNG:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_NONE;
+        m_video_codec_id    = AV_CODEC_ID_PNG;
+        m_format_name       = "png";
+        break;
+    }
+    case FILETYPE_JPG:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_NONE;
+        m_video_codec_id    = AV_CODEC_ID_MJPEG;
+        m_format_name       = "jpg";
+        break;
+    }
+    case FILETYPE_BMP:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_NONE;
+        m_video_codec_id    = AV_CODEC_ID_BMP;
+        m_format_name       = "bmp";
+        break;
+    }
+    // TEST Issue #26
     case FILETYPE_UNKNOWN:
     {
         found = false;
@@ -205,6 +231,14 @@ FILETYPE FFmpegfs_Format::filetype() const
 {
     return m_filetype;
 }
+
+// TEST Issue #26
+bool FFmpegfs_Format::export_frames() const
+{
+    return (m_filetype == FILETYPE_JPG || m_filetype == FILETYPE_PNG || m_filetype == FILETYPE_BMP);
+}
+// TEST Issue #26
+
 
 AVCodecID FFmpegfs_Format::video_codec_id() const
 {
@@ -661,6 +695,11 @@ FILETYPE get_filetype(const std::string & desttype)
         { "aiff",   FILETYPE_AIFF },
         { "opus",   FILETYPE_OPUS },
         { "prores", FILETYPE_PRORES },
+        // TEST Issue #26
+        { "png",    FILETYPE_PNG },
+        { "jpg",    FILETYPE_JPG },
+        { "bmp",    FILETYPE_BMP },
+        // TEST Issue #26
     };
 
     try

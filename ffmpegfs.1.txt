@@ -28,6 +28,9 @@ Supported output formats:
  * MP3 (audio only)
  * WAV (audio only)
  * AIFF (audio only)
+ * JPG (video to frameset)
+ * PNG (video to frameset)
+ * BMP (video to frameset)
 
 
 == OPTIONS ==
@@ -41,6 +44,8 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 Select destination format. 'TYPE' can currently be:
 +
 *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *OPUS* or *WAV*. To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
++
+When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will no be available.
 +
 To use the smart transcoding feature, specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF.
 +

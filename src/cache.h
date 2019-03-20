@@ -49,6 +49,7 @@ typedef struct CACHE_INFO
     bool            m_deinterlace;              /**< @brief true if video was deinterlaced */
     size_t          m_predicted_filesize;       /**< @brief Predicted file size */
     size_t          m_encoded_filesize;         /**< @brief Actual file size after encode */
+    int64_t         m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
     bool            m_finished;                 /**< @brief true if decode has finished */
     bool            m_error;                    /**< @brief true if encode failed */
     int             m_errno;                    /**< @brief errno if encode failed */

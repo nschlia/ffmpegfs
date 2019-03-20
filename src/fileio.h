@@ -39,12 +39,51 @@
 #include <sys/stat.h>
 #include <string>
 
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern "C" {
+#include <libavutil/avutil.h>
+}
+#ifdef __cplusplus
+}
+#endif
+#pragma GCC diagnostic pop
+
+// TEST Issue #26
+#pragma pack(push, 1)
+#define IMAGE_FRAME_TAG     "IMGFRAME"
+#define IMAGE_MAX_SIZE          (2*1024*1024)
+/**
+  * @brief Image frame header
+  *
+  * This image frame header will always start at a 8K boundary of the cache.
+  * It can be used to find the next image by seeking a 8K block starting with tag.
+  */
+typedef struct IMAGE_FRAME
+{
+    char          m_tag[8];                   /**< @brief Start tag, always ascii "IMGFRAME" */
+    uint32_t        m_frame_no;                 /**< @brief Number of the frame image */
+    uint32_t        m_size;                     /**< @brief Images size */
+    uint8_t         m_reserved[16];             /**< @brief Reserve */
+    // ...data
+} IMAGE_FRAME;
+#pragma pack(pop)
+typedef IMAGE_FRAME const *LPCIMAGE_FRAME;      /**< @brief Pointer version of IMAGE_FRAME */
+typedef IMAGE_FRAME *LPIMAGE_FRAME;             /**< @brief Pointer to const version of IMAGE_FRAME */
+// TEST Issue #26
+
 /** @brief Virtual file types enum
  */
 typedef enum VIRTUALTYPE
 {
     VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
     VIRTUALTYPE_REGULAR,                                            /**< @brief Regular file to transcode */
+    VIRTUALTYPE_FRAME,                                              /**< @brief File is part of a set of frames */
     VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
     VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 #ifdef USE_LIBVCD
@@ -56,6 +95,10 @@ typedef enum VIRTUALTYPE
 #ifdef USE_LIBBLURAY
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
+    // Issue #26
+    VIRTUALTYPE_DIRECTORY,                                          /**< @brief File is a virtual directory */
+    VIRTUALTYPE_DIRECTORY_FRAMES,                                   /**< @brief File is a virtual directory for set of frames */
+    // Issue #26
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
@@ -69,6 +112,8 @@ typedef struct VIRTUALFILE
         , m_format_idx(0)
         , m_full_title(false)
         , m_duration(0)
+        , m_predicted_size(0)
+        , m_video_frame_count(AV_NOPTS_VALUE)
     {
 
     }
@@ -81,6 +126,8 @@ typedef struct VIRTUALFILE
 
     bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
     int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    size_t          m_predicted_size;                               /**< @brief Use this as the size instead of computing it over and over. */
+    int64_t         m_video_frame_count;                            /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs

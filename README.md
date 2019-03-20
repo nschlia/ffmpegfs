@@ -36,6 +36,9 @@ Supported output formats:
 * MP3 (audio only)
 * WAV (audio only)
 * AIFF (audio only)
+* JPG (video to frameset)
+* PNG (video to frameset)
+* BMP (video to frameset)
 
 This can let you use a multi media file collection with software 
 and/or hardware which only understands one of the supported output
@@ -46,6 +49,10 @@ For live streaming select WebM or MP4 for best results. If video
 transcoding is not required MP3 will also do, but WebM and MP4 will
 create better results. The OGG encoder is not fast enough for real-time 
 recoding files.
+
+When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a
+video source file will be presented in a virtual directory named after
+the source file. Audio will no be available.
 
 For installation instructions see the [install](INSTALL.md) file.
 
@@ -181,6 +188,26 @@ separated by a "+" sign. For example, --desttype=mov+aiff will convert
 video files to Apple Quicktime MOV and audio only files to AIFF. This 
 can be handy if the results are consumed e.g. by some Apple Editing
 software which is very picky about the input format.
+
+TRANSCODE TO FRAME IMAGES
+-------------------------
+
+To transcode a video to frame images, set the destination type to
+JPG, PNG or BMP. This will convert videos to virtual folders with
+images for each frame.
+
+# ls /storage/videos
+ video1.mp4
+ video2.mov
+
+# ffmpegfs /storage/videos /mnt/ffmpegfs
+# find /mnt/ffmpegfs
+
+ /mnt/ffmpegfs/video1.mp4/00001.png
+ /mnt/ffmpegfs/video1.mp4/00002.png
+ ...
+ /mnt/ffmpegfs/video1.mov/00001.png
+ /mnt/ffmpegfs/video1.mov/00002.png
 
 A FEW WORDS ON PRORES
 ---------------------

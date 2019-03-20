@@ -90,6 +90,13 @@ public:
      *  @return The size of the file. Function never fails.
      */
     size_t                  size() const;
+    // TEST Issue #26
+    /**
+     * @brief Get the video frame count.
+     * @return On success, returns the number of frames; on error, returns AV_NOPTS_VALUE (calculation failed or no video source file).
+     */
+    int64_t                 video_frame_count() const;
+    // TEST Issue #26
     /**
      * @brief Get the age of the cache entry.
      * @return Returns the age of the cache entry in seconds since epoch.

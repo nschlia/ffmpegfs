@@ -286,7 +286,8 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
     if (transcoder->open_input_file(virtualfile) >= 0)
     {
-        cache_entry->m_cache_info.m_predicted_filesize = transcoder->predicted_filesize();
+        cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
+        cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
 
         transcoder->close();
 
@@ -332,6 +333,8 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         {
             cache_entry->clear();
         }
+
+        virtualfile->m_video_frame_count = cache_entry->m_cache_info.m_video_frame_count; /***< @todo: duration? */
 
         if (!cache_entry->m_is_decoding && !cache_entry->m_cache_info.m_finished)
         {
@@ -411,7 +414,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //  throw false;
                 //}
 
-                THREAD_DATA* thread_data = static_cast<THREAD_DATA*>(malloc(sizeof(THREAD_DATA)));  /** @todo Replace malloc/free with new/delete */
+                THREAD_DATA* thread_data = new(std::nothrow) THREAD_DATA;
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;
@@ -429,7 +432,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 Logging::debug(cache_entry->filename(), "Decoder thread is running.");
 
-                free(thread_data); // can safely be done here, will not be used in thread from now on
+                delete thread_data; // can safely be done here, will not be used in thread from now on
 
                 if (ret != 0)
                 {
@@ -469,7 +472,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         }
         else if (begin_transcode)
         {
-            Logging::info(cache_entry->destname(), "Reading file from cache.");
+            Logging::trace(cache_entry->destname(), "Reading file from cache.");
         }
 
         cache_entry->unlock();

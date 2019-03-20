@@ -32,6 +32,8 @@
 #include "wave.h"
 #include "logging.h"
 
+#include <assert.h>
+
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -151,6 +153,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     : m_fileio(nullptr)
     , m_close_fileio(true)
     , m_predicted_size(0)
+    , m_video_frame_count(AV_NOPTS_VALUE)
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
@@ -168,6 +171,10 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_copy_audio(false)
     , m_copy_video(false)
     , m_current_format(nullptr)
+    // TEST Issue #26
+    , m_frame_no(0)
+    , m_buffer(nullptr)
+    // TEST Issue #26
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -414,6 +421,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
+    virtualfile->m_duration = m_in.m_format_ctx->duration;
+
     if (m_in.m_video.m_stream_idx >= 0)
     {
         // We have a video stream
@@ -484,6 +493,18 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         Logging::error(filename(), "File contains neither a video nor an audio stream.");
         return AVERROR(EINVAL);
     }
+
+    m_predicted_size = calculate_predicted_filesize();
+
+    virtualfile->m_predicted_size = m_predicted_size;
+
+    if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
+    {
+        // Number of frames: should be quite accurate
+        m_video_frame_count = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)) + 1;
+    }
+
+    virtualfile->m_video_frame_count = m_video_frame_count;
 
     // Make sure this is set, although should already have happened
     virtualfile->m_format_idx = params.guess_format_idx(filename());
@@ -613,6 +634,20 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         Logging::error(filename(), "Out of memory pre-allocating buffer.");
         return AVERROR(ENOMEM);
     }
+
+    // TEST Issue #26
+    m_out.m_filetype = m_current_format->filetype();
+
+    m_frame_no = 0;
+
+    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+
+    if (m_current_format->export_frames())
+    {
+        m_buffer = buffer;
+        return 0;
+    }
+    // TEST Issue #26
 
     // Open the output file for writing.
     ret = open_output_filestreams(buffer);
@@ -2318,6 +2353,20 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = m_pts;
             }
 
+            // TEST Issue #26
+            if (m_out.m_video.m_stream != nullptr)
+            {
+                // TEST Issue #26
+                // Rescale to our time base, but only of nessessary
+                if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                {
+                    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                }
+
+                frame->quality = m_out.m_video.m_codec_ctx->global_quality;
+            }
+            // TEST Issue #26
+
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(send_filters(frame, ret));
@@ -2379,7 +2428,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             ret = store_packet(pkt);
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || m_current_format->export_frames()))     // TEST Issue #26
     {
         if (!m_copy_video)
         {
@@ -2879,8 +2928,122 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     return 0;
 }
 
+// TEST Issue #26
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"  /***< @todo Fix deprecations later */
+int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
+{
+    int ret;
+    AVPacket pkt;
+
+    if (frame == nullptr)
+    {
+        printf("Internal - empty frame\n");
+        return AVERROR(EINVAL);
+    }
+
+    if (m_current_format == nullptr)
+    {
+        printf("Internal - missing format\n");
+        return AVERROR(EINVAL);
+    }
+
+    AVCodec* codec = nullptr;
+    AVCodecContext* codec_context = nullptr;
+
+    try
+    {
+        codec = avcodec_find_encoder(m_current_format->video_codec_id());
+        if (codec == nullptr)
+        {
+            printf("Codec not found\n");
+            throw AVERROR(EINVAL);
+        }
+
+        codec_context = avcodec_alloc_context3(codec);
+        if (codec_context == nullptr)
+        {
+            printf("Could not allocate video codec context\n");
+            throw AVERROR(ENOMEM);
+        }
+
+        codec_context->bit_rate             = 400000;
+        codec_context->width                = frame->width;
+        codec_context->height               = frame->height;
+        codec_context->time_base            = {1, 25};
+        codec_context->pix_fmt              = AV_PIX_FMT_YUVJ420P;   /***< todo must match input or be converted */
+        //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
+        //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
+
+        ret = avcodec_open2(codec_context, codec, nullptr);
+        if (ret < 0)
+        {
+            printf("Could not open codec\n");
+            throw ret;
+        }
+
+        av_init_packet(&pkt);
+
+        pkt.data = nullptr;
+        pkt.size = 0;
+
+        int got_output = 0;
+        ret = avcodec_encode_video2(codec_context, &pkt, frame, &got_output);
+        if (ret < 0)
+        {
+            printf("Error encoding frame\n");
+            throw ret;
+        }
+
+        if (got_output)
+        {
+            IMAGE_FRAME image_frame;
+            size_t offset = static_cast<size_t>(m_frame_no) * IMAGE_MAX_SIZE;
+
+            memset(&image_frame, 0xFF, sizeof(image_frame));
+            memcpy(image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(image_frame.m_tag));
+            image_frame.m_frame_no      = ++m_frame_no;
+            image_frame.m_size          = static_cast<uint32_t>(pkt.size);
+
+            assert(image_frame.m_size + sizeof(image_frame) < IMAGE_MAX_SIZE);
+
+            m_buffer->reserve(offset);  /**< @todo: This is not an effective buffer format. Must be revamped. */
+            m_buffer->seek(static_cast<long>(offset), SEEK_SET);
+
+            m_buffer->write(reinterpret_cast<uint8_t *>(&image_frame), sizeof(image_frame));
+            m_buffer->write(pkt.data, static_cast<size_t>(pkt.size));
+
+            av_free_packet(&pkt);
+        }
+    }
+    catch (int _ret)
+    {
+        ret = _ret;
+    }
+
+    if (codec_context != nullptr)
+    {
+        avcodec_close(codec_context);
+    }
+
+    if (codec_context != nullptr)
+    {
+        av_free(codec_context);
+    }
+
+    return ret;
+}
+#pragma GCC diagnostic pop
+// TEST Issue #26
+
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
+    // TEST Issue #26
+    if (m_current_format->export_frames())
+    {
+        return encode_image_frame(frame);
+    }
+    // TEST Issue #26
+
     // Packet used for temporary storage.
     AVPacket pkt;
     int ret;
@@ -3654,17 +3817,27 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
 size_t FFmpeg_Transcoder::predicted_filesize()
 {
-    if (m_predicted_size == 0)
-    {
-        m_predicted_size = calculate_predicted_filesize();
-    }
-
     return m_predicted_size;
 }
+
+// TEST Issue #26
+int64_t FFmpeg_Transcoder::video_frame_count()
+{
+    return m_video_frame_count;
+}
+// TEST Issue #26
 
 int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
+
+    // TEST Issue #26
+    if (m_current_format->export_frames())
+    {
+        // Format has no trailer
+        return 0;
+    }
+    // TEST Issue #26
 
     // Write the trailer of the output file container.
     ret = write_output_file_trailer();

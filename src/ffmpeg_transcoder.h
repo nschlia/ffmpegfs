@@ -190,6 +190,13 @@ public:
      * @return Predicted file size in bytes.
      */
     size_t                      predicted_filesize();
+    // TEST Issue #26
+    /**
+     * @brief Caluculate the number of video frames in file.
+     * @return On success, returns the number of frames; on error, returns AV_NOPTS_VALUE (calculation failed or no video source file).
+     */
+    int64_t                     video_frame_count();
+    // TEST Issue #26
     /**
      * @brief Assemble an ID3v1 file tag
      * @return Returns an ID3v1 file tag.
@@ -446,6 +453,14 @@ protected:
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
+ 	// TEST Issue #26
+    /**
+     * @brief Encode frame to image
+     * @param frame - Video frame to encode
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
+    int                         encode_image_frame(const AVFrame *frame);
+ 	// TEST Issue #26
     /**
      * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
      * @param[in] frame_size . Size of frame.
@@ -573,7 +588,8 @@ private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
-    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it. */
+    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
+    int64_t                     m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
     bool                        m_is_video;                 /**< @brief true if input is a video file */
 
     // Audio conversion and buffering
@@ -606,6 +622,11 @@ private:
     bool                        m_copy_video;               /**< @brief If true, copy video stream from source to target (just remux, no recode). */
 
     FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
+
+    // TEST Issue #26
+    uint32_t                    m_frame_no;
+    Buffer *                    m_buffer;
+    // TEST Issue #26
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

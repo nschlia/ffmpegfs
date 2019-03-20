@@ -248,6 +248,12 @@ const std::string & remove_sep(std::string * path)
 const std::string & remove_filename(std::string * filepath)
 {
     char *p = new_strdup(*filepath);
+    if (p == nullptr)
+    {
+        errno = ENOMEM;
+        return *filepath;
+    }
+
     *filepath = dirname(p);
     delete [] p;
     append_sep(filepath);
@@ -257,6 +263,11 @@ const std::string & remove_filename(std::string * filepath)
 const std::string & remove_path(std::string *filepath)
 {
     char *p = new_strdup(*filepath);
+    if (p == nullptr)
+    {
+        errno = ENOMEM;
+        return *filepath;
+    }
     *filepath = basename(p);
     delete [] p;
     return *filepath;
@@ -321,7 +332,12 @@ const std::string & replace_ext(std::string * filepath, const std::string & ext)
 char * new_strdup(const std::string & str)
 {
     size_t n = str.size() + 1;
-    char * p = new char[n];
+    char * p = new(std::nothrow) char[n];
+    if (p == nullptr)
+    {
+        errno = ENOMEM;
+        return nullptr;
+    }
     strncpy(p, str.c_str(), n);
     return p;
 }
@@ -1095,7 +1111,7 @@ template<typename ... Args>
 std::string string_format(const std::string& format, Args ... args)
 {
     size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...) + 1); // Extra space for '\0'
-    std::unique_ptr<char[]> buf(new char[size]);
+    std::unique_ptr<char[]> buf(new(std::nothrow) char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
@@ -1147,6 +1163,13 @@ int is_mount(const std::string & path)
         char * parent_name = nullptr;
 
         orig_name = new_strdup(path);
+
+        if (orig_name == nullptr)
+        {
+            std::fprintf(stderr, "is_mount(): Out of memory\n");
+            errno = ENOMEM;
+            throw -1;
+        }
 
         // get the parent directory of the file
         parent_name = dirname(orig_name);

@@ -179,7 +179,7 @@ bool transcoder_init(void)
     if (cache == nullptr)
     {
         Logging::debug(nullptr, "Creating media file cache.");
-        cache = new Cache;
+        cache = new(std::nothrow) Cache;
         if (cache == nullptr)
         {
             Logging::error(nullptr, "Unable to create media file cache. Out of memory.");
@@ -275,7 +275,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
 bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
 {
-    FFmpeg_Transcoder *transcoder = new FFmpeg_Transcoder;
+    FFmpeg_Transcoder *transcoder = new(std::nothrow) FFmpeg_Transcoder;
     bool success = false;
 
     if (transcoder == nullptr)
@@ -652,7 +652,7 @@ static void *transcoder_thread(void *arg)
 {
     THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
-    FFmpeg_Transcoder *transcoder = new FFmpeg_Transcoder;
+    FFmpeg_Transcoder *transcoder = new(std::nothrow) FFmpeg_Transcoder;
     int averror = 0;
     int syserror = 0;
     bool timeout = false;

@@ -32,8 +32,6 @@
 #include "wave.h"
 #include "logging.h"
 
-#include <assert.h>
-
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -307,9 +305,23 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
     m_in.m_format_ctx = avformat_alloc_context();
+    if (m_in.m_format_ctx == nullptr)
+    {
+        Logging::error(filename(), "Out of memory opening file: Unable to allocate format context.");
+        return AVERROR(ENOMEM);
+    }
+
+    unsigned char *iobuffer = static_cast<unsigned char *>(::av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
+    if (iobuffer == nullptr)
+    {
+        Logging::error(filename(), "Out of memory opening file: Unable to allocate I/O buffer.");
+        avformat_free_context(m_in.m_format_ctx);
+        m_in.m_format_ctx = nullptr;
+        return AVERROR(ENOMEM);
+    }
 
     AVIOContext * pb = avio_alloc_context(
-                static_cast<unsigned char *>(::av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE)),
+                iobuffer,
                 static_cast<int>(m_fileio->bufsize()),
                 0,
                 static_cast<void *>(m_fileio),
@@ -1711,10 +1723,17 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    // open the output file
     const size_t buf_size = 1024*1024;
+    unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE));
+    if (iobuffer== nullptr)
+    {
+        Logging::error(filename(), "Out of memory opening output file: Unable to allocate I/O buffer.");
+        return AVERROR(ENOMEM);
+    }
+
+    // open the output file
     m_out.m_format_ctx->pb = avio_alloc_context(
-                static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE)),
+                iobuffer,
                 buf_size,
                 1,
                 static_cast<void *>(buffer),

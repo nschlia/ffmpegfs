@@ -46,8 +46,12 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     m_cache_info.m_desttype[0] = '\0';
     strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->desttype().c_str(), sizeof(m_cache_info.m_desttype) - 1);
 
-    m_buffer = new Buffer;
-    m_buffer->open(virtualfile);
+    m_buffer = new(std::nothrow) Buffer;
+
+    if (m_buffer != nullptr)
+    {
+        m_buffer->open(virtualfile);
+    }
 
     clear();
 
@@ -82,7 +86,7 @@ Cache_Entry::~Cache_Entry()
 
 Cache_Entry * Cache_Entry::create(Cache *owner, LPVIRTUALFILE virtualfile)
 {
-    return new Cache_Entry(owner, virtualfile);
+    return new(std::nothrow) Cache_Entry(owner, virtualfile);
 }
 
 bool Cache_Entry::destroy()

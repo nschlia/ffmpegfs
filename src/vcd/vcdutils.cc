@@ -38,7 +38,7 @@ namespace VCDUTILS
 {
 std::string convert_txt2string(const char * txt, int size, bool trimmed)
 {
-    char * buffer = new char[size + 1];
+    char * buffer = new(std::nothrow) char[size + 1];
     std::string ret_value;
 
     if (buffer != nullptr)

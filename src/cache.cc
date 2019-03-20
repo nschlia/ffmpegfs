@@ -446,11 +446,11 @@ void Cache::close_index()
 
 Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype)
 {
-    //    Cache_Entry* cache_entry = new Cache_Entry(this, filename);
+    //Cache_Entry* cache_entry = new(std::nothrow) Cache_Entry(this, filename);
     Cache_Entry* cache_entry = Cache_Entry::create(this, virtualfile);
     if (cache_entry == nullptr)
     {
-        Logging::error(m_cacheidx_file, "Out of memory.");
+        Logging::error(m_cacheidx_file, "Out of memory creating cache entry.");
         return nullptr;
     }
 

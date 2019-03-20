@@ -170,7 +170,11 @@ Logging::Logger Log(Logging::level loglevel, const std::string & filename)
 
 bool Logging::init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog)
 {
-    logging = new Logging(logfile, max_level, to_stderr, to_syslog);
+    logging = new(std::nothrow) Logging(logfile, max_level, to_stderr, to_syslog);
+    if (logging == nullptr)
+    {
+        return false;   // Out of memory...
+    }
     return !logging->GetFail();
 }
 

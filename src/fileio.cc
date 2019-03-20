@@ -59,28 +59,28 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
     {
     case VIRTUALTYPE_REGULAR:
     {
-        return new DiskIO;
+        return new(std::nothrow) DiskIO;
     }
     case VIRTUALTYPE_BUFFER:
     {
-        return new Buffer;
+        return new(std::nothrow) Buffer;
     }
 #ifdef USE_LIBVCD
     case VIRTUALTYPE_VCD:
     {
-        return new VcdIO;
+        return new(std::nothrow) VcdIO;
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE_DVD:
     {
-        return new DvdIO;
+        return new(std::nothrow) DvdIO;
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
     {
-        return new BlurayIO;
+        return new(std::nothrow) BlurayIO;
     }
 #endif // USE_LIBBLURAY
     //case VIRTUALTYPE_PASSTHROUGH:

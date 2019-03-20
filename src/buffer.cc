@@ -84,12 +84,19 @@ bool Buffer::init(bool erase_cache)
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
     try
     {
+        // Create the path to the cache file
+        char *cachefile = new_strdup(m_cachefile);
+        if (cachefile == nullptr)
+        {
+            Logging::error(m_cachefile, "Error opening cache file: Out of memory");
+            errno = ENOMEM;
+            throw false;
+        }
+
         struct stat sb;
         size_t filesize;
         void *p;
 
-        // Create the path to the cache file
-        char *cachefile = new_strdup(m_cachefile);
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
             Logging::error(m_cachefile, "Error creating cache directory: %1", strerror(errno));

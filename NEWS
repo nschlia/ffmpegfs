@@ -1,9 +1,11 @@
 FFmpegfs NEWS
 
-Important changes in 1.8 (2019-02-XX) YET UNRELEASED
+Important changes in 1.8 (2019-03-XX) YET UNRELEASED
 
-* Feature: Currently preparing Doxygen documentation.
-* Bugfix: Fix make dist: checks did not work
+* Feature: Added Doxygen documentation.
+* Bugfix: Fixed make dist: checks did not work
+* Bugfix: Fixed make clean: some Doxgen files were not removed.
+* Bugfix: Properly catch "no memory" errors.
 
 Important changes in 1.7 (2019-02-26)
 

@@ -66,7 +66,7 @@ extern "C" {
   */
 typedef struct IMAGE_FRAME
 {
-    char          m_tag[8];                   /**< @brief Start tag, always ascii "IMGFRAME" */
+    char            m_tag[8];                   /**< @brief Start tag, always ascii "IMGFRAME" */
     uint32_t        m_frame_no;                 /**< @brief Number of the frame image */
     uint32_t        m_size;                     /**< @brief Images size */
     uint8_t         m_reserved[16];             /**< @brief Reserve */

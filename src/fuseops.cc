@@ -788,7 +788,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
             transcoder_delete(cache_entry);
 
-            Logging::error(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
+            Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
         }
 
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -826,7 +826,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     std::string origpath;
 
     Logging::trace(path, "fgetattr");
-    Logging::debug(path, "fgetattr");
 
     errno = 0;
 
@@ -1019,8 +1018,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
         if (virtualfile2 != nullptr)
         {
-            //Logging::error(filepath, "open ORG ***************************");
-
             cache_entry = transcoder_new(virtualfile2, true);
             if (cache_entry == nullptr)
             {
@@ -1261,7 +1258,6 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
     std::string origpath;
 
     Logging::trace(path, "statfs");
-    Logging::debug(path, "statfs");
 
     translate_path(&origpath, path);
 

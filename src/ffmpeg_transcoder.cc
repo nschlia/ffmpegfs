@@ -635,16 +635,147 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
-    // TEST Issue #26
     m_out.m_filetype = m_current_format->filetype();
-
-    m_frame_no = 0;
 
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
 
+    // TEST Issue #26
     if (m_current_format->export_frames())
     {
+        m_frame_no = 0;
         m_buffer = buffer;
+
+        AVCodec* codec = nullptr;
+        AVCodecContext* output_codec_ctx = nullptr;
+
+        codec = avcodec_find_encoder(m_current_format->video_codec_id());
+        if (codec == nullptr)
+        {
+            Logging::error(destname(), "Codec not found");
+            return AVERROR(EINVAL);
+        }
+
+        output_codec_ctx = avcodec_alloc_context3(codec);
+        if (output_codec_ctx == nullptr)
+        {
+            Logging::error(destname(), "Could not allocate video codec context");
+            return AVERROR(ENOMEM);
+        }
+
+        output_codec_ctx->bit_rate             = 400000;   /**  @todo: per commandline setzen */
+        output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
+        output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
+        output_codec_ctx->time_base            = {1, 25};
+
+        // TODO: av_find_best_pix_fmt_of_2
+        for (const AVPixelFormat *pix_fmt = codec->pix_fmts; *pix_fmt != AV_PIX_FMT_NONE; pix_fmt++)
+        {
+            Logging::debug(destname(), "FORMAT %1", get_pix_fmt_name(*pix_fmt).c_str());
+        }
+
+        // JPG
+        //  FORMAT yuvj420p
+        //  FORMAT yuvj422p
+        //  FORMAT yuvj444p
+
+        // PNG
+        //  FORMAT rgb24
+        //  FORMAT rgba
+        //  FORMAT rgb48be
+        //  FORMAT rgba64be
+        //  FORMAT pal8
+        //  FORMAT gray
+        //  FORMAT ya8
+        //  FORMAT gray16be
+        //  FORMAT ya16be
+        //  FORMAT monob
+
+        // BMP
+        //  FORMAT bgra
+        //  FORMAT bgr24
+        //  FORMAT rgb565le
+        //  FORMAT rgb555le
+        //  FORMAT rgb444le
+        //  FORMAT rgb8
+        //  FORMAT bgr8
+        //  FORMAT rgb4_byte
+        //  FORMAT bgr4_byte
+        //  FORMAT gray
+        //  FORMAT pal8
+        //  FORMAT monob
+
+        switch (m_current_format->video_codec_id())
+        {
+        case AV_CODEC_ID_MJPEG:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
+            break;
+        }
+        case AV_CODEC_ID_PNG:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+            break;
+        }
+        case AV_CODEC_ID_BMP:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+            break;
+        }
+        default:
+        {
+            assert(false);
+            break;
+        }
+        }
+        //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
+        //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
+
+        ret = avcodec_open2(output_codec_ctx, codec, nullptr);
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not open image codec.");
+            return ret;
+        }
+
+        // Initialise pixel format conversion and rescaling if necessary
+#if LAVF_DEP_AVSTREAM_CODEC
+        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
+#else
+        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
+#endif
+        if (in_pix_fmt == AV_PIX_FMT_NONE)
+        {
+            // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
+            in_pix_fmt = output_codec_ctx->pix_fmt;
+        }
+
+        ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+        if (ret < 0)
+        {
+            return ret;
+        }
+
+#ifndef USING_LIBAV
+        if (params.m_deinterlace)
+        {
+            // Init deinterlace filters
+            ret = init_deinterlace_filters(output_codec_ctx, output_codec_ctx->pix_fmt, output_codec_ctx->time_base, output_codec_ctx->time_base);
+            if (ret < 0)
+            {
+                return ret;
+            }
+        }
+#endif // !USING_LIBAV
+
+        m_out.m_video.m_codec_ctx               = output_codec_ctx;
+        m_out.m_video.m_stream_idx              = -1;
+        m_out.m_video.m_stream                  = nullptr;
+
+        // No audio
+        m_out.m_audio.m_codec_ctx               = nullptr;
+        m_out.m_audio.m_stream_idx              = -1;
+        m_out.m_audio.m_stream                  = nullptr;
+
         return 0;
     }
     // TEST Issue #26
@@ -883,6 +1014,46 @@ int FFmpeg_Transcoder::prepare_codec(void *opt, FILETYPE filetype) const
     }
 
     return ret;
+}
+
+int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height)
+{
+    if (in_pix_fmt != out_pix_fmt || in_width != out_width || in_height != out_height)
+    {
+        // Rescale image if required
+        if (in_pix_fmt != out_pix_fmt)
+        {
+            Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(in_pix_fmt).c_str(), get_pix_fmt_name(out_pix_fmt).c_str());
+        }
+
+        if (in_width != out_width || in_height != out_height)
+        {
+            Logging::debug(destname(), "Rescaling video size from %1:%2 to %3:%4.",
+                           in_width, in_height,
+                           out_width, out_height);
+            Logging::error(destname(), "Rescaling video size from %1:%2 to %3:%4.",
+                           in_width, in_height,
+                           out_width, out_height);
+        }
+
+        m_sws_ctx = sws_getContext(
+                    // Source settings
+                    in_width,               // width
+                    in_height,              // height
+                    in_pix_fmt,             // format
+                    // Target settings
+                    out_width,              // width
+                    out_height,             // height
+                    out_pix_fmt,            // format
+                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
+        if (m_sws_ctx == nullptr)
+        {
+            Logging::error(destname(), "Could not allocate scaling/conversion context.");
+            return AVERROR(ENOMEM);
+        }
+    }
+
+    return 0;
 }
 
 int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
@@ -1286,52 +1457,21 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Initialise pixel format conversion and rescaling if necessary
-
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
+        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
 #else
-        AVPixelFormat src_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
+        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
 #endif
-        if (src_pix_fmt == AV_PIX_FMT_NONE)
+        if (in_pix_fmt == AV_PIX_FMT_NONE)
         {
             // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-            src_pix_fmt = output_codec_ctx->pix_fmt;
+            in_pix_fmt = output_codec_ctx->pix_fmt;
         }
 
-        if (src_pix_fmt != output_codec_ctx->pix_fmt ||
-                CODECPAR(m_in.m_video.m_stream)->width != output_codec_ctx->width ||
-                CODECPAR(m_in.m_video.m_stream)->height != output_codec_ctx->height)
+        ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+        if (ret < 0)
         {
-            // Rescale image if required
-            if (src_pix_fmt != output_codec_ctx->pix_fmt)
-            {
-                Logging::trace(destname(), "Initialising pixel format conversion from %1 to %2.", get_pix_fmt_name(src_pix_fmt).c_str(), get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
-            }
-
-            if (CODECPAR(m_in.m_video.m_stream)->width != output_codec_ctx->width ||
-                    CODECPAR(m_in.m_video.m_stream)->height != output_codec_ctx->height)
-
-            {
-                Logging::debug(destname(), "Rescaling video size from %1:%2 to %3:%4.",
-                               CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height,
-                               output_codec_ctx->width, output_codec_ctx->height);
-            }
-
-            m_sws_ctx = sws_getContext(
-                        // Source settings
-                        CODECPAR(m_in.m_video.m_stream)->width,    // width
-                        CODECPAR(m_in.m_video.m_stream)->height,   // height
-                        src_pix_fmt,                               // format
-                        // Target settings
-                        output_codec_ctx->width,                   // width
-                        output_codec_ctx->height,                  // height
-                        output_codec_ctx->pix_fmt,                 // format
-                        SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
-            if (m_sws_ctx == nullptr)
-            {
-                Logging::error(destname(), "Could not allocate scaling/conversion context.");
-                return AVERROR(ENOMEM);
-            }
+            return ret;
         }
 
 #ifdef _DEBUG
@@ -1702,7 +1842,12 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-                ret = init_deinterlace_filters(m_out.m_video.m_codec_ctx, m_out.m_video.m_stream);
+#if LAVF_DEP_AVSTREAM_CODEC
+                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_out.m_video.m_stream->codecpar->format);
+#else
+                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_out.m_video.m_stream->codec->pix_fmt);
+#endif
+                ret = init_deinterlace_filters(m_out.m_video.m_codec_ctx, pix_fmt, m_out.m_video.m_stream->avg_frame_rate, m_out.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;
@@ -2356,7 +2501,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             // TEST Issue #26
             if (m_out.m_video.m_stream != nullptr)
             {
-                // TEST Issue #26
                 // Rescale to our time base, but only of nessessary
                 if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
                 {
@@ -2366,7 +2510,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->quality = m_out.m_video.m_codec_ctx->global_quality;
             }
             // TEST Issue #26
-
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(send_filters(frame, ret));
@@ -2806,7 +2949,7 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.
 
-    ret = av_frame_get_buffer(*frame, 0);
+    ret = av_frame_get_buffer(*frame, 32);
     if (ret < 0)
     {
         Logging::error(destname(), "Could allocate output frame samples (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -2937,60 +3080,42 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
 
     if (frame == nullptr)
     {
-        printf("Internal - empty frame\n");
-        return AVERROR(EINVAL);
+        // This called internally to flush frames. We do not have a cache to flush, so simply ignore that.
+        return 0;
     }
 
     if (m_current_format == nullptr)
     {
-        printf("Internal - missing format\n");
+        Logging::error(destname(), "Internal - missing format.");
         return AVERROR(EINVAL);
     }
 
-    AVCodec* codec = nullptr;
-    AVCodecContext* codec_context = nullptr;
-
     try
     {
-        codec = avcodec_find_encoder(m_current_format->video_codec_id());
-        if (codec == nullptr)
-        {
-            printf("Codec not found\n");
-            throw AVERROR(EINVAL);
-        }
-
-        codec_context = avcodec_alloc_context3(codec);
-        if (codec_context == nullptr)
-        {
-            printf("Could not allocate video codec context\n");
-            throw AVERROR(ENOMEM);
-        }
-
-        codec_context->bit_rate             = 400000;
-        codec_context->width                = frame->width;
-        codec_context->height               = frame->height;
-        codec_context->time_base            = {1, 25};
-        codec_context->pix_fmt              = AV_PIX_FMT_YUVJ420P;   /***< todo must match input or be converted */
-        //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
-        //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
-
-        ret = avcodec_open2(codec_context, codec, nullptr);
-        if (ret < 0)
-        {
-            printf("Could not open codec\n");
-            throw ret;
-        }
-
         av_init_packet(&pkt);
 
         pkt.data = nullptr;
         pkt.size = 0;
 
+        //AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
+
+        //        AVFrame * copyFrame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
+        AVFrame *copyFrame = av_frame_clone(frame);
+        if (copyFrame == nullptr)
+        {
+            throw AVERROR(ENOMEM);
+        }
+
+        //av_frame_ref(copyFrame, frame);
+
+        copyFrame->pts = m_frame_no + 1;
+
         int got_output = 0;
-        ret = avcodec_encode_video2(codec_context, &pkt, frame, &got_output);
+        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, copyFrame, &got_output);
+        av_frame_free(&copyFrame);
         if (ret < 0)
         {
-            printf("Error encoding frame\n");
+            Logging::error(destname(), "Error encoding frame.");
             throw ret;
         }
 
@@ -3018,16 +3143,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
     catch (int _ret)
     {
         ret = _ret;
-    }
-
-    if (codec_context != nullptr)
-    {
-        avcodec_close(codec_context);
-    }
-
-    if (codec_context != nullptr)
-    {
-        av_free(codec_context);
     }
 
     return ret;
@@ -4183,7 +4298,7 @@ const char *FFmpeg_Transcoder::destname() const
 
 #ifndef USING_LIBAV
 // create
-int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_context, const AVStream *output_stream)
+int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
     const char * filters;
     char args[1024];
@@ -4200,12 +4315,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
 
     try
     {
-        if (output_stream == nullptr)
-        {
-            throw static_cast<int>(AVERROR(EINVAL));
-        }
-
-        if (!output_stream->avg_frame_rate.den && !output_stream->avg_frame_rate.num)
+        if (!avg_frame_rate.den && !avg_frame_rate.num)
         {
             // No framerate, so this video "stream" has only one picture
             throw static_cast<int>(AVERROR(EINVAL));
@@ -4215,11 +4325,6 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
 
         AVBufferSinkParams buffer_sink_params;
         enum AVPixelFormat pixel_formats[3];
-#if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(output_stream->codecpar->format);
-#else
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(output_stream->codec->pix_fmt);
-#endif
 
         if (outputs == nullptr || inputs == nullptr || m_filter_graph == nullptr)
         {
@@ -4229,7 +4334,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         // buffer video source: the decoded frames from the decoder will be inserted here.
         sprintf(args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
                 output_codec_context->width, output_codec_context->height, output_codec_context->pix_fmt,
-                output_stream->time_base.num, output_stream->time_base.den,
+                time_base.num, time_base.den,
                 output_codec_context->sample_aspect_ratio.num, FFMAX(output_codec_context->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);

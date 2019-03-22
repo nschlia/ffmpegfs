@@ -554,10 +554,12 @@ protected:
     /**
      * @brief Initialise video filters
      * @param[in] pCodecContext - AVCodecContext object of output video.
-     * @param[in] pStream - Output video stream.
+     * @param[in] pix_fmt - Output stream pixel format.
+     * @param[in] avg_frame_rate - Average output stream frame rate.
+     * @param[in] time_base - Output stream time base.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
-    int                         init_deinterlace_filters(AVCodecContext *output_codec_context, const AVStream *stream);
+    int                         init_deinterlace_filters(AVCodecContext *output_codec_context, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
     /**
      * @brief Send video frame to the filters.
      * @param[in] srcframe - Input video frame.
@@ -583,6 +585,18 @@ protected:
      * @return If an open context was closed, returns true; if nothing had been done returns false.
      */
     bool                        close_resample();
+
+    /**
+     * @brief Init image size rescaler and pixel format converter.
+     * @param in_pix_fmt - Input pixel format
+     * @param in_width - Input image width
+     * @param in_height - Input image height
+     * @param out_pix_fmt - Output pixel format
+     * @param out_width - Output image width
+     * @param out_height - Output pixel format
+     * @return Returns 0 if OK, or negative AVERROR value.
+     */
+    int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */

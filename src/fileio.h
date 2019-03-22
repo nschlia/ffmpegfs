@@ -57,7 +57,7 @@ extern "C" {
 // TEST Issue #26
 #pragma pack(push, 1)
 #define IMAGE_FRAME_TAG     "IMGFRAME"
-#define IMAGE_MAX_SIZE          (2*1024*1024)
+#define IMAGE_MAX_SIZE          (20*1024*1024)
 /**
   * @brief Image frame header
   *

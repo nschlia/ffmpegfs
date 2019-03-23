@@ -91,4 +91,4 @@ doxy-clean:
 
 # Really clean up everything	
 clean-local: doxy-clean
-	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1  ffmpegfs.1.hhc  ffmpegfs.1.hhp  ffmpegfs.1.pdf  ffmpegfs.1.text autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in src/Makefile.in src/ffmpegfshelp.h
+	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1  ffmpegfs.1.hhc  ffmpegfs.1.hhp  ffmpegfs.1.pdf  ffmpegfs.1.text src/ffmpegfshelp.h

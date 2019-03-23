@@ -11,8 +11,7 @@ FFmpegfs
 News
 ----
 
-* **Work on release 1.8 now in progress.**
-* Currently preparing Doxygen documentation.
+* **Work on release 1.9 now in progress.**
 
 * See [NEWS](NEWS) for details.
 

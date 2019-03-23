@@ -111,7 +111,7 @@ $(function() {
 <li>AIFF (audio only)</li>
 </ul>
 <p>This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.</p>
-<p>For live streaming select MP4 for best results. If video transcoding is not required MP3 will also do. The OGG encoder is not fast enough for real-time recoding files.</p>
+<p>For live streaming select WebM or MP4 for best results. If video transcoding is not required MP3 will also do, but WebM and MP4 will create better results. The OGG encoder is not fast enough for real-time recoding files.</p>
 <p>For installation instructions see the <a class="el" href="md_INSTALL.html">install</a> file.</p>
 <p>RESTRICTIONS:</p>
 <ul>
@@ -218,7 +218,7 @@ $(function() {
 <p>MP4: Same applies to meta atoms in MP4 containers.</p>
 <p>MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This <em>dramatically</em> speeds up such applications.</p>
 <p>WAV: A pro forma WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.</p>
-<h2>SUPPORTED OUTPUT FORMATS </h2>
+<h2>ABOUT OUTPUT FORMATS </h2>
 <p>A few words to the supported output formats. There is not much to say about the MP3 output as these are regular MP3 files with no strings attached. They should play well in any modern player.</p>
 <p>The MP4 files created are special, though, as MP4 is not quite suited for live streaming. Reason being that the start block of an MP4 contains a field with the size of the compressed data section. Suffice to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.</p>
 <p>Alas, for a continous live stream, that size will never be known or for our transcoded files one would have to wait for the whole file to be recoded. If that was not enough some important pieces of information are located at the end of the file, including meta tags with artist, album, etc.</p>
@@ -229,8 +229,6 @@ $(function() {
 <p>The data part is divided into chunks of about 1 second length, each with its own header, thus it is possible to fill in the size fields early enough.</p>
 <p>As a draw back not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback cannot be positioned past the current playback position, only backwards.</p>
 <p>But that's the price of starting playback fast.</p>
-<p>So there is a lot of work to be put into MP4 support, still.</p>
-<p>The output format must be selectable for the desired audience, for streaming or opening the files locally, for example.</p>
 <h2>FIXING PROBLEMS </h2>
 <p><b>Lock ups when accessing through Samba</b></p>
 <p>When accessed via Samba the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data was returned.</p>

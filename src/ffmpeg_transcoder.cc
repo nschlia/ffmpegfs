@@ -1031,9 +1031,6 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
             Logging::debug(destname(), "Rescaling video size from %1:%2 to %3:%4.",
                            in_width, in_height,
                            out_width, out_height);
-            Logging::error(destname(), "Rescaling video size from %1:%2 to %3:%4.",
-                           in_width, in_height,
-                           out_width, out_height);
         }
 
         m_sws_ctx = sws_getContext(

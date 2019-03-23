@@ -577,7 +577,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_PASSTHROUGH, origpath + filename, origfile, &st); /**< @todo Feature #2447 / Issue #25: add command line option */
+                                    insert_file(VIRTUALTYPE_PASSTHROUGH, origpath + filename, origfile, &st); /**< @todo Feature #2447 / Issue #25: add command line option m_recodesame */
                                 }
                             }
                             else

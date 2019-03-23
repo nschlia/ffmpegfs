@@ -119,6 +119,7 @@ extern struct FFMPEGFS_PARAMS
     std::string         m_mountpath;                /**< @brief Mount path: Files from m_mountpath will be mapped to this directory. */
     // Output type
     AUTOCOPY            m_autocopy;                 /**< @brief Copy streams if codec matches */
+    RECODESAME          m_recodesame;               /**< @brief Recode to same format options */
     PROFILE             m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */
     PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Format

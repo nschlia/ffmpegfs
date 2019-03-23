@@ -210,6 +210,7 @@ enum
     KEY_CACHEPATH,
     KEY_CACHE_MAINTENANCE,
     KEY_AUTOCOPY,
+    KEY_RECODESAME,
     KEY_PROFILE,
     KEY_LEVEL,
     KEY_LOG_MAXLEVEL,
@@ -233,6 +234,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("profile=%s",                      KEY_PROFILE),
     FUSE_OPT_KEY("--autocopy=%s",                   KEY_AUTOCOPY),
     FUSE_OPT_KEY("autocopy=%s",                     KEY_AUTOCOPY),
+    FUSE_OPT_KEY("--recodesame=%s",                 KEY_RECODESAME),
+    FUSE_OPT_KEY("recodesame=%s",                   KEY_RECODESAME),
     FUSE_OPT_KEY("--level=%s",                      KEY_LEVEL),
     FUSE_OPT_KEY("level=%s",                        KEY_LEVEL),
 
@@ -319,7 +322,8 @@ static struct fuse_opt ffmpegfs_opts[] =
 
 typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;     /**< @brief Map command line option to AUTOCOPY enum */
 typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map command line option to PROFILE enum  */
-typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;           /**< @brief Map command line option to LEVEL enum  */
+typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map command line option to LEVEL enum  */
+typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map command line option to RECODESAME enum  */
 
 /**
   * List of AUTOCOPY options
@@ -365,11 +369,24 @@ static const LEVEL_MAP level_map =
     { "HQ",             PRORESLEVEL_PRORES_HQ },
 };
 
+/**
+  * List if recode options.
+  */
+static const RECODESAME_MAP recode_map =
+{
+    // ProRes
+    { "NEVER",          RECODESAME_NEVER },
+    { "KEEP",           RECODESAME_KEEP },
+    { "ALWAYS",         RECODESAME_ALWAYS },
+};
+
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int          get_samplerate(const std::string & arg, int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format *video_format, FFmpegfs_Format *audio_format);
+static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
+static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
@@ -832,6 +849,53 @@ static std::string get_autocopy_text(AUTOCOPY autocopy)
 }
 
 /**
+ * @brief Get recode option.
+ * @param[in] arg - One of the recode options.
+ * @param[out] recode - Upon return contains selected RECODESAME enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_recodesame(const std::string & arg, RECODESAME *recode)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string data(arg.substr(pos + 1));
+
+        auto it = recode_map.find(data);
+
+        if (it == recode_map.end())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid recode option: %s\n", data.c_str());
+            return -1;
+        }
+
+        *recode = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing recode string\n");
+
+    return -1;
+}
+
+/**
+ * @brief Convert RECODESAME enum to human readable text.
+ * @param[in] recode - RECODESAME enum value to convert.
+ * @return RECODESAME enum as text or "INVALID" if not known.
+ */
+static std::string get_recodesame_text(RECODESAME recode)
+{
+    RECODESAME_MAP::const_iterator it = search_by_value(recode_map, recode);
+    if (it != recode_map.end())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
+/**
  * @brief Get profile option.
  * @param[in] arg - One of the auto profile options.
  * @param[out] profile - Upon return contains selected PROFILE enum.
@@ -1053,6 +1117,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_autocopy(arg, &params.m_autocopy);
     }
+    case KEY_RECODESAME:
+    {
+        return get_recodesame(arg, &params.m_recodesame);
+    }
     case KEY_PROFILE:
     {
         return get_profile(arg, &params.m_profile);
@@ -1157,50 +1225,52 @@ static void print_params(void)
                                          "Mount Path        : %2\n\n"
                                          "Smart Transcode   : %3\n"
                                          "Auto Copy         : %4\n"
-                                         "Audio File Type   : %5\n"
-                                         "Video File Type   : %6\n"
-                                         "Profile           : %7\n"
-                                         "Level             : %8\n"
+                                         "Recode to same fmt: %5\n"
+                                         "Audio File Type   : %6\n"
+                                         "Video File Type   : %7\n"
+                                         "Profile           : %8\n"
+                                         "Level             : %9\n"
                                          "\nAudio\n\n"
-                                         "Audio Codecs      : %9+%10\n"
-                                         "Audio Bitrate     : %11\n"
-                                         "Audio Sample Rate : %12\n"
+                                         "Audio Codecs      : %10+%11\n"
+                                         "Audio Bitrate     : %12\n"
+                                         "Audio Sample Rate : %13\n"
                                          "\nVideo\n\n"
-                                         "Video Size/Pixels : width=%13 height=%14\n"
-                                         "Deinterlace       : %15\n"
-                                         "Remove Album Arts : %16\n"
-                                         "Video Codec       : %17\n"
-                                         "Video Bitrate     : %18\n"
+                                         "Video Size/Pixels : width=%14 height=%15\n"
+                                         "Deinterlace       : %16\n"
+                                         "Remove Album Arts : %17\n"
+                                         "Video Codec       : %18\n"
+                                         "Video Bitrate     : %19\n"
                                          "\nVirtual Script\n\n"
-                                         "Create script     : %19\n"
-                                         "Script file name  : %20\n"
-                                         "Input file        : %21\n"
+                                         "Create script     : %20\n"
+                                         "Script file name  : %21\n"
+                                         "Input file        : %22\n"
                                          "\nLogging\n\n"
-                                         "Max. Log Level    : %22\n"
-                                         "Log to stderr     : %23\n"
-                                         "Log to syslog     : %24\n"
-                                         "Logfile           : %25\n"
+                                         "Max. Log Level    : %23\n"
+                                         "Log to stderr     : %24\n"
+                                         "Log to syslog     : %25\n"
+                                         "Logfile           : %26\n"
                                          "\nCache Settings\n\n"
-                                         "Expiry Time       : %26\n"
-                                         "Inactivity Suspend: %27\n"
-                                         "Inactivity Abort  : %28\n"
-                                         "Pre-buffer size   : %29\n"
-                                         "Max. Cache Size   : %20\n"
-                                         "Min. Disk Space   : %31\n"
-                                         "Cache Path        : %32\n"
-                                         "Disable Cache     : %33\n"
-                                         "Maintenance Timer : %34\n"
-                                         "Clear Cache       : %35\n"
+                                         "Expiry Time       : %27\n"
+                                         "Inactivity Suspend: %28\n"
+                                         "Inactivity Abort  : %29\n"
+                                         "Pre-buffer size   : %30\n"
+                                         "Max. Cache Size   : %31\n"
+                                         "Min. Disk Space   : %32\n"
+                                         "Cache Path        : %33\n"
+                                         "Disable Cache     : %34\n"
+                                         "Maintenance Timer : %35\n"
+                                         "Clear Cache       : %36\n"
                                          "\nVarious Options\n\n"
-                                         "Max. Threads      : %36\n"
-                                         "Decoding Errors   : %37\n"
-                                         "Min. DVD chapter  : %38\n"
+                                         "Max. Threads      : %37\n"
+                                         "Decoding Errors   : %38\n"
+                                         "Min. DVD chapter  : %39\n"
                                          "\nExperimental Options\n\n"
-                                         "Windows 10 Fix    : %39\n",
+                                         "Windows 10 Fix    : %40\n",
                    params.m_basepath.c_str(),
                    params.m_mountpath.c_str(),
                    params.smart_transcode() ? "yes" : "no",
                    get_autocopy_text(params.m_autocopy).c_str(),
+                   get_recodesame_text(params.m_recodesame).c_str(),
                    params.m_format[1].desttype().c_str(),
             params.m_format[0].desttype().c_str(),
             get_profile_text(params.m_profile).c_str(),

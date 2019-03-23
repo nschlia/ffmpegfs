@@ -71,6 +71,18 @@ STRICT would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to s
 +
 Default: *OFF*
 
+*--recodesame*=OPTION, *-orecodesame*=OPTION::
+Select recode to same format option, 'OPTION' can be:
++
+[width="100%"]
+|===================================================================================
+|*NEVER* |Never recode to same format.
+|*KEEP* |Recode to same format if target will not become larger.
+|*ALWAYS* |Always recode to same format.
+|===================================================================================
++
+Default: *NEVER*
+
 *--profile*=NAME, *-oprofile*=NAME::
 Set profile for target audience, 'NAME' can be:
 +

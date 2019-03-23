@@ -234,6 +234,16 @@ typedef enum AUTOCOPY
 } AUTOCOPY;
 
 /**
+  * Recode to same format options
+  */
+typedef enum RECODESAME
+{
+     RECODESAME_NEVER = 0,  /**< @brief Never recode to same format. */
+     RECODESAME_KEEP,       /**< @brief Recode to same format if target will not become larger. */
+     RECODESAME_ALWAYS,     /**< @brief Always recode to same format. */
+} RECODESAME;
+
+/**
  * @brief The #FFmpegfs_Format class
  */
 class FFmpegfs_Format

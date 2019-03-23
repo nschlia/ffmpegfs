@@ -1045,7 +1045,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                     out_width,              // width
                     out_height,             // height
                     out_pix_fmt,            // format
-                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
+                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
         if (m_sws_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate scaling/conversion context.");
@@ -4324,7 +4324,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         m_filter_graph = avfilter_graph_alloc();
 
         AVBufferSinkParams buffer_sink_params;
-        enum AVPixelFormat pixel_formats[3];
+        enum AVPixelFormat pixel_fmts[3];
 
         if (outputs == nullptr || inputs == nullptr || m_filter_graph == nullptr)
         {
@@ -4332,10 +4332,10 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         }
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
-        sprintf(args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-                output_codec_context->width, output_codec_context->height, output_codec_context->pix_fmt,
-                time_base.num, time_base.den,
-                output_codec_context->sample_aspect_ratio.num, FFMAX(output_codec_context->sample_aspect_ratio.den, 1));
+        snprintf(args, sizeof(args), "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+                 output_codec_context->width, output_codec_context->height, pix_fmt,
+                 time_base.num, time_base.den,
+                 output_codec_context->sample_aspect_ratio.num, FFMAX(output_codec_context->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)
@@ -4360,19 +4360,20 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
 
         if (pix_fmt == AV_PIX_FMT_NV12)
         {
-            pixel_formats[0] = AV_PIX_FMT_NV12;
-            pixel_formats[1] = AV_PIX_FMT_YUV420P;
+            pixel_fmts[0] = AV_PIX_FMT_NV12;
+            pixel_fmts[1] = AV_PIX_FMT_YUV420P;
         }
 
         else
         {
-            pixel_formats[0] = pix_fmt;
-            pixel_formats[1] = AV_PIX_FMT_NONE;
+            pixel_fmts[0] = pix_fmt;
+            pixel_fmts[1] = AV_PIX_FMT_NONE;
         }
 
-        pixel_formats[2] = AV_PIX_FMT_NONE;
+        pixel_fmts[2] = AV_PIX_FMT_NONE;
 
-        buffer_sink_params.pixel_fmts = pixel_formats;
+        buffer_sink_params.pixel_fmts = pixel_fmts;
+
         ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, &buffer_sink_params, m_filter_graph);
 
         if (ret < 0)
@@ -4381,19 +4382,17 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
             throw  ret;
         }
 
-        //ret = av_opt_set_int_list(m_pBufferSinkContext, "pix_fmts", pix_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
-        //if (ret < 0)
-        //{
-        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
-        //    throw  ret;
-        //}
+        // Cannot change FFmpeg's API, so we hide this warning
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+        ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
+#pragma GCC diagnostic pop
 
-        //ret = av_opt_set_bin(m_pBufferSinkContext, "pix_fmts", reinterpret_cast<uint8_t*>(&pCodecContext->pix_fmt), sizeof(pCodecContext->pix_fmt), AV_OPT_SEARCH_CHILDREN);
-        //if (ret < 0)
-        //{
-        //    Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
-        //    throw  ret;
-        //}
+        if (ret < 0)
+        {
+            Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw  ret;
+        }
 
         // Endpoints for the filter graph.
         outputs->name          = av_strdup("in");

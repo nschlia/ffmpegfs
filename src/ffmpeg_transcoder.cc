@@ -414,6 +414,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
+    virtualfile->m_duration = m_in.m_format_ctx->duration;
+
     if (m_in.m_video.m_stream_idx >= 0)
     {
         // We have a video stream
@@ -484,6 +486,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         Logging::error(filename(), "File contains neither a video nor an audio stream.");
         return AVERROR(EINVAL);
     }
+
+    m_predicted_size = calculate_predicted_filesize();
 
     // Make sure this is set, although should already have happened
     virtualfile->m_format_idx = params.guess_format_idx(filename());
@@ -3665,11 +3669,6 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
 size_t FFmpeg_Transcoder::predicted_filesize()
 {
-    if (m_predicted_size == 0)
-    {
-        m_predicted_size = calculate_predicted_filesize();
-    }
-
     return m_predicted_size;
 }
 

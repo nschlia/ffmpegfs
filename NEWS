@@ -6,6 +6,7 @@ Important changes in 1.8 (2019-03-XX) YET UNRELEASED
 * Bugfix: Fixed make dist: checks did not work
 * Bugfix: Fixed make clean: some Doxgen files were not removed.
 * Bugfix: Properly catch "no memory" errors.
+* Bugfix: Deinterlacing filter only worked for YUV videos.
 
 Important changes in 1.7 (2019-02-26)
 

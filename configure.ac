@@ -161,6 +161,7 @@ AS_CASE(["$with_libswresample"],
   [no], [],
   [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
 AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
+AS_IF([test "0$HAVE_LIBSWRESAMPLE" -eq 1], [with_libavresample=no])
 
 dnl Check for libavresample
 AC_ARG_WITH([libavresample],
@@ -182,24 +183,26 @@ AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
 )
 
 # Optional libraries
-dnl Check for libdvdread and libdvdnav
+dnl Check for libdvdread
 AC_ARG_WITH([libdvd],
   [AS_HELP_STRING([--with-libdvd],
     [support using libdvd @<:@default=check@:>@])],
   [],
   [with_libdvd=check])
 
-AS_CASE(["$with_libdvd"],
-  [yes], [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1])],
-  [no], [],
-  [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1], [HAVE_LIBDVDNAV=0])])
+# Removed dependency, library not used
+#AS_CASE(["$with_libdvd"],
+#  [yes], [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1])],
+#  [no], [],
+#  [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1], [HAVE_LIBDVDNAV=0])])
 
 AS_CASE(["$with_libdvd"],
   [yes], [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1])],
   [no], [],
   [PKG_CHECK_MODULES([libdvdread], [dvdread >= 5.0.0], [HAVE_LIBDVDREAD=1], [HAVE_LIBDVDREAD=0])])
-AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1 -a "0$HAVE_LIBDVDNAV" -eq 1])
-AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
+#AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1 -a "0$HAVE_LIBDVDNAV" -eq 1])
+AM_CONDITIONAL([USE_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 1])
+#AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDNAV" -eq 0])
 AM_CONDITIONAL([HINT_LIBDVD], [test "$with_libdvd" != "no" -a "0$HAVE_LIBDVDREAD" -eq 0])
 
 dnl Check for libbluray
@@ -247,6 +250,6 @@ AC_OUTPUT
 
 # Hints on options
 AM_COND_IF([HINT_LIBDVD],
-           [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdnav and libdvdread development packages. See INSTALL.md for details.])])
+           [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdread development packages. See INSTALL.md for details.])])
 AM_COND_IF([HINT_LIBBLURAY],
            [AC_MSG_NOTICE([HINT: To enable bluray suport install the libbluray development package. See INSTALL.md for details.])])

@@ -161,6 +161,7 @@ AS_CASE(["$with_libswresample"],
   [no], [],
   [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
 AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
+AS_IF([test "0$HAVE_LIBSWRESAMPLE" -eq 1], [with_libavresample=no])
 
 dnl Check for libavresample
 AC_ARG_WITH([libavresample],

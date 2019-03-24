@@ -411,7 +411,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //  throw false;
                 //}
 
-                THREAD_DATA* thread_data = static_cast<THREAD_DATA*>(malloc(sizeof(THREAD_DATA)));  /** @todo Replace malloc/free with new/delete */
+                THREAD_DATA* thread_data = new(std::nothrow) THREAD_DATA;
 
                 thread_data->m_initialised = false;
                 thread_data->m_arg = cache_entry;
@@ -429,7 +429,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 Logging::debug(cache_entry->filename(), "Decoder thread is running.");
 
-                free(thread_data); // can safely be done here, will not be used in thread from now on
+                delete thread_data; // can safely be done here, will not be used in thread from now on
 
                 if (ret != 0)
                 {

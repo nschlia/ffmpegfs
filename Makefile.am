@@ -89,6 +89,11 @@ doxy: doxyfile.inc $(SRCS)
 doxy-clean:
 	rm -Rf doxyfile.inc doxygen
 
-# Really clean up everything	
+# Clean up extra stuff	
 clean-local: doxy-clean
 	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1  ffmpegfs.1.hhc  ffmpegfs.1.hhp  ffmpegfs.1.pdf  ffmpegfs.1.text src/ffmpegfshelp.h
+
+# Really clean up everything
+wipe-all: doxy-clean
+	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in src/Makefile.in
+

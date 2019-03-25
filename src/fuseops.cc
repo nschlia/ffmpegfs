@@ -194,7 +194,7 @@ static void translate_path(std::string *origpath, const char* path)
 /**
  * @brief Convert file name from source to destination name.
  * @param[in] filepath - Name of source file, will be changed to destination name.
- * @param[out] ffmpegfs_format - If format has been found points to format info, nullptr if not.
+ * @param[out] current_format - If format has been found points to format info, nullptr if not.
  * @return Returns true if format has been found and filename changed, false if not.
  */
 static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)

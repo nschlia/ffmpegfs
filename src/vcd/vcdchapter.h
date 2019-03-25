@@ -88,59 +88,110 @@ public:
      */
     virtual ~VcdChapter();
 
-    bool        get_is_vcd() const;                     /**< @brief true for SVCD, false for VCD */
-    int         get_track_no() const;                   /**< @brief Track no */
-    int         get_min() const;                        /**< @brief MSF minute */
-    int         get_sec() const;                        /**< @brief MSF second */
-    int         get_frame() const;                      /**< @brief MSF frame */
-    int64_t     get_duration() const;                   /**< @brief Return chapter duration, in AV_TIME_BASE fractional seconds */
-
-    std::string get_filename() const;                   /**< @brief File name and path (e.g. MPEG/AVSEQ##.MPG) */
-    uint64_t    get_start_pos() const;                  /**< @brief File position of chapter in bytes */
-    uint64_t    get_end_pos() const;                    /**< @brief End position of chapter in bytes */
-    int64_t     get_start_time() const;                 /**< @brief Start position of chapter in AV_TIME_BASE units */
-    uint64_t    get_size() const;                       /**< @brief Get chapter size */
-    int         get_lba() const;                        /**< @brief LBA (large block address) */
+    /**
+     * @brief Check if this is a Super Video CD.
+     * @return Returns true for SVCD, false for VCD.
+     */
+    bool        get_is_svcd() const;
+    /**
+     * @brief Get the track number of this chapter.
+     * @return Returns track number.
+     */
+    int         get_track_no() const;                   
+    /**
+     * @brief Get MSF (minutes, seconds, and fractional seconds/frames) minute.
+     * @return Returns MSF minute.
+     */
+    int         get_min() const;
+    /**
+     * @brief Get MSF (minutes, seconds, and fractional seconds/frames) second.
+     * @return Returns MSF second.
+     */
+    int         get_sec() const;
+    /**
+     * @brief Get MSF (minutes, seconds, and fractional seconds/frames) frame.
+     *
+     * Each timecode frame is one seventy-fifth of a second.
+     *
+     * @return Returns MSF frame.
+     */
+    int         get_frame() const;
+    /**
+     * @brief Get chapter duration, in AV_TIME_BASE fractional seconds.
+     * @return Returns the chapter duration, in AV_TIME_BASE fractional seconds.
+     */
+    int64_t     get_duration() const;
 
     /**
-     * @brief operator =
+     * @brief Get file name and path of source file (e.g. MPEG/AVSEQ##.MPG).
+     * @return Returns file name and path of source file.
+     */
+    std::string get_filename() const;
+    /**
+     * @brief Get file position of chapter in bytes.
+     * @return Returns file position of chapter in bytes.
+     */
+    uint64_t    get_start_pos() const;
+    /**
+     * @brief Get end position of chapter in bytes.
+     * @return Returns end position of chapter in bytes.
+     */
+    uint64_t    get_end_pos() const;
+    /**
+     * @brief Get start position of chapter in AV_TIME_BASE units.
+     * @return Returns start position of chapter in AV_TIME_BASE units.
+     */
+    int64_t     get_start_time() const;
+    /**
+     * @brief Get the size of this chapter in bytes.
+     * @return Returns chapter size in bytes.
+     */
+    uint64_t    get_size() const;
+    /**
+     * @brief Get LBA (large block address) of chapter.
+     * @return Returns LBA of chapter.
+     */
+    int         get_lba() const;
+
+    /**
+     * @brief Assignment operator =
      * @param[in] other
      * @return this
      */
     VcdChapter & operator= (VcdChapter const & other);
 
     /**
-     * @brief operator ==
+     * @brief Comparison operator ==
      * @param[in] other
      * @return Nonzero if equal, 0 if not
      */
     int operator==(const VcdChapter & other) const;
     /**
-     * @brief operator <
+     * @brief Comparison operator <
      * @param[in] other
      * @return Nonzero if this object is smaller, 0 if not
      */
     int operator<(const VcdChapter & other) const;
     /**
-     * @brief operator <=
+     * @brief Comparison operator <=
      * @param[in] other
      * @return Nonzero if this object is smaller or equal, 0 if not
      */
     int operator<=(const VcdChapter & other) const;
     /**
-     * @brief operator >
+     * @brief Comparison operator >
      * @param[in] other
      * @return Nonzero if this object is greater, 0 if not
      */
     int operator>(const VcdChapter & other) const;
     /**
-     * @brief operator >=
+     * @brief Comparison operator >=
      * @param[in] other
      * @return Nonzero if this object is greater or equal, 0 if not
      */
     int operator>=(const VcdChapter & other) const;
     /**
-     * @brief operator !=
+     * @brief Comparison operator !=
      * @param[in] other
      * @return Nonzero if this object is not equal, 0 if equal
      */

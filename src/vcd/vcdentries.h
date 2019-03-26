@@ -71,13 +71,41 @@ public:
      */
     int                         load_file(const std::string & path);
 
-    time_t                      get_file_date() const;              /**< @brief Date of disk (of INFO.VCD or SVD) */
-    const std::string   &       get_id() const;                     /**< @brief Get disk ID */
-    VCDTYPE                     get_type() const;                   /**< @brief Get disk type */
-    std::string                 get_type_str() const;               /**< @brief Get disk type as string */
-    VCDPROFILETAG               get_profile_tag() const;            /**< @brief Get disk profile tag */
-    std::string                 get_profile_tag_str() const;        /**< @brief Get disk profile tag as string */
-    int                         get_number_of_chapters() const;     /**< @brief Get number of chapters on this disk */
+    /**
+     * @brief Get date of disk (takenf rom INFO.VCD or SVD).
+     * @return Returns date of disk.
+     */
+    time_t                      get_file_date() const;
+    /**
+     * @brief Get disk ID.
+     * @return Returns disk ID.
+     */
+    const std::string   &       get_id() const;
+    /**
+     * @brief Get disk type.
+     * @return Returns disk type.
+     */
+    VCDTYPE                     get_type() const;
+    /**
+     * @brief Get disk type as string.
+     * @return Returns disk type as string.
+     */
+    std::string                 get_type_str() const;
+    /**
+     * @brief Get disk profile tag.
+     * @return Returns disk profile tag.
+     */
+    VCDPROFILETAG               get_profile_tag() const;
+    /**
+     * @brief Get disk profile tag as string.
+     * @return Returns disk profile tag as string.
+     */
+    std::string                 get_profile_tag_str() const;
+    /**
+     * @brief Get number of chapters on this disk.
+     * @return Returns number of chapters on this disk.
+     */
+    int                         get_number_of_chapters() const;
     /**
      * @brief Get chapter object.
      * @note At least 1 chapter is guaranteed to exist if a disk was sucessfully read.
@@ -85,22 +113,33 @@ public:
      * @return VcdChapter object with this chapter, nullptr if chapter_idx is invalid
      */
     const VcdChapter  *         get_chapter(int chapter_idx) const;
-    int64_t                     get_duration() const;               /**< @brief Return total disk duration, in AV_TIME_BASE fractional seconds */
-    uint64_t                    get_size() const;                   /**< @brief Get disk size (DAT/MPEG only) */
-    const std::string &         get_disk_path() const;              /**< @brief Get disk directory */
+    /**
+     * @brief Get total disk duration, in AV_TIME_BASE fractional seconds.
+     * @return Returns total disk duration.
+     */
+    int64_t                     get_duration() const;
+    /**
+     * @brief Get disk size (DAT/MPEG only).
+     * @return Returns disk size.
+     */
+    uint64_t                    get_size() const;
+    /** @brief Get disk directory.
+     * @return Returns disk directory.
+     */
+    const std::string &         get_disk_path() const;
 
 protected:
     /**
-     * @brief Scan disk for chapters
-     * @return On success, returns 0; on error, returns errno
+     * @brief Scan disk for chapters.
+     * @return On success, returns 0; on error, returns errno.
      */
     int                         scan_chapters();
     /**
-     * @brief Seek for sync bytes
+     * @brief Seek for sync bytes.
      * @param[in] fpi - file pointer of open file
      * @param[in] sync - sync bytes
      * @param[in] len - length of sync bytes
-     * @return SEEKRES result code
+     * @return Returns SEEKRES result code.
      */
     SEEKRES                     seek_sync(FILE *fpi, const char * sync, int len) const;
 

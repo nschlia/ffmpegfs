@@ -163,15 +163,22 @@ public:
      */
     static FileIO * alloc(VIRTUALTYPE type);
 
-    virtual VIRTUALTYPE type() const = 0;                          /**< @brief VIRTUALTYPE of the virtual file */
-
-    virtual size_t  	bufsize() const = 0;                       /**< @brief Ideal buffer size, may be 0 if no recommendation. */
+    /**
+     * @brief Get type of the virtual file
+     * @return Returns the type of the virtual file.
+     */
+    virtual VIRTUALTYPE type() const = 0;
+    /**
+     * @brief Get the ideal buffer size.
+     * @return Return the ideal buffer size.
+     */
+    virtual size_t  	bufsize() const = 0;
     /** @brief Open a virtual file
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int         open(LPCVIRTUALFILE virtualfile);          /**< @brief Open virtual file */
+    virtual int         open(LPCVIRTUALFILE virtualfile);
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
@@ -180,16 +187,28 @@ public:
      * On error, the value 0 is returned and errno is set to indicate the error. @n
      * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
      */
-    virtual size_t      read(void *data, size_t size) = 0;          /**< @brief Read data */
-    virtual int         error() const = 0;                          /**< @brief If error occurred return number */
+    virtual size_t      read(void *data, size_t size) = 0;
+    /**
+     * @brief Get last error.
+     * @return errno value of last error.
+     */
+    virtual int         error() const = 0;
     /** @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
      *
      * This is only possible for file formats that are aware of the play time.
      * May be AV_NOPTS_VALUE if the time is not known.
      */
     virtual int64_t     duration() const = 0;
-    virtual size_t      size() const = 0;                           /**< @brief Get file size */
-    virtual size_t      tell() const = 0;                           /**< @brief Get current read position */
+    /**
+     * @brief Get the file size.
+     * @return Returns the file size.
+     */
+    virtual size_t      size() const = 0;
+    /**
+     * @brief Get current read position.
+     * @return Gets the current read position.
+     */
+    virtual size_t      tell() const = 0;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
@@ -204,8 +223,15 @@ public:
      * On error, the value -1 is returned and errno is set to indicate the error.
      */
     virtual int         seek(long offset, int whence) = 0;
-    virtual bool        eof() const = 0;                            /**< @brief Return true if at end of file */
-    virtual void        close() = 0;                                /**< @brief Close virtual file */
+    /**
+     * @brief Check if at end of file.
+     * @return Returns true if at end of file.
+     */
+    virtual bool        eof() const = 0;
+    /**
+     * @brief Close virtual file.
+     */
+    virtual void        close() = 0;
     /**
      * @brief Get virtual file object
      * @return Current virtual file object or nullptr if unset.

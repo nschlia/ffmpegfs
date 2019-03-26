@@ -54,7 +54,6 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
-// TEST Issue #26
 #pragma pack(push, 1)
 #define IMAGE_FRAME_TAG     "IMGFRAME"
 #define IMAGE_MAX_SIZE          (20*1024*1024)
@@ -75,7 +74,6 @@ typedef struct IMAGE_FRAME
 #pragma pack(pop)
 typedef IMAGE_FRAME const *LPCIMAGE_FRAME;      /**< @brief Pointer version of IMAGE_FRAME */
 typedef IMAGE_FRAME *LPIMAGE_FRAME;             /**< @brief Pointer to const version of IMAGE_FRAME */
-// TEST Issue #26
 
 /** @brief Virtual file types enum
  */
@@ -95,10 +93,8 @@ typedef enum VIRTUALTYPE
 #ifdef USE_LIBBLURAY
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
-    // Issue #26
     VIRTUALTYPE_DIRECTORY,                                          /**< @brief File is a virtual directory */
     VIRTUALTYPE_DIRECTORY_FRAMES,                                   /**< @brief File is a virtual directory for set of frames */
-    // Issue #26
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */

@@ -173,11 +173,9 @@ typedef enum FILETYPE
     FILETYPE_AIFF,
     FILETYPE_OPUS,
     FILETYPE_PRORES,
-    // TEST Issue #26
     FILETYPE_PNG,
     FILETYPE_JPG,
     FILETYPE_BMP
-    // TEST Issue #26
 } FILETYPE;
 
 /**
@@ -294,13 +292,11 @@ public:
      * @return Returns audio codec_id
      */
     AVCodecID           audio_codec_id() const;
-    // TEST Issue #26
     /**
      * @brief Check for an export frame format
-     * @return Returns true for formats that export all frames as images
+     * @return Returns true for formats that export all frames as images.
      */
     bool export_frames() const;
-    // TEST Issue #26
 
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */

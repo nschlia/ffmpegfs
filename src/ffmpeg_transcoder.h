@@ -159,6 +159,8 @@ public:
      */
     int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
     /**
+     * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @param buffer - Cache buffer to be written.
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_file(Buffer* buffer);
@@ -190,13 +192,11 @@ public:
      * @return Predicted file size in bytes.
      */
     size_t                      predicted_filesize();
-    // TEST Issue #26
     /**
-     * @brief Caluculate the number of video frames in file.
+     * @brief Calculate the number of video frames in file.
      * @return On success, returns the number of frames; on error, returns AV_NOPTS_VALUE (calculation failed or no video source file).
      */
     int64_t                     video_frame_count();
-    // TEST Issue #26
     /**
      * @brief Assemble an ID3v1 file tag
      * @return Returns an ID3v1 file tag.
@@ -238,6 +238,16 @@ public:
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
 
 protected:
+    /**
+     * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_output_frame_set(Buffer *buffer);
+    /**
+     * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_output(Buffer *buffer);
     /**
      * FFmpeg handles cover arts like video streams.
      * Try to find out if we have a video stream or a cover art.
@@ -453,14 +463,12 @@ protected:
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
- 	// TEST Issue #26
     /**
      * @brief Encode frame to image
      * @param frame - Video frame to encode
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
-    int                         encode_image_frame(const AVFrame *frame);
- 	// TEST Issue #26
+    int                         encode_image_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
      * @param[in] frame_size . Size of frame.
@@ -637,10 +645,8 @@ private:
 
     FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
 
-    // TEST Issue #26
-    uint32_t                    m_frame_no;
-    Buffer *                    m_buffer;
-    // TEST Issue #26
+    uint32_t                    m_frame_no;                 /**< @brief When exporting video frames this is the current frame number */
+    Buffer *                    m_buffer;                   /**< @brief Copy of the cache buffer objct */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

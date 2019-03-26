@@ -171,10 +171,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_copy_audio(false)
     , m_copy_video(false)
     , m_current_format(nullptr)
-    // TEST Issue #26
     , m_frame_no(0)
     , m_buffer(nullptr)
-    // TEST Issue #26
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -496,8 +494,10 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_predicted_size = calculate_predicted_filesize();
 
+    // Predict size of transcoded file as exact as possible
     virtualfile->m_predicted_size = m_predicted_size;
 
+    // Calulcate number or video frames in file based on duration and fram rate
     if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
     {
         // Number of frames: should be quite accurate
@@ -622,11 +622,14 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 
 int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
-    int ret = 0;
+    assert(buffer != nullptr);
 
     get_destname(&m_out.m_filename, m_in.m_filename);
 
+    m_out.m_filetype    = m_current_format->filetype();
+
     Logging::info(destname(), "Opening output file.");
+    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
 
     // Pre-allocate the predicted file size to reduce memory reallocations
     if (!buffer->reserve(predicted_filesize()))
@@ -635,150 +638,159 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
-    m_out.m_filetype = m_current_format->filetype();
-
-    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
-
-    // TEST Issue #26
-    if (m_current_format->export_frames())
+    if (!m_current_format->export_frames())
     {
-        m_frame_no = 0;
-        m_buffer = buffer;
+        return open_output(buffer);
+    }
+    else
+    {
+        return open_output_frame_set(buffer);
+    }
+}
 
-        AVCodec* codec = nullptr;
-        AVCodecContext* output_codec_ctx = nullptr;
+int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
+{
+    AVCodec* codec = nullptr;
+    AVCodecContext* output_codec_ctx = nullptr;
+    int ret = 0;
 
-        codec = avcodec_find_encoder(m_current_format->video_codec_id());
-        if (codec == nullptr)
-        {
-            Logging::error(destname(), "Codec not found");
-            return AVERROR(EINVAL);
-        }
+    m_frame_no          = 0;
+    m_buffer            = buffer;
 
-        output_codec_ctx = avcodec_alloc_context3(codec);
-        if (output_codec_ctx == nullptr)
-        {
-            Logging::error(destname(), "Could not allocate video codec context");
-            return AVERROR(ENOMEM);
-        }
+    codec = avcodec_find_encoder(m_current_format->video_codec_id());
+    if (codec == nullptr)
+    {
+        Logging::error(destname(), "Codec not found");
+        return AVERROR(EINVAL);
+    }
 
-        output_codec_ctx->bit_rate             = 400000;   /**  @todo: per commandline setzen */
-        output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
-        output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
-        output_codec_ctx->time_base            = {1, 25};
+    output_codec_ctx = avcodec_alloc_context3(codec);
+    if (output_codec_ctx == nullptr)
+    {
+        Logging::error(destname(), "Could not allocate video codec context");
+        return AVERROR(ENOMEM);
+    }
 
-        // TODO: av_find_best_pix_fmt_of_2
-        for (const AVPixelFormat *pix_fmt = codec->pix_fmts; *pix_fmt != AV_PIX_FMT_NONE; pix_fmt++)
-        {
-            Logging::debug(destname(), "FORMAT %1", get_pix_fmt_name(*pix_fmt).c_str());
-        }
+    output_codec_ctx->bit_rate             = 400000;   /**  @todo: per commandline setzen */
+    output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
+    output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
+    output_codec_ctx->time_base            = {1, 25};
 
-        // JPG
-        //  FORMAT yuvj420p
-        //  FORMAT yuvj422p
-        //  FORMAT yuvj444p
+    // TODO: av_find_best_pix_fmt_of_2
+    //for (const AVPixelFormat *pix_fmt = codec->pix_fmts; *pix_fmt != AV_PIX_FMT_NONE; pix_fmt++)
+    //{
+    //    Logging::debug(destname(), "FORMAT %1", get_pix_fmt_name(*pix_fmt).c_str());
+    //}
 
-        // PNG
-        //  FORMAT rgb24
-        //  FORMAT rgba
-        //  FORMAT rgb48be
-        //  FORMAT rgba64be
-        //  FORMAT pal8
-        //  FORMAT gray
-        //  FORMAT ya8
-        //  FORMAT gray16be
-        //  FORMAT ya16be
-        //  FORMAT monob
+    // JPG
+    //  FORMAT yuvj420p
+    //  FORMAT yuvj422p
+    //  FORMAT yuvj444p
 
-        // BMP
-        //  FORMAT bgra
-        //  FORMAT bgr24
-        //  FORMAT rgb565le
-        //  FORMAT rgb555le
-        //  FORMAT rgb444le
-        //  FORMAT rgb8
-        //  FORMAT bgr8
-        //  FORMAT rgb4_byte
-        //  FORMAT bgr4_byte
-        //  FORMAT gray
-        //  FORMAT pal8
-        //  FORMAT monob
+    // PNG
+    //  FORMAT rgb24
+    //  FORMAT rgba
+    //  FORMAT rgb48be
+    //  FORMAT rgba64be
+    //  FORMAT pal8
+    //  FORMAT gray
+    //  FORMAT ya8
+    //  FORMAT gray16be
+    //  FORMAT ya16be
+    //  FORMAT monob
 
-        switch (m_current_format->video_codec_id())
-        {
-        case AV_CODEC_ID_MJPEG:
-        {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
-            break;
-        }
-        case AV_CODEC_ID_PNG:
-        {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
-            break;
-        }
-        case AV_CODEC_ID_BMP:
-        {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
-            break;
-        }
-        default:
-        {
-            assert(false);
-            break;
-        }
-        }
-        //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
-        //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
+    // BMP
+    //  FORMAT bgra
+    //  FORMAT bgr24
+    //  FORMAT rgb565le
+    //  FORMAT rgb555le
+    //  FORMAT rgb444le
+    //  FORMAT rgb8
+    //  FORMAT bgr8
+    //  FORMAT rgb4_byte
+    //  FORMAT bgr4_byte
+    //  FORMAT gray
+    //  FORMAT pal8
+    //  FORMAT monob
 
-        ret = avcodec_open2(output_codec_ctx, codec, nullptr);
-        if (ret < 0)
-        {
-            Logging::error(destname(), "Could not open image codec.");
-            return ret;
-        }
+    switch (m_current_format->video_codec_id())
+    {
+    case AV_CODEC_ID_MJPEG:
+    {
+        output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
+        break;
+    }
+    case AV_CODEC_ID_PNG:
+    {
+        output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+        break;
+    }
+    case AV_CODEC_ID_BMP:
+    {
+        output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+        break;
+    }
+    default:
+    {
+        assert(false);
+        break;
+    }
+    }
+    //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
+    //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
-        // Initialise pixel format conversion and rescaling if necessary
+    ret = avcodec_open2(output_codec_ctx, codec, nullptr);
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Could not open image codec.");
+        return ret;
+    }
+
+    // Initialise pixel format conversion and rescaling if necessary
 #if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
+    AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
 #else
-        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
+    AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
 #endif
-        if (in_pix_fmt == AV_PIX_FMT_NONE)
-        {
-            // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-            in_pix_fmt = output_codec_ctx->pix_fmt;
-        }
+    if (in_pix_fmt == AV_PIX_FMT_NONE)
+    {
+        // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
+        in_pix_fmt = output_codec_ctx->pix_fmt;
+    }
 
-        ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
-        if (ret < 0)
-        {
-            return ret;
-        }
+    ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    if (ret < 0)
+    {
+        return ret;
+    }
 
 #ifndef USING_LIBAV
-        if (params.m_deinterlace)
+    if (params.m_deinterlace)
+    {
+        // Init deinterlace filters
+        ret = init_deinterlace_filters(output_codec_ctx, output_codec_ctx->pix_fmt, output_codec_ctx->time_base, output_codec_ctx->time_base);
+        if (ret < 0)
         {
-            // Init deinterlace filters
-            ret = init_deinterlace_filters(output_codec_ctx, output_codec_ctx->pix_fmt, output_codec_ctx->time_base, output_codec_ctx->time_base);
-            if (ret < 0)
-            {
-                return ret;
-            }
+            return ret;
         }
+    }
 #endif // !USING_LIBAV
 
-        m_out.m_video.m_codec_ctx               = output_codec_ctx;
-        m_out.m_video.m_stream_idx              = -1;
-        m_out.m_video.m_stream                  = nullptr;
+    m_out.m_video.m_codec_ctx               = output_codec_ctx;
+    m_out.m_video.m_stream_idx              = -1;
+    m_out.m_video.m_stream                  = nullptr;
 
-        // No audio
-        m_out.m_audio.m_codec_ctx               = nullptr;
-        m_out.m_audio.m_stream_idx              = -1;
-        m_out.m_audio.m_stream                  = nullptr;
+    // No audio
+    m_out.m_audio.m_codec_ctx               = nullptr;
+    m_out.m_audio.m_stream_idx              = -1;
+    m_out.m_audio.m_stream                  = nullptr;
 
-        return 0;
-    }
-    // TEST Issue #26
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_output(Buffer *buffer)
+{
+    int ret = 0;
 
     // Open the output file for writing.
     ret = open_output_filestreams(buffer);
@@ -2567,7 +2579,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             ret = store_packet(pkt);
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || m_current_format->export_frames()))     // TEST Issue #26
+    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || m_current_format->export_frames()))
     {
         if (!m_copy_video)
         {
@@ -3069,10 +3081,9 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
 
 // TEST Issue #26
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"  /***< @todo Fix deprecations later */
-int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
+int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_present)
 {
-    int ret;
-    AVPacket pkt;
+    *data_present = 0;
 
     if (frame == nullptr)
     {
@@ -3085,6 +3096,15 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
         Logging::error(destname(), "Internal - missing format.");
         return AVERROR(EINVAL);
     }
+
+    if (m_buffer == nullptr)
+    {
+        Logging::error(destname(), "Internal - cache not open.");
+        return AVERROR(EINVAL);
+    }
+
+    AVPacket pkt;
+    int ret = 0;
 
     try
     {
@@ -3144,17 +3164,9 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame)
     return ret;
 }
 #pragma GCC diagnostic pop
-// TEST Issue #26
 
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
-    // TEST Issue #26
-    if (m_current_format->export_frames())
-    {
-        return encode_image_frame(frame);
-    }
-    // TEST Issue #26
-
     // Packet used for temporary storage.
     AVPacket pkt;
     int ret;
@@ -3597,7 +3609,15 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 // Encode one video frame.
                 int data_written = 0;
                 output_frame->key_frame = 0;    // Leave that decision to decoder
-                ret = encode_video_frame(output_frame, &data_written);
+
+                if (!m_current_format->export_frames())
+                {
+                    ret = encode_video_frame(output_frame, &data_written);
+                }
+                else
+                {
+                    ret = encode_image_frame(output_frame, &data_written);
+                }
 #if !LAVC_NEW_PACKET_INTERFACE
                 if (ret < 0)
 #else
@@ -3625,7 +3645,14 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     int data_written = 0;
                     do
                     {
-                        ret = encode_video_frame(nullptr, &data_written);
+                        if (!m_current_format->export_frames())
+                        {
+                            ret = encode_video_frame(nullptr, &data_written);
+                        }
+                        else
+                        {
+                            ret = encode_image_frame(nullptr, &data_written);
+                        }
 #if LAVC_NEW_PACKET_INTERFACE
                         if (ret == AVERROR_EOF)
                         {
@@ -3931,24 +3958,20 @@ size_t FFmpeg_Transcoder::predicted_filesize()
     return m_predicted_size;
 }
 
-// TEST Issue #26
 int64_t FFmpeg_Transcoder::video_frame_count()
 {
     return m_video_frame_count;
 }
-// TEST Issue #26
 
 int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
 
-    // TEST Issue #26
     if (m_current_format->export_frames())
     {
         // Format has no trailer
         return 0;
     }
-    // TEST Issue #26
 
     // Write the trailer of the output file container.
     ret = write_output_file_trailer();

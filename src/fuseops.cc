@@ -568,7 +568,6 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             std::string newext;
                             find_ext(&newext, filename);
 
-                            // TEST Issue #26
                             if (!current_format->export_frames())
                             {
                                 if (origext != newext)
@@ -591,7 +590,6 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 insert_file(VIRTUALTYPE_DIRECTORY_FRAMES, origfile, &st);
                             }
-                            // TEST Issue #26
                         }
                     }
 
@@ -773,7 +771,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-        // TEST Issue #26
     case VIRTUALTYPE_DIRECTORY_FRAMES:
     {
         //Logging::error(origpath, "getattr DIRECTORY_FRAMES *************************** %1", virtualfile->m_video_frame_count);
@@ -796,14 +793,14 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         break;
     }
     case VIRTUALTYPE_FRAME:
-        // TEST Issue #26
     case VIRTUALTYPE_DIRECTORY:
     {
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         errno = 0;
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -907,15 +904,14 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         break;
     }
     case VIRTUALTYPE_SCRIPT:
-        // TEST Issue #26
     case VIRTUALTYPE_FRAME:
-        // TEST Issue #26
     case VIRTUALTYPE_DIRECTORY:
     {
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -1004,11 +1000,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
         break;
     }
-        // TEST Issue #26
     case VIRTUALTYPE_FRAME:
     {
-        //Logging::error(origpath, "open FRAME ***************************");
-
         std::string filepath(origpath);
 
         remove_filename(&filepath);
@@ -1035,12 +1028,12 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         }
         break;
     }
-    case VIRTUALTYPE_DIRECTORY_FRAMES:      // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_DIRECTORY_FRAMES:
     {
         //Logging::error(origpath, "open DIRECTORY_FRAMES ***************************");
         break;
     }
-        // TEST Issue #26
     case VIRTUALTYPE_DIRECTORY:
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
@@ -1149,7 +1142,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);
         break;
     }
-        // TEST Issue #26
     case VIRTUALTYPE_FRAME:
     {
         cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
@@ -1227,7 +1219,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     {
         break;
     }
-        // TEST Issue #26
+        // We should never come here but this shuts up a warning
     case VIRTUALTYPE_DIRECTORY:         // We should never come here but this shuts up a warning
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:

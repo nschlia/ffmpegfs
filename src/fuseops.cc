@@ -1066,7 +1066,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
     translate_path(&origpath, path);
 
-    LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     if (virtualfile == nullptr || virtualfile->m_type == VIRTUALTYPE_PASSTHROUGH)
     {
@@ -1206,6 +1206,10 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
                     {
                         throw false;
                     }
+
+                    virtualfile->m_st.st_size = image_frame.m_size;
+                    virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
+
                 }
             }
         }
@@ -1220,7 +1224,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_DIRECTORY:         // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_DIRECTORY: 
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {

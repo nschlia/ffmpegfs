@@ -3167,12 +3167,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
-    // Packet used for temporary storage.
-    AVPacket pkt;
-    int ret;
-
-    init_packet(&pkt);
-
     if (frame != nullptr)
     {
 #if LAVF_DEP_AVSTREAM_CODEC
@@ -3194,114 +3188,123 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 #endif
     }
 
-    // Encode the video frame and store it in the temporary packet.
-    // The output video stream encoder is used to do this.
+    AVPacket pkt;
+    int ret = 0;
+
+    try
+    {
+    	init_packet(&pkt);
+	
+        // Encode the video frame and store it in the temporary packet.
+        // The output video stream encoder is used to do this.
 #if !LAVC_NEW_PACKET_INTERFACE
-    ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
+        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
 
-    if (ret < 0)
-    {
-        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_packet_unref(&pkt);
-        return ret;
-    }
-
-    {
-#else
-    *data_present = 0;
-
-    // send the frame for encoding
-    ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
-    if (ret < 0 && ret != AVERROR_EOF)
-    {
-        Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_packet_unref(&pkt);
-        return ret;
-    }
-
-    // read all the available output packets (in general there may be any number of them
-    while (ret >= 0)
-    {
-        *data_present = 0;
-
-        ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, &pkt);
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-        {
-            av_packet_unref(&pkt);
-            return ret;
-        }
-        else if (ret < 0)
+        if (ret < 0)
         {
             Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
             av_packet_unref(&pkt);
-            return ret;
+            throw ret;
         }
 
-        *data_present = 1;
+        {
+#else
+        *data_present = 0;
+
+        // send the frame for encoding
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
+        if (ret < 0 && ret != AVERROR_EOF)
+        {
+            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+
+        // read all the available output packets (in general there may be any number of them
+        while (ret >= 0)
+        {
+            *data_present = 0;
+
+            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, &pkt);
+            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            {
+                throw ret;
+            }
+            else if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            *data_present = 1;
 #endif
 
-        // Write one video frame from the temporary packet to the output file.
-        if (*data_present)
-        {
-            if (pkt.pts != AV_NOPTS_VALUE)
+            // Write one video frame from the temporary packet to the output file.
+            if (*data_present)
             {
-                pkt.pts -=  m_out.m_video_start_pts;
-            }
-
-            if (pkt.dts != AV_NOPTS_VALUE)
-            {
-                pkt.dts -=  m_out.m_video_start_pts;
-            }
-
-            if (!(m_out.m_format_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
-            {
-                if (pkt.dts != AV_NOPTS_VALUE &&
-                        pkt.pts != AV_NOPTS_VALUE &&
-                        pkt.dts > pkt.pts)
+                if (pkt.pts != AV_NOPTS_VALUE)
                 {
-
-                    Logging::warning(destname(), "Invalid DTS: %1 PTS: %2 in video output, replacing by guess.", pkt.dts, pkt.pts);
-
-                    pkt.pts =
-                            pkt.dts = pkt.pts + pkt.dts + m_out.m_last_mux_dts + 1
-                            - FFMIN3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1)
-                            - FFMAX3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1);
+                    pkt.pts -=  m_out.m_video_start_pts;
                 }
 
-                if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
+                if (pkt.dts != AV_NOPTS_VALUE)
                 {
-                    int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
-                    //                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
-                    //                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
+                    pkt.dts -=  m_out.m_video_start_pts;
+                }
 
-                    if (pkt.dts < max)
+                if (!(m_out.m_format_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
+                {
+                    if (pkt.dts != AV_NOPTS_VALUE &&
+                            pkt.pts != AV_NOPTS_VALUE &&
+                            pkt.dts > pkt.pts)
                     {
-                        Logging::trace(destname(), "Non-monotonous DTS in video output stream; previous: %1, current: %2; changing to %3. This may result in incorrect timestamps in the output.", m_out.m_last_mux_dts, pkt.dts, max);
 
-                        if (pkt.pts >= pkt.dts)
+                        Logging::warning(destname(), "Invalid DTS: %1 PTS: %2 in video output, replacing by guess.", pkt.dts, pkt.pts);
+
+                        pkt.pts =
+                                pkt.dts = pkt.pts + pkt.dts + m_out.m_last_mux_dts + 1
+                                - FFMIN3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1)
+                                - FFMAX3(pkt.pts, pkt.dts, m_out.m_last_mux_dts + 1);
+                    }
+
+                    if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
+                    {
+                        int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
+                        //                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
+                        //                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
+
+                        if (pkt.dts < max)
                         {
-                            pkt.pts = FFMAX(pkt.pts, max);
+                            Logging::trace(destname(), "Non-monotonous DTS in video output stream; previous: %1, current: %2; changing to %3. This may result in incorrect timestamps in the output.", m_out.m_last_mux_dts, pkt.dts, max);
+
+                            if (pkt.pts >= pkt.dts)
+                            {
+                                pkt.pts = FFMAX(pkt.pts, max);
+                            }
+                            pkt.dts = max;
                         }
-                        pkt.dts = max;
                     }
                 }
+
+                m_out.m_last_mux_dts = pkt.dts;
+
+                ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
+                if (ret < 0)
+                {
+                    Logging::error(destname(), "Could not write video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                    throw ret;
+                }
             }
 
-            m_out.m_last_mux_dts = pkt.dts;
-
-            ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
-            if (ret < 0)
-            {
-                Logging::error(destname(), "Could not write video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                av_packet_unref(&pkt);
-                return ret;
-            }
+            av_packet_unref(&pkt);
         }
-
+    }
+    catch (int _ret)
+    {
         av_packet_unref(&pkt);
+        ret = _ret;
     }
 
-    return 0;
+    return ret;
 }
 
 int FFmpeg_Transcoder::load_encode_and_write(int frame_size)

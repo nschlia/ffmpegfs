@@ -13,9 +13,11 @@ var searchData=
   ['init_5fpacket',['init_packet',['../classFFmpeg__Base.html#a6a0bf024c64e5543aed03245b0ffe859',1,'FFmpeg_Base']]],
   ['init_5fresampler',['init_resampler',['../classFFmpeg__Transcoder.html#a6573a50f95e464137ca200abb19dbf5e',1,'FFmpeg_Transcoder']]],
   ['init_5frescaler',['init_rescaler',['../classFFmpeg__Transcoder.html#abcb61c1ba5a92ec7d8c8797f57938228',1,'FFmpeg_Transcoder']]],
+  ['init_5fstat',['init_stat',['../fuseops_8cc.html#a797eca2f2b7c397c048baa73b939c01e',1,'fuseops.cc']]],
   ['input_5fread',['input_read',['../classFFmpeg__Transcoder.html#a203942f9d2bb0d8dbcb547624fe6c728',1,'FFmpeg_Transcoder']]],
   ['insert_5ffile',['insert_file',['../ffmpegfs_8h.html#a412324a307b7979f30f64c5871796cf2',1,'insert_file(VIRTUALTYPE type, const std::string &amp;virtfilepath, const struct stat *st):&#160;fuseops.cc'],['../ffmpegfs_8h.html#a865cdd6018a62aacf09564743e670270',1,'insert_file(VIRTUALTYPE type, const std::string &amp;virtfilepath, const std::string &amp;origfile, const struct stat *st):&#160;fuseops.cc'],['../fuseops_8cc.html#a412324a307b7979f30f64c5871796cf2',1,'insert_file(VIRTUALTYPE type, const std::string &amp;virtfilepath, const struct stat *st):&#160;fuseops.cc'],['../fuseops_8cc.html#a865cdd6018a62aacf09564743e670270',1,'insert_file(VIRTUALTYPE type, const std::string &amp;virtfilepath, const std::string &amp;origfile, const struct stat *st):&#160;fuseops.cc']]],
   ['is_5falbum_5fart',['is_album_art',['../ffmpeg__utils_8cc.html#a4369f4bed0313a27e202e149ddb01e1c',1,'is_album_art(AVCodecID codec_id):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a4369f4bed0313a27e202e149ddb01e1c',1,'is_album_art(AVCodecID codec_id):&#160;ffmpeg_utils.cc']]],
+  ['is_5fdevice',['is_device',['../ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1',1,'ffmpeg_utils.cc']]],
   ['is_5fmount',['is_mount',['../ffmpeg__utils_8cc.html#a2eb34e45bc71e49d857b53855b822394',1,'is_mount(const std::string &amp;path):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a2eb34e45bc71e49d857b53855b822394',1,'is_mount(const std::string &amp;path):&#160;ffmpeg_utils.cc']]],
   ['is_5fopen',['is_open',['../classFFmpeg__Transcoder.html#abae5d70063ce52f3b9ccf5157265d97b',1,'FFmpeg_Transcoder']]],
   ['is_5fvideo',['is_video',['../classFFmpeg__Transcoder.html#a6e5172ec9ba20ff8229712b2ce4d2c11',1,'FFmpeg_Transcoder']]]

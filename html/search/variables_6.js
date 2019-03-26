@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['params',['params',['../ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3',1,'params():&#160;ffmpegfs.cc'],['../ffmpegfs_8h.html#ac0008f92bc7315b640eba68ad735efeb',1,'params():&#160;ffmpegfs.h']]]
+  ['level_5fmap',['level_map',['../ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6',1,'ffmpegfs.cc']]],
+  ['logger',['Logger',['../classLogging.html#a47fe95403f7197a89714548c08ca9001',1,'Logging']]]
 ];

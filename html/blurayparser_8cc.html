@@ -97,6 +97,21 @@ Include dependency graph for blurayparser.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a3f03a6fec82a0abf0dfb7025ff4c21f3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a3f03a6fec82a0abf0dfb7025ff4c21f3">stream_info</a> (const std::string &amp;path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved)</td></tr>
+<tr class="memdesc:a3f03a6fec82a0abf0dfb7025ff4c21f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about Bluray stream.  <a href="#a3f03a6fec82a0abf0dfb7025ff4c21f3">More...</a><br /></td></tr>
+<tr class="separator:a3f03a6fec82a0abf0dfb7025ff4c21f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84935cc18021375ba2475fb7851435d5"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a> ()</td></tr>
+<tr class="memdesc:a84935cc18021375ba2475fb7851435d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find best match audio stream.  <a href="#a84935cc18021375ba2475fb7851435d5">More...</a><br /></td></tr>
+<tr class="separator:a84935cc18021375ba2475fb7851435d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d91d3ccaa872502b7054e73ba33677"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">parse_find_best_video_stream</a> ()</td></tr>
+<tr class="memdesc:aa1d91d3ccaa872502b7054e73ba33677"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find best match video stream.  <a href="#aa1d91d3ccaa872502b7054e73ba33677">More...</a><br /></td></tr>
+<tr class="separator:aa1d91d3ccaa872502b7054e73ba33677"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3629b60b55784a2b0be1d920d331946e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">create_bluray_virtualfile</a> (<a class="el" href="blurayio_8h.html#ab446b017f0a8a6c31684027d6ddd3a69">BLURAY</a> *bd, const BLURAY_TITLE_INFO *ti, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx)</td></tr>
+<tr class="memdesc:a3629b60b55784a2b0be1d920d331946e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a virtual file entry of a bluray chapter or title.  <a href="#a3629b60b55784a2b0be1d920d331946e">More...</a><br /></td></tr>
+<tr class="separator:a3629b60b55784a2b0be1d920d331946e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45266d5096307aad8773c64b9923b2e9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a45266d5096307aad8773c64b9923b2e9">parse_bluray</a> (const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
+<tr class="memdesc:a45266d5096307aad8773c64b9923b2e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse Bluray directory and get all Bluray titles and chapters as virtual files.  <a href="#a45266d5096307aad8773c64b9923b2e9">More...</a><br /></td></tr>
+<tr class="separator:a45266d5096307aad8773c64b9923b2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a164ba768b4e817e3b246ab0c915b9798"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a164ba768b4e817e3b246ab0c915b9798">check_bluray</a> (const std::string &amp;_path, void *buf, fuse_fill_dir_t filler)</td></tr>
 <tr class="memdesc:a164ba768b4e817e3b246ab0c915b9798"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles on Bluray.  <a href="#a164ba768b4e817e3b246ab0c915b9798">More...</a><br /></td></tr>
 <tr class="separator:a164ba768b4e817e3b246ab0c915b9798"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,7 +169,351 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00498">498</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00282">load_path()</a>, <a class="el" href="blurayparser_8cc_source.html#l00442">parse_bluray()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00561">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00453">ffmpegfs_readdir()</a>.</p>
+
+</div>
+</div>
+<a id="a3629b60b55784a2b0be1d920d331946e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3629b60b55784a2b0be1d920d331946e">&#9670;&nbsp;</a></span>create_bluray_virtualfile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool create_bluray_virtualfile </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="blurayio_8h.html#ab446b017f0a8a6c31684027d6ddd3a69">BLURAY</a> *&#160;</td>
+          <td class="paramname"><em>bd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const BLURAY_TITLE_INFO *&#160;</td>
+          <td class="paramname"><em>ti</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>is_main_title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>full_title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>title_idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>chapter_idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a virtual file entry of a bluray chapter or title. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">bd</td><td>- Bluray disk clip info. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ti</td><td>- Bluray disk title info. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- path to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_main_title</td><td>- true if title_idx is the main title </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">full_title</td><td>- If true, create virtual file of all title. If false, include single chapter only. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title_idx</td><td>- Zero-based title index on Bluray </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">chapter_idx</td><td>- Zero-based chapter index on Bluray </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>On error, returns false. On success, returns true. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00320">320</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00151">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00799">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00840">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00820">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00918">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00240">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00134">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="structVIRTUALFILE.html#a9e64065a093280e7d66810be6b1532f9">VIRTUALFILE::m_bluray</a>, <a class="el" href="fileio_8h_source.html#l00133">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_duration</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00078">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00079">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00132">VIRTUALFILE::BLURAY_CHAPTER::m_playlist_no</a>, <a class="el" href="fileio_8h_source.html#l00131">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00075">params</a>, <a class="el" href="blurayparser_8cc_source.html#l00290">parse_find_best_audio_stream()</a>, <a class="el" href="blurayparser_8cc_source.html#l00300">parse_find_best_video_stream()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01096">replace_all()</a>, <a class="el" href="blurayparser_8cc_source.html#l00057">stream_info()</a>, <a class="el" href="transcode_8cc_source.html#l00211">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00241">transcoder_set_filesize()</a>, and <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_BLURAY</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00442">parse_bluray()</a>.</p>
+
+</div>
+</div>
+<a id="a45266d5096307aad8773c64b9923b2e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45266d5096307aad8773c64b9923b2e9">&#9670;&nbsp;</a></span>parse_bluray()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_bluray </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parse Bluray directory and get all Bluray titles and chapters as virtual files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- path to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00442">442</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00498">check_bluray()</a>.</p>
+
+</div>
+</div>
+<a id="a84935cc18021375ba2475fb7851435d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84935cc18021375ba2475fb7851435d5">&#9670;&nbsp;</a></span>parse_find_best_audio_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_find_best_audio_stream </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find best match audio stream. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>is 0 really OK or shall we better parse? </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns index of best match stream. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00290">290</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
+
+</div>
+</div>
+<a id="aa1d91d3ccaa872502b7054e73ba33677"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d91d3ccaa872502b7054e73ba33677">&#9670;&nbsp;</a></span>parse_find_best_video_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_find_best_video_stream </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find best match video stream. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>is 0 really OK or shall we better parse? </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns index of best match stream. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00300">300</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
+
+</div>
+</div>
+<a id="a3f03a6fec82a0abf0dfb7025ff4c21f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f03a6fec82a0abf0dfb7025ff4c21f3">&#9670;&nbsp;</a></span>stream_info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void stream_info </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">BLURAY_STREAM_INFO *&#160;</td>
+          <td class="paramname"><em>ss</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>channels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>sample_rate</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>audio</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>height</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AVRational *&#160;</td>
+          <td class="paramname"><em>framerate</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>interleaved</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get information about Bluray stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to Bluray disk. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ss</td><td>- BLURAY_STREAM_INFO object. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">channels</td><td>- Number of audio channels in stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">sample_rate</td><td>- Sample rate of stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">audio</td><td>- 1: stream contains audio, 0: no audio </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">width</td><td>- Width of video stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">height</td><td>- Height of video stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">framerate</td><td>- Frame rate of video stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">interleaved</td><td>- 1: video stream is interleaved, 0: video stream is not interleaved. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00057">57</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00571">av_make_q()</a>, and <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
 
 </div>
 </div>

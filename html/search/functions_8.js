@@ -1,6 +1,8 @@
 var searchData=
 [
   ['last_5faccess',['last_access',['../classCache__Entry.html#aa1b74c1569d09bcaa8cd88122819b55f',1,'Cache_Entry']]],
+  ['link_5fdown',['link_down',['../cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301',1,'cache_maintenance.cc']]],
+  ['link_5fup',['link_up',['../cache__maintenance_8cc.html#a8c6bf784b22ece87ea6d0269e89f11be',1,'cache_maintenance.cc']]],
   ['load_5fencode_5fand_5fwrite',['load_encode_and_write',['../classFFmpeg__Transcoder.html#afa312d18182b1fccba166477a66ff3b1',1,'FFmpeg_Transcoder']]],
   ['load_5ffile',['load_file',['../classVcdEntries.html#abdf8bb838c3a063aef11edaff90e23ce',1,'VcdEntries::load_file()'],['../classVcdInfo.html#a0210e4b9ab5410c6e3bd4f69025d3943',1,'VcdInfo::load_file()']]],
   ['load_5findex',['load_index',['../classCache.html#a5e16f13d67ba31c847e3bd3e3db2abf7',1,'Cache']]],

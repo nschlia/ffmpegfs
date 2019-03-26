@@ -100,39 +100,32 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aaf6cd0cb2197c48038e4502a0eae58e4">~DvdIO</a> ()</td></tr>
 <tr class="memdesc:aaf6cd0cb2197c48038e4502a0eae58e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free <a class="el" href="classDvdIO.html" title="DVD I/O class. ">DvdIO</a> object. <br /></td></tr>
 <tr class="separator:aaf6cd0cb2197c48038e4502a0eae58e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaeea5f625f95142778be404e918c266"><td class="memItemLeft" align="right" valign="top"><a id="abaeea5f625f95142778be404e918c266"></a>
-virtual <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#abaeea5f625f95142778be404e918c266">type</a> () const</td></tr>
-<tr class="memdesc:abaeea5f625f95142778be404e918c266"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the virtual file. <br /></td></tr>
+<tr class="memitem:abaeea5f625f95142778be404e918c266"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#abaeea5f625f95142778be404e918c266">type</a> () const</td></tr>
+<tr class="memdesc:abaeea5f625f95142778be404e918c266"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get type of the virtual file.  <a href="#abaeea5f625f95142778be404e918c266">More...</a><br /></td></tr>
 <tr class="separator:abaeea5f625f95142778be404e918c266"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33507ad28016e9d9a42ae1204d00de32"><td class="memItemLeft" align="right" valign="top"><a id="a33507ad28016e9d9a42ae1204d00de32"></a>
-virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a33507ad28016e9d9a42ae1204d00de32">bufsize</a> () const</td></tr>
-<tr class="memdesc:a33507ad28016e9d9a42ae1204d00de32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ideal buffer size. <br /></td></tr>
+<tr class="memitem:a33507ad28016e9d9a42ae1204d00de32"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a33507ad28016e9d9a42ae1204d00de32">bufsize</a> () const</td></tr>
+<tr class="memdesc:a33507ad28016e9d9a42ae1204d00de32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="#a33507ad28016e9d9a42ae1204d00de32">More...</a><br /></td></tr>
 <tr class="separator:a33507ad28016e9d9a42ae1204d00de32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1da7379c678baf3a8d52122a6a0a223"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aa1da7379c678baf3a8d52122a6a0a223">read</a> (void *data, size_t <a class="el" href="classDvdIO.html#aeeadab7f0d1f7f2e13d6aa8cb780d620">size</a>)</td></tr>
 <tr class="memdesc:aa1da7379c678baf3a8d52122a6a0a223"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="#aa1da7379c678baf3a8d52122a6a0a223">More...</a><br /></td></tr>
 <tr class="separator:aa1da7379c678baf3a8d52122a6a0a223"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebdc88cbff9a8f255d2a3ab39f6bb95e"><td class="memItemLeft" align="right" valign="top"><a id="aebdc88cbff9a8f255d2a3ab39f6bb95e"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aebdc88cbff9a8f255d2a3ab39f6bb95e">error</a> () const</td></tr>
-<tr class="memdesc:aebdc88cbff9a8f255d2a3ab39f6bb95e"><td class="mdescLeft">&#160;</td><td class="mdescRight">If error occurred return number. <br /></td></tr>
+<tr class="memitem:aebdc88cbff9a8f255d2a3ab39f6bb95e"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aebdc88cbff9a8f255d2a3ab39f6bb95e">error</a> () const</td></tr>
+<tr class="memdesc:aebdc88cbff9a8f255d2a3ab39f6bb95e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error.  <a href="#aebdc88cbff9a8f255d2a3ab39f6bb95e">More...</a><br /></td></tr>
 <tr class="separator:aebdc88cbff9a8f255d2a3ab39f6bb95e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75b428d14e8333ee97bdbbffd4b9ae82"><td class="memItemLeft" align="right" valign="top"><a id="a75b428d14e8333ee97bdbbffd4b9ae82"></a>
-virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a75b428d14e8333ee97bdbbffd4b9ae82">duration</a> () const</td></tr>
-<tr class="memdesc:a75b428d14e8333ee97bdbbffd4b9ae82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the duration of the file, in AV_TIME_BASE fractional seconds. <br /></td></tr>
+<tr class="memitem:a75b428d14e8333ee97bdbbffd4b9ae82"><td class="memItemLeft" align="right" valign="top">virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a75b428d14e8333ee97bdbbffd4b9ae82">duration</a> () const</td></tr>
+<tr class="memdesc:a75b428d14e8333ee97bdbbffd4b9ae82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the duration of the file, in AV_TIME_BASE fractional seconds.  <a href="#a75b428d14e8333ee97bdbbffd4b9ae82">More...</a><br /></td></tr>
 <tr class="separator:a75b428d14e8333ee97bdbbffd4b9ae82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeeadab7f0d1f7f2e13d6aa8cb780d620"><td class="memItemLeft" align="right" valign="top"><a id="aeeadab7f0d1f7f2e13d6aa8cb780d620"></a>
-virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aeeadab7f0d1f7f2e13d6aa8cb780d620">size</a> () const</td></tr>
-<tr class="memdesc:aeeadab7f0d1f7f2e13d6aa8cb780d620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get file size. <br /></td></tr>
+<tr class="memitem:aeeadab7f0d1f7f2e13d6aa8cb780d620"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#aeeadab7f0d1f7f2e13d6aa8cb780d620">size</a> () const</td></tr>
+<tr class="memdesc:aeeadab7f0d1f7f2e13d6aa8cb780d620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the file size.  <a href="#aeeadab7f0d1f7f2e13d6aa8cb780d620">More...</a><br /></td></tr>
 <tr class="separator:aeeadab7f0d1f7f2e13d6aa8cb780d620"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8bbc63da452e460aef705acc9ec919e"><td class="memItemLeft" align="right" valign="top"><a id="ae8bbc63da452e460aef705acc9ec919e"></a>
-virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#ae8bbc63da452e460aef705acc9ec919e">tell</a> () const</td></tr>
-<tr class="memdesc:ae8bbc63da452e460aef705acc9ec919e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current read position. <br /></td></tr>
+<tr class="memitem:ae8bbc63da452e460aef705acc9ec919e"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#ae8bbc63da452e460aef705acc9ec919e">tell</a> () const</td></tr>
+<tr class="memdesc:ae8bbc63da452e460aef705acc9ec919e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current read position.  <a href="#ae8bbc63da452e460aef705acc9ec919e">More...</a><br /></td></tr>
 <tr class="separator:ae8bbc63da452e460aef705acc9ec919e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fab407dc9d6d5c5eb340c462e9a6355"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a5fab407dc9d6d5c5eb340c462e9a6355">seek</a> (long offset, int whence)</td></tr>
 <tr class="memdesc:a5fab407dc9d6d5c5eb340c462e9a6355"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek to position in file.  <a href="#a5fab407dc9d6d5c5eb340c462e9a6355">More...</a><br /></td></tr>
 <tr class="separator:a5fab407dc9d6d5c5eb340c462e9a6355"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77454b5dcbdbcfcf89bb251a5dc48dc5"><td class="memItemLeft" align="right" valign="top"><a id="a77454b5dcbdbcfcf89bb251a5dc48dc5"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a77454b5dcbdbcfcf89bb251a5dc48dc5">eof</a> () const</td></tr>
-<tr class="memdesc:a77454b5dcbdbcfcf89bb251a5dc48dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if at end of file. <br /></td></tr>
+<tr class="memitem:a77454b5dcbdbcfcf89bb251a5dc48dc5"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a77454b5dcbdbcfcf89bb251a5dc48dc5">eof</a> () const</td></tr>
+<tr class="memdesc:a77454b5dcbdbcfcf89bb251a5dc48dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if at end of file.  <a href="#a77454b5dcbdbcfcf89bb251a5dc48dc5">More...</a><br /></td></tr>
 <tr class="separator:a77454b5dcbdbcfcf89bb251a5dc48dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72cd1768f46db5a49f2b7da8ddead170"><td class="memItemLeft" align="right" valign="top"><a id="a72cd1768f46db5a49f2b7da8ddead170"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDvdIO.html#a72cd1768f46db5a49f2b7da8ddead170">close</a> ()</td></tr>
@@ -268,7 +261,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
 <tr class="memitem:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classFileIO.html">FileIO</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
-<tr class="memdesc:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="VIRTUALTYPE of the virtual file. ">type()</a>.  <a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">More...</a><br /></td></tr>
+<tr class="memdesc:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file. ">type()</a>.  <a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">More...</a><br /></td></tr>
 <tr class="separator:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -276,6 +269,142 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dvdio_8h_source.html#l00042">42</a> of file <a class="el" href="dvdio_8h_source.html">dvdio.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a33507ad28016e9d9a42ae1204d00de32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33507ad28016e9d9a42ae1204d00de32">&#9670;&nbsp;</a></span>bufsize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t DvdIO::bufsize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the ideal buffer size. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return the ideal buffer size. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#a9ef072d7a6f475c0b185c3912d828342">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00083">83</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00205">m_data</a>.</p>
+
+</div>
+</div>
+<a id="a75b428d14e8333ee97bdbbffd4b9ae82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75b428d14e8333ee97bdbbffd4b9ae82">&#9670;&nbsp;</a></span>duration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int64_t DvdIO::duration </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the duration of the file, in AV_TIME_BASE fractional seconds. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the duration of the file, in AV_TIME_BASE fractional seconds. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#aaffdefd15fa7c5e54a9733b1770c8bcd">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00693">693</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00208">m_duration</a>.</p>
+
+</div>
+</div>
+<a id="a77454b5dcbdbcfcf89bb251a5dc48dc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77454b5dcbdbcfcf89bb251a5dc48dc5">&#9670;&nbsp;</a></span>eof()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DvdIO::eof </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if at end of file. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if at end of file. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#ad7bf956d13e66a11644c30c4b2b7d0ee">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00735">735</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00194">m_is_eof</a>.</p>
+
+</div>
+</div>
+<a id="aebdc88cbff9a8f255d2a3ab39f6bb95e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebdc88cbff9a8f255d2a3ab39f6bb95e">&#9670;&nbsp;</a></span>error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DvdIO::error </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get last error. </p>
+<dl class="section return"><dt>Returns</dt><dd>errno value of last error. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00688">688</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00195">m_errno</a>.</p>
+
+</div>
+</div>
 <a id="a008d5dd3faa896361bdfeb3f1e6e1f92"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a008d5dd3faa896361bdfeb3f1e6e1f92">&#9670;&nbsp;</a></span>openX()</h2>
 
@@ -314,7 +443,7 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 <p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00088">88</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="dvdio_8h_source.html#l00176">m_angle_idx</a>, <a class="el" href="dvdio_8h_source.html#l00175">m_chapter_idx</a>, <a class="el" href="dvdio_8h_source.html#l00163">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00160">m_cur_pgc</a>, <a class="el" href="dvdio_8h_source.html#l00171">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00181">m_duration</a>, <a class="el" href="dvdio_8h_source.html#l00156">m_dvd</a>, <a class="el" href="dvdio_8h_source.html#l00157">m_dvd_title</a>, <a class="el" href="dvdio_8h_source.html#l00162">m_end_cell</a>, <a class="el" href="dvdio_8h_source.html#l00168">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00173">m_full_title</a>, <a class="el" href="dvdio_8h_source.html#l00165">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00167">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00164">m_next_cell</a>, <a class="el" href="fileio_8h_source.html#l00230">FileIO::m_path</a>, <a class="el" href="dvdio_8h_source.html#l00170">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00169">m_rest_size</a>, <a class="el" href="dvdio_8h_source.html#l00161">m_start_cell</a>, <a class="el" href="dvdio_8h_source.html#l00174">m_title_idx</a>, <a class="el" href="dvdio_8h_source.html#l00158">m_vmg_file</a>, <a class="el" href="dvdio_8h_source.html#l00159">m_vts_file</a>, <a class="el" href="fileio_8cc_source.html#l00109">FileIO::set_path()</a>, <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>, and <a class="el" href="fileio_8cc_source.html#l00104">FileIO::virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="dvdio_8h_source.html#l00203">m_angle_idx</a>, <a class="el" href="dvdio_8h_source.html#l00202">m_chapter_idx</a>, <a class="el" href="dvdio_8h_source.html#l00190">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00187">m_cur_pgc</a>, <a class="el" href="dvdio_8h_source.html#l00198">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00208">m_duration</a>, <a class="el" href="dvdio_8h_source.html#l00183">m_dvd</a>, <a class="el" href="dvdio_8h_source.html#l00184">m_dvd_title</a>, <a class="el" href="dvdio_8h_source.html#l00189">m_end_cell</a>, <a class="el" href="dvdio_8h_source.html#l00195">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00200">m_full_title</a>, <a class="el" href="dvdio_8h_source.html#l00192">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00194">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00191">m_next_cell</a>, <a class="el" href="fileio_8h_source.html#l00256">FileIO::m_path</a>, <a class="el" href="dvdio_8h_source.html#l00197">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00196">m_rest_size</a>, <a class="el" href="dvdio_8h_source.html#l00188">m_start_cell</a>, <a class="el" href="dvdio_8h_source.html#l00201">m_title_idx</a>, <a class="el" href="dvdio_8h_source.html#l00185">m_vmg_file</a>, <a class="el" href="dvdio_8h_source.html#l00186">m_vts_file</a>, <a class="el" href="fileio_8cc_source.html#l00109">FileIO::set_path()</a>, <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>, and <a class="el" href="fileio_8cc_source.html#l00104">FileIO::virtualfile()</a>.</p>
 
 </div>
 </div>
@@ -363,13 +492,13 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 <dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDvdIO.html#aa1da7379c678baf3a8d52122a6a0a223" title="Read data from file. ">read()</a> returns the number of bytes read. <br />
 This may be less than size. <br />
 On error, the value 0 is returned and errno is set to indicate the error. <br />
-If at end of file, 0 may be returned by errno not set. <a class="el" href="classDvdIO.html#aebdc88cbff9a8f255d2a3ab39f6bb95e" title="If error occurred return number. ">error()</a> will return 0 if at EOF. </dd></dl>
+If at end of file, 0 may be returned by errno not set. <a class="el" href="classDvdIO.html#aebdc88cbff9a8f255d2a3ab39f6bb95e" title="Get last error. ">error()</a> will return 0 if at EOF. </dd></dl>
 
 <p>Implements <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00563">563</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="dvdio_8h_source.html#l00179">m_buffer</a>, <a class="el" href="dvdio_8h_source.html#l00166">m_cur_block</a>, <a class="el" href="dvdio_8h_source.html#l00163">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00160">m_cur_pgc</a>, <a class="el" href="dvdio_8h_source.html#l00171">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00178">m_data</a>, <a class="el" href="dvdio_8h_source.html#l00157">m_dvd_title</a>, <a class="el" href="dvdio_8h_source.html#l00168">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00173">m_full_title</a>, <a class="el" href="dvdio_8h_source.html#l00165">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00167">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00164">m_next_cell</a>, <a class="el" href="fileio_8h_source.html#l00230">FileIO::m_path</a>, <a class="el" href="dvdio_8h_source.html#l00170">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00169">m_rest_size</a>, <a class="el" href="dvdio_8cc_source.html#l00698">size()</a>, and <a class="el" href="logging_8h_source.html#l00225">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="dvdio_8h_source.html#l00206">m_buffer</a>, <a class="el" href="dvdio_8h_source.html#l00193">m_cur_block</a>, <a class="el" href="dvdio_8h_source.html#l00190">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00187">m_cur_pgc</a>, <a class="el" href="dvdio_8h_source.html#l00198">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00205">m_data</a>, <a class="el" href="dvdio_8h_source.html#l00184">m_dvd_title</a>, <a class="el" href="dvdio_8h_source.html#l00195">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00200">m_full_title</a>, <a class="el" href="dvdio_8h_source.html#l00192">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00194">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00191">m_next_cell</a>, <a class="el" href="fileio_8h_source.html#l00256">FileIO::m_path</a>, <a class="el" href="dvdio_8h_source.html#l00197">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00196">m_rest_size</a>, <a class="el" href="dvdio_8cc_source.html#l00698">size()</a>, and <a class="el" href="logging_8h_source.html#l00225">Logging::warning()</a>.</p>
 
 </div>
 </div>
@@ -426,7 +555,111 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00715">715</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00163">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00171">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00168">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00165">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00167">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00164">m_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00170">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00169">m_rest_size</a>, and <a class="el" href="dvdio_8h_source.html#l00161">m_start_cell</a>.</p>
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00190">m_cur_cell</a>, <a class="el" href="dvdio_8h_source.html#l00198">m_cur_pos</a>, <a class="el" href="dvdio_8h_source.html#l00195">m_errno</a>, <a class="el" href="dvdio_8h_source.html#l00192">m_goto_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00194">m_is_eof</a>, <a class="el" href="dvdio_8h_source.html#l00191">m_next_cell</a>, <a class="el" href="dvdio_8h_source.html#l00197">m_rest_pos</a>, <a class="el" href="dvdio_8h_source.html#l00196">m_rest_size</a>, and <a class="el" href="dvdio_8h_source.html#l00188">m_start_cell</a>.</p>
+
+</div>
+</div>
+<a id="aeeadab7f0d1f7f2e13d6aa8cb780d620"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeadab7f0d1f7f2e13d6aa8cb780d620">&#9670;&nbsp;</a></span>size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t DvdIO::size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the file size. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the file size. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#a28df61747de114001d67ef6abad2ca7d">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00698">698</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00187">m_cur_pgc</a>, and <a class="el" href="dvdio_8h_source.html#l00188">m_start_cell</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdio_8cc_source.html#l00563">read()</a>.</p>
+
+</div>
+</div>
+<a id="ae8bbc63da452e460aef705acc9ec919e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8bbc63da452e460aef705acc9ec919e">&#9670;&nbsp;</a></span>tell()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t DvdIO::tell </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get current read position. </p>
+<dl class="section return"><dt>Returns</dt><dd>Gets the current read position. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#a3a40140f766ff539cde0da854a1a9526">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00710">710</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdio_8h_source.html#l00198">m_cur_pos</a>.</p>
+
+</div>
+</div>
+<a id="abaeea5f625f95142778be404e918c266"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abaeea5f625f95142778be404e918c266">&#9670;&nbsp;</a></span>type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> DvdIO::type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get type of the virtual file. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns the type of the virtual file. </dd></dl>
+
+<p>Implements <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">FileIO</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="dvdio_8cc_source.html#l00078">78</a> of file <a class="el" href="dvdio_8cc_source.html">dvdio.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_DVD</a>.</p>
 
 </div>
 </div>

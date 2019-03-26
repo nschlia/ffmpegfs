@@ -14,6 +14,7 @@ var searchData=
   ['audio_5finfo',['audio_info',['../classFFmpeg__Base.html#a47da7eeb83c4a861c20e020846bc3dc3',1,'FFmpeg_Base']]],
   ['audio_5fsize',['audio_size',['../classFFmpeg__Transcoder.html#a9ed226346c42ea1d3de3fd4c61573774',1,'FFmpeg_Transcoder']]],
   ['av_5fdict_5fset_5fwith_5fcheck',['av_dict_set_with_check',['../classFFmpeg__Base.html#afec6bb914228e9716350b02c6fd7874e',1,'FFmpeg_Base']]],
+  ['av_5fmake_5fq',['av_make_q',['../ffmpeg__utils_8h.html#a7778b1d209ceb3e4bf34e40150d3b882',1,'ffmpeg_utils.h']]],
   ['av_5fopt_5fset_5fwith_5fcheck',['av_opt_set_with_check',['../classFFmpeg__Base.html#a231653f44a892d80b5da688abc1a5927',1,'FFmpeg_Base']]],
   ['avcodec_5fget_5fname',['avcodec_get_name',['../ffmpeg__utils_8cc.html#a2016a52e94f867ebe5113bdf448e182d',1,'avcodec_get_name(enum AVCodecID id):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a1eb209e687fcabc997c220570829cdcb',1,'avcodec_get_name(AVCodecID id):&#160;ffmpeg_utils.cc']]],
   ['avformat_5falloc_5foutput_5fcontext2',['avformat_alloc_output_context2',['../ffmpeg__utils_8cc.html#a362281b46aba7bbcd154f4a6aa8b64fc',1,'avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a362281b46aba7bbcd154f4a6aa8b64fc',1,'avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename):&#160;ffmpeg_utils.cc']]]

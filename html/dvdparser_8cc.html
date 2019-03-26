@@ -137,6 +137,21 @@ typedef <a class="el" href="structVIDEO__SETTINGS.html">VIDEO_SETTINGS</a> *&#16
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ac9baf91679a9e422818be34ff1e39072"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#ac9baf91679a9e422818be34ff1e39072">dvd_find_best_audio_stream</a> (const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)</td></tr>
+<tr class="memdesc:ac9baf91679a9e422818be34ff1e39072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locate best matching audio stream.  <a href="#ac9baf91679a9e422818be34ff1e39072">More...</a><br /></td></tr>
+<tr class="separator:ac9baf91679a9e422818be34ff1e39072"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a546edd44f72c3b6078cf40d298439062"><td class="memItemLeft" align="right" valign="top">static AVRational&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#a546edd44f72c3b6078cf40d298439062">dvd_frame_rate</a> (const uint8_t *ptr)</td></tr>
+<tr class="memdesc:a546edd44f72c3b6078cf40d298439062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the frame rate of the DVD. Can be 25 fps (PAL) or 29.97 (NTCS).  <a href="#a546edd44f72c3b6078cf40d298439062">More...</a><br /></td></tr>
+<tr class="separator:a546edd44f72c3b6078cf40d298439062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42340401b3eae010e3913439fd3e6058"><td class="memItemLeft" align="right" valign="top">static int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#a42340401b3eae010e3913439fd3e6058">BCDtime</a> (const dvd_time_t *dvd_time)</td></tr>
+<tr class="memdesc:a42340401b3eae010e3913439fd3e6058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a time in BCD format into AV_TIMEBASE fractional seconds.  <a href="#a42340401b3eae010e3913439fd3e6058">More...</a><br /></td></tr>
+<tr class="separator:a42340401b3eae010e3913439fd3e6058"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a492e2e1960310e6b55fa7d7b83ecc931"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a> (const ifo_handle_t *vts_file, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const <a class="el" href="structAUDIO__SETTINGS.html">AUDIO_SETTINGS</a> &amp;audio_settings, const <a class="el" href="structVIDEO__SETTINGS.html">VIDEO_SETTINGS</a> &amp;video_settings)</td></tr>
+<tr class="memdesc:a492e2e1960310e6b55fa7d7b83ecc931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a virtual file for a DVD.  <a href="#a492e2e1960310e6b55fa7d7b83ecc931">More...</a><br /></td></tr>
+<tr class="separator:a492e2e1960310e6b55fa7d7b83ecc931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4cba40b0b1282b135badb16cbf44e33"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a> (const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
+<tr class="memdesc:ae4cba40b0b1282b135badb16cbf44e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse DVD directory and get all DVD titles and chapters as virtual files.  <a href="#ae4cba40b0b1282b135badb16cbf44e33">More...</a><br /></td></tr>
+<tr class="separator:ae4cba40b0b1282b135badb16cbf44e33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a218a7a882ce8cc59dcd996adbeb1fd44"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dvdparser_8cc.html#a218a7a882ce8cc59dcd996adbeb1fd44">check_dvd</a> (const std::string &amp;_path, void *buf, fuse_fill_dir_t filler)</td></tr>
 <tr class="memdesc:a218a7a882ce8cc59dcd996adbeb1fd44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles on DVD.  <a href="#a218a7a882ce8cc59dcd996adbeb1fd44">More...</a><br /></td></tr>
 <tr class="separator:a218a7a882ce8cc59dcd996adbeb1fd44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,6 +163,47 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition in file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a42340401b3eae010e3913439fd3e6058"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42340401b3eae010e3913439fd3e6058">&#9670;&nbsp;</a></span>BCDtime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int64_t BCDtime </td>
+          <td>(</td>
+          <td class="paramtype">const dvd_time_t *&#160;</td>
+          <td class="paramname"><em>dvd_time</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert a time in BCD format into AV_TIMEBASE fractional seconds. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dvd_time</td><td>- dvd_time_t object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Time in AV_TIMEBASE fractional seconds. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00201">201</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00571">av_make_q()</a>, and <a class="el" href="dvdparser_8cc_source.html#l00167">dvd_frame_rate()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00241">create_dvd_virtualfile()</a>.</p>
+
+</div>
+</div>
 <a id="a218a7a882ce8cc59dcd996adbeb1fd44"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a218a7a882ce8cc59dcd996adbeb1fd44">&#9670;&nbsp;</a></span>check_dvd()</h2>
 
@@ -194,7 +250,303 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00553">553</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00282">load_path()</a>, <a class="el" href="dvdparser_8cc_source.html#l00405">parse_dvd()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00561">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00453">ffmpegfs_readdir()</a>.</p>
+
+</div>
+</div>
+<a id="a492e2e1960310e6b55fa7d7b83ecc931"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a492e2e1960310e6b55fa7d7b83ecc931">&#9670;&nbsp;</a></span>create_dvd_virtualfile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool create_dvd_virtualfile </td>
+          <td>(</td>
+          <td class="paramtype">const ifo_handle_t *&#160;</td>
+          <td class="paramname"><em>vts_file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>full_title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>title_idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>chapter_idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>angles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ttnnum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>audio_stream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structAUDIO__SETTINGS.html">AUDIO_SETTINGS</a> &amp;&#160;</td>
+          <td class="paramname"><em>audio_settings</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structVIDEO__SETTINGS.html">VIDEO_SETTINGS</a> &amp;&#160;</td>
+          <td class="paramname"><em>video_settings</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a virtual file for a DVD. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">vts_file</td><td>- Structure defines an IFO file </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to DVD files. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">full_title</td><td>- If true, create virtual file of all title. If false, include single chapter only. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title_idx</td><td>- Index of DVD title. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">chapter_idx</td><td>- Index of DVD chapter. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">angles</td><td>- Number of angles. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ttnnum</td><td>- DVD title number. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">audio_stream</td><td>- Audio stream index. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">audio_settings</td><td>- Audio stream settings. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">video_settings</td><td>- Video stream settings. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if successful. Returns false on error. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00241">241</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdparser_8cc_source.html#l00201">BCDtime()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00151">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="dvdparser_8cc_source.html#l00167">dvd_frame_rate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00799">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00840">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00918">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00240">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00116">VIRTUALFILE::DVD_CHAPTER::m_angle_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00048">AUDIO_SETTINGS::m_audio_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00049">AUDIO_SETTINGS::m_channels</a>, <a class="el" href="fileio_8h_source.html#l00115">VIRTUALFILE::DVD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_duration</a>, <a class="el" href="structVIRTUALFILE.html#ae7b70ef5291f502dd6115de55e3d6a84">VIRTUALFILE::m_dvd</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00078">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_full_title</a>, <a class="el" href="dvdparser_8cc_source.html#l00059">VIDEO_SETTINGS::m_height</a>, <a class="el" href="ffmpegfs_8h_source.html#l00163">FFMPEGFS_PARAMS::m_min_dvd_chapter_duration</a>, <a class="el" href="fileio_8h_source.html#l00079">VIRTUALFILE::m_origfile</a>, <a class="el" href="dvdparser_8cc_source.html#l00050">AUDIO_SETTINGS::m_sample_rate</a>, <a class="el" href="fileio_8h_source.html#l00114">VIRTUALFILE::DVD_CHAPTER::m_title_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00057">VIDEO_SETTINGS::m_video_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00058">VIDEO_SETTINGS::m_width</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00075">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01096">replace_all()</a>, <a class="el" href="transcode_8cc_source.html#l00211">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00241">transcoder_set_filesize()</a>, and <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_DVD</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00405">parse_dvd()</a>.</p>
+
+</div>
+</div>
+<a id="ac9baf91679a9e422818be34ff1e39072"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9baf91679a9e422818be34ff1e39072">&#9670;&nbsp;</a></span>dvd_find_best_audio_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int dvd_find_best_audio_stream </td>
+          <td>(</td>
+          <td class="paramtype">const vtsi_mat_t *&#160;</td>
+          <td class="paramname"><em>vtsi_mat</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>best_channels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>best_sample_frequency</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Locate best matching audio stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">vtsi_mat</td><td>- Video Title Set Information (VTSI) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">best_channels</td><td>- Number of channels in best stream. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">best_sample_frequency</td><td>- Sample frequency in best stream. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns number of best stream (0..8). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00077">77</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00405">parse_dvd()</a>.</p>
+
+</div>
+</div>
+<a id="a546edd44f72c3b6078cf40d298439062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a546edd44f72c3b6078cf40d298439062">&#9670;&nbsp;</a></span>dvd_frame_rate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static AVRational dvd_frame_rate </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the frame rate of the DVD. Can be 25 fps (PAL) or 29.97 (NTCS). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>- Pointer to frame_u element in dvd_time_t structure. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success returns AVRational with frame rate. On error returns frame rate { 0, 0 }. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00167">167</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00571">av_make_q()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00201">BCDtime()</a>, and <a class="el" href="dvdparser_8cc_source.html#l00241">create_dvd_virtualfile()</a>.</p>
+
+</div>
+</div>
+<a id="ae4cba40b0b1282b135badb16cbf44e33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4cba40b0b1282b135badb16cbf44e33">&#9670;&nbsp;</a></span>parse_dvd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_dvd </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parse DVD directory and get all DVD titles and chapters as virtual files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- path to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00405">405</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="dvdparser_8cc_source.html#l00241">create_dvd_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="dvdparser_8cc_source.html#l00077">dvd_find_best_audio_stream()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>, <a class="el" href="dvdparser_8cc_source.html#l00048">AUDIO_SETTINGS::m_audio_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00049">AUDIO_SETTINGS::m_channels</a>, <a class="el" href="dvdparser_8cc_source.html#l00059">VIDEO_SETTINGS::m_height</a>, <a class="el" href="dvdparser_8cc_source.html#l00050">AUDIO_SETTINGS::m_sample_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00057">VIDEO_SETTINGS::m_video_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00058">VIDEO_SETTINGS::m_width</a>, <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>, and <a class="el" href="logging_8h_source.html#l00225">Logging::warning()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00553">check_dvd()</a>.</p>
 
 </div>
 </div>

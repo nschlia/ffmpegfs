@@ -2,6 +2,7 @@ var searchData=
 [
   ['online_20news_20list',['Online NEWS list',['../ffmpegfs_NEWS.html',1,'']]],
   ['online_20todo_20list',['Online TODO List',['../ffmpegfs_TODO.html',1,'']]],
+  ['oldhandler',['oldHandler',['../fuseops_8cc.html#a751f2746b37ca950207ec5d4f904adf8',1,'fuseops.cc']]],
   ['open',['open',['../classCache.html#a1eb8ef8d7c26bf16f6bc8c43590ae902',1,'Cache::open()'],['../classCache__Entry.html#a01555933f10ccba187f7562addc3efc3',1,'Cache_Entry::open()'],['../classFileIO.html#a2c5af05678545dc944a4f8923523c6c4',1,'FileIO::open()']]],
   ['open_5fbestmatch_5fcodec_5fcontext',['open_bestmatch_codec_context',['../classFFmpeg__Base.html#a925916f722960f55c2bd6bced185d1cb',1,'FFmpeg_Base']]],
   ['open_5fcodec_5fcontext',['open_codec_context',['../classFFmpeg__Base.html#a6abf821def3cd9b2bedb45014004ea65',1,'FFmpeg_Base']]],

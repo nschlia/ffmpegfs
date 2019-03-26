@@ -12,5 +12,7 @@ var searchData=
   ['destroy',['destroy',['../classCache__Entry.html#a6b32137876a33aba00724cd594dd1fad',1,'Cache_Entry']]],
   ['desttype',['desttype',['../classFFmpegfs__Format.html#a00e5c92b14e8554d62c816a754df5eeb',1,'FFmpegfs_Format']]],
   ['duration',['duration',['../classBlurayIO.html#a1d6dea45bf542e820f7d7da187569b26',1,'BlurayIO::duration()'],['../classBuffer.html#a5c531f5faca100f397a3d6fc5ca63b6d',1,'Buffer::duration()'],['../classDiskIO.html#a2c276463685dbcc51ad35d554d3dcf3d',1,'DiskIO::duration()'],['../classDvdIO.html#a75b428d14e8333ee97bdbbffd4b9ae82',1,'DvdIO::duration()'],['../classFileIO.html#aaffdefd15fa7c5e54a9733b1770c8bcd',1,'FileIO::duration()'],['../classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0',1,'VcdIO::duration()']]],
+  ['dvd_5ffind_5fbest_5faudio_5fstream',['dvd_find_best_audio_stream',['../dvdparser_8cc.html#ac9baf91679a9e422818be34ff1e39072',1,'dvdparser.cc']]],
+  ['dvd_5fframe_5frate',['dvd_frame_rate',['../dvdparser_8cc.html#a546edd44f72c3b6078cf40d298439062',1,'dvdparser.cc']]],
   ['dvdio',['DvdIO',['../classDvdIO.html#a68c8399a49e49bd5f5641132d290843f',1,'DvdIO']]]
 ];

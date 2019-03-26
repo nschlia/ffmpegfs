@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ffmpegfs_5fops',['ffmpegfs_ops',['../ffmpegfs_8h.html#a20127960d0a961494a0a56d119d885a9',1,'ffmpegfs_ops():&#160;fuseops.cc'],['../fuseops_8cc.html#a20127960d0a961494a0a56d119d885a9',1,'ffmpegfs_ops():&#160;fuseops.cc']]]
+  ['debug',['DEBUG',['../logging_8h.html#aebd3b02a31285c20cc9ad01c4d034b9e',1,'logging.h']]]
 ];

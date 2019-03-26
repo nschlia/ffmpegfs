@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['debug',['DEBUG',['../logging_8h.html#aebd3b02a31285c20cc9ad01c4d034b9e',1,'logging.h']]]
+  ['autocopy_5fmap',['autocopy_map',['../ffmpegfs_8cc.html#a6f955fab7a55c8bef7b217847093ad96',1,'ffmpegfs.cc']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sync',['SYNC',['../vcdentries_8cc.html#ac4270e26101181161f70087391253c26',1,'SYNC():&#160;vcdentries.cc'],['../vcdutils_8h.html#ac4270e26101181161f70087391253c26',1,'SYNC():&#160;vcdentries.cc']]]
+  ['oldhandler',['oldHandler',['../fuseops_8cc.html#a751f2746b37ca950207ec5d4f904adf8',1,'fuseops.cc']]]
 ];

@@ -99,6 +99,12 @@ Include dependency graph for vcdparser.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a5d274dd7c050f3432b850e4cf64a4983"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdparser_8cc.html#a5d274dd7c050f3432b850e4cf64a4983">parse_vcd</a> (const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
+<tr class="memdesc:a5d274dd7c050f3432b850e4cf64a4983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse VCD directory and get all VCD chapters as virtual files.  <a href="#a5d274dd7c050f3432b850e4cf64a4983">More...</a><br /></td></tr>
+<tr class="separator:a5d274dd7c050f3432b850e4cf64a4983"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeb7a39f03e9b9f5599b00eac210a205"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdparser_8cc.html#afeb7a39f03e9b9f5599b00eac210a205">create_vcd_virtualfile</a> (const <a class="el" href="classVcdEntries.html">VcdEntries</a> &amp;vcd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)</td></tr>
+<tr class="memdesc:afeb7a39f03e9b9f5599b00eac210a205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a virtual file for a video CD.  <a href="#afeb7a39f03e9b9f5599b00eac210a205">More...</a><br /></td></tr>
+<tr class="separator:afeb7a39f03e9b9f5599b00eac210a205"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49d90aaba54911db7ba935a3fd93c1b4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdparser_8cc.html#a49d90aaba54911db7ba935a3fd93c1b4">check_vcd</a> (const std::string &amp;_path, void *buf, fuse_fill_dir_t filler)</td></tr>
 <tr class="memdesc:a49d90aaba54911db7ba935a3fd93c1b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of chapters on S/VCD.  <a href="#a49d90aaba54911db7ba935a3fd93c1b4">More...</a><br /></td></tr>
 <tr class="separator:a49d90aaba54911db7ba935a3fd93c1b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,7 +162,155 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00146">146</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00275">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00282">load_path()</a>, <a class="el" href="vcdparser_8cc_source.html#l00117">parse_vcd()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00561">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00453">ffmpegfs_readdir()</a>.</p>
+
+</div>
+</div>
+<a id="afeb7a39f03e9b9f5599b00eac210a205"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afeb7a39f03e9b9f5599b00eac210a205">&#9670;&nbsp;</a></span>create_vcd_virtualfile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool create_vcd_virtualfile </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classVcdEntries.html">VcdEntries</a> &amp;&#160;</td>
+          <td class="paramname"><em>vcd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>full_title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>chapter_no</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a virtual file for a video CD. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">vcd</td><td>- Video CD handle. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">full_title</td><td>- If true, create virtual file of all title. If false, include single chapter only. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">chapter_no</td><td>- Chapter number of virtual file. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if successful. Returns false on error. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00052">52</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00840">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="vcdentries_8cc_source.html#l00397">VcdEntries::get_chapter()</a>, <a class="el" href="vcdentries_8cc_source.html#l00423">VcdEntries::get_disk_path()</a>, <a class="el" href="vcdentries_8cc_source.html#l00406">VcdEntries::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00137">VcdChapter::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00162">VcdChapter::get_end_pos()</a>, <a class="el" href="vcdentries_8cc_source.html#l00411">VcdEntries::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00167">VcdChapter::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00157">VcdChapter::get_start_pos()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00117">VcdChapter::get_track_no()</a>, <a class="el" href="fuseops_8cc_source.html#l00240">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00098">VIRTUALFILE::VCD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00100">VIRTUALFILE::VCD_CHAPTER::m_end_pos</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00078">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00099">VIRTUALFILE::VCD_CHAPTER::m_start_pos</a>, <a class="el" href="fileio_8h_source.html#l00097">VIRTUALFILE::VCD_CHAPTER::m_track_no</a>, <a class="el" href="structVIRTUALFILE.html#af45ab3e9bcc01031dda5464ef46cf03f">VIRTUALFILE::m_vcd</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00075">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01096">replace_all()</a>, and <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_VCD</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00117">parse_vcd()</a>.</p>
+
+</div>
+</div>
+<a id="a5d274dd7c050f3432b850e4cf64a4983"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d274dd7c050f3432b850e4cf64a4983">&#9670;&nbsp;</a></span>parse_vcd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int parse_vcd </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct stat *&#160;</td>
+          <td class="paramname"><em>statbuf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fuse_fill_dir_t&#160;</td>
+          <td class="paramname"><em>filler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parse VCD directory and get all VCD chapters as virtual files. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- path to check. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- the buffer passed to the readdir() operation. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00117">117</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="vcdparser_8cc_source.html#l00052">create_vcd_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="vcdentries_8cc_source.html#l00392">VcdEntries::get_number_of_chapters()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00082">VcdEntries::load_file()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00146">check_vcd()</a>.</p>
 
 </div>
 </div>

@@ -109,7 +109,7 @@ int VcdChapter::read(FILE *fpi, int track_no)
     return 0;
 }
 
-bool VcdChapter::get_is_vcd() const
+bool VcdChapter::get_is_svcd() const
 {
     return m_is_svcd;
 }
@@ -169,9 +169,9 @@ uint64_t VcdChapter::get_size() const
     return (m_end_pos - m_start_pos);
 }
 
-// MSF format: minutes, seconds, and fractional seconds called frames. Each timecode frame is one seventy-fifth of a second.
 int64_t VcdChapter::get_start_time() const
 {
+    // MSF format: minutes, seconds, and fractional seconds called frames. Each timecode frame is one seventy-fifth of a second.
     return static_cast<int64_t>(m_min * 60 + m_sec) * AV_TIME_BASE + (static_cast<int64_t>(m_frame) * AV_TIME_BASE / 75);
 }
 

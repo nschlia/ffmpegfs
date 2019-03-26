@@ -91,12 +91,19 @@ public:
      */
     virtual int             error() const;
     /** @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
-     *
-     * Not applicable to buffer, always returns AV_NOPTS_VALUE.
+     * @return Not applicable to buffer, always returns AV_NOPTS_VALUE.
      */
     virtual int64_t         duration() const;
-    virtual size_t          size() const;                                           /**< @brief Give the value of the internal buffer size pointer. */
-    virtual size_t          tell() const;                                           /**< @brief Give the value of the internal read position pointer. */
+    /**
+     * @brief Get the value of the internal buffer size pointer.
+     * @return Returns the value of the internal buffer size pointer.
+     */
+    virtual size_t          size() const;
+    /**
+     * @brief Get the value of the internal read position pointer.
+     * @return Returns the value of the internal read position pointer.
+     */
+    virtual size_t          tell() const;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
@@ -108,11 +115,18 @@ public:
      * SEEK_CUR: The offset is set to its current location plus offset bytes. @n
      * SEEK_END: The offset is set to the size of the file plus offset bytes.
      * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
-     * from the beginning of the file.  @n
+     * from the beginning of the file.
      */
     virtual int             seek(long offset, int whence);
-    virtual bool            eof() const;                                        	/**< @brief Return true if at end of buffer */
-    virtual void            close();                                            	/**< @brief Close buffer */
+    /**
+     * @brief Check if at end of file.
+     * @return Returns true if at end of buffer.
+     */
+    virtual bool            eof() const;
+    /**
+     * @brief Close buffer.
+     */
+    virtual void            close();
     /**
      * @brief Write data to the current position in the Buffer. The position pointer will be updated.
      * @param[in] data - Buffer with data to write.
@@ -120,8 +134,16 @@ public:
      * @return Returns the bytes written to the buffer. If less than length this indicates an error.
      */
     size_t                  write(const uint8_t* data, size_t length);
-    bool                    flush();                                                /**< @brief Flush buffer to disk */
-    bool                    clear();                                                /**< @brief Clear (delete) buffer */
+    /**
+     * @brief Flush buffer to disk
+     * @return Returns true on success; false on error. Check errno for details.
+     */
+    bool                    flush();
+    /**
+     * @brief Clear (delete) buffer.
+     * @return Returns true on success; false on error. Check errno for details.
+     */
+    bool                    clear();
     /**
      * @brief Reserve memory without changing size to reduce re-allocations.
      * @param[in] size - Size of buffer to reserve.
@@ -154,7 +176,6 @@ public:
      * @return Returns cache filename.
      */
     const std::string &     cachefile() const;
-
     /**
      * @brief Make up a cache file name including full path
      * @param[out] cachefile - Name of cache file.

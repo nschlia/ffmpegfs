@@ -238,7 +238,7 @@ int VcdEntries::scan_chapters()
             // Locate sector with correct start time
             while (first <= last)
             {
-                VcdChapter buffer(m_chapters[chapter_no].get_is_vcd());
+                VcdChapter buffer(m_chapters[chapter_no].get_is_svcd());
                 __off_t file_pos = first_sync + middle * VCD_SECTOR_SIZE;
 
                 if (fseek(fpi, file_pos, SEEK_SET))
@@ -276,7 +276,7 @@ int VcdEntries::scan_chapters()
         }
 
         {
-            VcdChapter buffer(m_chapters[m_chapters.size() - 1].get_is_vcd());
+            VcdChapter buffer(m_chapters[m_chapters.size() - 1].get_is_svcd());
             int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
 
             // Read time stamp of last sector

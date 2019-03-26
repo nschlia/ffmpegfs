@@ -41,9 +41,16 @@ public:
     DiskIO();
     virtual ~DiskIO();
 
-    virtual VIRTUALTYPE type() const;                           /**< @brief Type of the virtual file */
-
-    virtual size_t  bufsize() const;                            /**< @brief Ideal buffer size */
+    /**
+     * @brief Get type of the virtual file
+     * @return Returns the type of the virtual file.
+     */
+    virtual VIRTUALTYPE type() const;
+    /**
+     * @brief Get the ideal buffer size.
+     * @return Return the ideal buffer size.
+     */
+    virtual size_t  bufsize() const;
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
@@ -53,14 +60,26 @@ public:
      * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
      */
     virtual size_t  read(void *data, size_t size);
-    virtual int     error() const;                              /**< @brief If error occurred return number */
+    /**
+     * @brief Get last error.
+     * @return errno value of last error.
+     */
+    virtual int     error() const;
     /** @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
      *
      * Not applicable to generic disk files, always returns AV_NOPTS_VALUE.
      */
     virtual int64_t duration() const;
-    virtual size_t  size() const;                               /**< @brief Get file size */
-    virtual size_t  tell() const;                               /**< @brief Get current read position */
+    /**
+     * @brief Get the file size.
+     * @return Returns the file size.
+     */
+    virtual size_t  size() const;
+    /**
+     * @brief Get current read position.
+     * @return Gets the current read position.
+     */
+    virtual size_t  tell() const;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
@@ -75,8 +94,15 @@ public:
      * On error, the value -1 is returned and errno is set to indicate the error.
      */
     virtual int     seek(long offset, int whence);
-    virtual bool    eof() const;                                /**< @brief Return true if at end of file */
-    virtual void    close();                                    /**< @brief Close virtual file */
+    /**
+     * @brief Check if at end of file.
+     * @return Returns true if at end of file.
+     */
+    virtual bool    eof() const;
+    /**
+     * @brief Close virtual file.
+     */
+    virtual void    close();
 
 protected:
     /** @brief Open a virtual file

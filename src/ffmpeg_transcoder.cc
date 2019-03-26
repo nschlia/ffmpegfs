@@ -2495,7 +2495,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = m_pts;
             }
 
-            // TEST Issue #26
             if (m_out.m_video.m_stream != nullptr)
             {
                 // Rescale to our time base, but only of nessessary
@@ -2506,7 +2505,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                 frame->quality = m_out.m_video.m_codec_ctx->global_quality;
             }
-            // TEST Issue #26
+
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(send_filters(frame, ret));

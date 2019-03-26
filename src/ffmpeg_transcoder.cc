@@ -3079,8 +3079,6 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     return 0;
 }
 
-// TEST Issue #26
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"  /***< @todo Fix deprecations later */
 int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_present)
 {
     *data_present = 0;
@@ -3113,57 +3111,86 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         pkt.data = nullptr;
         pkt.size = 0;
 
-        //AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
-
-        //        AVFrame * copyFrame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
-        AVFrame *copyFrame = av_frame_clone(frame);
-        if (copyFrame == nullptr)
+        AVFrame *temp_frame = av_frame_clone(frame);
+        if (temp_frame == nullptr)
         {
             throw AVERROR(ENOMEM);
         }
 
         //av_frame_ref(copyFrame, frame);
 
-        copyFrame->pts = m_frame_no + 1;
+        temp_frame->pts = m_frame_no + 1;
 
-        int got_output = 0;
-        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, copyFrame, &got_output);
-        av_frame_free(&copyFrame);
+#if !LAVC_NEW_PACKET_INTERFACE
+        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, temp_frame, data_present);
         if (ret < 0)
         {
-            Logging::error(destname(), "Error encoding frame.");
+            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
-        if (got_output)
         {
-            IMAGE_FRAME image_frame;
-            size_t offset = static_cast<size_t>(m_frame_no) * IMAGE_MAX_SIZE;
+#else
+        *data_present = 0;
 
-            memset(&image_frame, 0xFF, sizeof(image_frame));
-            memcpy(image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(image_frame.m_tag));
-            image_frame.m_frame_no      = ++m_frame_no;
-            image_frame.m_size          = static_cast<uint32_t>(pkt.size);
+        // send the frame for encoding
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, temp_frame);
+        if (ret < 0 && ret != AVERROR_EOF)
+        {
+            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
 
-            assert(image_frame.m_size + sizeof(image_frame) < IMAGE_MAX_SIZE);
+        // read all the available output packets (in general there may be any number of them
+        while (ret >= 0)
+        {
+            *data_present = 0;
 
-            m_buffer->reserve(offset);  /**< @todo: This is not an effective buffer format. Must be revamped. */
-            m_buffer->seek(static_cast<long>(offset), SEEK_SET);
+            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, &pkt);
+            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            {
+                throw ret;
+            }
+            else if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
 
-            m_buffer->write(reinterpret_cast<uint8_t *>(&image_frame), sizeof(image_frame));
-            m_buffer->write(pkt.data, static_cast<size_t>(pkt.size));
+            *data_present = 1;
+#endif
 
-            av_free_packet(&pkt);
+            // Write one video frame from the temporary packet to the output file.
+            if (*data_present)
+            {
+                IMAGE_FRAME image_frame;
+                size_t offset = static_cast<size_t>(m_frame_no) * IMAGE_MAX_SIZE;
+
+                memset(&image_frame, 0xFF, sizeof(image_frame));
+                memcpy(image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(image_frame.m_tag));
+                image_frame.m_frame_no      = ++m_frame_no;
+                image_frame.m_size          = static_cast<uint32_t>(pkt.size);
+
+                assert(image_frame.m_size + sizeof(image_frame) < IMAGE_MAX_SIZE);
+
+                m_buffer->reserve(offset);  /**< @todo: This is not an effective buffer format. Must be revamped. */
+                m_buffer->seek(static_cast<long>(offset), SEEK_SET);
+
+                m_buffer->write(reinterpret_cast<uint8_t *>(&image_frame), sizeof(image_frame));
+                m_buffer->write(pkt.data, static_cast<size_t>(pkt.size));
+            }
+
+            av_packet_unref(&pkt);
         }
     }
     catch (int _ret)
     {
+        av_packet_unref(&pkt);
         ret = _ret;
     }
 
     return ret;
 }
-#pragma GCC diagnostic pop
 
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {

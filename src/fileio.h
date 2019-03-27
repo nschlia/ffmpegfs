@@ -55,8 +55,8 @@ extern "C" {
 #pragma GCC diagnostic pop
 
 #pragma pack(push, 1)
-#define IMAGE_FRAME_TAG     "IMGFRAME"
-#define IMAGE_MAX_SIZE          (20*1024*1024)
+#define IMAGE_FRAME_TAG         "IMGFRAME"      /**< @brief Tag of an image frame header for the frame images buffer. */
+#define IMAGE_MAX_SIZE          (20*1024*1024)  /**< @brief Size of one image entry in images buffer. This is the maximum size of an image. */
 /**
   * @brief Image frame header
   *

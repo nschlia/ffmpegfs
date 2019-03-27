@@ -465,13 +465,14 @@ protected:
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Encode frame to image
-     * @param frame - Video frame to encode
+     * @param[in] frame - Video frame to encode
+     * @param[out] data_present - Set to 1 if data was encoded. 0 if not.
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_image_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
-     * @param[in] frame_size . Size of frame.
+     * @param[in] frame_size - Size of frame.
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         load_encode_and_write(int frame_size);

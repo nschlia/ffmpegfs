@@ -101,7 +101,8 @@ void init_fuse_ops(void)
 /**
  * @brief Initialise a stat structure.
  * @param[in] st - struct stat to fill in.
- * @param[in] size - size of the corresponding file.
+ * @param[in] fsize - size of the corresponding file.
+ * @param[in] ftime - File time (creation/modified/access) of the corresponding file.
  * @param[in] directory - If true, the structure is set up for a directory.
  */
 static void init_stat(struct stat * st, size_t fsize, time_t ftime, bool directory)
@@ -285,7 +286,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
     filenames.insert(make_pair(sanitised_filepath, virtualfile));
 
-    filenamemap::iterator it = filenames.find(sanitised_filepath);
+    filenamemap::iterator it    = filenames.find(sanitised_filepath);
     return &it->second;
 }
 
@@ -611,8 +612,6 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     else
     {
-        //Logging::error(origpath, "readdir INSERTFILE ***************************");
-
         for (int64_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
         {
             char filename[PATH_MAX + 1];
@@ -773,8 +772,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DIRECTORY_FRAMES:
     {
-        //Logging::error(origpath, "getattr DIRECTORY_FRAMES *************************** %1", virtualfile->m_video_frame_count);
-
         if (virtualfile->m_video_frame_count == AV_NOPTS_VALUE)
         {
             Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
@@ -899,7 +896,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
     case VIRTUALTYPE_DIRECTORY_FRAMES:
     {
-        //Logging::error(origpath, "fgetattr DIRECTORY_FRAMES ***************************");
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         break;
     }
@@ -1031,7 +1027,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         // We should never come here but this shuts up a warning
     case VIRTUALTYPE_DIRECTORY_FRAMES:
     {
-        //Logging::error(origpath, "open DIRECTORY_FRAMES ***************************");
         break;
     }
     case VIRTUALTYPE_DIRECTORY:
@@ -1224,7 +1219,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_DIRECTORY: 
+    case VIRTUALTYPE_DIRECTORY:
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {

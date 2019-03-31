@@ -188,7 +188,7 @@ static void translate_path(std::string *origpath, const char* path)
 {
     *origpath = params.m_basepath;
     *origpath += path;
-    *origpath = sanitise_name(*origpath);
+    sanitise_filepath(origpath);
 }
 
 /**
@@ -245,11 +245,11 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat *st)
 {
     VIRTUALFILE virtualfile;
-    std::string sanitised_filepath = sanitise_name(virtfilepath);
+    std::string sanitised_filepath = sanitise_filepath(virtfilepath);
 
     virtualfile.m_type          = type;
     virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-    virtualfile.m_origfile      = sanitise_name(origfile);
+    virtualfile.m_origfile      = sanitise_filepath(origfile);
 
     memcpy(&virtualfile.m_st, st, sizeof(struct stat));
 
@@ -261,7 +261,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
 LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
-    filenamemap::iterator it = filenames.find(sanitise_name(virtfilepath));
+    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));
 
     errno = 0;
 
@@ -336,7 +336,7 @@ static int selector(const struct dirent * de)
 
 LPVIRTUALFILE find_original(std::string * filepath)
 {
-    *filepath = sanitise_name(*filepath);
+    sanitise_filepath(filepath);
 
     LPVIRTUALFILE virtualfile = find_file(*filepath);
 
@@ -387,7 +387,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             }
             free(namelist);
 
-            tmppath = sanitise_name(tmppath);
+            sanitise_filepath(&tmppath);
 
             if (found && lstat(tmppath.c_str(), &st) == 0)
             {

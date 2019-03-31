@@ -1233,19 +1233,27 @@ std::vector<std::string> split(const std::string& input, const std::string & reg
     return {first, last};
 }
 
-std::string sanitise_name(const std::string & filepath)
+std::string sanitise_filepath(std::string * filepath)
 {
     char resolved_name[PATH_MAX + 1];
 
-    if (realpath(filepath.c_str(), resolved_name) != nullptr)
+    if (realpath(filepath->c_str(), resolved_name) != nullptr)
     {
-        return resolved_name;
+        *filepath = resolved_name;
+    	return *filepath;
     }
 
-    // If realpath fails, at least remove trailing slash
-    std::string _filepath(filepath);
+	// realpath has the strange feature to remove a traling slash if there.
+    // To mimick its behaviour, if realpath fails, at least remove it.
+    std::string _filepath(*filepath);
     remove_sep(&_filepath);
     return _filepath;
+}
+
+std::string sanitise_filepath(const std::string & filepath)
+{
+    std::string buffer(filepath);
+    return sanitise_filepath(&buffer);
 }
 
 bool is_album_art(AVCodecID codec_id)

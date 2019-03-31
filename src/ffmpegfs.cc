@@ -1035,6 +1035,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         if (n == 0 && params.m_basepath.empty())
         {
             expand_path(&params.m_basepath, arg);
+            sanitise_filepath(&params.m_basepath);
             append_sep(&params.m_basepath);
             n++;
             return 0;
@@ -1042,6 +1043,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         else if (n == 1 && params.m_mountpath.empty())
         {
             expand_path(&params.m_mountpath, arg);
+            sanitise_filepath(&params.m_mountpath);
             append_sep(&params.m_mountpath);
 
             switch (is_mount(params.m_mountpath))

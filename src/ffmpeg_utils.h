@@ -615,7 +615,14 @@ constexpr std::size_t countof(T const (&)[N]) noexcept
  * @param[in] filepath - File name and path to sanitise.
  * @return Returns sanitised file name and path.
  */
-std::string         sanitise_name(const std::string & filepath);
+std::string         sanitise_filepath(const std::string & filepath);
+/**
+ * @brief Sanitise file name. Calls realpath() to remove duplicate // or resolve ../.. etc.
+ * Changes the path in place.
+ * @param[in] filepath - File name and path to sanitise.
+ * @return Returns sanitised file name and path.
+ */
+std::string         sanitise_filepath(std::string * filepath);
 
 /**
  * @brief Minimal check if codec is an album art.

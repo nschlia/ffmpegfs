@@ -367,7 +367,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             count = scandir(dir.c_str(), &namelist, selector, nullptr);
             if (count == -1)
             {
-                perror("scandir");
+                Logging::error(dir, "Error scanning directory: %1", strerror(errno));
                 return nullptr;
             }
 

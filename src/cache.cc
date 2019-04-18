@@ -69,7 +69,7 @@ static int callback(void * /*NotUsed*/, int /*argc*/, char ** /*argv*/, char ** 
     return 0;
 }
 
-bool Cache::load_index()
+bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB structures */
 {
     bool success = true;
 
@@ -119,7 +119,7 @@ bool Cache::load_index()
 
         // Create cache_entry table not already existing
         sql =
-                "CREATE TABLE IF NOT EXISTS `cache_entry` (\n"
+                "CREATE TABLE IF NOT EXISTS `cache_entry` (\n"      /**< @todo Add duration to list */
                 //
                 // Primary key: filename + desttype
                 //

@@ -257,7 +257,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
     filenames.insert(make_pair(sanitised_filepath, virtualfile));
 
-    filenamemap::iterator it = filenames.find(sanitised_filepath);
+    filenamemap::iterator it    = filenames.find(sanitised_filepath);
     return &it->second;
 }
 
@@ -584,7 +584,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     LPVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
-    bool no_lstat = false;
+    bool no_check = false;
 
     switch (type)
     {
@@ -607,12 +607,12 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        no_lstat = true;
+        no_check = true;    // FILETYPE already known, no need to check again.
         [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_lstat)
+        if (!no_check)
         {
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
@@ -706,7 +706,8 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -751,7 +752,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
     assert(virtualfile != nullptr);
 
-    bool no_lstat = false;
+    bool no_check = false;
 
     switch (virtualfile->m_type)
     {
@@ -774,12 +775,12 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        no_lstat = true;
+        no_check = true;
         [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_lstat)
+        if (!no_check)
         {
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
@@ -810,7 +811,8 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         errno = 0;  // Just to make sure - reset any error
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -895,7 +897,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         errno = 0;
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -953,6 +956,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     }
 
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
+    // This is a virtual file
     bool success = true;
 
     assert(virtualfile != nullptr);
@@ -998,7 +1002,8 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH: // We should never come here but this shuts up a warning
+        // We should never come here but this shuts up a warning
+    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);

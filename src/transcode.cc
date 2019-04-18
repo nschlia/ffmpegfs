@@ -286,7 +286,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
     if (transcoder->open_input_file(virtualfile) >= 0)
     {
-        cache_entry->m_cache_info.m_predicted_filesize = transcoder->predicted_filesize();
+        cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
 
         transcoder->close();
 

@@ -159,6 +159,8 @@ public:
      */
     int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
     /**
+     * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @param buffer - Cache buffer to be written.
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_file(Buffer* buffer);
@@ -448,7 +450,7 @@ protected:
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
-     * @param[in] frame_size . Size of frame.
+     * @param[in] frame_size - Size of frame.
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         load_encode_and_write(int frame_size);
@@ -587,7 +589,7 @@ private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
-    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it. */
+    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
     bool                        m_is_video;                 /**< @brief true if input is a video file */
 
     // Audio conversion and buffering

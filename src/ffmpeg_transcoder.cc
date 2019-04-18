@@ -880,7 +880,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                     out_width,              // width
                     out_height,             // height
                     out_pix_fmt,            // format
-                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);
+                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
         if (m_sws_ctx == nullptr)
         {
             Logging::error(destname(), "Could not allocate scaling/conversion context.");
@@ -1545,7 +1545,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     output_codec_ctx->time_base = { 1, 90000 };
-    output_stream->time_base = { 1, 90000 };
+    output_stream->time_base    = { 1, 90000 };
 
     output_codec_ctx->pix_fmt   = input_codec_ctx->pix_fmt;
     output_codec_ctx->width     = input_codec_ctx->width;
@@ -2333,14 +2333,17 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = m_pts;
             }
 
-            // Rescale to our time base, but only if nessessary
-            if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+            if (m_out.m_video.m_stream != nullptr)
             {
-                frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                // Rescale to our time base, but only if nessessary
+                if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                {
+                    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                }
+
+                frame->quality = m_out.m_video.m_codec_ctx->global_quality;
             }
 
-            frame->quality = m_out.m_video.m_codec_ctx->global_quality;
-			
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(send_filters(frame, ret));

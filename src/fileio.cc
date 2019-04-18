@@ -83,8 +83,8 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
         return new(std::nothrow) BlurayIO;
     }
 #endif // USE_LIBBLURAY
-    //case VIRTUALTYPE_PASSTHROUGH:
-    //case VIRTUALTYPE_SCRIPT:
+        //case VIRTUALTYPE_PASSTHROUGH:
+        //case VIRTUALTYPE_SCRIPT:
     default:
     {
         return nullptr;
@@ -94,7 +94,7 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
 
 int FileIO::open(LPCVIRTUALFILE virtualfile)
 {
-//    assert(virtualfile->m_type == type());
+    //    assert(virtualfile->m_type == type());
 
     m_virtualfile = virtualfile;
 

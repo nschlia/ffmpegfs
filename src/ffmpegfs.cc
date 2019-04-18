@@ -80,7 +80,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
 
     , m_autocopy(AUTOCOPY_OFF)                  // default: off
     , m_profile(PROFILE_NONE)                   // default: no profile
-    , m_level(PRORESLEVEL_NONE)                       // default: no level
+    , m_level(PRORESLEVEL_NONE)                 // default: no level
 
     // Format
     , m_audiobitrate(128*1024)                  // default: 128 kBit
@@ -319,7 +319,7 @@ static struct fuse_opt ffmpegfs_opts[] =
 
 typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;     /**< @brief Map command line option to AUTOCOPY enum */
 typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map command line option to PROFILE enum  */
-typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;           /**< @brief Map command line option to LEVEL enum  */
+typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map command line option to LEVEL enum  */
 
 /**
   * List of AUTOCOPY options

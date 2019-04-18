@@ -168,7 +168,8 @@ int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 
 void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const
 {
-    AVRational time_base;
+    AVRational time_base_tbn;
+    AVRational time_base_tbc;
 
     if (!framerate.num || !framerate.den)
     {
@@ -190,32 +191,37 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     case AV_CODEC_ID_MPEG1VIDEO:
     case AV_CODEC_ID_MPEG2VIDEO:
     {
-        time_base                               = av_inv_q(framerate);
+        time_base_tbn                           = av_inv_q(framerate);
+        time_base_tbc                           = time_base_tbn;
         break;
     }
     case AV_CODEC_ID_VP9:           // webm
     {
-        time_base.num = 1;
-        time_base.den = 1000;
+        // 30 fps, 1k tbn, 30 tbc (default)
+
+        time_base_tbn.num                       = 1;
+        time_base_tbn.den                       = 1000;
+        time_base_tbc                           = time_base_tbn;
         break;
     }
     default:                        // mp4 and all others
     {
-        time_base.num = 1;
-        time_base.den = 90000;
+        time_base_tbn.num                       = 1;
+        time_base_tbn.den                       = 90000;
+        time_base_tbc                           = time_base_tbn;
         break;
     }
     }
 
+    // tbn
+    output_stream->time_base                    = time_base_tbn;
     // tbc
-    output_stream->time_base                    = time_base;
-    output_codec_ctx->time_base                 = time_base;
+    output_codec_ctx->time_base                 = time_base_tbc;
 
-    // tbc
 #if LAVF_DEP_AVSTREAM_CODEC
-    //output_stream->codecpar->time_base        = time_base;
+    //output_stream->codecpar->time_base        = time_base_tbc;
 #else
-    output_stream->codec->time_base             = time_base;
+    output_stream->codec->time_base             = time_base_tbc;
 #endif
 
 #ifndef USING_LIBAV

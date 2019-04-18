@@ -658,7 +658,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     // This is a virtual file
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
-    bool no_lstat = false;
+    bool no_check = false;
 
     switch (type)
     {
@@ -681,12 +681,12 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        no_lstat = true;
+        no_check = true;    // FILETYPE already known, no need to check again.
         [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_lstat)
+        if (!no_check)
         {
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
@@ -852,7 +852,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     // This is a virtual file
     assert(virtualfile != nullptr);
 
-    bool no_lstat = false;
+    bool no_check = false;
 
     switch (virtualfile->m_type)
     {
@@ -868,12 +868,12 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        no_lstat = true;
+        no_check = true;
         [[clang::fallthrough]];
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_lstat)
+        if (!no_check)
         {
             if (lstat(origpath.c_str(), stbuf) == -1)
             {
@@ -1039,6 +1039,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     {
         break;
     }
+        // We should never come here but this shuts up a warning
     case VIRTUALTYPE_DIRECTORY:
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:

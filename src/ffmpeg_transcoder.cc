@@ -1719,7 +1719,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     output_codec_ctx->time_base = { 1, 90000 };
-    output_stream->time_base = { 1, 90000 };
+    output_stream->time_base    = { 1, 90000 };
 
     output_codec_ctx->pix_fmt   = input_codec_ctx->pix_fmt;
     output_codec_ctx->width     = input_codec_ctx->width;
@@ -2509,7 +2509,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
             if (m_out.m_video.m_stream != nullptr)
             {
-                // Rescale to our time base, but only of nessessary
+                // Rescale to our time base, but only if nessessary
                 if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
                 {
                     frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));

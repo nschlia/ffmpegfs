@@ -80,7 +80,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
 
     , m_autocopy(AUTOCOPY_OFF)                  // default: off
     , m_profile(PROFILE_NONE)                   // default: no profile
-    , m_level(PRORESLEVEL_NONE)                       // default: no level
+    , m_level(PRORESLEVEL_NONE)                 // default: no level
 
     // Format
     , m_audiobitrate(128*1024)                  // default: 128 kBit

@@ -243,8 +243,10 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
         }
     }
 
-    *current_format = nullptr;
-
+    if (current_format != nullptr)
+    {
+        *current_format = nullptr;
+    }
     return false;
 }
 
@@ -746,24 +748,32 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Get size for resulting output file from regular file, otherwise it's a symbolic link.
         if (S_ISREG(stbuf->st_mode))
         {
-            assert(virtualfile->m_origfile == origpath);
-
-            if (!transcoder_cached_filesize(virtualfile, stbuf))
+            if (virtualfile != nullptr)
             {
-                Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
-                if (cache_entry == nullptr)
+                assert(virtualfile->m_origfile == origpath);
+
+                if (!transcoder_cached_filesize(virtualfile, stbuf))
                 {
-                    return -errno;
-                }
+                    Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+                    if (cache_entry == nullptr)
+                    {
+                        return -errno;
+                    }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-                stbuf->st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
+                    stbuf->st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
 #else
-                stbuf->st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
+                    stbuf->st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
 #endif
-                stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+                    stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
 
-                transcoder_delete(cache_entry);
+                    transcoder_delete(cache_entry);
+                }
+            }
+            else
+            {
+                // We should not end here - report bad file number.
+                return -EBADF;
             }
         }
 

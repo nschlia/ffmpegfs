@@ -83,7 +83,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (mktree(m_cacheidx_file.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            Logging::error(m_cacheidx_file, "Error creating cache directory: %1", strerror(errno));
+            Logging::error(m_cacheidx_file, "Error creating cache directory: (%1) %2", errno, strerror(errno));
             throw false;
         }
 
@@ -679,7 +679,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     if (!free_bytes && errno)
     {
-        Logging::error(cachepath, "prune_disk_space() cannot determine free disk space: %1", strerror(errno));
+        Logging::error(cachepath, "prune_disk_space() cannot determine free disk space: (%1) %2", errno, strerror(errno));
         return false;
     }
 

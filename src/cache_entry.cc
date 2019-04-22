@@ -69,7 +69,7 @@ Cache_Entry::~Cache_Entry()
         int s = pthread_join(m_thread_id, nullptr);
         if (s != 0)
         {
-            Logging::error(filename(), "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : %2", thread_id, strerror(s));
+            Logging::error(filename(), "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : (%2) %3", thread_id, s, strerror(s));
         }
         else
         {

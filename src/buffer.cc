@@ -98,7 +98,7 @@ bool Buffer::init(bool erase_cache)
 
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            Logging::error(m_cachefile, "Error creating cache directory: %1", strerror(errno));
+            Logging::error(m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
             delete [] cachefile;
             throw false;
         }
@@ -120,13 +120,13 @@ bool Buffer::init(bool erase_cache)
         m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
         if (m_fd == -1)
         {
-            Logging::error(m_cachefile, "Error opening cache file: %1", strerror(errno));
+            Logging::error(m_cachefile, "Error opening cache file: (%1) %2", errno, strerror(errno));
             throw false;
         }
 
         if (fstat(m_fd, &sb) == -1)
         {
-            Logging::error(m_cachefile, "File stat failed: %1 (fd = %2)", strerror(errno), m_fd);
+            Logging::error(m_cachefile, "File stat failed: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
             throw false;
         }
 
@@ -143,7 +143,7 @@ bool Buffer::init(bool erase_cache)
 
             if (ftruncate(m_fd, pagesize) == -1)
             {
-                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: %1 (fd = %2)", strerror(errno), m_fd);
+                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
                 throw false;
             }
             filesize = static_cast<size_t>(pagesize);
@@ -157,7 +157,7 @@ bool Buffer::init(bool erase_cache)
         p = mmap(nullptr, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
         if (p == MAP_FAILED)
         {
-            Logging::error(m_cachefile,  "File mapping failed: %1 (fd = %2)", strerror(errno), m_fd);
+            Logging::error(m_cachefile,  "File mapping failed: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
             throw false;
         }
 
@@ -215,13 +215,13 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (munmap(p, size) == -1)
     {
-        Logging::error(m_cachefile, "File unmapping failed: %1", strerror(errno));
+        Logging::error(m_cachefile, "File unmapping failed: (%1) %2", errno, strerror(errno));
         success = false;
     }
 
     if (ftruncate(fd, static_cast<off_t>(m_buffer_watermark)) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: %1 (fd = %2)", strerror(errno), fd);
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), fd);
         success = false;
     }
 
@@ -246,7 +246,7 @@ bool Buffer::flush()
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
     if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
     {
-        Logging::error(m_cachefile, "Could not sync to disk: %1", strerror(errno));
+        Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
     }
 
     return true;
@@ -272,7 +272,7 @@ bool Buffer::clear()
 
     if (ftruncate(m_fd, filesize) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: %1 (fd = %2)", strerror(errno), m_fd);
+        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
         success = false;
     }
 
@@ -304,7 +304,7 @@ bool Buffer::reserve(size_t size)
 
     if (ftruncate(m_fd, static_cast<off_t>(m_buffer_size)) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: %1 (fd = %2)", strerror(errno), m_fd);
+        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
         success = false;
     }
 
@@ -499,7 +499,7 @@ bool Buffer::remove_file(const std::string & filename)
 {
     if (unlink(filename.c_str()) && errno != ENOENT)
     {
-        Logging::warning(filename, "Cannot unlink the file: %1", strerror(errno));
+        Logging::warning(filename, "Cannot unlink the file: (%1) %2", errno, strerror(errno));
         return false;
     }
     else

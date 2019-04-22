@@ -1177,7 +1177,7 @@ int is_mount(const std::string & path)
         // get the file's stat info
         if (-1 == stat(path.c_str(), &file_stat))
         {
-            std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
+            std::fprintf(stderr, "is_mount(): (%i) %s\n", errno, strerror(errno));
             throw -1;
         }
 
@@ -1192,7 +1192,7 @@ int is_mount(const std::string & path)
         // get the parent's stat info
         if (-1 == stat(parent_name, &parent_stat))
         {
-            std::fprintf(stderr, "is_mount(): %s\n", strerror(errno));
+            std::fprintf(stderr, "is_mount(): (%i) %s\n", errno, strerror(errno));
             throw -1;
         }
 

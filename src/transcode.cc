@@ -376,7 +376,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(cache_entry->filename(), "Error creating thread attributes: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Error creating thread attributes: (%1) %2", ret, strerror(ret));
                     throw false;
                 }
 
@@ -386,7 +386,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     if (ret != 0)
                     {
                         _errno = ret;
-                        Logging::error(cache_entry->filename(), "Error setting stack size: %1", strerror(ret));
+                        Logging::error(cache_entry->filename(), "Error setting stack size: (%1) %2", ret, strerror(ret));
                         pthread_attr_destroy(&attr);
                         throw false;
                     }
@@ -397,7 +397,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(cache_entry->filename(), "Cannot make thread joinable: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Cannot make thread joinable: (%1) %2", ret, strerror(ret));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -407,7 +407,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 //if (ret != 0)
                 //{
                 //  _errno = ret;
-                //  Logging::error(cache_entry->filename(), "Error setting thread detached state: %1", strerror(ret));
+                //  Logging::error(cache_entry->filename(), "Error setting thread detached state: (%1) %2", ret, strerror(ret));
                 //  throw false;
                 //}
 
@@ -434,7 +434,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 if (ret != 0)
                 {
                     _errno = ret;
-                    Logging::error(cache_entry->filename(), "Error creating thread: %1", strerror(ret));
+                    Logging::error(cache_entry->filename(), "Error creating thread: (%1) %2", ret, strerror(ret));
                     pthread_attr_destroy(&attr);
                     throw false;
                 }
@@ -444,7 +444,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 ret = pthread_attr_destroy(&attr);
                 if (ret != 0)
                 {
-                    Logging::warning(cache_entry->filename(), "Error destroying thread attributes: %1", strerror(ret));
+                    Logging::warning(cache_entry->filename(), "Error destroying thread attributes: (%1) %2", ret, strerror(ret));
                 }
 
                 if (cache_entry->m_cache_info.m_error)
@@ -818,11 +818,11 @@ static void *transcoder_thread(void *arg)
             Logging::error(cache_entry->destname(), "Transcoding exited with error.");
             if (cache_entry->m_cache_info.m_errno)
             {
-                Logging::error(cache_entry->destname(), "System error: %1 (%2)", strerror(cache_entry->m_cache_info.m_errno), cache_entry->m_cache_info.m_errno);
+                Logging::error(cache_entry->destname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
             }
             if (cache_entry->m_cache_info.m_averror)
             {
-                Logging::error(cache_entry->destname(), "FFMpeg error: %1 (%2)", ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str(), cache_entry->m_cache_info.m_averror);
+                Logging::error(cache_entry->destname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
             }
         }
     }

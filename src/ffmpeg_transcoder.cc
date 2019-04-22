@@ -299,8 +299,9 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (m_fileio == nullptr)
     {
-        Logging::error(filename(), "Out of memory opening file.");
-        return AVERROR(ENOMEM);
+        int _errno = errno;
+        Logging::error(filename(), "Error opening file: (%1) %2", errno, strerror(errno));
+        return AVERROR(_errno);
     }
 
     ret = m_fileio->open(virtualfile);

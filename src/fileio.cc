@@ -61,10 +61,6 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
     {
         return new(std::nothrow) DiskIO;
     }
-    case VIRTUALTYPE_BUFFER:
-    {
-        return new(std::nothrow) Buffer;
-    }
 #ifdef USE_LIBVCD
     case VIRTUALTYPE_VCD:
     {
@@ -92,6 +88,7 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
         //case VIRTUALTYPE_SCRIPT:
     default:
     {
+		errno = EINVAL;
         return nullptr;
     }
     }

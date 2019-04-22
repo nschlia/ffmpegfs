@@ -101,7 +101,7 @@ static bool start_timer(time_t interval)
     sigemptyset(&sa.sa_mask);
     if (sigaction(SIGMAINT, &sa, nullptr) == -1)
     {
-        Logging::error(nullptr, "start_timer(): sigaction failed: %1", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigaction failed: (%1) %2", errno, strerror(errno));
         return false;
     }
 
@@ -110,7 +110,7 @@ static bool start_timer(time_t interval)
     sigaddset(&mask, SIGMAINT);
     if (sigprocmask(SIG_SETMASK, &mask, nullptr) == -1)
     {
-        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_SETMASK) failed: %1", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_SETMASK) failed: (%1) %2", errno, strerror(errno));
         return false;
     }
 
@@ -120,7 +120,7 @@ static bool start_timer(time_t interval)
     sev.sigev_value.sival_ptr = &timerid;
     if (timer_create(CLOCKID, &sev, &timerid) == -1)
     {
-        Logging::error(nullptr, "start_timer(): timer_create failed: %1", strerror(errno));
+        Logging::error(nullptr, "start_timer(): timer_create failed: (%1) %2", errno, strerror(errno));
         return false;
     }
 
@@ -132,13 +132,13 @@ static bool start_timer(time_t interval)
 
     if (timer_settime(timerid, 0, &its, nullptr) == -1)
     {
-        Logging::error(nullptr, "start_timer(): timer_settime failed: %1", strerror(errno));
+        Logging::error(nullptr, "start_timer(): timer_settime failed: (%1) %2", errno, strerror(errno));
         return false;
     }
 
     if (sigprocmask(SIG_UNBLOCK, &mask, nullptr) == -1)
     {
-        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_UNBLOCK) failed: %1", strerror(errno));
+        Logging::error(nullptr, "start_timer(): sigprocmask(SIG_UNBLOCK) failed: (%1) %2", errno, strerror(errno));
     }
 
     Logging::trace(nullptr, "Maintenance timer started successfully.");
@@ -156,7 +156,7 @@ static bool stop_timer()
 
     if (timer_delete(timerid) == -1)
     {
-        Logging::error(nullptr, "stop_timer(): timer_delete failed: %1", strerror(errno));
+        Logging::error(nullptr, "stop_timer(): timer_delete failed: (%1) %2", errno, strerror(errno));
         return false;
     }
 
@@ -178,7 +178,7 @@ static bool link_up()
 
     if (shmkey == -1)
     {
-        Logging::error(nullptr, "link_up(): ftok error %1", strerror(errno));
+        Logging::error(nullptr, "link_up(): ftok error (%1) %2", errno, strerror(errno));
         return false;
     }
 
@@ -200,7 +200,7 @@ static bool link_up()
         }
         else
         {
-            Logging::error(nullptr, "link_up(): shmget error %1", strerror(errno));
+            Logging::error(nullptr, "link_up(): shmget error (%1) %2", errno, strerror(errno));
             return false;
         }
     }
@@ -231,7 +231,7 @@ static bool link_up()
 
         if (sem == SEM_FAILED)
         {
-            Logging::error(nullptr, "link_up(): sem_open error %1", strerror(errno));
+            Logging::error(nullptr, "link_up(): sem_open error (%1) %2", errno, strerror(errno));
             link_down();
             return false;
         }
@@ -285,20 +285,20 @@ static bool link_down()
 
     if (sem_close(sem))
     {
-        Logging::error(nullptr, "link_down(): sem_close error %1", strerror(errno));
+        Logging::error(nullptr, "link_down(): sem_close error (%1) %2", errno, strerror(errno));
         success = false;
     }
 
     // shared memory detach
     if (shmdt (pid_master))
     {
-        Logging::error(nullptr, "link_down(): shmdt error %1", strerror(errno));
+        Logging::error(nullptr, "link_down(): shmdt error (%1) %2", errno, strerror(errno));
         success = false;
     }
 
     if (shmctl(shmid, IPC_STAT, &buf))
     {
-        Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
+        Logging::error(nullptr, "link_down(): shmctl error (%1) %2", errno, strerror(errno));
         success = false;
     }
     else
@@ -307,7 +307,7 @@ static bool link_down()
         {
             if (shmctl (shmid, IPC_RMID, nullptr))
             {
-                Logging::error(nullptr, "link_down(): shmctl error %1", strerror(errno));
+                Logging::error(nullptr, "link_down(): shmctl error (%1) %2", errno, strerror(errno));
                 success = false;
             }
 
@@ -315,7 +315,7 @@ static bool link_down()
             // if a crash occurs during the execution
             if (sem_unlink(SEM_OPEN_FILE))
             {
-                Logging::error(nullptr, "link_down(): sem_unlink error %1", strerror(errno));
+                Logging::error(nullptr, "link_down(): sem_unlink error (%1) %2", errno, strerror(errno));
                 success = false;
             }
         }

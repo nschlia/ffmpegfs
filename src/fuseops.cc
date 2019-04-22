@@ -176,7 +176,7 @@ static void prepare_script()
     FILE *fpi = fopen(scriptsource.c_str(), "rt");
     if (fpi == nullptr)
     {
-        Logging::warning(scriptsource, "File open failed. Disabling script: %1", strerror(errno));
+        Logging::warning(scriptsource, "File open failed. Disabling script: (%1) %2", errno, strerror(errno));
         params.m_enablescript = false;
     }
     else
@@ -184,7 +184,7 @@ static void prepare_script()
         struct stat st;
         if (fstat(fileno(fpi), &st) == -1)
         {
-            Logging::warning(scriptsource, "File could not be accessed. Disabling script: %1", strerror(errno));
+            Logging::warning(scriptsource, "File could not be accessed. Disabling script: (%1) %2", errno, strerror(errno));
             params.m_enablescript = false;
         }
         else
@@ -193,7 +193,7 @@ static void prepare_script()
 
             if (fread(&index_buffer[0], 1, static_cast<size_t>(st.st_size), fpi) != static_cast<size_t>(st.st_size))
             {
-                Logging::warning(scriptsource, "File could not be read. Disabling script: %1", strerror(errno));
+                Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
                 params.m_enablescript = false;
             }
             else
@@ -400,7 +400,10 @@ LPVIRTUALFILE find_original(std::string * filepath)
             count = scandir(dir.c_str(), &namelist, selector, nullptr);
             if (count == -1)
             {
-                Logging::error(dir, "Error scanning directory: %1", strerror(errno));
+                if (errno != ENOTDIR)   // If not a directory, simply ignore error
+                {
+                    Logging::error(dir, "Error scanning directory: (%1) %2", errno, strerror(errno));
+                }
                 return nullptr;
             }
 

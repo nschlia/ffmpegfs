@@ -203,7 +203,7 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
 {
     int64_t time[4];
     AVRational  framerate = dvd_frame_rate(&dvd_time->frame_u);
-	
+
     if (!framerate.den)
     {
         framerate = av_make_q(25000, 1000);                    // Avoid divisions by 0
@@ -264,7 +264,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     }
 
     interleaved         = cur_pgc->cell_playback[start_cell].interleaved;
-    framerate          = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
+    framerate           = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
 
     bool has_angles = false;
 
@@ -500,39 +500,16 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
             }
         }
 
-        // Check if chapter is valid
-        c_adt_t *c_adt = vts_file->menu_c_adt;
-        size_t  info_length = 0;
-
-        if (c_adt != nullptr)
+        // Add separate chapters
+        for (int chapter_idx = 0; chapter_idx < chapters && success; ++chapter_idx)
         {
-            info_length = c_adt->last_byte + 1 - C_ADT_SIZE;
+            success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, false, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);
         }
 
-        bool skip = false;
-
-        for (unsigned int n = 0; n < info_length / sizeof(cell_adr_t) && !skip; n++)
+        if (success && chapters > 1)
         {
-            skip = (c_adt->cell_adr_table[n].start_sector >= c_adt->cell_adr_table[n].last_sector);
-        }
-
-        if (skip)
-        {
-            Logging::info(path, "Title %1 has invalid size, ignoring.", title_idx + 1);
-        }
-        else
-        {
-            // Add separate chapters
-            for (int chapter_idx = 0; chapter_idx < chapters && success; ++chapter_idx)
-            {
-                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, false, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);
-            }
-
-            if (success && chapters > 1)
-            {
-                // If more than 1 chapter, add full title as well
-                success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, true, title_idx, 0, 1, ttnnum, audio_stream, audio_settings, video_settings);
-            }
+            // If more than 1 chapter, add full title as well
+            success = create_dvd_virtualfile(vts_file, path, statbuf, buf, filler, true, title_idx, 0, 1, ttnnum, audio_stream, audio_settings, video_settings);
         }
 
         ifoClose(vts_file);

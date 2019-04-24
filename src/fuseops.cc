@@ -1144,8 +1144,11 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
         if (cache_entry == nullptr)
         {
-            Logging::error(origpath.c_str(), "Tried to read from unopen file.");
-            return -errno;
+        	if (errno)
+        	{
+                Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+        	}
+        	return -errno;
         }
 
         success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);

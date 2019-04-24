@@ -175,7 +175,7 @@ static AVRational dvd_frame_rate(const uint8_t * ptr)
     {
     case 3: // PAL
     {
-        framerate = av_make_q(30000, 1000);
+        framerate = av_make_q(25000, 1000);
         break;
     }
     case 1: // NTSC
@@ -185,7 +185,8 @@ static AVRational dvd_frame_rate(const uint8_t * ptr)
     }
     default:
     {
-        framerate = { 0, 0 };
+        // Frame rate is illegal, so we need to set anything. Assume PAL.
+        framerate = av_make_q(25000, 1000);
         break;
     }
     }

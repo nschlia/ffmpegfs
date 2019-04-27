@@ -303,8 +303,6 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
-    int _errno = 0;
-
     // Allocate transcoder structure
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
@@ -320,8 +318,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
         if (!cache_entry->open(begin_transcode))
         {
-            _errno = errno;
-            throw false;
+            throw static_cast<int>(errno);
         }
 
         if (params.m_disable_cache)
@@ -352,8 +349,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     if (thread_count >= params.m_max_threads)
                     {
                         Logging::error(cache_entry->filename(), "Unable to start new thread. Cancelling transcode.");
-                        _errno = EBUSY; // Report resource busy
-                        throw false;
+                        throw static_cast<int>(EBUSY);  // Report resource busy
                     }
 
                     Logging::info(cache_entry->filename(), "Threads available again. Continuing now.");
@@ -378,9 +374,8 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 ret = pthread_attr_init(&attr);
                 if (ret != 0)
                 {
-                    _errno = ret;
                     Logging::error(cache_entry->filename(), "Error creating thread attributes: (%1) %2", ret, strerror(ret));
-                    throw false;
+                    throw ret;
                 }
 
                 if (stack_size > 0)
@@ -388,10 +383,9 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     ret = pthread_attr_setstacksize(&attr, stack_size);
                     if (ret != 0)
                     {
-                        _errno = ret;
                         Logging::error(cache_entry->filename(), "Error setting stack size: (%1) %2", ret, strerror(ret));
                         pthread_attr_destroy(&attr);
-                        throw false;
+                        throw ret;
                     }
                 }
 
@@ -399,19 +393,17 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
                 if (ret != 0)
                 {
-                    _errno = ret;
                     Logging::error(cache_entry->filename(), "Cannot make thread joinable: (%1) %2", ret, strerror(ret));
                     pthread_attr_destroy(&attr);
-                    throw false;
+                    throw ret;
                 }
 
                 /** @bug Perils of the sun: If started in detached state, threads cannot be joined. Not starting in detached state creates a tiny little memory leak. */
                 //ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
                 //if (ret != 0)
                 //{
-                //  _errno = ret;
                 //  Logging::error(cache_entry->filename(), "Error setting thread detached state: (%1) %2", ret, strerror(ret));
-                //  throw false;
+                //  throw ret;
                 //}
 
                 THREAD_DATA* thread_data = new(std::nothrow) THREAD_DATA;
@@ -436,10 +428,9 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 if (ret != 0)
                 {
-                    _errno = ret;
                     Logging::error(cache_entry->filename(), "Error creating thread: (%1) %2", ret, strerror(ret));
                     pthread_attr_destroy(&attr);
-                    throw false;
+                    throw ret;
                 }
 
                 // Destroy the thread attributes object, since it is no longer needed
@@ -452,21 +443,20 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 if (cache_entry->m_cache_info.m_error)
                 {
-                    Logging::debug(cache_entry->filename(), "Decoder error!");
-                    _errno = cache_entry->m_cache_info.m_errno;
-                    if (!_errno)
+                    Logging::trace(cache_entry->filename(), "Decoder error!");
+                    ret = cache_entry->m_cache_info.m_errno;
+                    if (!ret)
                     {
-                        _errno = EIO; // Must return anything...
+                        ret = EIO; // Must return anything...
                     }
-                    throw false;
+                    throw ret;
                 }
             }
             else if (!cache_entry->m_cache_info.m_predicted_filesize)
             {
                 if (!transcoder_predict_filesize(virtualfile, cache_entry))
                 {
-                    _errno = errno;
-                    throw false;
+                    throw static_cast<int>(errno);
                 }
             }
         }
@@ -477,7 +467,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
         cache_entry->unlock();
     }
-    catch (bool /*_bSuccess*/)
+    catch (int _errno)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();

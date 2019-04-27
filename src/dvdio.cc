@@ -417,11 +417,6 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
         case (0x100 | PS_STREAM_ID_END_STREAM):
         case (0x100 | PS_STREAM_ID_SYSTEM_HEADER):
         case (0x100 | PS_STREAM_ID_MAP):
-        case (0x100 | PS_STREAM_ID_PRIVATE_STREAM1):
-        case (0x100 | PS_STREAM_ID_PADDING):
-        case (0x100 | PS_STREAM_ID_PRIVATE):
-        case (0x100 | PS_STREAM_ID_EXTENDED):
-        case (0x100 | PS_STREAM_ID_DIRECTORY):
         {
             break;
         }

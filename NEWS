@@ -3,7 +3,7 @@ FFmpegfs NEWS
 Important changes in 1.8 (2019-03-XX) YET UNRELEASED
 
 * Feature: Added Doxygen documentation.
-* Feature: Report all errors together with erro number.
+* Feature: Report all errors together with error number.
 * Feature: More detailed error handling.
 * Feature: Added "make wipe-all" to really clean up all generated files.
 * Bugfix: Do not report "Not a directory" error for virtual directories. Not an error, it's a feature.
@@ -11,7 +11,7 @@ Important changes in 1.8 (2019-03-XX) YET UNRELEASED
 * Bugfix: Fixed make clean: some Doxgen files were not removed.
 * Bugfix: Properly catch "no memory" errors.
 * Bugfix: Deinterlacing filter only worked for YUV videos.
-* Bugfix: Removed the check for invalid chapters - did not work as expected
+* Bugfix: Removed the check for invalid chapters - did not work as expected.
 * Bugfix: Wrong bitrate for PAL (was 30 fps instead of 25 fps) and assume PAL if bits are invalid.
 * Bugfix: Fixed potential crash in DVD handling.
 * Bugfix: Do not add libavresample if libswresample is present. Saves buildtime.

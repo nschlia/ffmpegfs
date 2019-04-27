@@ -221,7 +221,7 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int         open(LPCVIRTUALFILE virtualfile);
+    virtual int         open(LPCVIRTUALFILE get_virtualfile) = 0;
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
@@ -279,15 +279,14 @@ public:
      * @brief Get virtual file object
      * @return Current virtual file object or nullptr if unset.
      */
-    LPCVIRTUALFILE      virtualfile() const;
+    LPCVIRTUALFILE      get_virtualfile() const;
 
 protected:
-    /** @brief Open a virtual file
-     * @param[in] filename - Name of file to open. Only required for disk files.
-     * @return Upon successful completion, #openX() returns 0. @n
-     * On error, an nonzero value is returned and errno is set to indicate the error.
+    /** @brief Set the virtual file object.
+     * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
+     * @return File name and path of original file.
      */
-    virtual int         openX(const std::string & filename) = 0;
+    const std::string & set_virtualfile(LPCVIRTUALFILE get_virtualfile);
     /**
      * @brief Set the internal source path
      * @param[in] path - Source path, with or without file name

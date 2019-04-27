@@ -53,8 +53,10 @@ size_t DiskIO::bufsize() const
     return (100 /* KB */ * 1024);
 }
 
-int DiskIO::openX(const std::string & filename)
+int DiskIO::open(LPCVIRTUALFILE virtualfile)
 {
+    std::string filename = set_virtualfile(virtualfile);
+
     Logging::info(filename, "Opening input file.");
 
     set_path(filename);

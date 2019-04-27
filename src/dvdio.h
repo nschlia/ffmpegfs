@@ -75,6 +75,13 @@ public:
      * @return Return the ideal buffer size.
      */
     virtual size_t  bufsize() const;
+
+    /** @brief Open a virtual file
+     * @param[in] virtualfile - LPCVIRTUALFILE of file to open
+     * @return Upon successful completion, #open() returns 0. @n
+     * On error, an nonzero value is returned and errno is set to indicate the error.
+     */
+    virtual int     open(LPCVIRTUALFILE get_virtualfile);
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
@@ -126,14 +133,6 @@ public:
      * @brief Close virtual file.
      */
     virtual void    close();
-
-protected:
-    /** @brief Open a virtual file
-     * @param[in] filename - Name of file to open.
-     * @return Upon successful completion, #openX() returns 0. @n
-     * On error, an nonzero value is returned and errno is set to indicate the error.
-     */
-    virtual int     openX(const std::string & filename);
 
 private:
     /**

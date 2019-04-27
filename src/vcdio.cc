@@ -59,19 +59,20 @@ size_t VcdIO::bufsize() const
     return (32 * 1024);
 }
 
-int VcdIO::openX(const std::string & filename)
+int VcdIO::open(LPCVIRTUALFILE virtualfile)
 {
+    std::string filename = set_virtualfile(virtualfile);
     std::string src_filename;
 
     set_path(filename);
 
-    if (virtualfile() != nullptr)
+    if (get_virtualfile() != nullptr)
     {
-        m_full_title    = virtualfile()->m_full_title;
-        m_track_no      = virtualfile()->m_vcd.m_track_no;
-        m_chapter_no    = virtualfile()->m_vcd.m_chapter_no;
-        m_start_pos     = virtualfile()->m_vcd.m_start_pos;
-        m_end_pos       = virtualfile()->m_vcd.m_end_pos;
+        m_full_title    = get_virtualfile()->m_full_title;
+        m_track_no      = get_virtualfile()->m_vcd.m_track_no;
+        m_chapter_no    = get_virtualfile()->m_vcd.m_chapter_no;
+        m_start_pos     = get_virtualfile()->m_vcd.m_start_pos;
+        m_end_pos       = get_virtualfile()->m_vcd.m_end_pos;
     }
     else
     {

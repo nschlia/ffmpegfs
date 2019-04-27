@@ -62,15 +62,17 @@ size_t Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::openX(const std::string & filename)
+int Buffer::open(LPCVIRTUALFILE virtualfile)
 {
-    m_filename = filename;
-    make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->desttype());
+    m_filename = set_virtualfile(virtualfile);
+    make_cachefile_name(m_cachefile, m_filename, params.current_format(get_virtualfile())->desttype());
     return 0;
 }
 
 bool Buffer::init(bool erase_cache)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_is_open)
     {
         return true;
@@ -80,7 +82,6 @@ bool Buffer::init(bool erase_cache)
 
     bool success = true;
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     try
     {
         // Create the path to the cache file
@@ -184,6 +185,8 @@ bool Buffer::init(bool erase_cache)
 
 bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     bool success = true;
 
     if (!m_is_open)
@@ -198,8 +201,6 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     }
 
     m_is_open       = false;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Write it now to disk
     flush();
@@ -233,6 +234,8 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         errno = 0;  // ignore this error
     }
 
+    m_is_open       = false;
+
     return success;
 }
 
@@ -243,10 +246,19 @@ bool Buffer::remove_cachefile()
 
 bool Buffer::flush()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
-    if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
+    if (m_buffer != nullptr)
     {
-        Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+        std::lock_guard<std::recursive_mutex> lck (m_mutex);
+        if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
+        {
+            Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+            return false;
+        }
+    }
+    else
+    {
+        errno = EPERM;
+        return false;
     }
 
     return true;
@@ -254,7 +266,7 @@ bool Buffer::flush()
 
 bool Buffer::clear()
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -281,7 +293,7 @@ bool Buffer::clear()
 
 bool Buffer::reserve(size_t size)
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -313,7 +325,7 @@ bool Buffer::reserve(size_t size)
 
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return 0;
@@ -359,7 +371,7 @@ void Buffer::increment_pos(size_t increment)
 
 int Buffer::seek(long offset, int whence)
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return -1;
@@ -429,7 +441,7 @@ size_t Buffer::buffer_watermark() const
 
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;

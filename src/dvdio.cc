@@ -85,8 +85,9 @@ size_t DvdIO::bufsize() const
     return sizeof(m_data);
 }
 
-int DvdIO::openX(const std::string & filename)
+int DvdIO::open(LPCVIRTUALFILE virtualfile)
 {
+    std::string filename = set_virtualfile(virtualfile);
     int pgc_id;
     int ttn, pgn;
     tt_srpt_t *tt_srpt;
@@ -94,13 +95,13 @@ int DvdIO::openX(const std::string & filename)
 
     set_path(filename);
 
-    if (virtualfile() != nullptr)
+    if (get_virtualfile() != nullptr)
     {
-        m_full_title    = virtualfile()->m_full_title;
-        m_title_idx     = virtualfile()->m_dvd.m_title_no - 1;
-        m_chapter_idx   = virtualfile()->m_dvd.m_chapter_no - 1;
-        m_angle_idx     = virtualfile()->m_dvd.m_angle_no - 1;
-        m_duration      = virtualfile()->m_duration;
+        m_full_title    = get_virtualfile()->m_full_title;
+        m_title_idx     = get_virtualfile()->m_dvd.m_title_no - 1;
+        m_chapter_idx   = get_virtualfile()->m_dvd.m_chapter_no - 1;
+        m_angle_idx     = get_virtualfile()->m_dvd.m_angle_no - 1;
+        m_duration      = get_virtualfile()->m_duration;
     }
     else
     {

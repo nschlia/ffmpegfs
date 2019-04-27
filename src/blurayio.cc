@@ -69,8 +69,9 @@ size_t BlurayIO::bufsize() const
     return sizeof(m_data);
 }
 
-int BlurayIO::openX(const std::string & filename)
+int BlurayIO::open(LPCVIRTUALFILE virtualfile)
 {
+    std::string filename = set_virtualfile(virtualfile);
     const char *bdpath = nullptr;
     uint32_t title_count;
     uint32_t chapter_end;
@@ -81,13 +82,13 @@ int BlurayIO::openX(const std::string & filename)
 
     bdpath = m_path.c_str();
 
-    if (virtualfile() != nullptr)
+    if (get_virtualfile() != nullptr)
     {
-        m_full_title    = virtualfile()->m_full_title;
-        m_title_idx     = virtualfile()->m_bluray.m_title_no - 1;
-        m_chapter_idx   = virtualfile()->m_bluray.m_chapter_no - 1;
-        m_angle_idx     = virtualfile()->m_bluray.m_angle_no - 1;
-        m_duration      = virtualfile()->m_duration;
+        m_full_title    = get_virtualfile()->m_full_title;
+        m_title_idx     = get_virtualfile()->m_bluray.m_title_no - 1;
+        m_chapter_idx   = get_virtualfile()->m_bluray.m_chapter_no - 1;
+        m_angle_idx     = get_virtualfile()->m_bluray.m_angle_no - 1;
+        m_duration      = get_virtualfile()->m_duration;
     }
     else
     {

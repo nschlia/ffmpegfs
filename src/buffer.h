@@ -78,6 +78,13 @@ public:
      * @return Not applicable, returns 0.
      */
     virtual size_t          bufsize() const;
+
+    /** @brief Open a virtual file
+     * @param[in] virtualfile - LPCVIRTUALFILE of file to open
+     * @return Upon successful completion, #open() returns 0. @n
+     * On error, an nonzero value is returned and errno is set to indicate the error.
+     */
+    virtual int             open(LPCVIRTUALFILE virtualfile);
     /**
      * @brief Not implemented
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
@@ -192,12 +199,6 @@ public:
     static bool             remove_file(const std::string & filename);
 
 protected:
-    /**
-     * @brief Open the cache file by name.
-     * @param[in] filename - Name of file to open.
-     * @return Returns true on success; false on error.
-     */
-    virtual int             openX(const std::string & filename);
     /**
      * @brief Remove the cachefile.
      * @return Returns true on success; false on error.

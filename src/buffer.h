@@ -235,17 +235,40 @@ private:
      * @return Returns true on success; false on error.
      */
     bool                    reallocate(size_t newsize);
+    /**
+     * @brief Map memory to file.
+     * @param[in] filename - Name of cache file to open.
+     * @param[out] fd - The file descriptor of the open cache file.
+     * @param[out] p - Memory pointer to cache file.
+     * @param[out] filesize - Actual size of the cache file after this call.
+     * @param[inout] isdefaultsize -@n
+     * In: If false, the file size will be the size of the existing file, returning the size in filesize. If the file does not exist, it will be sized to defaultsize.
+     * If true, the defaultsize will be used in any case, resizing an existing file if necessary.@n
+     * Out: true if the file size was set to default.
+     * @param[out] defaultsize - Default size of the file if it does not exist. This parameter can be zero in which case the size will be set to the system's page size.
+     * @return Returns true if successful and fd, p, filesize, isdefaultsize filled in or false on error.
+     */
+    bool                    map_file(const std::string & filename, int *fd, void **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const;
+    /**
+     * @brief Umnap memory from file.
+     * @param[in] filename - Name of cache file to unmap.
+     * @param[in] fd - The file descriptor of the open cache file.
+     * @param[in] p - Memory pointer to cache file.
+     * @param[in] filesize - Actual size of the cache file.
+     * @return Returns true on success; false on error.
+     */
+    bool                    unmap_file(const std::string & filename, int fd, void *p, size_t filesize) const;
 
 private:
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_filename;                     /**< @brief Source file name */
+    volatile bool           m_is_open;                      /**< @brief true if cache is open */
     std::string             m_cachefile;                    /**< @brief Cache file name */
+    int                     m_fd;                           /**< @brief File handle for buffer */
+    uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
     size_t                  m_buffer_pos;                   /**< @brief Read/write position */
     size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
-    volatile bool           m_is_open;                      /**< @brief true if cache file is open */
     size_t                  m_buffer_size;                  /**< @brief Current buffer size */
-    uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
-    int                     m_fd;                           /**< @brief File handle for buffer */
 };
 
 #endif

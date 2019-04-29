@@ -37,7 +37,7 @@
 /** @brief Simply get encoded file size (do not create the whole encoder/decoder objects)
  *  @param[in] virtualfile - virtual file object to open
  *  @param[out] stbuf - stat struct filled in with the size of the cached file
- *  @return true if file was found in cache, false if not (stbuf will be unchanged)
+ *  @return Returns true if file was found in cache, false if not (stbuf will be unchanged)
  */
 bool            transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf);
 // Set the file size
@@ -81,7 +81,7 @@ Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
  *  @param[in] offset - byte offset to start reading at
  *  @param[in] len - length of data chunk to be read.
  *  @param[out] bytes_read - Bytes read from transcoder.
- *  @return On success, returns number of bytes read. On error, returns -1 and sets errno accordingly.
+ *  @return On success, returns true. On error, returns false and sets errno accordingly.
  */
 bool            transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int *bytes_read);
 /** @brief Free the cache entry structure.

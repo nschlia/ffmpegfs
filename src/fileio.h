@@ -55,8 +55,8 @@ extern "C" {
 #pragma GCC diagnostic pop
 
 #pragma pack(push, 1)
+
 #define IMAGE_FRAME_TAG         "IMGFRAME"      /**< @brief Tag of an image frame header for the frame images buffer. */
-#define IMAGE_MAX_SIZE          (20*1024*1024)  /**< @brief Size of one image entry in images buffer. This is the maximum size of an image. */
 /**
   * @brief Image frame header
   *
@@ -65,10 +65,11 @@ extern "C" {
   */
 typedef struct IMAGE_FRAME
 {
-    char            m_tag[8];                   /**< @brief Start tag, always ascii "IMGFRAME" */
-    uint32_t        m_frame_no;                 /**< @brief Number of the frame image */
-    uint32_t        m_size;                     /**< @brief Images size */
-    uint8_t         m_reserved[16];             /**< @brief Reserve */
+    char            m_tag[8];                   /**< @brief Start tag, always ascii "IMGFRAME". */
+    uint32_t        m_frame_no;                 /**< @brief Number of the frame image. 0 if not yet decoded. */
+    uint64_t        m_offset;                   /**< @brief Offset in index file. */
+    uint32_t        m_size;                     /**< @brief Image size in bytes. */
+    uint8_t         m_reserved[8];              /**< @brief Reserved. Pad structure to 32 bytes. */
     // ...data
 } IMAGE_FRAME;
 #pragma pack(pop)
@@ -83,7 +84,6 @@ typedef enum VIRTUALTYPE
     VIRTUALTYPE_REGULAR,                                            /**< @brief Regular file to transcode */
     VIRTUALTYPE_FRAME,                                              /**< @brief File is part of a set of frames */
     VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
-    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 #ifdef USE_LIBVCD
     VIRTUALTYPE_VCD,                                                /**< @brief Video CD file */
 #endif // USE_LIBVCD
@@ -94,10 +94,15 @@ typedef enum VIRTUALTYPE
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
     VIRTUALTYPE_DIRECTORY,                                          /**< @brief File is a virtual directory */
-    VIRTUALTYPE_DIRECTORY_FRAMES,                                   /**< @brief File is a virtual directory for set of frames */
+
+    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
+    //    VIRTUALTYPE_IMAGE_BUFFER,                                       /**< @brief Image buffer file */
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
+
+#define VIRTUALFLAG_NONE            0                               /**< @brief No flags */
+#define VIRTUALFLAG_IMAGE_FRAME     0x00000001                      /**< @brief File is a frame image */
 
 /** @brief Virtual file definition
  */
@@ -105,6 +110,7 @@ typedef struct VIRTUALFILE
 {
     VIRTUALFILE()
         : m_type(VIRTUALTYPE_REGULAR)
+        , m_flags(VIRTUALFLAG_NONE)
         , m_format_idx(0)
         , m_full_title(false)
         , m_duration(0)
@@ -115,6 +121,7 @@ typedef struct VIRTUALFILE
     }
 
     VIRTUALTYPE     m_type;                                         /**< @brief Type of this virtual file */
+    int             m_flags;                                        /**< @brief One of the VIRTUALFLAG_* flags */
 
     int             m_format_idx;                                   /**< @brief Index into params.format[] array */
     std::string     m_origfile;                                     /**< @brief Sanitised original file name */
@@ -204,7 +211,7 @@ public:
      * @return Upon successful completion, #FileIO of requested type. @n
      * On error (out of memory), returns a nullptr.
      */
-    static FileIO * alloc(VIRTUALTYPE type);
+    static FileIO *     alloc(VIRTUALTYPE type);
 
     /**
      * @brief Get type of the virtual file

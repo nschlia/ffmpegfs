@@ -154,6 +154,9 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_close_fileio(true)
     , m_predicted_size(0)
     , m_video_frame_count(AV_NOPTS_VALUE)
+    , m_seek_frame_no(0)
+    , m_have_seeked(false)
+    , m_skip_next_frame(false)
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
@@ -171,7 +174,6 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_copy_audio(false)
     , m_copy_video(false)
     , m_current_format(nullptr)
-    , m_frame_no(0)
     , m_buffer(nullptr)
 {
 #pragma GCC diagnostic pop
@@ -632,19 +634,28 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     Logging::info(destname(), "Opening output file.");
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
 
-    // Pre-allocate the predicted file size to reduce memory reallocations
-    if (!buffer->reserve(predicted_filesize()))
+    if (!export_frameset())
     {
-        Logging::error(filename(), "Out of memory pre-allocating buffer.");
-        return AVERROR(ENOMEM);
-    }
+        // Pre-allocate the predicted file size to reduce memory reallocations
+        if (!buffer->reserve(predicted_filesize()))
+        {
+            Logging::error(filename(), "Out of memory pre-allocating buffer.");
+            return AVERROR(ENOMEM);
+        }
 
-    if (!m_current_format->export_frames())
-    {
+        // Not a frame set, open regular buffer
         return open_output(buffer);
     }
     else
     {
+        // Pre-allocate the predicted file size to reduce memory reallocations
+        if (!buffer->reserve(600 * 1024 * 1024 /*predicted_filesize() * m_video_frame_count*/))
+        {
+            Logging::error(filename(), "Out of memory pre-allocating buffer.");
+            return AVERROR(ENOMEM);
+        }
+
+        // Open frame set buffer
         return open_output_frame_set(buffer);
     }
 }
@@ -655,8 +666,9 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     AVCodecContext* output_codec_ctx = nullptr;
     int ret = 0;
 
-    m_frame_no          = 0;
     m_buffer            = buffer;
+    m_seek_frame_no     = 0;
+    m_have_seeked       = false;
 
     codec = avcodec_find_encoder(m_current_format->video_codec_id());
     if (codec == nullptr)
@@ -677,66 +689,48 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
     output_codec_ctx->time_base            = {1, 25};
 
-    // TODO: av_find_best_pix_fmt_of_2
-    //for (const AVPixelFormat *pix_fmt = codec->pix_fmts; *pix_fmt != AV_PIX_FMT_NONE; pix_fmt++)
-    //{
-    //    Logging::debug(destname(), "FORMAT %1", get_pix_fmt_name(*pix_fmt).c_str());
-    //}
+#ifndef USING_LIBAV
+    const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
+    int loss = 0;
 
-    // JPG
-    //  FORMAT yuvj420p
-    //  FORMAT yuvj422p
-    //  FORMAT yuvj444p
+    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA, &loss);
 
-    // PNG
-    //  FORMAT rgb24
-    //  FORMAT rgba
-    //  FORMAT rgb48be
-    //  FORMAT rgba64be
-    //  FORMAT pal8
-    //  FORMAT gray
-    //  FORMAT ya8
-    //  FORMAT gray16be
-    //  FORMAT ya16be
-    //  FORMAT monob
+    if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
+#endif // !USING_LIBAV
+    {
+        // No best match found, use default
+        switch (m_current_format->video_codec_id())
+        {
+        case AV_CODEC_ID_MJPEG:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
+            break;
+        }
+        case AV_CODEC_ID_PNG:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+            break;
+        }
+        case AV_CODEC_ID_BMP:
+        {
+            output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+            break;
+        }
+        default:
+        {
+            assert(false);
+            break;
+        }
+        }
+#ifndef USING_LIBAV
+        Logging::debug(destname(), "No best match output pixel format found, using default: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
+    }
+    else
+    {
+#endif // !USING_LIBAV
+        Logging::debug(destname(), "Output pixel format: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
+    }
 
-    // BMP
-    //  FORMAT bgra
-    //  FORMAT bgr24
-    //  FORMAT rgb565le
-    //  FORMAT rgb555le
-    //  FORMAT rgb444le
-    //  FORMAT rgb8
-    //  FORMAT bgr8
-    //  FORMAT rgb4_byte
-    //  FORMAT bgr4_byte
-    //  FORMAT gray
-    //  FORMAT pal8
-    //  FORMAT monob
-
-    switch (m_current_format->video_codec_id())
-    {
-    case AV_CODEC_ID_MJPEG:
-    {
-        output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
-        break;
-    }
-    case AV_CODEC_ID_PNG:
-    {
-        output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
-        break;
-    }
-    case AV_CODEC_ID_BMP:
-    {
-        output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
-        break;
-    }
-    default:
-    {
-        assert(false);
-        break;
-    }
-    }
     //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
     //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
@@ -2580,7 +2574,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             ret = store_packet(pkt);
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || m_current_format->export_frames()))
+    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
     {
         if (!m_copy_video)
         {
@@ -3084,9 +3078,11 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 {
     *data_present = 0;
 
-    if (frame == nullptr)
+    if (frame == nullptr || m_skip_next_frame)
     {
         // This called internally to flush frames. We do not have a cache to flush, so simply ignore that.
+        // After seek oprations we need to skip the first frame.
+        m_skip_next_frame = false;
         return 0;
     }
 
@@ -3120,7 +3116,9 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
         //av_frame_ref(copyFrame, frame);
 
-        temp_frame->pts = m_frame_no + 1;
+        uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts) /*av_rescale_q(frame->pts, m_in.m_video.m_stream->r_frame_rate, m_in.m_video.m_stream->time_base)*/;
+
+        temp_frame->pts = frame_no;
 
 #if !LAVC_NEW_PACKET_INTERFACE
         ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, temp_frame, data_present);
@@ -3143,7 +3141,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         }
 
         // read all the available output packets (in general there may be any number of them
-        while (ret >= 0)
+        //while (ret >= 0)
         {
             *data_present = 0;
 
@@ -3164,21 +3162,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             // Write one video frame from the temporary packet to the output file.
             if (*data_present)
             {
-                IMAGE_FRAME image_frame;
-                size_t offset = static_cast<size_t>(m_frame_no) * IMAGE_MAX_SIZE;
-
-                memset(&image_frame, 0xFF, sizeof(image_frame));
-                memcpy(image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(image_frame.m_tag));
-                image_frame.m_frame_no      = ++m_frame_no;
-                image_frame.m_size          = static_cast<uint32_t>(pkt.size);
-
-                assert(image_frame.m_size + sizeof(image_frame) < IMAGE_MAX_SIZE);
-
-                m_buffer->reserve(offset);  /**< @todo: This is not an effective buffer format. Must be revamped. */
-                m_buffer->seek(static_cast<long>(offset), SEEK_SET);
-
-                m_buffer->write(reinterpret_cast<uint8_t *>(&image_frame), sizeof(image_frame));
-                m_buffer->write(pkt.data, static_cast<size_t>(pkt.size));
+                m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
             }
 
             av_packet_unref(&pkt);
@@ -3517,6 +3501,34 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
     status = 0;
 
+    if (m_in.m_video.m_stream != nullptr && m_seek_frame_no)
+    {
+        // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
+        // We are unable to detect that because the pts seems correct (the one that we requested).
+        // So we position before the frame requested, and simply throw the first away.
+#define PRESCAN_FRAMES  25
+        if (m_seek_frame_no > PRESCAN_FRAMES)
+        {
+            m_seek_frame_no -= PRESCAN_FRAMES;
+            m_skip_next_frame = true;
+        }
+        else
+        {
+            m_seek_frame_no = 1;
+        }
+        uint32_t seek_frame_no = m_seek_frame_no;
+        m_seek_frame_no = 0;
+        m_have_seeked   = true;     // Note that we have seeked. We need to start transcoding over.
+        int64_t pts = frame_to_pts(m_in.m_video.m_stream, seek_frame_no);
+        int res = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
+        if (m_in.m_audio.m_codec_ctx != nullptr)
+        {
+            avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
+        }
+        avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
+        fprintf(stderr, "SEEK FRAME %5u %6" PRId64 " res %i\n", seek_frame_no, pts, res);
+    }
+
     try
     {
         if (!m_copy_audio && m_out.m_audio.m_stream_idx > -1)
@@ -3641,7 +3653,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 int data_written = 0;
                 output_frame->key_frame = 0;    // Leave that decision to decoder
 
-                if (!m_current_format->export_frames())
+                if (!export_frameset())
                 {
                     ret = encode_video_frame(output_frame, &data_written);
                 }
@@ -3676,7 +3688,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     int data_written = 0;
                     do
                     {
-                        if (!m_current_format->export_frames())
+                        if (!export_frameset())
                         {
                             ret = encode_video_frame(nullptr, &data_written);
                         }
@@ -3998,17 +4010,16 @@ int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
 
-    if (m_current_format->export_frames())
+    if (!export_frameset())
     {
-        // Format has no trailer
-        return 0;
-    }
+        // If not a frame set, write trailer
 
-    // Write the trailer of the output file container.
-    ret = write_output_file_trailer();
-    if (ret < 0)
-    {
-        Logging::error(destname(), "Error writing trailer (error '%1').", ffmpeg_geterror(ret).c_str());
+        // Write the trailer of the output file container.
+        ret = write_output_file_trailer();
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Error writing trailer (error '%1').", ffmpeg_geterror(ret).c_str());
+        }
     }
 
     return ret;
@@ -4587,3 +4598,34 @@ void FFmpeg_Transcoder::free_filters()
     }
 }
 #endif  // !USING_LIBAV
+
+int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
+{
+    if (m_seek_frame_no < 1 || m_seek_frame_no > m_video_frame_count)
+    {
+        m_seek_frame_no = frame_no; // Seek to this frame next decoding operation
+        return 0;
+    }
+    else
+    {
+        errno = EINVAL;
+        return AVERROR(EINVAL);
+    }
+}
+
+bool FFmpeg_Transcoder::export_frameset() const
+{
+    if (m_current_format == nullptr)
+    {
+        return false;
+    }
+    else
+    {
+        return m_current_format->export_frameset();
+    }
+}
+
+bool FFmpeg_Transcoder::have_seeked() const
+{
+    return m_have_seeked;
+}

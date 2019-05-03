@@ -230,7 +230,7 @@ FILETYPE FFmpegfs_Format::filetype() const
     return m_filetype;
 }
 
-bool FFmpegfs_Format::export_frames() const
+bool FFmpegfs_Format::export_frameset() const
 {
     return (m_filetype == FILETYPE_JPG || m_filetype == FILETYPE_PNG || m_filetype == FILETYPE_BMP);
 }

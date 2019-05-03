@@ -79,15 +79,9 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
         return new(std::nothrow) BlurayIO;
     }
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_DIRECTORY_FRAMES:
-    {
-        return new(std::nothrow) DiskIO; /**< @todo eigener typ */
-    }
-        //case VIRTUALTYPE_DIRECTORY:
-        //case VIRTUALTYPE_PASSTHROUGH:
-        //case VIRTUALTYPE_SCRIPT:
     default:
     {
+        return new(std::nothrow) DiskIO;    // TEST
 		errno = EINVAL;
         return nullptr;
     }

@@ -73,7 +73,7 @@ bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Ent
  *  @return On success, returns cache entry object. On error, returns nullptr and sets errno accordingly.
  */
 Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
-/** @brief Read some bytes into the internal buffer and into the given buffer.
+/** @brief Read some bytes from the internal buffer and into the given buffer.
  *  @note buff must be large enough to hold len number of bytes.
  *  @note Returns number of bytes read, may be less than len bytes.
  *  @param[in] cache_entry - corresponding cache entry
@@ -84,6 +84,19 @@ Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
  *  @return On success, returns true. On error, returns false and sets errno accordingly.
  */
 bool            transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int *bytes_read);
+/** @brief Read one image frame from the internal buffer and into the given buffer.
+ *  @note buff must be large enough to hold len number of bytes.
+ *  @note Returns number of bytes read, may be less than len bytes.
+ *  @param[in] cache_entry - corresponding cache entry
+ *  @param[out] buff - will be filled in with data read
+ *  @param[in] offset - byte offset to start reading at
+ *  @param[in] len - length of data chunk to be read.
+ *  @param[in] frame_no - Number of frame to return.
+ *  @param[out] bytes_read - Bytes read from transcoder.
+ *  @param[in,out] virtualfile - Birtual file object of image, may be modified.
+ *  @return On success, returns true. On error, returns false and sets errno accordingly.
+ */
+bool            transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, uint32_t frame_no, int * bytes_read, LPVIRTUALFILE virtualfile);
 /** @brief Free the cache entry structure.
  *
  * Call this to free the cache entry structure. @n

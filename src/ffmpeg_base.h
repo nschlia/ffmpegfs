@@ -153,7 +153,20 @@ protected:
      * @return Returns filename.
      */
     virtual const char *destname() const = 0;
-
+    /**
+     * @brief Convert PTS value to frame number.
+     * @param stream - Source video stream.
+     * @param pts - PTS of current frame in stream's time_base units.
+     * @return Returns frame number.
+     */
+    uint32_t pts_to_frame(AVStream* stream, int64_t pts) const;
+    /**
+     * @brief FrameToPts
+     * @param stream - Source video stream.
+     * @param frame_no - Number of frame.
+     * @return Returns PTS of frame in stream's time_base units.
+     */
+    int64_t frame_to_pts(AVStream* stream, uint32_t frame_no) const;
 private:
 };
 

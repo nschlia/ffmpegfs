@@ -124,6 +124,7 @@ extern struct FFMPEGFS_PARAMS
     PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Format
     FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file  */
+    bool                m_export_frameset;          /**< @brief Export videos as frame set */
     // Audio
     BITRATE             m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */
@@ -230,18 +231,20 @@ bool            transcoder_cache_clear(void);
  * @param[in] type - Type of virtual file.
  * @param[in] virtfilepath - Name of virtual file.
  * @param[in] st - stat buffer with file size, time etc.
+ * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Add new virtual file to internal list.
  * @param[in] type - Type of virtual file.
  * @param[in] virtfilepath - Name of virtual file.
  * @param[in] origfile - Original file name.
  * @param[in] st - stat buffer with file size, time etc.
+ * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *st);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *st, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Find file in cache.
  * @param[in] virtfilepath - Virtual filename and path of file to find.

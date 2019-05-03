@@ -270,17 +270,18 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
     return map.end();
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat * st, int flags)
 {
-    return insert_file(type, virtfilepath, virtfilepath, st);
+    return insert_file(type, virtfilepath, virtfilepath, st, flags);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat  * st, int flags)
 {
     VIRTUALFILE virtualfile;
     std::string sanitised_filepath = sanitise_filepath(virtfilepath);
 
     virtualfile.m_type          = type;
+    virtualfile.m_flags         = flags;
     virtualfile.m_format_idx    = params.guess_format_idx(origfile);
     virtualfile.m_origfile      = sanitise_filepath(origfile);
 
@@ -514,35 +515,38 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, params.m_scriptfile, index_buffer.size());
     }
 
-#ifdef USE_LIBVCD
-    res = check_vcd(origpath, buf, filler);
-    if (res != 0)
-    {
-        // Found VCD or error reading VCD
-        return (res >= 0 ?  0 : res);
-    }
-#endif // USE_LIBVCD
-#ifdef USE_LIBDVD
-    res = check_dvd(origpath, buf, filler);
-    if (res != 0)
-    {
-        // Found DVD or error reading DVD
-        return (res >= 0 ?  0 : res);
-    }
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-    res = check_bluray(origpath, buf, filler);
-    if (res != 0)
-    {
-        // Found Bluray or error reading Bluray
-        return (res >= 0 ?  0 : res);
-    }
-#endif // USE_LIBBLURAY
-
     std::string buffer(origpath);
     LPVIRTUALFILE virtualfile = find_original(&buffer);
 
-    if (virtualfile == nullptr || virtualfile->m_type != VIRTUALTYPE_DIRECTORY_FRAMES)
+    if (virtualfile == nullptr)
+    {
+#ifdef USE_LIBVCD
+        res = check_vcd(origpath, buf, filler);
+        if (res != 0)
+        {
+            // Found VCD or error reading VCD
+            return (res >= 0 ?  0 : res);
+        }
+#endif // USE_LIBVCD
+#ifdef USE_LIBDVD
+        res = check_dvd(origpath, buf, filler);
+        if (res != 0)
+        {
+            // Found DVD or error reading DVD
+            return (res >= 0 ?  0 : res);
+        }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+        res = check_bluray(origpath, buf, filler);
+        if (res != 0)
+        {
+            // Found Bluray or error reading Bluray
+            return (res >= 0 ?  0 : res);
+        }
+#endif // USE_LIBBLURAY
+    }
+
+    if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
     {
         DIR *dp = opendir(origpath.c_str());
         if (dp != nullptr)
@@ -574,7 +578,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             std::string newext;
                             find_ext(&newext, filename);
 
-                            if (!current_format->export_frames())
+                            if (!current_format->export_frameset())
                             {
                                 if (origext != newext)
                                 {
@@ -594,7 +598,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_DIRECTORY_FRAMES, origfile, &st);
+                                insert_file(VIRTUALTYPE_REGULAR, origfile, &st, VIRTUALFLAG_IMAGE_FRAME);
                             }
                         }
                     }
@@ -617,11 +621,44 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     else
     {
+        if (virtualfile->m_video_frame_count == AV_NOPTS_VALUE)
+        {
+            Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+            if (cache_entry == nullptr)
+            {
+                return -errno;
+            }
+
+            transcoder_delete(cache_entry);
+
+            Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
+
+            //            if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
+            //            {
+            //                Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+            //                if (cache_entry == nullptr)
+            //                {
+            //                    return -errno;
+            //                }
+
+            //#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+            //                virtualfile->m_st.st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
+            //#else
+            //                virtualfile->m_st.st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
+            //#endif
+            //                virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
+
+            //                transcoder_delete(cache_entry);
+            //            }
+        }
+
+        //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
+
         for (int64_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
         {
             char filename[PATH_MAX + 1];
             sprintf(filename, "%011" PRId64 ".%s", frame_no, params.current_format(virtualfile)->desttype().c_str());
-            make_file(buf, filler, VIRTUALTYPE_FRAME, origpath, filename, 40 * 1024, virtualfile->m_st.st_ctime);
+            make_file(buf, filler, VIRTUALTYPE_FRAME, origpath, filename, 40 * 1024, virtualfile->m_st.st_ctime); /**< @todo Dateigrösse */
         }
 
         errno = 0;  // Just to make sure - reset any error
@@ -639,16 +676,44 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
     std::string origpath;
+    int flags = 0;
 
     Logging::trace(path, "getattr");
 
     translate_path(&origpath, path);
 
     LPVIRTUALFILE virtualfile = find_original(&origpath);
+    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
 
-    if ((virtualfile == nullptr || virtualfile->m_type == VIRTUALTYPE_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
+    if (virtualfile == nullptr && lstat(origpath.c_str(), stbuf) == 0)
     {
-        // pass-through for regular files
+        // File was not yet created as virtual file, but physically exists
+        FFmpegfs_Format *current_format = nullptr;
+        std::string filename(origpath);
+
+        if (transcoded_name(&filename, &current_format))
+        {
+            if (!current_format->export_frameset())
+            {
+                // Pass-through for regular files
+                /**< @todo Feature #2447 / Issue #25:  Reencode to same file format as source file */
+                Logging::debug(origpath, "getattr: Treating existing file as passthrough.");
+                errno = 0;
+                return 0;
+            }
+            else
+            {
+                Logging::debug(origpath, "getattr: Creating frame set directory of file.");
+
+                flags |= VIRTUALFLAG_IMAGE_FRAME;
+            }
+        }
+    }
+    else if (type == VIRTUALTYPE_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)
+    {
+        // File pysically exists and is marked as pass-through
+
+        Logging::debug(origpath, "getattr: File is marked as passthrough.");
         errno = 0;
         return 0;
     }
@@ -659,8 +724,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
 
     // This is a virtual file
-    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
-
     bool no_check = false;
 
     switch (type)
@@ -689,10 +752,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_check)
+        if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
-            if (lstat(origpath.c_str(), stbuf) == -1)
+            if (!no_check && lstat(origpath.c_str(), stbuf) == -1)
             {
+                // If file does not exist here we can assume it's some sort of virtual file: Regular, DVD, S/VCD
                 int error = -errno;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 int res = 0;
@@ -746,13 +810,31 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 return error;
 #endif
             }
-        }
 
-        // Get size for resulting output file from regular file, otherwise it's a symbolic link.
-        if (S_ISREG(stbuf->st_mode))
-        {
-            if (virtualfile != nullptr)
+            if (flags & VIRTUALFLAG_IMAGE_FRAME)
             {
+                // Change file to virtual directory for the frame set. Keep permissions.
+                stbuf->st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+                stbuf->st_mode  |= S_IFDIR;
+                stbuf->st_nlink = 2;
+                stbuf->st_size  = stbuf->st_blksize;
+
+                append_sep(&origpath);
+
+                insert_file(VIRTUALTYPE_DIRECTORY, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
+
+                //                type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
+                //                insert_file(type, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
+            }
+            else if (S_ISREG(stbuf->st_mode))
+            {
+                // Get size for resulting output file from regular file, otherwise it's a symbolic link or a virtual frame set.
+                if (virtualfile == nullptr)
+                {
+                    // We should not never end here - report bad file number.
+                    return -EBADF;
+                }
+
                 assert(virtualfile->m_origfile == origpath);
 
                 if (!transcoder_cached_filesize(virtualfile, stbuf))
@@ -773,40 +855,22 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     transcoder_delete(cache_entry);
                 }
             }
-            else
-            {
-                // We should not end here - report bad file number.
-                return -EBADF;
-            }
-        }
 
-        errno = 0;  // Just to make sure - reset any error
-        break;
-    }
-    case VIRTUALTYPE_DIRECTORY_FRAMES:
-    {
-        if (virtualfile->m_video_frame_count == AV_NOPTS_VALUE)
+            errno = 0;  // Just to make sure - reset any error
+        }
+        else // if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
-            Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
-            if (cache_entry == nullptr)
-            {
-                return -errno;
-            }
-
-            transcoder_delete(cache_entry);
-
-            Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
+            // Frame set, simply report stat.
+            mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+            errno = 0;
         }
-
-        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        errno = 0;
         break;
     }
     case VIRTUALTYPE_FRAME:
     case VIRTUALTYPE_DIRECTORY:
     {
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        errno = 0;
+        errno = 0;  // Just to make sure - reset any error
         break;
     }
         // We should never come here but this shuts up a warning
@@ -876,40 +940,42 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
     case VIRTUALTYPE_REGULAR:
     {
-        if (!no_check)
+        if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
-            if (lstat(origpath.c_str(), stbuf) == -1)
+            if (!no_check)
             {
-                return -errno;
+                if (lstat(origpath.c_str(), stbuf) == -1)
+                {
+                    return -errno;
+                }
             }
-        }
 
-        // Get size for resulting output file from regular file, otherwise it's a symbolic link.
-        if (S_ISREG(stbuf->st_mode))
-        {
-            Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
-
-            if (cache_entry == nullptr)
+            // Get size for resulting output file from regular file, otherwise it's a symbolic link.
+            if (S_ISREG(stbuf->st_mode))
             {
-                Logging::error(path, "Tried to stat unopen file.");
-                errno = EBADF;
-                return -errno;
-            }
+                Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
+
+                if (cache_entry == nullptr)
+                {
+                    Logging::error(path, "Tried to stat unopen file.");
+                    errno = EBADF;
+                    return -errno;
+                }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-            stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry));
+                stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry));
 #else
-            stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry));
+                stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry));
 #endif
-            stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
-        }
+                stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+            }
 
-        errno = 0;  // Just to make sure - reset any error
-        break;
-    }
-    case VIRTUALTYPE_DIRECTORY_FRAMES:
-    {
-        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+            errno = 0;  // Just to make sure - reset any error
+        }
+        else
+        {
+            mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+        }
         break;
     }
     case VIRTUALTYPE_SCRIPT:
@@ -993,20 +1059,24 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 #endif // USE_LIBBLURAY
     case VIRTUALTYPE_REGULAR:
     {
-        cache_entry = transcoder_new(virtualfile, true);
-        if (cache_entry == nullptr)
+        if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
-            return -errno;
+            cache_entry = transcoder_new(virtualfile, true);
+
+            if (cache_entry == nullptr)
+            {
+                return -errno;
+            }
+
+            // Store transcoder in the fuse_file_info structure.
+            fi->fh = reinterpret_cast<uintptr_t>(cache_entry);
+            // Need this because we do not know the exact size in advance.
+            fi->direct_io = 1;
+            //fi->keep_cache = 1;
+
+            // Clear errors
+            errno = 0;
         }
-
-        // Store transcoder in the fuse_file_info structure.
-        fi->fh = reinterpret_cast<uintptr_t>(cache_entry);
-        // Need this because we do not know the exact size in advance.
-        fi->direct_io = 1;
-        //fi->keep_cache = 1;
-
-        // Clear errors
-        errno = 0;
         break;
     }
     case VIRTUALTYPE_FRAME:
@@ -1035,11 +1105,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
             // Clear errors
             errno = 0;
         }
-        break;
-    }
-        // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_DIRECTORY_FRAMES:
-    {
         break;
     }
         // We should never come here but this shuts up a warning
@@ -1140,18 +1205,21 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 #endif // USE_LIBBLURAY
     case VIRTUALTYPE_REGULAR:
     {
-        cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
-
-        if (cache_entry == nullptr)
+        if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
-        	if (errno)
-        	{
-                Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
-        	}
-        	return -errno;
-        }
+            cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
-        success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);
+            if (cache_entry == nullptr)
+            {
+                if (errno)
+                {
+                    Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+                }
+                return -errno;
+            }
+
+            success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);
+        }
         break;
     }
     case VIRTUALTYPE_FRAME:
@@ -1160,82 +1228,23 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
         if (cache_entry == nullptr)
         {
-            Logging::error(origpath.c_str(), "Tried to read from unopen file.");
+            if (errno)
+            {
+                Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+            }
             return -errno;
         }
 
-        IMAGE_FRAME image_frame;
         std::string filename(path);
-        int header_read = 0;
-        uint32_t frame_no = 0;
-        size_t start = 0;
 
         // Get frame number
         remove_path(&filename);
-        frame_no = static_cast<uint32_t>(atoi(filename.c_str()));
 
-        start = static_cast<size_t>(frame_no - 1) * IMAGE_MAX_SIZE;
+        uint32_t frame_no = static_cast<uint32_t>(atoi(filename.c_str()));
 
-        try
-        {
-            success = transcoder_read(cache_entry, reinterpret_cast<char *>(&image_frame), start, sizeof(image_frame), &header_read);
-
-            if (!success)
-            {
-                throw false;
-            }
-
-            bytes_read = 0; // EOF for image
-
-            if (header_read)
-            {
-                if (static_cast<size_t>(header_read) != sizeof(image_frame))
-                {
-                    Logging::error(origpath, "Frame image header too small.");
-                    throw false;
-                }
-
-                if (memcmp(&image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(image_frame.m_tag)))
-                {
-                    Logging::error(origpath, "Frame image header not found.");
-                    throw false;
-                }
-
-                if (image_frame.m_frame_no != frame_no)
-                {
-                    Logging::error(origpath, "Frame image not found, tried to locate %1, but found %2.", frame_no, image_frame.m_frame_no);
-                    throw false;
-                }
-
-                // Skip header
-                start += static_cast<size_t>(header_read);
-
-                if (offset < image_frame.m_size)    // If offset >= size, we are at EOF
-                {
-                    success = transcoder_read(cache_entry, buf, start + offset, size < image_frame.m_size ? size : image_frame.m_size, &bytes_read);
-
-                    if (!success)
-                    {
-                        throw false;
-                    }
-
-                    virtualfile->m_st.st_size = image_frame.m_size;
-                    virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
-
-                }
-            }
-        }
-        catch (bool _success)
-        {
-            success = _success;
-        }
+        success = transcoder_read_frame(cache_entry, buf, offset, size, frame_no, &bytes_read, virtualfile);
         break;
     }
-    case VIRTUALTYPE_DIRECTORY_FRAMES:
-    {
-        break;
-    }
-        // We should never come here but this shuts up a warning
     case VIRTUALTYPE_DIRECTORY:
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:

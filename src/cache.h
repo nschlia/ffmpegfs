@@ -34,6 +34,19 @@
 #include <map>
 #include <sqlite3.h>
 /**
+  * @brief RESULTCODE of transcoding operation
+  */
+typedef enum RESULTCODE
+{
+    RESULTCODE_NONE,                            /**< @brief No result code available */
+    RESULTCODE_INCOMPLETE,                      /**< @brief Transcode finished, but incomplete */
+    RESULTCODE_FINISHED,                        /**< @brief Transcode finished successfully */
+    RESULTCODE_ERROR,                           /**< @brief Transcode finished with error */
+} RESULTCODE;
+typedef RESULTCODE const *LPCRESULTCODE;        /**< @brief Pointer version of RESULTCODE */
+typedef RESULTCODE *LPRESULTCODE;               /**< @brief Pointer to const version of RESULTCODE */
+
+/**
   * @brief Cache information block
   */
 typedef struct CACHE_INFO
@@ -50,7 +63,7 @@ typedef struct CACHE_INFO
     size_t          m_predicted_filesize;       /**< @brief Predicted file size */
     size_t          m_encoded_filesize;         /**< @brief Actual file size after encode */
     int64_t         m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
-    bool            m_finished;                 /**< @brief true if decode has finished */
+    RESULTCODE      m_finished;                 /**< @brief Result code: */
     bool            m_error;                    /**< @brief true if encode failed */
     int             m_errno;                    /**< @brief errno if encode failed */
     int             m_averror;                  /**< @brief FFmpeg error code if encode failed */

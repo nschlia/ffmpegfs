@@ -32,6 +32,7 @@
 #include "fileio.h"
 
 #include <mutex>
+#include <vector>
 #include <stddef.h>
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))  /**< @brief Check bit in bitmask */
@@ -86,12 +87,23 @@ public:
      */
     virtual int             open(LPCVIRTUALFILE virtualfile);
     /**
-     * @brief Not implemented
-     * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
-     * @param[in] size - number of bytes to read
-     * @return Returns number of bytes read.
+     * @brief Not implemented.
+     * @param[out] data - unused
+     * @param[in] size - unused
+     * @return Always returns 0 and errno is EPERM.
      */
     virtual size_t          read(void *data, size_t size);
+    /**
+    * @brief Write image data for the frame number into the Buffer
+     * @param[out] data - Buffer to read data in.
+     * @param[in] frame_no - Number of the frame to write.
+     * @return Upon successful completion, #read() returns the number of bytes read. @n
+     * This may be less than size. @n
+     * On error, the value 0 is returned and errno is set to indicate the error. @n
+     * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
+     * If the image frame is not yet read, the function also returns 0 and errno is EAGAIN.
+     */
+    size_t                  read_frame(std::vector<uint8_t> * data, uint32_t frame_no);
     /**
      * @brief Get last error.
      * @return errno value of last error.
@@ -135,12 +147,20 @@ public:
      */
     virtual void            close();
     /**
-     * @brief Write data to the current position in the Buffer. The position pointer will be updated.
+     * @brief Write data to the current position into the buffer. The position pointer will be updated.
      * @param[in] data - Buffer with data to write.
      * @param[in] length - Length of buffer to write.
-     * @return Returns the bytes written to the buffer. If less than length this indicates an error.
+     * @return Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details.
      */
     size_t                  write(const uint8_t* data, size_t length);
+    /**
+    * @brief Write image data for the frame number into the buffer.
+     * @param[in] data - Buffer with data to write.
+     * @param[in] length - Length of buffer to write.
+     * @param[in] frame_no - Number of the frame to write.
+     * @return Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details.
+     */
+    size_t                  write_frame(const uint8_t* data, size_t length, uint32_t frame_no);
     /**
      * @brief Flush buffer to disk
      * @return Returns true on success; false on error. Check errno for details.
@@ -188,9 +208,10 @@ public:
      * @param[out] cachefile - Name of cache file.
      * @param[in] filename - Source file name.
      * @param[in] desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] is_idx - If true, create index file; otherwise create a cache.
      * @return Returns the name of the cache file.
      */
-    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
+    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype, bool is_idx);
     /**
      * @brief Remove (unlink) file.
      * @param[in] filename - Name of file to remove.
@@ -263,12 +284,18 @@ private:
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_filename;                     /**< @brief Source file name */
     volatile bool           m_is_open;                      /**< @brief true if cache is open */
+    // Main cache
     std::string             m_cachefile;                    /**< @brief Cache file name */
     int                     m_fd;                           /**< @brief File handle for buffer */
     uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
     size_t                  m_buffer_pos;                   /**< @brief Read/write position */
     size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
     size_t                  m_buffer_size;                  /**< @brief Current buffer size */
+    // Index for frame sets
+    std::string             m_cachefile_idx;                /**< @brief Index file name */
+    int                     m_fd_idx;                       /**< @brief File handle for index */
+    uint8_t *               m_buffer_idx;                   /**< @brief Pointer to index memory */
+    size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
 };
 
 #endif

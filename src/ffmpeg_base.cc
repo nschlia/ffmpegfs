@@ -236,8 +236,8 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     int alpha = 0;
     int loss = 0;
 
-    AVPixelFormat  src_pix_fmt = input_codec_ctx->pix_fmt;
-    AVPixelFormat  dst_pix_fmt = AV_PIX_FMT_NONE;
+    AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
+    AVPixelFormat  dst_pix_fmt                  = AV_PIX_FMT_NONE;
     if (output_codec_ctx->codec->pix_fmts != nullptr)
     {
 #ifndef USING_LIBAV
@@ -353,4 +353,25 @@ std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t chann
 #endif
     return buffer;
 }
+
+uint32_t FFmpeg_Base::pts_to_frame(AVStream* stream, int64_t pts) const
+{
+#ifndef USING_LIBAV
+    AVRational factor = av_mul_q(stream->r_frame_rate, stream->time_base);
+#else   // !USING_LIBAV
+    AVRational factor = av_mul_q(stream->avg_frame_rate, stream->time_base);
+#endif  // USING_LIBAV
+    return static_cast<uint32_t>(av_rescale(pts, factor.num, factor.den) + 1);
+}
+
+int64_t FFmpeg_Base::frame_to_pts(AVStream* stream, uint32_t frame_no) const
+{
+#ifndef USING_LIBAV
+    AVRational factor = av_mul_q(stream->r_frame_rate, stream->time_base);
+#else   // !USING_LIBAV
+    AVRational factor = av_mul_q(stream->avg_frame_rate, stream->time_base);
+#endif  // USING_LIBAV
+    return static_cast<uint32_t>(av_rescale(frame_no - 1, factor.den, factor.num));
+}
+
 

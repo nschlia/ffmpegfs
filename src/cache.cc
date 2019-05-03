@@ -141,7 +141,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
                 "    `predicted_filesize`	UNSIGNED BIG INT NOT NULL,\n"
                 "    `encoded_filesize`     UNSIGNED BIG INT NOT NULL,\n"
                 "    `video_frame_count`    UNSIGNED BIG INT NOT NULL,\n"
-                "    `finished`             BOOLEAN NOT NULL,\n"
+                "    `finished`             INT NOT NULL,\n"
                 "    `error`                BOOLEAN NOT NULL,\n"
                 "    `errno`                INT NOT NULL,\n"
                 "    `averror`              INT NOT NULL,\n"
@@ -270,7 +270,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             cache_info->m_predicted_filesize    = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 8));
             cache_info->m_encoded_filesize      = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 9));
             cache_info->m_video_frame_count     = sqlite3_column_int64(m_cacheidx_select_stmt, 10);
-            cache_info->m_finished              = sqlite3_column_int(m_cacheidx_select_stmt, 11);
+            cache_info->m_finished              = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_select_stmt, 11));
             cache_info->m_error                 = sqlite3_column_int(m_cacheidx_select_stmt, 12);
             cache_info->m_errno                 = sqlite3_column_int(m_cacheidx_select_stmt, 13);
             cache_info->m_averror               = sqlite3_column_int(m_cacheidx_select_stmt, 14);
@@ -468,8 +468,8 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
     {
         return true;
     }
-	
-	bool deleted = false;
+
+    bool deleted = false;
 
     if ((*cache_entry)->close(flags))
     {
@@ -834,10 +834,20 @@ bool Cache::clear()
 bool Cache::remove_cachefile(const std::string & filename, const std::string & desttype)
 {
     std::string cachefile;
+    bool success;
 
-    Buffer::make_cachefile_name(cachefile, filename, desttype);
+    Buffer::make_cachefile_name(cachefile, filename, desttype, false);
 
-    return Buffer::remove_file(cachefile);
+    success = Buffer::remove_file(cachefile);
+
+    Buffer::make_cachefile_name(cachefile, filename, desttype, true);
+
+    if (!Buffer::remove_file(cachefile) && errno != ENOENT)
+    {
+        success = false;
+    }
+
+    return success;
 }
 
 std::string Cache::expanded_sql(sqlite3_stmt *pStmt)

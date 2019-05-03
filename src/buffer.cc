@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
+#include <assert.h>
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
@@ -44,6 +45,9 @@ Buffer::Buffer()
     , m_buffer_pos(0)
     , m_buffer_watermark(0)
     , m_buffer_size(0)
+    , m_fd_idx(-1)
+    , m_buffer_idx(nullptr)
+    , m_buffer_size_idx(0)
 {
 }
 
@@ -65,8 +69,18 @@ size_t Buffer::bufsize() const
 
 int Buffer::open(LPCVIRTUALFILE virtualfile)
 {
+    if (virtualfile == nullptr)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
     m_filename = set_virtualfile(virtualfile);
-    make_cachefile_name(m_cachefile, m_filename, params.current_format(get_virtualfile())->desttype());
+    make_cachefile_name(m_cachefile, m_filename, params.current_format(get_virtualfile())->desttype(), false);
+    if (virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME)
+    {
+        make_cachefile_name(m_cachefile_idx, m_filename, params.current_format(get_virtualfile())->desttype(), true);
+    }
     return 0;
 }
 
@@ -207,6 +221,24 @@ bool Buffer::init(bool erase_cache)
 
         m_buffer_size       = filesize;
         m_buffer            = static_cast<uint8_t*>(p);
+
+        if (!m_cachefile_idx.empty())
+        {
+            assert(get_virtualfile()->m_video_frame_count > 0);
+            assert(sizeof(IMAGE_FRAME) == 32);
+
+            filesize            = 0;
+            isdefaultsize       = true;
+            p                   = nullptr;
+
+            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * get_virtualfile()->m_video_frame_count))
+            {
+                throw false;
+            }
+
+            m_buffer_size_idx   = filesize;
+            m_buffer_idx        = static_cast<uint8_t*>(p);
+        }
     }
     catch (bool _success)
     {
@@ -236,7 +268,7 @@ bool Buffer::unmap_file(const std::string &filename, int fd, void *p, size_t fil
 
     if (fd != -1)
     {
-        if (ftruncate(fd, static_cast<off_t>(m_buffer_watermark)) == -1)
+        if (ftruncate(fd, static_cast<off_t>(filesize)) == -1)
         {
             Logging::error(filename, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), fd);
             success = false;
@@ -275,11 +307,27 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     m_buffer        = nullptr;
     m_buffer_size   = 0;
     m_buffer_pos    = 0;
-    m_fd =          -1;
+    m_fd            = -1;
 
     if (!unmap_file(m_cachefile, fd, p, size))
     {
         success = false;
+    }
+
+    if (!m_cachefile.empty())
+    {
+        p                   = m_buffer_idx;
+        size                = m_buffer_size_idx;
+        fd                  = m_fd_idx;
+
+        m_buffer_idx        = nullptr;
+        m_buffer_size_idx   = 0;
+        m_fd_idx            = -1;
+
+        if (!unmap_file(m_cachefile, fd, p, size))
+        {
+            success = false;
+        }
     }
 
     if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
@@ -295,7 +343,16 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
 bool Buffer::remove_cachefile()
 {
-    return remove_file(m_cachefile);
+    bool success = remove_file(m_cachefile);
+
+    if (!m_cachefile_idx.empty())
+    {
+        if (!remove_file(m_cachefile_idx))
+        {
+            success = false;
+        }
+    }
+    return success;
 }
 
 bool Buffer::flush()
@@ -342,6 +399,8 @@ bool Buffer::clear()
         success = false;
     }
 
+    // TODO m_cachefile_idx
+
     return success;
 }
 
@@ -362,7 +421,7 @@ bool Buffer::reserve(size_t size)
         size = m_buffer_size;
     }
 
-    m_buffer = static_cast<uint8_t*>(mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
+    m_buffer = static_cast<uint8_t*>(mremap(m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
     if (m_buffer != nullptr)
     {
         m_buffer_size = size;
@@ -399,6 +458,58 @@ size_t Buffer::write(const uint8_t* data, size_t length)
     }
 
     return length;
+}
+
+size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no)
+{
+    if (data == nullptr || frame_no < 1 || frame_no > get_virtualfile()->m_video_frame_count)
+    {
+        // Invalid parameter
+        errno = EINVAL;
+        return 0;
+    }
+
+    LPIMAGE_FRAME old_image_frame;
+    IMAGE_FRAME new_image_frame;
+    size_t bytes_written;
+    size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
+
+    old_image_frame = reinterpret_cast<LPIMAGE_FRAME>(m_buffer_idx + start);
+
+    if (old_image_frame->m_frame_no && (old_image_frame->m_size <= static_cast<uint32_t>(length)))
+    {
+        // Frame already exists and has enough space
+        old_image_frame->m_size         = static_cast<uint32_t>(length);
+
+        // Write image
+        seek(static_cast<long>(old_image_frame->m_offset), SEEK_SET);
+        bytes_written = write(data, old_image_frame->m_size);
+        if (bytes_written != old_image_frame->m_size)
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        // Create new frame if not existing or not enough space
+        memset(&new_image_frame, 0xFF, sizeof(new_image_frame));
+        memcpy(new_image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(new_image_frame.m_tag));
+        new_image_frame.m_frame_no      = frame_no;
+        new_image_frame.m_offset        = buffer_watermark();
+        new_image_frame.m_size          = static_cast<uint32_t>(length);
+
+        // Write image
+        seek(static_cast<long>(new_image_frame.m_offset), SEEK_SET);
+        bytes_written = write(data, new_image_frame.m_size);
+        if (bytes_written != new_image_frame.m_size)
+        {
+            return 0;
+        }
+
+        memcpy(reinterpret_cast<void *>(m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
+    }
+
+    return bytes_written;
 }
 
 uint8_t* Buffer::write_prepare(size_t length)
@@ -549,13 +660,20 @@ const std::string & Buffer::cachefile() const
     return m_cachefile;
 }
 
-const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype)
+const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype, bool is_idx)
 {
     transcoder_cache_path(cachefile);
 
     cachefile += params.m_mountpath;
     cachefile += filename;
-    cachefile += ".cache.";
+    if (is_idx)
+    {
+        cachefile += ".idx.";
+    }
+    else
+    {
+        cachefile += ".cache.";
+    }
     cachefile += desttype;
 
     return cachefile;
@@ -580,6 +698,31 @@ size_t Buffer::read(void * /*data*/, size_t /*size*/)
     // Not implemented
     errno = EPERM;
     return 0;
+}
+
+size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
+{
+    if (data == nullptr || frame_no < 1 || frame_no > get_virtualfile()->m_video_frame_count)
+    {
+        // Invalid parameter
+        errno = EINVAL;
+        return 0;
+    }
+
+    LPCIMAGE_FRAME image_frame;
+    size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
+
+    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_buffer_idx + start);
+
+    if (!image_frame->m_frame_no)
+    {
+        errno = EAGAIN;
+        return 0;
+    }
+
+    data->resize(image_frame->m_size);
+
+    return copy(data->data(), image_frame->m_offset, image_frame->m_size);
 }
 
 int Buffer::error() const

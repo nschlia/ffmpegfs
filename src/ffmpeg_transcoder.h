@@ -237,6 +237,23 @@ public:
      */
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
 
+    /**
+     * @brief Seek to a specific frame. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
+     * @param frame_no - Frame number to seek 1...n
+     * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
+     */
+    int                         seek_frame(uint32_t frame_no);
+    /**
+     * @brief Check for an export frame format
+     * @return Returns true for formats that export all frames as images.
+     */
+    bool                        export_frameset() const;
+    /**
+     * @brief Check if we made a seek operation
+     * @return Returns true if a seek was done, false if not.
+     */
+    bool                        have_seeked() const;
+
 protected:
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
@@ -613,6 +630,9 @@ private:
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
     size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
     int64_t                     m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
+    uint32_t                    m_seek_frame_no;            /**< @brief If not 0, seek to next video frame. Video sources only. */
+    bool                        m_have_seeked;              /**< @brief After seek operations this is set */
+    bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                 /**< @brief true if input is a video file */
 
     // Audio conversion and buffering
@@ -646,8 +666,7 @@ private:
 
     FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
 
-    uint32_t                    m_frame_no;                 /**< @brief When exporting video frames this is the current frame number */
-    Buffer *                    m_buffer;                   /**< @brief Copy of the cache buffer objct */
+    Buffer *                    m_buffer;                   /**< @brief Copy of the cache buffer object */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

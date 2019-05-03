@@ -119,7 +119,7 @@ void Cache_Entry::clear(bool fetch_file_time /*= true*/)
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
     m_cache_info.m_video_frame_count    = 0;
-    m_cache_info.m_finished             = false;
+    m_cache_info.m_finished             = RESULTCODE_NONE;
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;
     m_cache_info.m_averror              = 0;
@@ -197,7 +197,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         return true;
     }
 
-    if (!m_cache_info.m_finished)
+    if (m_cache_info.m_finished != RESULTCODE_INCOMPLETE && m_cache_info.m_finished != RESULTCODE_FINISHED)
     {
         // If no database entry found (database is not consistent),
         // or file was not completely transcoded last time,

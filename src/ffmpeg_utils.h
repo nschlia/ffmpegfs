@@ -296,7 +296,7 @@ public:
      * @brief Check for an export frame format
      * @return Returns true for formats that export all frames as images.
      */
-    bool export_frames() const;
+    bool                export_frameset() const;
 
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */

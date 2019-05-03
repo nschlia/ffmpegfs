@@ -98,7 +98,7 @@ bool Cache_Entry::destroy()
     return true;    /** @todo Return true when deleted, false if kept for delete later */
 }
 
-void Cache_Entry::clear(int fetch_file_time)
+void Cache_Entry::clear(bool fetch_file_time /*= true*/)
 {
     m_is_decoding = false;
 

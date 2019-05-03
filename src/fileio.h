@@ -286,7 +286,7 @@ protected:
      * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
      * @return File name and path of original file.
      */
-    const std::string & set_virtualfile(LPCVIRTUALFILE get_virtualfile);
+    const std::string & set_virtualfile(LPCVIRTUALFILE virtualfile);
     /**
      * @brief Set the internal source path
      * @param[in] path - Source path, with or without file name

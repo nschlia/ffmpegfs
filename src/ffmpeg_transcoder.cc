@@ -271,7 +271,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //        return ret;
     //    }
 
-    // defaults to 5,000,000 microseconds = 5 seconds.
+    // defaults to 5000000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
     //    if (ret < 0)
     //    {
@@ -684,7 +684,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
-    output_codec_ctx->bit_rate             = 400000;   /**  @todo: per commandline setzen */
+    output_codec_ctx->bit_rate             = 400000;   /**  @todo: Make command line settable */
     output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
     output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
     output_codec_ctx->time_base            = {1, 25};
@@ -1215,7 +1215,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // If none of the supported formats match use the first supported
             if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
             {
-                output_codec_ctx->sample_fmt        = output_codec->sample_fmts[0];
+                output_codec_ctx->sample_fmt    = output_codec->sample_fmts[0];
             }
         }
         else
@@ -1225,9 +1225,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Set the sample rate for the container.
-        output_stream->time_base.den        = output_codec_ctx->sample_rate;
-        output_stream->time_base.num        = 1;
-        output_codec_ctx->time_base         = output_stream->time_base;
+        output_stream->time_base.den            = output_codec_ctx->sample_rate;
+        output_stream->time_base.num            = 1;
+        output_codec_ctx->time_base             = output_stream->time_base;
 
 #if !FFMPEG_VERSION3 | defined(USING_LIBAV) // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
@@ -3206,8 +3206,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 
     try
     {
-    	init_packet(&pkt);
-	
+        init_packet(&pkt);
+
         // Encode the video frame and store it in the temporary packet.
         // The output video stream encoder is used to do this.
 #if !LAVC_NEW_PACKET_INTERFACE
@@ -3691,10 +3691,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     {
                         if (!export_frameset())
                         {
+                            // Encode regluar frame
                             ret = encode_video_frame(nullptr, &data_written);
                         }
                         else
                         {
+                            // Encode seperate image frame
                             ret = encode_image_frame(nullptr, &data_written);
                         }
 #if LAVC_NEW_PACKET_INTERFACE

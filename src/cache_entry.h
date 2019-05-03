@@ -81,7 +81,7 @@ public:
      * @brief Clear the cache entry
      * @param[in] fetch_file_time - If true, the entry file time will be filled in from the source file.
      */
-    void                    clear(int fetch_file_time = true);
+    void                    clear(bool fetch_file_time = true);
     /** @brief Return size of output file, as computed by encoder.
      *
      * Returns the file size, either the predicted size (which may be inaccurate) or

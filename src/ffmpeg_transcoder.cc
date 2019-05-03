@@ -4116,40 +4116,40 @@ bool FFmpeg_Transcoder::close_resample()
 
 void FFmpeg_Transcoder::close()
 {
-    int nAudioSamplesLeft = 0;
-    size_t nVideoFramesLeft = 0;
+    int audio_samples_left = 0;
+    size_t video_frames_left = 0;
     std::string infile;
     std::string outfile;
-    bool bClosed = false;
+    bool closed = false;
 
     if (m_audio_fifo)
     {
-        nAudioSamplesLeft = av_audio_fifo_size(m_audio_fifo);
+        audio_samples_left = av_audio_fifo_size(m_audio_fifo);
         av_audio_fifo_free(m_audio_fifo);
         m_audio_fifo = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
-    nVideoFramesLeft = m_video_fifo.size();
+    video_frames_left = m_video_fifo.size();
     while (m_video_fifo.size())
     {
         AVFrame *output_frame = m_video_fifo.front();
         m_video_fifo.pop();
 
         av_frame_free(&output_frame);
-        bClosed = true;
+        closed = true;
     }
 
     if (close_resample())
     {
-        bClosed = true;
+        closed = true;
     }
 
     if (m_sws_ctx != nullptr)
     {
         sws_freeContext(m_sws_ctx);
         m_sws_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     // Close output file
@@ -4158,28 +4158,28 @@ void FFmpeg_Transcoder::close()
     {
         avcodec_close(m_out.m_audio.m_codec_ctx);
         m_out.m_audio.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     if (m_out.m_video.m_codec_ctx)
     {
         avcodec_close(m_out.m_video.m_codec_ctx);
         m_out.m_video.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 #else
     if (m_out.m_audio.m_codec_ctx)
     {
         avcodec_free_context(&m_out.m_audio.m_codec_ctx);
         m_out.m_audio.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     if (m_out.m_video.m_codec_ctx)
     {
         avcodec_free_context(&m_out.m_video.m_codec_ctx);
         m_out.m_video.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 #endif
 
@@ -4194,7 +4194,7 @@ void FFmpeg_Transcoder::close()
 #else
             avcodec_free_context(&codec_ctx);
 #endif
-            bClosed = true;
+            closed = true;
         }
     }
 
@@ -4226,7 +4226,7 @@ void FFmpeg_Transcoder::close()
         avformat_free_context(m_out.m_format_ctx);
 
         m_out.m_format_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     // Close input file
@@ -4235,28 +4235,28 @@ void FFmpeg_Transcoder::close()
     {
         avcodec_close(m_in.m_audio.m_codec_ctx);
         m_in.m_audio.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     if (m_in.m_video.m_codec_ctx)
     {
         avcodec_close(m_in.m_video.m_codec_ctx);
         m_in.m_video.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 #else
     if (m_in.m_audio.m_codec_ctx)
     {
         avcodec_free_context(&m_in.m_audio.m_codec_ctx);
         m_in.m_audio.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
     if (m_in.m_video.m_codec_ctx)
     {
         avcodec_free_context(&m_in.m_video.m_codec_ctx);
         m_in.m_video.m_codec_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 #endif
 
@@ -4271,7 +4271,7 @@ void FFmpeg_Transcoder::close()
 #else
             avcodec_free_context(&codec_ctx);
 #endif
-            bClosed = true;
+            closed = true;
         }
     }
 
@@ -4311,24 +4311,24 @@ void FFmpeg_Transcoder::close()
 
         avformat_close_input(&m_in.m_format_ctx);
         m_in.m_format_ctx = nullptr;
-        bClosed = true;
+        closed = true;
     }
 
 #ifndef USING_LIBAV
     free_filters();
 #endif  // !USING_LIBAV
 
-    if (bClosed)
+    if (closed)
     {
         const char *p = outfile.empty() ? nullptr : outfile.c_str();
-        if (nAudioSamplesLeft)
+        if (audio_samples_left)
         {
-            Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", nAudioSamplesLeft);
+            Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", audio_samples_left);
         }
 
-        if (nVideoFramesLeft)
+        if (video_frames_left)
         {
-            Logging::warning(p, "%1 video frames left in buffer and not written to target file!", nVideoFramesLeft);
+            Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
         }
 
         // Closed anything...

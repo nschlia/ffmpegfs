@@ -44,7 +44,6 @@
 #include <libbluray/bluray-version.h>
 #endif
 
-// TODO: Move this elsewehere, so this file can be library agnostic
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -1011,7 +1010,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_VERSION:
     {
-        // TODO: Also output this information in debug mode
+        /** @todo: Also output this information in debug mode */
         std::printf("-------------------------------------------------------------------------------------------\n");
 
 #ifdef __GNUC__

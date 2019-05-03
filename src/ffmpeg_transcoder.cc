@@ -1136,7 +1136,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
-            // TODO: The ffmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here...
+            /** @todo: The ffmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
 
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
@@ -1527,7 +1527,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     //    output_stream->codec->framerate = { 1, 0 };
 
-    // TODO: ALBUM ARTS
+    /** @todo: Support album arts */
     // mp4 album arts do not work with ipod profile. Set mp4.
     //    if (m_out.m_format_ctx->oformat->mime_type != nullptr && (!strcmp(m_out.m_format_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_format_ctx->oformat->mime_type, "video/mp4")))
     //    {
@@ -2808,10 +2808,11 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
 
             if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS)
             {
-                // OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
-                // at 48 K sampling rate.
-                // For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
-                // TODO: Is this a FFmpeg bug or am I too stupid?
+                /** @todo: Is this a FFmpeg bug or am I too stupid?
+                 * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
+                 * at 48 K sampling rate.
+                 * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
+                 */
                 if (duration > 0 && CODECPAR(m_out.m_audio.m_stream)->sample_rate > 0)
                 {
                     pkt->duration = duration = static_cast<int>(av_rescale(duration, static_cast<int64_t>(m_out.m_audio.m_stream->time_base.den) * m_out.m_audio.m_codec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_stream)->sample_rate * static_cast<int64_t>(m_out.m_audio.m_stream->time_base.num)));
@@ -3571,7 +3572,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_MJPEG:
     {
-        // TODO... size += ???
+        /** @todo: Size? */
         break;
     }
     case AV_CODEC_ID_THEORA:
@@ -3586,7 +3587,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(105 * (*filesize) / 100); // add 5% for overhead
         break;
     }
-    case AV_CODEC_ID_PRORES:    // TODO: grösse berechnen
+    case AV_CODEC_ID_PRORES:
     {
         *filesize += static_cast<size_t>(duration * get_prores_bitrate(width, height, framerate, interleaved, params.m_level) / (8LL * AV_TIME_BASE));
         break;
@@ -3657,7 +3658,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
             int width = CODECPAR(m_in.m_video.m_stream)->width;
             int height = CODECPAR(m_in.m_video.m_stream)->height;
 #ifdef USING_LIBAV
-            int interleaved = 0; // TODO: Check source if not deinterlace is on
+            int interleaved = 0;    /** @todo: Check source if not deinterlace is on */
 #else
             int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
 #endif // !USING_LIBAV
@@ -3671,7 +3672,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
                 Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
             }
         }
-        // else      // TODO #2260: Add picture size
+        // else      /** @todo: Feature #2260: Add picture size */
         // {
         // }
     }

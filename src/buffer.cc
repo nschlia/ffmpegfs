@@ -399,7 +399,11 @@ bool Buffer::clear()
         success = false;
     }
 
-    // TODO m_cachefile_idx
+    if (ftruncate(m_fd_idx, filesize) == -1)
+    {
+        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd_idx);
+        success = false;
+    }
 
     return success;
 }

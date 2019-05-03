@@ -72,18 +72,34 @@ $(function() {
 </dd>
 <dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">create_bluray_virtualfile</a>  (BLURAY *bd, const BLURAY_TITLE_INFO *ti, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx)</dt>
 <dd>We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
-<dt><a class="anchor" id="_todo000007"></a>Member <a class="el" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>  (const ifo_handle_t *vts_file, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const <a class="el" href="structAUDIO__SETTINGS.html" title="Audio stream settings. ">AUDIO_SETTINGS</a> &amp;audio_settings, const <a class="el" href="structVIDEO__SETTINGS.html" title="Video stream settings. ">VIDEO_SETTINGS</a> &amp;video_settings)</dt>
+<dt><a class="anchor" id="_todo000008"></a>Member <a class="el" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>  (const ifo_handle_t *vts_file, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const <a class="el" href="structAUDIO__SETTINGS.html" title="Audio stream settings. ">AUDIO_SETTINGS</a> &amp;audio_settings, const <a class="el" href="structVIDEO__SETTINGS.html" title="Video stream settings. ">VIDEO_SETTINGS</a> &amp;video_settings)</dt>
 <dd>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
-<dt><a class="anchor" id="_todo000009"></a>Member <a class="el" href="ffmpegfs_8cc.html#a17e5bd23bf9e4812f47e975fc11d02ac">get_desttype</a>  (const std::string &amp;arg, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> *video_format, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> *audio_format)</dt>
+<dt><a class="anchor" id="_todo000007"></a>Member <a class="el" href="classDvdIO.html#aeeadab7f0d1f7f2e13d6aa8cb780d620">DvdIO::size</a>  () const</dt>
+<dd>: This is incorrect, fix!  </dd>
+<dt><a class="anchor" id="_todo000010"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#a7f6903a86d5ed1ebee3258b981536f74">FFmpeg_Transcoder::add_albumart_stream</a>  (const AVCodecContext *input_codec_ctx)</dt>
+<dd>: Support album arts  </dd>
+<dt><a class="anchor" id="_todo000009"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#afe22b3a4c7ad7fa2ca8219f5b76f2542">FFmpeg_Transcoder::add_stream</a>  (AVCodecID codec_id)</dt>
+<dd>: The ffmpeg actually <em>can</em> transcode while presevering the SAR. Need to find out what I am doing wrong here...  </dd>
+<dt><a class="anchor" id="_todo000013"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#a854e9576e697fb877c2e344c5c203947">FFmpeg_Transcoder::calculate_predicted_filesize</a>  () const</dt>
+<dd>: Check source if not deinterlace is on  </dd>
+<dt><a class="anchor" id="_todo000011"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#acbf27f6da1c209883d7474897fe1a896">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt, int64_t *pts)</dt>
+<dd>: Is this a FFmpeg bug or am I too stupid? OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value  </dd>
+<dt><a class="anchor" id="_todo000012"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#a52c544c5ae93090357de29b4f39075ae">FFmpeg_Transcoder::video_size</a>  (size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational &amp;framerate)</dt>
+<dd>: Size?  </dd>
+<dt><a class="anchor" id="_todo000016"></a>Member <a class="el" href="ffmpegfs_8cc.html#a684834ac60520f3c7e2e37c9e43607a8">ffmpegfs_opt_proc</a>  (void *data, const char *arg, int key, struct fuse_args *outargs)</dt>
+<dd>: Also output this information in debug mode  </dd>
+<dt><a class="anchor" id="_todo000015"></a>Member <a class="el" href="ffmpegfs_8cc.html#a17e5bd23bf9e4812f47e975fc11d02ac">get_desttype</a>  (const std::string &amp;arg, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> *video_format, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> *audio_format)</dt>
 <dd>: evaluate this function  </dd>
-<dt><a class="anchor" id="_todo000008"></a>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
+<dt><a class="anchor" id="_todo000014"></a>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
 <dd>Currently always returns 0. Must implement real check.  </dd>
 <dt><a class="anchor" id="_todo000001"></a>Member <a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a>  ()</dt>
 <dd>is 0 really OK or shall we better parse?  </dd>
 <dt><a class="anchor" id="_todo000002"></a>Member <a class="el" href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">parse_find_best_video_stream</a>  ()</dt>
 <dd>is 0 really OK or shall we better parse?  </dd>
-<dt><a class="anchor" id="_todo000010"></a>Member <a class="el" href="classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0">VcdIO::duration</a>  () const</dt>
-<dd>Could work for VCD, but always returns AV_NOPTS_VALUE. </dd>
+<dt><a class="anchor" id="_todo000018"></a>Member <a class="el" href="classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0">VcdIO::duration</a>  () const</dt>
+<dd><p class="startdd">Could work for VCD, but always returns AV_NOPTS_VALUE. </p>
+<p class="enddd">: implement me </p>
+</dd>
 </dl>
 </div></div><!-- contents -->
 <!-- start footer part -->

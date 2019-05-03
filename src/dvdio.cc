@@ -705,7 +705,7 @@ size_t DvdIO::size() const
     }
     else
     {
-        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;  // TODO: FALSCH!!!!
+        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;  /** @todo: This is incorrect, fix! */
     }
 }
 

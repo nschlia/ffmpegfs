@@ -271,7 +271,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //        return ret;
     //    }
 
-    // defaults to 5000000 microseconds = 5 seconds.
+    // defaults to 5,000,000 microseconds = 5 seconds.
     //    ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
     //    if (ret < 0)
     //    {
@@ -2871,7 +2871,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
 
     try
     {
-        // Read one audio frame from the input file into a temporary packet.
+        // Read one frame from the input file into a temporary packet.
         ret = av_read_frame(m_in.m_format_ctx, &pkt);
 
         if (ret < 0)
@@ -3180,6 +3180,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
+    // Packet used for temporary storage.
     if (frame != nullptr)
     {
 #if LAVF_DEP_AVSTREAM_CODEC

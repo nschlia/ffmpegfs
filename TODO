@@ -5,5 +5,3 @@ FFmpegfs TODOs
 * Any features that you may request.
 
 * Implement upgrade function for SQLite database.
-* Make direct access possible at video frame sets.
-

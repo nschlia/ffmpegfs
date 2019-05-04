@@ -12,7 +12,7 @@ News
 ----
 
 * **Work on release 1.8 now in progress.**
-* Currently preparing Doxygen documentation.
+* Feature: Documented the whole project with Doxygen.
 
 * See [NEWS](NEWS) for details.
 

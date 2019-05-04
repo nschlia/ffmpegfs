@@ -387,22 +387,31 @@ bool Buffer::clear()
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    m_buffer_pos = 0;
-    m_buffer_watermark = 0;
+    m_buffer_pos        = 0;
+    m_buffer_watermark  = 0;
+    m_buffer_size       = 0;
 
     // If empty set file size to 1 page
     long filesize = sysconf (_SC_PAGESIZE);
 
-    if (ftruncate(m_fd, filesize) == -1)
+    if (m_fd != -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-        success = false;
+        if (ftruncate(m_fd, filesize) == -1)
+        {
+            Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
+            success = false;
+        }
     }
 
-    if (ftruncate(m_fd_idx, filesize) == -1)
+    m_buffer_size_idx   = 0;
+
+    if (m_fd_idx != -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd_idx);
-        success = false;
+        if (ftruncate(m_fd_idx, filesize) == -1)
+        {
+            Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd_idx);
+            success = false;
+        }
     }
 
     return success;

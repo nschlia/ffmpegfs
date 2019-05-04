@@ -634,6 +634,7 @@ private:
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
     size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
     int64_t                     m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
+    int64_t                     m_current_pts;              /**< @brief PTS or last frame read */
     uint32_t                    m_seek_frame_no;            /**< @brief If not 0, seek to next video frame. Video sources only. */
     bool                        m_have_seeked;              /**< @brief After seek operations this is set */
     bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */

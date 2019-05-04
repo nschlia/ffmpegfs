@@ -154,6 +154,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_close_fileio(true)
     , m_predicted_size(0)
     , m_video_frame_count(AV_NOPTS_VALUE)
+    , m_current_pts(AV_NOPTS_VALUE)
     , m_seek_frame_no(0)
     , m_have_seeked(false)
     , m_skip_next_frame(false)
@@ -2549,6 +2550,12 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
     if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
     {
+        if (m_in.m_video.m_stream_idx == -1)
+        {
+            // If we have no video, store current audio PTS instead
+            m_current_pts = pkt->pts;
+        }
+
         if (!m_copy_audio)
         {
             int decoded = 0;
@@ -2576,6 +2583,9 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
     {
+        // Store current PTS
+        m_current_pts = pkt->pts;
+
         if (!m_copy_video)
         {
             int decoded = 0;
@@ -3538,6 +3548,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             int64_t pts = frame_to_pts(m_in.m_video.m_stream, seek_frame_no);
             ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
+
+            if (ret >= 0)
+            {
+                // On success, store current PTS
+                m_current_pts = pts;
+            }
 
             flush_buffers();
 

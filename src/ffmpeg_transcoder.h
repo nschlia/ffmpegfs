@@ -253,7 +253,11 @@ public:
      * @return Returns true if a seek was done, false if not.
      */
     bool                        have_seeked() const;
-
+    /**
+     * @brief Flush FFmpeg's input buffers
+     */
+    void                        flush_buffers();
+    
 protected:
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.

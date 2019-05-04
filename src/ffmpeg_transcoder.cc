@@ -3496,6 +3496,18 @@ int FFmpeg_Transcoder::process_albumarts()
     return ret;
 }
 
+void FFmpeg_Transcoder::flush_buffers()
+{
+    if (m_in.m_audio.m_codec_ctx != nullptr)
+    {
+        avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
+    }
+    if (m_in.m_video.m_codec_ctx != nullptr)
+    {
+        avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
+    }
+}
+
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
@@ -3503,32 +3515,33 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
     status = 0;
 
-    if (m_in.m_video.m_stream != nullptr && m_seek_frame_no)
+    if (m_in.m_video.m_stream != nullptr)
     {
-        // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
-        // We are unable to detect that because the pts seems correct (the one that we requested).
-        // So we position before the frame requested, and simply throw the first away.
+        if (m_seek_frame_no)
+        {
+            // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
+            // We are unable to detect that because the pts seems correct (the one that we requested).
+            // So we position before the frame requested, and simply throw the first away.
 #define PRESCAN_FRAMES  25
-        if (m_seek_frame_no > PRESCAN_FRAMES)
-        {
-            m_seek_frame_no -= PRESCAN_FRAMES;
-            m_skip_next_frame = true;
+            if (m_seek_frame_no > PRESCAN_FRAMES)
+            {
+                m_seek_frame_no -= PRESCAN_FRAMES;
+                m_skip_next_frame = true;
+            }
+            else
+            {
+                m_seek_frame_no = 1;
+            }
+            uint32_t seek_frame_no = m_seek_frame_no;
+            m_seek_frame_no = 0;
+            m_have_seeked   = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over.
+
+            int64_t pts = frame_to_pts(m_in.m_video.m_stream, seek_frame_no);
+            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
+
+            flush_buffers();
+
         }
-        else
-        {
-            m_seek_frame_no = 1;
-        }
-        uint32_t seek_frame_no = m_seek_frame_no;
-        m_seek_frame_no = 0;
-        m_have_seeked   = true;     // Note that we have seeked. We need to start transcoding over.
-        int64_t pts = frame_to_pts(m_in.m_video.m_stream, seek_frame_no);
-        int res = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
-        if (m_in.m_audio.m_codec_ctx != nullptr)
-        {
-            avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
-        }
-        avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
-        fprintf(stderr, "SEEK FRAME %5u %6" PRId64 " res %i\n", seek_frame_no, pts, res);
     }
 
     try

@@ -286,7 +286,7 @@ public:
      * @brief Get virtual file object
      * @return Current virtual file object or nullptr if unset.
      */
-    LPCVIRTUALFILE      get_virtualfile() const;
+    LPCVIRTUALFILE      virtualfile() const;
 
 protected:
     /** @brief Set the virtual file object.

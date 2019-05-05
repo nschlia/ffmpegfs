@@ -76,10 +76,10 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
     }
 
     m_filename = set_virtualfile(virtualfile);
-    make_cachefile_name(m_cachefile, m_filename, params.current_format(get_virtualfile())->desttype(), false);
+    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->desttype(), false);
     if (virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME)
     {
-        make_cachefile_name(m_cachefile_idx, m_filename, params.current_format(get_virtualfile())->desttype(), true);
+        make_cachefile_name(m_cachefile_idx, m_filename, params.current_format(virtualfile)->desttype(), true);
     }
     return 0;
 }
@@ -224,14 +224,14 @@ bool Buffer::init(bool erase_cache)
 
         if (!m_cachefile_idx.empty())
         {
-            assert(get_virtualfile()->m_video_frame_count > 0);
+            assert(virtualfile()->m_video_frame_count > 0);
             assert(sizeof(IMAGE_FRAME) == 32);
 
             filesize            = 0;
             isdefaultsize       = true;
             p                   = nullptr;
 
-            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * get_virtualfile()->m_video_frame_count))
+            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
             {
                 throw false;
             }
@@ -475,7 +475,7 @@ size_t Buffer::write(const uint8_t* data, size_t length)
 
 size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no)
 {
-    if (data == nullptr || frame_no < 1 || frame_no > get_virtualfile()->m_video_frame_count)
+    if (data == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
@@ -715,7 +715,7 @@ size_t Buffer::read(void * /*data*/, size_t /*size*/)
 
 size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
 {
-    if (data == nullptr || frame_no < 1 || frame_no > get_virtualfile()->m_video_frame_count)
+    if (data == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;

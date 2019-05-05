@@ -97,7 +97,7 @@ const std::string &FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
     return m_virtualfile->m_origfile;
 }
 
-LPCVIRTUALFILE FileIO::get_virtualfile() const
+LPCVIRTUALFILE FileIO::virtualfile() const
 {
     return m_virtualfile;
 }

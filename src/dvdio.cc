@@ -95,13 +95,13 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
 
     set_path(filename);
 
-    if (get_virtualfile() != nullptr)
+    if (virtualfile != nullptr)
     {
-        m_full_title    = get_virtualfile()->m_full_title;
-        m_title_idx     = get_virtualfile()->m_dvd.m_title_no - 1;
-        m_chapter_idx   = get_virtualfile()->m_dvd.m_chapter_no - 1;
-        m_angle_idx     = get_virtualfile()->m_dvd.m_angle_no - 1;
-        m_duration      = get_virtualfile()->m_duration;
+        m_full_title    = virtualfile->m_full_title;
+        m_title_idx     = virtualfile->m_dvd.m_title_no - 1;
+        m_chapter_idx   = virtualfile->m_dvd.m_chapter_no - 1;
+        m_angle_idx     = virtualfile->m_dvd.m_angle_no - 1;
+        m_duration      = virtualfile->m_duration;
     }
     else
     {

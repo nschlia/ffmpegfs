@@ -3533,7 +3533,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
             // We are unable to detect that because the pts seems correct (the one that we requested).
             // So we position before the frame requested, and simply throw the first away.
-#define PRESCAN_FRAMES  25
+#define PRESCAN_FRAMES  3
             if (m_seek_frame_no > PRESCAN_FRAMES)
             {
                 m_seek_frame_no -= PRESCAN_FRAMES;

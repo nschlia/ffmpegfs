@@ -374,10 +374,9 @@ static const LEVEL_MAP level_map =
   */
 static const RECODESAME_MAP recode_map =
 {
-    // ProRes
-    { "NEVER",          RECODESAME_NEVER },
-    { "KEEP",           RECODESAME_KEEP },
-    { "ALWAYS",         RECODESAME_ALWAYS },
+    // Recode to same format
+    { "NO",             RECODESAME_NO },
+    { "YES",            RECODESAME_YES },
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);

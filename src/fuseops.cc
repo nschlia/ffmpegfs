@@ -580,7 +580,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                             if (!current_format->export_frameset())
                             {
-                                if (origext != newext)
+                                if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
                                     insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
                                 }

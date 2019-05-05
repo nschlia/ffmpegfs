@@ -76,9 +76,8 @@ Select recode to same format option, 'OPTION' can be:
 +
 [width="100%"]
 |===================================================================================
-|*NEVER* |Never recode to same format.
-|*KEEP* |Recode to same format if target will not become larger.
-|*ALWAYS* |Always recode to same format.
+|*NO* |Never recode to same format.
+|*YES* |Always recode to same format.
 |===================================================================================
 +
 Default: *NEVER*

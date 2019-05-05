@@ -236,9 +236,8 @@ typedef enum AUTOCOPY
   */
 typedef enum RECODESAME
 {
-     RECODESAME_NEVER = 0,  /**< @brief Never recode to same format. */
-     RECODESAME_KEEP,       /**< @brief Recode to same format if target will not become larger. */
-     RECODESAME_ALWAYS,     /**< @brief Always recode to same format. */
+     RECODESAME_NO = 0,     /**< @brief Never recode to same format. */
+     RECODESAME_YES,        /**< @brief Always recode to same format. */
 } RECODESAME;
 
 /**

@@ -622,7 +622,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
-                fprintf(stderr, "SEEK %u/%" PRIi64 ": %u %s\n", frame_no, cache_entry->virtualfile()->m_video_frame_count, errno, strerror(errno));
                 seek_frame_no = frame_no;
             }
 

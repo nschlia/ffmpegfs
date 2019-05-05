@@ -39,3 +39,4 @@ gh-pages/
 mkdeb
 mkdoxy
 dev
+*.gcda

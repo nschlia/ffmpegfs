@@ -3128,7 +3128,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
         //av_frame_ref(copyFrame, frame);
 
-        uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts) /*av_rescale_q(frame->pts, m_in.m_video.m_stream->r_frame_rate, m_in.m_video.m_stream->time_base)*/;
+        uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
         temp_frame->pts = frame_no;
 
@@ -3557,7 +3557,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
 
             flush_buffers();
-
         }
 
         if (export_frameset())

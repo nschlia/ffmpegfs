@@ -33,6 +33,7 @@
 #include "logging.h"
 
 #include <assert.h>
+#include <unistd.h>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -3557,6 +3558,33 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             flush_buffers();
 
+        }
+
+        if (export_frameset())
+        {
+            // Check if we have already exported the next frames and skip them to save processing time
+            uint32_t next_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts) + 1;
+            uint32_t frame_no = next_frame_no;
+            for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
+            {
+                sleep(0);
+            }
+
+            if (frame_no != next_frame_no && next_frame_no > 1)
+            {
+                int64_t pts = frame_to_pts(m_in.m_video.m_stream, next_frame_no - 1);
+                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
+
+                if (ret >= 0)
+                {
+                    // On success, store current PTS
+                    m_current_pts = pts;
+                }
+
+                flush_buffers();
+
+                m_skip_next_frame = true;
+            }
         }
     }
 

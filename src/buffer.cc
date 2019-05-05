@@ -752,3 +752,20 @@ void Buffer::close()
 {
     release();
 }
+
+bool Buffer::have_frame(uint32_t frame_no)
+{
+    if (frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    {
+        // Invalid parameter
+        return false;
+    }
+
+    LPCIMAGE_FRAME image_frame;
+    size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
+
+    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_buffer_idx + start);
+
+    return (image_frame->m_frame_no ? true : false);
+}
+

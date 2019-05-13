@@ -2886,8 +2886,8 @@ int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
                 flush_packet = &pkt;
 
                 init_packet(flush_packet);
-
-                flush_packet->data = nullptr;
+                
+		flush_packet->data = nullptr;
                 flush_packet->size = 0;
                 flush_packet->stream_index = stream_index;
             }

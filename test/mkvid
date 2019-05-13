@@ -1,13 +1,25 @@
 #!/bin/bash
 
-ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=60:r=30000/1001 -g 1 -c:v prores -vf \
+ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=10:r=30000/1001 -g 1 -c:v prores -vf \
  "drawtext=fontsize=800: \
   fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2: \
   text='%{frame_num}': start_number=1" \
  frame_test_ntsc.mov
 
-ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=60:r=25 -g 1 -c:v prores -vf \
+ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=10:r=25 -g 1 -c:v prores -vf \
  "drawtext=fontsize=800: \
   fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2: \
   text='%{frame_num}': start_number=1" \
  frame_test_pal.mov
+
+ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=10:r=30000/1001 -g 24 -c:v h264 -vf \
+ "drawtext=fontsize=800: \
+  fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2: \
+  text='%{frame_num}': start_number=1" \
+ frame_test_ntsc.mp4
+
+ffmpeg -y -f lavfi -i color=c=blue:s=1920x1280:d=10:r=25 -g 24 -c:v h264 -vf \
+ "drawtext=fontsize=800: \
+  fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2: \
+  text='%{frame_num}': start_number=1" \
+ frame_test_pal.mp4

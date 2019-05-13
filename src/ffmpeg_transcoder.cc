@@ -2650,7 +2650,32 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     return 0;
 }
 
-int FFmpeg_Transcoder::flush_frames(int stream_index)
+int FFmpeg_Transcoder::flush_frames(bool use_flush_packet)
+{
+    int ret = 0;
+
+    if (m_in.m_audio.m_codec_ctx != nullptr)
+    {
+        int ret2 = flush_frames(m_in.m_audio.m_stream_idx, use_flush_packet);
+        if (ret2 < 0)
+        {
+            ret = ret2;
+        }
+    }
+
+    if (m_in.m_video.m_codec_ctx != nullptr)
+    {
+        int ret2 = flush_frames(m_in.m_video.m_stream_idx, use_flush_packet);
+        if (ret2 < 0)
+        {
+            ret = ret2;
+        }
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
 {
     int ret = 0;
 
@@ -2669,18 +2694,24 @@ int FFmpeg_Transcoder::flush_frames(int stream_index)
 
         if (decode_frame_ptr != nullptr)
         {
-            AVPacket flush_packet;
+            AVPacket pkt;
+            AVPacket *flush_packet = nullptr;
             int decoded = 0;
 
-            init_packet(&flush_packet);
+            if (use_flush_packet)
+            {
+                flush_packet = &pkt;
 
-            flush_packet.data = nullptr;
-            flush_packet.size = 0;
-            flush_packet.stream_index = stream_index;
+                init_packet(flush_packet);
+
+                flush_packet->data = nullptr;
+                flush_packet->size = 0;
+                flush_packet->stream_index = stream_index;
+            }
 
             do
             {
-                ret = (this->*decode_frame_ptr)(&flush_packet, &decoded);
+                ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     break;
@@ -2688,7 +2719,10 @@ int FFmpeg_Transcoder::flush_frames(int stream_index)
             }
             while (decoded);
 
-            av_packet_unref(&flush_packet);
+            if (flush_packet != nullptr)
+            {
+                av_packet_unref(flush_packet);
+            }
         }
     }
 

@@ -390,11 +390,17 @@ protected:
      */
     int                         add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size);
     /**
-     * @brief Flush the remaining frames
-     * @param[in] stream_index - Stream index to flush.
+     * @brief Flush the remaining frames for all streams.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         flush_frames(int stream_index);
+    int                         flush_frames(bool use_flush_packet = true);
+     /**
+     * @brief Flush the remaining frames
+     * @param[in] stream_index - Stream index to flush.
+     * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         flush_frames(int stream_index, bool use_flush_packet);
     /**
      * @brief Read frame from source file, decode and store in FIFO.
      * @param[in] finished - 1 if at EOF.

@@ -621,7 +621,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     else
     {
-        if (virtualfile->m_video_frame_count == AV_NOPTS_VALUE)
+        if (!virtualfile->m_video_frame_count)
         {
             Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
             if (cache_entry == nullptr)
@@ -654,10 +654,10 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
         //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
 
-        for (int64_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
+        for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
         {
             char filename[PATH_MAX + 1];
-            sprintf(filename, "%011" PRId64 ".%s", frame_no, params.current_format(virtualfile)->desttype().c_str());
+            sprintf(filename, "%011u.%s", frame_no, params.current_format(virtualfile)->desttype().c_str());
             make_file(buf, filler, VIRTUALTYPE_FRAME, origpath, filename, 40 * 1024, virtualfile->m_st.st_ctime); /**< @todo Dateigrösse */
         }
 

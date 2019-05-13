@@ -269,7 +269,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             cache_info->m_deinterlace           = sqlite3_column_int(m_cacheidx_select_stmt, 7);
             cache_info->m_predicted_filesize    = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 8));
             cache_info->m_encoded_filesize      = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 9));
-            cache_info->m_video_frame_count     = sqlite3_column_int64(m_cacheidx_select_stmt, 10);
+            cache_info->m_video_frame_count     = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_select_stmt, 10));
             cache_info->m_finished              = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_select_stmt, 11));
             cache_info->m_error                 = sqlite3_column_int(m_cacheidx_select_stmt, 12);
             cache_info->m_errno                 = sqlite3_column_int(m_cacheidx_select_stmt, 13);
@@ -345,7 +345,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         SQLBINDNUM(sqlite3_bind_int,    9,  cache_info->m_deinterlace);
         SQLBINDNUM(sqlite3_bind_int64,  10, static_cast<sqlite3_int64>(cache_info->m_predicted_filesize));
         SQLBINDNUM(sqlite3_bind_int64,  11, static_cast<sqlite3_int64>(cache_info->m_encoded_filesize));
-        SQLBINDNUM(sqlite3_bind_int64,  12, cache_info->m_video_frame_count);
+        SQLBINDNUM(sqlite3_bind_int,    12, static_cast<int32_t>(cache_info->m_video_frame_count));
         SQLBINDNUM(sqlite3_bind_int,    13, cache_info->m_finished);
         SQLBINDNUM(sqlite3_bind_int,    14, cache_info->m_error);
         SQLBINDNUM(sqlite3_bind_int,    15, cache_info->m_errno);

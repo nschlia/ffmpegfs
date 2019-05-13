@@ -40,6 +40,9 @@
 
 #include <unistd.h>
 
+/** @brief 1 millisecond = 1,000,000 Nanoseconds */
+#define MS  *1000000L
+
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread
   */
@@ -625,11 +628,19 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 seek_frame_no = frame_no;
             }
 
-            while (!cache_entry->m_buffer->read_frame(&data, frame_no))
+            int n = 300;
+            while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
             {
                 if (errno != EAGAIN)
                 {
                     Logging::error(cache_entry->destname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                    throw false;
+                }
+
+                if (errno == EAGAIN && !--n)
+                {
+                    errno = ETIMEDOUT;
+                    Logging::error(cache_entry->destname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
                     throw false;
                 }
 
@@ -650,7 +661,9 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2).", offset, len);
                     reported = true;
                 }
-                sleep(0);
+
+                const struct timespec ts = { 0, 100 MS };
+                nanosleep(&ts, nullptr);
             }
 
             if (reported)
@@ -819,6 +832,14 @@ static void *transcoder_thread(void *arg)
         }
 
         bool unlocked = false;
+
+        if (transcoder->export_frameset())
+        {
+            // Unlock frame set from beginning
+            unlocked = true;
+            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+        }
+
         while ((cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED) && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
             int status = 0;

@@ -482,6 +482,8 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
         return 0;
     }
 
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     LPIMAGE_FRAME old_image_frame;
     IMAGE_FRAME new_image_frame;
     size_t bytes_written;
@@ -722,6 +724,7 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
         return 0;
     }
 
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 
@@ -761,6 +764,7 @@ bool Buffer::have_frame(uint32_t frame_no)
         return false;
     }
 
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 

@@ -154,9 +154,10 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     : m_fileio(nullptr)
     , m_close_fileio(true)
     , m_predicted_size(0)
-    , m_video_frame_count(AV_NOPTS_VALUE)
+    , m_video_frame_count(0)
     , m_current_pts(AV_NOPTS_VALUE)
-    , m_seek_frame_no(0)
+    , m_last_seek_frame_no(0)
+    , m_last_seek_frame_no2(0)
     , m_have_seeked(false)
     , m_skip_next_frame(false)
     , m_is_video(false)
@@ -506,7 +507,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
     {
         // Number of frames: should be quite accurate
-        m_video_frame_count = av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)) + 1;
+        m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
     }
 
     virtualfile->m_video_frame_count = m_video_frame_count;
@@ -669,7 +670,10 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     int ret = 0;
 
     m_buffer            = buffer;
-    m_seek_frame_no     = 0;
+    while (m_seek_frame_fifo.size())
+    {
+        m_seek_frame_fifo.pop();
+    }
     m_have_seeked       = false;
 
     codec = avcodec_find_encoder(m_current_format->video_codec_id());
@@ -2191,7 +2195,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
 
     *got_frame = 0;
 
-    if (pkt)
+    if (pkt != nullptr)
     {
         ret = avcodec_send_packet(avctx, pkt);
         // In particular, we don't expect AVERROR(EAGAIN), because we read all
@@ -2284,6 +2288,12 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             // unused frame
             av_frame_free(&frame);
             break;
+        }
+
+        if (m_in.m_video.m_stream_idx == -1)
+        {
+            // If we have no video, store current audio PTS instead
+            m_current_pts = frame->pts; /**< @todo: Rescale? */
         }
 
         again = true;
@@ -2522,6 +2532,8 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
             m_video_fifo.push(frame);
 #endif
+            // Store current video PTS
+            m_current_pts = frame->pts;
         }
         else
         {
@@ -2551,12 +2563,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
     if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
     {
-        if (m_in.m_video.m_stream_idx == -1)
-        {
-            // If we have no video, store current audio PTS instead
-            m_current_pts = pkt->pts;
-        }
-
         if (!m_copy_audio)
         {
             int decoded = 0;
@@ -2584,8 +2590,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
     {
-        // Store current PTS
-        m_current_pts = pkt->pts;
 
         if (!m_copy_video)
         {
@@ -2829,7 +2833,32 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     return 0;
 }
 
-int FFmpeg_Transcoder::flush_frames(int stream_index)
+int FFmpeg_Transcoder::flush_frames(bool use_flush_packet)
+{
+    int ret = 0;
+
+    if (m_in.m_audio.m_codec_ctx != nullptr)
+    {
+        int ret2 = flush_frames(m_in.m_audio.m_stream_idx, use_flush_packet);
+        if (ret2 < 0)
+        {
+            ret = ret2;
+        }
+    }
+
+    if (m_in.m_video.m_codec_ctx != nullptr)
+    {
+        int ret2 = flush_frames(m_in.m_video.m_stream_idx, use_flush_packet);
+        if (ret2 < 0)
+        {
+            ret = ret2;
+        }
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
 {
     int ret = 0;
 
@@ -2841,25 +2870,31 @@ int FFmpeg_Transcoder::flush_frames(int stream_index)
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_audio_frame;
         }
-        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_video_frame;
         }
 
         if (decode_frame_ptr != nullptr)
         {
-            AVPacket flush_packet;
+            AVPacket pkt;
+            AVPacket *flush_packet = nullptr;
             int decoded = 0;
 
-            init_packet(&flush_packet);
+            if (use_flush_packet)
+            {
+                flush_packet = &pkt;
 
-            flush_packet.data = nullptr;
-            flush_packet.size = 0;
-            flush_packet.stream_index = stream_index;
+                init_packet(flush_packet);
+
+                flush_packet->data = nullptr;
+                flush_packet->size = 0;
+                flush_packet->stream_index = stream_index;
+            }
 
             do
             {
-                ret = (this->*decode_frame_ptr)(&flush_packet, &decoded);
+                ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     break;
@@ -2867,7 +2902,10 @@ int FFmpeg_Transcoder::flush_frames(int stream_index)
             }
             while (decoded);
 
-            av_packet_unref(&flush_packet);
+            if (flush_packet != nullptr)
+            {
+                av_packet_unref(flush_packet);
+            }
         }
     }
 
@@ -2914,15 +2952,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
         else
         {
             // Flush cached frames, ignoring any errors
-            if (m_in.m_audio.m_codec_ctx != nullptr)
-            {
-                flush_frames(m_in.m_audio.m_stream_idx);
-            }
-
-            if (m_in.m_video.m_codec_ctx != nullptr)
-            {
-                flush_frames(m_in.m_video.m_stream_idx);
-            }
+            flush_frames();
         }
 
         ret = 0;    // Errors will be reported by exception
@@ -3120,20 +3150,10 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         pkt.data = nullptr;
         pkt.size = 0;
 
-        AVFrame *temp_frame = av_frame_clone(frame);
-        if (temp_frame == nullptr)
-        {
-            throw AVERROR(ENOMEM);
-        }
-
-        //av_frame_ref(copyFrame, frame);
-
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
-        temp_frame->pts = frame_no;
-
 #if !LAVC_NEW_PACKET_INTERFACE
-        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, temp_frame, data_present);
+        ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
         if (ret < 0)
         {
             Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3145,7 +3165,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         *data_present = 0;
 
         // send the frame for encoding
-        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, temp_frame);
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3153,7 +3173,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         }
 
         // read all the available output packets (in general there may be any number of them
-        //while (ret >= 0)
+        while (ret >= 0)
         {
             *data_present = 0;
 
@@ -3519,6 +3539,71 @@ void FFmpeg_Transcoder::flush_buffers()
     }
 }
 
+int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
+{
+    int ret = -1;
+
+    m_last_seek_frame_no    = frame_no;
+    m_last_seek_frame_no2   = frame_no;
+    m_have_seeked           = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
+
+    //m_skip_next_frame = true;/**< @todo: params.m_deinterlace beachten */
+
+    if (m_skip_next_frame)
+    {
+        --frame_no;
+    }
+
+    int64_t pts = frame_to_pts(m_in.m_video.m_stream, frame_no);
+
+    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+
+    //flush_buffers();
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
+{
+    int ret = 0;
+    uint32_t next_frame_no = frame_no;
+    // Seek next undecoded frame
+    for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
+    {
+        sleep(0);
+    }
+
+    if (next_frame_no > m_video_frame_count)
+    {
+        // Reached end of file
+        // Set PTS to end of file
+        m_current_pts = m_in.m_video.m_stream->duration;
+        // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
+        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_current_pts, AVSEEK_FLAG_ANY);
+        return 0;
+    }
+
+    uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts);
+
+    if (last_frame_no + 1 == next_frame_no)
+    {
+        return 0;
+    }
+
+    if (forced_seek || (frame_no != next_frame_no && next_frame_no > 1))
+    {
+        // If frame changed, skip to it
+        ret = do_seek_frame(next_frame_no);
+
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not encode audio frame: Seek to frame #%1 failed (error '%2').", next_frame_no, ffmpeg_geterror(ret).c_str());
+        }
+    }
+
+    return ret;
+}
+
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
@@ -3526,69 +3611,85 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
     status = 0;
 
-    if (m_in.m_video.m_stream != nullptr)
-    {
-        if (m_seek_frame_no)
-        {
-            // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
-            // We are unable to detect that because the pts seems correct (the one that we requested).
-            // So we position before the frame requested, and simply throw the first away.
-#define PRESCAN_FRAMES  3
-            if (m_seek_frame_no > PRESCAN_FRAMES)
-            {
-                m_seek_frame_no -= PRESCAN_FRAMES;
-                m_skip_next_frame = true;
-            }
-            else
-            {
-                m_seek_frame_no = 1;
-            }
-            uint32_t seek_frame_no = m_seek_frame_no;
-            m_seek_frame_no = 0;
-            m_have_seeked   = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over.
-
-            int64_t pts = frame_to_pts(m_in.m_video.m_stream, seek_frame_no);
-            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
-
-            if (ret >= 0)
-            {
-                // On success, store current PTS
-                m_current_pts = pts;
-            }
-
-            flush_buffers();
-        }
-
-        if (export_frameset())
-        {
-            // Check if we have already exported the next frames and skip them to save processing time
-            uint32_t next_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts) + 1;
-            uint32_t frame_no = next_frame_no;
-            for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
-            {
-                sleep(0);
-            }
-
-            if (frame_no != next_frame_no && next_frame_no > 1)
-            {
-                int64_t pts = frame_to_pts(m_in.m_video.m_stream, next_frame_no - 1);
-                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, /*AVSEEK_FLAG_FRAME |*/ AVSEEK_FLAG_ANY);
-
-                if (ret >= 0)
-                {
-                    // On success, store current PTS
-                    m_current_pts = pts;
-                }
-
-                flush_buffers();
-
-                m_skip_next_frame = true;
-            }
-        }
-    }
-
     try
     {
+        if (m_in.m_video.m_stream != nullptr)
+        {
+            uint32_t seek_frame_no = 0;
+
+            while (!m_seek_frame_fifo.empty())
+            {
+                uint32_t frame_no = m_seek_frame_fifo.front();
+
+                if (!m_buffer->have_frame(frame_no))
+                {
+                    seek_frame_no = frame_no;
+                    break;
+                }
+
+                m_seek_frame_fifo.pop();
+            }
+
+            if (seek_frame_no && seek_frame_no != m_last_seek_frame_no2)
+            {
+                m_last_seek_frame_no2 = 0;
+
+                // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
+                // We are unable to detect that because the pts seems correct (the one that we requested).
+                // So we position before the frame requested, and simply throw the first away.
+#if 0
+#define PRESCAN_FRAMES  3
+                if (seek_frame_no > PRESCAN_FRAMES)
+                {
+                    seek_frame_no -= PRESCAN_FRAMES;
+                    //m_skip_next_frame = true;/**< @todo: params.m_deinterlace beachten */
+                }
+                else
+                {
+                    seek_frame_no = 1;
+                }
+#endif
+
+                ret = skip_decoded_frames(seek_frame_no, true);
+
+                if (ret == AVERROR_EOF)
+                {
+                    status = 1;
+                    return 0;
+                }
+
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+            }
+#if 1
+            else if (export_frameset())
+            {
+                // Check if we have already exported the next frames and skip them to save processing time
+                uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts) + 1;
+
+                if (m_last_seek_frame_no < frame_no)    // Skip frames until seek pos
+                {
+                    m_last_seek_frame_no = 0;
+
+                    ret = skip_decoded_frames(frame_no, false);
+
+                    if (ret == AVERROR_EOF)
+                    {
+                        status = 1;
+                        return 0;
+                    }
+
+                    if (ret < 0)
+                    {
+                        throw ret;
+                    }
+                }
+            }
+#endif
+        }
+
         if (!m_copy_audio && m_out.m_audio.m_stream_idx > -1)
         {
             int output_frame_size;
@@ -4061,7 +4162,7 @@ size_t FFmpeg_Transcoder::predicted_filesize()
     return m_predicted_size;
 }
 
-int64_t FFmpeg_Transcoder::video_frame_count()
+uint32_t FFmpeg_Transcoder::video_frame_count() const
 {
     return m_video_frame_count;
 }
@@ -4661,9 +4762,10 @@ void FFmpeg_Transcoder::free_filters()
 
 int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
 {
-    if (m_seek_frame_no < 1 || m_seek_frame_no > m_video_frame_count)
+
+    if (frame_no > 0 && frame_no <= m_video_frame_count)
     {
-        m_seek_frame_no = frame_no; // Seek to this frame next decoding operation
+        m_seek_frame_fifo.push(frame_no);  // Seek to this frame next decoding operation
         return 0;
     }
     else

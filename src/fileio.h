@@ -115,7 +115,7 @@ typedef struct VIRTUALFILE
         , m_full_title(false)
         , m_duration(0)
         , m_predicted_size(0)
-        , m_video_frame_count(AV_NOPTS_VALUE)
+        , m_video_frame_count(0)
     {
 
     }
@@ -130,7 +130,7 @@ typedef struct VIRTUALFILE
     bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
     int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     size_t          m_predicted_size;                               /**< @brief Use this as the size instead of computing it over and over. */
-    int64_t         m_video_frame_count;                            /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
+    uint32_t        m_video_frame_count;                            /**< @brief Number of frames in video or 0 if not a video */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs

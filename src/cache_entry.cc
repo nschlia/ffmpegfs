@@ -297,6 +297,11 @@ size_t Cache_Entry::size() const
     }
 }
 
+uint32_t Cache_Entry::video_frame_count() const
+{
+    return m_cache_info.m_video_frame_count;
+}
+
 time_t Cache_Entry::age() const
 {
     return (time(nullptr) - m_cache_info.m_creation_time);

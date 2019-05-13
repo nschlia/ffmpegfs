@@ -194,9 +194,9 @@ public:
     size_t                      predicted_filesize();
     /**
      * @brief Calculate the number of video frames in file.
-     * @return On success, returns the number of frames; on error, returns AV_NOPTS_VALUE (calculation failed or no video source file).
+     * @return On success, returns the number of frames; on error, returns 0 (calculation failed or no video source file).
      */
-    int64_t                     video_frame_count();
+    uint32_t                    video_frame_count() const;
     /**
      * @brief Assemble an ID3v1 file tag
      * @return Returns an ID3v1 file tag.
@@ -257,7 +257,7 @@ public:
      * @brief Flush FFmpeg's input buffers
      */
     void                        flush_buffers();
-    
+        
 protected:
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
@@ -426,11 +426,17 @@ protected:
      */
     int                         add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size);
     /**
-     * @brief Flush the remaining frames
-     * @param[in] stream_index - Stream index to flush.
+     * @brief Flush the remaining frames for all streams.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         flush_frames(int stream_index);
+    int                         flush_frames(bool use_flush_packet = true);
+     /**
+     * @brief Flush the remaining frames
+     * @param[in] stream_index - Stream index to flush.
+     * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         flush_frames(int stream_index, bool use_flush_packet);
     /**
      * @brief Read frame from source file, decode and store in FIFO.
      * @param[in] finished - 1 if at EOF.
@@ -602,20 +608,17 @@ protected:
      */
     void                        free_filters();
 #endif // !USING_LIBAV
-
     /**
      * @brief Check if stream can be copied from input to output (AUTOCOPY option).
      * @param[in] stream - Input stream to check.
      * @return Returns true if stream can be copied; false if not.
      */
     bool                        can_copy_stream(const AVStream *stream) const;
-
     /**
      * @brief Close and free the resampler context.
      * @return If an open context was closed, returns true; if nothing had been done returns false.
      */
     bool                        close_resample();
-
     /**
      * @brief Init image size rescaler and pixel format converter.
      * @param in_pix_fmt - Input pixel format
@@ -627,15 +630,32 @@ protected:
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);
+    /**
+     * @brief Actually perform seek for frame.
+     * This function ensures that it is positioned at a key frame, so the resulting position may be different from the requested.
+     * If e.g. frame no. 24 is a key frame, and frame_no is set to 28, the actual position will be at frame 24.
+     * @param frame_no - Frame number 1...n to seek to.
+     * @return Returns 0 if OK, or negative AVERROR value.
+     */
+    int                         do_seek_frame(uint32_t frame_no);
+    /**
+     * @brief Skip decoded frames or force seek to frame_no.
+     * @param frame_no - Frame to seek to.
+     * @param forced_seek - Force seek even if np frames skipped.
+     * @return Returns 0 if OK, or negative AVERROR value.
+     */
+    int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
     size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
-    int64_t                     m_video_frame_count;        /**< @brief Number of frames in video or AV_NOPTS_VALUE if not a video */
+    uint32_t                    m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
     int64_t                     m_current_pts;              /**< @brief PTS or last frame read */
-    uint32_t                    m_seek_frame_no;            /**< @brief If not 0, seek to next video frame. Video sources only. */
+    std::queue<uint32_t>        m_seek_frame_fifo;          /**< @brief Stack of seek requests. Will be processed FIFO */
+    uint32_t                    m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
+    uint32_t                    m_last_seek_frame_no2;      /**< @brief If not 0, delay next seek until this frame was decoded. Video sources only. */
     bool                        m_have_seeked;              /**< @brief After seek operations this is set */
     bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                 /**< @brief true if input is a video file */

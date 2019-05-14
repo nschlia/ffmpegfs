@@ -357,9 +357,10 @@ bool Buffer::remove_cachefile()
 
 bool Buffer::flush()
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_buffer != nullptr)
     {
-        std::lock_guard<std::recursive_mutex> lck (m_mutex);
         if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
         {
             Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
@@ -377,6 +378,8 @@ bool Buffer::flush()
 
 bool Buffer::clear()
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_buffer == nullptr)
     {
         errno = EBADF;
@@ -384,8 +387,6 @@ bool Buffer::clear()
     }
 
     bool success = true;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     m_buffer_pos        = 0;
     m_buffer_watermark  = 0;
@@ -418,7 +419,9 @@ bool Buffer::clear()
 }
 
 bool Buffer::reserve(size_t size)
-{
+{    
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_buffer == nullptr)
     {
         errno = EBADF;
@@ -426,8 +429,6 @@ bool Buffer::reserve(size_t size)
     }
 
     bool success = true;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (!size)
     {
@@ -451,13 +452,13 @@ bool Buffer::reserve(size_t size)
 
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_buffer == nullptr)
     {
         errno = EBADF;
         return 0;
     }
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     uint8_t* write_ptr = write_prepare(length);
     if (!write_ptr)
@@ -475,14 +476,14 @@ size_t Buffer::write(const uint8_t* data, size_t length)
 
 size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no)
 {
-    if (data == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (data == nullptr || m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
         return 0;
     }
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     LPIMAGE_FRAME old_image_frame;
     IMAGE_FRAME new_image_frame;
@@ -621,6 +622,8 @@ size_t Buffer::buffer_watermark() const
 
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_buffer == nullptr)
     {
         errno = EBADF;
@@ -628,8 +631,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     }
 
     bool success = true;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (size() >= offset && m_buffer != nullptr)
     {
@@ -717,14 +718,15 @@ size_t Buffer::read(void * /*data*/, size_t /*size*/)
 
 size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
 {
-    if (data == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (data == nullptr || m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
         return 0;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 
@@ -758,13 +760,21 @@ void Buffer::close()
 
 bool Buffer::have_frame(uint32_t frame_no)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    {
+        // Invalid parameter
+        errno = EINVAL;
+        return 0;
+    }
+
     if (frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 

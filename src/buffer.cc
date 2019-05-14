@@ -71,16 +71,17 @@ int Buffer::openX(const std::string & filename)
 
 bool Buffer::init(bool erase_cache)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     if (m_is_open)
     {
         return true;
     }
 
-    m_is_open = true;
+    m_is_open = true;   // Block this now
 
     bool success = true;
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
     try
     {
         // Create the path to the cache file
@@ -91,10 +92,6 @@ bool Buffer::init(bool erase_cache)
             errno = ENOMEM;
             throw false;
         }
-
-        struct stat sb;
-        size_t filesize;
-        void *p;
 
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
@@ -116,6 +113,10 @@ bool Buffer::init(bool erase_cache)
             remove_cachefile();
             errno = 0;  // ignore this error
         }
+
+        struct stat sb;
+        size_t filesize;
+        void *p;
 
         m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
         if (m_fd == -1)
@@ -184,6 +185,8 @@ bool Buffer::init(bool erase_cache)
 
 bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 {
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
     bool success = true;
 
     if (!m_is_open)
@@ -198,8 +201,6 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     }
 
     m_is_open       = false;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Write it now to disk
     flush();
@@ -244,9 +245,19 @@ bool Buffer::remove_cachefile()
 bool Buffer::flush()
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
-    if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
+
+    if (m_buffer != nullptr)
     {
-        Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+        if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
+        {
+            Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+            return false;
+        }
+    }
+    else
+    {
+        errno = EPERM;
+        return false;
     }
 
     return true;
@@ -254,7 +265,9 @@ bool Buffer::flush()
 
 bool Buffer::clear()
 {
-    if (!m_is_open)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -262,34 +275,36 @@ bool Buffer::clear()
 
     bool success = true;
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
-
-    m_buffer_pos = 0;
-    m_buffer_watermark = 0;
+    m_buffer_pos        = 0;
+    m_buffer_watermark  = 0;
+    m_buffer_size       = 0;
 
     // If empty set file size to 1 page
     long filesize = sysconf (_SC_PAGESIZE);
 
-    if (ftruncate(m_fd, filesize) == -1)
+    if (m_fd != -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-        success = false;
+        if (ftruncate(m_fd, filesize) == -1)
+        {
+            Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
+            success = false;
+        }
     }
 
     return success;
 }
 
 bool Buffer::reserve(size_t size)
-{
-    if (!m_is_open)
+{    
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
     }
 
     bool success = true;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (!size)
     {
@@ -313,13 +328,13 @@ bool Buffer::reserve(size_t size)
 
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
-    if (!m_is_open)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return 0;
     }
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     uint8_t* write_ptr = write_prepare(length);
     if (!write_ptr)
@@ -359,7 +374,7 @@ void Buffer::increment_pos(size_t increment)
 
 int Buffer::seek(long offset, int whence)
 {
-    if (!m_is_open)
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return -1;
@@ -429,15 +444,15 @@ size_t Buffer::buffer_watermark() const
 
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
-    if (!m_is_open)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
     }
 
     bool success = true;
-
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (size() >= offset && m_buffer != nullptr)
     {

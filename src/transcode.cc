@@ -821,22 +821,17 @@ static void *transcoder_thread(void *arg)
         memcpy(&cache_entry->m_id3v1, transcoder->id3v1tag(), sizeof(ID3v1));
 
         thread_data->m_initialised = true;
-        if (!params.m_prebuffer_size)
+
+        bool unlocked = false;
+        if (!params.m_prebuffer_size || transcoder->export_frameset())
         {
+            // Unlock frame set from beginning
+            unlocked = true;
             pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
         }
         else
         {
             Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
-        }
-
-        bool unlocked = false;
-
-        if (transcoder->export_frameset())
-        {
-            // Unlock frame set from beginning
-            unlocked = true;
-            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
         }
 
         while ((cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED) && !(timeout = cache_entry->decode_timeout()) && !thread_exit)

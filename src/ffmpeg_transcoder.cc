@@ -3582,7 +3582,8 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
 
     uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
 
-    if (last_frame_no + 1 == next_frame_no)
+	// Ignore seek if target is within the next 25 frames
+    if (next_frame_no >= last_frame_no + 1 && next_frame_no <= last_frame_no + 25)
     {
         return 0;
     }

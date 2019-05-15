@@ -652,7 +652,7 @@ private:
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
     size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
     uint32_t                    m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
-    int64_t                     m_current_pts;              /**< @brief PTS or last frame read */
+    int64_t                     m_current_write_pts;              /**< @brief PTS or last frame read */
     std::queue<uint32_t>        m_seek_frame_fifo;          /**< @brief Stack of seek requests. Will be processed FIFO */
     uint32_t                    m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
     uint32_t                    m_last_seek_frame_no2;      /**< @brief If not 0, delay next seek until this frame was decoded. Video sources only. */

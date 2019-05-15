@@ -155,7 +155,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_close_fileio(true)
     , m_predicted_size(0)
     , m_video_frame_count(0)
-    , m_current_pts(AV_NOPTS_VALUE)
+    , m_current_write_pts(AV_NOPTS_VALUE)
     , m_last_seek_frame_no(0)
     , m_last_seek_frame_no2(0)
     , m_have_seeked(false)
@@ -2293,7 +2293,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         if (m_in.m_video.m_stream_idx == -1)
         {
             // If we have no video, store current audio PTS instead
-            m_current_pts = frame->pts; /**< @todo: Rescale? */
+            m_current_write_pts = frame->pts; /**< @todo: Rescale? */
         }
 
         again = true;
@@ -2533,7 +2533,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             m_video_fifo.push(frame);
 #endif
             // Store current video PTS
-            m_current_pts = frame->pts;
+            m_current_write_pts = frame->pts;
         }
         else
         {
@@ -3577,13 +3577,13 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     {
         // Reached end of file
         // Set PTS to end of file
-        m_current_pts = m_in.m_video.m_stream->duration;
+        m_current_write_pts = m_in.m_video.m_stream->duration;
         // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
-        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_current_pts, AVSEEK_FLAG_ANY);
+        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_current_write_pts, AVSEEK_FLAG_ANY);
         return 0;
     }
 
-    uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts);
+    uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
 
     if (last_frame_no + 1 == next_frame_no)
     {
@@ -3667,7 +3667,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             else if (export_frameset())
             {
                 // Check if we have already exported the next frames and skip them to save processing time
-                uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_pts) + 1;
+                uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts) + 1;
 
                 if (m_last_seek_frame_no < frame_no)    // Skip frames until seek pos
                 {

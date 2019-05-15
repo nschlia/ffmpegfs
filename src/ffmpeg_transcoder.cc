@@ -3671,13 +3671,17 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             else if (export_frameset())
             {
                 // Check if we have already exported the next frames and skip them to save processing time
-                uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts) + 1;
+                uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts) + 1;
 
-                if (m_last_seek_frame_no < frame_no)    // Skip frames until seek pos
+                if (m_last_seek_frame_no < current_frame_no)    // Skip frames until seek pos
                 {
+                    //#ifdef DEBUG_FRAME_SET
+                    //                    fprintf(stderr, "PSKIP                       | Last:  %10u Next: %10u PTS:    %" PRIi64 "\n", m_last_seek_frame_no, current_frame_no, m_current_pts);
+                    //#endif // DEBUG_FRAME_SET
+
                     m_last_seek_frame_no = 0;
 
-                    ret = skip_decoded_frames(frame_no, false);
+                    ret = skip_decoded_frames(current_frame_no, false);
 
                     if (ret == AVERROR_EOF)
                     {

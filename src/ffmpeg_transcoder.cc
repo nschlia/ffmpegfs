@@ -4206,6 +4206,7 @@ int FFmpeg_Transcoder::input_read(void * opaque, unsigned char * data, int size)
 
     if (io == nullptr)
     {
+        Logging::error(nullptr, "input_read(): Internal error: FileIO is NULL!");
         return AVERROR(EINVAL);
     }
 
@@ -4232,6 +4233,7 @@ int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int siz
 
     if (buffer == nullptr)
     {
+        Logging::error(nullptr, "input_write(): Internal error: FileIO is NULL!");
         return AVERROR(EINVAL);
     }
 
@@ -4251,6 +4253,7 @@ int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
 
     if (io == nullptr)
     {
+        Logging::error(nullptr, "seek(): Internal error: FileIO is NULL!");
         return AVERROR(EINVAL);
     }
 
@@ -4781,6 +4784,7 @@ int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
     else
     {
         errno = EINVAL;
+        Logging::error(destname(), "seek_frame failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, m_video_frame_count);
         return AVERROR(EINVAL);
     }
 }

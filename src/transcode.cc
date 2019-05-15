@@ -57,7 +57,6 @@ typedef struct THREAD_DATA
 static Cache *cache;                            /**< @brief Global cache manager object */
 static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
 static volatile unsigned int thread_count;      /**< @brief Number of currently active threads */
-static volatile uint32_t seek_frame_no;         /**< @brief If not 0, seeks to specified frame */
 
 extern "C"
 {
@@ -625,7 +624,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
-                seek_frame_no = frame_no;
+                cache_entry->m_seek_frame_no = frame_no;
             }
 
             int n = 300;
@@ -850,10 +849,10 @@ static void *transcoder_thread(void *arg)
                 cache_entry->update_access(false);
             }
 
-            uint32_t frame_no = seek_frame_no;
+            uint32_t frame_no = cache_entry->m_seek_frame_no;
             if (frame_no)
             {
-                seek_frame_no = 0;
+                cache_entry->m_seek_frame_no = 0;
 
                 averror = transcoder->seek_frame(frame_no);
                 if (averror < 0)

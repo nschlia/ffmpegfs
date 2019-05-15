@@ -2284,6 +2284,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             break;
         }
+
         if (ret < 0)
         {
             // Anything else is an error, report it!
@@ -2291,12 +2292,6 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             // unused frame
             av_frame_free(&frame);
             break;
-        }
-
-        if (m_in.m_video.m_stream_idx == -1)
-        {
-            // If we have no video, store current audio PTS instead
-            m_current_write_pts = frame->pts; /**< @todo: Rescale? */
         }
 
         again = true;
@@ -2535,8 +2530,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
             m_video_fifo.push(frame);
 #endif
-            // Store current video PTS
-            m_current_write_pts = frame->pts;
         }
         else
         {
@@ -3193,10 +3186,11 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
             *data_present = 1;
 #endif
-
             // Write one video frame from the temporary packet to the output file.
             if (*data_present)
             {
+                // Store current video PTS
+                m_current_write_pts = pkt.pts;
                 m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
             }
 

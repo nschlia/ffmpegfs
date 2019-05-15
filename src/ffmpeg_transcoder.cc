@@ -2425,12 +2425,14 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         }
 
         ret = decode(m_in.m_video.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
+
         if (!data_present)
         {
             // unused frame
             av_frame_free(&frame);
             break;
         }
+
         if (ret < 0)
         {
             // Anything else is an error, report it!
@@ -2882,8 +2884,8 @@ int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
                 flush_packet = &pkt;
 
                 init_packet(flush_packet);
-                
-		flush_packet->data = nullptr;
+
+                flush_packet->data = nullptr;
                 flush_packet->size = 0;
                 flush_packet->stream_index = stream_index;
             }
@@ -3138,7 +3140,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
     AVPacket pkt;
     int ret = 0;
-
     try
     {
         av_init_packet(&pkt);

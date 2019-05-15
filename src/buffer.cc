@@ -314,7 +314,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         success = false;
     }
 
-    if (!m_cachefile.empty())
+    if (!m_cachefile_idx.empty())
     {
         p                   = m_buffer_idx;
         size                = m_buffer_size_idx;
@@ -324,7 +324,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         m_buffer_size_idx   = 0;
         m_fd_idx            = -1;
 
-        if (!unmap_file(m_cachefile, fd, p, size))
+        if (!unmap_file(m_cachefile_idx, fd, p, size))
         {
             success = false;
         }
@@ -404,15 +404,9 @@ bool Buffer::clear()
         }
     }
 
-    m_buffer_size_idx   = 0;
-
     if (m_fd_idx != -1)
     {
-        if (ftruncate(m_fd_idx, filesize) == -1)
-        {
-            Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd_idx);
-            success = false;
-        }
+        memset(m_buffer_idx, 0, m_buffer_size_idx);
     }
 
     return success;
@@ -766,12 +760,6 @@ bool Buffer::have_frame(uint32_t frame_no)
     {
         // Invalid parameter
         errno = EINVAL;
-        return 0;
-    }
-
-    if (frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
-    {
-        // Invalid parameter
         return false;
     }
 

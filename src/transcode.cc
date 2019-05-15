@@ -48,10 +48,10 @@
   */
 typedef struct THREAD_DATA
 {
-    pthread_mutex_t  m_mutex;                   /**< @brief Signal mutex when thread is running */
-    pthread_cond_t   m_cond;                    /**< @brief Signal mutex when thread is running  */
-    bool             m_initialised;             /**< @brief True when this object is completely initialised */
-    void *           m_arg;                     /**< @brief Opaque argument pointer. Will not be freed by child thread. */
+    pthread_mutex_t m_mutex;                    /**< @brief Signal mutex when thread is running */
+    pthread_cond_t  m_cond;                     /**< @brief Signal mutex when thread is running  */
+    bool            m_initialised;              /**< @brief True when this object is completely initialised */
+    void *          m_arg;                      /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
 static Cache *cache;                            /**< @brief Global cache manager object */
@@ -91,7 +91,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
         // Wait until decoder thread has reached the desired position
         if (cache_entry->m_is_decoding)
         {
-            bool reported = false;            
+            bool reported = false;
             while (cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
             {
                 if (fuse_interrupted())

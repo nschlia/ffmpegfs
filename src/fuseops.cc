@@ -490,6 +490,27 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 }
 
 /**
+ * @brief Calculate the video frame count.
+ * @param origpath - Path of original file.
+ * @param virtualfile - Virtual file object to modify.
+ * @return On success, returns 0. On error, returns -errno.
+ */
+static int get_video_frame_count(std::string & origpath, LPVIRTUALFILE virtualfile)
+{
+    Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+    if (cache_entry == nullptr)
+    {
+        return -errno;
+    }
+
+    transcoder_delete(cache_entry);
+
+    Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
+
+    return 0;
+}
+
+/**
  * @brief Read directory
  * @param[in] path - Physical path to load.
  * @param[in] buf - FUSE buffer to fill.
@@ -623,33 +644,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     {
         if (!virtualfile->m_video_frame_count)
         {
-            Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
-            if (cache_entry == nullptr)
+            int res = get_video_frame_count(origpath, virtualfile);
+            if (res < 0)
             {
-                return -errno;
+                return res;
             }
-
-            transcoder_delete(cache_entry);
-
-            Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
-
-            //            if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
-            //            {
-            //                Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
-            //                if (cache_entry == nullptr)
-            //                {
-            //                    return -errno;
-            //                }
-
-            //#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-            //                virtualfile->m_st.st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
-            //#else
-            //                virtualfile->m_st.st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
-            //#endif
-            //                virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
-
-            //                transcoder_delete(cache_entry);
-            //            }
         }
 
         //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
@@ -790,6 +789,43 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         res = check_bluray(_origpath);
                     }
 #endif // USE_LIBBLURAY
+
+                    {
+                        std::string filepath(origpath);
+
+                        remove_filename(&filepath);
+                        remove_sep(&filepath);
+
+                        LPVIRTUALFILE virtualfile2 = find_original(&filepath);
+
+                        if (virtualfile2 != nullptr && virtualfile2->m_type == VIRTUALTYPE_DIRECTORY && (virtualfile2->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+                        {
+                            struct stat st;
+
+                            if (!virtualfile2->m_video_frame_count)
+                            {
+                                int res = get_video_frame_count(origpath, virtualfile2);
+                                if (res < 0)
+                                {
+                                    return res;
+                                }
+                            }
+
+                            //memcpy(&st, &virtualfile->m_st, sizeof(struct stat));
+
+                            init_stat(&st, 40 * 1024, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
+
+                            insert_file(VIRTUALTYPE_FRAME, origpath, &st);
+
+                            mempcpy(stbuf, &st, sizeof(struct stat));
+
+                            // Clear errors
+                            errno = 0;
+
+                            return 0;
+                        }
+                    }
+
                     if (res <= 0)
                     {
                         // No Bluray/DVD/VCD found or error reading disk

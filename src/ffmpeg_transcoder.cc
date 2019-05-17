@@ -2588,7 +2588,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
     {
-
         if (!m_copy_video)
         {
             int decoded = 0;
@@ -3633,7 +3632,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     m_seek_frame_fifo.pop();
                 }
             }
-
 
             if (seek_frame_no && seek_frame_no != m_last_seek_frame_no2)
             {
@@ -4774,7 +4772,6 @@ void FFmpeg_Transcoder::free_filters()
 
 int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
 {
-
     if (frame_no > 0 && frame_no <= m_video_frame_count)
     {
         std::lock_guard<std::recursive_mutex> lck (m_mutex);

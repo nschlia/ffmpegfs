@@ -696,7 +696,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             {
                 // Pass-through for regular files
                 /**< @todo Feature #2447 / Issue #25:  Reencode to same file format as source file */
-                Logging::debug(origpath, "getattr: Treating existing file as passthrough.");
+                Logging::debug(origpath, "getattr: Not transcpding existing file.");
                 errno = 0;
                 return 0;
             }
@@ -706,6 +706,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 flags |= VIRTUALFLAG_IMAGE_FRAME;
             }
+        }
+        else
+        {
+            // Pass-through for regular files
+            Logging::debug(origpath, "getattr: Treating existing file as passthrough.");
+            errno = 0;
+            return 0;
         }
     }
     else if (type == VIRTUALTYPE_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)

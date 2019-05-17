@@ -156,11 +156,14 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
-                   format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
-                   format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
-                   format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
-                   static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    if (!transcoder->export_frameset())
+    {
+        Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
+                       format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
+                       format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
+                       format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
+                       static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
+    }
 
     cache_entry->flush();
 

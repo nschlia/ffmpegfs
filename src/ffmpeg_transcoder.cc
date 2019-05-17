@@ -2874,6 +2874,10 @@ int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
 
         if (decode_frame_ptr != nullptr)
         {
+//#ifdef DEBUG_FRAME_SET
+//            fprintf(stderr, "FLUSH!                      |\n");
+//#endif // DEBUG_FRAME_SET
+
             AVPacket pkt;
             AVPacket *flush_packet = nullptr;
             int decoded = 0;
@@ -4054,11 +4058,6 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
         break;
     }
-    case AV_CODEC_ID_MJPEG:
-    {
-        /** @todo: Size? */
-        break;
-    }
     case AV_CODEC_ID_THEORA:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
@@ -4074,6 +4073,13 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_PRORES:
     {
         *filesize += static_cast<size_t>(duration * get_prores_bitrate(width, height, framerate, interleaved, params.m_level) / (8LL * AV_TIME_BASE));
+        break;
+    }
+    case AV_CODEC_ID_PNG:
+    case AV_CODEC_ID_BMP:
+    case AV_CODEC_ID_MJPEG:
+    {
+        *filesize += width * height * 24 / 8;   // Get the max. size
         break;
     }
     case AV_CODEC_ID_NONE:

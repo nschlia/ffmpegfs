@@ -657,7 +657,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         {
             char filename[PATH_MAX + 1];
             sprintf(filename, "%011u.%s", frame_no, params.current_format(virtualfile)->desttype().c_str());
-            make_file(buf, filler, VIRTUALTYPE_FRAME, origpath, filename, 40 * 1024, virtualfile->m_st.st_ctime); /**< @todo Dateigrösse */
+            make_file(buf, filler, VIRTUALTYPE_FRAME, origpath, filename, virtualfile->m_predicted_size, virtualfile->m_st.st_ctime); /**< @todo Dateigrösse */
         }
 
         errno = 0;  // Just to make sure - reset any error
@@ -813,7 +813,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                             //memcpy(&st, &virtualfile->m_st, sizeof(struct stat));
 
-                            init_stat(&st, 40 * 1024, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
+                            init_stat(&st, virtualfile2->m_predicted_size, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
 
                             insert_file(VIRTUALTYPE_FRAME, origpath, &st);
 

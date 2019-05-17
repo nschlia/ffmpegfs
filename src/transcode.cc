@@ -660,13 +660,13 @@ static void *transcoder_thread(void *arg)
 
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1. Predicted size %2.", params.current_format(cache_entry->virtualfile())->desttype().c_str(), format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
-
         if (transcoder == nullptr)
         {
-            Logging::error(cache_entry->filename(), "Out of memory creating transcoder.");
+            Logging::error(cache_entry->filename(), "Internal error: Trancoder object should not be NULL.");
             throw (static_cast<int>(ENOMEM));
         }
+
+        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
 
         if (!cache_entry->open())
         {

@@ -57,7 +57,7 @@ int DiskIO::open(LPCVIRTUALFILE virtualfile)
 {
     std::string filename = set_virtualfile(virtualfile);
 
-    Logging::info(filename, "Opening input file.");
+    Logging::debug(filename, "Opening input file.");
 
     set_path(filename);
 

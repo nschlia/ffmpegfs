@@ -82,23 +82,25 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
         return true;
     }
 
-    // Wait until decoder thread has reached the desired position
-    if (cache_entry->m_is_decoding)
+    try
     {
-        bool reported = false;
-        while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
+        // Wait until decoder thread has reached the desired position
+        if (cache_entry->m_is_decoding)
         {
-            if (fuse_interrupted())
+            bool reported = false;
+        	while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
             {
-                Logging::info(cache_entry->destname(), "Client has gone away.");
-                return false;
-            }
+                if (fuse_interrupted())
+                {
+                    Logging::info(cache_entry->destname(), "Client has gone away.");
+                    throw false;
+                }
 
-            if (thread_exit)
-            {
-                Logging::warning(cache_entry->destname(), "Received thread exit.");
-                return false;
-            }
+                if (thread_exit)
+                {
+                    Logging::warning(cache_entry->destname(), "Received thread exit.");
+                    throw false;
+                }
 
             if (!reported)
             {
@@ -106,14 +108,20 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
                 reported = true;
             }
             sleep(0);
-        }
+            }
 
-        if (reported)
-        {
-            Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
+            if (reported)
+            {
+                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
+            }
+            success = !cache_entry->m_cache_info.m_error;
         }
-        success = !cache_entry->m_cache_info.m_error;
     }
+    catch (bool _success)
+    {
+        success = _success;
+    }
+
     return success;
 }
 

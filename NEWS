@@ -16,7 +16,7 @@ This is a bugfix/maintenance release with only a few minor features added.
 * Feature: More detailed error handling.
 * Feature: Added "make wipe-all" to really clean up all generated files.
 * Bugfix: Do not report "Not a directory" error for virtual directories. Not an error, it's a feature.
-* Bugfix: Fixed make dist: checks did not work
+* Bugfix: Fixed make dist: checks did not work.
 * Bugfix: Fixed make clean: some Doxgen files were not removed.
 * Bugfix: Properly catch "no memory" errors.
 * Bugfix: Deinterlacing filter only worked for YUV videos.
@@ -25,6 +25,7 @@ This is a bugfix/maintenance release with only a few minor features added.
 * Bugfix: Fixed potential crash in DVD handling.
 * Bugfix: Do not add libavresample if libswresample is present. Saves build time.
 * Bugfix: Removed dependency on unused libdvdnav. Saves buildtime.
+* Bugfix: Fixed two (probably rare but possible) crashes.
 
 Important changes in 1.7 (2019-02-26)
 

@@ -83,6 +83,25 @@ static struct sigaction oldHandler;             /**< @brief Saves old SIGINT han
 
 fuse_operations ffmpegfs_ops;                   /**< @brief FUSE file system operations */
 
+static AVCodecID image_codecs[] =               /**< @brief List of image only (not video) codecs */
+{
+        AV_CODEC_ID_LJPEG,
+        AV_CODEC_ID_JPEGLS,
+        AV_CODEC_ID_MJPEG,
+        AV_CODEC_ID_PNG,
+        AV_CODEC_ID_PPM,
+        AV_CODEC_ID_PBM,
+        AV_CODEC_ID_PGM,
+        AV_CODEC_ID_PGMYUV,
+        AV_CODEC_ID_BMP,
+        AV_CODEC_ID_TIFF,
+        AV_CODEC_ID_GIF,
+        AV_CODEC_ID_PCX,
+        AV_CODEC_ID_TARGA_Y216,
+
+        AV_CODEC_ID_NONE                        // Must be the last in this list
+        };
+
 void init_fuse_ops(void)
 {
     memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
@@ -234,12 +253,34 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
     
     if (format != nullptr)
     {
-        if ((params.current_format(*filepath)->audio_codec_id() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                (params.current_format(*filepath)->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        bool is_image = false;
+
+        if (format->video_codec != AV_CODEC_ID_NONE)
         {
-            *current_format = params.current_format(*filepath);
-            replace_ext(filepath, (*current_format)->format_name());
-            return true;
+            AVCodecID video_codec = av_guess_codec(format, nullptr, filepath->c_str(), format->mime_type, AVMEDIA_TYPE_VIDEO);
+
+            for (int n = 0; image_codecs[n] != AV_CODEC_ID_NONE; n++)
+            {
+                if (image_codecs[n] == video_codec)
+                {
+                    // Video codec is not a motion video (image e.g. BMP, JPG etc.)
+                    is_image = true;
+                    break;
+                }
+            }
+        }
+
+        if (!is_image)
+        {
+            FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
+
+            if ((ffmpegfs_format->audio_codec_id() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                    (ffmpegfs_format->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+            {
+                *current_format = params.current_format(*filepath);
+                replace_ext(filepath, (*current_format)->format_name());
+                return true;
+            }
         }
     }
 

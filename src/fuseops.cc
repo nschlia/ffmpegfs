@@ -737,13 +737,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             {
                 // Pass-through for regular files
                 /**< @todo Feature #2447 / Issue #25:  Reencode to same file format as source file */
-                Logging::debug(origpath, "getattr: Not transcpding existing file.");
+                Logging::trace(origpath, "getattr: Not transcoding existing file.");
                 errno = 0;
                 return 0;
             }
             else
             {
-                Logging::debug(origpath, "getattr: Creating frame set directory of file.");
+                Logging::trace(origpath, "getattr: Creating frame set directory of file.");
 
                 flags |= VIRTUALFLAG_IMAGE_FRAME;
             }
@@ -751,7 +751,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         else
         {
             // Pass-through for regular files
-            Logging::debug(origpath, "getattr: Treating existing file as passthrough.");
+            Logging::trace(origpath, "getattr: Treating existing file as passthrough.");
             errno = 0;
             return 0;
         }
@@ -759,8 +759,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     else if (type == VIRTUALTYPE_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)
     {
         // File pysically exists and is marked as pass-through
-
-        Logging::debug(origpath, "getattr: File is marked as passthrough.");
+        Logging::trace(origpath, "getattr: File is marked as passthrough.");
         errno = 0;
         return 0;
     }

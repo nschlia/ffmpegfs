@@ -2650,13 +2650,13 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     return 0;
 }
 
-int FFmpeg_Transcoder::flush_frames(bool use_flush_packet)
+int FFmpeg_Transcoder::flush_frames_all(bool use_flush_packet)
 {
     int ret = 0;
 
     if (m_in.m_audio.m_codec_ctx != nullptr)
     {
-        int ret2 = flush_frames(m_in.m_audio.m_stream_idx, use_flush_packet);
+        int ret2 = flush_frames_single(m_in.m_audio.m_stream_idx, use_flush_packet);
         if (ret2 < 0)
         {
             ret = ret2;
@@ -2665,7 +2665,7 @@ int FFmpeg_Transcoder::flush_frames(bool use_flush_packet)
 
     if (m_in.m_video.m_codec_ctx != nullptr)
     {
-        int ret2 = flush_frames(m_in.m_video.m_stream_idx, use_flush_packet);
+        int ret2 = flush_frames_single(m_in.m_video.m_stream_idx, use_flush_packet);
         if (ret2 < 0)
         {
             ret = ret2;
@@ -2675,7 +2675,7 @@ int FFmpeg_Transcoder::flush_frames(bool use_flush_packet)
     return ret;
 }
 
-int FFmpeg_Transcoder::flush_frames(int stream_index, bool use_flush_packet)
+int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_packet)
 {
     int ret = 0;
 
@@ -2769,15 +2769,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
         else
         {
             // Flush cached frames, ignoring any errors
-            if (m_in.m_audio.m_codec_ctx != nullptr)
-            {
-                flush_frames(m_in.m_audio.m_stream_idx);
-            }
-
-            if (m_in.m_video.m_codec_ctx != nullptr)
-            {
-                flush_frames(m_in.m_video.m_stream_idx);
-            }
+            flush_frames_all(true);
         }
 
         ret = 0;    // Errors will be reported by exception

@@ -393,14 +393,14 @@ protected:
      * @brief Flush the remaining frames for all streams.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         flush_frames(bool use_flush_packet = true);
+    int                         flush_frames_all(bool use_flush_packet);
      /**
      * @brief Flush the remaining frames
      * @param[in] stream_index - Stream index to flush.
      * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         flush_frames(int stream_index, bool use_flush_packet);
+    int                         flush_frames_single(int stream_index, bool use_flush_packet);
     /**
      * @brief Read frame from source file, decode and store in FIFO.
      * @param[in] finished - 1 if at EOF.
@@ -565,20 +565,17 @@ protected:
      */
     void                        free_filters();
 #endif // !USING_LIBAV
-
     /**
      * @brief Check if stream can be copied from input to output (AUTOCOPY option).
      * @param[in] stream - Input stream to check.
      * @return Returns true if stream can be copied; false if not.
      */
     bool                        can_copy_stream(const AVStream *stream) const;
-
     /**
      * @brief Close and free the resampler context.
      * @return If an open context was closed, returns true; if nothing had been done returns false.
      */
     bool                        close_resample();
-
     /**
      * @brief Init image size rescaler and pixel format converter.
      * @param in_pix_fmt - Input pixel format

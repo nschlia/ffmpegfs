@@ -19,6 +19,7 @@ This is a bugfix/maintenance release with only a few minor features added.
 * Bugfix: Do not add libavresample if libswresample is present. Saves build time.
 * Bugfix: Removed dependency on unused libdvdnav. Saves buildtime.
 * Bugfix: Fixed two (probably rare but possible) crashes.
+* Bugfix: Image now not converted when the destination type is a video format.
 
 Important changes in 1.7 (2019-02-26)
 

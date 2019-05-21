@@ -49,6 +49,7 @@
 #include <map>
 #include <vector>
 #include <regex>
+#include <list>
 #include <assert.h>
 #include <signal.h>
 
@@ -82,24 +83,142 @@ static struct sigaction oldHandler;             /**< @brief Saves old SIGINT han
 
 fuse_operations ffmpegfs_ops;                   /**< @brief FUSE file system operations */
 
-static AVCodecID image_codecs[] =               /**< @brief List of image only (not video) codecs */
+/**
+  *
+  * List of passthrough file extension
+  *
+  * Note: Must be in ascending aplhabetical order for the
+  * binary_search function used on it to work! New elements
+  * must be inserted in the correct position, elements
+  * removed by simply deleting them from the list.
+  */
+static const std::list<std::string> passthrough_map =
 {
-        AV_CODEC_ID_LJPEG,
-        AV_CODEC_ID_JPEGLS,
-        AV_CODEC_ID_MJPEG,
-        AV_CODEC_ID_PNG,
-        AV_CODEC_ID_PPM,
-        AV_CODEC_ID_PBM,
-        AV_CODEC_ID_PGM,
-        AV_CODEC_ID_PGMYUV,
-        AV_CODEC_ID_BMP,
-        AV_CODEC_ID_TIFF,
-        AV_CODEC_ID_GIF,
-        AV_CODEC_ID_PCX,
-        AV_CODEC_ID_TARGA_Y216,
-
-        AV_CODEC_ID_NONE                        // Must be the last in this list
-        };
+    "AA",
+    "ACR",		// Dicom/ACR/IMA file format for medical images
+    "AI",		// PostScript Formats (Ghostscript required)
+    "ANI",		// Animated Cursor
+    "ARW",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "AWD",		// Artweaver format
+    "B3D",		// BodyPaint 3D format
+    "BMP",		// Windows Bitmap
+    "CAM",		// Casio digital camera format (JPG version only)
+    "CEL",
+    "CGM",		// CAD Formats (Shareware PlugIns)
+    "CIN",		// Digital Picture Exchange/Cineon Format
+    "CLP",		// Windows Clipboard
+    "CPT",		// CorelDraw Photopaint format (CPT version 6 only)
+    "CR2",		// Canon RAW format
+    "CRW",		// Canon RAW format
+    "CUR",		// Animated Cursor
+    "DCM",		// Dicom/ACR/IMA file format for medical images
+    "DCR",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "DCX",		// Multipage PCX format
+    "DDS",		// Direct Draw Surface format
+    "DIB",		// Windows Bitmap
+    "DJVU",		// DjVu File Format
+    "DNG",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "DPX",		// Digital Picture Exchange/Cineon Format
+    "DWG",		// CAD Formats (Shareware PlugIns)
+    "DXF",		// Drawing Interchange Format, CAD format
+    "ECW",		// Enhanced Compressed Wavelet
+    "EEF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "EMF",		// Enhanced Metafile Format
+    "EPS",		// PostScript Formats (Ghostscript required)
+    "EXR",		// EXR format
+    "FITS",     // Flexible Image Transport System
+    "FLI",
+    "FLIF",     // Free Lossless Image format
+    "FPX",		// FlashPix format
+    "G3",		// Group 3 Facsimile Apparatus format
+    "GIF",		// Graphics Interchange Format
+    "HDP",		// JPEG-XR/Microsoft HD Photo format
+    "HDR",		// High Dynamic Range format
+    "HEIC",     // High Efficiency Image format
+    "HPGL",		// CAD Formats (Shareware PlugIns)
+    "HRZ",
+    "ICL",		// Icon Library formats
+    "ICO",		// Windows Icon
+    "ICS",		// Image Cytometry Standard format
+    "IFF",		// Interchange File Format
+    "IMA",		// Dicom/ACR/IMA file format for medical images
+    "IMG",		// GEM Raster format
+    "IW44",     // DjVu File Format
+    "J2K",		// JPEG 2000 format
+    "JLS",		// JPEG-LS, JPEG Lossless
+    "JNG",		// Multiple Network Graphics
+    "JP2",		// JPEG 2000 format
+    "JPC",		// JPEG 2000 format
+    "JPEG",     // Joint Photographic Experts Group
+    "JPG",		// Joint Photographic Experts Group
+    "JPM",		// JPEG2000/Part6, LuraDocument.jpm
+    "JXR",		// JPEG-XR/Microsoft HD Photo format
+    "KDC",		// Kodak digital camera format
+    "LBM",		// Interchange File Format
+    "MIFF",
+    "MNG",		// Multiple Network Graphics
+    "MRC",		// MRC format
+    "MrSID ",	// LizardTech's SID Wavelet format
+    "MRW",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "NEF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "NRW",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "ORF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "PBM",		// Portable Bitmap format
+    "PCD",		// Kodak Photo CD
+    "PCX",		// PC Paintbrush format from ZSoft Corporation
+    "PDF",		// PostScript Formats (Ghostscript required)
+    "PDF",		// Portable Document format
+    "PDN",		// Paint.NET file format
+    "PEF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "PGM",		// Portable Greymap format
+    "PICT",		// Macintosh PICT format
+    "PIX",
+    "PNG",		// Portable Network Graphics
+    "PNM",
+    "PPM",		// Portable Pixelmap format
+    "PS",		// PostScript Formats (Ghostscript required)
+    "PSD",		// Adobe PhotoShop format
+    "PSP",		// Paint Shop Pro format
+    "PVR",		// DreamCast Texture format
+    "QTIF ",    // Macintosh PICT format
+    "RAF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "RAS",		// Sun Raster format
+    "RAW",		// Raw (binary) data
+    "RGB",		// Silicon Graphics format
+    "RLE",		// Utah RLE format
+    "RW2",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "SFF",		// Structured Fax File
+    "SFW",		// Seattle Film Works format
+    "SGI",		// Silicon Graphics format
+    "SID",		// LizardTech's SID Wavelet format
+    "SIF",		// SIF format
+    "SRF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "SUN",		// Sun Raster format
+    "Sunras",
+    "SVG",		// CAD Formats (Shareware PlugIns)
+    "TGA",		// Truevision Advanced Raster Graphics Adapter (TARGA)
+    "TIF",		// Tagged Image File Format
+    "TIFF",
+    "TTF",		// True Type Font
+    "TXT",		// Text (ASCII) File (as image)
+    "VTF",		// Valve Texture format
+    "WAD",		// WAD3 Game format
+    "WAL",		// Quake 2 textures
+    "WBC",		// Webshots formats
+    "WBZ",		// Webshots formats
+    "WBMP ",    // WAP Bitmap format
+    "WDP",		// JPEG-XR/Microsoft HD Photo format
+    "WebP ",    // Weppy file format
+    "WMF",		// Windows Metafile Format
+    "WSQ",		// Wavelet Scaler Quantization format
+    "X",
+    "X3F",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
+    "XBM",		// X11 Bitmap
+    "XCF",		// GIMP file format
+    "XPM",
+    "XWD",
+    "YUV "		// Raw (binary) data
+};
 
 void init_fuse_ops(void)
 {
@@ -222,24 +341,9 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
     
     if (format != nullptr)
     {
-        bool is_image = false;
+        std::string ext;
 
-        if (format->video_codec != AV_CODEC_ID_NONE)
-        {
-            AVCodecID video_codec = av_guess_codec(format, nullptr, filepath->c_str(), format->mime_type, AVMEDIA_TYPE_VIDEO);
-
-            for (int n = 0; image_codecs[n] != AV_CODEC_ID_NONE; n++)
-            {
-                if (image_codecs[n] == video_codec)
-                {
-                    // Video codec is not a motion video (image e.g. BMP, JPG etc.)
-                    is_image = true;
-                    break;
-                }
-            }
-        }
-
-        if (!is_image)
+        if (!find_ext(&ext, *filepath) || !std::binary_search(passthrough_map.begin(), passthrough_map.end(), ext, nocasecompare))
         {
             FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
 
@@ -304,7 +408,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
 LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
-    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));
+    filenamemap::iterator it    = filenames.find(sanitise_filepath(virtfilepath));
 
     errno = 0;
 

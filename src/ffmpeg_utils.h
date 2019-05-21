@@ -614,17 +614,24 @@ std::string         sanitise_filepath(std::string * filepath);
 bool                is_album_art(AVCodecID codec_id);
 
 /**
- * @brief Make find case insensitive
+ * @brief nocasecompare to make std::string find operations case insensitive
+ * @param[in] lhs - left hand string
+ * @param[in] rhs - right hand string
+ * @return -1 if lhs < rhs; 0 if lhs == rhs and 1 if lhs > rhs
  */
-struct comp {
+bool                nocasecompare(const std::string & lhs, const std::string &rhs);
+
+struct comp
+{
     /**
-     * @brief operator () to make std::string find operations case insenistive
+     * @brief operator () to make std::string find operations case insensitive
      * @param[in] lhs - left hand string
      * @param[in] rhs - right hand string
      * @return -1 if lhs < rhs; 0 if lhs == rhs and 1 if lhs > rhs
      */
-    bool operator() (const std::string& lhs, const std::string& rhs) const {
-        return strcasecmp(lhs, rhs) < 0;
+    bool operator() (const std::string& lhs, const std::string& rhs) const
+    {
+        return nocasecompare(lhs, rhs);
     }
 };
 

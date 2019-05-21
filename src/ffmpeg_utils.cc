@@ -1293,6 +1293,11 @@ bool is_album_art(AVCodecID codec_id)
     return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
 }
 
+bool nocasecompare(const std::string & lhs, const std::string &rhs)
+{
+    return (strcasecmp(lhs, rhs) < 0);
+}
+
 size_t get_disk_free(std::string & path)
 {
     struct statvfs buf;

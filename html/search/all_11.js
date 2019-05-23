@@ -8,7 +8,7 @@ var searchData=
   ['thread_5fexit',['thread_exit',['../transcode_8cc.html#ab27c735ddd0160ff2541829f9ecf7071',1,'transcode.cc']]],
   ['timerid',['timerid',['../cache__maintenance_8cc.html#a7c22bf62313ce4f2bbe148ca7ba2abd3',1,'cache_maintenance.cc']]],
   ['todo_20list',['Todo List',['../todo.html',1,'']]],
-  ['trace',['trace',['../classLogging.html#a1a9dac8c040170d6ab1314a935eb999c',1,'Logging::trace(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a9be7c1f8cc73e80b09121069f709e77e',1,'Logging::trace(const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2d3e4144aa384b18849ab9a8abad74d6',1,'Logging::TRACE()'],['../logging_8h.html#ad810aaf4b94d7ea8b1436b054c3df4aa',1,'TRACE():&#160;logging.h']]],
+  ['trace',['TRACE',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2d3e4144aa384b18849ab9a8abad74d6',1,'Logging::TRACE()'],['../classLogging.html#a1a9dac8c040170d6ab1314a935eb999c',1,'Logging::trace(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a9be7c1f8cc73e80b09121069f709e77e',1,'Logging::trace(const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../logging_8h.html#ad810aaf4b94d7ea8b1436b054c3df4aa',1,'TRACE():&#160;logging.h']]],
   ['transcode_2ecc',['transcode.cc',['../transcode_8cc.html',1,'']]],
   ['transcode_2eh',['transcode.h',['../transcode_8h.html',1,'']]],
   ['transcode_5ffinish',['transcode_finish',['../transcode_8cc.html#a33f5c5e32ae960358957e09353f15236',1,'transcode.cc']]],

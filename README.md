@@ -11,9 +11,7 @@ FFmpegfs
 News
 ----
 
-* **Work on version 1.95 (2.0 pre-release) now in progress.**
-* Feature: Added transcode videos to frame images option. Video files can be mounted to folders with jpg/png/bmp files for each video frame.
-* Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not be recoded. Added --recodesame option to allow transcoding to the same format.
+* **Work on version 1.96 (2.0 pre-release) now in progress.**
 
 * See [NEWS](NEWS) for details.
 

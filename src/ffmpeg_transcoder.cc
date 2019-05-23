@@ -2874,10 +2874,6 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
 
         if (decode_frame_ptr != nullptr)
         {
-//#ifdef DEBUG_FRAME_SET
-//            fprintf(stderr, "FLUSH!                      |\n");
-//#endif // DEBUG_FRAME_SET
-
             AVPacket pkt;
             AVPacket *flush_packet = nullptr;
             int decoded = 0;

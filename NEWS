@@ -1,13 +1,15 @@
 FFmpegfs NEWS
 
-Important changes in 1.95 (2019-05-XX) YET UNRELEASED
+Important changes in 1.95 (2019-05-23)
+
+This is a pre-release towards the new version 2.0 coming up soon.
 
 * Feature: Added transcode videos to frame images option. Video files can be mounted to folders with jpg/png/bmp files for
          each video frame.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
          be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.8 (2019-05-XX) YET UNRELEASED
+Important changes in 1.8 (2019-05-23)
 
 This is a bugfix/maintenance release with only a few minor features added.
 

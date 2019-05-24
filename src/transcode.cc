@@ -37,6 +37,7 @@
 #include "cache.h"
 #include "logging.h"
 #include "cache_entry.h"
+#include "thread_pool.h"
 
 #include <unistd.h>
 
@@ -45,21 +46,17 @@
   */
 typedef struct THREAD_DATA
 {
-    pthread_mutex_t  m_mutex;                   /**< @brief Signal mutex when thread is running */
-    pthread_cond_t   m_cond;                    /**< @brief Signal mutex when thread is running  */
-    bool             m_initialised;             /**< @brief True when this object is completely initialised */
-    void *           m_arg;                     /**< @brief Opaque argument pointer. Will not be freed by child thread. */
+    std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
+    std::condition_variable m_cond;             /**< @brief Condition when thread is running */
+    bool                    m_initialised;      /**< @brief True when this object is completely initialised */
+    void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *cache;                            /**< @brief Global cache manager object */
-static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
-static volatile unsigned int thread_count;      /**< @brief Number of currently active threads */
+static Cache *              cache;              /**< @brief Global cache manager object */
+static volatile bool        thread_exit;        /**< @brief Used for shutdown: if true, exit all thread */
+extern thread_pool          tp;                 /**< @brief Thread pool object */
 
-extern "C"
-{
-static void *transcoder_thread(void *arg);
-}
-
+static void transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
 
@@ -88,7 +85,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
         if (cache_entry->m_is_decoding)
         {
             bool reported = false;
-        	while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
+            while (!cache_entry->m_cache_info.m_finished && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
             {
                 if (fuse_interrupted())
                 {
@@ -102,12 +99,12 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
                     throw false;
                 }
 
-            if (!reported)
-            {
-                Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
-                reported = true;
-            }
-            sleep(0);
+                if (!reported)
+                {
+                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
+                    reported = true;
+                }
+                sleep(0);
             }
 
             if (reported)
@@ -342,26 +339,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         {
             if (begin_transcode)
             {
-                if (params.m_max_threads && thread_count >= params.m_max_threads)
-                {
-                    Logging::warning(cache_entry->filename(), "Too many active threads. Deferring transcoder start until threads become available.");
-
-                    while (!thread_exit && thread_count >= params.m_max_threads)
-                    {
-                        sleep(0);
-                    }
-
-                    if (thread_count >= params.m_max_threads)
-                    {
-                        Logging::error(cache_entry->filename(), "Unable to start new thread. Cancelling transcode.");
-                        throw static_cast<int>(EBUSY);  // Report resource busy
-                    }
-
-                    Logging::info(cache_entry->filename(), "Threads available again. Continuing now.");
-                }
-
-                pthread_attr_t attr;
-                size_t stack_size = 0;
                 int ret;
 
                 Logging::debug(cache_entry->filename(), "Starting decoder thread.");
@@ -375,76 +352,20 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 // Must decode the file, otherwise simply use cache
                 cache_entry->m_is_decoding = true;
 
-                // Initialise thread creation attributes
-                ret = pthread_attr_init(&attr);
-                if (ret != 0)
-                {
-                    Logging::error(cache_entry->filename(), "Error creating thread attributes: (%1) %2", ret, strerror(ret));
-                    throw ret;
-                }
-
-                if (stack_size > 0)
-                {
-                    ret = pthread_attr_setstacksize(&attr, stack_size);
-                    if (ret != 0)
-                    {
-                        Logging::error(cache_entry->filename(), "Error setting stack size: (%1) %2", ret, strerror(ret));
-                        pthread_attr_destroy(&attr);
-                        throw ret;
-                    }
-                }
-
-                // Make thread joinable
-                ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-                if (ret != 0)
-                {
-                    Logging::error(cache_entry->filename(), "Cannot make thread joinable: (%1) %2", ret, strerror(ret));
-                    pthread_attr_destroy(&attr);
-                    throw ret;
-                }
-
-                /** @bug Perils of the sun: If started in detached state, threads cannot be joined. Not starting in detached state creates a tiny little memory leak. */
-                //ret = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-                //if (ret != 0)
-                //{
-                //  Logging::error(cache_entry->filename(), "Error setting thread detached state: (%1) %2", ret, strerror(ret));
-                //  throw ret;
-                //}
-
                 THREAD_DATA* thread_data = new(std::nothrow) THREAD_DATA;
 
-                thread_data->m_initialised = false;
-                thread_data->m_arg = cache_entry;
+                thread_data->m_initialised  = false;
+                thread_data->m_arg          = cache_entry;
 
-                pthread_mutex_init(&thread_data->m_mutex, nullptr);
-                pthread_cond_init (&thread_data->m_cond, nullptr);
-
-                pthread_mutex_lock(&thread_data->m_mutex);
-                ret = pthread_create(&cache_entry->m_thread_id, &attr, &transcoder_thread, thread_data);
-                if (ret == 0)
                 {
-                    pthread_cond_wait(&thread_data->m_cond, &thread_data->m_mutex);
+                    std::unique_lock<std::mutex> lock(thread_data->m_mutex);
+
+                    tp.new_thread(&transcoder_thread, thread_data);
+
+                    thread_data->m_cond.wait(lock);
                 }
-                pthread_mutex_unlock(&thread_data->m_mutex);
 
                 Logging::debug(cache_entry->filename(), "Decoder thread is running.");
-
-                delete thread_data; // can safely be done here, will not be used in thread from now on
-
-                if (ret != 0)
-                {
-                    Logging::error(cache_entry->filename(), "Error creating thread: (%1) %2", ret, strerror(ret));
-                    pthread_attr_destroy(&attr);
-                    throw ret;
-                }
-
-                // Destroy the thread attributes object, since it is no longer needed
-
-                ret = pthread_attr_destroy(&attr);
-                if (ret != 0)
-                {
-                    Logging::warning(cache_entry->filename(), "Error destroying thread attributes: (%1) %2", ret, strerror(ret));
-                }
 
                 if (cache_entry->m_cache_info.m_error)
                 {
@@ -644,9 +565,8 @@ bool transcoder_cache_clear(void)
 /**
  * @brief Transcoding thread
  * @param[in] arg - Corresponding Cache_Entry object.
- * @return Returns nullptr.
  */
-static void *transcoder_thread(void *arg)
+static void transcoder_thread(void *arg)
 {
     THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
@@ -656,7 +576,7 @@ static void *transcoder_thread(void *arg)
     bool timeout = false;
     bool success = true;
 
-    thread_count++;
+    std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
 
     try
     {
@@ -695,7 +615,7 @@ static void *transcoder_thread(void *arg)
         thread_data->m_initialised = true;
         if (!params.m_prebuffer_size)
         {
-            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+            thread_data->m_cond.notify_all();       // signal that we are running
         }
         else
         {
@@ -733,7 +653,7 @@ static void *transcoder_thread(void *arg)
             {
                 unlocked = true;
                 Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
-                pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+                thread_data->m_cond.notify_all();       // signal that we are running
             }
 
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
@@ -741,7 +661,7 @@ static void *transcoder_thread(void *arg)
                 if (!unlocked && params.m_prebuffer_size)
                 {
                     unlocked = true;
-                    pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+                    thread_data->m_cond.notify_all();  // signal that we are running
                 }
 
                 Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
@@ -763,7 +683,7 @@ static void *transcoder_thread(void *arg)
         if (!unlocked && params.m_prebuffer_size)
         {
             Logging::debug(cache_entry->destname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
-            pthread_cond_signal(&thread_data->m_cond);  // signal that we are running
+            thread_data->m_cond.notify_all();       // signal that we are running
         }
     }
     catch (int _syserror)
@@ -776,7 +696,7 @@ static void *transcoder_thread(void *arg)
         cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
         cache_entry->m_cache_info.m_averror     = success ? 0 : averror;                        // Preserve averror
 
-        pthread_cond_signal(&thread_data->m_cond);  // unlock main thread
+        thread_data->m_cond.notify_all();           // unlock main thread
     }
 
     transcoder->close();
@@ -825,15 +745,11 @@ static void *transcoder_thread(void *arg)
         }
     }
 
-    cache_entry->m_thread_id = 0;
-
     cache->close(&cache_entry, timeout ? CLOSE_CACHE_DELETE : CLOSE_CACHE_NOOPT);
 
-    thread_count--;
+    delete thread_data;
 
     errno = syserror;
-
-    return nullptr;
 }
 
 #ifndef USING_LIBAV

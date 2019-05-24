@@ -43,6 +43,7 @@
 #ifdef USE_LIBBLURAY
 #include "blurayparser.h"
 #endif // USE_LIBBLURAY
+#include "thread_pool.h"
 
 #include <dirent.h>
 #include <unistd.h>
@@ -76,12 +77,14 @@ static void sighandler(int signum);
 static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
-static filenamemap filenames;                   /**< @brief Map files to virtual files */
-static std::vector<char> index_buffer;          /**< @brief Buffer for the virtual script if enabled */
+static filenamemap          filenames;          /**< @brief Map files to virtual files */
+static std::vector<char>    index_buffer;       /**< @brief Buffer for the virtual script if enabled */
 
-static struct sigaction oldHandler;             /**< @brief Saves old SIGINT handler to restore on shutdown */
+static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
 
-fuse_operations ffmpegfs_ops;                   /**< @brief FUSE file system operations */
+fuse_operations             ffmpegfs_ops;       /**< @brief FUSE file system operations */
+
+thread_pool                 tp;                 /**< @brief Thread pool object */
 
 /**
   *
@@ -408,7 +411,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
 LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
-    filenamemap::iterator it    = filenames.find(sanitise_filepath(virtfilepath));
+    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));
 
     errno = 0;
 
@@ -1253,8 +1256,8 @@ static void sighandler(int signum)
 
 /**
  * @brief Initialise filesystem
- * @param[in] conn
- * @return
+ * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
+ * @return nullptr
  */
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
@@ -1287,12 +1290,14 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
         prepare_script();
     }
 
+    tp.init(params.m_max_threads);
+
     return nullptr;
 }
 
 /**
  * @brief Clean up filesystem
- * @param[in] p
+ * @param[in] p - unused
  */
 static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
@@ -1303,6 +1308,8 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     transcoder_exit();
     transcoder_free();
+
+    tp.tear_down();
 
     index_buffer.clear();
 

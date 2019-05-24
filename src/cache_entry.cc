@@ -37,7 +37,6 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     : m_owner(owner)
     , m_ref_count(0)
     , m_virtualfile(virtualfile)
-    , m_thread_id(0)
 {
     m_cache_info.m_origfile = virtualfile->m_origfile;
 
@@ -60,22 +59,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
 Cache_Entry::~Cache_Entry()
 {
-    if (m_thread_id && m_thread_id != pthread_self())
-    {
-        pthread_t thread_id = m_thread_id;
-        // If not same thread, wait for other to finish
-        Logging::warning(filename(), "Waiting for thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 to terminate.", thread_id);
-
-        int s = pthread_join(m_thread_id, nullptr);
-        if (s != 0)
-        {
-            Logging::error(filename(), "Error joining thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 : (%2) %3", thread_id, s, strerror(s));
-        }
-        else
-        {
-            Logging::info(filename(), "Thread id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">1 has terminated.", thread_id);
-        }
-    }
+    std::unique_lock<std::recursive_mutex> lock(m_active_mutex);
 
     delete m_buffer;
 

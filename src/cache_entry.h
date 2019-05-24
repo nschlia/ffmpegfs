@@ -210,7 +210,7 @@ protected:
 public:
     Buffer *                m_buffer;                       /**< @brief Buffer object */
     bool                    m_is_decoding;                  /**< @brief true while file is decoding */
-    pthread_t               m_thread_id;                    /**< @brief ID if decoder thread if currently decoding */
+    std::recursive_mutex    m_active_mutex;                 /**< @brief Mutex while thread is active */
 
     CACHE_INFO              m_cache_info;                   /**< @brief Info about cached object */
 

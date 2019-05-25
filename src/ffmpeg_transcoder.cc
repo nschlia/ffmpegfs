@@ -4075,7 +4075,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_BMP:
     case AV_CODEC_ID_MJPEG:
     {
-        *filesize += width * height * 24 / 8;   // Get the max. size
+        *filesize += static_cast<size_t>(width * height * 24 / 8);   // Get the max. size
         break;
     }
     case AV_CODEC_ID_NONE:

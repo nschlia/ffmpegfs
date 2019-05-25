@@ -54,7 +54,7 @@ void thread_pool::loop_function()
 {
     unsigned int thread_no = ++m_cur_threads;
 
-    Logging::info(nullptr, "Starting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+    Logging::trace(nullptr, "Starting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
 
     while (true)
     {
@@ -69,7 +69,7 @@ void thread_pool::loop_function()
                 break;
             }
 
-            Logging::info(nullptr, "Starting job using pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+            Logging::trace(nullptr, "Starting job using pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
             info = m_thread_queue.front();
             m_thread_queue.pop();
         }
@@ -77,14 +77,14 @@ void thread_pool::loop_function()
         info.m_thread_func(info.m_opaque);
     }
 
-    Logging::info(nullptr, "Exiting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+    Logging::trace(nullptr, "Exiting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
 }
 
 bool thread_pool::new_thread(void (*thread_func)(void *), void *opaque)
 {
     if (!m_queue_shutdown)
     {
-        Logging::info(nullptr, "Queueing new thread. %1 threads already in queue.", m_thread_pool.size());
+        Logging::trace(nullptr, "Queueing new thread. %1 threads already in queue.", m_thread_pool.size());
 
         {
             //std::unique_lock<std::mutex> lock(m_queue_mutex);
@@ -128,7 +128,7 @@ void thread_pool::tear_down(bool silent)
 {
     if (!silent)
     {
-        Logging::info(nullptr, "Tearing down thread pool. %1 threads still in queue.", m_thread_queue.size());
+        Logging::debug(nullptr, "Tearing down thread pool. %1 threads still in queue.", m_thread_queue.size());
     }
 
     m_queue_mutex.lock();

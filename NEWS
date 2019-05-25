@@ -1,5 +1,13 @@
 FFmpegfs NEWS
 
+Important changes in 1.96 (2019-05-XX)
+
+This is a pre-release towards the new version 2.0 coming up soon.
+
+* Feature:
+* Bugfix:
+* Known bug:
+
 Important changes in 1.95 (2019-05-23)
 
 This is a pre-release towards the new version 2.0 coming up soon.
@@ -8,6 +16,14 @@ This is a pre-release towards the new version 2.0 coming up soon.
          each video frame.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
          be recoded. Added --recodesame option to allow transcoding to the same format.
+
+Important changes in 1.9 (2019-05-XX)
+
+* Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before.
+           The thread pool also ensures that not more threads than configured are started. Defaults
+           to 16x the number of processor cores available.
+* Bugfix:
+* Known bug:
 
 Important changes in 1.8 (2019-05-23)
 

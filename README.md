@@ -12,6 +12,8 @@ News
 ----
 
 * **Work on version 1.96 (2.0 pre-release) now in progress.**
+* Feature: Documented the whole project with Doxygen.
+* Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.
 
 * See [NEWS](NEWS) for details.
 

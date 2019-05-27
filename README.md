@@ -10,6 +10,7 @@ FFmpegfs
 
 News
 ----
+**The branch for Version 2 has been renamed. To switch to it, do "git checkout release2.x".**
 
 * **Work on release 1.9 now in progress.**
 * Feature: Documented the whole project with Doxygen.

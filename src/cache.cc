@@ -39,6 +39,71 @@
 #define sqlite3_errstr(rc)  ""              /**< @brief If our version of SQLite hasn't go this function */
 #endif // HAVE_SQLITE_ERRSTR
 
+const Cache::TABLE_DEF Cache::m_table_cache_entry =
+{
+    //
+    // Table name
+    //
+    "cache_entry",
+    //
+    // Primary key
+    //
+    "PRIMARY KEY(`filename`,`desttype`)"
+};
+
+const Cache::TABLE_COLUMNS Cache::m_columns_cache_entry[] =
+{
+    //
+    // Primary key: filename + desttype
+    //
+    { "filename",           "TEXT NOT NULL" },
+    { "desttype",           "CHAR ( 10 ) NOT NULL" },
+    //
+    // Encoding parameters
+    //
+    { "enable_ismv",        "BOOLEAN NOT NULL" },
+    { "audiobitrate",       "UNSIGNED INT NOT NULL" },
+    { "audiosamplerate",    "UNSIGNED INT NOT NULL" },
+    { "videobitrate",       "UNSIGNED INT NOT NULL" },
+    { "videowidth",         "UNSIGNED INT NOT NULL" },
+    { "videoheight",        "UNSIGNED INT NOT NULL" },
+    { "deinterlace",        "BOOLEAN NOT NULL" },
+    //
+    // Encoding results
+    //
+    { "predicted_filesize", "UNSIGNED BIG INT NOT NULL" },
+    { "encoded_filesize",   "UNSIGNED BIG INT NOT NULL" },
+    { "video_frame_count",  "UNSIGNED BIG INT NOT NULL" },
+    { "finished",           "INT NOT NULL" },
+    { "error",              "BOOLEAN NOT NULL" },
+    { "errno",              "INT NOT NULL" },
+    { "averror",            "INT NOT NULL" },
+    { "creation_time",      "DATETIME NOT NULL" },
+    { "access_time",        "DATETIME NOT NULL" },
+    { "file_time",          "DATETIME NOT NULL" },
+    { "file_size",          "UNSIGNED BIG INT NOT NULL" },
+    // Stop
+    { nullptr,              nullptr }
+};
+
+const Cache::TABLE_DEF Cache::m_table_version =
+{
+    //
+    // Table name
+    //
+    "version",
+    //
+    nullptr
+};
+
+const Cache::TABLE_COLUMNS Cache::m_columns_version[] =
+{
+    { "db_version_major",   "INTEGER NOT NULL" },
+    { "db_version_minor",   "INTEGER NOT NULL" },
+    // Stop
+    { nullptr,              nullptr }
+};
+
 Cache::Cache()
     : m_cacheidx_db(nullptr)
     , m_cacheidx_select_stmt(nullptr)
@@ -60,15 +125,386 @@ Cache::~Cache()
     close_index();
 }
 
-bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB structures */
+bool Cache::prepare_stmts()
+{
+    int ret;
+    const char * sql;
+
+    sql =   "INSERT OR REPLACE INTO cache_entry\n"
+            "(filename, desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, video_frame_count, finished, error, errno, averror, creation_time, access_time, file_time, file_size) VALUES\n"
+            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), ?);\n";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare insert: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        return false;
+    }
+
+    sql =   "SELECT desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, video_frame_count, finished, error, errno, averror, strftime('%s', creation_time), strftime('%s', access_time), strftime('%s', file_time), file_size FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        return false;
+    }
+
+    sql =   "DELETE FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare delete: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        return false;
+    }
+
+    return true;
+}
+
+bool Cache::table_exists(const char *table)
+{
+    std::string sql;
+    sqlite3_stmt *  stmt = nullptr;
+    int results = 0;
+    int ret;
+
+    sql = "SELECT Count(*) FROM sqlite_master WHERE type='table' AND name='";
+    sql += table;
+    sql += "'";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        return false;
+    }
+
+    ret = sqlite3_step(stmt);
+
+    if (ret == SQLITE_ROW)
+    {
+        results = sqlite3_column_int(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return (results == 1);
+}
+
+bool Cache::column_exists(const char *table, const char *column)
+{
+    std::string sql;
+    sqlite3_stmt *  stmt = nullptr;
+    int results = 0;
+    int ret;
+
+    sql = "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('";
+    sql += table;
+    sql += "') WHERE name='";
+    sql += column;
+    sql += "';";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        return false;
+    }
+
+    ret = sqlite3_step(stmt);
+
+    if (ret == SQLITE_ROW)
+    {
+        results = sqlite3_column_int(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return (results == 1);
+}
+
+bool Cache::check_min_version(int *db_version_major, int *db_version_minor)
+{
+    std::string sql;
+    sqlite3_stmt *  stmt = nullptr;
+    int ret;
+
+    sql = "SELECT db_version_major, db_version_minor FROM version;";
+
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    {
+        Logging::error(m_cacheidx_file, "Failed to prepare statement for check_min_version: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        return false;
+    }
+
+    ret = sqlite3_step(stmt);
+
+    if (ret == SQLITE_ROW)
+    {
+        *db_version_major = sqlite3_column_int(stmt, 0);
+        *db_version_minor = sqlite3_column_int(stmt, 1);
+    }
+
+    sqlite3_finalize(stmt);
+
+    return (cmp_version(*db_version_major, *db_version_minor, DB_MIN_VERSION_MAJOR, DB_MIN_VERSION_MINOR) >= 0);
+}
+
+int Cache::cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r)
+{
+    if (version_major_l > version_major_r || (version_major_l == version_major_r && version_minor_l > version_minor_r))
+    {
+        return 1;
+    }
+
+    if (version_major_l < version_major_r || (version_major_l == version_major_r && version_minor_l < version_minor_r))
+    {
+        return -1;
+    }
+    return 0;
+}
+
+bool Cache::begin_transaction()
+{
+    char *errmsg = nullptr;
+    const char * sql;
+    int ret;
+
+    sql = "BEGIN TRANSACTION;";
+    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    {
+        Logging::error(m_cacheidx_file, "SQLite3 begin transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        sqlite3_free(errmsg);
+        return false;
+    }
+    return true;
+}
+
+bool Cache::end_transaction()
+{
+    char *errmsg = nullptr;
+    const char * sql;
+    int ret;
+
+    sql = "END TRANSACTION;";
+    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    {
+        Logging::error(m_cacheidx_file, "SQLite3 end transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        sqlite3_free(errmsg);
+        return false;
+    }
+    return true;
+}
+
+bool Cache::rollback_transaction()
+{
+    char *errmsg = nullptr;
+    const char * sql;
+    int ret;
+
+    sql = "ROLLBACK;";
+    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    {
+        Logging::error(m_cacheidx_file, "SQLite3 rollback transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        sqlite3_free(errmsg);
+        return false;
+    }
+    return true;
+}
+
+bool Cache::create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS columns[])
+{
+    char *errmsg = nullptr;
+    std::string sql;
+    int ret;
+
+    sql = "CREATE TABLE `";
+    sql += table->name;
+    sql += "` (\n";
+
+    for (LPCTABLE_COLUMNS col = columns; col->name != nullptr; col++)
+    {
+        sql += "`";
+        sql += col->name;
+        sql += "` ";
+        sql += col->type;
+        if ((col + 1)->name != nullptr)
+        {
+            sql += ",\n";
+        }
+    }
+
+    if (table->primary_key != nullptr)
+    {
+        sql += ",\n";
+        sql += table->primary_key;
+    }
+    sql += "\n";
+    sql += ");\n";
+
+    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+    {
+        Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+        sqlite3_free(errmsg);
+        return false;
+    }
+    return true;
+}
+
+bool Cache::upgrade_db_1(int *db_version_major, int *db_version_minor)
+{
+    char *errmsg = nullptr;
+    int ret;
+
+    if (!column_exists("cache_entry", "video_frame_count"))
+    {
+        // If video_frame_count is missing, this db is definetly old
+        std::string sql;
+
+        Logging::debug(m_cacheidx_file, "Adding `video_frame_count` column.");
+
+        // Add `video_frame_count` UNSIGNED BIG INT NOT NULL DEFAULT 0
+        sql = "ALTER TABLE `";
+        sql += m_table_cache_entry.name;
+        sql += "` ADD COLUMN `video_frame_count` UNSIGNED BIG INT NOT NULL DEFAULT 0;\n";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+
+        Logging::debug(m_cacheidx_file, "Altering `finished` from BOOLEAN to INT.");
+
+        //ALTER `finished` from BOOLEAN to INT NOT NULL
+        // sqlite can't do that for us, we must...
+        //
+        // 1. Rename `cache_entry` to `cache_entry_old`
+        // 2. Create new table `cache_entry` with new structure
+        // 3. Copy all data from `cache_entry_old` to `cache_entry`, converting old to new column
+        // 4. Delete `cache_entry_old`
+
+        sql = "PRAGMA foreign_keys=off;\n";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+
+        // Step 1
+        sql = "ALTER TABLE `";
+        sql += m_table_cache_entry.name;
+        sql += "` RENAME TO `";
+        sql += m_table_cache_entry.name;
+        sql += "_old`;\n";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+
+        // Step 2
+        if (!create_table_cache_entry(&m_table_cache_entry, m_columns_cache_entry))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
+            return false;
+        }
+
+        // Step 3
+        {
+            char *errmsg = nullptr;
+            std::string sql;
+            std::string columns;
+            int ret;
+
+            for (LPCTABLE_COLUMNS col = m_columns_cache_entry; col->name != nullptr; col++)
+            {
+                columns += "`";
+                columns += col->name;
+                columns += "`";
+                if ((col + 1)->name != nullptr)
+                {
+                    columns += ",";
+                }
+            }
+
+            sql = "INSERT INTO `";
+            sql += m_table_cache_entry.name;
+            sql += "` (";
+            sql += columns;
+            sql += ")\nSELECT ";
+            sql += columns;
+            sql += " FROM `";
+            sql += m_table_cache_entry.name;
+            sql += "_old`;";
+
+            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            {
+                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                sqlite3_free(errmsg);
+                return false;
+            }
+        }
+
+        //    Old 0 is RESULTCODE_NONE (0)
+        //    Old 1 is RESULTCODE_FINISHED (2)
+        sql = "UPDATE `";
+        sql += m_table_cache_entry.name;
+        sql += "`\n";
+        sql += "SET `finished` = 3\n";
+        sql += "WHERE `finished` = 1\n";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error updating column `finished`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+
+        // Step 4        
+        sql = "DROP TABLE `cache_entry_old`";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+
+        sql = "PRAGMA foreign_keys=on;\n";
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        {
+            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            sqlite3_free(errmsg);
+            return false;
+        }
+    }
+
+    // Update DB version
+    Logging::debug(m_cacheidx_file, "Updating version table to V%1.%2.", DB_VERSION_MAJOR, DB_VERSION_MINOR);
+
+    const char *sql;
+    sql = "UPDATE `version` SET db_version_major = " TOSTRING(DB_VERSION_MAJOR) ", db_version_minor = " TOSTRING(DB_VERSION_MINOR) ";\n";
+    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    {
+        Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
+        sqlite3_free(errmsg);
+        return false;
+    }
+    *db_version_major = DB_VERSION_MAJOR;
+    *db_version_minor = DB_VERSION_MINOR;
+
+    Logging::info(m_cacheidx_file, "Database successfully upgraded to V%1.%2.", *db_version_major, *db_version_minor);
+
+    return true;
+}
+
+bool Cache::load_index()
 {
     bool success = true;
 
     try
     {
         char *errmsg = nullptr;
-        const char * sql;
         int ret;
+        bool new_database = false;
+        bool need_upate = false;
 
         transcoder_cache_path(m_cacheidx_file);
 
@@ -108,46 +544,72 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
             throw false;
         }
 
-        // Create cache_entry table not already existing
-        sql =
-                "CREATE TABLE IF NOT EXISTS `cache_entry` (\n"      /**< @todo Add duration to list */
-                //
-                // Primary key: filename + desttype
-                //
-                "    `filename`             TEXT NOT NULL,\n"
-                "    `desttype`             CHAR ( 10 ) NOT NULL,\n"
-                //
-                // Encoding parameters
-                //
-                "    `enable_ismv`          BOOLEAN NOT NULL,\n"
-                "    `audiobitrate`         UNSIGNED INT NOT NULL,\n"
-                "    `audiosamplerate`      UNSIGNED INT NOT NULL,\n"
-                "    `videobitrate`         UNSIGNED INT NOT NULL,\n"
-                "    `videowidth`           UNSIGNED INT NOT NULL,\n"
-                "    `videoheight`          UNSIGNED INT NOT NULL,\n"
-                "    `deinterlace`          BOOLEAN NOT NULL,\n"
-                //
-                // Encoding results
-                //
-                "    `predicted_filesize`	UNSIGNED BIG INT NOT NULL,\n"
-                "    `encoded_filesize`     UNSIGNED BIG INT NOT NULL,\n"
-                "    `video_frame_count`    UNSIGNED BIG INT NOT NULL,\n"
-                "    `finished`             INT NOT NULL,\n"
-                "    `error`                BOOLEAN NOT NULL,\n"
-                "    `errno`                INT NOT NULL,\n"
-                "    `averror`              INT NOT NULL,\n"
-                "    `creation_time`        DATETIME NOT NULL,\n"
-                "    `access_time`          DATETIME NOT NULL,\n"
-                "    `file_time`            DATETIME NOT NULL,\n"
-                "    `file_size`            UNSIGNED BIG INT NOT NULL,\n"
-                "    PRIMARY KEY(`filename`,`desttype`)\n"
-                ");\n";
-        //"CREATE UNIQUE INDEX IF NOT EXISTS `idx_cache_entry_key` ON `cache_entry` (`filename`,`desttype`);\n";
-
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+        // Make sure the next changes are either all successfull or rolled back
+        if (!begin_transaction())
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
-            sqlite3_free(errmsg);
+            throw false;
+        }
+
+        // Check  if we got a new, empty database and create necessary tables
+
+        // Create cache_entry table if not already existing
+        if (!table_exists("cache_entry"))
+        {
+            Logging::debug(m_cacheidx_file, "Creating 'cache_entry' table in database.");
+
+            if (!create_table_cache_entry(&m_table_cache_entry, m_columns_cache_entry))
+            {
+                Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
+                throw false;
+            }
+
+            new_database = true;    //  Created a new database
+        }
+
+        // If version table does not exist add it
+        if (!table_exists("version"))
+        {
+            const char * sql;
+
+            Logging::debug(m_cacheidx_file, "Creating 'version' table in database.");
+
+            if (!create_table_cache_entry(&m_table_version, m_columns_version))
+            {
+                Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
+                throw false;
+            }
+
+            sql = "INSERT INTO `version` (db_version_major, db_version_minor) VALUES (" TOSTRING(DB_VERSION_MAJOR) ", " TOSTRING(DB_VERSION_MINOR) ");\n";
+            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+            {
+            	Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
+                sqlite3_free(errmsg);
+                throw false;
+            }
+
+            if (!new_database)
+            {
+                // Added version only, old database, need upgrade
+                need_upate = true;
+            }
+        }
+
+        // Check if database needs a structure upgrade
+        int db_version_major = DB_BASE_VERSION_MAJOR;
+        int db_version_minor = DB_BASE_VERSION_MINOR;
+        if (need_upate || !check_min_version(&db_version_major, &db_version_minor))
+        {
+            // No version table found, or minimum version too low, do an upgrade.
+            Logging::warning(m_cacheidx_file, "Database version is %1.%2, but a least %3.%4 required. Upgrading database now.", db_version_major, db_version_minor, DB_MIN_VERSION_MAJOR, DB_MIN_VERSION_MINOR);
+
+            if (!upgrade_db_1(&db_version_major, &db_version_minor))
+            {
+                throw false;
+            }
+        }
+
+        if (!end_transaction())
+        {
             throw false;
         }
 
@@ -159,30 +621,8 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 #endif // HAVE_SQLITE_CACHEFLUSH
 
         // prepare the statements
-
-        sql =   "INSERT OR REPLACE INTO cache_entry\n"
-                "(filename, desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, video_frame_count, finished, error, errno, averror, creation_time, access_time, file_time, file_size) VALUES\n"
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), ?);\n";
-
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, nullptr)))
+        if (!prepare_stmts())
         {
-            Logging::error(m_cacheidx_file, "Failed to prepare insert: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
-            throw false;
-        }
-
-        sql =   "SELECT desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, predicted_filesize, encoded_filesize, video_frame_count, finished, error, errno, averror, strftime('%s', creation_time), strftime('%s', access_time), strftime('%s', file_time), file_size FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
-
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, nullptr)))
-        {
-            Logging::error(m_cacheidx_file, "Failed to prepare select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
-            throw false;
-        }
-
-        sql =   "DELETE FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
-
-        if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, nullptr)))
-        {
-            Logging::error(m_cacheidx_file, "Failed to prepare delete: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
             throw false;
         }
     }

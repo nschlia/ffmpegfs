@@ -23,7 +23,7 @@
  * @author Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
- 
+
 #ifndef CACHE_H
 #define CACHE_H
 
@@ -33,6 +33,19 @@
 
 #include <map>
 #include <sqlite3.h>
+
+// The oldest database version (Release < 1.95)
+#define     DB_BASE_VERSION_MAJOR   1
+#define     DB_BASE_VERSION_MINOR   0
+
+// Current database version
+#define     DB_VERSION_MAJOR        1
+#define     DB_VERSION_MINOR        95
+
+// Required database version is 1.95
+#define     DB_MIN_VERSION_MAJOR    1
+#define     DB_MIN_VERSION_MINOR    95
+
 /**
   * @brief RESULTCODE of transcoding operation
   */
@@ -85,6 +98,22 @@ class Cache
 {
     typedef std::pair<std::string, std::string> cache_key_t;
     typedef std::map<cache_key_t, Cache_Entry *> cache_t;
+public:
+    typedef struct
+    {
+        const char *    name;
+        const char *    primary_key;
+    } TABLE_DEF;
+    typedef TABLE_DEF const *LPCTABLE_DEF;
+    typedef TABLE_DEF *LPTABLE_DEF;
+
+    typedef struct
+    {
+        const char *    name;
+        const char *    type;
+    } TABLE_COLUMNS;
+    typedef TABLE_COLUMNS const *LPCTABLE_COLUMNS;
+    typedef TABLE_COLUMNS *LPTABLE_COLUMNS;
 
     friend class Cache_Entry;
 
@@ -165,7 +194,7 @@ public:
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(const std::string & filename, const std::string &desttype);
-
+    
 protected:
     /**
      * @brief Read cache file info.
@@ -210,8 +239,86 @@ protected:
      * @return Returns the SQL string bound to the statement handle.
      */
     std::string             expanded_sql(sqlite3_stmt *pStmt);
+    /**
+     * @brief Prepare all SQL statements
+     * @return Returns true on success, false on error.
+     */
+    bool                    prepare_stmts();
+    /**
+     * @brief Check if SQL table exists in database.
+     * @param[in] table - name of table
+     * @return Returns true if table exists, false if not.
+     */
+    bool                    table_exists(const char *table);
+    /**
+     * @brief Check if column exists in SQL table.
+     * @param[in] table - name of table
+     * @param[in] column - name of column
+     * @return Returns true if table exists, false if not.
+     */
+    bool                    column_exists(const char *table, const char *column);
+    /**
+     * @brief Check the db version if upgrade needed.
+     * @param[out] db_version_major - Upon return, contains the major database version.
+     * @param[out] db_version_minor - Upon return, contains the minor database version.
+     * @return Returns true of version is OK, false if upgrade is needed.
+     */
+    bool                    check_min_version(int *db_version_major, int *db_version_minor);
+    /**
+     * @brief Compare two versions.
+     * @param[in] db_version_major_l - Left major version
+     * @param[in] db_version_minor_l - Left minor version
+     * @param[in] db_version_major_r - Right major version
+     * @param[in] db_version_minor_r - Right minor version
+     * @return Returns +1 if left version is larger then right, 0 if versions are the same, -1 if right version is larger than left.
+     */
+    int cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r);
+    /**
+     * @brief Begin a database transactio.n
+     * @return Returns true on success; false on error.
+     */
+    bool                    begin_transaction();
+    /**
+     * @brief End a database transaction.
+     * @return Returns true on success; false on error.
+     */
+    bool                    end_transaction();
+    /**
+     * @brief Rollback a database transaction.
+     * @return Returns true on success; false on error.
+     */
+    bool                    rollback_transaction();
+    /**
+     * @brief Create cache_entry table
+     * @return
+     * @return Returns true on success; false on error.
+     */
+    bool                    create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS columns[]);
+    /*
+     */
+#define     DB_VERSION_MAJOR_1      1       /**< @brief upgrade_db_1 upgrades to this major version */
+#define     DB_VERSION_MINOR_1      95      /**< @brief upgrade_db_1 upgrades to this minor version */
+    /**
+     * @brief Upgrade database from version below 1.95
+     * @param[out] db_version_major - Upon return, contains the new major database version.
+     * @param[out] db_version_minor - Upon return, contains the new minor database version.
+     * @return Returns true on success; false on error.
+     */
+    bool                    upgrade_db_1(int *db_version_major, int *db_version_minor);
+    // Future upgrades here...
+    //bool                    upgrade_db_2(int *db_version_major, int *db_version_minor);
+    //bool                    upgrade_db_3(int *db_version_major, int *db_version_minor);
 
 private:
+    static const
+    TABLE_DEF               m_table_cache_entry;
+    static const
+    TABLE_COLUMNS           m_columns_cache_entry[];
+    static const
+    TABLE_DEF               m_table_version;
+    static const
+    TABLE_COLUMNS           m_columns_version[];
+
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_cacheidx_file;                /**< @brief Name of SQLite cache index database */
     sqlite3*                m_cacheidx_db;                  /**< @brief SQLite handle of cache index database */

@@ -146,6 +146,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 exec error: %1\n%2", ret, errmsg);
+            sqlite3_free(errmsg);
             throw false;
         }
 

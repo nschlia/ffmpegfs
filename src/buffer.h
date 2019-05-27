@@ -220,7 +220,7 @@ public:
     static bool             remove_file(const std::string & filename);
     /**
      * @brief Check if we have the requested frame number. Works only when processing a frame set.
-     * @param frame_no - 1...frames
+     * @param[in] frame_no - 1...frames
      * @return Returns true of frame is already in cache, false if not.
      */
     bool                    have_frame(uint32_t frame_no);

@@ -240,7 +240,7 @@ public:
 
     /**
      * @brief Seek to a specific frame. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
-     * @param frame_no - Frame number to seek 1...n
+     * @param[in] frame_no - Frame number to seek 1...n
      * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
      */
     int                         seek_frame(uint32_t frame_no);
@@ -635,14 +635,14 @@ protected:
      * @brief Actually perform seek for frame.
      * This function ensures that it is positioned at a key frame, so the resulting position may be different from the requested.
      * If e.g. frame no. 24 is a key frame, and frame_no is set to 28, the actual position will be at frame 24.
-     * @param frame_no - Frame number 1...n to seek to.
+     * @param[in] frame_no - Frame number 1...n to seek to.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int                         do_seek_frame(uint32_t frame_no);
     /**
      * @brief Skip decoded frames or force seek to frame_no.
-     * @param frame_no - Frame to seek to.
-     * @param forced_seek - Force seek even if np frames skipped.
+     * @param[in] frame_no - Frame to seek to.
+     * @param[in] forced_seek - Force seek even if np frames skipped.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);

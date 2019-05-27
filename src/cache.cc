@@ -74,7 +74,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (mktree(m_cacheidx_file.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            Logging::error(m_cacheidx_file, "Error creating cache directory: (%1) %2", errno, strerror(errno));
+            Logging::error(m_cacheidx_file, "Error creating cache directory: (%1) %2\n%3", errno, strerror(errno), m_cacheidx_file.c_str());
             throw false;
         }
 
@@ -83,20 +83,20 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
         // initialise engine
         if (SQLITE_OK != (ret = sqlite3_initialize()))
         {
-            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 library: %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 library: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         // open connection to a DB
         if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 connection: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 connection: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
         {
-            Logging::error(m_cacheidx_file, "Failed to set SQLite3 busy timeout: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to set SQLite3 busy timeout: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -104,7 +104,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
         // We support Sqlite from 3.7.13 anyway
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", nullptr, nullptr, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to set SQLite3 WAL mode: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to set SQLite3 WAL mode: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
             throw false;
         }
 
@@ -145,7 +145,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error: %1\n%2", ret, errmsg);
+            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
             sqlite3_free(errmsg);
             throw false;
         }
@@ -165,7 +165,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to prepare insert: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to prepare insert: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
             throw false;
         }
 
@@ -173,7 +173,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to prepare select: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to prepare select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
             throw false;
         }
 
@@ -181,7 +181,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
 
         if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to prepare delete: %1\n%2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_file, "Failed to prepare delete: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
             throw false;
         }
     }
@@ -203,7 +203,7 @@ bool Cache::flush_index()
         // Flush cache to disk
         if (SQLITE_OK != (ret = sqlite3_db_cacheflush(m_cacheidx_db)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 cache flush error: %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "SQLite3 cache flush error: (%1) %2", ret, sqlite3_errstr(ret));
             return false;
         }
     }
@@ -230,13 +230,13 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info->m_origfile.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error 'filename': %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype, -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error 'desttype': %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
@@ -271,7 +271,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
         }
         else if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) select statement: %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) select statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -348,7 +348,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
 
         if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) insert statement: %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) insert statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -386,13 +386,13 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 1, filename.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error 'filename': %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 2, desttype.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error 'desttype': %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
@@ -400,7 +400,7 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
 
         if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) delete statement: %1\n%2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) delete statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -573,7 +573,7 @@ bool Cache::prune_expired()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -652,7 +652,7 @@ bool Cache::prune_cache_size()
         }
         else
         {
-            Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
     }
 
@@ -740,7 +740,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         }
         else
         {
-            Logging::error(cachepath, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(cachepath, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
 
         sqlite3_finalize(stmt);
@@ -812,7 +812,7 @@ bool Cache::clear()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: %1\n%2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);

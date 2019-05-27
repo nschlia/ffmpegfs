@@ -639,8 +639,8 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 
 /**
  * @brief Calculate the video frame count.
- * @param origpath - Path of original file.
- * @param virtualfile - Virtual file object to modify.
+ * @param[in] origpath - Path of original file.
+ * @param[in] virtualfile - Virtual file object to modify.
  * @return On success, returns 0. On error, returns -errno.
  */
 static int get_video_frame_count(std::string & origpath, LPVIRTUALFILE virtualfile)

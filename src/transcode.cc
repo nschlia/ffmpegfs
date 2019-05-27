@@ -52,8 +52,8 @@ typedef struct THREAD_DATA
     void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *              cache;              /**< @brief Global cache manager object */
-static volatile bool        thread_exit;        /**< @brief Used for shutdown: if true, exit all thread */
+static Cache *cache;                            /**< @brief Global cache manager object */
+static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
 
 static void transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
@@ -136,11 +136,11 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
     }
 
     // Check encoded buffer size.
-    cache_entry->m_cache_info.m_encoded_filesize = cache_entry->m_buffer->buffer_watermark();
-    cache_entry->m_cache_info.m_finished = true;
-    cache_entry->m_is_decoding = false;
-    cache_entry->m_cache_info.m_errno = 0;
-    cache_entry->m_cache_info.m_averror = 0;
+    cache_entry->m_cache_info.m_encoded_filesize    = cache_entry->m_buffer->buffer_watermark();
+    cache_entry->m_cache_info.m_finished 			= true;
+    cache_entry->m_is_decoding                      = false;
+    cache_entry->m_cache_info.m_errno               = 0;
+    cache_entry->m_cache_info.m_averror             = 0;
 
     Logging::debug(transcoder->destname(), "Finishing file.");
 
@@ -721,10 +721,10 @@ static void transcoder_thread(void *arg)
     }
     else
     {
-        cache_entry->m_is_decoding = false;
-        cache_entry->m_cache_info.m_error   = !success;
-        cache_entry->m_cache_info.m_errno   = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
-        cache_entry->m_cache_info.m_averror = success ? 0 : averror;                        // Preserve averror
+        cache_entry->m_is_decoding                  = false;
+        cache_entry->m_cache_info.m_error           = !success;
+        cache_entry->m_cache_info.m_errno           = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
+        cache_entry->m_cache_info.m_averror         = success ? 0 : averror;                        // Preserve averror
 
         if (success)
         {

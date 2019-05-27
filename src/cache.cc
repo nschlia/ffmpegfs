@@ -60,15 +60,6 @@ Cache::~Cache()
     close_index();
 }
 
-/**
- * @brief SQLite callback function. Not used.
- * @return Returns 0,
- */
-static int callback(void * /*NotUsed*/, int /*argc*/, char ** /*argv*/, char ** /*azColName*/)
-{
-    return 0;
-}
-
 bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB structures */
 {
     bool success = true;
@@ -152,7 +143,7 @@ bool Cache::load_index()    /**< @todo Implement versioning + auto-update of DB 
                 ");\n";
         //"CREATE UNIQUE INDEX IF NOT EXISTS `idx_cache_entry_key` ON `cache_entry` (`filename`,`desttype`);\n";
 
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, callback, nullptr, &errmsg)))
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 exec error: %1\n%2", ret, errmsg);
             throw false;

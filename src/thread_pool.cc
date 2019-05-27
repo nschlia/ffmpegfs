@@ -109,6 +109,23 @@ bool thread_pool::new_thread(void (*thread_func)(void *), void *opaque)
     }
 }
 
+unsigned int thread_pool::current_running() const
+{
+    return m_threads_running;
+}
+
+size_t thread_pool::current_queued()
+{
+    std::lock_guard<std::mutex> lock(m_queue_mutex);
+
+    return m_thread_queue.size();
+}
+
+size_t thread_pool::pool_size() const
+{
+    return m_thread_pool.size();
+}
+
 void thread_pool::init(unsigned int num_threads /*= 0*/)
 {
     if (num_threads)

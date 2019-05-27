@@ -174,6 +174,12 @@ class Cache_Entry;
  */
 extern fuse_operations ffmpegfs_ops;
 
+class thread_pool;
+/**
+ * @brief Thread pool object
+ */
+extern thread_pool*         tp;
+
 /**
  * @brief Initialise FUSE operation structure.
  */

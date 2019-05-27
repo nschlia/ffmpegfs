@@ -19,17 +19,32 @@ class thread_pool
     } THREADINFO;
 
 public:
+    /**
+     * @brief Construct a thread_pool object.
+     * @param[in] num_threads - Optional: number of threads to create in pool. Defaults to Defaults to 4 x number of CPU cores.
+     */
     explicit thread_pool(unsigned int num_threads = std::thread::hardware_concurrency() * 4);
+    /**
+     * @brief Object destructor. Ends all threads and cleans up resources.
+     */
     virtual ~thread_pool();
 
-    void        init(unsigned int num_threads = 0);
-    void        tear_down(bool silent = false);
+    /**
+     * @brief Initialise thread pool.
+     * @param[in] num_threads - Optional: number of threads to create in pool. Defaults to Defaults to 4x number of CPU cores.
+     */
+    void            init(unsigned int num_threads = 0);
+    void            tear_down(bool silent = false);
 
-    bool        new_thread(void (*thread_func)(void *), void *opaque);
+    bool            new_thread(void (*thread_func)(void *), void *opaque);
+
+    unsigned int    current_running() const;
+    size_t          current_queued();
+    size_t          pool_size() const;
 
 private:
-    static void loop_function_starter(thread_pool &tp);
-    void        loop_function();
+    static void     loop_function_starter(thread_pool &tp);
+    void            loop_function();
 
 protected:
     std::vector<std::thread>    m_thread_pool;      /**< Thread pool */
@@ -37,8 +52,9 @@ protected:
     std::condition_variable     m_queue_condition;  /**< Condition for critical section */
     std::queue<THREADINFO>      m_thread_queue;     /**< Thread queue parameters */
     volatile bool               m_queue_shutdown;   /**< If true all threads have been shut down */
-    unsigned int                m_num_threads;      /**< Max. number of threads. Defaults to 4 x number of CPU cores. */
+    unsigned int                m_num_threads;      /**< Max. number of threads. Defaults to 4x number of CPU cores. */
     unsigned int                m_cur_threads;      /**< Current number of threads. */
+    volatile unsigned int       m_threads_running;  /**< Currently running threads. */
 };
 
 #endif // THREAD_POOL_H

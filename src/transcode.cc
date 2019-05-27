@@ -51,13 +51,13 @@ typedef struct THREAD_DATA
 {
     std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
     std::condition_variable m_cond;             /**< @brief Condition when thread is running */
+    volatile bool           m_lock_guard;        /**< @brief Lock guard to avoid spurious or missed unlocks */
     bool                    m_initialised;      /**< @brief True when this object is completely initialised */
     void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *              cache;              /**< @brief Global cache manager object */
-static volatile bool        thread_exit;        /**< @brief Used for shutdown: if true, exit all thread */
-extern thread_pool          tp;                 /**< @brief Thread pool object */
+static Cache *cache;                            /**< @brief Global cache manager object */
+static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
 
 static void transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
@@ -365,13 +365,17 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 thread_data->m_initialised  = false;
                 thread_data->m_arg          = cache_entry;
+                thread_data->m_lock_guard    = false;
 
                 {
                     std::unique_lock<std::mutex> lock(thread_data->m_mutex);
 
-                    tp.new_thread(&transcoder_thread, thread_data);
+                    tp->new_thread(&transcoder_thread, thread_data);
 
-                    thread_data->m_cond.wait(lock);
+                    while (!thread_data->m_lock_guard)
+                    {
+                        thread_data->m_cond.wait(lock);
+                    }
                 }
 
                 Logging::debug(cache_entry->filename(), "Decoder thread is running.");
@@ -750,6 +754,7 @@ static void transcoder_thread(void *arg)
         {
             // Unlock frame set from beginning
             unlocked = true;
+            thread_data->m_lock_guard = true;
             thread_data->m_cond.notify_all();       // signal that we are running
         }
         else
@@ -798,6 +803,7 @@ static void transcoder_thread(void *arg)
             {
                 unlocked = true;
                 Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
+                thread_data->m_lock_guard = true;
                 thread_data->m_cond.notify_all();       // signal that we are running
             }
 
@@ -806,6 +812,7 @@ static void transcoder_thread(void *arg)
                 if (!unlocked && params.m_prebuffer_size)
                 {
                     unlocked = true;
+                    thread_data->m_lock_guard = true;
                     thread_data->m_cond.notify_all();  // signal that we are running
                 }
 
@@ -828,6 +835,7 @@ static void transcoder_thread(void *arg)
         if (!unlocked && params.m_prebuffer_size)
         {
             Logging::debug(cache_entry->destname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
+            thread_data->m_lock_guard = true;
             thread_data->m_cond.notify_all();       // signal that we are running
         }
     }
@@ -841,6 +849,7 @@ static void transcoder_thread(void *arg)
         cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
         cache_entry->m_cache_info.m_averror     = success ? 0 : averror;                        // Preserve averror
 
+        thread_data->m_lock_guard = true;
         thread_data->m_cond.notify_all();           // unlock main thread
     }
 

@@ -161,7 +161,7 @@ public:
     int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
-     * @param buffer - Cache buffer to be written.
+     * @param[in] buffer - Cache buffer to be written.
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_file(Buffer* buffer);
@@ -622,12 +622,12 @@ protected:
     bool                        close_resample();
     /**
      * @brief Init image size rescaler and pixel format converter.
-     * @param in_pix_fmt - Input pixel format
-     * @param in_width - Input image width
-     * @param in_height - Input image height
-     * @param out_pix_fmt - Output pixel format
-     * @param out_width - Output image width
-     * @param out_height - Output pixel format
+     * @param[in] in_pix_fmt - Input pixel format
+     * @param[in] in_width - Input image width
+     * @param[in] in_height - Input image height
+     * @param[in] out_pix_fmt - Output pixel format
+     * @param[in] out_width - Output image width
+     * @param[in] out_height - Output pixel format
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);

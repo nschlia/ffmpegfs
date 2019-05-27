@@ -4,7 +4,8 @@ Important changes in 1.96 (2019-05-XX)
 
 This is a pre-release towards the new version 2.0 coming up soon.
 
-* Feature:
+* Feature: Added version check and auto update to cache database. Older database versions will
+         now automaically upgraded to the latest structure.
 * Bugfix:
 * Known bug:
 

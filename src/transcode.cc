@@ -54,7 +54,6 @@ typedef struct THREAD_DATA
 
 static Cache *              cache;              /**< @brief Global cache manager object */
 static volatile bool        thread_exit;        /**< @brief Used for shutdown: if true, exit all thread */
-extern thread_pool          tp;                 /**< @brief Thread pool object */
 
 static void transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
@@ -360,7 +359,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 {
                     std::unique_lock<std::mutex> lock(thread_data->m_mutex);
 
-                    tp.new_thread(&transcoder_thread, thread_data);
+                    tp->new_thread(&transcoder_thread, thread_data);
 
                     thread_data->m_cond.wait(lock);
                 }

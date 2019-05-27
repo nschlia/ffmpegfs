@@ -84,7 +84,7 @@ static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT han
 
 fuse_operations             ffmpegfs_ops;       /**< @brief FUSE file system operations */
 
-thread_pool                 tp;                 /**< @brief Thread pool object */
+thread_pool*                tp;                 /**< @brief Thread pool object */
 
 /**
   *
@@ -1290,7 +1290,12 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
         prepare_script();
     }
 
-    tp.init(params.m_max_threads);
+    if (tp == nullptr)
+    {
+        tp = new(std::nothrow)thread_pool(params.m_max_threads);
+    }
+
+    tp->init();
 
     return nullptr;
 }
@@ -1309,7 +1314,12 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     transcoder_exit();
     transcoder_free();
 
-    tp.tear_down();
+    if (tp != nullptr)
+    {
+        tp->tear_down();
+        delete tp;
+        tp = nullptr;
+    }
 
     index_buffer.clear();
 

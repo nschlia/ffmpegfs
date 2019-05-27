@@ -65,6 +65,7 @@ static void prepare_script();
 static void translate_path(std::string *origpath, const char* path);
 static bool transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
+static int get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile);
 
 static int ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -643,7 +644,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
  * @param[in] virtualfile - Virtual file object to modify.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int get_video_frame_count(std::string & origpath, LPVIRTUALFILE virtualfile)
+static int get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
     if (cache_entry == nullptr)

@@ -53,13 +53,13 @@ struct AVAudioFifo;
 /**
  * @brief The #FFmpeg_Transcoder class
  *
- * @bug Issue #32: After transcoding several files VMEM usage sometimes goes off the edge
+ * @bug Issue #32: After transcoding several files VMEM usage sometimes goes off the edge.\n
  * After playing files for a while, sometimes the VME usage goes up to the machine
  * limit, In this particular case the machine has 32 GB RAM with 13 GB free.
  * Never happens if the files are copied via Samba or directly, but only if played
  * through a web server. Probably has to do with slow connections and time outs.
  *
- * @bug Issue #33: H265 decoding does not work
+ * @bug Issue #33: H265 decoding does not work.\n
  * Decoding H265 files fails.
  */
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles

@@ -1323,5 +1323,5 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     index_buffer.clear();
 
-    Logging::debug(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }

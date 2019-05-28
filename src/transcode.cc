@@ -40,6 +40,7 @@
 #include "thread_pool.h"
 
 #include <unistd.h>
+#include <atomic>
 
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread
@@ -48,7 +49,7 @@ typedef struct THREAD_DATA
 {
     std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
     std::condition_variable m_cond;             /**< @brief Condition when thread is running */
-    volatile bool           m_lock_guard;        /**< @brief Lock guard to avoid spurious or missed unlocks */
+    std::atomic_bool        m_lock_guard;       /**< @brief Lock guard to avoid spurious or missed unlocks */
     bool                    m_initialised;      /**< @brief True when this object is completely initialised */
     void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;

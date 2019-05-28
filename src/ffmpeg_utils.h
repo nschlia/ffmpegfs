@@ -640,6 +640,9 @@ bool                is_album_art(AVCodecID codec_id);
  */
 bool                nocasecompare(const std::string & lhs, const std::string &rhs);
 
+/**
+ * @brief The comp struct to make std::string find operations case insensitive
+ */
 struct comp
 {
     /**

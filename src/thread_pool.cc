@@ -80,14 +80,13 @@ void thread_pool::loop_function()
     Logging::trace(nullptr, "Exiting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
 }
 
-bool thread_pool::new_thread(void (*thread_func)(void *), void *opaque)
+bool thread_pool::schedule_thread(void (*thread_func)(void *), void *opaque)
 {
     if (!m_queue_shutdown)
     {
         Logging::trace(nullptr, "Queueing new thread. %1 threads already in queue.", m_thread_pool.size());
 
         {
-            //std::unique_lock<std::mutex> lock(m_queue_mutex);
             std::lock_guard<std::mutex> lock(m_queue_mutex);
 
             THREADINFO info;
@@ -97,9 +96,7 @@ bool thread_pool::new_thread(void (*thread_func)(void *), void *opaque)
             m_thread_queue.push(info);
         }
 
-        //m_queue_mutex.lock();
         m_queue_condition.notify_one();
-        //m_queue_mutex.unlock();
 
         return true;
     }
@@ -114,16 +111,16 @@ unsigned int thread_pool::current_running() const
     return m_threads_running;
 }
 
-size_t thread_pool::current_queued()
+unsigned int thread_pool::current_queued()
 {
     std::lock_guard<std::mutex> lock(m_queue_mutex);
 
-    return m_thread_queue.size();
+    return static_cast<unsigned int>(m_thread_queue.size());
 }
 
-size_t thread_pool::pool_size() const
+unsigned int thread_pool::pool_size() const
 {
-    return m_thread_pool.size();
+    return static_cast<unsigned int>(m_thread_pool.size());
 }
 
 void thread_pool::init(unsigned int num_threads /*= 0*/)

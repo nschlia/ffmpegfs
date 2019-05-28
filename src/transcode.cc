@@ -40,6 +40,7 @@
 #include "thread_pool.h"
 
 #include <unistd.h>
+#include <atomic>
 
 /** @brief 1 millisecond = 1,000,000 Nanoseconds */
 #define MS  *1000000L
@@ -51,7 +52,7 @@ typedef struct THREAD_DATA
 {
     std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
     std::condition_variable m_cond;             /**< @brief Condition when thread is running */
-    volatile bool           m_lock_guard;        /**< @brief Lock guard to avoid spurious or missed unlocks */
+    std::atomic_bool        m_lock_guard;       /**< @brief Lock guard to avoid spurious or missed unlocks */
     bool                    m_initialised;      /**< @brief True when this object is completely initialised */
     void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
@@ -370,7 +371,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 {
                     std::unique_lock<std::mutex> lock(thread_data->m_mutex);
 
-                    tp->new_thread(&transcoder_thread, thread_data);
+                    tp->schedule_thread(&transcoder_thread, thread_data);
 
                     while (!thread_data->m_lock_guard)
                     {

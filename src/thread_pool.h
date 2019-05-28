@@ -7,9 +7,11 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
-
 #include <unistd.h>
 
+/**
+ * @brief The thread_pool class.
+ */
 class thread_pool
 {
     typedef struct THREADINFO                       /**< Thread info structure */
@@ -34,16 +36,43 @@ public:
      * @param[in] num_threads - Optional: number of threads to create in pool. Defaults to Defaults to 4x number of CPU cores.
      */
     void            init(unsigned int num_threads = 0);
+    /**
+     * @brief Shut down the thread pool.
+     * @param[in] silent - If true, no log messages will be issued.
+     */
     void            tear_down(bool silent = false);
-
-    bool            new_thread(void (*thread_func)(void *), void *opaque);
-
+    /**
+     * @brief Schedule a new thread from pool.
+     * @param[in] thread_func - Thread function to start.
+     * @param[in] opaque - Parameter passed to thread function.
+     * @return Returns true if thread was successfully scheduled, fals if not.
+     */
+    bool            schedule_thread(void (*thread_func)(void *), void *opaque);
+    /**
+     * @brief Get number of currently running threads.
+     * @return Returns number of currently running threads.
+     */
     unsigned int    current_running() const;
-    size_t          current_queued();
-    size_t          pool_size() const;
+    /**
+     * @brief Get number of currently queued threads.
+     * @return Returns number of currently queued threads.
+     */
+    unsigned int    current_queued();
+    /**
+     * @brief Get current pool size.
+     * @return Return current pool size.
+     */
+    unsigned int    pool_size() const;
 
 private:
+    /**
+     * @brief Start loop function.
+     * @param[in] tp - Thread pool object of caller.
+     */
     static void     loop_function_starter(thread_pool &tp);
+    /**
+     * @brief Start loop function
+     */
     void            loop_function();
 
 protected:

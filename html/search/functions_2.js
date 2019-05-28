@@ -3,7 +3,6 @@ var searchData=
   ['cache',['Cache',['../classCache.html#a486f257a48e32d0083f8ae41f78074d1',1,'Cache']]],
   ['cachefile',['cachefile',['../classBuffer.html#afb509b7316549507bb34f713f7a5a3af',1,'Buffer']]],
   ['calculate_5fpredicted_5ffilesize',['calculate_predicted_filesize',['../classFFmpeg__Transcoder.html#a854e9576e697fb877c2e344c5c203947',1,'FFmpeg_Transcoder']]],
-  ['callback',['callback',['../cache_8cc.html#ad3f792378889fc799ce443b5cd90d2e9',1,'cache.cc']]],
   ['can_5fcopy_5fstream',['can_copy_stream',['../classFFmpeg__Transcoder.html#a1f1608f6c5c6d8efe099b8e9869cd259',1,'FFmpeg_Transcoder']]],
   ['check_5fbluray',['check_bluray',['../blurayparser_8cc.html#a164ba768b4e817e3b246ab0c915b9798',1,'check_bluray(const std::string &amp;_path, void *buf, fuse_fill_dir_t filler):&#160;blurayparser.cc'],['../blurayparser_8h.html#a34bc32ca6bc8e2596113564abe40953f',1,'check_bluray(const std::string &amp;path, void *buf=nullptr, fuse_fill_dir_t filler=nullptr):&#160;blurayparser.cc']]],
   ['check_5fdvd',['check_dvd',['../dvdparser_8cc.html#a218a7a882ce8cc59dcd996adbeb1fd44',1,'check_dvd(const std::string &amp;_path, void *buf, fuse_fill_dir_t filler):&#160;dvdparser.cc'],['../dvdparser_8h.html#a2d1066943d904ad88378042c9b8a250f',1,'check_dvd(const std::string &amp;path, void *buf=nullptr, fuse_fill_dir_t filler=nullptr):&#160;dvdparser.cc']]],
@@ -26,5 +25,7 @@ var searchData=
   ['create_5fdvd_5fvirtualfile',['create_dvd_virtualfile',['../dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931',1,'dvdparser.cc']]],
   ['create_5fentry',['create_entry',['../classCache.html#ad4e6eacbc36ecd967fa1d492ec6836a0',1,'Cache']]],
   ['create_5fvcd_5fvirtualfile',['create_vcd_virtualfile',['../vcdparser_8cc.html#afeb7a39f03e9b9f5599b00eac210a205',1,'vcdparser.cc']]],
-  ['current_5fformat',['current_format',['../structFFMPEGFS__PARAMS.html#a3f5a3c0e70661f5010a4285292f4ac57',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)'],['../structFFMPEGFS__PARAMS.html#afd8436f43504eed93b3b2fe05cfacc10',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)']]]
+  ['current_5fformat',['current_format',['../structFFMPEGFS__PARAMS.html#a3f5a3c0e70661f5010a4285292f4ac57',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)'],['../structFFMPEGFS__PARAMS.html#afd8436f43504eed93b3b2fe05cfacc10',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)']]],
+  ['current_5fqueued',['current_queued',['../classthread__pool.html#ade1494a78b0363a44e013938c51a72a8',1,'thread_pool']]],
+  ['current_5frunning',['current_running',['../classthread__pool.html#aee7607c774b8f568ee151701d6b3268a',1,'thread_pool']]]
 ];

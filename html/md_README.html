@@ -88,9 +88,11 @@ $(function() {
  </td></tr>
 </table>
 <h2>News </h2>
+<p><b>The branch for Version 2 has been renamed. To switch to it, do "git checkout release2.x".</b></p>
 <ul>
-<li><b>Work on release 1.8 now in progress.</b></li>
+<li><b>Work on release 1.9 now in progress.</b></li>
 <li>Feature: Documented the whole project with Doxygen.</li>
+<li>Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.</li>
 <li>See [NEWS](NEWS) for details.</li>
 </ul>
 <h2>About </h2>

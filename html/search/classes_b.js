@@ -1,7 +1,7 @@
 var searchData=
 [
   ['vcd_5fchapter',['VCD_CHAPTER',['../structVIRTUALFILE_1_1VCD__CHAPTER.html',1,'VIRTUALFILE']]],
-  ['vcdchapter',['VcdChapter',['../classVcdChapter.html',1,'VcdChapter'],['../structVCDCHAPTER.html',1,'VCDCHAPTER']]],
+  ['vcdchapter',['VCDCHAPTER',['../structVCDCHAPTER.html',1,'VCDCHAPTER'],['../classVcdChapter.html',1,'VcdChapter']]],
   ['vcdentries',['VCDENTRIES',['../structVCDENTRIES.html',1,'VCDENTRIES'],['../classVcdEntries.html',1,'VcdEntries']]],
   ['vcdinfo',['VCDINFO',['../structVCDINFO.html',1,'VCDINFO'],['../classVcdInfo.html',1,'VcdInfo']]],
   ['vcdio',['VcdIO',['../classVcdIO.html',1,'']]],

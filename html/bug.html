@@ -64,8 +64,12 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_bug000001"></a>Member <a class="el" href="transcode_8h.html#ace38421aa8da8b23852109db4b0f1c95">transcoder_new</a>  (LPVIRTUALFILE virtualfile, bool begin_transcode)</dt>
-<dd>Perils of the sun: If started in detached state, threads cannot be joined. Not starting in detached state creates a tiny little memory leak. </dd>
+<dt><a class="anchor" id="_bug000001"></a>Class <a class="el" href="classBlurayIO.html">BlurayIO</a>  </dt>
+<dd>Issue #27: Bluray chapters stop prematurely Some chapters stop playing after 30 seconds, sometimes a few seconds early. Problem exists at least for half a year... There seems to be a problem extracting Bluray data.  </dd>
+<dt><a class="anchor" id="_bug000002"></a>Class <a class="el" href="classFFmpeg__Transcoder.html">FFmpeg_Transcoder</a>  </dt>
+<dd><p class="startdd">Issue #32: After transcoding several files VMEM usage sometimes goes off the edge After playing files for a while, sometimes the VME usage goes up to the machine limit, In this particular case the machine has 32 GB RAM with 13 GB free. Never happens if the files are copied via Samba or directly, but only if played through a web server. Probably has to do with slow connections and time outs.</p>
+<p class="enddd">Issue #33: H265 decoding does not work Decoding H265 files fails. </p>
+</dd>
 </dl>
 </div></div><!-- contents -->
 <!-- start footer part -->

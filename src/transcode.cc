@@ -361,7 +361,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 {
                     std::unique_lock<std::mutex> lock(thread_data->m_mutex);
 
-                    tp->new_thread(&transcoder_thread, thread_data);
+                    tp->schedule_thread(&transcoder_thread, thread_data);
 
                     while (!thread_data->m_lock_guard)
                     {

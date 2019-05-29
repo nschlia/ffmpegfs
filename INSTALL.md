@@ -52,7 +52,7 @@ for details.
 
     aptitude install gcc g++
 
-    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
+    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev autoconf asciidoc-base w3m
     
 To get DVD support:
 

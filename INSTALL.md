@@ -35,11 +35,11 @@ For optional Bluray support you need the following library
 
 * libbluray       (>= 0.6.2)
 
-If building from git, you'll also need:
+**If building from git, you'll also need:**
 
 * autoconf
 * automake
-* asciidoc
+* asciidoc (or at least asciidoc-base to save disk space)
 * xmllint
 * w3m
 

@@ -58,7 +58,7 @@ Select auto copy option, 'OPTION' can be:
 |*STRICTLIMIT* |Same as STRICT, only copy if target not larger, transcode otherwise.
 |===================================================================================
 +
-This can speed up transcoding siginificantly as copying streams uses much less computing power as compared to transcoding.
+This can speed up transcoding significantly as copying streams uses much less computing power as compared to transcoding.
 +
 MATCH copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although ffmepeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
 +
@@ -138,7 +138,7 @@ Video encoding bit rate. Setting this too high or low may cause transcoding to f
 +
 Default: 2 Mbit
 +    
-*mp4:* May be specfied as 500 to 25000 kbit.
+*mp4:* May be specified as 500 to 25000 kbit.
 +
 *BITRATE*:: can be defined as...
  * n bit/s:  #  or #bps
@@ -392,7 +392,7 @@ to say that this field cannot be filled in until the size is known,
 which means compression must be completed first, a seek done to the
 beginning, and the size atom updated.
 
-Alas, for a continous live stream, that size will never be known or
+Alas, for a continuous live stream, that size will never be known or
 for our transcoded files one would have to wait for the whole file
 to be recoded. If that was not enough some important pieces of 
 information are located at the end of the file, including meta tags
@@ -405,7 +405,7 @@ of FFmpegfs.
 
 To get around the restriction several extensions have been developed,
 one of which is called "faststart" that relocates the afformentioned
-data from the end to the beginning of the *mp4*. Additonally, the size field 
+data from the end to the beginning of the *mp4*. Additionally, the size field
 can be left empty (0). isml (smooth live streaming) is another extension.
 
 For direct to stream transcoding several new features in *mp4* need to

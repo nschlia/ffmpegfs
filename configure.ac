@@ -242,6 +242,15 @@ if test -z "$CURL";
    then AC_MSG_WARN([curl not found - continuing without curl support. If you intend to use "make doxy" you should install it.])
 fi
 
+AC_ARG_ENABLE([changelog],
+[  --enable-changelog    Turn on changelog],
+[case "${enableval}" in
+  yes) changelog=yes ;;
+  no)  changelog=no ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-changelog]) ;;
+esac],[changelog=false])
+AM_CONDITIONAL([NOCHANGELOG], [test x$changelog = xno])
+
 # Outputs resulting files.
 AC_CONFIG_FILES([Makefile
                  src/Makefile
@@ -253,3 +262,4 @@ AM_COND_IF([HINT_LIBDVD],
            [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdread development packages. See INSTALL.md for details.])])
 AM_COND_IF([HINT_LIBBLURAY],
            [AC_MSG_NOTICE([HINT: To enable bluray suport install the libbluray development package. See INSTALL.md for details.])])
+           

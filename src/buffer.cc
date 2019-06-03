@@ -454,7 +454,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 
     bool success = true;
 
-    if (size() >= offset && m_buffer != nullptr)
+    if (size() >= offset)
     {
         if (size() < offset + bufsize)
         {

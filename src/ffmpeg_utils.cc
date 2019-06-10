@@ -297,6 +297,7 @@ const std::string & remove_path(std::string *filepath)
         errno = ENOMEM;
         return *filepath;
     }
+
     *filepath = basename(p);
     delete [] p;
     return *filepath;
@@ -367,6 +368,7 @@ char * new_strdup(const std::string & str)
         errno = ENOMEM;
         return nullptr;
     }
+
     strncpy(p, str.c_str(), n);
     return p;
 }

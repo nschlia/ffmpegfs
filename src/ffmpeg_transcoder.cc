@@ -2021,7 +2021,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
 
     *got_frame = 0;
 
-    if (pkt)
+    if (pkt != nullptr)
     {
         ret = avcodec_send_packet(avctx, pkt);
         // In particular, we don't expect AVERROR(EAGAIN), because we read all
@@ -2107,6 +2107,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             break;
         }
+
         if (ret < 0)
         {
             // Anything else is an error, report it!
@@ -2247,12 +2248,14 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         }
 
         ret = decode(m_in.m_video.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
+
         if (!data_present)
         {
             // unused frame
             av_frame_free(&frame);
             break;
         }
+
         if (ret < 0)
         {
             // Anything else is an error, report it!

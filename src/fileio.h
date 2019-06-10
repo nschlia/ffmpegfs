@@ -161,7 +161,7 @@ public:
      * @return Upon successful completion, #FileIO of requested type. @n
      * On error (out of memory), returns a nullptr.
      */
-    static FileIO * alloc(VIRTUALTYPE type);
+    static FileIO *     alloc(VIRTUALTYPE type);
 
     /**
      * @brief Get type of the virtual file
@@ -178,7 +178,7 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int         open(LPCVIRTUALFILE virtualfile);
+    virtual int         open(LPCVIRTUALFILE virtualfile) = 0;
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
@@ -239,12 +239,11 @@ public:
     LPCVIRTUALFILE      virtualfile() const;
 
 protected:
-    /** @brief Open a virtual file
-     * @param[in] filename - Name of file to open. Only required for disk files.
-     * @return Upon successful completion, #openX() returns 0. @n
-     * On error, an nonzero value is returned and errno is set to indicate the error.
+    /** @brief Set the virtual file object.
+     * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
+     * @return File name and path of original file.
      */
-    virtual int         openX(const std::string & filename) = 0;
+    const std::string & set_virtualfile(LPCVIRTUALFILE virtualfile);
     /**
      * @brief Set the internal source path
      * @param[in] path - Source path, with or without file name

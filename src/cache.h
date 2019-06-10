@@ -23,7 +23,7 @@
  * @author Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  */
- 
+
 #ifndef CACHE_H
 #define CACHE_H
 
@@ -151,7 +151,7 @@ public:
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(const std::string & filename, const std::string &desttype);
-
+    
 protected:
     /**
      * @brief Read cache file info.

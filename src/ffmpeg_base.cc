@@ -236,8 +236,8 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     int alpha = 0;
     int loss = 0;
 
-    AVPixelFormat  src_pix_fmt = input_codec_ctx->pix_fmt;
-    AVPixelFormat  dst_pix_fmt = AV_PIX_FMT_NONE;
+    AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
+    AVPixelFormat  dst_pix_fmt                  = AV_PIX_FMT_NONE;
     if (output_codec_ctx->codec->pix_fmts != nullptr)
     {
 #ifndef USING_LIBAV

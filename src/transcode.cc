@@ -604,6 +604,11 @@ static void transcoder_thread(void *arg)
             throw (static_cast<int>(errno));
         }
 
+        if (!cache_entry->m_cache_info.m_predicted_filesize)
+        {
+            cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
+        }
+
         if (!cache->maintenance(transcoder->predicted_filesize()))
         {
             throw (static_cast<int>(errno));

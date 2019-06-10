@@ -38,11 +38,11 @@
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
-    : m_buffer_pos(0)
-    , m_buffer_watermark(0)
-    , m_is_open(false)
-    , m_buffer(nullptr)
+    : m_is_open(false)
     , m_fd(-1)
+    , m_buffer(nullptr)
+    , m_buffer_pos(0)
+    , m_buffer_watermark(0)
 {
 }
 
@@ -62,11 +62,93 @@ size_t Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::openX(const std::string & filename)
+int Buffer::open(LPCVIRTUALFILE virtualfile)
 {
-    m_filename = filename;
-    make_cachefile_name(m_cachefile, filename, params.current_format(virtualfile())->desttype());
+    if (virtualfile == nullptr)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    m_filename = set_virtualfile(virtualfile);
+    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->desttype());
     return 0;
+}
+
+bool Buffer::map_file(const std::string & filename, int *fd, void **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
+{
+    bool success = true;
+
+    try
+    {
+        struct stat sb;
+
+        *fd = ::open(filename.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
+        if (*fd == -1)
+        {
+            Logging::error(filename, "Error opening cache file: (%1) %2", errno, strerror(errno));
+            throw false;
+        }
+
+        if (fstat(*fd, &sb) == -1)
+        {
+            Logging::error(filename, "File stat failed: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
+            throw false;
+        }
+
+        if (!S_ISREG(sb.st_mode))
+        {
+            Logging::error(filename, "Not a file.");
+            throw false;
+        }
+
+        if (!sb.st_size || *isdefaultsize)
+        {
+            // If file is empty or did not exist set file size to default
+
+            if (!defaultsize)
+            {
+                defaultsize = sysconf(_SC_PAGESIZE);
+            }
+
+            if (ftruncate(*fd, defaultsize) == -1)
+            {
+                Logging::error(filename, "Error calling ftruncate() to 'stretch' the file: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
+                throw false;
+            }
+
+            *filesize = static_cast<size_t>(defaultsize);
+            *isdefaultsize = true;
+        }
+        else
+        {
+            // Keep size
+            *filesize = static_cast<size_t>(sb.st_size);
+            *isdefaultsize = false;
+        }
+
+        *p = mmap(nullptr, *filesize, PROT_READ | PROT_WRITE, MAP_SHARED, *fd, 0);
+        if (*p == MAP_FAILED)
+        {
+            Logging::error(filename, "File mapping failed: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
+            throw false;
+        }
+    }
+    catch (bool _success)
+    {
+        success = _success;
+
+        if (!success)
+        {
+            if (*fd != -1)
+            {
+                ::close(*fd);
+                *fd = -1;
+            }
+        }
+    }
+
+    return success;
 }
 
 bool Buffer::init(bool erase_cache)
@@ -103,10 +185,10 @@ bool Buffer::init(bool erase_cache)
 
         delete [] cachefile;
 
-        m_buffer_size = 0;
-        m_buffer = nullptr;
-        m_buffer_pos = 0;
-        m_buffer_watermark = 0;
+        m_buffer_size       = 0;
+        m_buffer            = nullptr;
+        m_buffer_pos        = 0;
+        m_buffer_watermark  = 0;
 
         if (erase_cache)
         {
@@ -114,56 +196,22 @@ bool Buffer::init(bool erase_cache)
             errno = 0;  // ignore this error
         }
 
-        struct stat sb;
-        size_t filesize;
-        void *p;
+        size_t filesize     = 0;
+        bool isdefaultsize  = false;
+        void *p             = nullptr;
 
-        m_fd = ::open(m_cachefile.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
-        if (m_fd == -1)
+        if (!map_file(m_cachefile, &m_fd, &p, &filesize, &isdefaultsize, 0))
         {
-            Logging::error(m_cachefile, "Error opening cache file: (%1) %2", errno, strerror(errno));
             throw false;
         }
 
-        if (fstat(m_fd, &sb) == -1)
+        if (!isdefaultsize)
         {
-            Logging::error(m_cachefile, "File stat failed: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-            throw false;
-        }
-
-        if (!S_ISREG(sb.st_mode))
-        {
-            Logging::error(m_cachefile, "Not a file.");
-            throw false;
-        }
-
-        if (!sb.st_size)
-        {
-            // If empty set file size to 1 page
-            off_t pagesize = sysconf (_SC_PAGESIZE);
-
-            if (ftruncate(m_fd, pagesize) == -1)
-            {
-                Logging::error(m_cachefile, "Error calling ftruncate() to 'stretch' the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-                throw false;
-            }
-            filesize = static_cast<size_t>(pagesize);
-        }
-        else
-        {
-            filesize = static_cast<size_t>(sb.st_size);
             m_buffer_pos = m_buffer_watermark = filesize;
         }
 
-        p = mmap(nullptr, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
-        if (p == MAP_FAILED)
-        {
-            Logging::error(m_cachefile,  "File mapping failed: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-            throw false;
-        }
-
-        m_buffer_size = filesize;
-        m_buffer = static_cast<uint8_t*>(p);
+        m_buffer_size       = filesize;
+        m_buffer            = static_cast<uint8_t*>(p);
     }
     catch (bool _success)
     {
@@ -171,13 +219,35 @@ bool Buffer::init(bool erase_cache)
 
         if (!success)
         {
-            m_is_open = false;
-            if (m_fd != -1)
-            {
-                ::close(m_fd);
-                m_fd = -1;
-            }
+            m_is_open = false;  // Unblock now
         }
+    }
+
+    return success;
+}
+
+bool Buffer::unmap_file(const std::string &filename, int fd, void *p, size_t filesize) const
+{
+    bool success = true;
+
+    if (p != nullptr)
+    {
+        if (munmap(p, filesize) == -1)
+        {
+            Logging::error(filename, "File unmapping failed: (%1) %2", errno, strerror(errno));
+            success = false;
+        }
+    }
+
+    if (fd != -1)
+    {
+        if (ftruncate(fd, static_cast<off_t>(filesize)) == -1)
+        {
+            Logging::error(filename, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), fd);
+            success = false;
+        }
+
+        ::close(fd);
     }
 
     return success;
@@ -200,8 +270,6 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         return true;
     }
 
-    m_is_open       = false;
-
     // Write it now to disk
     flush();
 
@@ -212,27 +280,20 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     m_buffer        = nullptr;
     m_buffer_size   = 0;
     m_buffer_pos    = 0;
-    m_fd = -1;
+    m_fd            = -1;
 
-    if (munmap(p, size) == -1)
+    if (!unmap_file(m_cachefile, fd, p, size))
     {
-        Logging::error(m_cachefile, "File unmapping failed: (%1) %2", errno, strerror(errno));
         success = false;
     }
-
-    if (ftruncate(fd, static_cast<off_t>(m_buffer_watermark)) == -1)
-    {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), fd);
-        success = false;
-    }
-
-    ::close(fd);
 
     if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
     {
         remove_cachefile();
         errno = 0;  // ignore this error
     }
+
+    m_is_open       = false;
 
     return success;
 }
@@ -295,7 +356,7 @@ bool Buffer::clear()
 }
 
 bool Buffer::reserve(size_t size)
-{    
+{
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     if (m_buffer == nullptr)
@@ -311,7 +372,7 @@ bool Buffer::reserve(size_t size)
         size = m_buffer_size;
     }
 
-    m_buffer = static_cast<uint8_t*>(mremap (m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
+    m_buffer = static_cast<uint8_t*>(mremap(m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
     if (m_buffer != nullptr)
     {
         m_buffer_size = size;

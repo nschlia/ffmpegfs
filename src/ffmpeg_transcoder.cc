@@ -2588,6 +2588,17 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
     {
+        //m_key_seen = (pkt->flags & AV_PKT_FLAG_KEY) ? true : false;
+
+#ifdef DEBUG_FRAME_SET
+        if (export_frameset())
+        {
+            uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, pkt->pts);
+
+            Logging::FRAME_SET(filename(), "DECODE FRAME       | Frame: %<%10u>1                  PTS   : %<%11" PRIi64 ">2   %3", frame_no, pkt->pts, (pkt->flags & AV_PKT_FLAG_KEY) ? "KEY" : "-");
+        }
+#endif // DEBUG_FRAME_SET
+
         if (!m_copy_video)
         {
             int decoded = 0;
@@ -2874,6 +2885,13 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
 
         if (decode_frame_ptr != nullptr)
         {
+#ifdef DEBUG_FRAME_SET
+            if (export_frameset())
+            {
+                Logging::FRAME_SET(filename(), "FLUSH FRAMES!      |");
+            }
+#endif // DEBUG_FRAME_SET
+
             AVPacket pkt;
             AVPacket *flush_packet = nullptr;
             int decoded = 0;
@@ -3555,6 +3573,9 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 
     ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
 
+#ifdef DEBUG_FRAME_SET
+    Logging::FRAME_SET(filename(), "FRAME SEEK NOW     | Frame: %<%10u>1                  PTS   : %<%11" PRIi64 ">2 Ret   : %<%11i>3", frame_no, pts, ret);
+#endif // DEBUG_FRAME_SET
     //flush_buffers();
 
     return ret;
@@ -3567,6 +3588,9 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     // Seek next undecoded frame
     for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
     {
+#ifdef DEBUG_FRAME_SET
+        Logging::FRAME_SET(filename(), "SKIP FRAME         | Frame: %<%10u>1", next_frame_no);
+#endif // DEBUG_FRAME_SET
         sleep(0);
     }
 
@@ -3577,20 +3601,34 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
         m_current_write_pts = m_in.m_video.m_stream->duration;
         // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
         ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_current_write_pts, AVSEEK_FLAG_ANY);
+#ifdef DEBUG_FRAME_SET
+        Logging::FRAME_SET(filename(), "SKIP FRAME EOF     | Frame: %<%10u>1                  PTS   : %<%11" PRIi64 ">2", next_frame_no, m_current_write_pts);
+#endif
         return 0;
     }
 
+    //#ifdef DEBUG_FRAME_SET
+    //    Logging::FRAME_SET(filename(), "SKIP FRAME HAVE    | Frame: %<%10u>1                  HAVE  : %<%11i>2", next_frame_no, m_buffer->have_frame(next_frame_no));
+    //#endif // DEBUG_FRAME_SET
+
     uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
 
-	// Ignore seek if target is within the next 25 frames
+    // Ignore seek if target is within the next 25 frames
     if (next_frame_no >= last_frame_no /*+ 1*/ && next_frame_no <= last_frame_no + 25)
     {
+        //#ifdef DEBUG_FRAME_SET
+        //        Logging::FRAME_SET(filename(), "SKIP FRAME NOSEEK  | Frame: %<%10u>1", next_frame_no);
+        //#endif // DEBUG_FRAME_SET
         return 0;
     }
 
     if (forced_seek || (frame_no != next_frame_no && next_frame_no > 1))
     {
         // If frame changed, skip to it
+#ifdef DEBUG_FRAME_SET
+        Logging::FRAME_SET(filename(), "SKIP FRAME DO SKIP | Last:  %<%10u>1 Next: %<%10u>2 Forced: %<%11i>3", last_frame_no, next_frame_no, forced_seek);
+#endif // DEBUG_FRAME_SET
+
         ret = do_seek_frame(next_frame_no);
 
         if (ret < 0)
@@ -3611,7 +3649,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
     try
     {
-        if (m_in.m_video.m_stream != nullptr)
+        if (m_in.m_video.m_stream != nullptr && export_frameset())
         {
             uint32_t seek_frame_no = 0;
 
@@ -3628,13 +3666,24 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         break;
                     }
 
+#ifdef DEBUG_FRAME_SET
+                    Logging::FRAME_SET(filename(), "RESET SEEK FRAME   | Frame: %<%10u>1", frame_no);
+#endif // DEBUG_FRAME_SET
 
                     m_seek_frame_fifo.pop();
                 }
             }
 
+            //#ifdef DEBUG_FRAME_SET
+            //            Logging::FRAME_SET(filename(), "FRAME *************| Frame: %<%10u>1 Last: %<%10u>2", seek_frame_no, m_last_seek_frame_no2);
+            //#endif // DEBUG_FRAME_SET
+
             if (seek_frame_no && seek_frame_no != m_last_seek_frame_no2)
             {
+#ifdef DEBUG_FRAME_SET
+                Logging::FRAME_SET(filename(), "FRAME *************| Frame: %<%10u>1 Last: %<%10u>2", seek_frame_no, m_last_seek_frame_no2);
+#endif // DEBUG_FRAME_SET
+
                 m_last_seek_frame_no2 = 0;
 
                 // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
@@ -3642,12 +3691,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 // So we position before the frame requested, and simply throw the first away.
 #if 0
 #define PRESCAN_FRAMES  3
-                if (seek_frame_no > PRESCAN_FRAMES)
+                if (seek_frame_no > PRESCAN_FRAMES)F
                 {
                     seek_frame_no -= PRESCAN_FRAMES;
                     //m_skip_next_frame = true;/**< @todo: params.m_deinterlace beachten */
                 }
-                else
+                    else
                 {
                     seek_frame_no = 1;
                 }
@@ -3667,7 +3716,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 }
             }
 #if 1
-            else if (export_frameset())
+            else
             {
                 // Check if we have already exported the next frames and skip them to save processing time
                 uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts) + 1;
@@ -3675,7 +3724,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 if (m_last_seek_frame_no < current_frame_no)    // Skip frames until seek pos
                 {
                     //#ifdef DEBUG_FRAME_SET
-                    //                    fprintf(stderr, "PSKIP                       | Last:  %10u Next: %10u PTS:    %" PRIi64 "\n", m_last_seek_frame_no, current_frame_no, m_current_pts);
+                    //                    Logging::FRAME_SET(filename(), "PRESKIP FRAME      | Frame: %<%10u>1 Last: %<%10u>2 PTS   : %<%11" PRIi64 ">3", current_frame_no, m_last_seek_frame_no, m_current_write_pts);
                     //#endif // DEBUG_FRAME_SET
 
                     m_last_seek_frame_no = 0;
@@ -4774,6 +4823,9 @@ void FFmpeg_Transcoder::free_filters()
 
 int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
 {
+#ifdef DEBUG_FRAME_SET
+    Logging::FRAME_SET(filename(), "FRAME SEEK REQUEST | Frame: %<%10u>1", frame_no);
+#endif // DEBUG_FRAME_SET
     if (frame_no > 0 && frame_no <= m_video_frame_count)
     {
         std::lock_guard<std::recursive_mutex> lck (m_mutex);

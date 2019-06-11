@@ -3667,7 +3667,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     }
 
 #ifdef DEBUG_FRAME_SET
-                    Logging::FRAME_SET(filename(), "RESET SEEK FRAME   | Frame: %<%10u>1", frame_no);
+                    Logging::FRAME_SET(filename(), "IGNORE SEEK FRAME  | Frame: %<%10u>1", frame_no);
 #endif // DEBUG_FRAME_SET
 
                     m_seek_frame_fifo.pop();

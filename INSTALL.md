@@ -57,7 +57,7 @@ for details.
 
     apt-get install gcc g++
 
-    apt-get install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
+    apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
     
 To get DVD support:
 
@@ -71,7 +71,7 @@ To get Bluray support:
 
     zypper install gcc gcc-c++
 
-    zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
+    zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 
 To get DVD support:
 
@@ -173,11 +173,40 @@ respectively.
 Trouble Shooting
 ----------------
 
+**Mounting via /etc/fstab fails:**
+
+An fstab line with fuse.ffmpegfs file system fails with a strange message when
+attempted to mount with "mount -av". No log entries, no other hints...
+
+   mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1,
+          missing codepage or helper program, or other error
+
+          In some cases useful info is found in syslog - try
+          dmesg | tail or so.
+
+Fuse is missing! Do...
+
+    apt-get install fuse
+
+**fuse: failed to exec fusermount: No such file or directory:**
+
+Trying to mount as other than root, the message
+
+    fuse: failed to exec fusermount: No such file or directory
+    
+is printed.    
+
+Fuse is missing! Do...
+
+    apt-get install fuse
+
+**"ERROR: libmp3lame >= 3.98.3 not found":**
+
 If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built 
 and installed libmp3lame you may find a solution here: 
 https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
-**If you run into this error:**
+**autogen.sh displays "possibly undefined macro":**
     
     Running autoreconf --install
     configure.ac:46: error: possibly undefined macro: AC_DEFINE

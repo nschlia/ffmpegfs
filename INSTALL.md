@@ -22,9 +22,14 @@ libraries:
 * libavcodec     (>= 56.1.0)
 * libavformat    (>= 56.1.0)
 * libavfilter    (>= 5.40.0)
-* libavresample  (>= 2.1.0)
 * libswscale     (>= 3.0.0)
+
+One of these is required, preferably libswresample as libavresample is deprecated. 
+It will be removed, but as for now is required if Libav is used (which has no
+libswresample).
+
 * libswresample  (>= 1.0.0)
+* libavresample  (>= 2.1.0)
 
 For optional DVD support you need the following libraries
 
@@ -52,7 +57,7 @@ for details.
 
     aptitude install gcc g++
 
-    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
+    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
     
 To get DVD support:
 

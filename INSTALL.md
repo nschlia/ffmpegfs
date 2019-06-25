@@ -57,7 +57,7 @@ for details.
 
     apt-get install gcc g++
 
-    apt-get install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
+    apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
     
 To get DVD support:
 
@@ -71,7 +71,7 @@ To get Bluray support:
 
     zypper install gcc gcc-c++
 
-    zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
+    zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 
 To get DVD support:
 

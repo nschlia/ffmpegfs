@@ -22,9 +22,14 @@ libraries:
 * libavcodec     (>= 56.1.0)
 * libavformat    (>= 56.1.0)
 * libavfilter    (>= 5.40.0)
-* libavresample  (>= 2.1.0)
 * libswscale     (>= 3.0.0)
+
+One of these is required, preferably libswresample as libavresample is deprecated. 
+It will be removed, but as for now is required if Libav is used (which has no
+libswresample).
+
 * libswresample  (>= 1.0.0)
+* libavresample  (>= 2.1.0)
 
 For optional DVD support you need the following libraries
 
@@ -50,19 +55,17 @@ for details.
 
 **On Debian:**
 
-    aptitude install gcc g++
+    apt-get install gcc g++
 
-    aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
+    apt-get install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
     
 To get DVD support:
 
-    aptitude install libdvdread-dev libdvdnav-dev
+    apt-get install libdvdread-dev libdvdnav-dev
 
 To get Bluray support:
 
-    aptitude install libbluray-dev
-
-On Ubuntu use the same command with `apt-get` in place of `aptitude`.
+    apt-get install libbluray-dev
 
 **On Suse** (please read notes before continuing):
 
@@ -198,12 +201,12 @@ Check the Apache2 error.log, you might see this:
 This is because for some reason utf8_encode() has been moved to the XML
 library. Just do (or similar):
 
-    aptitude install php7.0-xml
+    apt-get install php7.0-xml
     systemctl restart apache2
 
 And your troubles should be gone.
 
-On Ubuntu use the same command with `apt-get` in place of `aptitude`.
+On Ubuntu use the same command with `apt-get` in place of `apt-get`.
 
 **"make check": all audio checks fail**
 
@@ -212,9 +215,9 @@ missing.
 
 Fix by installing it (or similar):
 
-     aptitude install bc
+     apt-get install bc
 
-On Ubuntu use the same command with `apt-get` in place of `aptitude`.
+On Ubuntu use the same command with `apt-get` in place of `apt-get`.
 
 **Songs get cut short**
 
@@ -237,7 +240,7 @@ to cope with that, but how to is unknown to me.
 
 You are missing out on asciidoc, to install do (or similar)
 
-     aptitude install asciidoc
+     apt-get install asciidoc
      
 should fix it.
 

@@ -1286,6 +1286,16 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             output_codec_ctx->profile = params.m_level;
             break;
         }
+        case AV_CODEC_ID_ALAC:
+        {
+            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_ALAC);
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+            break;
+        }
         default:
         {
             break;
@@ -3573,6 +3583,21 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
         *filesize = static_cast<size_t>(105 * (*filesize) / 100); // add 5% for overhead
+        break;
+    }
+    case AV_CODEC_ID_ALAC:
+    {
+        //*** @TODO */
+
+        //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
+        //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
+
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_NONE:

@@ -411,6 +411,25 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_format[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
+// ****************************************************************************************************************
+
+/**
+ *  @brief ALAC profile: MOV codec options.
+ */
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_codec[] =
+{
+    { nullptr,                  nullptr,                    0,  0 }
+};
+
+/**
+ *  @brief ALAC profile: MOV format options.
+ */
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_format[] =
+{
+    { "movflags",               "+delay_moov",              0, OPT_ALL },
+    { nullptr,                  nullptr,                    0,  0 }
+};
+
 /*
  * *******************************************************************************************************************
  *
@@ -572,6 +591,15 @@ const FFmpeg_Profiles::PROFILE_LIST FFmpeg_Profiles::m_profile[] =
         PROFILE_NONE,
         m_option_webm_codec_none,
         m_option_webm_format_none
+    },
+
+    // ALAC (Apple Lossless Audio Coding)
+
+    {
+        FILETYPE_ALAC,
+        PROFILE_NONE,
+        m_option_alac_codec,
+        m_option_alac_format
     },
 
     // Must be last entry

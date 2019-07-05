@@ -181,6 +181,14 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_format_name       = "mov";
         break;
     }
+    case FILETYPE_ALAC:
+    {
+        m_desttype          = desttype;
+        m_audio_codec_id    = AV_CODEC_ID_ALAC;
+        m_video_codec_id    = AV_CODEC_ID_NONE;
+        m_format_name       = "mov";
+        break;
+    }
     case FILETYPE_UNKNOWN:
     {
         found = false;
@@ -663,6 +671,7 @@ FILETYPE get_filetype(const std::string & desttype)
         { "aiff",   FILETYPE_AIFF },
         { "opus",   FILETYPE_OPUS },
         { "prores", FILETYPE_PRORES },
+        { "alac",   FILETYPE_ALAC },
     };
 
     try

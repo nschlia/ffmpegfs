@@ -178,7 +178,7 @@ FFmpeg_Profiles::~FFmpeg_Profiles() {}
 // ****************************************************************************************************************
 
 /**
- *  @brief No opimisations, just plain mp4. MP4 Codec options.
+ *  @brief No opimisations, just plain mp4. MP4 codec options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 {
@@ -192,7 +192,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 };
 
 /**
- *  @brief No opimisations, just plain mp4. MP4 Format options.
+ *  @brief No optimisations, just plain mp4. MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_none[] =
 {
@@ -203,7 +203,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_none[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Firefox profile: MP4 Codec options.
+ *  @brief Firefox profile: MP4 codec options.
  * Use: -movflags +empty_moov @n
  *       -frag_duration 1000000  (for audio files only) @n
  * GOOD: Starts immediately while still decoding.
@@ -220,7 +220,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ff[] =
 };
 
 /**
- *  @brief Firefox profile: MP4 Format options.
+ *  @brief Firefox profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
 {
@@ -232,7 +232,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief MS Edge profile: MP4 Codec options.
+ *  @brief MS Edge profile: MP4 codec options.
  * Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
  * GOOD: Starts immediately while still decoding.
  */
@@ -244,7 +244,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_edge[] =
 };
 
 /**
- *  @brief MS Edge profile: MP4 Format options.
+ *  @brief MS Edge profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
 {
@@ -258,7 +258,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief MS Internet Explorer profile: MP4 Codec options.
+ *  @brief MS Internet Explorer profile: MP4 codec options.
  * Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
  * NOT GOOD: Starts when decode is complete.
  */
@@ -274,7 +274,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ie[] =
 };
 
 /**
- *  @brief MS Internet Explorer profile: MP4 Format options.
+ *  @brief MS Internet Explorer profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ie[] =
 {
@@ -284,7 +284,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ie[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Google Chrome profile: MP4 Codec options.
+ *  @brief Google Chrome profile: MP4 codec options.
  * NOT GOOD: Starts when decode is complete.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_chrome[] =
@@ -296,7 +296,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_chrome[] =
 };
 
 /**
- *  @brief Google Chrome profile: MP4 Format options.
+ *  @brief Google Chrome profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
 {
@@ -306,7 +306,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Apple Safari profile: MP4 Codec options.
+ *  @brief Apple Safari profile: MP4 codec options.
  * Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
  * NOT GOOD: Starts when decode is complete. Makes crazy things, stops, jumps, gaga. Comes from the inventors of MP4...
  */
@@ -318,7 +318,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_safari[] =
 };
 
 /**
- *  @brief Apple Safari profile: MP4 Format options.
+ *  @brief Apple Safari profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
 {
@@ -328,7 +328,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Opera profile: MP4 Codec options.
+ *  @brief Opera profile: MP4 codec options.
  * NOT GOOD: Starts when decode is complete.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_opera[] =
@@ -339,7 +339,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_opera[] =
 };
 
 /**
- *  @brief Opera profile: MP4 Format options.
+ *  @brief Opera profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
 {
@@ -349,7 +349,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Maxthon profile: MP4 Codec options.
+ *  @brief Maxthon profile: MP4 codec options.
  * NOT GOOD: Starts when decode is complete.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
@@ -364,7 +364,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
 };
 
 /**
- *  @brief Maxthon profile: MP4 Format options.
+ *  @brief Maxthon profile: MP4 format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
 {
@@ -374,7 +374,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief Basic MOV profile: MOV Codec options.
+ *  @brief Basic MOV profile: MOV codec options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_codec[] =
 {
@@ -384,7 +384,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_codec[] =
 };
 
 /**
- *  @brief Basic MOV profile: MOV Format options.
+ *  @brief Basic MOV profile: MOV format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_format[] =
 {
@@ -395,7 +395,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_format[] =
 // ****************************************************************************************************************
 
 /**
- *  @brief ProRes profile: MOV Codec options.
+ *  @brief ProRes profile: MOV codec options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_codec[] =
 {
@@ -403,7 +403,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_codec[] =
 };
 
 /**
- *  @brief ProRes profile: MOV Format options.
+ *  @brief ProRes profile: MOV format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_format[] =
 {

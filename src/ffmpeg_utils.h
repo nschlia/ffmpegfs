@@ -221,11 +221,11 @@ typedef enum PRORESLEVEL
   */
 typedef enum AUTOCOPY
 {
-     AUTOCOPY_OFF = 0,      /**< @brief Never copy streams, transcode always. */
-     AUTOCOPY_MATCH,        /**< @brief Copy stream if target supports codec. */
-     AUTOCOPY_MATCHLIMIT,   /**< @brief Same as MATCH, only copy if target not larger transcode otherwise. */
-     AUTOCOPY_STRICT,       /**< @brief Copy stream if codec matches desired target, transcode otherwise. */
-     AUTOCOPY_STRICTLIMIT,  /**< @brief Same as STRICT, only copy if target not larger, transcode otherwise. */
+    AUTOCOPY_OFF = 0,      /**< @brief Never copy streams, transcode always. */
+    AUTOCOPY_MATCH,        /**< @brief Copy stream if target supports codec. */
+    AUTOCOPY_MATCHLIMIT,   /**< @brief Same as MATCH, only copy if target not larger transcode otherwise. */
+    AUTOCOPY_STRICT,       /**< @brief Copy stream if codec matches desired target, transcode otherwise. */
+    AUTOCOPY_STRICTLIMIT,  /**< @brief Same as STRICT, only copy if target not larger, transcode otherwise. */
 } AUTOCOPY;
 
 /**

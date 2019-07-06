@@ -73,7 +73,7 @@ bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Ent
  *  @return On success, returns cache entry object. On error, returns nullptr and sets errno accordingly.
  */
 Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
-/** @brief Read some bytes into the internal buffer and into the given buffer.
+/** @brief Read some bytes from the internal buffer and into the given buffer.
  *  @note buff must be large enough to hold len number of bytes.
  *  @note Returns number of bytes read, may be less than len bytes.
  *  @param[in] cache_entry - corresponding cache entry

@@ -3587,17 +3587,11 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_ALAC:
     {
-        //*** @TODO */
-
-        //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
-        //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
-
         int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
 
         // File size:
-        // file duration * sample rate (HZ) * channels * bytes per sample
-        // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
+        // Apple Lossless Audio Coding promises a compression rate of 60-70%. We setimate 65 % of the original WAV size.
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) * 100 / 65;
         break;
     }
     case AV_CODEC_ID_NONE:

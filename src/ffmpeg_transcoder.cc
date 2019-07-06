@@ -1033,13 +1033,19 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         if (output_codec->sample_fmts != nullptr)
         {
             // Check if input sample format is supported and if so, use it (avoiding resampling)
+            AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(m_in.m_audio.m_codec_ctx->sample_fmt);
+
             output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
 
             for (int n = 0; output_codec->sample_fmts[n] != -1; n++)
             {
-                if (output_codec->sample_fmts[n] == m_in.m_audio.m_codec_ctx->sample_fmt)
+                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(output_codec->sample_fmts[n]);
+
+                if (output_codec->sample_fmts[n] == m_in.m_audio.m_codec_ctx->sample_fmt ||
+                        (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
+                         input_fmt_planar == output_fmt_planar))
                 {
-                    output_codec_ctx->sample_fmt    = m_in.m_audio.m_codec_ctx->sample_fmt;
+                    output_codec_ctx->sample_fmt    = output_codec->sample_fmts[n];
                     break;
                 }
             }

@@ -186,7 +186,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_ALAC;
         m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "mov";
+        m_format_name       = "m4a";
         break;
     }
     case FILETYPE_UNKNOWN:

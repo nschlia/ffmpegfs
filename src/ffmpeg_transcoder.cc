@@ -1666,7 +1666,14 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
     // Create a new format context for the output container format.
-    avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+    if (m_current_format->format_name() != "m4a")
+    {
+        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+    }
+    else
+    {
+        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, nullptr, ".m4a");
+    }
     if (m_out.m_format_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate output format context.");

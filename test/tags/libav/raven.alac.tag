@@ -1,6 +1,6 @@
 album=The Raven
 artist=Edgar Allen Poe
-compatible_brands=isomiso2iso6
+compatible_brands=isomiso2
 date=2007
 description=www.librivox.org
 

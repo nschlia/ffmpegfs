@@ -1210,13 +1210,19 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         if (output_codec->sample_fmts != nullptr)
         {
             // Check if input sample format is supported and if so, use it (avoiding resampling)
+            AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(m_in.m_audio.m_codec_ctx->sample_fmt);
+
             output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
 
             for (int n = 0; output_codec->sample_fmts[n] != -1; n++)
             {
-                if (output_codec->sample_fmts[n] == m_in.m_audio.m_codec_ctx->sample_fmt)
+                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(output_codec->sample_fmts[n]);
+
+                if (output_codec->sample_fmts[n] == m_in.m_audio.m_codec_ctx->sample_fmt ||
+                        (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
+                         input_fmt_planar == output_fmt_planar))
                 {
-                    output_codec_ctx->sample_fmt    = m_in.m_audio.m_codec_ctx->sample_fmt;
+                    output_codec_ctx->sample_fmt    = output_codec->sample_fmts[n];
                     break;
                 }
             }
@@ -1461,6 +1467,16 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             //        2=‘standard’,
             //        3=‘hq’
             output_codec_ctx->profile = params.m_level;
+            break;
+        }
+        case AV_CODEC_ID_ALAC:
+        {
+            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_ALAC);
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
             break;
         }
         default:
@@ -1827,7 +1843,14 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
     // Create a new format context for the output container format.
-    avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+    if (m_current_format->format_name() != "m4a")
+    {
+        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+    }
+    else
+    {
+        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, nullptr, ".m4a");
+    }
     if (m_out.m_format_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate output format context.");
@@ -4073,6 +4096,15 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
         *filesize = static_cast<size_t>(115 * (*filesize) / 100); // add 15% for overhead
+        break;
+    }
+    case AV_CODEC_ID_ALAC:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+
+        // File size:
+        // Apple Lossless Audio Coding promises a compression rate of 60-70%. We setimate 65 % of the original WAV size.
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) * 100 / 65;
         break;
     }
     case AV_CODEC_ID_NONE:

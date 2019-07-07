@@ -63,7 +63,7 @@ elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
     check_filesize "obama" 85751 89385
-    check_filesize "raven" 126696 126958 
+    check_filesize "raven" 126696 127540 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
@@ -79,6 +79,11 @@ then
     # prores
     check_filesize "obama" 1059275 1061039
     check_filesize "raven" 1850485 1853884
+elif [ "${DESTTYPE}" == "alac" ];
+then
+    # aiff
+    check_filesize "obama" 208272 208694
+    check_filesize "raven" 1739046 1740298
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

@@ -28,7 +28,12 @@ DESTTYPE=$1
 # Map filenames
 if [ "${DESTTYPE}" == "prores" ];
 then
+# ProRes uses the MOV container
     FILEEXT="mov"
+elif [ "${DESTTYPE}" == "alac" ];
+then
+# ALAC (Apple Lossless Coding) uses the mp4 container
+    FILEEXT="m4a"
 else
     FILEEXT=${DESTTYPE}
 fi

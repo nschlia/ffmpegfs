@@ -235,8 +235,6 @@ library. Just do (or similar):
 
 And your troubles should be gone.
 
-On Ubuntu use the same command with `apt-get` in place of `apt-get`.
-
 **"make check": all audio checks fail**
 
 Logfiles contain "bc: command not found", so the command line communicator is
@@ -245,8 +243,6 @@ missing.
 Fix by installing it (or similar):
 
      apt-get install bc
-
-On Ubuntu use the same command with `apt-get` in place of `apt-get`.
 
 **Songs get cut short**
 

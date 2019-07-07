@@ -102,7 +102,7 @@ extern struct FFMPEGFS_PARAMS
      */
     int                 guess_format_idx(const std::string & filepath) const;
     /**
-     * @brief Get FFmpegfs_Format for ae file.
+     * @brief Get FFmpegfs_Format for the file.
      * @param[in] filepath - Name of the file, path my be included, but not required.
      * @return On success, returns pointer to format. On error, returns nullptr.
      */

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./test_filenames alac m4a

@@ -7,6 +7,7 @@ TESTS += test_audio_opus test_filenames_opus test_filesize_opus test_tags_opus
 TESTS += test_audio_prores test_filenames_prores test_filesize_prores test_tags_prores
 TESTS += test_audio_wav test_filenames_wav test_filesize_wav test_tags_wav
 TESTS += test_audio_webm test_filenames_webm test_filesize_webm test_tags_webm
+TESTS += test_audio_alac test_filenames_alac test_filesize_alac test_tags_alac
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 
 EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize

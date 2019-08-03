@@ -1,3 +1,5 @@
+EXTRA_DIST = $(wildcard scripts/*)
+
 AM_CPPFLAGS = $(fuse_CFLAGS)
 
 bin_PROGRAMS = ffmpegfs

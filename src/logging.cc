@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017-2019 K. Henriksson
- * Extensions (c) 2017 by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017 Original author K. Henriksson
+ * Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+ * 
+ * On Debian systems, the complete text of the GNU General Public License
+ * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
 
 /**

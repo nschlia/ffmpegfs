@@ -141,7 +141,7 @@ public:
      * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
      * from the beginning of the file.
      */
-    virtual int             seek(long offset, int whence);
+    virtual int             seek(int64_t offset, int whence);
     /**
      * @brief Check if at end of file.
      * @return Returns true if at end of buffer.

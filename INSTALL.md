@@ -45,8 +45,11 @@ For optional Bluray support you need the following library
 * autoconf
 * automake
 * asciidoc (or at least asciidoc-base to save disk space)
-* xmllint
 * w3m
+
+For those who are lazy like me, simply copy and issue this command to get all prerequisites:
+
+    apt-get install gcc g++ autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
 
 The commands to install just the first prerequisites follow.
 

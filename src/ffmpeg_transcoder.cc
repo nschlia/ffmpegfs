@@ -4703,6 +4703,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         // Cannot change FFmpeg's API, so we hide this warning
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
         ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
 #pragma GCC diagnostic pop
 

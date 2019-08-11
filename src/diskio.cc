@@ -109,9 +109,9 @@ size_t DiskIO::tell() const
     return static_cast<size_t>(ftell(m_fpi));
 }
 
-int DiskIO::seek(long offset, int whence)
+int DiskIO::seek(int64_t offset, int whence)
 {
-    return fseek(m_fpi, offset, whence);
+    return fseek(m_fpi, static_cast<long int>(offset), whence);
 }
 
 bool DiskIO::eof() const

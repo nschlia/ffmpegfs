@@ -558,7 +558,7 @@ void Buffer::increment_pos(size_t increment)
     m_buffer_pos += increment;
 }
 
-int Buffer::seek(long offset, int whence)
+int Buffer::seek(int64_t offset, int whence)
 {
     if (m_buffer == nullptr)
     {
@@ -604,7 +604,7 @@ int Buffer::seek(long offset, int whence)
         return -1;
     }
 
-    m_buffer_pos = static_cast<uint64_t>(seek_pos);
+    m_buffer_pos = static_cast<size_t>(seek_pos);
     return 0;
 }
 

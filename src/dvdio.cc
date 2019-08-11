@@ -717,7 +717,7 @@ size_t DvdIO::tell() const
     return m_cur_pos;
 }
 
-int DvdIO::seek(long offset, int whence)
+int DvdIO::seek(int64_t offset, int whence)
 {
     if (!offset && whence == SEEK_SET)
     {

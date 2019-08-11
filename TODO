@@ -3,5 +3,3 @@ FFmpegfs TODOs
 * Improve Libav compatibility (maybe it is possible to use Libav 11+?).
 * Many more ideas I'll have when I wake up and find them nice to have.
 * Any features that you may request.
-
-* Implement upgrade function for SQLite database.

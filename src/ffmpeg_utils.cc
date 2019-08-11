@@ -959,14 +959,14 @@ std::string format_time(time_t value)
     return buffer;
 }
 
-std::string format_size(size_t value)
+std::string format_size(uint64_t value)
 {
     if (!value)
     {
         return "unlimited";
     }
 
-    if (value == static_cast<size_t>(AV_NOPTS_VALUE))
+    if (value == static_cast<uint64_t>(AV_NOPTS_VALUE))
     {
         return "unset";
     }
@@ -989,13 +989,13 @@ std::string format_size(size_t value)
     }
     else
     {
-        return string_format("%zu bytes", value);
+        return string_format("%" PRIu64 " bytes", value);
     }
 }
 
-std::string format_size_ex(size_t value)
+std::string format_size_ex(uint64_t value)
 {
-    return format_size(value) + string_format(" (%zu bytes)", value);
+    return format_size(value) + string_format(" (%" PRIu64 " bytes)", value);
 }
 
 std::string format_result_size(size_t size_resulting, size_t size_predicted)
@@ -1321,7 +1321,7 @@ size_t get_disk_free(std::string & path)
         return 0;
     }
 
-    return (buf.f_bfree * buf.f_bsize);
+    return static_cast<size_t>(buf.f_bfree * buf.f_bsize);
 }
 
 bool check_ignore(size_t size, size_t offset)

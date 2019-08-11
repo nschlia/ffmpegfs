@@ -277,7 +277,7 @@ public:
      * from the beginning of the file.  @n
      * On error, the value -1 is returned and errno is set to indicate the error.
      */
-    virtual int         seek(long offset, int whence) = 0;
+    virtual int         seek(int64_t offset, int whence) = 0;
     /**
      * @brief Check if at end of file.
      * @return Returns true if at end of file.

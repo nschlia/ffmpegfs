@@ -128,8 +128,8 @@ static bool start_timer(time_t interval)
     }
 
     // Start the timer
-    its.it_value.tv_sec = freq_nanosecs / 1000000000;
-    its.it_value.tv_nsec = freq_nanosecs % 1000000000;
+    its.it_value.tv_sec = static_cast<time_t>(freq_nanosecs / 1000000000);
+    its.it_value.tv_nsec = static_cast<long>(freq_nanosecs % 1000000000);
     its.it_interval.tv_sec = its.it_value.tv_sec;
     its.it_interval.tv_nsec = its.it_value.tv_nsec;
 

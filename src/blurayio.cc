@@ -251,7 +251,7 @@ size_t BlurayIO::tell() const
     return static_cast<size_t>(static_cast<int64_t>(bd_tell(m_bd)) - m_start_pos);
 }
 
-int BlurayIO::seek(long offset, int whence)
+int BlurayIO::seek(int64_t offset, int whence)
 {
     int64_t seek_pos;
 

@@ -239,7 +239,7 @@ int VcdEntries::scan_chapters()
             while (first <= last)
             {
                 VcdChapter buffer(m_chapters[chapter_no].get_is_svcd());
-                __off_t file_pos = first_sync + middle * VCD_SECTOR_SIZE;
+                __off_t file_pos = static_cast<__off_t>(first_sync + middle * VCD_SECTOR_SIZE);
 
                 if (fseek(fpi, file_pos, SEEK_SET))
                 {
@@ -280,7 +280,7 @@ int VcdEntries::scan_chapters()
             int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
 
             // Read time stamp of last sector
-            if (fseek(fpi, first_sync + (total_chunks - 1) * VCD_SECTOR_SIZE, SEEK_SET))
+            if (fseek(fpi, static_cast<long int>(first_sync + (total_chunks - 1) * VCD_SECTOR_SIZE), SEEK_SET))
             {
                 throw static_cast<int>(ferror(fpi));
             }

@@ -107,7 +107,7 @@ size_t VcdIO::read(void * data, size_t size)
 {
     if (static_cast<size_t>(ftell(m_fpi)) + size > m_end_pos)
     {
-        size = m_end_pos - static_cast<size_t>(ftell(m_fpi));
+        size = static_cast<size_t>(m_end_pos - static_cast<uint64_t>(ftell(m_fpi)));
     }
 
     if (!size)
@@ -138,7 +138,7 @@ size_t VcdIO::size() const
 
     if (m_end_pos)
     {
-        return (m_end_pos - m_start_pos);
+        return static_cast<size_t>(m_end_pos - m_start_pos);
     }
 
     struct stat st;
@@ -148,10 +148,10 @@ size_t VcdIO::size() const
 
 size_t VcdIO::tell() const
 {
-    return (static_cast<size_t>(ftell(m_fpi)) - m_start_pos);
+    return static_cast<size_t>(static_cast<uint64_t>(ftell(m_fpi)) - m_start_pos);
 }
 
-int VcdIO::seek(long offset, int whence)
+int VcdIO::seek(int64_t offset, int whence)
 {
     off_t seek_pos;
     switch (whence)
@@ -189,7 +189,7 @@ int VcdIO::seek(long offset, int whence)
         return -1;
     }
 
-    return fseek(m_fpi, seek_pos, SEEK_SET);
+    return fseek(m_fpi, static_cast<long int>(seek_pos), SEEK_SET);
 }
 
 bool VcdIO::eof() const

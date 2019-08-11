@@ -410,13 +410,13 @@ std::string         format_time(time_t value);
  * @param[in] value - Size to format.
  * @return Returns std::string with formatted value in bytes, KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
-std::string         format_size(size_t value);
+std::string         format_size(uint64_t value);
 /**
  * @brief Format size.
  * @param[in] value - Size to format.
  * @return Returns std::string with formatted value in bytes plus KB, MB or TB; if value == AV_NOPTS_VALUE returns "unset"; "unlimited" if value == 0.
  */
-std::string         format_size_ex(size_t value);
+std::string         format_size_ex(uint64_t value);
 /**
  * @brief Format size of transcoded file including difference between predicted and resulting size.
  * @param[in] size_resulting - Resulting size.

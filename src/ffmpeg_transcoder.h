@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017-2019 by Norbert Schlia (nschlia@oblivion-software.de)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
@@ -163,9 +163,9 @@ public:
      */
     bool                        is_open() const;
     /**
-     * Open the given FFmpeg file and prepare for decoding. 
+     * Open the given FFmpeg file and prepare for decoding.
      * Collect information for the file (duration, bitrate, etc.).
-     * After this function, the other methods can be used to process the file. 
+     * After this function, the other methods can be used to process the file.
      *
      * @param[in,out] virtualfile - Virtualfile object for desired file. May be a physical file, a DVD, Bluray or video CD
      * @param[in,out] fio - Pass an already open fileio object. Normally the file is opened, but if this parameter is not nullptr the already existing object is used.

@@ -12,7 +12,7 @@ MAINTAINERCLEANFILES = ffmpegfs.1
 
 EXTRA_DIST = INSTALL.md README.md ffmpegfs.1.txt src/makehelp.sh
 
-#CLEANFILES = 
+#CLEANFILES =
 
 ffmpegfs.1: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
@@ -93,7 +93,7 @@ doxy: doxyfile.inc $(SRCS)
 doxy-clean:
 	rm -Rf doxyfile.inc doxygen
 
-# Clean up extra stuff	
+# Clean up extra stuff
 clean-local: doxy-clean
 	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1  ffmpegfs.1.hhc  ffmpegfs.1.hhp  ffmpegfs.1.pdf  ffmpegfs.1.text src/ffmpegfshelp.h
 

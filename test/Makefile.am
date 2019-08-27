@@ -12,7 +12,7 @@ TESTS += test_audio_alac test_filenames_alac test_filesize_alac test_tags_alac
 
 EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize
 EXTRA_DIST += $(wildcard tags/*)
-# NOT IN RELEASE 1.0! Add later: test_picture 
+# NOT IN RELEASE 1.0! Add later: test_picture
 
 CLEANFILES = $(patsubst %,%.builtin.log,$(TESTS))
 

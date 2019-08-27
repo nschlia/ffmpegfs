@@ -97,7 +97,7 @@ public:
      * @brief Get the track number of this chapter.
      * @return Returns track number.
      */
-    int         get_track_no() const;                   
+    int         get_track_no() const;
     /**
      * @brief Get MSF (minutes, seconds, and fractional seconds/frames) minute.
      * @return Returns MSF minute.

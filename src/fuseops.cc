@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
@@ -376,7 +376,7 @@ static void translate_path(std::string *origpath, const char* path)
 static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
 {
     AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
-    
+
     if (format != nullptr)
     {
         std::string ext;

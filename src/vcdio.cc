@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
@@ -167,7 +167,7 @@ int VcdIO::seek(int64_t offset, int whence)
         break;
     }
     case SEEK_END:
-    {        
+    {
         seek_pos = static_cast<off_t>(m_end_pos) - offset;
         break;
     }

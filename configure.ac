@@ -98,23 +98,12 @@ AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPAND
 # Check for a2x (convert asciidoc to another format)
 AC_PATH_PROG(A2X, a2x)
 AC_CHECK_PROG(HAVE_A2X, a2x, "yes", "no")
-AS_IF([test "$HAVE_A2X" == "yes"], [], AC_MSG_ERROR([Missing a2x. Please install asciidoc to fix.]))
+AS_IF([test "$HAVE_A2X" == "yes"], [], AC_MSG_ERROR([Missing a2x. Please install asciidoc (or at least asciidoc-base to save disk space) to fix.]))
 
 # Check for w3m (html -> text)
 AC_PATH_PROG(W3M, w3m)
 AC_CHECK_PROG(HAVE_W3M, w3m, "yes", "no")
 AS_IF([test "$HAVE_W3M" == "yes"], [], AC_MSG_ERROR([Missing w3m. Please install w3m to fix.]))
-
-# Check for xmllint
-AC_PATH_PROG(XMLLINT, xmllint)
-AC_CHECK_PROG(HAVE_XMLLINT, xmllint, "yes", "no")
-AS_IF([test "$HAVE_XMLLINT" == "yes"], [], AC_MSG_ERROR([Missing xmlint. Please install libxml2-utils to fix.]))
-
-# xmlto seems not to be required
-# Check for xmlto
-#AC_PATH_PROG(XMLLTO, xmlto)
-#AC_CHECK_PROG(HAVE_XMLLTO, xmlto, "yes", "no")
-#AS_IF([test "$HAVE_XMLLTO" == "yes"], [], AC_MSG_ERROR([Missing xmlto. Please install xmlto to fix.]))
 
 dnl FFMPEG support checks
 
@@ -230,16 +219,22 @@ AM_COND_IF([USE_LIBVCD],
            [AC_MSG_RESULT([Internal S/VCD support enabled... yes])],
            [AC_MSG_RESULT([Internal S/VCD support enabled... no])])
 
-# Check for doxygen. If not installed, go on, but make doxy won't work
+# Check for doxygen. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN";
    then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support. If you intend to use "make doxy" you should install it.])
 fi
 
-# Check for curl. If not installed, go on, but make doxy won't work
+# Check for curl. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([CURL], [curl])
 if test -z "$CURL";
    then AC_MSG_WARN([curl not found - continuing without curl support. If you intend to use "make doxy" you should install it.])
+fi
+
+# Check for dot (graphviz). If not installed, go on, but make doxy won't work.
+AC_CHECK_PROGS([GRAPHVIZ], [dot])
+if test -z "$GRAPHVIZ";
+   then AC_MSG_WARN([dot not found - continuing without graphviz support. If you intend to use "make doxy" you should install it.])
 fi
 
 AC_ARG_ENABLE([changelog],
@@ -262,4 +257,4 @@ AM_COND_IF([HINT_LIBDVD],
            [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdread development packages. See INSTALL.md for details.])])
 AM_COND_IF([HINT_LIBBLURAY],
            [AC_MSG_NOTICE([HINT: To enable bluray suport install the libbluray development package. See INSTALL.md for details.])])
-           
+

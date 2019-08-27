@@ -39,7 +39,7 @@ Usage: ffmpegfs [OPTION]... IN_DIR OUT_DIR
 
 Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 
-=== Encoding options === 
+=== Encoding options ===
 *--desttype*=TYPE, *-odesttype*=TYPE::
 Select destination format. 'TYPE' can currently be:
 +
@@ -153,7 +153,7 @@ Default: 44.1 kHz
 Video encoding bit rate. Setting this too high or low may cause transcoding to fail.
 +
 Default: 2 Mbit
-+    
++
 *mp4:* May be specified as 500 to 25000 kbit.
 +
 *BITRATE*:: can be defined as...
@@ -189,7 +189,7 @@ Do not copy album arts into output file.
 This will reduce the file size, may be useful when streaming via HTML5 when album arts are not used anyway.
 +
 Default: add album arts
-    
+
 === Virtual Script ===
 --*enablescript*, -o *enablescript*::
 Add virtual index.php to every directory. It reads scripts/videotag.php from the ffmpegs binary directory.
@@ -367,14 +367,14 @@ but only fair to good for *mp4*.
 
 As the file is read, it is transcoded into an internal per-file
 buffer. This buffer continues to grow while the file is being read
-until the whole file is transcoded in memory. Once decoded the 
+until the whole file is transcoded in memory. Once decoded the
 file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should
 access the same file they will share the same transcoded data, saving
 CPU time. If the first process abandons the file before its end,
 transconding will continue for some time. If the file is accessed
-again before the timeout, transcoding will go on, if not it stops 
+again before the timeout, transcoding will go on, if not it stops
 and the chunk created so far discarded to save disk space.
 
 Seeking within a file will cause the file to be transcoded up to the
@@ -384,25 +384,25 @@ enhancements may provide true random seeking (But if this is feasible
 is yet unclear due to restrictions to positioning inside compressed
 streams).
 
-*mp3*: ID3 version 2.4 and 1.1 tags are created from the comments in the 
-source file. They are located at the start and end of the file 
-respectively. 
+*mp3*: ID3 version 2.4 and 1.1 tags are created from the comments in the
+source file. They are located at the start and end of the file
+respectively.
 
 *mp4*: Same applies to meta atoms in *mp4* containers.
 
-*mp3* target only: A special optimisation is made so that applications 
-which scan for id3v1 tags do not have to wait for the whole file to be 
+*mp3* target only: A special optimisation is made so that applications
+which scan for id3v1 tags do not have to wait for the whole file to be
 transcoded before reading the tag. This *dramatically* speeds up such
 applications.
 
 == SUPPORTED OUTPUT FORMATS ==
-A few words to the supported output formats which are *mp3* and *mp4* 
-currently. There is not much to say about the *mp3* output as these 
-are regular *mp3* files with no strings attached. They should play 
+A few words to the supported output formats which are *mp3* and *mp4*
+currently. There is not much to say about the *mp3* output as these
+are regular *mp3* files with no strings attached. They should play
 well in any modern player.
 
 The *mp4* files created are special, though, as *mp4* is not quite suited
-for live streaming. Reason being that the start block of an *mp4* 
+for live streaming. Reason being that the start block of an *mp4*
 contains a field with the size of the compressed data section. Suffice
 to say that this field cannot be filled in until the size is known,
 which means compression must be completed first, a seek done to the
@@ -410,7 +410,7 @@ beginning, and the size atom updated.
 
 Alas, for a continuous live stream, that size will never be known or
 for our transcoded files one would have to wait for the whole file
-to be recoded. If that was not enough some important pieces of 
+to be recoded. If that was not enough some important pieces of
 information are located at the end of the file, including meta tags
 with artist, album, etc.
 
@@ -425,20 +425,20 @@ data from the end to the beginning of the *mp4*. Additionally, the size field
 can be left empty (0). isml (smooth live streaming) is another extension.
 
 For direct to stream transcoding several new features in *mp4* need to
-be used (ISMV, faststart, separate_moof/empty_moov to name them) 
-which are not implemented in older versions (or if available, not 
-working properly). 
+be used (ISMV, faststart, separate_moof/empty_moov to name them)
+which are not implemented in older versions (or if available, not
+working properly).
 
-By default faststart files will be created with an empty size field so 
-that the file can be started to be written out at once instead of 
-decoding it as a whole before this is possible. That would mean it would 
+By default faststart files will be created with an empty size field so
+that the file can be started to be written out at once instead of
+decoding it as a whole before this is possible. That would mean it would
 take some time before playback can start.
 
-The data part is divided into chunks of about 5 seconds length each, 
+The data part is divided into chunks of about 5 seconds length each,
 this allowing to fill in the size fields early enough.
 
-As a draw back not all players support the format, or play back with 
-strange side effects. VLC plays the file, but updates the time display 
+As a draw back not all players support the format, or play back with
+strange side effects. VLC plays the file, but updates the time display
 every 5 seconds only. When streamed over HTML5 video tags, there will be no
 total time shown, but that is OK, as it is yet unknown. The playback
 cannot be positioned past the current playback position, only backwards.
@@ -475,7 +475,7 @@ If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
 This fork with FFmpeg support is maintained by
 mailto:nschlia@oblivion-software.de[Norbert Schlia] since 2017.
 
-Based on work by K. Henriksson (from 2008 to 2017) and the original author 
+Based on work by K. Henriksson (from 2008 to 2017) and the original author
 David Collett (from 2006 to 2008).
 
 Much thanks to them for the original work!
@@ -490,11 +490,11 @@ the GNU Free Documentation License 1.3 or later. It can be found
 http://www.gnu.org/licenses/fdl-1.3.html[online] or in the COPYING.DOC file.
 
 == FFMPEG LICENSE ==
-FFmpeg is licensed under the GNU Lesser General Public License (LGPL) 
-version 2.1 or later. However, FFmpeg incorporates several optional 
-parts and optimizations that are covered by the GNU General Public 
-License (GPL) version 2 or later. If those parts get used the GPL 
-applies to all of FFmpeg. 
+FFmpeg is licensed under the GNU Lesser General Public License (LGPL)
+version 2.1 or later. However, FFmpeg incorporates several optional
+parts and optimizations that are covered by the GNU General Public
+License (GPL) version 2 or later. If those parts get used the GPL
+applies to all of FFmpeg.
 
 See https://www.ffmpeg.org/legal.html for details.
 

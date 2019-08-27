@@ -45,14 +45,14 @@ Supported output formats:
 * PNG (video to frameset)
 * BMP (video to frameset)
 
-This can let you use a multi media file collection with software 
+This can let you use a multi media file collection with software
 and/or hardware which only understands one of the supported output
-formats, or transcode files through simple drag-and-drop in a file 
+formats, or transcode files through simple drag-and-drop in a file
 browser.
 
-For live streaming select WebM or MP4 for best results. If video 
+For live streaming select WebM or MP4 for best results. If video
 transcoding is not required MP3 will also do, but WebM and MP4 will
-create better results. The OGG encoder is not fast enough for real-time 
+create better results. The OGG encoder is not fast enough for real-time
 recoding files.
 
 When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a
@@ -70,20 +70,20 @@ Supported Linux Distributions
 
 **Suse** does not provide proprietary formats like AAC and H264, thus
 the distribution FFmpeg is crippled. FFmpegfs will not be able to encode
-to H264 and AAC. End of story. 
+to H264 and AAC. End of story.
 See https://en.opensuse.org/Restricted_formats.
 
-**Debian 7** comes with Libav 0.8 clone of FFmpeg. 
+**Debian 7** comes with Libav 0.8 clone of FFmpeg.
 
 This Libav version is far too old and will not work.
 
-**Debian 8** comes with Libav 11 clone of FFmpeg. 
+**Debian 8** comes with Libav 11 clone of FFmpeg.
 
 FFmpegfs compiles with Libav 11 and 12, but streaming directly while
-transcoding does not work. The first time a file is accessed playback 
-will fail. After it has been decoded fully to cache playback does work. 
+transcoding does not work. The first time a file is accessed playback
+will fail. After it has been decoded fully to cache playback does work.
 Playing the file via http may fail or it may take quite long until the
-file starts playing. This is a Libav insufficiency. You may have to 
+file starts playing. This is a Libav insufficiency. You may have to
 replace it with FFmpeg.
 
 **Debian 9**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
@@ -141,14 +141,14 @@ default this is only possible for the user who launched FFmpegfs.
 Examples:
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache
-     
+
 Run FFmpegfs transcoding files from /test/in to /test/out, logging up to
 a chatty TRACE level to stderr. The cache resides in test/cache. All directories
 are under the current user's home directory.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
-     
-Same as above, but also limit video with to 640 pixels. Larger videos will be 
+
+Same as above, but also limit video with to 640 pixels. Larger videos will be
 scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
@@ -188,9 +188,9 @@ audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV
 are possible but do not make sense as MP4 or WebM work perfectly
 with audio only content.
 
-To use the new feature, simply specify a video and audio file type, 
-separated by a "+" sign. For example, --desttype=mov+aiff will convert 
-video files to Apple Quicktime MOV and audio only files to AIFF. This 
+To use the new feature, simply specify a video and audio file type,
+separated by a "+" sign. For example, --desttype=mov+aiff will convert
+video files to Apple Quicktime MOV and audio only files to AIFF. This
 can be handy if the results are consumed e.g. by some Apple Editing
 software which is very picky about the input format.
 
@@ -275,7 +275,7 @@ but only fair to good for MP4.
 
 As the file is read, it is transcoded into an internal per-file
 buffer. This buffer continues to grow while the file is being read
-until the whole file is transcoded in memory. Once decoded the 
+until the whole file is transcoded in memory. Once decoded the
 file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should
@@ -292,14 +292,14 @@ enhancements may provide true random seeking (but if this is feasible
 is yet unclear due to restrictions to positioning inside compressed
 streams).
 
-MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the 
-source file. They are located at the start and end of the file 
+MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the
+source file. They are located at the start and end of the file
 respectively.
 
 MP4: Same applies to meta atoms in MP4 containers.
 
-MP3 target only: A special optimisation is made so that applications 
-which scan for id3v1 tags do not have to wait for the whole file to be 
+MP3 target only: A special optimisation is made so that applications
+which scan for id3v1 tags do not have to wait for the whole file to be
 transcoded before reading the tag. This *dramatically* speeds up such
 applications.
 
@@ -311,12 +311,12 @@ ignore this information and play the file anyway.
 ABOUT OUTPUT FORMATS
 --------------------
 
-A few words to the supported output formats. There is not much to say 
-about the MP3 output as these are regular MP3 files with no strings 
+A few words to the supported output formats. There is not much to say
+about the MP3 output as these are regular MP3 files with no strings
 attached. They should play well in any modern player.
 
 The MP4 files created are special, though, as MP4 is not quite suited
-for live streaming. Reason being that the start block of an MP4 
+for live streaming. Reason being that the start block of an MP4
 contains a field with the size of the compressed data section. Suffice
 to say that this field cannot be filled in until the size is known,
 which means compression must be completed first, a file seek done to
@@ -324,7 +324,7 @@ the beginning, and the size atom updated.
 
 Alas, for a continous live stream, that size will never be known or
 for our transcoded files one would have to wait for the whole file
-to be recoded. If that was not enough some important pieces of 
+to be recoded. If that was not enough some important pieces of
 information are located at the end of the file, including meta tags
 with artist, album, etc.
 
@@ -335,28 +335,28 @@ of FFmpegfs.
 
 To get around the restriction several extensions have been developed,
 one of which is called "faststart" that relocates the afformentioned
-data from the end to the beginning of the MP4. Additonally, the size field 
+data from the end to the beginning of the MP4. Additonally, the size field
 can be left empty (0). isml (smooth live streaming) is another extension.
 
 For direct to stream transcoding several new features in MP4 need to
-be active (ISMV, faststart, separate_moof/empty_moov to name them) 
+be active (ISMV, faststart, separate_moof/empty_moov to name them)
 which are not implemented in older versions of FFMpeg (or if available,
-not working properly). 
+not working properly).
 
-By default faststart files will be created with an empty size field so 
-that the file can be started to be written out at once instead of 
+By default faststart files will be created with an empty size field so
+that the file can be started to be written out at once instead of
 encoding it as a whole before this is possible. Encoding it completely
 would mean it would take some time before playback can start.
 
-The data part is divided into chunks of about 1 second length, each 
-with its own header, thus it is possible to fill in the size fields 
+The data part is divided into chunks of about 1 second length, each
+with its own header, thus it is possible to fill in the size fields
 early enough.
 
-As a draw back not all players support the format, or play it with 
-strange side effects. VLC plays the file, but updates the time display 
-every few seconds only. When streamed over HTML5 video tags, sometimes there 
+As a draw back not all players support the format, or play it with
+strange side effects. VLC plays the file, but updates the time display
+every few seconds only. When streamed over HTML5 video tags, sometimes there
 will be no total time shown, but that is OK, as long as the file plays.
-Playback cannot be positioned past the current playback position, only 
+Playback cannot be positioned past the current playback position, only
 backwards.
 
 But that's the price of starting playback fast.
@@ -366,9 +366,9 @@ FIXING PROBLEMS
 
 **Lock ups when accessing through Samba**
 
-When accessed via Samba the pending read can lock the whole share, causing 
-Windows Explorer and even KDE Dolphin to freeze. Any access from the same 
-machine to that share is blocked, Even "ls" is not possible and blocks until 
+When accessed via Samba the pending read can lock the whole share, causing
+Windows Explorer and even KDE Dolphin to freeze. Any access from the same
+machine to that share is blocked, Even "ls" is not possible and blocks until
 the data was returned.
 
 Seems others had the same problem:
@@ -384,16 +384,16 @@ Adding this to the [global] config in smb.conf fixes that:
 The "aio read size" parameter may be moved to the share config:
 
  	aio read size = 1
- 	
+
 **rsync, Beyond Compare and other tools**
 
-Some copy tools do not go along very well with dynamically generated files 
+Some copy tools do not go along very well with dynamically generated files
 as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).
 
 Under Linux ist is best to use (optionally with -r parameter)
 
         cp -uv /path/to/source /path/to/target
-	
+
 This will copy all missing/changed files without missing parts. On the Windows
 side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only
 copy the predicted size first and not respond to size changes.
@@ -432,10 +432,10 @@ Future Plans
 AUTHORS
 -------
 
-This fork with FFmpeg support is maintained by Norbert Schlia 
+This fork with FFmpeg support is maintained by Norbert Schlia
 (nschlia@oblivion-software.de) since 2017 to date.
 
-Based on work by K. Henriksson (from 2008 to 2017) and the original author 
+Based on work by K. Henriksson (from 2008 to 2017) and the original author
 David Collett (from 2006 to 2008).
 
 Much thanks to them for the original work and giving me a good head start!
@@ -454,11 +454,11 @@ the GNU Free Documentation License 1.3 or later. It can be found
 FFMPEG LICENSE
 --------------
 
-FFmpeg is licensed under the GNU Lesser General Public License (LGPL) 
-version 2.1 or later. However, FFmpeg incorporates several optional 
-parts and optimizations that are covered by the GNU General Public 
-License (GPL) version 2 or later. If those parts get used the GPL 
-applies to all of FFmpeg. 
+FFmpeg is licensed under the GNU Lesser General Public License (LGPL)
+version 2.1 or later. However, FFmpeg incorporates several optional
+parts and optimizations that are covered by the GNU General Public
+License (GPL) version 2 or later. If those parts get used the GPL
+applies to all of FFmpeg.
 
 See https://www.ffmpeg.org/legal.html for details.
 
@@ -468,12 +468,12 @@ COPYRIGHT
 This fork with FFmpeg support copyright \(C) 2017-2019 Norbert Schlia
 (nschlia@oblivion-software.de).
 
-Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 
+Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013
 K. Henriksson.
 
 This is free software: you are free to change and redistribute it under
 the terms of the GNU General Public License (GPL) version 3 or later.
 
 Manual is copyright \(C) 2010-2011 K. Henriksson. This fork 2017 to present
-by N. Schlia and may be distributed under GNU Free Documentation License 1.3 
+by N. Schlia and may be distributed under GNU Free Documentation License 1.3
 or later.

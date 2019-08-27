@@ -2,9 +2,9 @@ Installation Instructions for FFmpegfs
 ======================================
 
 Copyright (C) 2017-2019 Norbert Schlia (nschlia@oblivion-software.de)
-This file was originally copyright (C) 2013-2014 K. Henriksson. 
+This file was originally copyright (C) 2013-2014 K. Henriksson.
 
-It can be distributed under the terms of the GFDL 1.3 or later. 
+It can be distributed under the terms of the GFDL 1.3 or later.
 See README.md for more information.
 
 Prerequisites
@@ -24,7 +24,7 @@ libraries:
 * libavfilter    (>= 5.40.0)
 * libswscale     (>= 3.0.0)
 
-One of these is required, preferably libswresample as libavresample is deprecated. 
+One of these is required, preferably libswresample as libavresample is deprecated.
 It will be removed, but as for now is required if Libav is used (which has no
 libswresample).
 
@@ -40,28 +40,17 @@ For optional Bluray support you need the following library
 
 * libbluray       (>= 0.6.2)
 
-**If building from git, you'll also need:**
-
-* autoconf
-* automake
-* asciidoc (or at least asciidoc-base to save disk space)
-* w3m
-
-For those who are lazy like me, simply copy and issue this command to get all prerequisites:
-
-    apt-get install gcc g++ autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
-
 The commands to install just the first prerequisites follow.
 
-Please read the "Supported Linux Distributions" chapter in README.md 
+Please read the "Supported Linux Distributions" chapter in README.md
 for details.
 
 **On Debian:**
 
-    apt-get install gcc g++
+    apt-get install gcc g++ make pkg-config asciidoc-base w3m
 
     apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
-    
+
 To get DVD support:
 
     apt-get install libdvdread-dev libdvdnav-dev
@@ -69,6 +58,14 @@ To get DVD support:
 To get Bluray support:
 
     apt-get install libbluray-dev
+
+To "make doxy (build Doxygen documentation):
+
+    apt-get install doxygen graphviz
+
+To "make check" (run test suite):
+
+    apt-get install libchromaprint-dev bc
 
 **On Suse** (please read notes before continuing):
 
@@ -79,13 +76,13 @@ To get Bluray support:
 To get DVD support:
 
     zypper install libdvdread-devel libdvdnav-devel
-    
+
 To get Bluray support:
 
     zypper install libbluray-devel
 
 Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264
-are *not* available which renders this library next to usesless. But FFmpeg can 
+are *not* available which renders this library next to usesless. But FFmpeg can
 be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
 "FFmpeg compile notes" below.
 
@@ -98,7 +95,7 @@ be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and chec
 To get DVD support:
 
     yum install libdvdread-devel libdvdnav-devel
-    
+
 To get Bluray support:
 
     yum install libbluray-devel
@@ -135,9 +132,25 @@ to build ffmpeg.
 
 FFmpeg compile notes:
 
-FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. 
+FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
+
+**If building from git, you'll also need:**
+
+* autoconf
+* automake
+* asciidoc (or at least asciidoc-base to save disk space)
+* w3m
+
+For those who are lazy like me, simply copy and issue this command to get all prerequisites:
+
+    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+
+Then do
+
+    ./autogen.sh
+    ./configure
 
 Installation
 ------------
@@ -153,11 +166,11 @@ build and install, run:
     ./configure
     make
     make install
-    
-To build and run the check suite, do:    
+
+To build and run the check suite, do:
 
     make checks
-    
+
 This will test audio conversion, tagging and size prediction.
 
 NOTE: Image embedding is not yet implemented. The test has been
@@ -196,8 +209,8 @@ Fuse is missing! Do...
 Trying to mount as other than root, the message
 
     fuse: failed to exec fusermount: No such file or directory
-    
-is printed.    
+
+is printed.
 
 Fuse is missing! Do...
 
@@ -205,12 +218,12 @@ Fuse is missing! Do...
 
 **"ERROR: libmp3lame >= 3.98.3 not found":**
 
-If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built 
-and installed libmp3lame you may find a solution here: 
+If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built
+and installed libmp3lame you may find a solution here:
 https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
 **autogen.sh displays "possibly undefined macro":**
-    
+
     Running autoreconf --install
     configure.ac:46: error: possibly undefined macro: AC_DEFINE
       If this token and others are legitimate, please use m4_pattern_allow.
@@ -254,7 +267,7 @@ If songs do not play to the very end and you are using SAMBA or NFS you're in tr
 Happens when the files are transcoded on the fly, but never when file comes from
 cache. This is because the result is never exactly what was predicted.
 
-SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the 
+SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the
 file ist larger than predicted.
 
 NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA.
@@ -266,11 +279,11 @@ to cope with that, but how to is unknown to me.
 
 **Make reports "/bin/sh: a2x: command not found"**
 
-You are missing out on asciidoc, to install do (or similar)
+You are missing out on asciidoc, to install do (or similar):
 
      apt-get install asciidoc
-     
-should fix it.
+
+That should fix it. You may just install asciidoc-base to safe disk space.
 
 **libbluray fails to load libbluray.jar**
 

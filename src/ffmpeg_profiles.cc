@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
@@ -481,8 +481,8 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_none[] =
 
     { "cpu-used",               "8",                        0,  0 },
 
-//    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1 
-//      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25 
+//    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1
+//      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25
 //      -c:a libopus -b:a 64k -f webm out.webm
 
 

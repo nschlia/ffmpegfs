@@ -18,7 +18,7 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
          be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.9 (2019-08-XX)
+Important changes in 1.9 (2019-09-XX)
 
 * Support: Code has now been tested to work on ARMv7 (32 bit).
 * Feature: Documented the whole project with Doxygen.
@@ -26,8 +26,11 @@ Important changes in 1.9 (2019-08-XX)
            The thread pool also ensures that not more threads than configured are started. Defaults
            to 16x the number of processor cores available.
 * Feature: Added Apple Lossles Audio Compression (ALAC) support.
-* Fixed several warnings if compiled for 32 bit.
-* Bugfix:
+* Feature: Added optional graphviz to configure, only required for Doxygen.
+* Feature: Updated INSTALL.md with missing prerequisites. Rearranged paragraphs, mentioning building
+           from git first was confusing.
+* Bugfix: Fixed several warnings if compiled for 32 bit.
+* Bugfix: Removed unused xmlint prerequisite from configure.
 * Known bug:
 
 Important changes in 1.8 (2019-05-23)
@@ -60,13 +63,13 @@ Important changes in 1.7 (2019-02-26)
            recoding. Reduces computing time and CPU load.
 * Feature: Sped up DVD/Bluray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.
 * Feature: Extended stream copy: now any codec can be copied if supported by target container using --autocopy=MATCH option.
-* Feature: Added full virtual titles to DVD, Bluray and Video CD. Creating one virtual file per chapter is very nice for 
+* Feature: Added full virtual titles to DVD, Bluray and Video CD. Creating one virtual file per chapter is very nice for
 	   music disks as it allows access to every single title very easily. For movies it is better to have it in one
 	   piece.
 * Feature: Enhanced win_smb_fix=1 functionality to hopefully catch all Windows incidents.
 * Feature: Added min_dvd_chapter_duration parameter. DVD chapters shorter than this will be ignored. Defaults to 1 second.
 * Bugfix: Decimal seconds in duration was wrong. Fixed.
-* Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space 
+* Bugfix: This was a bad one: The application crashed with a protection fault if there was not enough disk space
           on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting
           the issue.
 * Bugfix: Fixed crash when DVD nav packet was missing
@@ -96,7 +99,7 @@ Important changes in 1.6 (2019-01-11)
 * Feature: Added DVD angle support.Chapters with angles will show as separate files.
 * Feature: Speed up Bluray conversion significantly by using the directory instead of probing each chapter.
 * Feature: Speed up VCD conversion.
-* Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment 
+* Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment
            simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file
            up to this point).
 * Bugfix: Suspend/decoding timeouts did not work. Transcoding never timed out...
@@ -144,16 +147,16 @@ Important changes in 1.4 (2018-05-30)
   be fine and reduce system load significantly.
 
 * Feature: Enhanced logging, added a colour profile to screen logs and raised or lowered
-           some messages log levels appropriately. Also added a few informative log 
+           some messages log levels appropriately. Also added a few informative log
            messages.
-* Feature: Bluray support: Detect bluray files in directories and list separate chapters 
-           and titles as separate files. 
+* Feature: Bluray support: Detect bluray files in directories and list separate chapters
+           and titles as separate files.
 * Feature: DVD support: Detect IFO files and list separate DVD chapters or programs
-           as separate files. 
-* Feature: S/VCD support: Detect Video CDs in directories and list chapters 
-           as separate files. 
-* Feature: Changed the fuse operations code module to c++ (minimise danger of 
-           memory leaks or buffer overruns)	   
+           as separate files.
+* Feature: S/VCD support: Detect Video CDs in directories and list chapters
+           as separate files.
+* Feature: Changed the fuse operations code module to c++ (minimise danger of
+           memory leaks or buffer overruns)
 * Feature: Added --enablescript option that will add virtual index.php to every
            directory. It reads scripts/videotag.php from the ffmpegs binary directory.
            This can be very handy to test video playback. Of course, feel free to
@@ -188,10 +191,10 @@ Changes in this release:
 * Feature: Enhanced logging output for better readability.
 * Feature: Added pre-buffer option. Files will be decoded up to this limit first
            before made accessible. This ensures smooth startup.
-* Feature: Enhanced configure that checks whether libavresample or libswresample 
+* Feature: Enhanced configure that checks whether libavresample or libswresample
            is present.
-* Feature: Improved recoding detection. Files are recoded if the source file size 
-           or timestamp changes, or different encoding options are selected 
+* Feature: Improved recoding detection. Files are recoded if the source file size
+           or timestamp changes, or different encoding options are selected
            (e.g. a different bitrate, vidoe size etc.).
 * Feature: Allow profiles for target browsers or players. Currently selectable:
            NONE     no profile
@@ -208,7 +211,7 @@ Changes in this release:
            Use --noalbumarts parameter to disable, e.g., for streaming files.
 
 * Bugfix: Only four lines of code: Avoid locking other clients when trying to get
-          the size of a file currently being decoded. Also speeds up directory 
+          the size of a file currently being decoded. Also speeds up directory
           access quite significantly.
 * Bugfix: Fixed lost frames at end of files (files where cut short)
 * Bugfix: Fixed crash when video files were transcoded to audio only (e.g. mp3)
@@ -279,7 +282,7 @@ Changes in this release:
   If already smaller the size will be left as is. You should only set
   one parameter, if both are set the aspect ratio may be changed and the
   result look strange.
-* Feature: Added clear_cache option to clear the whole cache everytime 
+* Feature: Added clear_cache option to clear the whole cache everytime
   the application is started.
 * Note: Dropped ISMV option as it did not work as expected, especially creating an
   mp4 on-the-fly did not work. The streamlined mp4 format already does the work.
@@ -358,20 +361,20 @@ Changes in this release:
 * Suspend transcode after n seconds
 * Exit transcode after n seconds
 * TODO: Add intelligent stream copy, e.g., if transcoding a transport stream
-  that already represents a H264 video stream it would be possible to 
+  that already represents a H264 video stream it would be possible to
   simply repackage it to a mp4 container without recoding.
 
 nschlia@oblivion-software.de
 
 Important changes in 0.91-FFmpeg (2017-10-04)
 
-Added FFmpeg for decoding and encoding. 
+Added FFmpeg for decoding and encoding.
 
 Changes in this release:
 * Replaced decoding and encoding with FFmpeg.
 * Removed discrete FLAC/Ogg/MP3 libraries. FFmpeg supports a wide range of
   formats, including these, so they are no longer required.
-* TODO: Supports a huge number of file formats now (run "mp3fs --codecs" for 
+* TODO: Supports a huge number of file formats now (run "mp3fs --codecs" for
   a list).
 * The standard target format is mp4 now (use "-o mp3" or "--output mp3"
   to change back to mp3).
@@ -389,7 +392,7 @@ Changes in this release:
   memory.
 * TODO: Support for video files.
 * TODO: Add intelligent stream copy, e.g., if transcoding a transport stream
-  that already represents a H264 video stream it would be possible to 
+  that already represents a H264 video stream it would be possible to
   simply repackage it to a mp4 container without recoding.
 
 nschlia@oblivion-software.de

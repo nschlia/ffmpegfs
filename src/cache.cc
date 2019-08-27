@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- * 
+ *
  * On Debian systems, the complete text of the GNU General Public License
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
@@ -461,7 +461,7 @@ bool Cache::upgrade_db_1(int *db_version_major, int *db_version_minor)
             return false;
         }
 
-        // Step 4        
+        // Step 4
         sql = "DROP TABLE `cache_entry_old`";
         if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
         {
@@ -694,7 +694,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
                 cache_info->m_desttype[0] = '\0';
                 strncat(cache_info->m_desttype, text, sizeof(cache_info->m_desttype) - 1);
             }
-            
+
             //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info->m_audiobitrate          = sqlite3_column_int(m_cacheidx_select_stmt, 2);
             cache_info->m_audiosamplerate       = sqlite3_column_int(m_cacheidx_select_stmt, 3);
@@ -978,7 +978,7 @@ bool Cache::prune_expired()
     char sql[1024];
 
     Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
-    
+
     sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);

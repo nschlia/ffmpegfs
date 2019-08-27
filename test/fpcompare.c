@@ -32,7 +32,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     SwrContext *swr_ctx = NULL;
 #else // USE_LIBSAVRESAMPLE
     AVAudioResampleContext *avresample_ctx = NULL;
-#endif	
+#endif
 #if LAVF_DEP_AVSTREAM_CODEC
     int max_dst_nb_samples = 0;
     uint8_t *dst_data = NULL ;
@@ -81,7 +81,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     }
 #else
     codec_ctx = stream->codec;
-#endif	
+#endif
     codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
     if (avcodec_open2(codec_ctx, codec, NULL) < 0) {
@@ -139,7 +139,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     frame = av_frame_alloc();
 //#else
 //    frame = avcodec_alloc_frame();
-//#endif	
+//#endif
 
     while (1) {
         if (av_read_frame(format_ctx, &packet) < 0) {
@@ -250,7 +250,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                     }
                     data = dst_data;
                 }
-#endif	
+#endif
 
                 length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
                 if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
@@ -271,7 +271,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
         av_packet_unref(&packet);
 #else
         av_free_packet(&packet);
-#endif	
+#endif
     }
 
 finish:
@@ -288,7 +288,7 @@ done:
         av_frame_unref(frame);
 //#else
 //        avcodec_free_frame(&frame);
-//#endif	
+//#endif
     }
     if (dst_data) {
         av_freep(&dst_data);
@@ -313,7 +313,7 @@ done:
     if (codec_ctx) {
         avcodec_free_context(&codec_ctx);
     }
-#endif	
+#endif
     return ok;
 }
 

@@ -478,9 +478,6 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
     {
         // Invalid parameter
         errno = EINVAL;
-#ifdef DEBUG_FRAME_SET
-        Logging::FRAME_SET_ERROR(m_filename, "FRAME WRITE 1      | Frame: %<%10u>1                  Ret   : %<%11s>2", frame_no, "EINVAL");
-#endif // DEBUG_FRAME_SET
         return 0;
     }
 
@@ -501,9 +498,6 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
         bytes_written = write(data, old_image_frame->m_size);
         if (bytes_written != old_image_frame->m_size)
         {
-#ifdef DEBUG_FRAME_SET
-            Logging::FRAME_SET_ERROR(m_filename, "FRAME WRITE 2      | Frame: %<%10u>1                  Ret   : %<%11i>2", frame_no, errno);
-#endif // DEBUG_FRAME_SET
             return 0;
         }
     }
@@ -521,17 +515,11 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
         bytes_written = write(data, new_image_frame.m_size);
         if (bytes_written != new_image_frame.m_size)
         {
-#ifdef DEBUG_FRAME_SET
-            Logging::FRAME_SET_ERROR(m_filename, "FRAME WRITE 3      | Frame: %<%10u>1                  Ret   : %<%11i>2", frame_no, errno);
-#endif // DEBUG_FRAME_SET
             return 0;
         }
 
         memcpy(reinterpret_cast<void *>(m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
     }
-#ifdef DEBUG_FRAME_SET
-    Logging::FRAME_SET(m_filename, "WRITE FRAME        | Frame: %<%10u>1                  Bytes : %<%11zi>2", frame_no, bytes_written);
-#endif // DEBUG_FRAME_SET
 
     return bytes_written;
 }
@@ -651,10 +639,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     }
     else
     {
-#ifdef DEBUG_FRAME_SET
-        Logging::error(m_filename, "INTERNAL ERROR: Tried to read from offset %1 but size is %2 only.", offset, size());
-#endif // DEBUG_FRAME_SET
-
         errno = ENOMEM;
         success = false;
     }
@@ -736,9 +720,6 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
     {
         // Invalid parameter
         errno = EINVAL;
-#ifdef DEBUG_FRAME_SET
-        Logging::FRAME_SET_ERROR(m_filename, "FRAME READ EINVAL  | Frame: %<%10u>1", frame_no);
-#endif // DEBUG_FRAME_SET
         return 0;
     }
 
@@ -750,16 +731,8 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
     if (!image_frame->m_frame_no)
     {
         errno = EAGAIN;
-
-#ifdef DEBUG_FRAME_SET
-        Logging::FRAME_SET_WARNING(m_filename, "FRAME READ EAGAIN  | Frame: %<%10u>1", frame_no);
-#endif // DEBUG_FRAME_SET
         return 0;
     }
-
-    //#ifdef DEBUG_FRAME_SET
-    //    Logging::FRAME_SET(m_filename, "FRAME READ         | Frame: %<%10u>1                  Ret   : %<%11s>2", frame_no, "SUCCESS");
-    //#endif // DEBUG_FRAME_SET
 
     data->resize(image_frame->m_size);
 
@@ -789,9 +762,6 @@ bool Buffer::have_frame(uint32_t frame_no)
     {
         // Invalid parameter
         errno = EINVAL;
-#ifdef DEBUG_FRAME_SET
-        Logging::FRAME_SET_ERROR(m_filename, "HAVE FRAME         | Frame: %<%10u>1                  Ret   : %<%11s>2", frame_no, "EINVAL");
-#endif // DEBUG_FRAME_SET
         return false;
     }
 

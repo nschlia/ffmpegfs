@@ -590,12 +590,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 if (!reported)
                 {
                     Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2).", offset, len);
-#ifdef DEBUG_FRAME_SET
-                    if (!offset)
-                    {
-                        Logging::FRAME_SET_WARNING(cache_entry->filename(), "FRAME READ MISS    | Frame: %<%10u>1", frame_no);
-                    }
-#endif // DEBUG_FRAME_SET
                     reported = true;
                 }
 
@@ -607,12 +601,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             {
                 Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2).", offset, len);
             }
-#ifdef DEBUG_FRAME_SET
-            if (!offset/* && !reported*/)
-            {
-                Logging::FRAME_SET(cache_entry->filename(), "FRAME READ HIT     | Frame: %<%10u>1", frame_no);
-            }
-#endif // DEBUG_FRAME_SET
             success = !cache_entry->m_cache_info.m_error;
         }
         else

@@ -671,8 +671,7 @@ private:
     int64_t                     m_current_write_pts;        /**< @brief PTS or last frame written */
     std::recursive_mutex        m_mutex;                    /**< @brief Access mutex */
     std::queue<uint32_t>        m_seek_frame_fifo;          /**< @brief Stack of seek requests. Will be processed FIFO */
-    uint32_t                    m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
-    uint32_t                    m_last_seek_frame_no2;      /**< @brief If not 0, delay next seek until this frame was decoded. Video sources only. */
+    volatile uint32_t           m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
     bool                        m_have_seeked;              /**< @brief After seek operations this is set */
     bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                 /**< @brief true if input is a video file */

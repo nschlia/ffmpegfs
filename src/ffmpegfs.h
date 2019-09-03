@@ -24,11 +24,6 @@
 #ifndef FFMPEGFS_H
 #define FFMPEGFS_H
 
-#define DEBUG_FRAME_SET             /**< @brief - Define to enable extra debig output for frame sets */
-#define FRAME_SET           info    /**< @brief - Log level for frame sets */
-#define FRAME_SET_WARNING   warning /**< @brief - Log level for frame sets */
-#define FRAME_SET_ERROR     error   /**< @brief - Log level for frame sets */
-
 #pragma once
 
 /**

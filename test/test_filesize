@@ -82,8 +82,8 @@ then
 elif [ "${DESTTYPE}" == "alac" ];
 then
     # aiff
-    check_filesize "obama" 208272 208694
-    check_filesize "raven" 1739046 1740298
+    check_filesize "obama" 208260 208694
+    check_filesize "raven" 1739034 1740298
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

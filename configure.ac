@@ -105,11 +105,6 @@ AC_PATH_PROG(W3M, w3m)
 AC_CHECK_PROG(HAVE_W3M, w3m, "yes", "no")
 AS_IF([test "$HAVE_W3M" == "yes"], [], AC_MSG_ERROR([Missing w3m. Please install w3m to fix.]))
 
-# Check for xmllint
-AC_PATH_PROG(XMLLINT, xmllint)
-AC_CHECK_PROG(HAVE_XMLLINT, xmllint, "yes", "no")
-AS_IF([test "$HAVE_XMLLINT" == "yes"], [], AC_MSG_ERROR([Missing xmlint. Please install libxml2-utils to fix.]))
-
 dnl FFMPEG support checks
 
 # Tested with...

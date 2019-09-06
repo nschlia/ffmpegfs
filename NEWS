@@ -31,6 +31,7 @@ Important changes in 1.9 (2019-09-XX)
            from git first was confusing.
 * Bugfix: Fixed several warnings if compiled for 32 bit.
 * Bugfix: Removed unused xmlint prerequisite from configure.
+* Bugfix: Video and audio was out of sync on android devices.
 * Known bug:
 
 Important changes in 1.8 (2019-05-23)

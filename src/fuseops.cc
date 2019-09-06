@@ -389,7 +389,7 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
                     (ffmpegfs_format->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
             {
                 *current_format = params.current_format(*filepath);
-                replace_ext(filepath, (*current_format)->format_name());
+                replace_ext(filepath, (*current_format)->fileext());
                 return true;
             }
         }
@@ -537,7 +537,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].format_name()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].format_name()) == 0)))
+        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].fileext()) == 0)))
         {
             std::string dir(*filepath);
             std::string filename(*filepath);

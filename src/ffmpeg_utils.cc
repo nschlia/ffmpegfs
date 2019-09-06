@@ -86,6 +86,7 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 
 FFmpegfs_Format::FFmpegfs_Format()
     : m_format_name("")
+    , m_fileext("")
     , m_filetype(FILETYPE_UNKNOWN)
     , m_video_codec_id(AV_CODEC_ID_NONE)
     , m_audio_codec_id(AV_CODEC_ID_NONE)
@@ -93,8 +94,9 @@ FFmpegfs_Format::FFmpegfs_Format()
 
 }
 
-FFmpegfs_Format::FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
+FFmpegfs_Format::FFmpegfs_Format(const std::string & format_name, const std::string & fileext, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
     : m_format_name(format_name)
+    , m_fileext(fileext)
     , m_filetype(filetype)
     , m_video_codec_id(video_codec_id)
     , m_audio_codec_id(audio_codec_id)
@@ -118,6 +120,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_MP3;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "mp3";
+        m_fileext           = "mp3";
         break;
     }
     case FILETYPE_MP4:
@@ -126,6 +129,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_AAC;
         m_video_codec_id    = AV_CODEC_ID_H264;
         m_format_name       = "mp4";
+        m_fileext           = "mp4";
         break;
     }
     case FILETYPE_WAV:
@@ -134,6 +138,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "wav";
+        m_fileext           = "wav";
         break;
     }
     case FILETYPE_OGG:
@@ -142,6 +147,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_VORBIS;
         m_video_codec_id    = AV_CODEC_ID_THEORA;
         m_format_name       = "ogg";
+        m_fileext           = "ogg";
         break;
     }
     case FILETYPE_WEBM:
@@ -150,6 +156,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_OPUS;
         m_video_codec_id    = AV_CODEC_ID_VP9;
         m_format_name       = "webm";
+        m_fileext           = "webm";
         break;
     }
     case FILETYPE_MOV:
@@ -158,6 +165,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_AAC;
         m_video_codec_id    = AV_CODEC_ID_H264;
         m_format_name       = "mov";
+        m_fileext           = "mov";
         break;
     }
     case FILETYPE_AIFF:
@@ -166,6 +174,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "aiff";
+        m_fileext           = "aiff";
         break;
     }
     case FILETYPE_OPUS:
@@ -174,6 +183,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_OPUS;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "opus";
+        m_fileext           = "opus";
         break;
     }
     case FILETYPE_PRORES:
@@ -182,6 +192,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
         m_video_codec_id    = AV_CODEC_ID_PRORES;
         m_format_name       = "mov";
+        m_fileext           = "mov";
         break;
     }
     case FILETYPE_ALAC:
@@ -190,6 +201,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_ALAC;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "m4a";
+        m_fileext           = "m4a";
         break;
     }
     case FILETYPE_UNKNOWN:
@@ -209,7 +221,12 @@ const std::string & FFmpegfs_Format::desttype() const
 
 const std::string & FFmpegfs_Format::format_name() const
 {
-    return m_format_name;               // Format name and extension are basically the same
+    return m_format_name;
+}
+
+const std::string & FFmpegfs_Format::fileext() const
+{
+    return m_fileext;
 }
 
 FILETYPE FFmpegfs_Format::filetype() const
@@ -359,7 +376,7 @@ const std::string & get_destname(std::string *destfilepath, const std::string & 
 {
     *destfilepath = filepath;
     remove_path(destfilepath);
-    replace_ext(destfilepath, params.current_format(filepath)->format_name());
+    replace_ext(destfilepath, params.current_format(filepath)->fileext());
     *destfilepath = params.m_mountpath + *destfilepath;
 
     return *destfilepath;

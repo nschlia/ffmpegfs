@@ -246,12 +246,13 @@ public:
     FFmpegfs_Format();
     /**
      * @brief Construct FFmpegfs_Format object
-     * @param[in] format_name - Name of this format, e.g. "MP4 file"
+     * @param[in] format_name - Name of this format, e.g. "MP4"
+     * @param[in] fileext - File extension for this format, e.g. "mp4"
      * @param[in] filetype - File type, MP3, MP4, OPUS etc.
      * @param[in] video_codec_id - AVCodec used for video encoding
      * @param[in] audio_codec_id - AVCodec used for audio encoding
      */
-    FFmpegfs_Format(const std::string & format_name, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id);
+    FFmpegfs_Format(const std::string & format_name, const std::string &fileext, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id);
 
     /**
      * @brief Get codecs for the selected destination type.
@@ -271,6 +272,11 @@ public:
      */
     const std::string & desttype() const;
     /**
+     * @brief Get file extension
+     * @return File extension
+     */
+    const std::string & fileext() const;
+    /**
      * @brief Get selected filetype.
      * @return Returns selected filetype.
      */
@@ -289,6 +295,7 @@ public:
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
     std::string m_desttype;                 /**< @brief Destination type: mp4, mp3 or other */
+    std::string m_fileext;                   /**< @brief File extensio: mp4, mp3, flac or other */
     FILETYPE    m_filetype;                 /**< @brief File type, MP3, MP4, OPUS etc. */
     AVCodecID   m_video_codec_id;           /**< @brief AVCodec used for video encoding */
     AVCodecID   m_audio_codec_id;           /**< @brief AVCodec used for audio encoding */

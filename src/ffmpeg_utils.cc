@@ -210,6 +210,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_NONE;
         m_video_codec_id    = AV_CODEC_ID_PNG;
         m_format_name       = "png";
+        m_fileext           = "png";
         break;
     }
     case FILETYPE_JPG:
@@ -218,6 +219,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_NONE;
         m_video_codec_id    = AV_CODEC_ID_MJPEG;
         m_format_name       = "jpg";
+        m_fileext           = "jpg";
         break;
     }
     case FILETYPE_BMP:
@@ -226,6 +228,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_audio_codec_id    = AV_CODEC_ID_NONE;
         m_video_codec_id    = AV_CODEC_ID_BMP;
         m_format_name       = "bmp";
+        m_fileext           = "bmp";
         break;
     }
     case FILETYPE_UNKNOWN:

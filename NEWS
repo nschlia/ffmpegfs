@@ -29,6 +29,7 @@ Important changes in 1.9 (2019-09-XX)
 * Feature: Added optional graphviz to configure, only required for Doxygen.
 * Feature: Updated INSTALL.md with missing prerequisites. Rearranged paragraphs, mentioning building
            from git first was confusing.
+* Feature: Moved cache directory from rather unusual /tmp/ffmpegfs location to /var/cache/ffmpegfs.
 * Bugfix: Fixed several warnings if compiled for 32 bit.
 * Bugfix: Removed unused xmlint prerequisite from configure.
 * Bugfix: Video and audio was out of sync on android devices.

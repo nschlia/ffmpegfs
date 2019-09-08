@@ -110,13 +110,13 @@ bool FFmpegfs_Format::init(const std::string & desttype)
 
     m_filetype              = get_filetype(desttype);
 
-    // Please note that m_format_name should be the extension for the target file. It is also used to select the FFmpeg container
+    // Please note that m_format_name is used to select the FFmpeg container
     // by passing it to avformat_alloc_output_context2().
+    m_desttype              = desttype;
     switch (m_filetype)
     {
     case FILETYPE_MP3:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_MP3;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "mp3";
@@ -125,7 +125,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_MP4:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_AAC;
         m_video_codec_id    = AV_CODEC_ID_H264;
         m_format_name       = "mp4";
@@ -134,7 +133,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_WAV:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "wav";
@@ -143,7 +141,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_OGG:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_VORBIS;
         m_video_codec_id    = AV_CODEC_ID_THEORA;
         m_format_name       = "ogg";
@@ -152,7 +149,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_WEBM:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_OPUS;
         m_video_codec_id    = AV_CODEC_ID_VP9;
         m_format_name       = "webm";
@@ -161,7 +157,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_MOV:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_AAC;
         m_video_codec_id    = AV_CODEC_ID_H264;
         m_format_name       = "mov";
@@ -170,7 +165,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_AIFF:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "aiff";
@@ -179,7 +173,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_OPUS:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_OPUS;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "opus";
@@ -188,7 +181,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_PRORES:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
         m_video_codec_id    = AV_CODEC_ID_PRORES;
         m_format_name       = "mov";
@@ -197,7 +189,6 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_ALAC:
     {
-        m_desttype          = desttype;
         m_audio_codec_id    = AV_CODEC_ID_ALAC;
         m_video_codec_id    = AV_CODEC_ID_NONE;
         m_format_name       = "m4a";

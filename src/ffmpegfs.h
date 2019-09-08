@@ -161,7 +161,7 @@ extern struct FFMPEGFS_PARAMS
     size_t              m_prebuffer_size;           /**< @brief Number of bytes that will be decoded before it can be accessed */
     size_t              m_max_cache_size;           /**< @brief Max. cache size in MB. When exceeded, oldest entries will be pruned */
     size_t              m_min_diskspace;            /**< @brief Min. diskspace required for cache */
-    std::string         m_cachepath;                /**< @brief Disk cache path, defaults to /tmp */
+    std::string         m_cachepath;                /**< @brief Disk cache path, defaults to /var/cache */
     int                 m_disable_cache;            /**< @brief Disable cache */
     time_t              m_cache_maintenance;        /**< @brief Prune timer interval */
     int                 m_prune_cache;              /**< @brief Prune cache immediately */

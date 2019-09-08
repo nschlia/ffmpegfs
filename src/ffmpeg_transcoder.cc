@@ -1141,7 +1141,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // Go through supported sample rates and adjust if necessary
             bool supported = false;
 
-            for (int n = 0; output_codec->supported_samplerates[n] !=0; n++)
+            for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
             {
                 if (output_codec->supported_samplerates[n] == output_codec_ctx->sample_rate)
                 {

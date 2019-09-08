@@ -19,16 +19,16 @@ the supported target formats upon access.
 
 Supported output formats:
 
- * MP4 (audio & video)
- * WebM (audio & video)
- * OGG (audio & video)
- * MOV (audio & video)
+ * MP4 (MPEG-4)
+ * WebM
+ * OGG
+ * MOV (QuickTime File Format)
  * Prores (a MOV container for Apple Prores video & PCM audio)
  * Opus (audio only)
- * MP3 (audio only)
- * WAV (audio only)
- * AIFF (audio only)
- * ALAC (audio only)
+ * MP3 (MPEG-2 Audio Layer III)
+ * WAV (Waveform Audio File Format)
+ * AIFF (Audio Interchange File Format)
+ * ALAC (Apple Lossless Audio Codec)
  * JPG (video to frameset)
  * PNG (video to frameset)
  * BMP (video to frameset)
@@ -244,7 +244,7 @@ Default: 0 (no minimum space)
 *--cachepath*=DIR, *-o cachepath*=DIR::
 Sets the disk cache directory to 'DIR'. Will be created if not existing. The user running ffmpegfs must have write access to the location.
 +
-Default: temp directory, e.g. /tmp
+Default: /var/cache/ffmpegfs
 
 *--disable_cache*, -o *disable_cache*::
 Disable the cache functionality.

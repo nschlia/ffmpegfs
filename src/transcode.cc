@@ -173,7 +173,7 @@ void transcoder_cache_path(std::string & path)
     }
     else
     {
-        tempdir(path);
+        path = "/var/cache";
     }
 
     append_sep(&path);

@@ -228,7 +228,7 @@ Default: 0 (no minimum space)
 *--cachepath*=DIR, *-o cachepath*=DIR::
 Sets the disk cache directory to 'DIR'. Will be created if not existing. The user running ffmpegfs must have write access to the location.
 +
-Default: temp directory, e.g. /tmp
+Default: /var/cache/ffmpegfs
 
 *--disable_cache*, -o *disable_cache*::
 Disable the cache functionality.

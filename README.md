@@ -31,16 +31,16 @@ and video formats on the fly when opened and read.
 
 Supported output formats:
 
-* MP4 (audio & video)
-* WebM (audio & video)
-* OGG (audio & video)
-* MOV (audio & video)
+* MP4 (MPEG-4)
+* WebM
+* OGG
+* MOV (QuickTime File Format)
 * Prores (a MOV container for Apple Prores video & PCM audio)
 * Opus (audio only)
-* MP3 (audio only)
-* WAV (audio only)
-* AIFF (audio only)
-* ALAC (audio only)
+* MP3 (MPEG-2 Audio Layer III)
+* WAV (Waveform Audio File Format)
+* AIFF (Audio Interchange File Format)
+* ALAC (Apple Lossless Audio Codec)
 
 This can let you use a multi media file collection with software
 and/or hardware which only understands one of the supported output

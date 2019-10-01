@@ -637,7 +637,6 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     m_out.m_filetype    = m_current_format->filetype();
 
     Logging::info(destname(), "Opening output file.");
-    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
 
     if (!export_frameset())
     {
@@ -653,10 +652,13 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
     else
     {
+    	Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+	
         // Pre-allocate the predicted file size to reduce memory reallocations
-        if (!buffer->reserve(600 * 1024 * 1024 /*predicted_filesize() * m_video_frame_count*/))
+        size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
+        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating buffer.");
+            Logging::error(filename(), "Out of memory pre-allocating %zu bytes buffer.", buffsize);
             return AVERROR(ENOMEM);
         }
 

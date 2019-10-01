@@ -742,7 +742,7 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
 
     data->resize(image_frame->m_size);
 
-    return copy(data->data(), static_cast<size_t>(image_frame->m_offset), image_frame->m_size);
+    return copy(data, static_cast<size_t>(image_frame->m_offset));
 }
 
 int Buffer::error() const

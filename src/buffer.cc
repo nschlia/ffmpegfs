@@ -179,6 +179,7 @@ bool Buffer::init(bool erase_cache)
     {
         // Create the path to the cache file
         char *cachefile = new_strdup(m_cachefile);
+
         if (cachefile == nullptr)
         {
             Logging::error(m_cachefile, "Error opening cache file: Out of memory");
@@ -616,6 +617,11 @@ size_t Buffer::buffer_watermark() const
     return m_buffer_watermark;
 }
 
+bool Buffer::copy(std::vector<uint8_t> * out_data, size_t offset)
+{
+    return copy(out_data->data(), offset, out_data->size());
+}
+
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
@@ -639,7 +645,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
     }
     else
     {
-        errno = ENOMEM;
+        errno = ESPIPE; // Changed from ENOMEM because this was misleading.
         success = false;
     }
 

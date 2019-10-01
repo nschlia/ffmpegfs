@@ -4032,7 +4032,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(115 * (*filesize) / 100); // add 15% for overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% for overhead
         break;
     }
     case AV_CODEC_ID_ALAC:
@@ -4040,7 +4040,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
 
         // File size:
-        // Apple Lossless Audio Coding promises a compression rate of 60-70%. We setimate 65 % of the original WAV size.
+        // Apple Lossless Audio Coding promises a compression rate of 60-70%. We estimate 65 % of the original WAV size.
         *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) * 100 / 65;
         break;
     }
@@ -4069,7 +4069,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_H264:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add 10.0% for overhead
         break;
     }
     case AV_CODEC_ID_THEORA:
@@ -4081,7 +4081,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_VP9:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(115 * (*filesize) / 100); // add 15% for overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% for overhead
         break;
     }
     case AV_CODEC_ID_PRORES:

@@ -194,6 +194,13 @@ public:
      * @brief Copy buffered data into output buffer.
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
+     * @return Returns true on success; false on error.
+     */
+    bool                    copy(std::vector<uint8_t> * out_data, size_t offset);
+    /**
+     * @brief Copy buffered data into output buffer.
+     * @param[in] out_data - Buffer to copy data to.
+     * @param[in] offset - Offset in buffer to copy data from.
      * @param[in] bufsize - Size of out_data buffer.
      * @return Returns true on success; false on error.
      */

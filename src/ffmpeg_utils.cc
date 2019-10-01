@@ -299,6 +299,7 @@ const std::string & remove_sep(std::string * path)
 const std::string & remove_filename(std::string * filepath)
 {
     char *p = new_strdup(*filepath);
+
     if (p == nullptr)
     {
         errno = ENOMEM;
@@ -314,6 +315,7 @@ const std::string & remove_filename(std::string * filepath)
 const std::string & remove_path(std::string *filepath)
 {
     char *p = new_strdup(*filepath);
+
     if (p == nullptr)
     {
         errno = ENOMEM;
@@ -385,6 +387,7 @@ char * new_strdup(const std::string & str)
 {
     size_t n = str.size() + 1;
     char * p = new(std::nothrow) char[n];
+
     if (p == nullptr)
     {
         errno = ENOMEM;

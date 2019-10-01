@@ -107,7 +107,7 @@ wipe-all: doxy-clean distclean
 	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in src/Makefile.in
 	
 install-exec-hook:
-	if getent passwd $(USERNAME) > /dev/null 2>&1; \
+	@if getent passwd $(USERNAME) > /dev/null 2>&1; \
 	then \
 		echo "User $(USERNAME) already exists."; \
 	else \
@@ -116,7 +116,7 @@ install-exec-hook:
 		usermod -L $(USERNAME); \
 	fi
 
-	if [ -d "$(CACHEDIR)" ]; \
+	@if [ -d "$(CACHEDIR)" ]; \
 	then \
 		echo "$(CACHEDIR) already exists."; \
 	else \
@@ -129,17 +129,17 @@ install-exec-hook:
 			rmdir /tmp/ffmpegfs/; \
 		fi \
 	fi
-	chown -R $(USERNAME):$(USERGROUP) $(CACHEDIR)
-	chmod -R 777 $(CACHEDIR)
+	@chown -R $(USERNAME):$(USERGROUP) $(CACHEDIR)
+	@chmod -R 777 $(CACHEDIR)
 
 uninstall-hook:
-	if [ -d "$(CACHEDIR)" ]; \
+	@if [ -d "$(CACHEDIR)" ]; \
 	then \
 		echo "Removing cache directory $(CACHEDIR)."; \
 		rm -Rf "$(CACHEDIR)"; \
 	fi
 	
-	if getent passwd $(USERNAME) > /dev/null 2>&1; \
+	@if getent passwd $(USERNAME) > /dev/null 2>&1; \
 	then \
 		echo "Removing user $(USERNAME)."; \
 		userdel $(USERNAME); \

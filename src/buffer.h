@@ -37,6 +37,7 @@
 #include "fileio.h"
 
 #include <mutex>
+#include <vector>
 #include <stddef.h>
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))  /**< @brief Check bit in bitmask */
@@ -170,6 +171,13 @@ public:
      *  @return Returns the current watermark.
      */
     size_t                  buffer_watermark() const;
+    /**
+     * @brief Copy buffered data into output buffer.
+     * @param[in] out_data - Buffer to copy data to.
+     * @param[in] offset - Offset in buffer to copy data from.
+     * @return Returns true on success; false on error.
+     */
+    bool                    copy(std::vector<uint8_t> * out_data, size_t offset);
     /**
      * @brief Copy buffered data into output buffer.
      * @param[in] out_data - Buffer to copy data to.

@@ -44,6 +44,7 @@ Supported output formats:
 * JPG (video to frameset)
 * PNG (video to frameset)
 * BMP (video to frameset)
+* TS (MPEG transport stream)
 
 This can let you use a multi media file collection with software
 and/or hardware which only understands one of the supported output

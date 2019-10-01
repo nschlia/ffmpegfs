@@ -219,6 +219,14 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         m_fileext           = "bmp";
         break;
     }
+    case FILETYPE_TS:
+    {
+        m_audio_codec_id    = AV_CODEC_ID_AC3;
+        m_video_codec_id    = AV_CODEC_ID_H264;
+        m_format_name       = "mpegts";
+        m_fileext           = "ts";
+        break;
+    }
     case FILETYPE_UNKNOWN:
     {
         found = false;
@@ -718,6 +726,7 @@ FILETYPE get_filetype(const std::string & desttype)
         { "png",    FILETYPE_PNG },
         { "jpg",    FILETYPE_JPG },
         { "bmp",    FILETYPE_BMP },
+        { "ts",     FILETYPE_TS },
     };
 
     try

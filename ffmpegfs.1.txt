@@ -32,6 +32,7 @@ Supported output formats:
  * JPG (video to frameset)
  * PNG (video to frameset)
  * BMP (video to frameset)
+ * TS (MPEG transport stream)
 
 == OPTIONS ==
 
@@ -43,7 +44,10 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 *--desttype*=TYPE, *-odesttype*=TYPE::
 Select destination format. 'TYPE' can currently be:
 +
-*MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *ALAC*, *OPUS* or *WAV*. To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
+*MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *ALAC*, *OPUS*, *WAV*, *JPG*,
+*PNG*, *BMP* OR *TS*.
++
+To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
 +
 When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will no be available.
 +

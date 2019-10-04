@@ -97,7 +97,7 @@ int VcdEntries::load_file(const std::string & path)
     try
     {
         VCDENTRY    vcdentry;
-        struct stat st;
+        struct stat stbuf;
         int         num_entries = 0;
 
         fpi = fopen(fullname.c_str(), "rb");
@@ -106,12 +106,12 @@ int VcdEntries::load_file(const std::string & path)
             throw static_cast<int>(errno);
         }
 
-        if (fstat(fileno(fpi), &st) != 0)
+        if (fstat(fileno(fpi), &stbuf) != 0)
         {
             throw static_cast<int>(ferror(fpi));
         }
 
-        m_file_date      = st.st_mtime;
+        m_file_date      = stbuf.st_mtime;
 
         memset(&vcdentry, 0, sizeof(vcdentry));
 
@@ -175,7 +175,7 @@ int VcdEntries::scan_chapters()
     std::string fullname;
     int         last_track_no = -1;
     int64_t     first_sync = -1;
-    struct stat st;
+    struct stat stbuf;
 
     if (!m_chapters.size())
     {
@@ -199,7 +199,7 @@ int VcdEntries::scan_chapters()
 
                 if (chapter_no)
                 {
-                    m_chapters[chapter_no - 1].m_end_pos = static_cast<uint64_t>(st.st_size);
+                    m_chapters[chapter_no - 1].m_end_pos = static_cast<uint64_t>(stbuf.st_size);
                 }
 
                 if (fpi != nullptr)
@@ -214,7 +214,7 @@ int VcdEntries::scan_chapters()
                     throw static_cast<int>(errno);
                 }
 
-                if (fstat(fileno(fpi), &st) != 0)
+                if (fstat(fileno(fpi), &stbuf) != 0)
                 {
                     throw static_cast<int>(ferror(fpi));
                 }
@@ -230,7 +230,7 @@ int VcdEntries::scan_chapters()
                 first_sync = ftell(fpi) - static_cast<int64_t>(sizeof(SYNC));
             }
 
-            int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
+            int64_t total_chunks    = (stbuf.st_size - first_sync) / VCD_SECTOR_SIZE;
             int64_t first           = 0;
             int64_t last            = total_chunks - 1;
             int64_t middle          = (first + last) / 2;
@@ -277,7 +277,7 @@ int VcdEntries::scan_chapters()
 
         {
             VcdChapter buffer(m_chapters[m_chapters.size() - 1].get_is_svcd());
-            int64_t total_chunks    = (st.st_size - first_sync) / VCD_SECTOR_SIZE;
+            int64_t total_chunks    = (stbuf.st_size - first_sync) / VCD_SECTOR_SIZE;
 
             // Read time stamp of last sector
             if (fseek(fpi, static_cast<long int>(first_sync + (total_chunks - 1) * VCD_SECTOR_SIZE), SEEK_SET))
@@ -310,7 +310,7 @@ int VcdEntries::scan_chapters()
     }
 
     // End of last chapter
-    m_chapters[m_chapters.size() - 1].m_end_pos = static_cast<uint64_t>(st.st_size);
+    m_chapters[m_chapters.size() - 1].m_end_pos = static_cast<uint64_t>(stbuf.st_size);
 
     if (fpi != nullptr)
     {

@@ -99,9 +99,9 @@ size_t DiskIO::size() const
         return 0;
     }
 
-    struct stat st;
-    fstat(fileno(m_fpi), &st);
-    return static_cast<size_t>(st.st_size);
+    struct stat stbuf;
+    fstat(fileno(m_fpi), &stbuf);
+    return static_cast<size_t>(stbuf.st_size);
 }
 
 size_t DiskIO::tell() const

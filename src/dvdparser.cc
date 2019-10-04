@@ -355,7 +355,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         stbuf.st_size   = static_cast<__off_t>(size);
         stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
-        //init_stat(&st, size, false);
+        //init_stat(&stbuf, size, false);
 
         if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
         {
@@ -533,22 +533,22 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
 int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);
-    struct stat st;
+    struct stat stbuf;
     int res = 0;
 
     append_sep(&path);
 
-    if (stat((path + "VIDEO_TS.IFO").c_str(), &st) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &st) == 0)
+    if (stat((path + "VIDEO_TS.IFO").c_str(), &stbuf) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &stbuf) == 0)
     {
         if (!check_path(path))
         {
             Logging::trace(path, "DVD detected.");
-            res = parse_dvd(path, &st, buf, filler);
+            res = parse_dvd(path, &stbuf, buf, filler);
             Logging::trace(path, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &st, buf, filler);
+            res = load_path(path, &stbuf, buf, filler);
         }
     }
     return res;

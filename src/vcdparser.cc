@@ -56,7 +56,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 {
     const VcdChapter * chapter1 = vcd.get_chapter(chapter_no);
     char title_buf[PATH_MAX + 1];
-    struct stat st;
+    struct stat stbuf;
     size_t size;
     int64_t duration;
 
@@ -75,19 +75,19 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 
     std::string filename(title_buf);
 
-    memcpy(&st, statbuf, sizeof(struct stat));
+    memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-    st.st_size = static_cast<__off_t>(size);
-    st.st_blocks = (st.st_size + 512 - 1) / 512;
+    stbuf.st_size = static_cast<__off_t>(size);
+    stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
-    //init_stat(&st, size, false);
+    //init_stat(&stbuf, size, false);
 
-    if (buf != nullptr && filler(buf, title_buf, &st, 0))
+    if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
     {
         // break;
     }
 
-    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &st);
+    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
 
     // Video CD is video format anyway
     virtualfile->m_format_idx           = 0;
@@ -149,35 +149,35 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
 int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);
-    struct stat st;
+    struct stat stbuf;
     int res = 0;
 
     append_sep(&path);
 
-    if (stat((path + "SVCD/INFO.SVD").c_str(), &st) == 0)
+    if (stat((path + "SVCD/INFO.SVD").c_str(), &stbuf) == 0)
     {
         if (!check_path(path))
         {
             Logging::trace(path, "VCD detected.");
-            res = parse_vcd(path, &st, buf, filler);
+            res = parse_vcd(path, &stbuf, buf, filler);
             Logging::trace(nullptr, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &st, buf, filler);
+            res = load_path(path, &stbuf, buf, filler);
         }
     }
-    else if (stat((path + "VCD/INFO.VCD").c_str(), &st) == 0)
+    else if (stat((path + "VCD/INFO.VCD").c_str(), &stbuf) == 0)
     {
         if (!check_path(path))
         {
             Logging::trace(path, "VCD detected.");
-            res = parse_vcd(path, &st, buf, filler);
+            res = parse_vcd(path, &stbuf, buf, filler);
             Logging::trace(nullptr, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &st, buf, filler);
+            res = load_path(path, &stbuf, buf, filler);
         }
     }
     return res;

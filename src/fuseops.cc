@@ -62,7 +62,7 @@
  */
 typedef std::map<std::string, VIRTUALFILE> filenamemap;
 
-static void init_stat(struct stat *st, size_t size, bool directory);
+static void init_stat(struct stat *stbuf, size_t size, bool directory);
 static void prepare_script();
 static void translate_path(std::string *origpath, const char* path);
 static bool transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
@@ -243,39 +243,39 @@ void init_fuse_ops(void)
 
 /**
  * @brief Initialise a stat structure.
- * @param[in] st - struct stat to fill in.
+ * @param[in] stbuf - struct stat to fill in.
  * @param[in] size - size of the corresponding file.
  * @param[in] directory - If true, the structure is set up for a directory.
  */
-static void init_stat(struct stat * st, size_t size, bool directory)
+static void init_stat(struct stat * stbuf, size_t size, bool directory)
 {
-    memset(st, 0, sizeof(struct stat));
+    memset(stbuf, 0, sizeof(struct stat));
 
-    st->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    stbuf->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
     if (directory)
     {
-        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-        st->st_nlink = 2;
+        stbuf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+        stbuf->st_nlink = 2;
     }
     else
     {
-        st->st_mode |= S_IFREG;
-        st->st_nlink = 1;
+        stbuf->st_mode |= S_IFREG;
+        stbuf->st_nlink = 1;
     }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-    st->st_size = static_cast<__off_t>(size);
+    stbuf->st_size = static_cast<__off_t>(size);
 #else
-    st->st_size = static_cast<__off64_t>(size);
+    stbuf->st_size = static_cast<__off64_t>(size);
 #endif
-    st->st_blocks = (st->st_size + 512 - 1) / 512;
+    stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
 
     // Set current user as owner
-    st->st_uid = getuid();
-    st->st_gid = getgid();
+    stbuf->st_uid = getuid();
+    stbuf->st_gid = getgid();
 
     // Use current date/time
-    st->st_atime = st->st_mtime = st->st_ctime = time(nullptr);
+    stbuf->st_atime = stbuf->st_mtime = stbuf->st_ctime = time(nullptr);
 }
 
 /**
@@ -298,17 +298,17 @@ static void prepare_script()
     }
     else
     {
-        struct stat st;
-        if (fstat(fileno(fpi), &st) == -1)
+        struct stat stbuf;
+        if (fstat(fileno(fpi), &stbuf) == -1)
         {
             Logging::warning(scriptsource, "File could not be accessed. Disabling script: (%1) %2", errno, strerror(errno));
             params.m_enablescript = false;
         }
         else
         {
-            index_buffer.resize(static_cast<size_t>(st.st_size));
+            index_buffer.resize(static_cast<size_t>(stbuf.st_size));
 
-            if (fread(&index_buffer[0], 1, static_cast<size_t>(st.st_size), fpi) != static_cast<size_t>(st.st_size))
+            if (fread(&index_buffer[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
             {
                 Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
                 params.m_enablescript = false;
@@ -390,12 +390,12 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
     return map.end();
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *stbuf)
 {
-    return insert_file(type, virtfilepath, virtfilepath, st);
+    return insert_file(type, virtfilepath, virtfilepath, stbuf);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat *st)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat *stbuf)
 {
     VIRTUALFILE virtualfile;
     std::string sanitised_filepath = sanitise_filepath(virtfilepath);
@@ -404,7 +404,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
     virtualfile.m_format_idx    = params.guess_format_idx(origfile);
     virtualfile.m_origfile      = sanitise_filepath(origfile);
 
-    memcpy(&virtualfile.m_st, st, sizeof(struct stat));
+    memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
 
     filenames.insert(make_pair(sanitised_filepath, virtualfile));
 
@@ -510,7 +510,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             std::string filename(*filepath);
             std::string tmppath;
             struct dirent **namelist;
-            struct stat st;
+            struct stat stbuf;
             int count;
             int found = 0;
 
@@ -545,10 +545,10 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
             sanitise_filepath(&tmppath);
 
-            if (found && lstat(tmppath.c_str(), &st) == 0)
+            if (found && lstat(tmppath.c_str(), &stbuf) == 0)
             {
                 // File exists with this extension
-                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &st);
+                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &stbuf);
                 *filepath = tmppath;
                 return virtualfile;
             }
@@ -624,16 +624,16 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     if (params.m_enablescript)
     {
         std::string filename(params.m_scriptfile);
-        struct stat st;
+        struct stat stbuf;
 
-        init_stat(&st, index_buffer.size(), false);
+        init_stat(&stbuf, index_buffer.size(), false);
 
-        if (filler(buf, filename.c_str(), &st, 0))
+        if (filler(buf, filename.c_str(), &stbuf, 0))
         {
             // break;
         }
 
-        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, &st);
+        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, &stbuf);
     }
 
 #ifdef USE_LIBVCD
@@ -670,26 +670,26 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             {
                 std::string filename(de->d_name);
                 std::string origfile;
-                struct stat st;
+                struct stat stbuf;
 
                 origfile = origpath + filename;
 
-                if (lstat(origfile.c_str(), &st) == -1)
+                if (lstat(origfile.c_str(), &stbuf) == -1)
                 {
                     throw false;
                 }
 
-                if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
+                if (S_ISREG(stbuf.st_mode) || S_ISLNK(stbuf.st_mode))
                 {
                     FFmpegfs_Format *current_format = nullptr;
 
                     if (transcoded_name(&filename, &current_format))
                     {
-                        insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
+                        insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &stbuf);
                     }
                 }
 
-                if (filler(buf, filename.c_str(), &st, 0))
+                if (filler(buf, filename.c_str(), &stbuf, 0))
                 {
                     break;
                 }

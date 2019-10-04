@@ -157,14 +157,14 @@ int VcdInfo::load_file(const std::string & path)
         return errno;
     }
 
-    struct stat st;
+    struct stat stbuf;
 
-    if (fstat(fileno(fpi), &st) != 0)
+    if (fstat(fileno(fpi), &stbuf) != 0)
     {
         return ferror(fpi);
     }
 
-    m_file_date      = st.st_mtime;
+    m_file_date      = stbuf.st_mtime;
 
     memset(&vi, 0, sizeof(vi));
 

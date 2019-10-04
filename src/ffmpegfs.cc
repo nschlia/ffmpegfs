@@ -1431,8 +1431,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    struct stat st;
-    if (stat(params.m_basepath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
+    struct stat stbuf;
+    if (stat(params.m_basepath.c_str(), &stbuf) != 0 || !S_ISDIR(stbuf.st_mode))
     {
         std::fprintf(stderr, "INVALID PARAMETER: basepath is not a valid directory: %s\n\n", params.m_basepath.c_str());
         return 1;
@@ -1450,7 +1450,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (stat(params.m_mountpath.c_str(), &st) != 0 || !S_ISDIR(st.st_mode))
+    if (stat(params.m_mountpath.c_str(), &stbuf) != 0 || !S_ISDIR(stbuf.st_mode))
     {
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;

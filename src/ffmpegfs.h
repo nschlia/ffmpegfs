@@ -243,21 +243,21 @@ bool            transcoder_cache_clear(void);
  *
  * @param[in] type - Type of virtual file.
  * @param[in] virtfilepath - Name of virtual file.
- * @param[in] st - stat buffer with file size, time etc.
+ * @param[in] stbuf - stat buffer with file size, time etc.
  * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *st, int flags = VIRTUALFLAG_NONE);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Add new virtual file to internal list.
  * @param[in] type - Type of virtual file.
  * @param[in] virtfilepath - Name of virtual file.
  * @param[in] origfile - Original file name.
- * @param[in] st - stat buffer with file size, time etc.
+ * @param[in] stbuf - stat buffer with file size, time etc.
  * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *st, int flags = VIRTUALFLAG_NONE);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Find file in cache.
  * @param[in] virtfilepath - Virtual filename and path of file to find.

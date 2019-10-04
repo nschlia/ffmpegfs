@@ -364,7 +364,9 @@ int main(int argc, char **argv)
         return 2;
     }
 
+#if !(LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 9, 0))
     av_register_all();
+#endif
     av_log_set_level(AV_LOG_ERROR);
 
     chromaprint_ctx = chromaprint_new(algo);

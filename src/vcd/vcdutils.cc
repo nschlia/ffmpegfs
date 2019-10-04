@@ -150,11 +150,11 @@ std::string get_profile_tag_str(int tag)
 
 void get_directory(const std::string & fullname, std::string *directory)
 {
-    struct stat st;
+    struct stat stbuf;
 
-    stat(fullname.c_str(), &st);
+    stat(fullname.c_str(), &stbuf);
 
-    if (S_ISDIR(st.st_mode))
+    if (S_ISDIR(stbuf.st_mode))
     {
         // Already a directory
         *directory = fullname;

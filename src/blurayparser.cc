@@ -501,22 +501,22 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
 int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
 {
     std::string path(_path);
-    struct stat st;
+    struct stat stbuf;
     int res = 0;
 
     append_sep(&path);
 
-    if (stat((path + "BDMV/index.bdmv").c_str(), &st) == 0)
+    if (stat((path + "BDMV/index.bdmv").c_str(), &stbuf) == 0)
     {
         if (!check_path(path))
         {
             Logging::trace(path, "Bluray detected.");
-            res = parse_bluray(path, &st, buf, filler);
+            res = parse_bluray(path, &stbuf, buf, filler);
             Logging::trace(path, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &st, buf, filler);
+            res = load_path(path, &stbuf, buf, filler);
         }
     }
     return res;

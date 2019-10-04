@@ -141,9 +141,9 @@ size_t VcdIO::size() const
         return static_cast<size_t>(m_end_pos - m_start_pos);
     }
 
-    struct stat st;
-    fstat(fileno(m_fpi), &st);
-    return static_cast<size_t>(st.st_size);
+    struct stat stbuf;
+    fstat(fileno(m_fpi), &stbuf);
+    return static_cast<size_t>(stbuf.st_size);
 }
 
 size_t VcdIO::tell() const

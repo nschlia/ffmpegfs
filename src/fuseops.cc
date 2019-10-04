@@ -62,7 +62,7 @@
  */
 typedef std::map<std::string, VIRTUALFILE> filenamemap;
 
-static void init_stat(struct stat *st, size_t fsize, time_t ftime, bool directory);
+static void init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr));
 static void prepare_script();
 static void translate_path(std::string *origpath, const char* path);
@@ -245,40 +245,40 @@ void init_fuse_ops(void)
 
 /**
  * @brief Initialise a stat structure.
- * @param[in] st - struct stat to fill in.
+ * @param[in] stbuf - struct stat to fill in.
  * @param[in] fsize - size of the corresponding file.
  * @param[in] ftime - File time (creation/modified/access) of the corresponding file.
  * @param[in] directory - If true, the structure is set up for a directory.
  */
-static void init_stat(struct stat * st, size_t fsize, time_t ftime, bool directory)
+static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool directory)
 {
-    memset(st, 0, sizeof(struct stat));
+    memset(stbuf, 0, sizeof(struct stat));
 
-    st->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    stbuf->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
     if (directory)
     {
-        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-        st->st_nlink = 2;
+        stbuf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+        stbuf->st_nlink = 2;
     }
     else
     {
-        st->st_mode |= S_IFREG;
-        st->st_nlink = 1;
+        stbuf->st_mode |= S_IFREG;
+        stbuf->st_nlink = 1;
     }
 
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-    st->st_size = static_cast<__off_t>(fsize);
+    stbuf->st_size = static_cast<__off_t>(fsize);
 #else
-    st->st_size = static_cast<__off64_t>(fsize);
+    stbuf->st_size = static_cast<__off64_t>(size);
 #endif
-    st->st_blocks = (st->st_size + 512 - 1) / 512;
+    stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
 
     // Set current user as owner
-    st->st_uid = getuid();
-    st->st_gid = getgid();
+    stbuf->st_uid = getuid();
+    stbuf->st_gid = getgid();
 
     // Use current date/time
-    st->st_atime = st->st_mtime = st->st_ctime = ftime;
+    stbuf->st_atime = stbuf->st_mtime = stbuf->st_ctime = ftime;
 }
 
 /**
@@ -294,16 +294,16 @@ static void init_stat(struct stat * st, size_t fsize, time_t ftime, bool directo
  */
 static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime)
 {
-    struct stat st;
+    struct stat stbuf;
 
-    init_stat(&st, fsize, ftime, false);
+    init_stat(&stbuf, fsize, ftime, false);
 
-    if (filler(buf, filename.c_str(), &st, 0))
+    if (filler(buf, filename.c_str(), &stbuf, 0))
     {
         // break;
     }
 
-    return insert_file(type, origpath + filename, &st);
+    return insert_file(type, origpath + filename, &stbuf);
 }
 
 /**
@@ -326,17 +326,17 @@ static void prepare_script()
     }
     else
     {
-        struct stat st;
-        if (fstat(fileno(fpi), &st) == -1)
+        struct stat stbuf;
+        if (fstat(fileno(fpi), &stbuf) == -1)
         {
             Logging::warning(scriptsource, "File could not be accessed. Disabling script: (%1) %2", errno, strerror(errno));
             params.m_enablescript = false;
         }
         else
         {
-            index_buffer.resize(static_cast<size_t>(st.st_size));
+            index_buffer.resize(static_cast<size_t>(stbuf.st_size));
 
-            if (fread(&index_buffer[0], 1, static_cast<size_t>(st.st_size), fpi) != static_cast<size_t>(st.st_size))
+            if (fread(&index_buffer[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
             {
                 Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
                 params.m_enablescript = false;
@@ -422,12 +422,12 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
     return map.end();
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat * st, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat * stbuf, int flags)
 {
-    return insert_file(type, virtfilepath, virtfilepath, st, flags);
+    return insert_file(type, virtfilepath, virtfilepath, stbuf, flags);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat  * st, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat  * stbuf, int flags)
 {
     VIRTUALFILE virtualfile;
     std::string sanitised_filepath = sanitise_filepath(virtfilepath);
@@ -437,7 +437,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
     virtualfile.m_format_idx    = params.guess_format_idx(origfile);
     virtualfile.m_origfile      = sanitise_filepath(origfile);
 
-    memcpy(&virtualfile.m_st, st, sizeof(struct stat));
+    memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
 
     filenames.insert(make_pair(sanitised_filepath, virtualfile));
 
@@ -543,7 +543,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             std::string filename(*filepath);
             std::string tmppath;
             struct dirent **namelist;
-            struct stat st;
+            struct stat stbuf;
             int count;
             int found = 0;
 
@@ -578,19 +578,19 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
             sanitise_filepath(&tmppath);
 
-            if (found && lstat(tmppath.c_str(), &st) == 0)
+            if (found && lstat(tmppath.c_str(), &stbuf) == 0)
             {
                 // File exists with this extension
                 LPVIRTUALFILE virtualfile;
 
                 if (*filepath != tmppath)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &st);
+                    virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &stbuf);
                     *filepath = tmppath;
                 }
                 else
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_PASSTHROUGH, tmppath, &st); /**< @todo Feature #2447 / Issue #25: add command line option */
+                    virtualfile = insert_file(VIRTUALTYPE_PASSTHROUGH, tmppath, &stbuf); /**< @todo Feature #2447 / Issue #25: add command line option */
                 }
                 return virtualfile;
             }
@@ -731,16 +731,16 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     std::string origname(de->d_name);
                     std::string origfile;
                     std::string filename(de->d_name);
-                    struct stat st;
+                    struct stat stbuf;
 
                     origfile = origpath + origname;
 
-                    if (lstat(origfile.c_str(), &st) == -1)
+                    if (lstat(origfile.c_str(), &stbuf) == -1)
                     {
                         throw false;
                     }
 
-                    if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
+                    if (S_ISREG(stbuf.st_mode) || S_ISLNK(stbuf.st_mode))
                     {
                         FFmpegfs_Format *current_format = nullptr;
                         std::string origext;
@@ -755,28 +755,28 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
-                                    insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &st);
+                                    insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &stbuf);
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_PASSTHROUGH, origpath + filename, origfile, &st);
+                                    insert_file(VIRTUALTYPE_PASSTHROUGH, origpath + filename, origfile, &stbuf);
                                 }
                             }
                             else
                             {
                                 // Change file to directory for the frame set
-                                st.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-                                st.st_mode |=  S_IFDIR;
-                                st.st_size = st.st_blksize;
+                                stbuf.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+                                stbuf.st_mode |=  S_IFDIR;
+                                stbuf.st_size = stbuf.st_blksize;
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_REGULAR, origfile, &st, VIRTUALFLAG_IMAGE_FRAME);
+                                insert_file(VIRTUALTYPE_REGULAR, origfile, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
                             }
                         }
                     }
 
-                    if (filler(buf, filename.c_str(), &st, 0))
+                    if (filler(buf, filename.c_str(), &stbuf, 0))
                     {
                         break;
                     }
@@ -958,7 +958,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                         if (virtualfile2 != nullptr && virtualfile2->m_type == VIRTUALTYPE_DIRECTORY && (virtualfile2->m_flags & VIRTUALFLAG_IMAGE_FRAME))
                         {
-                            struct stat st;
+                            struct stat stbuf2;
 
                             if (!virtualfile2->m_video_frame_count)
                             {
@@ -969,13 +969,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            //memcpy(&st, &virtualfile->m_st, sizeof(struct stat));
+                            //memcpy(&stbuf2, &virtualfile->m_st, sizeof(struct stat));
 
-                            init_stat(&st, virtualfile2->m_predicted_size, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
+                            init_stat(&stbuf2, virtualfile2->m_predicted_size, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
 
-                            insert_file(VIRTUALTYPE_FRAME, origpath, &st);
+                            insert_file(VIRTUALTYPE_FRAME, origpath, &stbuf2);
 
-                            mempcpy(stbuf, &st, sizeof(struct stat));
+                            mempcpy(stbuf, &stbuf2, sizeof(struct stat));
 
                             // Clear errors
                             errno = 0;

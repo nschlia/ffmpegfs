@@ -15,6 +15,9 @@ Important changes in 1.9 (2019-09-XX)
 * Bugfix: Fixed several warnings if compiled for 32 bit.
 * Bugfix: Removed unused xmlint prerequisite from configure.
 * Bugfix: Video and audio was out of sync on android devices.
+* Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
+    Deprecate use of avfilter_register(), avfilter_register_all(),
+    avfilter_next(). Added av_filter_iterate().
 * Known bug:
 
 Important changes in 1.8 (2019-05-23)

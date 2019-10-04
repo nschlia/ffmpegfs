@@ -269,7 +269,7 @@ static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool dire
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
     stbuf->st_size = static_cast<__off_t>(fsize);
 #else
-    stbuf->st_size = static_cast<__off64_t>(size);
+    stbuf->st_size = static_cast<__off64_t>(fsize);
 #endif
     stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
 

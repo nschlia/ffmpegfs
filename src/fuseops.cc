@@ -552,7 +552,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             if (found && lstat(tmppath.c_str(), &stbuf) == 0)
             {
                 // File exists with this extension
-                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &stbuf);
+                LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, tmppath, &stbuf);
                 *filepath = tmppath;
                 return virtualfile;
             }
@@ -689,7 +689,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                     if (transcoded_name(&filename, &current_format))
                     {
-                        insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &stbuf);
+                        insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf);
                     }
                 }
 
@@ -740,7 +740,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     // This is a virtual file
     LPVIRTUALFILE virtualfile = find_original(&origpath);
-    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
+    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
 
     bool no_check = false;
 
@@ -768,7 +768,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         no_check = true;    // FILETYPE already known, no need to check again.
         [[clang::fallthrough]];
     }
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (!no_check)
         {
@@ -865,7 +865,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -936,7 +935,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         no_check = true;
         [[clang::fallthrough]];
     }
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (!no_check)
         {
@@ -970,7 +969,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -1037,7 +1035,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         cache_entry = transcoder_new(virtualfile, true);
         if (cache_entry == nullptr)
@@ -1056,7 +1054,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);
@@ -1146,7 +1143,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
@@ -1164,7 +1161,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
         assert(false);

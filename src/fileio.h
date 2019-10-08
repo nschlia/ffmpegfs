@@ -48,10 +48,8 @@
  */
 typedef enum VIRTUALTYPE
 {
-    VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
-    VIRTUALTYPE_REGULAR,                                            /**< @brief Regular file to transcode */
+    VIRTUALTYPE_DISK,                                               /**< @brief Regular disk file to transcode */
     VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
-    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 #ifdef USE_LIBVCD
     VIRTUALTYPE_VCD,                                                /**< @brief Video CD file */
 #endif // USE_LIBVCD
@@ -61,6 +59,8 @@ typedef enum VIRTUALTYPE
 #ifdef USE_LIBBLURAY
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
+
+    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
@@ -70,7 +70,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 typedef struct VIRTUALFILE
 {
     VIRTUALFILE()
-        : m_type(VIRTUALTYPE_REGULAR)
+        : m_type(VIRTUALTYPE_DISK)
         , m_format_idx(0)
         , m_full_title(false)
         , m_duration(0)

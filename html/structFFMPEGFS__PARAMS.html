@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -90,7 +90,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac0e58e320facd622ae9343946d010680"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to guess the format index (audio or video) for a file.  <a href="#ac0e58e320facd622ae9343946d010680">More...</a><br /></td></tr>
 <tr class="separator:ac0e58e320facd622ae9343946d010680"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f5a3c0e70661f5010a4285292f4ac57"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFFmpegfs__Format.html">FFmpegfs_Format</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a3f5a3c0e70661f5010a4285292f4ac57">current_format</a> (const std::string &amp;filepath)</td></tr>
-<tr class="memdesc:a3f5a3c0e70661f5010a4285292f4ac57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> for ae file.  <a href="#a3f5a3c0e70661f5010a4285292f4ac57">More...</a><br /></td></tr>
+<tr class="memdesc:a3f5a3c0e70661f5010a4285292f4ac57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> for the file.  <a href="#a3f5a3c0e70661f5010a4285292f4ac57">More...</a><br /></td></tr>
 <tr class="separator:a3f5a3c0e70661f5010a4285292f4ac57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd8436f43504eed93b3b2fe05cfacc10"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFFmpegfs__Format.html">FFmpegfs_Format</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#afd8436f43504eed93b3b2fe05cfacc10">current_format</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> virtualfile)</td></tr>
 <tr class="memdesc:afd8436f43504eed93b3b2fe05cfacc10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> for a virtual file.  <a href="#afd8436f43504eed93b3b2fe05cfacc10">More...</a><br /></td></tr>
@@ -204,7 +204,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 <tr class="separator:ad9f6c34856ebe9d165831cb843f0d674"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c4f20d60dc983136521011565deb2bc"><td class="memItemLeft" align="right" valign="top"><a id="a7c4f20d60dc983136521011565deb2bc"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a7c4f20d60dc983136521011565deb2bc">m_cachepath</a></td></tr>
-<tr class="memdesc:a7c4f20d60dc983136521011565deb2bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disk cache path, defaults to /tmp. <br /></td></tr>
+<tr class="memdesc:a7c4f20d60dc983136521011565deb2bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disk cache path, defaults to /var/cache. <br /></td></tr>
 <tr class="separator:a7c4f20d60dc983136521011565deb2bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb59fa97e9c6a821f6406b6bfe9f75c6"><td class="memItemLeft" align="right" valign="top"><a id="abb59fa97e9c6a821f6406b6bfe9f75c6"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#abb59fa97e9c6a821f6406b6bfe9f75c6">m_disable_cache</a></td></tr>
@@ -242,7 +242,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Global program parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00089">89</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00096">96</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a3f5a3c0e70661f5010a4285292f4ac57"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3f5a3c0e70661f5010a4285292f4ac57">&#9670;&nbsp;</a></span>current_format() <span class="overload">[1/2]</span></h2>
@@ -260,7 +260,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
       </table>
 </div><div class="memdoc">
 
-<p>Get <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> for ae file. </p>
+<p>Get <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class. ">FFmpegfs_Format</a> for the file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">filepath</td><td>- Name of the file, path my be included, but not required. </td></tr>
@@ -269,11 +269,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to format. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00161">161</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00164">164</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00412">find_file()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00130">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00125">m_format</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00419">find_file()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00133">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00132">m_format</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00464">Cache::delete_entry()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00345">get_destname()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00236">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="buffer_8cc_source.html#l00065">Buffer::openX()</a>, <a class="el" href="fuseops_8cc_source.html#l00341">transcoded_name()</a>, <a class="el" href="transcode_8cc_source.html#l00413">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00247">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00574">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00467">Cache::delete_entry()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00369">get_destname()</a>, <a class="el" href="buffer_8cc_source.html#l00067">Buffer::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00239">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00348">transcoded_name()</a>, <a class="el" href="transcode_8cc_source.html#l00416">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00250">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00577">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -302,9 +302,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to format. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00182">182</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00185">185</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00125">m_format</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00132">m_format</a>.</p>
 
 </div>
 </div>
@@ -333,11 +333,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Index 0 or 1 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00130">130</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00133">133</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00214">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01261">is_album_art()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">m_format</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00125">smart_transcode()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00209">FFmpegfs_Format::video_codec_id()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00233">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01286">is_album_art()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00132">m_format</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00128">smart_transcode()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00228">FFmpegfs_Format::video_codec_id()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00161">current_format()</a>, <a class="el" href="fuseops_8cc_source.html#l00395">insert_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00236">FFmpeg_Transcoder::open_input_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00164">current_format()</a>, <a class="el" href="fuseops_8cc_source.html#l00402">insert_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00239">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
 </div>
 </div>
@@ -360,11 +360,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <p>Check for smart transcode mode. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if smart transcode is active, false if not </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00125">125</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00128">128</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00204">FFmpegfs_Format::filetype()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00125">m_format</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00223">FFmpegfs_Format::filetype()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00132">m_format</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00487">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00130">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01150">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00133">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01153">print_params()</a>.</p>
 
 </div>
 </div>

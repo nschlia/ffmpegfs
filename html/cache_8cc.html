@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -84,15 +84,15 @@ Include dependency graph for cache.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="cache_8cc__incl.png" border="0" usemap="#src_2cache_8cc" alt=""/></div>
 <map name="src_2cache_8cc" id="src_2cache_8cc">
-<area shape="rect" id="node2" href="cache_8h.html" title="Data cache management. " alt="" coords="829,155,897,181"/>
-<area shape="rect" id="node11" href="cache__entry_8h.html" title="Cache entry " alt="" coords="716,80,820,107"/>
-<area shape="rect" id="node13" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="538,80,622,107"/>
-<area shape="rect" id="node16" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="281,155,385,181"/>
-<area shape="rect" id="node21" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="961,80,1036,107"/>
-<area shape="rect" id="node3" href="buffer_8h.html" title="Buffer class. " alt="" coords="829,229,896,256"/>
-<area shape="rect" id="node4" href="fileio_8h.html" title="FileIO class. " alt="" coords="565,304,625,331"/>
-<area shape="rect" id="node12" href="id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="721,155,804,181"/>
-<area shape="rect" id="node17" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="139,229,261,256"/>
+<area shape="rect" id="node2" href="cache_8h.html" title="Data cache management. " alt="" coords="642,155,710,181"/>
+<area shape="rect" id="node12" href="cache__entry_8h.html" title="Cache entry " alt="" coords="527,80,631,107"/>
+<area shape="rect" id="node14" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="426,155,510,181"/>
+<area shape="rect" id="node17" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="241,229,345,256"/>
+<area shape="rect" id="node21" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="776,80,851,107"/>
+<area shape="rect" id="node3" href="buffer_8h.html" title="Buffer class. " alt="" coords="743,229,809,256"/>
+<area shape="rect" id="node4" href="fileio_8h.html" title="FileIO class. " alt="" coords="582,304,642,331"/>
+<area shape="rect" id="node13" href="id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="535,155,617,181"/>
+<area shape="rect" id="node18" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="232,304,355,331"/>
 </map>
 </div>
 </div>
@@ -149,12 +149,12 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \</div><div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div><div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div><div class="line">    throw <span class="keyword">false</span>; \</div><div class="line">    }</div><div class="ttc" id="classLogging_html_a9eca3fc38f586624d6f5e3057c1955f9"><div class="ttname"><a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a></div><div class="ttdeci">static void error(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry. </div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00248">logging.h:248</a></div></div>
-<div class="ttc" id="cache_8cc_html_a566d303f997c2fb61fc91d5af125dff0"><div class="ttname"><a href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a></div><div class="ttdeci">#define sqlite3_errstr(rc)</div><div class="ttdoc">If our version of SQLite hasn&amp;#39;t go this function. </div><div class="ttdef"><b>Definition:</b> <a href="cache_8cc_source.html#l00039">cache.cc:39</a></div></div>
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \</div><div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div><div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div><div class="line">    throw <span class="keyword">false</span>; \</div><div class="line">    }</div><div class="ttc" id="classLogging_html_a9eca3fc38f586624d6f5e3057c1955f9"><div class="ttname"><a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a></div><div class="ttdeci">static void error(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry. </div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00254">logging.h:254</a></div></div>
+<div class="ttc" id="cache_8cc_html_a566d303f997c2fb61fc91d5af125dff0"><div class="ttname"><a href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a></div><div class="ttdeci">#define sqlite3_errstr(rc)</div><div class="ttdoc">If our version of SQLite hasn&amp;#39;t go this function. </div><div class="ttdef"><b>Definition:</b> <a href="cache_8cc_source.html#l00042">cache.cc:42</a></div></div>
 </div><!-- fragment -->
 <p>Bind numeric column to SQLite statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00305">305</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00308">308</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -183,12 +183,12 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, <span class="keyword">nullptr</span>))) \</div><div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div><div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div><div class="line">    throw <span class="keyword">false</span>; \</div><div class="line">    }</div><div class="ttc" id="classLogging_html_a9eca3fc38f586624d6f5e3057c1955f9"><div class="ttname"><a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a></div><div class="ttdeci">static void error(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry. </div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00248">logging.h:248</a></div></div>
-<div class="ttc" id="cache_8cc_html_a566d303f997c2fb61fc91d5af125dff0"><div class="ttname"><a href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a></div><div class="ttdeci">#define sqlite3_errstr(rc)</div><div class="ttdoc">If our version of SQLite hasn&amp;#39;t go this function. </div><div class="ttdef"><b>Definition:</b> <a href="cache_8cc_source.html#l00039">cache.cc:39</a></div></div>
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, <span class="keyword">nullptr</span>))) \</div><div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div><div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div><div class="line">    throw <span class="keyword">false</span>; \</div><div class="line">    }</div><div class="ttc" id="classLogging_html_a9eca3fc38f586624d6f5e3057c1955f9"><div class="ttname"><a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a></div><div class="ttdeci">static void error(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry. </div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00254">logging.h:254</a></div></div>
+<div class="ttc" id="cache_8cc_html_a566d303f997c2fb61fc91d5af125dff0"><div class="ttname"><a href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a></div><div class="ttdeci">#define sqlite3_errstr(rc)</div><div class="ttdoc">If our version of SQLite hasn&amp;#39;t go this function. </div><div class="ttdef"><b>Definition:</b> <a href="cache_8cc_source.html#l00042">cache.cc:42</a></div></div>
 </div><!-- fragment -->
 <p>Bind text column to SQLite statement. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00293">293</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00296">296</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>

@@ -41,9 +41,8 @@ var searchData=
   ['virtualtype',['VIRTUALTYPE',['../fileio_8h.html#a1199d38534b11312b0210e527499a805',1,'VIRTUALTYPE():&#160;fileio.h'],['../fileio_8h.html#a2003e6a527b6604a62ef0ee1b8dca293',1,'VIRTUALTYPE():&#160;fileio.h']]],
   ['virtualtype_5fbluray',['VIRTUALTYPE_BLURAY',['../fileio_8h.html#a1199d38534b11312b0210e527499a805aced62b04e062f8e282ba110fcd117547',1,'fileio.h']]],
   ['virtualtype_5fbuffer',['VIRTUALTYPE_BUFFER',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a77f7782177bb9c59031e5ce8e4d4b1ae',1,'fileio.h']]],
+  ['virtualtype_5fdisk',['VIRTUALTYPE_DISK',['../fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8',1,'fileio.h']]],
   ['virtualtype_5fdvd',['VIRTUALTYPE_DVD',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615',1,'fileio.h']]],
-  ['virtualtype_5fpassthrough',['VIRTUALTYPE_PASSTHROUGH',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a250e69c432372f302ea23088ed64a393',1,'fileio.h']]],
-  ['virtualtype_5fregular',['VIRTUALTYPE_REGULAR',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a96238b0b09a468c272eb606f1a57911f',1,'fileio.h']]],
   ['virtualtype_5fscript',['VIRTUALTYPE_SCRIPT',['../fileio_8h.html#a1199d38534b11312b0210e527499a805ac40d6714b4ab94f0c1ae259bd0bb6585',1,'fileio.h']]],
   ['virtualtype_5fvcd',['VIRTUALTYPE_VCD',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a216ce6e555d22eba5b793f3b7fe9081d',1,'fileio.h']]]
 ];

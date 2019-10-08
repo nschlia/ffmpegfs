@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -61,7 +61,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classVcdIO-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -105,6 +104,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6cac727f75ae3bb74bd9cf728d91ae03"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#a6cac727f75ae3bb74bd9cf728d91ae03">bufsize</a> () const</td></tr>
 <tr class="memdesc:a6cac727f75ae3bb74bd9cf728d91ae03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="#a6cac727f75ae3bb74bd9cf728d91ae03">More...</a><br /></td></tr>
 <tr class="separator:a6cac727f75ae3bb74bd9cf728d91ae03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a455b4727610b1778dec511fdc475e753"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#a455b4727610b1778dec511fdc475e753">open</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
+<tr class="memdesc:a455b4727610b1778dec511fdc475e753"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="#a455b4727610b1778dec511fdc475e753">More...</a><br /></td></tr>
+<tr class="separator:a455b4727610b1778dec511fdc475e753"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad05d922e678cbe73595f9450bfe2ecd2"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#ad05d922e678cbe73595f9450bfe2ecd2">read</a> (void *data, size_t <a class="el" href="classVcdIO.html#a2139f192596ce31ac726ac97d1f2ce98">size</a>)</td></tr>
 <tr class="memdesc:ad05d922e678cbe73595f9450bfe2ecd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="#ad05d922e678cbe73595f9450bfe2ecd2">More...</a><br /></td></tr>
 <tr class="separator:ad05d922e678cbe73595f9450bfe2ecd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,9 +122,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a939ed023504380376cf7826f6385186a"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#a939ed023504380376cf7826f6385186a">tell</a> () const</td></tr>
 <tr class="memdesc:a939ed023504380376cf7826f6385186a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current read position.  <a href="#a939ed023504380376cf7826f6385186a">More...</a><br /></td></tr>
 <tr class="separator:a939ed023504380376cf7826f6385186a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afabc123383d0f68bf90f51d71e565a09"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#afabc123383d0f68bf90f51d71e565a09">seek</a> (long offset, int whence)</td></tr>
-<tr class="memdesc:afabc123383d0f68bf90f51d71e565a09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek to position in file.  <a href="#afabc123383d0f68bf90f51d71e565a09">More...</a><br /></td></tr>
-<tr class="separator:afabc123383d0f68bf90f51d71e565a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75641b1632485036fbdea5a1f23840df"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#a75641b1632485036fbdea5a1f23840df">seek</a> (int64_t offset, int whence)</td></tr>
+<tr class="memdesc:a75641b1632485036fbdea5a1f23840df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek to position in file.  <a href="#a75641b1632485036fbdea5a1f23840df">More...</a><br /></td></tr>
+<tr class="separator:a75641b1632485036fbdea5a1f23840df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af50f233324ac3708851d9e0aa0937eb3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#af50f233324ac3708851d9e0aa0937eb3">eof</a> () const</td></tr>
 <tr class="memdesc:af50f233324ac3708851d9e0aa0937eb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if at end of file.  <a href="#af50f233324ac3708851d9e0aa0937eb3">More...</a><br /></td></tr>
 <tr class="separator:af50f233324ac3708851d9e0aa0937eb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,22 +141,9 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#adc3caa8f1e5d76274d8ffb8b5c17288b">~FileIO</a> ()</td></tr>
 <tr class="memdesc:adc3caa8f1e5d76274d8ffb8b5c17288b inherit pub_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free <a class="el" href="classFileIO.html" title="Base class for I/O. ">FileIO</a> object. <br /></td></tr>
 <tr class="separator:adc3caa8f1e5d76274d8ffb8b5c17288b inherit pub_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c5af05678545dc944a4f8923523c6c4 inherit pub_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a2c5af05678545dc944a4f8923523c6c4">open</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
-<tr class="memdesc:a2c5af05678545dc944a4f8923523c6c4 inherit pub_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="classFileIO.html#a2c5af05678545dc944a4f8923523c6c4">More...</a><br /></td></tr>
-<tr class="separator:a2c5af05678545dc944a4f8923523c6c4 inherit pub_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5577a5efda75a47674e260e4e7d45ab inherit pub_methods_classFileIO"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a> () const</td></tr>
 <tr class="memdesc:ae5577a5efda75a47674e260e4e7d45ab inherit pub_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get virtual file object.  <a href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">More...</a><br /></td></tr>
 <tr class="separator:ae5577a5efda75a47674e260e4e7d45ab inherit pub_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a8974354c34b6c63c1149961ae998d8b6"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVcdIO.html#a8974354c34b6c63c1149961ae998d8b6">openX</a> (const std::string &amp;filename)</td></tr>
-<tr class="memdesc:a8974354c34b6c63c1149961ae998d8b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="#a8974354c34b6c63c1149961ae998d8b6">More...</a><br /></td></tr>
-<tr class="separator:a8974354c34b6c63c1149961ae998d8b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
-<tr class="memitem:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a0922314abfeca01db14caa928ba74e76">set_path</a> (const std::string &amp;path)</td></tr>
-<tr class="memdesc:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the internal source path.  <a href="classFileIO.html#a0922314abfeca01db14caa928ba74e76">More...</a><br /></td></tr>
-<tr class="separator:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -194,11 +183,18 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classFileIO.html">FileIO</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
 <tr class="memdesc:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file. ">type()</a>.  <a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">More...</a><br /></td></tr>
 <tr class="separator:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
+<tr class="memitem:aaf32943a1127e71fa4f7c5ea33c2630c inherit pro_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#aaf32943a1127e71fa4f7c5ea33c2630c">set_virtualfile</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
+<tr class="memdesc:aaf32943a1127e71fa4f7c5ea33c2630c inherit pro_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the virtual file object.  <a href="classFileIO.html#aaf32943a1127e71fa4f7c5ea33c2630c">More...</a><br /></td></tr>
+<tr class="separator:aaf32943a1127e71fa4f7c5ea33c2630c inherit pro_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a0922314abfeca01db14caa928ba74e76">set_path</a> (const std::string &amp;path)</td></tr>
+<tr class="memdesc:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the internal source path.  <a href="classFileIO.html#a0922314abfeca01db14caa928ba74e76">More...</a><br /></td></tr>
+<tr class="separator:a0922314abfeca01db14caa928ba74e76 inherit pro_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Video CD and Super Video CD I/O class. </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8h_source.html#l00040">40</a> of file <a class="el" href="vcdio_8h_source.html">vcdio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8h_source.html#l00045">45</a> of file <a class="el" href="vcdio_8h_source.html">vcdio.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a04a2c17893137ceb6adf6ba08b94d0b6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a04a2c17893137ceb6adf6ba08b94d0b6">&#9670;&nbsp;</a></span>~VcdIO()</h2>
@@ -226,9 +222,9 @@ Additional Inherited Members</h2></td></tr>
 <p>Free <a class="el" href="classVcdIO.html" title="Video CD and Super Video CD I/O class. ">VcdIO</a> object. </p>
 <p>Close file pointers </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00047">47</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00053">53</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8cc_source.html#l00193">close()</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8cc_source.html#l00200">close()</a>.</p>
 
 </div>
 </div>
@@ -261,7 +257,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#a9ef072d7a6f475c0b185c3912d828342">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00057">57</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00063">63</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
 </div>
 </div>
@@ -289,12 +285,12 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get the duration of the file, in AV_TIME_BASE fractional seconds. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd>Could work for VCD, but always returns AV_NOPTS_VALUE. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>: implement me </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>Could work for VCD, but always returns AV_NOPTS_VALUE. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>: implement me </dd></dl>
 
 <p>Implements <a class="el" href="classFileIO.html#aaffdefd15fa7c5e54a9733b1770c8bcd">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00119">119</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00126">126</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
 </div>
 </div>
@@ -326,9 +322,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#ad7bf956d13e66a11644c30c4b2b7d0ee">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00188">188</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00195">195</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00133">m_end_pos</a>, and <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00137">m_end_pos</a>, and <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>.</p>
 
 </div>
 </div>
@@ -360,14 +356,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00114">114</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00121">121</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>.</p>
 
 </div>
 </div>
-<a id="a8974354c34b6c63c1149961ae998d8b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8974354c34b6c63c1149961ae998d8b6">&#9670;&nbsp;</a></span>openX()</h2>
+<a id="a455b4727610b1778dec511fdc475e753"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a455b4727610b1778dec511fdc475e753">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -376,16 +372,16 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int VcdIO::openX </td>
+          <td class="memname">int VcdIO::open </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a>&#160;</td>
+          <td class="paramname"><em>virtualfile</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -393,18 +389,18 @@ Additional Inherited Members</h2></td></tr>
 <p>Open a virtual file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file to open. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">virtualfile</td><td>- LPCVIRTUALFILE of file to open </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classVcdIO.html#a8974354c34b6c63c1149961ae998d8b6" title="Open a virtual file. ">openX()</a> returns 0. <br />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classVcdIO.html#a455b4727610b1778dec511fdc475e753" title="Open a virtual file. ">open()</a> returns 0. <br />
 On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#af0b6b7248fb1825e76630c79c7969775">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#a73d127faf89871419d7d3dc34d6ef96b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00062">62</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00068">68</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00202">Logging::info()</a>, <a class="el" href="vcdutils_8cc_source.html#l00088">VCDUTILS::locate_video()</a>, <a class="el" href="vcdio_8h_source.html#l00130">m_chapter_no</a>, <a class="el" href="vcdio_8h_source.html#l00133">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>, <a class="el" href="vcdio_8h_source.html#l00128">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00256">FileIO::m_path</a>, <a class="el" href="vcdio_8h_source.html#l00132">m_start_pos</a>, <a class="el" href="vcdio_8h_source.html#l00129">m_track_no</a>, <a class="el" href="vcdio_8cc_source.html#l00147">seek()</a>, <a class="el" href="fileio_8cc_source.html#l00104">FileIO::set_path()</a>, <a class="el" href="vcdio_8cc_source.html#l00124">size()</a>, and <a class="el" href="fileio_8cc_source.html#l00099">FileIO::virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="vcdutils_8cc_source.html#l00088">VCDUTILS::locate_video()</a>, <a class="el" href="vcdio_8h_source.html#l00134">m_chapter_no</a>, <a class="el" href="vcdio_8h_source.html#l00137">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>, <a class="el" href="vcdio_8h_source.html#l00132">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00260">FileIO::m_path</a>, <a class="el" href="vcdio_8h_source.html#l00136">m_start_pos</a>, <a class="el" href="vcdio_8h_source.html#l00133">m_track_no</a>, <a class="el" href="vcdio_8cc_source.html#l00154">seek()</a>, <a class="el" href="fileio_8cc_source.html#l00108">FileIO::set_path()</a>, <a class="el" href="fileio_8cc_source.html#l00094">FileIO::set_virtualfile()</a>, and <a class="el" href="vcdio_8cc_source.html#l00131">size()</a>.</p>
 
 </div>
 </div>
@@ -457,14 +453,14 @@ If at end of file, 0 may be returned by errno not set. <a class="el" href="class
 
 <p>Implements <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00099">99</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00106">106</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00133">m_end_pos</a>, and <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00137">m_end_pos</a>, and <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>.</p>
 
 </div>
 </div>
-<a id="afabc123383d0f68bf90f51d71e565a09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afabc123383d0f68bf90f51d71e565a09">&#9670;&nbsp;</a></span>seek()</h2>
+<a id="a75641b1632485036fbdea5a1f23840df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75641b1632485036fbdea5a1f23840df">&#9670;&nbsp;</a></span>seek()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -475,7 +471,7 @@ If at end of file, 0 may be returned by errno not set. <a class="el" href="class
         <tr>
           <td class="memname">int VcdIO::seek </td>
           <td>(</td>
-          <td class="paramtype">long&#160;</td>
+          <td class="paramtype">int64_t&#160;</td>
           <td class="paramname"><em>offset</em>, </td>
         </tr>
         <tr>
@@ -509,16 +505,16 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classVcdIO.html#afabc123383d0f68bf90f51d71e565a09" title="Seek to position in file. ">seek()</a> returns the resulting offset location as measured in bytes from the beginning of the file. <br />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classVcdIO.html#a75641b1632485036fbdea5a1f23840df" title="Seek to position in file. ">seek()</a> returns the resulting offset location as measured in bytes from the beginning of the file. <br />
 On error, the value -1 is returned and errno is set to indicate the error. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#a2512bb1a3672ec584f77d00e402b3c28">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#a0171ca18c497a09971e22cc5c381304b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00147">147</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00154">154</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00133">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00132">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00137">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00136">m_start_pos</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00062">openX()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00068">open()</a>.</p>
 
 </div>
 </div>
@@ -550,11 +546,11 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a28df61747de114001d67ef6abad2ca7d">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00124">124</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00131">131</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00133">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00132">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00137">m_end_pos</a>, <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00136">m_start_pos</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00062">openX()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00068">open()</a>.</p>
 
 </div>
 </div>
@@ -586,9 +582,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a3a40140f766ff539cde0da854a1a9526">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00142">142</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00149">149</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00126">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00132">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="vcdio_8h_source.html#l00130">m_fpi</a>, and <a class="el" href="vcdio_8h_source.html#l00136">m_start_pos</a>.</p>
 
 </div>
 </div>
@@ -620,9 +616,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00052">52</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdio_8cc_source.html#l00058">58</a> of file <a class="el" href="vcdio_8cc_source.html">vcdio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_VCD</a>.</p>
 
 </div>
 </div>

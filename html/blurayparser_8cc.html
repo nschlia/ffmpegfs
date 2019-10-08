@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -167,11 +167,11 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>-errno or number or titles on Bluray </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00498">498</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00501">501</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00219">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00425">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00432">load_path()</a>, <a class="el" href="blurayparser_8cc_source.html#l00442">parse_bluray()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00432">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00439">load_path()</a>, <a class="el" href="blurayparser_8cc_source.html#l00445">parse_bluray()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00714">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00606">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00721">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00613">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
@@ -277,11 +277,11 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>On error, returns false. On success, returns true. </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00320">320</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00323">323</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00151">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00799">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00840">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00199">FFmpegfs_Format::format_name()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00820">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00918">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00390">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00134">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="structVIRTUALFILE.html#a9e64065a093280e7d66810be6b1532f9">VIRTUALFILE::m_bluray</a>, <a class="el" href="fileio_8h_source.html#l00133">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_duration</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00078">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00079">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00132">VIRTUALFILE::BLURAY_CHAPTER::m_playlist_no</a>, <a class="el" href="fileio_8h_source.html#l00131">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00074">params</a>, <a class="el" href="blurayparser_8cc_source.html#l00290">parse_find_best_audio_stream()</a>, <a class="el" href="blurayparser_8cc_source.html#l00300">parse_find_best_video_stream()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01096">replace_all()</a>, <a class="el" href="blurayparser_8cc_source.html#l00057">stream_info()</a>, <a class="el" href="transcode_8cc_source.html#l00217">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00247">transcoder_set_filesize()</a>, and <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_BLURAY</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00156">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00218">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00824">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00865">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00845">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00943">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00397">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="structVIRTUALFILE.html#a9e64065a093280e7d66810be6b1532f9">VIRTUALFILE::m_bluray</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00088">VIRTUALFILE::m_duration</a>, <a class="el" href="ffmpegfs_8h_source.html#l00132">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00087">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00137">VIRTUALFILE::BLURAY_CHAPTER::m_playlist_no</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="blurayparser_8cc_source.html#l00293">parse_find_best_audio_stream()</a>, <a class="el" href="blurayparser_8cc_source.html#l00303">parse_find_best_video_stream()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01121">replace_all()</a>, <a class="el" href="blurayparser_8cc_source.html#l00060">stream_info()</a>, <a class="el" href="transcode_8cc_source.html#l00220">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00250">transcoder_set_filesize()</a>, and <a class="el" href="fileio_8h_source.html#l00060">VIRTUALTYPE_BLURAY</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00442">parse_bluray()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00445">parse_bluray()</a>.</p>
 
 </div>
 </div>
@@ -343,11 +343,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00442">442</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00445">445</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00179">Logging::debug()</a>, and <a class="el" href="logging_8h_source.html#l00156">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00498">check_bluray()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00501">check_bluray()</a>.</p>
 
 </div>
 </div>
@@ -378,9 +378,9 @@ Functions</h2></td></tr>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>is 0 really OK or shall we better parse? </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns index of best match stream. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00290">290</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00293">293</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>.</p>
 
 </div>
 </div>
@@ -411,9 +411,9 @@ Functions</h2></td></tr>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>is 0 really OK or shall we better parse? </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns index of best match stream. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00300">300</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00303">303</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>.</p>
 
 </div>
 </div>
@@ -509,11 +509,11 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00057">57</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00060">60</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00571">av_make_q()</a>, and <a class="el" href="logging_8h_source.html#l00248">Logging::error()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00586">av_make_q()</a>, and <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00320">create_bluray_virtualfile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>.</p>
 
 </div>
 </div>

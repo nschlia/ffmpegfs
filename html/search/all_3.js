@@ -49,7 +49,7 @@ var searchData=
   ['compare',['compare',['../ffmpeg__utils_8cc.html#aba5d26e4361ea670c53cad12d4a3c2d4',1,'compare(const std::string &amp;value, const std::string &amp;pattern):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#aba5d26e4361ea670c53cad12d4a3c2d4',1,'compare(const std::string &amp;value, const std::string &amp;pattern):&#160;ffmpeg_utils.cc']]],
   ['convert_5fsamples',['convert_samples',['../classFFmpeg__Transcoder.html#ada3ad7eef000399122463376320acb54',1,'FFmpeg_Transcoder']]],
   ['convert_5ftxt2string',['convert_txt2string',['../namespaceVCDUTILS.html#a13939ee05972ab90f03f7043f9d29ba7',1,'VCDUTILS']]],
-  ['copy',['copy',['../classBuffer.html#a2a7238803543822e2d5af2ccca42a28e',1,'Buffer']]],
+  ['copy',['copy',['../classBuffer.html#a7a9faca7aae021dc179296bc08155183',1,'Buffer::copy(std::vector&lt; uint8_t &gt; *out_data, size_t offset)'],['../classBuffer.html#a2a7238803543822e2d5af2ccca42a28e',1,'Buffer::copy(uint8_t *out_data, size_t offset, size_t bufsize)']]],
   ['copy_5fmetadata',['copy_metadata',['../classFFmpeg__Transcoder.html#ac582ce443ea0781a4b647f8701b73569',1,'FFmpeg_Transcoder']]],
   ['countof',['countof',['../ffmpeg__utils_8h.html#a830b8db3b94d028c275c4dc1b63d7c28',1,'ffmpeg_utils.h']]],
   ['create',['create',['../classCache__Entry.html#a244a1e808f456066c9348aa66425feb8',1,'Cache_Entry']]],

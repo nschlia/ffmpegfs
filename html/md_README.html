@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -88,11 +88,13 @@ $(function() {
  </td></tr>
 </table>
 <h2>News </h2>
-<p><b>The branch for Version 2 has been renamed. To switch to it, do "git checkout release2.x".</b></p>
+<p><b>To switch to the branch for version 2, git clone and do "git checkout release2.x".</b></p>
 <ul>
 <li><b>Work on release 1.9 now in progress.</b></li>
+<li>Support: Code has now been tested to work on ARMv7 (32 bit).</li>
 <li>Feature: Documented the whole project with Doxygen.</li>
 <li>Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.</li>
+<li>Feature: Added Apple Lossles Audio Compression (ALAC) support.</li>
 <li>See [NEWS](NEWS) for details.</li>
 </ul>
 <h2>About </h2>
@@ -102,15 +104,16 @@ $(function() {
 <p>FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video formats on the fly when opened and read.</p>
 <p>Supported output formats:</p>
 <ul>
-<li>MP4 (audio &amp; video)</li>
-<li>WebM (audio &amp; video)</li>
-<li>OGG (audio &amp; video)</li>
-<li>MOV (audio &amp; video)</li>
+<li>MP4 (MPEG-4)</li>
+<li>WebM</li>
+<li>OGG</li>
+<li>MOV (QuickTime File Format)</li>
 <li>Prores (a MOV container for Apple Prores video &amp; PCM audio)</li>
 <li>Opus (audio only)</li>
-<li>MP3 (audio only)</li>
-<li>WAV (audio only)</li>
-<li>AIFF (audio only)</li>
+<li>MP3 (MPEG-2 Audio Layer III)</li>
+<li>WAV (Waveform Audio File Format)</li>
+<li>AIFF (Audio Interchange File Format)</li>
+<li>ALAC (Apple Lossless Audio Codec)</li>
 </ul>
 <p>This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.</p>
 <p>For live streaming select WebM or MP4 for best results. If video transcoding is not required MP3 will also do, but WebM and MP4 will create better results. The OGG encoder is not fast enough for real-time recoding files.</p>

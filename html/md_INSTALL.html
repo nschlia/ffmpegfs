@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
   </td>
  </tr>
@@ -75,9 +75,12 @@ $(function() {
 <li>libavcodec (&gt;= 56.1.0)</li>
 <li>libavformat (&gt;= 56.1.0)</li>
 <li>libavfilter (&gt;= 5.40.0)</li>
-<li>libavresample (&gt;= 2.1.0)</li>
 <li>libswscale (&gt;= 3.0.0)</li>
+</ul>
+<p>One of these is required, preferably libswresample as libavresample is deprecated. It will be removed, but as for now is required if Libav is used (which has no libswresample).</p>
+<ul>
 <li>libswresample (&gt;= 1.0.0)</li>
+<li>libavresample (&gt;= 2.1.0)</li>
 </ul>
 <p>For optional DVD support you need the following libraries</p>
 <ul>
@@ -88,25 +91,18 @@ $(function() {
 <ul>
 <li>libbluray (&gt;= 0.6.2)</li>
 </ul>
-<p>If building from git, you'll also need:</p>
-<ul>
-<li>autoconf</li>
-<li>automake</li>
-<li>asciidoc</li>
-<li>xmllint</li>
-<li>w3m</li>
-</ul>
 <p>The commands to install just the first prerequisites follow.</p>
 <p>Please read the "Supported Linux Distributions" chapter in <a class="el" href="README_8md_source.html">README.md</a> for details.</p>
-<p><b>On Debian:</b> </p><pre class="fragment">aptitude install gcc g++
+<p><b>On Debian:</b> </p><pre class="fragment">apt-get install gcc g++ make pkg-config asciidoc-base w3m
 
-aptitude install libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev
-</pre><p>To get DVD support: </p><pre class="fragment">aptitude install libdvdread-dev libdvdnav-dev
-</pre><p>To get Bluray support: </p><pre class="fragment">aptitude install libbluray-dev
-</pre><p>On Ubuntu use the same command with <code>apt-get</code> in place of <code>aptitude</code>.</p>
-<p><b>On Suse</b> (please read notes before continuing): </p><pre class="fragment">zypper install gcc gcc-c++
+apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
+</pre><p>To get DVD support: </p><pre class="fragment">apt-get install libdvdread-dev libdvdnav-dev
+</pre><p>To get Bluray support: </p><pre class="fragment">apt-get install libbluray-dev
+</pre><p>To "make doxy (build Doxygen documentation): </p><pre class="fragment">apt-get install doxygen graphviz
+</pre><p>To "make check" (run test suite): </p><pre class="fragment">apt-get install libchromaprint-dev bc
+</pre><p><b>On Suse</b> (please read notes before continuing): </p><pre class="fragment">zypper install gcc gcc-c++
 
-zypper install fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
+zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 </pre><p>To get DVD support: </p><pre class="fragment">zypper install libdvdread-devel libdvdnav-devel
 </pre><p>To get Bluray support: </p><pre class="fragment">zypper install libbluray-devel
 </pre><p>Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 are <em>not</em> available which renders this library next to usesless. But FFmpeg can be built from source, see <a href="https://trac.ffmpeg.org/wiki/CompilationGuide">https://trac.ffmpeg.org/wiki/CompilationGuide</a> and check "FFmpeg compile notes" below.</p>
@@ -129,7 +125,17 @@ emerge media-video/ffmpeg
 </pre><p>to build ffmpeg.</p>
 <p>FFmpeg compile notes:</p>
 <p>FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. Other libraries, e.g. ogg, Windows Media or FLAC must be added when these formats should be used as source.</p>
-<h2>Installation </h2>
+<p><b>If building from git, you'll also need:</b></p>
+<ul>
+<li>autoconf</li>
+<li>automake</li>
+<li>asciidoc (or at least asciidoc-base to save disk space)</li>
+<li>w3m</li>
+</ul>
+<p>For those who are lazy like me, simply copy and issue this command to get all prerequisites: </p><pre class="fragment">apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+</pre><p>Then do </p><pre class="fragment">./autogen.sh
+./configure
+</pre><h2>Installation </h2>
 <p>FFmpegfs uses the GNU build system. If you are installing from git, you'll need to first run: </p><pre class="fragment">./autogen.sh
 </pre><p>If you are downloading a release, this has already been done for you. To build and install, run: </p><pre class="fragment">./configure
 make
@@ -142,8 +148,18 @@ make install
 make help-html
 </pre><p>respectively.</p>
 <h2>Trouble Shooting </h2>
+<p><b>Mounting via /etc/fstab fails:</b></p>
+<p>An fstab line with fuse.ffmpegfs file system fails with a strange message when attempted to mount with "mount -av". No log entries, no other hints...</p>
+<p>mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1, missing codepage or helper program, or other error</p>
+<p>In some cases useful info is found in syslog - try dmesg | tail or so.</p>
+<p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
+</pre><p><b>fuse: failed to exec fusermount: No such file or directory:</b></p>
+<p>Trying to mount as other than root, the message </p><pre class="fragment">fuse: failed to exec fusermount: No such file or directory
+</pre><p>is printed.</p>
+<p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
+</pre><p>**"ERROR: libmp3lame &gt;= 3.98.3 not found":**</p>
 <p>If you run into this "ERROR: libmp3lame &gt;= 3.98.3 not found" although you have built and installed libmp3lame you may find a solution here: <a href="https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found">https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found</a></p>
-<p><b>If you run into this error:</b> </p><pre class="fragment">Running autoreconf --install
+<p><b>autogen.sh displays "possibly undefined macro":</b> </p><pre class="fragment">Running autoreconf --install
 configure.ac:46: error: possibly undefined macro: AC_DEFINE
   If this token and others are legitimate, please use m4_pattern_allow.
   See the Autoconf documentation.
@@ -153,23 +169,21 @@ autoreconf: /usr/bin/autoconf failed with exit status: 1
 <p>The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7) it suddenly stops showing the list of files.</p>
 <p>Check the Apache2 error.log, you might see this:</p>
 <p>"PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"</p>
-<p>This is because for some reason utf8_encode() has been moved to the XML library. Just do (or similar): </p><pre class="fragment">aptitude install php7.0-xml
+<p>This is because for some reason utf8_encode() has been moved to the XML library. Just do (or similar): </p><pre class="fragment">apt-get install php7.0-xml
 systemctl restart apache2
 </pre><p>And your troubles should be gone.</p>
-<p>On Ubuntu use the same command with <code>apt-get</code> in place of <code>aptitude</code>.</p>
 <p>**"make check": all audio checks fail**</p>
 <p>Logfiles contain "bc: command not found", so the command line communicator is missing.</p>
-<p>Fix by installing it (or similar): </p><pre class="fragment"> aptitude install bc
-</pre><p>On Ubuntu use the same command with <code>apt-get</code> in place of <code>aptitude</code>.</p>
-<p><b>Songs get cut short</b></p>
+<p>Fix by installing it (or similar): </p><pre class="fragment"> apt-get install bc
+</pre><p><b>Songs get cut short</b></p>
 <p>If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.</p>
 <p>Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.</p>
 <p>SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the file ist larger than predicted.</p>
 <p>NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.</p>
 <p>As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.</p>
 <p><b>Make reports "/bin/sh: a2x: command not found"</b></p>
-<p>You are missing out on asciidoc, to install do (or similar) </p><pre class="fragment"> aptitude install asciidoc
-</pre><p>should fix it.</p>
+<p>You are missing out on asciidoc, to install do (or similar): </p><pre class="fragment"> apt-get install asciidoc
+</pre><p>That should fix it. You may just install asciidoc-base to safe disk space.</p>
 <p><b>libbluray fails to load libbluray.jar</b></p>
 <p>When you see this message accessing blurays: </p><pre class="fragment">bdj.c:340: libbluray-j2se-0.9.3.jar not found.
 bdj.c:466: BD-J check: Failed to load libbluray.jar

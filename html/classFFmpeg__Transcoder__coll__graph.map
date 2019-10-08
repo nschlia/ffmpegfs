@@ -1,6 +1,6 @@
 <map id="FFmpeg_Transcoder" name="FFmpeg_Transcoder">
-<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class. " alt="" coords="5,213,112,240"/>
-<area shape="rect" id="node3" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class. " alt="" coords="137,213,258,240"/>
-<area shape="rect" id="node4" href="$structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles. " alt="" coords="87,124,308,151"/>
-<area shape="rect" id="node5" href="$structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options. " alt="" coords="104,5,291,47"/>
+<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class. " alt="" coords="7,213,114,240"/>
+<area shape="rect" id="node3" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class. " alt="" coords="139,213,260,240"/>
+<area shape="rect" id="node4" href="$structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles. " alt="" coords="89,124,310,151"/>
+<area shape="rect" id="node5" href="$structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options. " alt="" coords="106,5,293,47"/>
 </map>

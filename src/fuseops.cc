@@ -331,6 +331,10 @@ static void prepare_script()
 static void translate_path(std::string *origpath, const char* path)
 {
     *origpath = params.m_basepath;
+    if (*path == '/')
+    {
+        ++path;
+    }
     *origpath += path;
     sanitise_filepath(origpath);
 }

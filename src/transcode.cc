@@ -354,13 +354,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 }
 
                 // Must decode the file, otherwise simply use cache
-                cache_entry->m_is_decoding = true;
+                cache_entry->m_is_decoding  = true;
 
-                THREAD_DATA* thread_data = new(std::nothrow) THREAD_DATA;
+                THREAD_DATA* thread_data    = new(std::nothrow) THREAD_DATA;
 
                 thread_data->m_initialised  = false;
                 thread_data->m_arg          = cache_entry;
-                thread_data->m_lock_guard    = false;
+                thread_data->m_lock_guard   = false;
 
                 {
                     std::unique_lock<std::mutex> lock(thread_data->m_mutex);

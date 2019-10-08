@@ -585,7 +585,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
                 if (*filepath != tmppath)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_REGULAR, *filepath, tmppath, &stbuf);
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, tmppath, &stbuf);
                     *filepath = tmppath;
                 }
                 else
@@ -755,7 +755,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
-                                    insert_file(VIRTUALTYPE_REGULAR, origpath + filename, origfile, &stbuf);
+                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf);
                                 }
                                 else
                                 {
@@ -771,7 +771,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_REGULAR, origfile, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
                             }
                         }
                     }
@@ -834,7 +834,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     translate_path(&origpath, path);
 
     LPVIRTUALFILE virtualfile = find_original(&origpath);
-    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
+    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
 
     if (virtualfile == nullptr && lstat(origpath.c_str(), stbuf) == 0)
     {
@@ -907,7 +907,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         no_check = true;    // FILETYPE already known, no need to check again.
         [[clang::fallthrough]];
     }
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
@@ -1017,7 +1017,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 insert_file(VIRTUALTYPE_DIRECTORY, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
 
-                //                type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_REGULAR;
+                //                type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
                 //                insert_file(type, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
             }
             else if (S_ISREG(stbuf->st_mode))
@@ -1132,7 +1132,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         no_check = true;
         [[clang::fallthrough]];
     }
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
@@ -1251,7 +1251,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {
@@ -1397,7 +1397,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE_BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
         {

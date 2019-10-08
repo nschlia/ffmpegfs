@@ -86,7 +86,7 @@ typedef IMAGE_FRAME *LPIMAGE_FRAME;             /**< @brief Pointer to const ver
 typedef enum VIRTUALTYPE
 {
     VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
-    VIRTUALTYPE_REGULAR,                                            /**< @brief Regular file to transcode */
+    VIRTUALTYPE_DISK,                                               /**< @brief Regular disk file to transcode */
     VIRTUALTYPE_FRAME,                                              /**< @brief File is part of a set of frames */
     VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
 #ifdef USE_LIBVCD
@@ -101,12 +101,11 @@ typedef enum VIRTUALTYPE
     VIRTUALTYPE_DIRECTORY,                                          /**< @brief File is a virtual directory */
 
     VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
-    //    VIRTUALTYPE_IMAGE_BUFFER,                                       /**< @brief Image buffer file */
 } VIRTUALTYPE;
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
 
-#define VIRTUALFLAG_NONE            0                               /**< @brief No flags */
+#define VIRTUALFLAG_NONE            0x00000000                      /**< @brief No flags */
 #define VIRTUALFLAG_IMAGE_FRAME     0x00000001                      /**< @brief File is a frame image */
 
 /** @brief Virtual file definition
@@ -114,7 +113,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 typedef struct VIRTUALFILE
 {
     VIRTUALFILE()
-        : m_type(VIRTUALTYPE_REGULAR)
+        : m_type(VIRTUALTYPE_DISK)
         , m_flags(VIRTUALFLAG_NONE)
         , m_format_idx(0)
         , m_full_title(false)

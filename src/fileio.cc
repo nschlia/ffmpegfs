@@ -60,7 +60,7 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
 {
     switch (type)
     {
-    case VIRTUALTYPE_REGULAR:
+    case VIRTUALTYPE_DISK:
     {
         return new(std::nothrow) DiskIO;
     }

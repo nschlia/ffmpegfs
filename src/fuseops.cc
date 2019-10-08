@@ -244,7 +244,7 @@ void init_fuse_ops(void)
 /**
  * @brief Initialise a stat structure.
  * @param[in] stbuf - struct stat to fill in.
- * @param[in] size - size of the corresponding file.
+ * @param[in] fsize - size of the corresponding file.
  * @param[in] directory - If true, the structure is set up for a directory.
  */
 static void init_stat(struct stat * stbuf, size_t fsize, bool directory)

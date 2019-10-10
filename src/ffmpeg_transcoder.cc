@@ -641,9 +641,10 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     if (!export_frameset())
     {
         // Pre-allocate the predicted file size to reduce memory reallocations
-        if (!buffer->reserve(predicted_filesize()))
+        size_t buffsize = predicted_filesize();
+        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating buffer.");
+            Logging::error(filename(), "Out of memory pre-allocating %zu bytes buffer.", buffsize);
             return AVERROR(ENOMEM);
         }
 
@@ -652,8 +653,8 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
     else
     {
-    	Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
-	
+        Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+
         // Pre-allocate the predicted file size to reduce memory reallocations
         size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
@@ -3223,7 +3224,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
                 m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
 
                 {
-                   // uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
+                    // uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
 
                     if (m_last_seek_frame_no == frame_no)    // Skip frames until seek pos
                     {

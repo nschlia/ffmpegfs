@@ -7,6 +7,7 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Added version check and auto update to cache database. Older database versions will
          now automaically upgraded to the latest structure.
 * Bugfix:  Fix for "prores can't allocate memory #41".
+* Bugfix:  Do not shrink cache when reopening it.
 * Known bug:
 
 Important changes in 1.95 (2019-05-23)

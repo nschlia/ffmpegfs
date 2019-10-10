@@ -1016,9 +1016,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 append_sep(&origpath);
 
                 insert_file(VIRTUALTYPE_DIRECTORY, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
-
-                //                type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
-                //                insert_file(type, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME);
             }
             else if (S_ISREG(stbuf->st_mode))
             {

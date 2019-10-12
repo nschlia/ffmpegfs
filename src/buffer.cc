@@ -69,7 +69,7 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
     if (virtualfile == nullptr)
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
 
     m_filename = set_virtualfile(virtualfile);
@@ -441,7 +441,7 @@ int Buffer::seek(int64_t offset, int whence)
     if (m_buffer == nullptr)
     {
         errno = EBADF;
-        return -1;
+        return (EOF);
     }
 
     off_t seek_pos;
@@ -466,7 +466,7 @@ int Buffer::seek(int64_t offset, int whence)
     default:
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
     }
 
@@ -479,7 +479,7 @@ int Buffer::seek(int64_t offset, int whence)
     if (seek_pos < 0)           // Cannot go before head, leave position untouched, set errno.
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
 
     m_buffer_pos = static_cast<size_t>(seek_pos);

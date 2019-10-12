@@ -174,7 +174,7 @@ int VcdIO::seek(int64_t offset, int whence)
     default:
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
     }
 
@@ -186,7 +186,7 @@ int VcdIO::seek(int64_t offset, int whence)
     if (static_cast<uint64_t>(seek_pos) < m_start_pos)      // Cannot go before head, leave position untouched, set errno.
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
 
     return fseek(m_fpi, static_cast<long int>(seek_pos), SEEK_SET);

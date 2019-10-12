@@ -734,7 +734,7 @@ int DvdIO::seek(int64_t offset, int whence)
         return 0;
     }
     errno = EPERM;
-    return -1;
+    return (EOF);
 }
 
 bool DvdIO::eof() const
@@ -802,7 +802,9 @@ bool DvdIO::is_nav_pack(const unsigned char *buffer) const
              buffer[0x406] == 0x01))
     {
         return (1);
-    } else {
+    }
+    else
+    {
         return (0);
     }
 }

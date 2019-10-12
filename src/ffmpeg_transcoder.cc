@@ -380,7 +380,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (t != nullptr)
     {
         Logging::error(filename(), "Option %1 not found.", t->key);
-        return -1; // Couldn't open file
+        return (EOF); // Couldn't open file
     }
 
 #if HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA

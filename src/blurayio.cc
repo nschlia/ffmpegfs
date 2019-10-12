@@ -275,7 +275,7 @@ int BlurayIO::seek(int64_t offset, int whence)
     default:
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
     }
 
@@ -288,7 +288,7 @@ int BlurayIO::seek(int64_t offset, int whence)
     if (seek_pos < 0)           // Cannot go before head, set errno.
     {
         errno = EINVAL;
-        return -1;
+        return (EOF);
     }
 
     int64_t found_pos = bd_seek(m_bd, static_cast<uint64_t>(seek_pos));

@@ -69,6 +69,7 @@ DvdIO::DvdIO()
     , m_chapter_idx(0)
     , m_angle_idx(0)
     , m_duration(AV_NOPTS_VALUE)
+    , m_size(0)
 {
     memset(&m_data, 0, sizeof(m_data));
     memset(&m_buffer, 0, sizeof(m_buffer));
@@ -92,7 +93,8 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
 {
     std::string filename = set_virtualfile(virtualfile);
     int pgc_id;
-    int ttn, pgn;
+    int ttn;
+    int pgn;
     tt_srpt_t *tt_srpt;
     vts_ptt_srpt_t *vts_ptt_srpt;
 
@@ -206,30 +208,18 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
         return EINVAL;
     }
 
-    m_next_cell         = m_start_cell;
-    m_cur_cell          = m_start_cell;
+    rewind();
 
-    //    if (!m_duration)
-    //    {
-    //        int first_cell = m_next_cell;
+    // Determine the net file size
+    m_size = 0;
+    size_t bytes_read;
 
-    //        // Check if we're entering an angle block.
-    //        if (m_cur_pgc->cell_playback[first_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
-    //        {
-    //            first_cell += m_angle_idx;
-    //        }
+    while ((bytes_read = read(nullptr, ULONG_MAX)) != 0 && !eof())
+    {
+        m_size += bytes_read;
+    }
 
-    //        int framerate   = ((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0xc0) >> 6);
-    //        int64_t frac    = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.frame_u & 0x3f) * AV_TIME_BASE / ((framerate == 3) ? 25 : 29.97));
-    //        m_duration      = static_cast<int64_t>((m_cur_pgc->cell_playback[first_cell].playback_time.hour * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.minute) * 60 + m_cur_pgc->cell_playback[first_cell].playback_time.second) * AV_TIME_BASE + frac;
-    //    }
-
-    m_goto_next_cell    = true;
-    m_is_eof            = false;
-    m_errno             = 0;
-    m_rest_size         = 0;
-    m_rest_pos          = 0;
-    m_cur_pos           = 0;
+    rewind();
 
     return 0;
 }
@@ -572,7 +562,7 @@ size_t DvdIO::read(void * data, size_t size)
     size_t result_len = 0;
     DSITYPE dsitype;
 
-    if (m_rest_size)
+    if (data != nullptr && m_rest_size)
     {
         size_t rest_size = m_rest_size;
 
@@ -658,19 +648,36 @@ size_t DvdIO::read(void * data, size_t size)
 
             netsize = demux_pes(m_data, m_buffer, netsize);
 
-            if (netsize > size)
+            if (data != nullptr)
             {
-                result_len = size;
-                memcpy(data, m_data, result_len);
+                if (netsize > size)
+                {
+                    result_len = size;
 
-                m_rest_size = netsize - size;
-                m_rest_pos = size;
+                    memcpy(data, m_data, result_len);
+
+                    m_rest_size = netsize - size;
+                    m_rest_pos = size;
+                }
+                else
+                {
+                    result_len = netsize;
+
+                    memcpy(data, m_data, result_len);
+                }
             }
             else
             {
-                result_len = netsize;
-                memcpy(data, m_data, result_len);
+                if (netsize > size)
+                {
+                    result_len = size;
+                }
+                else
+                {
+                    result_len = netsize;
+                }
             }
+
             m_cur_block = next_vobu;
         }
 
@@ -680,7 +687,7 @@ size_t DvdIO::read(void * data, size_t size)
     // DSITYPE_EOF_TITLE - end of title
     // DSITYPE_EOF_CHAPTER - end of chapter
     if ((dsitype != DSITYPE_CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
-            (dsitype == DSITYPE_EOF_TITLE))                     // Stop at end of title
+            (dsitype == DSITYPE_EOF_TITLE))                 // Stop at end of title
     {
         m_is_eof = true;
     }
@@ -702,14 +709,7 @@ int64_t DvdIO::duration() const
 
 size_t DvdIO::size() const
 {
-    if (m_cur_pgc == nullptr)
-    {
-        return 0;
-    }
-    else
-    {
-        return (m_cur_pgc->cell_playback[m_start_cell].last_sector - m_cur_pgc->cell_playback[m_start_cell].first_sector) * DVD_VIDEO_LB_LEN;  /** @todo: This is incorrect, fix! */
-    }
+    return m_size;
 }
 
 size_t DvdIO::tell() const
@@ -717,22 +717,75 @@ size_t DvdIO::tell() const
     return m_cur_pos;
 }
 
+void DvdIO::rewind()
+{
+    m_next_cell         = m_start_cell;
+    m_cur_cell          = m_start_cell;
+
+    m_goto_next_cell    = true;
+    m_is_eof            = false;
+    m_errno             = 0;
+    m_rest_size         = 0;
+    m_rest_pos          = 0;
+    m_cur_pos           = 0;
+}
+
 int DvdIO::seek(int64_t offset, int whence)
 {
-    if (!offset && whence == SEEK_SET)
+    errno = 0;
+
+    if (whence == SEEK_SET && !offset)
     {
         // Only rewind (seek(0, SEEK_SET) is implemented yet
-        m_next_cell         = m_start_cell;
-        m_cur_cell          = m_start_cell;
-
-        m_goto_next_cell    = true;
-        m_is_eof            = false;
-        m_errno             = 0;
-        m_rest_size         = 0;
-        m_rest_pos          = 0;
-        m_cur_pos           = 0;
+        rewind();
         return 0;
     }
+    size_t cur_pos = tell();
+    size_t abs_offset = 0;
+
+    switch (whence)
+    {
+    case SEEK_SET:
+        assert(offset >= 0);
+        abs_offset = static_cast<size_t>(offset);
+        break;
+    case SEEK_CUR:
+        abs_offset += cur_pos;
+        break;
+    case SEEK_END:
+        assert(offset >= 0);
+        abs_offset = size() - abs_offset;
+        break;
+    default:
+        errno = EINVAL;
+        return (EOF);
+    }
+
+    if (cur_pos == abs_offset)
+    {
+        // Already at right position
+        return static_cast<int>(abs_offset);
+    }
+
+    if (cur_pos > abs_offset)
+    {
+        // Need to start from beginning to find byte position
+        rewind();
+        cur_pos = 0;
+    }
+
+    size_t total_read = 0;
+    size_t bytes_read;
+    while ((bytes_read = read(nullptr, abs_offset - total_read - cur_pos)) != 0 && total_read < abs_offset && !eof())
+    {
+        total_read += bytes_read;
+    }
+
+    if (total_read)
+    {
+        return static_cast<int>(cur_pos + total_read);
+    }
+
     errno = EPERM;
     return (EOF);
 }

@@ -89,6 +89,8 @@ public:
     virtual int     open(LPCVIRTUALFILE virtualfile);
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
+     * Special case: If set to nullptr as many bytes as possible are "read" (and discarded). Can be used
+     * to determine the net file size of the virtual stream.
      * @param[in] size - number of bytes to read
      * @return Upon successful completion, #read() returns the number of bytes read. @n
      * This may be less than size. @n
@@ -179,9 +181,13 @@ private:
      */
     DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int * next_vobu, uint8_t *data);
     /**
-     * @brief Goto next DVD cell-
+     * @brief Goto next DVD cell
      */
     void            next_cell();
+    /**
+     * @brief Rewind to start of stream
+     */
+    void            rewind();
 
 protected:
     dvd_reader_t *  m_dvd;                                      /**< @brief DVD reader handle */
@@ -210,6 +216,7 @@ protected:
     unsigned char   m_buffer[1024 * DVD_VIDEO_LB_LEN];          /**< @brief Buffer for data extracted from VOB file */
 
     int64_t         m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    size_t          m_size;                                     /**< @brief Size of virtual file */
 };
 #endif // USE_LIBDVD
 

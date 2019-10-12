@@ -630,14 +630,14 @@ size_t DvdIO::read(void * data, size_t size)
             dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_vobu, m_buffer);
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
-                Logging::error(m_path, "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", cur_output_size);
+                Logging::error(m_path, "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
 
             if (cur_output_size >= 1024)
             {
-                Logging::error(m_path, "Read failed at %1 because current output size >= 1024", cur_output_size);
+                Logging::error(m_path, "Read failed at %1 because current output size %2 >= 1024", m_cur_block, cur_output_size);
                 m_errno = EIO;
                 return 0;
             }

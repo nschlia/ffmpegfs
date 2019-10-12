@@ -39,6 +39,13 @@
 
 #include "libbluray/bluray.h"
 
+extern "C" {
+#include <libavutil/rational.h>
+#ifdef USING_LIBAV
+#include "libavutil/mathematics.h"
+#endif
+}
+
 static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved);
 static int parse_find_best_audio_stream();
 static int parse_find_best_video_stream();
@@ -375,7 +382,25 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         // break;
     }
 
-    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
+    LPVIRTUALFILE virtualfile;
+    if (!params.m_format[0].export_frameset())
+    {
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
+    }
+    else
+    {
+        std::string origpath(path + filename);
+
+        // Change file to virtual directory for the frame set. Keep permissions.
+        stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+        stbuf.st_mode  |= S_IFDIR;
+        stbuf.st_nlink = 2;
+        stbuf.st_size  = stbuf.st_blksize;
+
+        append_sep(&origpath);
+
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+    }
 
     // Bluray is video format anyway
     virtualfile->m_format_idx           = 0;
@@ -407,7 +432,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return false;
         }
 
-        uint64_t size           = bd_get_title_size(bd);;
+        uint64_t size           = bd_get_title_size(bd);
 
         virtualfile->m_duration = duration;
 
@@ -419,8 +444,14 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         }
 
         // Get details
-        stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
-        stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+        if (clip->audio_stream_count)
+        {
+            stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+        }
+        if (clip->video_stream_count)
+        {
+            stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+        }
 
         Logging::debug(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
         if (audio > -1)
@@ -429,6 +460,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         }
 
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
+
+        virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
     }
 
     return true;
@@ -481,7 +514,6 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
             // If more than 1 chapter, add full title as well
             success = create_bluray_virtualfile(bd, ti, path, statbuf, buf, filler, is_main_title, true, title_idx, 0);
         }
-
 
         bd_free_title_info(ti);
     }

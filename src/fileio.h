@@ -87,7 +87,6 @@ typedef enum VIRTUALTYPE
 {
     VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
     VIRTUALTYPE_DISK,                                               /**< @brief Regular disk file to transcode */
-    VIRTUALTYPE_FRAME,                                              /**< @brief File is part of a set of frames */
     VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
 #ifdef USE_LIBVCD
     VIRTUALTYPE_VCD,                                                /**< @brief Video CD file */
@@ -98,7 +97,6 @@ typedef enum VIRTUALTYPE
 #ifdef USE_LIBBLURAY
     VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
 #endif // USE_LIBBLURAY
-    VIRTUALTYPE_DIRECTORY,                                          /**< @brief File is a virtual directory */
 
     VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
 } VIRTUALTYPE;
@@ -107,6 +105,9 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 
 #define VIRTUALFLAG_NONE            0x00000000                      /**< @brief No flags */
 #define VIRTUALFLAG_IMAGE_FRAME     0x00000001                      /**< @brief File is a frame image */
+#define VIRTUALFLAG_PASSTHROUGH     0x00000002                      /**< @brief passthrough file, not used */
+#define VIRTUALFLAG_FRAME           0x00000004                      /**< @brief File is part of a set of frames */
+#define VIRTUALFLAG_DIRECTORY       0x00000008                      /**< @brief File is a virtual directory */
 
 /** @brief Virtual file definition
  */

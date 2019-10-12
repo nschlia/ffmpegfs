@@ -42,6 +42,9 @@
 
 extern "C" {
 #include <libavutil/rational.h>
+#ifdef USING_LIBAV
+#include "libavutil/mathematics.h"
+#endif
 }
 //#pragma GCC diagnostic pop
 
@@ -362,7 +365,25 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // break;
         }
 
-        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
+        LPVIRTUALFILE virtualfile;
+        if (!params.m_format[0].export_frameset())
+        {
+            virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
+        }
+        else
+        {
+            std::string origpath(path + filename);
+
+            // Change file to virtual directory for the frame set. Keep permissions.
+            stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+            stbuf.st_mode  |= S_IFDIR;
+            stbuf.st_nlink = 2;
+            stbuf.st_size  = stbuf.st_blksize;
+
+            append_sep(&origpath);
+
+            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+        }
 
         // DVD is video format anyway
         virtualfile->m_format_idx       = 0;
@@ -391,6 +412,8 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
 
             transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
+
+            virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
         }
     }
 

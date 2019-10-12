@@ -87,7 +87,25 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
         // break;
     }
 
-    LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
+    LPVIRTUALFILE virtualfile;
+    if (!params.m_format[0].export_frameset())
+    {
+    	virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
+    }
+    else
+    {
+        std::string origpath(vcd.get_disk_path() + filename);
+
+        // Change file to virtual directory for the frame set. Keep permissions.
+        stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+        stbuf.st_mode  |= S_IFDIR;
+        stbuf.st_nlink = 2;
+        stbuf.st_size  = stbuf.st_blksize;
+
+        append_sep(&origpath);
+
+        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+    }
 
     // Video CD is video format anyway
     virtualfile->m_format_idx           = 0;

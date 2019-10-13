@@ -52,17 +52,17 @@ then
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "obama" 66181 66201
+    check_filesize "obama" 66168 66201
     check_filesize "raven" 124449 141211
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "obama" 85653 92398
+    check_filesize "obama" 85231 92398
     check_filesize "raven" 130581 149735
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "obama" 83620 89385
+    check_filesize "obama" 83532 89385
     check_filesize "raven" 124449 127540 
 elif [ "${DESTTYPE}" == "mov" ];
 then

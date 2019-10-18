@@ -51,7 +51,6 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <map>
-#include <vector>
 #include <regex>
 #include <list>
 #include <assert.h>
@@ -81,7 +80,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn);
 static void ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static filenamemap          filenames;          /**< @brief Map files to virtual files */
-static std::vector<char>    index_buffer;       /**< @brief Buffer for the virtual script if enabled */
+static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
 
@@ -306,16 +305,16 @@ static void prepare_script()
         }
         else
         {
-            index_buffer.resize(static_cast<size_t>(stbuf.st_size));
+            script_file.resize(static_cast<size_t>(stbuf.st_size));
 
-            if (fread(&index_buffer[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
+            if (fread(&script_file[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
             {
                 Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
                 params.m_enablescript = false;
             }
             else
             {
-                Logging::trace(scriptsource, "Read %1 bytes of script file.", index_buffer.size());
+                Logging::trace(scriptsource, "Read %1 bytes of script file.", script_file.size());
             }
         }
 
@@ -630,14 +629,16 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         std::string filename(params.m_scriptfile);
         struct stat stbuf;
 
-        init_stat(&stbuf, index_buffer.size(), false);
+        init_stat(&stbuf, script_file.size(), false);
 
         if (filler(buf, filename.c_str(), &stbuf, 0))
         {
             // break;
         }
 
-        insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, &stbuf);
+        LPVIRTUALFILE virtualfile = insert_file(VIRTUALTYPE_SCRIPT, origpath + filename, &stbuf);
+
+        virtualfile->m_file_contents = script_file;
     }
 
 #ifdef USE_LIBVCD
@@ -1120,15 +1121,21 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     {
     case VIRTUALTYPE_SCRIPT:
     {
-        size_t bytes = size;
-        if (offset + bytes > index_buffer.size())
+        if (offset >= virtualfile->m_file_contents.size())
         {
-            bytes = index_buffer.size() - offset;
+            bytes_read = 0;
+            break;
+        }
+
+        size_t bytes = size;
+        if (offset + bytes > virtualfile->m_file_contents.size())
+        {
+            bytes = virtualfile->m_file_contents.size() - offset;
         }
 
         if (bytes)
         {
-            memcpy(buf, &index_buffer[offset], bytes);
+            memcpy(buf, &virtualfile->m_file_contents[offset], bytes);
         }
 
         bytes_read = static_cast<int>(bytes);
@@ -1324,7 +1331,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
         tp = nullptr;
     }
 
-    index_buffer.clear();
+    script_file.clear();
 
     Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }

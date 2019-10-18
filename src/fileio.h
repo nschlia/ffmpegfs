@@ -43,6 +43,7 @@
 
 #include <sys/stat.h>
 #include <string>
+#include <vector>
 
 /** @brief Virtual file types enum
  */
@@ -86,6 +87,8 @@ typedef struct VIRTUALFILE
 
     bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
     int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+
+    std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs

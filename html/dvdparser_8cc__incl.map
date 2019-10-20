@@ -1,9 +1,9 @@
 <map id="src/dvdparser.cc" name="src/dvdparser.cc">
-<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="496,155,580,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="287,229,391,256"/>
-<area shape="rect" id="node13" href="$dvdparser_8h.html" title="DVD parser. " alt="" coords="677,229,767,256"/>
-<area shape="rect" id="node14" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="575,80,666,107"/>
-<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="741,80,815,107"/>
-<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="592,229,652,256"/>
-<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="301,304,423,331"/>
+<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="445,155,529,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="236,229,340,256"/>
+<area shape="rect" id="node13" href="$dvdparser_8h.html" title="DVD parser. " alt="" coords="625,229,716,256"/>
+<area shape="rect" id="node14" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="524,80,615,107"/>
+<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="689,80,764,107"/>
+<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="541,229,601,256"/>
+<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,304,128,331"/>
 </map>

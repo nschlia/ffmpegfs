@@ -4,7 +4,6 @@ var searchData=
   ['id3v1_5ftag_5flength',['ID3V1_TAG_LENGTH',['../id3v1tag_8h.html#a4c5ca436c60bcf8c0e9c7059e663accf',1,'id3v1tag.h']]],
   ['id3v1tag',['id3v1tag',['../classFFmpeg__Transcoder.html#a84df98a3cadf75bd48b2bdc6afbd4846',1,'FFmpeg_Transcoder']]],
   ['id3v1tag_2eh',['id3v1tag.h',['../id3v1tag_8h.html',1,'']]],
-  ['index_5fbuffer',['index_buffer',['../fuseops_8cc.html#a411fdba36f1bcd9e683ecaf42fafb9b2',1,'fuseops.cc']]],
   ['info',['info',['../classLogging.html#a61245156bad50e71fee169c78247172e',1,'Logging::info(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a9fa4045909c4557c32154457df3257b8',1,'Logging::info(const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)'],['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa551b723eafd6a31d444fcb2f5920fbd3',1,'Logging::INFO()'],['../logging_8h.html#abb239898d0f6c8ee0a48e4f15cdb7182',1,'INFO():&#160;logging.h']]],
   ['init',['init',['../classBuffer.html#a7666cfb24110cf46c289cb860f79b197',1,'Buffer::init()'],['../classFFmpegfs__Format.html#a4c1701c8bda95271b3bdf167aae24e63',1,'FFmpegfs_Format::init()'],['../classthread__pool.html#a0413ea59c279483918e0bc6bcce23584',1,'thread_pool::init()']]],
   ['init_5faudio_5foutput_5fframe',['init_audio_output_frame',['../classFFmpeg__Transcoder.html#ae459f2a8794c63f7ff38fd9c80fcfb45',1,'FFmpeg_Transcoder']]],

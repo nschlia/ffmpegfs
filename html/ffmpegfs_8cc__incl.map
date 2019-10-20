@@ -1,7 +1,7 @@
 <map id="src/ffmpegfs.cc" name="src/ffmpegfs.cc">
-<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="245,80,329,107"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="340,155,444,181"/>
-<area shape="rect" id="node13" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="519,80,593,107"/>
-<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="79,155,139,181"/>
-<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="189,229,312,256"/>
+<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="177,80,261,107"/>
+<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="277,155,381,181"/>
+<area shape="rect" id="node13" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="456,80,531,107"/>
+<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="189,155,249,181"/>
+<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="272,229,395,256"/>
 </map>

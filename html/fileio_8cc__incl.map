@@ -1,10 +1,10 @@
 <map id="src/fileio.cc" name="src/fileio.cc">
-<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class. " alt="" coords="190,155,250,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="767,80,871,107"/>
-<area shape="rect" id="node10" href="$buffer_8h.html" title="Buffer class. " alt="" coords="429,80,496,107"/>
+<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class. " alt="" coords="194,155,254,181"/>
+<area shape="rect" id="node6" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="659,155,763,181"/>
+<area shape="rect" id="node10" href="$buffer_8h.html" title="Buffer class. " alt="" coords="427,80,493,107"/>
 <area shape="rect" id="node13" href="$diskio_8h.html" title="Direct disk I/O. " alt="" coords="5,80,72,107"/>
 <area shape="rect" id="node14" href="$vcdio_8h.html" title="Video CD and Super Video CD I/O. " alt="" coords="96,80,160,107"/>
 <area shape="rect" id="node15" href="$dvdio_8h.html" title="DVD I/O. " alt="" coords="339,80,403,107"/>
 <area shape="rect" id="node17" href="$blurayio_8h.html" title="Bluray I/O. " alt="" coords="185,80,263,107"/>
-<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="913,155,1036,181"/>
+<area shape="rect" id="node7" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="841,229,964,256"/>
 </map>

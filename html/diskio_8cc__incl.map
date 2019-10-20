@@ -1,8 +1,8 @@
 <map id="src/diskio.cc" name="src/diskio.cc">
-<area shape="rect" id="node2" href="$diskio_8h.html" title="Direct disk I/O. " alt="" coords="85,80,152,107"/>
-<area shape="rect" id="node6" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="213,80,297,107"/>
-<area shape="rect" id="node14" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="468,80,543,107"/>
-<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="53,155,113,181"/>
-<area shape="rect" id="node9" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="313,155,417,181"/>
-<area shape="rect" id="node10" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="189,229,312,256"/>
+<area shape="rect" id="node2" href="$diskio_8h.html" title="Direct disk I/O. " alt="" coords="200,80,267,107"/>
+<area shape="rect" id="node7" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="347,80,431,107"/>
+<area shape="rect" id="node14" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="563,80,637,107"/>
+<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="147,155,207,181"/>
+<area shape="rect" id="node10" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="232,155,336,181"/>
+<area shape="rect" id="node11" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="272,229,395,256"/>
 </map>

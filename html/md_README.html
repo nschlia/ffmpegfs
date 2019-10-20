@@ -67,22 +67,22 @@ $(function() {
 <tr>
 <th>Compiler </th><th>Library </th><th>Build State  </th></tr>
 <tr>
-<td>gcc 8.2.0 </td><td>FFmpeg 4.1 </td><td><div class="image">
+<td>gcc 8.2.0 </td><td>FFmpeg 4.1.4</td><td><div class="image">
 <img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status"/>
 </div>
  </td></tr>
 <tr>
-<td>clang 3.8.1 </td><td>FFmpeg 4.1 </td><td><div class="image">
+<td>clang 7.0.1 </td><td>FFmpeg 4.1.4 </td><td><div class="image">
 <img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status"/>
 </div>
  </td></tr>
 <tr>
-<td>gcc 8.2.0 </td><td>Libav 12.2 </td><td><div class="image">
+<td>gcc 8.2.0 </td><td>Libav 13_dev0 </td><td><div class="image">
 <img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav)" alt="Build Status"/>
 </div>
  </td></tr>
 <tr>
-<td>clang 3.8.1 </td><td>Libav 12.2 </td><td><div class="image">
+<td>clang 7.0.1 </td><td>Libav 13_dev0 </td><td><div class="image">
 <img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libavl-clang)" alt="Build Status"/>
 </div>
  </td></tr>
@@ -95,6 +95,7 @@ $(function() {
 <li>Feature: Documented the whole project with Doxygen.</li>
 <li>Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.</li>
 <li>Feature: Added Apple Lossles Audio Compression (ALAC) support.</li>
+<li>Libav pulled tricks on me, again: Libav 12.3 won't compile anymore under Debian 10. To fix upgraded to master branch 13_dev0.</li>
 <li>See [NEWS](NEWS) for details.</li>
 </ul>
 <h2>About </h2>

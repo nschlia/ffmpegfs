@@ -85,7 +85,6 @@ $(function() {
 <code>#include &lt;dirent.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
-<code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;regex&gt;</code><br />
 <code>#include &lt;list&gt;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
@@ -95,17 +94,17 @@ Include dependency graph for fuseops.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="fuseops_8cc__incl.png" border="0" usemap="#src_2fuseops_8cc" alt=""/></div>
 <map name="src_2fuseops_8cc" id="src_2fuseops_8cc">
-<area shape="rect" id="node2" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="255,80,345,107"/>
-<area shape="rect" id="node6" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="343,229,447,256"/>
-<area shape="rect" id="node14" href="cache__maintenance_8h.html" title="Cache maintenance " alt="" coords="1285,80,1435,107"/>
-<area shape="rect" id="node16" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="1509,80,1584,107"/>
-<area shape="rect" id="node21" href="vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="1659,80,1749,107"/>
-<area shape="rect" id="node22" href="dvdparser_8h.html" title="DVD parser. " alt="" coords="471,229,561,256"/>
-<area shape="rect" id="node23" href="blurayparser_8h.html" title="Bluray disk parser. " alt="" coords="585,229,689,256"/>
-<area shape="rect" id="node24" href="thread__pool_8h_source.html" title="thread_pool.h" alt="" coords="1014,80,1114,107"/>
-<area shape="rect" id="node3" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="178,155,262,181"/>
-<area shape="rect" id="node12" href="fileio_8h.html" title="FileIO class. " alt="" coords="258,229,318,256"/>
-<area shape="rect" id="node7" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="109,304,232,331"/>
+<area shape="rect" id="node2" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="511,80,601,107"/>
+<area shape="rect" id="node6" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="221,229,325,256"/>
+<area shape="rect" id="node14" href="cache__maintenance_8h.html" title="Cache maintenance " alt="" coords="1405,80,1555,107"/>
+<area shape="rect" id="node16" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="1629,80,1704,107"/>
+<area shape="rect" id="node21" href="vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="1779,80,1869,107"/>
+<area shape="rect" id="node22" href="dvdparser_8h.html" title="DVD parser. " alt="" coords="739,229,829,256"/>
+<area shape="rect" id="node23" href="blurayparser_8h.html" title="Bluray disk parser. " alt="" coords="611,229,715,256"/>
+<area shape="rect" id="node24" href="thread__pool_8h_source.html" title="thread_pool.h" alt="" coords="1137,80,1237,107"/>
+<area shape="rect" id="node3" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="430,155,514,181"/>
+<area shape="rect" id="node12" href="fileio_8h.html" title="FileIO class. " alt="" coords="526,229,586,256"/>
+<area shape="rect" id="node7" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="181,304,304,331"/>
 </map>
 </div>
 </div>
@@ -201,10 +200,10 @@ Variables</h2></td></tr>
 static <a class="el" href="fuseops_8cc.html#a48dd1b588b6080267a2c6d4c602699d2">filenamemap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fuseops_8cc.html#aed1aba02bbcd7a769c3a7d886061925f">filenames</a></td></tr>
 <tr class="memdesc:aed1aba02bbcd7a769c3a7d886061925f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map files to virtual files. <br /></td></tr>
 <tr class="separator:aed1aba02bbcd7a769c3a7d886061925f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a411fdba36f1bcd9e683ecaf42fafb9b2"><td class="memItemLeft" align="right" valign="top"><a id="a411fdba36f1bcd9e683ecaf42fafb9b2"></a>
-static std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fuseops_8cc.html#a411fdba36f1bcd9e683ecaf42fafb9b2">index_buffer</a></td></tr>
-<tr class="memdesc:a411fdba36f1bcd9e683ecaf42fafb9b2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class. ">Buffer</a> for the virtual script if enabled. <br /></td></tr>
-<tr class="separator:a411fdba36f1bcd9e683ecaf42fafb9b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44017e60d131194400a8f961f6295207"><td class="memItemLeft" align="right" valign="top"><a id="a44017e60d131194400a8f961f6295207"></a>
+static std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fuseops_8cc.html#a44017e60d131194400a8f961f6295207">script_file</a></td></tr>
+<tr class="memdesc:a44017e60d131194400a8f961f6295207"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class. ">Buffer</a> for the virtual script if enabled. <br /></td></tr>
+<tr class="separator:a44017e60d131194400a8f961f6295207"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a751f2746b37ca950207ec5d4f904adf8"><td class="memItemLeft" align="right" valign="top"><a id="a751f2746b37ca950207ec5d4f904adf8"></a>
 static struct sigaction&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fuseops_8cc.html#a751f2746b37ca950207ec5d4f904adf8">oldHandler</a></td></tr>
 <tr class="memdesc:a751f2746b37ca950207ec5d4f904adf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves old SIGINT handler to restore on shutdown. <br /></td></tr>
@@ -253,11 +252,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if path was found; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00432">432</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00431">431</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00383">find_prefix()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00382">find_prefix()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00501">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, and <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00506">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, and <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>.</p>
 
 </div>
 </div>
@@ -293,11 +292,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01310">1310</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01317">1317</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00342">stop_cache_maintenance()</a>, <a class="el" href="thread__pool_8cc_source.html#l00142">thread_pool::tear_down()</a>, <a class="el" href="fuseops_8cc_source.html#l00090">tp</a>, <a class="el" href="transcode_8cc_source.html#l00544">transcoder_exit()</a>, and <a class="el" href="transcode_8cc_source.html#l00208">transcoder_free()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00342">stop_cache_maintenance()</a>, <a class="el" href="thread__pool_8cc_source.html#l00142">thread_pool::tear_down()</a>, <a class="el" href="fuseops_8cc_source.html#l00089">tp</a>, <a class="el" href="transcode_8cc_source.html#l00544">transcoder_exit()</a>, and <a class="el" href="transcode_8cc_source.html#l00208">transcoder_free()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -352,11 +351,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00885">885</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00886">886</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00534">transcoder_buffer_watermark()</a>, <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00060">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00063">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00534">transcoder_buffer_watermark()</a>, <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00061">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00064">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00058">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00053">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00055">VIRTUALTYPE_VCD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -404,11 +403,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00721">721</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00722">722</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayparser_8cc_source.html#l00501">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00081">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00267">remove_filename()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00220">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00524">transcoder_delete()</a>, <a class="el" href="transcode_8cc_source.html#l00529">transcoder_get_size()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00060">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00063">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="blurayparser_8cc_source.html#l00506">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00086">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00267">remove_filename()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00220">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00524">transcoder_delete()</a>, <a class="el" href="transcode_8cc_source.html#l00529">transcoder_get_size()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00061">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00064">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00058">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00053">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00055">VIRTUALTYPE_VCD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -445,11 +444,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>nullptr </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01265">1265</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01272">1272</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00127">thread_pool::init()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_cache_maintenance</a>, <a class="el" href="ffmpegfs_8h_source.html#l00146">FFMPEGFS_PARAMS::m_enablescript</a>, <a class="el" href="ffmpegfs_8h_source.html#l00167">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00126">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="fuseops_8cc_source.html#l00086">oldHandler</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="fuseops_8cc_source.html#l00284">prepare_script()</a>, <a class="el" href="fuseops_8cc_source.html#l01244">sighandler()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00330">start_cache_maintenance()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00127">thread_pool::init()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_cache_maintenance</a>, <a class="el" href="ffmpegfs_8h_source.html#l00146">FFMPEGFS_PARAMS::m_enablescript</a>, <a class="el" href="ffmpegfs_8h_source.html#l00167">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00126">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="fuseops_8cc_source.html#l00085">oldHandler</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="fuseops_8cc_source.html#l00283">prepare_script()</a>, <a class="el" href="fuseops_8cc_source.html#l01251">sighandler()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00330">start_cache_maintenance()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -497,11 +496,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00988">988</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00989">989</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="fileio_8h_source.html#l00081">VIRTUALFILE::m_type</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00060">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00063">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_type</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00061">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00064">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00058">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00053">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00055">VIRTUALTYPE_VCD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -570,11 +569,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01076">1076</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01077">1077</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00416">transcoder_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00060">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00063">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00057">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00054">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00416">transcoder_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00061">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00064">VIRTUALTYPE_BUFFER</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00058">VIRTUALTYPE_DVD</a>, <a class="el" href="fileio_8h_source.html#l00053">VIRTUALTYPE_SCRIPT</a>, and <a class="el" href="fileio_8h_source.html#l00055">VIRTUALTYPE_VCD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -641,11 +640,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00613">613</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00612">612</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">append_sep()</a>, <a class="el" href="blurayparser_8cc_source.html#l00501">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l00250">init_stat()</a>, <a class="el" href="fuseops_8cc_source.html#l00397">insert_file()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00146">FFMPEGFS_PARAMS::m_enablescript</a>, <a class="el" href="ffmpegfs_8h_source.html#l00147">FFMPEGFS_PARAMS::m_scriptfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="fuseops_8cc_source.html#l00348">transcoded_name()</a>, <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>, and <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_SCRIPT</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00238">append_sep()</a>, <a class="el" href="blurayparser_8cc_source.html#l00506">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l00249">init_stat()</a>, <a class="el" href="fuseops_8cc_source.html#l00396">insert_file()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00146">FFMPEGFS_PARAMS::m_enablescript</a>, <a class="el" href="fileio_8h_source.html#l00091">VIRTUALFILE::m_file_contents</a>, <a class="el" href="ffmpegfs_8h_source.html#l00147">FFMPEGFS_PARAMS::m_scriptfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="fuseops_8cc_source.html#l00083">script_file</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="fuseops_8cc_source.html#l00347">transcoded_name()</a>, <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>, <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>, and <a class="el" href="fileio_8h_source.html#l00053">VIRTUALTYPE_SCRIPT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -700,11 +699,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00577">577</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00576">576</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="fuseops_8cc_source.html#l00348">transcoded_name()</a>, and <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="fuseops_8cc_source.html#l00347">transcoded_name()</a>, and <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -752,11 +751,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01221">1221</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01228">1228</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="transcode_8cc_source.html#l00524">transcoder_delete()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -804,11 +803,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns 0. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01187">1187</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01194">1194</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="fuseops_8cc_source.html#l00331">translate_path()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="fuseops_8cc_source.html#l00330">translate_path()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00229">init_fuse_ops()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00228">init_fuse_ops()</a>.</p>
 
 </div>
 </div>
@@ -837,11 +836,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If found, returns <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object, if not found returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00419">419</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00418">418</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, and <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, and <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>.</p>
 
 </div>
 </div>
@@ -870,11 +869,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns contstant pointer to <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object of file, nullptr if not found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00494">494</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00493">493</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00248">append_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01146">compare()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00218">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00312">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00419">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00397">insert_file()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00132">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_origfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00267">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00283">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00332">replace_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>, <a class="el" href="fuseops_8cc_source.html#l00482">selector()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00128">FFMPEGFS_PARAMS::smart_transcode()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01132">strcasecmp()</a>, and <a class="el" href="fileio_8h_source.html#l00051">VIRTUALTYPE_DISK</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00248">append_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01146">compare()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00218">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00312">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00418">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00396">insert_file()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00132">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00267">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00283">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00332">replace_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>, <a class="el" href="fuseops_8cc_source.html#l00481">selector()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00128">FFMPEGFS_PARAMS::smart_transcode()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01132">strcasecmp()</a>, and <a class="el" href="fileio_8h_source.html#l00052">VIRTUALTYPE_DISK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00885">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00721">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00988">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01076">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00577">ffmpegfs_readlink()</a>, and <a class="el" href="fuseops_8cc_source.html#l01187">ffmpegfs_statfs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00886">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00722">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00989">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01077">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00576">ffmpegfs_readlink()</a>, and <a class="el" href="fuseops_8cc_source.html#l01194">ffmpegfs_statfs()</a>.</p>
 
 </div>
 </div>
@@ -922,9 +921,9 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If found, returns const_iterator to map entry. Returns map.end() if not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00383">383</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00382">382</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00432">check_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00431">check_path()</a>.</p>
 
 </div>
 </div>
@@ -978,9 +977,9 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00250">250</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00249">249</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00613">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00612">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
@@ -1028,9 +1027,9 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant pointer to <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object of file, nullptr if not found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00397">397</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00396">396</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00055">create_vcd_virtualfile()</a>, <a class="el" href="fuseops_8cc_source.html#l00613">ffmpegfs_readdir()</a>, and <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00055">create_vcd_virtualfile()</a>, <a class="el" href="fuseops_8cc_source.html#l00612">ffmpegfs_readdir()</a>, and <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>.</p>
 
 </div>
 </div>
@@ -1084,9 +1083,9 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns constant pointer to <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object of file, nullptr if not found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00402">402</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00401">401</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00133">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="fileio_8h_source.html#l00083">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00081">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00133">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00086">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00082">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>.</p>
 
 </div>
 </div>
@@ -1140,11 +1139,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns number of files found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00439">439</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00438">438</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00369">get_destname()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00283">remove_path()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00501">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, and <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00506">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00533">check_dvd()</a>, and <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>.</p>
 
 </div>
 </div>
@@ -1182,9 +1181,9 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns nonzero if dirent matches, 0 if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00482">482</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00481">481</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00494">find_original()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00493">find_original()</a>.</p>
 
 </div>
 </div>
@@ -1221,11 +1220,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01244">1244</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l01251">1251</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00086">oldHandler</a>, <a class="el" href="transcode_8cc_source.html#l00544">transcoder_exit()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00085">oldHandler</a>, <a class="el" href="transcode_8cc_source.html#l00544">transcoder_exit()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01265">ffmpegfs_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01272">ffmpegfs_init()</a>.</p>
 
 </div>
 </div>
@@ -1273,11 +1272,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if format has been found and filename changed, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00348">348</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00347">347</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00233">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00312">find_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01291">nocasecompare()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00332">replace_ext()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00228">FFmpegfs_Format::video_codec_id()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00613">ffmpegfs_readdir()</a>, and <a class="el" href="fuseops_8cc_source.html#l00577">ffmpegfs_readlink()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00612">ffmpegfs_readdir()</a>, and <a class="el" href="fuseops_8cc_source.html#l00576">ffmpegfs_readlink()</a>.</p>
 
 </div>
 </div>
@@ -1324,11 +1323,11 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00331">331</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00330">330</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00125">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01263">sanitise_filepath()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00885">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00721">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00988">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01076">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00613">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l00577">ffmpegfs_readlink()</a>, and <a class="el" href="fuseops_8cc_source.html#l01187">ffmpegfs_statfs()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00886">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00722">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00989">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01077">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00612">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l00576">ffmpegfs_readlink()</a>, and <a class="el" href="fuseops_8cc_source.html#l01194">ffmpegfs_statfs()</a>.</p>
 
 </div>
 </div>
@@ -1348,7 +1347,7 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 <p>FUSE file system operations. </p>
 <p>Fuse operations struct. </p>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00088">88</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00087">87</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01256">main()</a>.</p>
 
@@ -1376,7 +1375,7 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 <p>List of passthrough file extension</p>
 <p>Note: Must be in ascending aplhabetical order for the binary_search function used on it to work! New elements must be inserted in the correct position, elements removed by simply deleting them from the list. </p>
 
-<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00101">101</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00100">100</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
 </div>
 </div>

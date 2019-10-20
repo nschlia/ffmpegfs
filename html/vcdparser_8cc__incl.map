@@ -1,11 +1,11 @@
 <map id="src/vcdparser.cc" name="src/vcdparser.cc">
-<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="330,155,414,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="160,229,264,256"/>
-<area shape="rect" id="node13" href="$vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="396,80,487,107"/>
-<area shape="rect" id="node14" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="561,80,652,107"/>
-<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="713,80,788,107"/>
-<area shape="rect" id="node20" href="$vcdentries_8h.html" title="S/VCD VcdEntries class. " alt="" coords="451,155,570,181"/>
-<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="637,229,697,256"/>
+<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="306,155,390,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="191,229,295,256"/>
+<area shape="rect" id="node13" href="$vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="331,80,421,107"/>
+<area shape="rect" id="node14" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="445,80,536,107"/>
+<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="560,80,635,107"/>
+<area shape="rect" id="node20" href="$vcdentries_8h.html" title="S/VCD VcdEntries class. " alt="" coords="801,155,919,181"/>
+<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="495,229,555,256"/>
 <area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,304,128,331"/>
-<area shape="rect" id="node21" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class. " alt="" coords="515,229,613,256"/>
+<area shape="rect" id="node21" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class. " alt="" coords="651,229,749,256"/>
 </map>

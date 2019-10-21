@@ -773,6 +773,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
+                                flags |= VIRTUALFLAG_FRAME;
                                 insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
                             }
                         }

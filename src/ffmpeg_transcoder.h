@@ -246,6 +246,20 @@ public:
      * @return On success, returns true; on failure, returns false.
      */
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
+    /**
+     * @brief Closes the output file of open. Can safely be called again after the file was already closed or if the file was never open.
+     * @param[out] outfile - Name of output file. May be nullptr if not required.
+     * @param[out] audio_samples_left - If audio samples are left in buffer their number will be returned here. May be nullptr if not required.
+     * @param[out] video_frames_left - If video frames are left in buffer their number will be returned here. May be nullptr if not required.
+     * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
+     */
+    bool                        close_output_file(std::string * outfile = nullptr, int * audio_samples_left = nullptr, size_t * video_frames_left = nullptr);
+    /**
+     * @brief Closes the input file of open. Can safely be called again after the file was already closed or if the file was never open.
+     * @param[out] infile - Name of input file. May be nullptr if not required.
+     * @return Returns true if the input file was closed, false if it was not upon upon calling this function.
+     */
+    bool                        close_input_file(std::string * infile = nullptr);
 
 protected:
     /**

@@ -811,7 +811,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
         {
             char filename[PATH_MAX + 1];
-            sprintf(filename, "%06u.%s", frame_no, params.current_format(virtualfile)->desttype().c_str());
+                sprintf(filename, "%06u.%s", frame_no, params.current_format(virtualfile)->fileext().c_str());
             make_file(buf, filler, virtualfile->m_type, origpath, filename, virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Dateigrösse */
         }
 

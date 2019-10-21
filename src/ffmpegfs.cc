@@ -933,7 +933,7 @@ static std::string get_level_text(PRORESLEVEL level)
  * @brief Get value form command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
- * @param[in] value - Upon returnm, contains the value after the "=" sign.
+ * @param[in] value - Upon return, contains the value after the "=" sign.
  * @return Returns 0 if found; if not found returns -1.
  */
 static int get_value(const std::string & arg, std::string *value)

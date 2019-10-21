@@ -4327,23 +4327,34 @@ bool FFmpeg_Transcoder::close_resample()
     return false;
 }
 
-void FFmpeg_Transcoder::close()
+bool FFmpeg_Transcoder::close_output_file(std::string *outfile, int *audio_samples_left, size_t *video_frames_left)
 {
-    int audio_samples_left = 0;
-    size_t video_frames_left = 0;
-    std::string infile;
-    std::string outfile;
     bool closed = false;
 
     if (m_audio_fifo)
     {
-        audio_samples_left = av_audio_fifo_size(m_audio_fifo);
+        if (audio_samples_left != nullptr)
+        {
+            *audio_samples_left = av_audio_fifo_size(m_audio_fifo);
+        }
+        else
+        {
+            av_audio_fifo_size(m_audio_fifo);
+        }
         av_audio_fifo_free(m_audio_fifo);
         m_audio_fifo = nullptr;
         closed = true;
     }
 
-    video_frames_left = m_video_fifo.size();
+    if (video_frames_left != nullptr)
+    {
+        *video_frames_left = m_video_fifo.size();
+    }
+    else
+    {
+        m_video_fifo.size();
+    }
+
     while (m_video_fifo.size())
     {
         AVFrame *output_frame = m_video_fifo.front();
@@ -4414,13 +4425,16 @@ void FFmpeg_Transcoder::close()
     if (m_out.m_format_ctx != nullptr)
     {
 #if LAVF_DEP_FILENAME
-        if (m_out.m_format_ctx->url != nullptr)
+        if (m_out.m_format_ctx->url != nullptr && outfile != nullptr)
         {
-            outfile = m_out.m_format_ctx->url;
+            *outfile = m_out.m_format_ctx->url;
         }
 #else
-        // lavf 58.7.100 - avformat.h - deprecated
-        outfile = m_out.m_format_ctx->filename;
+        if (outfile != nullptr)
+        {
+            // lavf 58.7.100 - avformat.h - deprecated
+            *outfile = m_out.m_format_ctx->filename;
+        }
 #endif
 
         if (m_out.m_format_ctx->pb != nullptr)
@@ -4442,7 +4456,13 @@ void FFmpeg_Transcoder::close()
         closed = true;
     }
 
-    // Close input file
+    return closed;
+}
+
+bool FFmpeg_Transcoder::close_input_file(std::string *infile)
+{
+    bool closed = false;
+
 #if !LAVF_DEP_AVSTREAM_CODEC
     if (m_in.m_audio.m_codec_ctx)
     {
@@ -4491,13 +4511,16 @@ void FFmpeg_Transcoder::close()
     if (m_in.m_format_ctx != nullptr)
     {
 #if LAVF_DEP_FILENAME
-        if (m_in.m_format_ctx->url != nullptr)
+        if (m_in.m_format_ctx->url != nullptr && infile != nullptr)
         {
-            infile = m_in.m_format_ctx->url;
+            *infile = m_in.m_format_ctx->url;
         }
 #else
-        // lavf 58.7.100 - avformat.h - deprecated
-        infile = m_in.m_format_ctx->filename;
+        if (infile != nullptr)
+        {
+            // lavf 58.7.100 - avformat.h - deprecated
+            *infile = m_in.m_format_ctx->filename;
+        }
 #endif
 
         //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))
@@ -4530,6 +4553,23 @@ void FFmpeg_Transcoder::close()
 #ifndef USING_LIBAV
     free_filters();
 #endif  // !USING_LIBAV
+
+    return closed;
+}
+
+void FFmpeg_Transcoder::close()
+{
+    int audio_samples_left = 0;
+    size_t video_frames_left = 0;
+    std::string infile;
+    std::string outfile;
+    bool closed = false;
+
+    // Close output file
+    closed |= close_input_file(&infile);
+
+    // Close input file
+    closed |= close_output_file(&outfile, &audio_samples_left, &video_frames_left);
 
     if (closed)
     {

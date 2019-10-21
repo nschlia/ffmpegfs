@@ -366,7 +366,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         }
 
         LPVIRTUALFILE virtualfile = nullptr;
-        if (!params.m_format[0].export_frameset())
+        if (!params.m_format[0].is_multiformat())
         {
             virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
         }

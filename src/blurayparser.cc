@@ -383,7 +383,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     }
 
     LPVIRTUALFILE virtualfile = nullptr;
-    if (!params.m_format[0].export_frameset())
+    if (!params.m_format[0].is_multiformat())
     {
         virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
     }

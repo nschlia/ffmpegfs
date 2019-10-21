@@ -307,10 +307,16 @@ public:
      */
     AVCodecID           audio_codec_id() const;
     /**
+     * @brief Check if this si some sort of multi file format
+     * (any of the following: is_frameset(), is_hls() or is_dash()
+     * @return Returns true for a multi file format.
+     */
+    bool                is_multiformat() const;
+    /**
      * @brief Check for an export frame format
      * @return Returns true for formats that export all frames as images.
      */
-    bool                export_frameset() const;
+    bool                is_frameset() const;
 
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */

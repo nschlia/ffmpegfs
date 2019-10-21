@@ -751,7 +751,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             std::string newext;
                             find_ext(&newext, filename);
 
-                            if (!current_format->export_frameset())
+                            if (!current_format->is_multiformat())
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
@@ -764,6 +764,8 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             }
                             else
                             {
+                                int flags = VIRTUALFLAG_FILESET;
+
                                 // Change file to directory for the frame set
                                 stbuf.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
                                 stbuf.st_mode |=  S_IFDIR;
@@ -771,7 +773,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_FILESET);
+                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
                             }
                         }
                     }
@@ -846,7 +848,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
         if (transcoded_name(&filename, &current_format))
         {
-            if (!current_format->export_frameset())
+            if (!current_format->is_multiformat())
             {
                 // Pass-through for regular files
                 /**< @todo Feature #2447 / Issue #25:  Reencode to same file format as source file */
@@ -1133,7 +1135,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
     case VIRTUALTYPE_DISK:
     {
-        if ((virtualfile->m_flags & VIRTUALFLAG_FILESET) || (virtualfile->m_flags & VIRTUALFLAG_FRAME) || (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY))
+        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         }

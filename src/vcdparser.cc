@@ -88,7 +88,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     }
 
     LPVIRTUALFILE virtualfile = nullptr;
-    if (!params.m_format[0].export_frameset())
+    if (!params.m_format[0].is_multiformat())
     {
     	virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
     }

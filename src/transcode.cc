@@ -157,7 +157,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
         Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
     }
 
-    if (!transcoder->export_frameset())
+    if (!transcoder->is_multiformat())
     {
         Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
                        format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
@@ -754,7 +754,7 @@ static void transcoder_thread(void *arg)
         thread_data->m_initialised = true;
 
         bool unlocked = false;
-        if (!params.m_prebuffer_size || transcoder->export_frameset())
+        if (!params.m_prebuffer_size || transcoder->is_multiformat())
         {
             // Unlock frame set from beginning
             unlocked = true;
@@ -776,7 +776,7 @@ static void transcoder_thread(void *arg)
                 cache_entry->update_access(false);
             }
 
-            if (transcoder->export_frameset())
+            if (transcoder->is_frameset())
             {
                 uint32_t frame_no = cache_entry->m_seek_frame_no;
                 if (frame_no)

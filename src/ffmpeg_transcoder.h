@@ -277,7 +277,12 @@ public:
      * @brief Check for an export frame format
      * @return Returns true for formats that export all frames as images.
      */
-    bool                        export_frameset() const;
+    bool                        is_multiformat() const;
+    /**
+     * @brief Check for an export frame format
+     * @return Returns true for formats that export all frames as images.
+     */
+    bool                        is_frameset() const;
     /**
      * @brief Check if we made a seek operation
      * @return Returns true if a seek was done, false if not.

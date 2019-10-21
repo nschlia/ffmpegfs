@@ -257,7 +257,12 @@ FILETYPE FFmpegfs_Format::filetype() const
     return m_filetype;
 }
 
-bool FFmpegfs_Format::export_frameset() const
+bool FFmpegfs_Format::is_multiformat() const
+{
+    return  (is_frameset());
+}
+
+bool FFmpegfs_Format::is_frameset() const
 {
     return (m_filetype == FILETYPE_JPG || m_filetype == FILETYPE_PNG || m_filetype == FILETYPE_BMP);
 }

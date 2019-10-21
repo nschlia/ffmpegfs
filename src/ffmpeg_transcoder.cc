@@ -638,7 +638,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::info(destname(), "Opening output file.");
 
-    if (!export_frameset())
+    if (!is_frameset())
     {
         // Pre-allocate the predicted file size to reduce memory reallocations
         size_t buffsize = predicted_filesize();
@@ -2614,7 +2614,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             ret = store_packet(pkt);
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
+    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
     {
         //m_key_seen = (pkt->flags & AV_PKT_FLAG_KEY) ? true : false;
 
@@ -2897,7 +2897,7 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_audio_frame;
         }
-        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || export_frameset()))
+        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_video_frame;
         }
@@ -3650,7 +3650,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
     try
     {
-        if (m_in.m_video.m_stream != nullptr && export_frameset())
+        if (m_in.m_video.m_stream != nullptr && is_frameset())
         {
             if (!m_last_seek_frame_no)
             {
@@ -3832,7 +3832,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 int data_written = 0;
                 output_frame->key_frame = 0;    // Leave that decision to decoder
 
-                if (!export_frameset())
+                if (!is_frameset())
                 {
                     ret = encode_video_frame(output_frame, &data_written);
                 }
@@ -3867,7 +3867,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     int data_written = 0;
                     do
                     {
-                        if (!export_frameset())
+                        if (!is_frameset())
                         {
                             // Encode regluar frame
                             ret = encode_video_frame(nullptr, &data_written);
@@ -4209,7 +4209,7 @@ int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
 
-    if (!export_frameset())
+    if (!is_frameset())
     {
         // If not a frame set, write trailer
 
@@ -4858,7 +4858,7 @@ int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
     }
 }
 
-bool FFmpeg_Transcoder::export_frameset() const
+bool FFmpeg_Transcoder::is_multiformat() const
 {
     if (m_current_format == nullptr)
     {
@@ -4866,7 +4866,20 @@ bool FFmpeg_Transcoder::export_frameset() const
     }
     else
     {
-        return m_current_format->export_frameset();
+        return m_current_format->is_multiformat();
+    }
+}
+
+
+bool FFmpeg_Transcoder::is_frameset() const
+{
+    if (m_current_format == nullptr)
+    {
+        return false;
+    }
+    else
+    {
+        return m_current_format->is_frameset();
     }
 }
 

@@ -43,6 +43,7 @@
 
 #include <sys/stat.h>
 #include <string>
+#include <vector>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -136,6 +137,8 @@ typedef struct VIRTUALFILE
     int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     size_t          m_predicted_size;                               /**< @brief Use this as the size instead of computing it over and over. */
     uint32_t        m_video_frame_count;                            /**< @brief Number of frames in video or 0 if not a video */
+
+    std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs

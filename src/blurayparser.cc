@@ -382,8 +382,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         // break;
     }
 
-    LPVIRTUALFILE virtualfile;
-    if (!params.m_format[0].export_frameset())
+    LPVIRTUALFILE virtualfile = nullptr;
+    if (!params.m_format[0].is_multiformat())
     {
         virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
     }
@@ -399,7 +399,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         append_sep(&origpath);
 
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_FILESET);
     }
 
     // Bluray is video format anyway

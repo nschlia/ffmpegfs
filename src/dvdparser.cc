@@ -365,7 +365,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // break;
         }
 
-        LPVIRTUALFILE virtualfile;
+        LPVIRTUALFILE virtualfile = nullptr;
         if (!params.m_format[0].export_frameset())
         {
             virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
@@ -382,7 +382,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
             append_sep(&origpath);
 
-            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_FILESET);
         }
 
         // DVD is video format anyway

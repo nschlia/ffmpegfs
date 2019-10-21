@@ -3121,7 +3121,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
 
         *data_present = 1;
 #endif
-        // Write one audio frame from the temporary packet to the output file.
+        // Write one audio frame from the temporary packet to the output buffer.
         if (*data_present)
         {
             pkt.stream_index = m_out.m_audio.m_stream_idx;
@@ -3216,7 +3216,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
             *data_present = 1;
 #endif
-            // Write one video frame from the temporary packet to the output file.
+            // Write one video frame from the temporary packet to the output buffer.
             if (*data_present)
             {
                 // Store current video PTS
@@ -3320,7 +3320,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             *data_present = 1;
 #endif
 
-            // Write one video frame from the temporary packet to the output file.
+            // Write one video frame from the temporary packet to the output buffer.
             if (*data_present)
             {
                 if (pkt.pts != AV_NOPTS_VALUE)
@@ -3369,6 +3369,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 
                 m_out.m_last_mux_dts = pkt.dts;
 
+                // Write packet to buffer
                 ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
                 if (ret < 0)
                 {
@@ -3920,7 +3921,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
     for (int i = 0; m_prores_bitrate[i].m_width; i++)
     {
         unsigned int x = static_cast<unsigned int>(width - m_prores_bitrate[i].m_width);
-        unsigned int y = static_cast<unsigned int>(height - m_prores_bitrate[i].m_height);;
+        unsigned int y = static_cast<unsigned int>(height - m_prores_bitrate[i].m_height);
         unsigned int dist = (x * x) + (y * y);
 
         if (dist < mindist)

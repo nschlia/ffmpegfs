@@ -79,8 +79,9 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
 
     m_filename = set_virtualfile(virtualfile);
     make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->desttype(), false);
-    if (virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME)
+    if ((virtualfile->m_flags & VIRTUALFLAG_FILESET) && (virtualfile->m_flags & VIRTUALFLAG_FRAME))
     {
+        // Create extra index cash for frame sets only
         make_cachefile_name(m_cachefile_idx, m_filename, params.current_format(virtualfile)->desttype(), true);
     }
     return 0;

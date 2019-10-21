@@ -131,7 +131,6 @@ extern struct FFMPEGFS_PARAMS
     PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Format
     FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file  */
-    bool                m_export_frameset;          /**< @brief Export videos as frame set */
     // Audio
     BITRATE             m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */

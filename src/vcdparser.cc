@@ -87,7 +87,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
         // break;
     }
 
-    LPVIRTUALFILE virtualfile;
+    LPVIRTUALFILE virtualfile = nullptr;
     if (!params.m_format[0].export_frameset())
     {
     	virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
@@ -104,7 +104,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 
         append_sep(&origpath);
 
-        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, VIRTUALFLAG_FILESET);
     }
 
     // Video CD is video format anyway

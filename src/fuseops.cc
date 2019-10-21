@@ -719,7 +719,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 #endif // USE_LIBBLURAY
     }
 
-    if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+    if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_FILESET))
     {
         DIR *dp = opendir(origpath.c_str());
         if (dp != nullptr)
@@ -771,7 +771,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_IMAGE_FRAME);
+                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_FILESET);
                             }
                         }
                     }
@@ -858,7 +858,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             {
                 Logging::trace(origpath, "getattr: Creating frame set directory of file.");
 
-                flags |= VIRTUALFLAG_IMAGE_FRAME;
+                flags |= VIRTUALFLAG_FILESET;
             }
         }
         else
@@ -911,14 +911,14 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DISK:
     {
-        if (flags & VIRTUALFLAG_FRAME || flags & VIRTUALFLAG_DIRECTORY)
+        if (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
             errno = 0;  // Just to make sure - reset any error
             break;
         }
 
-        if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+        if (virtualfile == nullptr || !(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
             if (!no_check && lstat(origpath.c_str(), stbuf) == -1)
             {
@@ -965,7 +965,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                         LPVIRTUALFILE virtualfile2 = find_original(&filepath);
 
-                        if (virtualfile2 != nullptr && (virtualfile2->m_flags & VIRTUALFLAG_DIRECTORY) && (virtualfile2->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+                        if (virtualfile2 != nullptr && (virtualfile2->m_flags & VIRTUALFLAG_DIRECTORY) && (virtualfile2->m_flags & VIRTUALFLAG_FILESET))
                         {
                             struct stat stbuf2;
 
@@ -1014,7 +1014,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #endif
             }
 
-            if (flags & VIRTUALFLAG_IMAGE_FRAME)
+            if (flags & VIRTUALFLAG_FILESET)
             {
                 // Change file to virtual directory for the frame set. Keep permissions.
                 stbuf->st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
@@ -1024,7 +1024,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 append_sep(&origpath);
 
-                insert_file(type, origpath, stbuf, VIRTUALFLAG_IMAGE_FRAME | VIRTUALFLAG_DIRECTORY);
+                insert_file(type, origpath, stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY);
             }
             else if (S_ISREG(stbuf->st_mode))
             {
@@ -1058,7 +1058,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
             errno = 0;  // Just to make sure - reset any error
         }
-        else // if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+        else // if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY))
         {
             // Frame set, simply report stat.
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -1133,7 +1133,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
     case VIRTUALTYPE_DISK:
     {
-        if ((virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME) || (virtualfile->m_flags & VIRTUALFLAG_FRAME) || (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY))
+        if ((virtualfile->m_flags & VIRTUALFLAG_FILESET) || (virtualfile->m_flags & VIRTUALFLAG_FRAME) || (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         }
@@ -1278,7 +1278,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
                 errno = 0;
             }
         }
-        else if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+        else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
             cache_entry = transcoder_new(virtualfile, true);
 
@@ -1429,7 +1429,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
 
             success = transcoder_read_frame(cache_entry, buf, offset, size, frame_no, &bytes_read, virtualfile);
         }
-        else if (!(virtualfile->m_flags & VIRTUALFLAG_IMAGE_FRAME))
+        else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
             cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 

@@ -163,8 +163,8 @@ const char *get_media_type_string(enum AVMediaType media_type);
 #define CODECPAR(s)     ((s)->codec)                                                /**< @brief Map to codec */
 #endif
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
+#define STRINGIFY(x) #x                                                             /**< @brief Stringification helper for STRINGIFY. Not to be used separately. */
+#define TOSTRING(x) STRINGIFY(x)                                                    /**< @brief Convert a macro argument into a string constant */
 /**
   * File types
   */

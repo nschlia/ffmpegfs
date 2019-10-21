@@ -5,7 +5,7 @@ Important changes in 1.96 (2019-10-XX)
 This is a pre-release towards the new version 2.0 coming up soon.
 
 * Feature: Added version check and auto update to cache database. Older database versions will
-         now automatically upgraded to the latest structure.
+           now automatically upgraded to the latest structure.
 * Feature: Transcode videos to frame works transparently for any input now (DVD, Bluray and VideoCD).
 * Bugfix:  Fix for "prores can't allocate memory #41".
 * Bugfix:  Do not shrink cache when reopening it.
@@ -16,9 +16,9 @@ Important changes in 1.95 (2019-05-23)
 This is a pre-release towards the new version 2.0 coming up soon.
 
 * Feature: Added transcode videos to frame images option. Video files can be mounted to folders with jpg/png/bmp files for
-         each video frame.
+           each video frame.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
-         be recoded. Added --recodesame option to allow transcoding to the same format.
+           be recoded. Added --recodesame option to allow transcoding to the same format.
 
 Important changes in 1.9 (2019-10-XX)
 

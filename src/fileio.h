@@ -105,10 +105,10 @@ typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief 
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
 
 #define VIRTUALFLAG_NONE            0x00000000                      /**< @brief No flags */
-#define VIRTUALFLAG_IMAGE_FRAME     0x00000001                      /**< @brief File is a frame image */
-#define VIRTUALFLAG_PASSTHROUGH     0x00000002                      /**< @brief passthrough file, not used */
-#define VIRTUALFLAG_FRAME           0x00000004                      /**< @brief File is part of a set of frames */
-#define VIRTUALFLAG_DIRECTORY       0x00000008                      /**< @brief File is a virtual directory */
+#define VIRTUALFLAG_PASSTHROUGH     0x00000001                      /**< @brief passthrough file, not used */
+#define VIRTUALFLAG_DIRECTORY       0x00000002                      /**< @brief File is a virtual directory */
+#define VIRTUALFLAG_FILESET         0x00000004                      /**< @brief File is file set (images, HLS, DASH) */
+#define VIRTUALFLAG_FRAME           0x00000008                      /**< @brief File is part of a set of frames */
 
 /** @brief Virtual file definition
  */

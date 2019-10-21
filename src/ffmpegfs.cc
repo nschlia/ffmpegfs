@@ -85,7 +85,6 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_level(PRORESLEVEL_NONE)                 // default: no level
 
     // Format
-    , m_export_frameset(false)                  // default: do not export
     , m_audiobitrate(128*1024)                  // default: 128 kBit
     , m_audiosamplerate(44100)                  // default: 44.1 kHz
 
@@ -386,7 +385,7 @@ static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int          get_samplerate(const std::string & arg, int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
-static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2], bool *export_frameset);
+static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
@@ -765,10 +764,9 @@ static int get_size(const std::string & arg, size_t *size)
  * @param[in] arg - Format as string (MP4, OGG etc.).
  * @param[out] format - Index 0: Selected video format.@n
  * Index 1: Selected audio format.
- * @param[out] export_frameset - Set to true if format is a frame set (BMP, PNG, JPG), false otherwise.
  * @return Returns 0 if found; if not found returns -1.
  */
-static int get_desttype(const std::string & arg, FFmpegfs_Format format[2], bool *export_frameset)
+static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 {
     /** @todo: evaluate this function */
     size_t pos = arg.find('=');
@@ -786,8 +784,6 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2], bool
                 return 1;
             }
 
-            *export_frameset = format[0].export_frameset();
-
             if (results.size() == 2)
             {
                 if (!format[1].init(results[1]))
@@ -795,8 +791,6 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2], bool
                     std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[1].c_str());
                     return 1;
                 }
-
-                *export_frameset = format[1].export_frameset();
             }
 
             return 0;
@@ -1120,7 +1114,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_DESTTYPE:
     {
-        return get_desttype(arg, params.m_format, &params.m_export_frameset);
+        return get_desttype(arg, params.m_format);
     }
     case KEY_AUTOCOPY:
     {

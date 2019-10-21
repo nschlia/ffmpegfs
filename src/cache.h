@@ -39,17 +39,14 @@
 #include <map>
 #include <sqlite3.h>
 
-// The oldest database version (Release < 1.95)
-#define     DB_BASE_VERSION_MAJOR   1
-#define     DB_BASE_VERSION_MINOR   0
+#define     DB_BASE_VERSION_MAJOR   1           /**< brief The oldest database version major (Release < 1.95) */
+#define     DB_BASE_VERSION_MINOR   0           /**< brief The oldest database version minor (Release < 1.95) */
 
-// Current database version
-#define     DB_VERSION_MAJOR        1
-#define     DB_VERSION_MINOR        95
+#define     DB_VERSION_MAJOR        1           /**< brief Current database version major */
+#define     DB_VERSION_MINOR        95          /**< brief Current database version minor */
 
-// Required database version is 1.95
-#define     DB_MIN_VERSION_MAJOR    1
-#define     DB_MIN_VERSION_MINOR    95
+#define     DB_MIN_VERSION_MAJOR    1           /**< brief Required database version major (required 1.95) */
+#define     DB_MIN_VERSION_MINOR    95          /**< brief Required database version minor (required 1.95) */
 
 /**
   * @brief RESULTCODE of transcoding operation
@@ -104,21 +101,27 @@ class Cache
     typedef std::pair<std::string, std::string> cache_key_t;
     typedef std::map<cache_key_t, Cache_Entry *> cache_t;
 public:
+    /**
+      * @brief Definition of sql table
+      */
     typedef struct
     {
-        const char *    name;
-        const char *    primary_key;
+        const char *    name;                       /**< @brief Table name */
+        const char *    primary_key;                /**< @brief Primary key of table */
     } TABLE_DEF;
-    typedef TABLE_DEF const *LPCTABLE_DEF;
-    typedef TABLE_DEF *LPTABLE_DEF;
+    typedef TABLE_DEF const *LPCTABLE_DEF;          /**< @brief Pointer version of TABLE_DEF */
+    typedef TABLE_DEF *LPTABLE_DEF;                 /**< @brief Pointer to const version of TABLE_DEF */
 
+    /**
+      * @brief Column definition of sql table
+      */
     typedef struct
     {
-        const char *    name;
-        const char *    type;
+        const char *    name;                       /**< @brief Column name */
+        const char *    type;                       /**< @brief Column type (INT, CHAR etc) */
     } TABLE_COLUMNS;
-    typedef TABLE_COLUMNS const *LPCTABLE_COLUMNS;
-    typedef TABLE_COLUMNS *LPTABLE_COLUMNS;
+    typedef TABLE_COLUMNS const *LPCTABLE_COLUMNS;  /**< @brief Pointer version of TABLE_COLUMNS */
+    typedef TABLE_COLUMNS *LPTABLE_COLUMNS;         /**< @brief Pointer to const version of TABLE_COLUMNS */
 
     friend class Cache_Entry;
 
@@ -271,10 +274,10 @@ protected:
     bool                    check_min_version(int *db_version_major, int *db_version_minor);
     /**
      * @brief Compare two versions.
-     * @param[in] db_version_major_l - Left major version
-     * @param[in] db_version_minor_l - Left minor version
-     * @param[in] db_version_major_r - Right major version
-     * @param[in] db_version_minor_r - Right minor version
+     * @param[in] version_major_l - Left major version
+     * @param[in] version_minor_l - Left minor version
+     * @param[in] version_major_r - Right major version
+     * @param[in] version_minor_r - Right minor version
      * @return Returns +1 if left version is larger then right, 0 if versions are the same, -1 if right version is larger than left.
      */
     int cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r);

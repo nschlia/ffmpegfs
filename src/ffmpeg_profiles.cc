@@ -185,7 +185,7 @@ FFmpeg_Profiles::~FFmpeg_Profiles() {}
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 {
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
     { "profile",              "high",                       0,  0 },
     { "level",                "3.1",                        0,  0 },
 
@@ -213,7 +213,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_none[] =
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ff[] =
 {
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
     { "profile",              "high",                       0,  0 },
     { "level",                "3.1",                        0,  0 },
 
@@ -267,7 +267,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ie[] =
 {
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7
+    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
     { "profile",              "high",                       0,  0 },
     { "level",                "3.1",                        0,  0 },
 
@@ -357,7 +357,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
 {
-    // -profile:v high -level 3.1
+    // -profile:v high -level 3.1 (Partially or totally overwritten by profile!)
     { "profile",              "high",                       0,  0 },
     { "level",                "3.1",                        0,  0 },
 

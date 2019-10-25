@@ -1313,7 +1313,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate);
 #endif
 
-        AVRational sample_aspect_ratio                  = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
+        AVRational sample_aspect_ratio                      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
 
         if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9)
         {
@@ -1357,8 +1357,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             {
                 if (!strcasecmp(reinterpret_cast<const char *>(out_val), "high"))
                 {
-                    av_free(out_val);
-
                     switch (output_codec_ctx->pix_fmt)
                     {
                     case AV_PIX_FMT_YUYV422:
@@ -1445,6 +1443,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     }
                     }
                 }
+                av_free(out_val);
             }
             break;
         }
@@ -1819,12 +1818,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     tmp_pkt->pos = 0;
     tmp_pkt->dts = 0;
 
-    ret = av_interleaved_write_frame(m_out.m_format_ctx, tmp_pkt);
-
-    if (ret < 0)
-    {
-        Logging::error(destname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
-    }
+    ret = store_packet(tmp_pkt, "album art");
 
 #if LAVF_DEP_AV_COPY_PACKET
     av_packet_unref(tmp_pkt);
@@ -2571,13 +2565,13 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     return ret;
 }
 
-int FFmpeg_Transcoder::store_packet(AVPacket *pkt)
+int FFmpeg_Transcoder::store_packet(AVPacket *pkt, const char *type)
 {
     int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
 
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not write %1 frame (error '%2').", type, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -2611,7 +2605,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             }
             pkt->pos            = -1;
 
-            ret = store_packet(pkt);
+            ret = store_packet(pkt, "audio");
         }
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
@@ -2681,7 +2675,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             }
             pkt->pos            = -1;
 
-            ret = store_packet(pkt);
+            ret = store_packet(pkt, "video");
         }
     }
     else
@@ -3128,10 +3122,9 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
 
             produce_audio_dts(&pkt, &m_out.m_audio_pts);
 
-            ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
+            ret = store_packet(&pkt, "audio");
             if (ret < 0)
             {
-                Logging::error(destname(), "Could not write audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 av_packet_unref(&pkt);
                 return ret;
             }
@@ -3370,10 +3363,9 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 m_out.m_last_mux_dts = pkt.dts;
 
                 // Write packet to buffer
-                ret = av_interleaved_write_frame(m_out.m_format_ctx, &pkt);
+                ret = store_packet(&pkt, "video");
                 if (ret < 0)
                 {
-                    Logging::error(destname(), "Could not write video frame (error '%1').", ffmpeg_geterror(ret).c_str());
                     throw ret;
                 }
             }
@@ -3465,7 +3457,7 @@ time_t FFmpeg_Transcoder::mtime() const
 
 #define tagcpy(dst, src)    \
     for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
-    *p1 = *p2;      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
+    *p1 = *p2      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
 
 void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in)
 {
@@ -3830,7 +3822,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 // Encode one video frame.
                 int data_written = 0;
-                output_frame->key_frame = 0;    // Leave that decision to decoder
+                output_frame->key_frame = 0;    // Leave that decision to encoder
 
                 if (!is_frameset())
                 {

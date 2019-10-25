@@ -367,9 +367,10 @@ protected:
     /**
      * @brief Store packet in output stream.
      * @param[in] pkt - Packet to store.
+     * @param[in] type - Typo of packet: audio, video, image
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         store_packet(AVPacket *pkt);
+    int                         store_packet(AVPacket *pkt, const char *type);
     /**
      * @brief Decode one audio frame
      * @param[in] pkt - Packet to decode.

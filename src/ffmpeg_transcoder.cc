@@ -3409,7 +3409,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 // Encode one video frame.
                 int data_written = 0;
-                output_frame->key_frame = 0;    // Leave that decision to decoder
+                output_frame->key_frame = 0;    // Leave that decision to encoder
                 ret = encode_video_frame(output_frame, &data_written);
 #if !LAVC_NEW_PACKET_INTERFACE
                 if (ret < 0)

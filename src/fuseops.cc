@@ -685,7 +685,8 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     // Add a virtual script if enabled
     if (params.m_enablescript)
     {
-        make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, params.m_scriptfile, script_file.size());
+        LPVIRTUALFILE virtualfile = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, params.m_scriptfile, script_file.size());
+        virtualfile->m_file_contents = script_file;
     }
 
     std::string buffer(origpath);

@@ -51,7 +51,6 @@ struct AVAudioResampleContext;
 #endif
 struct SwsContext;
 struct AVFilterContext;
-struct AVFilterContext;
 struct AVFilterGraph;
 struct AVAudioFifo;
 

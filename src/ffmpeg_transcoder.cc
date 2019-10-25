@@ -1178,8 +1178,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             {
                 if (!strcasecmp(reinterpret_cast<const char *>(out_val), "high"))
                 {
-                    av_free(out_val);
-
                     switch (output_codec_ctx->pix_fmt)
                     {
                     case AV_PIX_FMT_YUYV422:
@@ -1266,6 +1264,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     }
                     }
                 }
+                av_free(out_val);
             }
             break;
         }

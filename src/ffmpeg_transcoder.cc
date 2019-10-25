@@ -3180,7 +3180,7 @@ time_t FFmpeg_Transcoder::mtime() const
 
 #define tagcpy(dst, src)    \
     for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
-    *p1 = *p2;      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
+    *p1 = *p2      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
 
 void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in)
 {

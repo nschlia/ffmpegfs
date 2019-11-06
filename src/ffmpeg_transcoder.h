@@ -456,9 +456,8 @@ protected:
      * @brief Produce audio dts/pts. This is required because the target codec usually has a different
      * frame size than the source, so the number of packets will not match 1:1.
      * @param[in] pkt - Packet to add dts/pts to.
-     * @param[in] pts - pts for next packet.
      */
-    void                        produce_audio_dts(AVPacket * pkt, int64_t *pts);
+    void                        produce_audio_dts(AVPacket * pkt);
 #if LAVC_NEW_PACKET_INTERFACE
     /**
      * This does not quite work like avcodec_decode_audio4/avcodec_decode_video2.

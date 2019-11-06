@@ -1134,7 +1134,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate);
 #endif
 
-        AVRational sample_aspect_ratio                  = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
+        AVRational sample_aspect_ratio                      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
 
         if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9)
         {
@@ -1671,6 +1671,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     {
         avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, nullptr, ".m4a");
     }
+
     if (m_out.m_format_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate output format context.");
@@ -2480,18 +2481,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         else
         {
             pkt->stream_index   = m_out.m_video.m_stream_idx;
-            if (pkt->pts != AV_NOPTS_VALUE)
-            {
-                pkt->pts            = av_rescale_q_rnd(pkt->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
-            }
-            if (pkt->dts != AV_NOPTS_VALUE)
-            {
-                pkt->dts            = av_rescale_q_rnd(pkt->dts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
-            }
-            if (pkt->duration)
-            {
-                pkt->duration       = static_cast<int>(av_rescale_q(pkt->duration, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base));
-            }
+            av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
             pkt->pos            = -1;
 
             ret = store_packet(pkt, "video");
@@ -2844,7 +2834,7 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     return 0;
 }
 
-void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
+void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 {
     //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
@@ -2867,17 +2857,16 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt, int64_t *pts)
                     pkt->duration = duration = static_cast<int>(av_rescale(duration, static_cast<int64_t>(m_out.m_audio.m_stream->time_base.den) * m_out.m_audio.m_codec_ctx->ticks_per_frame, CODECPAR(m_out.m_audio.m_stream)->sample_rate * static_cast<int64_t>(m_out.m_audio.m_stream->time_base.num)));
                 }
             }
-
         }
         else
         {
             duration = 1;
         }
 
-        pkt->dts = *pts - 1;
-        pkt->pts = *pts;
+        pkt->dts = m_out.m_audio_pts - 1;
+        pkt->pts = m_out.m_audio_pts;
 
-        *pts += duration;
+        m_out.m_audio_pts += duration;
     }
 }
 
@@ -2939,7 +2928,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
         {
             pkt.stream_index = m_out.m_audio.m_stream_idx;
 
-            produce_audio_dts(&pkt, &m_out.m_audio_pts);
+            produce_audio_dts(&pkt);
 
             ret = store_packet(&pkt, "audio");
             if (ret < 0)

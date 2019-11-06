@@ -221,7 +221,11 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     }
     case FILETYPE_TS:
     {
-        m_audio_codec_id    = AV_CODEC_ID_AC3;
+        // AC3 possible in container, but not supported in browsers:
+        // m_audio_codec_id    = AV_CODEC_ID_AC3;
+        // Also allowed:
+        // m_audio_codec_id    = AV_CODEC_ID_MP3;
+        m_audio_codec_id    = AV_CODEC_ID_AAC;
         m_video_codec_id    = AV_CODEC_ID_H264;
         m_format_name       = "mpegts";
         m_fileext           = "ts";

@@ -211,7 +211,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     {
         time_base_tbn.num                       = 1;
         time_base_tbn.den                       = 90000;
-        time_base_tbc                           = time_base_tbn;
+        time_base_tbc                       = time_base_tbn;
         break;
     }
     }
@@ -221,20 +221,18 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // tbc
     output_codec_ctx->time_base                 = time_base_tbc;
 
-#if LAVF_DEP_AVSTREAM_CODEC
-    //output_stream->codecpar->time_base        = time_base_tbc;
-#else
+#if !LAVF_DEP_AVSTREAM_CODEC
     output_stream->codec->time_base             = time_base_tbc;
 #endif
 
 #ifndef USING_LIBAV
     // tbr
     // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
-    // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
+    // output_stream->r_frame_rate              = framerate; //{ .num = 25, .den = 1 };
 
     // fps
     output_stream->avg_frame_rate               = framerate;
-    output_codec_ctx->framerate                 = framerate;
+    // output_codec_ctx->framerate                 = framerate;
 #endif
     int alpha = 0;
     int loss = 0;

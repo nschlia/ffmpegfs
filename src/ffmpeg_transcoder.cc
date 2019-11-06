@@ -3026,12 +3026,13 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
         {
             duration = pkt->duration;
 
-            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS)
+            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS)
             {
                 /** @todo: Is this a FFmpeg bug or am I too stupid?
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
                  * at 48 K sampling rate.
-                 * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
+                 * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value.
+                 * Same applies to mpegts, so let's rescale.
                  */
                 if (duration > 0 && CODECPAR(m_out.m_audio.m_stream)->sample_rate > 0)
                 {
@@ -3264,6 +3265,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         // The output video stream encoder is used to do this.
 #if !LAVC_NEW_PACKET_INTERFACE
         ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
+
         if (ret < 0)
         {
             Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3350,6 +3352,13 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 }
 
                 m_out.m_last_mux_dts = pkt.dts;
+
+#ifndef USING_LIBAV
+                if (frame != nullptr && !pkt.duration)
+                {
+                    pkt.duration = frame->pkt_duration;
+                }
+#endif
 
                 // Write packet to buffer
                 ret = store_packet(&pkt, "video");

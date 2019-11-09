@@ -3067,6 +3067,13 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 
                 m_out.m_last_mux_dts = pkt.dts;
 
+#ifndef USING_LIBAV
+                if (frame != nullptr && !pkt.duration)
+                {
+                    pkt.duration = frame->pkt_duration;
+                }
+#endif
+
                 // Write packet to buffer
                 ret = store_packet(&pkt, "video");
                 if (ret < 0)

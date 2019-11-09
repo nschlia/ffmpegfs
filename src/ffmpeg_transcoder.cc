@@ -3986,7 +3986,7 @@ bool FFmpeg_Transcoder::close_output_file(std::string *outfile, int *audio_sampl
     return closed;
 }
 
-bool FFmpeg_Transcoder::close_input_file(std::string *infile)
+bool FFmpeg_Transcoder::close_input_file()
 {
     bool closed = false;
 
@@ -4037,19 +4037,6 @@ bool FFmpeg_Transcoder::close_input_file(std::string *infile)
 
     if (m_in.m_format_ctx != nullptr)
     {
-#if LAVF_DEP_FILENAME
-        if (m_in.m_format_ctx->url != nullptr && infile != nullptr)
-        {
-            *infile = m_in.m_format_ctx->url;
-        }
-#else
-        if (infile != nullptr)
-        {
-            // lavf 58.7.100 - avformat.h - deprecated
-            *infile = m_in.m_format_ctx->filename;
-        }
-#endif
-
         //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))
         {
             if (m_close_fileio && m_fileio != nullptr)
@@ -4084,19 +4071,15 @@ bool FFmpeg_Transcoder::close_input_file(std::string *infile)
     return closed;
 }
 
-void FFmpeg_Transcoder::close()
+bool FFmpeg_Transcoder::close_output_file_with_report()
 {
+    std::string outfile;
     int audio_samples_left = 0;
     size_t video_frames_left = 0;
-    std::string infile;
-    std::string outfile;
     bool closed = false;
 
     // Close output file
-    closed |= close_input_file(&infile);
-
-    // Close input file
-    closed |= close_output_file(&outfile, &audio_samples_left, &video_frames_left);
+    closed = close_output_file(&outfile, &audio_samples_left, &video_frames_left);
 
     if (closed)
     {
@@ -4110,9 +4093,25 @@ void FFmpeg_Transcoder::close()
         {
             Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
         }
+    }
 
-        // Closed anything...
-        Logging::trace(p, "FFmpeg transcoder closed.");
+    return closed;
+}
+
+void FFmpeg_Transcoder::close()
+{
+    bool closed = false;
+
+    // Close input file
+    closed |= close_input_file();
+
+    // Close output file
+    closed |= close_output_file_with_report();
+
+    if (closed)
+    {
+        // Closed anything (anything had been open to be closed in the first place)...
+        Logging::trace(nullptr, "FFmpeg transcoder closed.");
     }
 }
 

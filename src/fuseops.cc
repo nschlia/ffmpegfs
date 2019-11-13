@@ -915,7 +915,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DISK:
     {
-        if (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY))
+        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY)))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
             errno = 0;  // Just to make sure - reset any error

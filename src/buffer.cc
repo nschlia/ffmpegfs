@@ -277,7 +277,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     flush();
 
     void *p         = m_buffer;
-    size_t size     = m_buffer_size;
+    size_t size     = m_buffer_watermark;
     int fd          = m_fd;
 
     m_buffer        = nullptr;

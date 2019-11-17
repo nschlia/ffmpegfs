@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 1.9 (2019-10-XX)
+Important changes in 1.9 (2019-11-XX)
 
 * Support: Code has now been tested to work on ARMv7 (32 bit).
 * Feature: Documented the whole project with Doxygen.
@@ -16,6 +16,8 @@ Important changes in 1.9 (2019-10-XX)
 * Bugfix: Removed unused xmlint prerequisite from configure.
 * Bugfix: Video and audio was out of sync on android devices.
 * Bugfix: Fix crash when Bluray video without audio was opened.
+* Bugfix: Cache files were left at the predicted size if it was larger than the result size.
+*         Size is now correctly capped to the correct result size.
 * Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
     Deprecate use of avfilter_register(), avfilter_register_all(),
     avfilter_next(). Added av_filter_iterate().

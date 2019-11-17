@@ -112,10 +112,11 @@ bool Buffer::init(bool erase_cache)
 
         delete [] cachefile;
 
-        m_buffer_size       = 0;
+        m_fd                = -1;
         m_buffer            = nullptr;
         m_buffer_pos        = 0;
         m_buffer_watermark  = 0;
+        m_buffer_size       = 0;
 
         if (erase_cache)
         {
@@ -146,11 +147,11 @@ bool Buffer::init(bool erase_cache)
 
         if (!success)
         {
+            m_fd                = -1;
             m_buffer            = nullptr;
             m_buffer_pos        = 0;
             m_buffer_watermark  = 0;
             m_buffer_size       = 0;
-            m_fd 			= -1;
         }
     }
 
@@ -350,13 +351,10 @@ bool Buffer::clear()
     // If empty set file size to 1 page
     long filesize = sysconf (_SC_PAGESIZE);
 
-    if (m_fd != -1)
+    if (m_fd != -1 && ftruncate(m_fd, filesize) == -1)
     {
-        if (ftruncate(m_fd, filesize) == -1)
-        {
-            Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-            success = false;
-        }
+        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
+        success = false;
     }
 
     return success;

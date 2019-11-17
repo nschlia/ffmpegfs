@@ -644,7 +644,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = predicted_filesize();
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating %zu bytes buffer.", buffsize);
+            Logging::error(filename(), "Out of memory pre-allocating %1 bytes buffer.", buffsize);
             return AVERROR(ENOMEM);
         }
 
@@ -659,7 +659,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating %zu bytes buffer.", buffsize);
+            Logging::error(filename(), "Out of memory pre-allocating %1 bytes buffer.", buffsize);
             return AVERROR(ENOMEM);
         }
 

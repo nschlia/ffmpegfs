@@ -79,14 +79,14 @@ typedef struct VIRTUALFILE
 
     }
 
-    VIRTUALTYPE     m_type;                                         /**< @brief Type of this virtual file */
+    VIRTUALTYPE         m_type;                                     /**< @brief Type of this virtual file */
 
-    int             m_format_idx;                                   /**< @brief Index into params.format[] array */
-    std::string     m_origfile;                                     /**< @brief Sanitised original file name */
-    struct stat     m_st;                                           /**< @brief stat structure with size etc. */
+    int                 m_format_idx;                               /**< @brief Index into params.format[] array */
+    std::string         m_origfile;                                 /**< @brief Sanitised original file name */
+    struct stat         m_st;                                       /**< @brief stat structure with size etc. */
 
-    bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
-    int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    bool                m_full_title;                               /**< @brief If true, ignore m_chapter_no and provide full track */
+    int64_t             m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
 
     std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 

@@ -72,7 +72,7 @@ public:
      * @param[in] erase_cache - if true delete old file before opening.
      * @return Returns true on success; false on error.
      */
-    bool                    init(bool erase_cache = false);
+    bool                    init(bool erase_cache);
     /**
      * @brief Release cache buffer.
      * @param[in] flags - One of the CLOSE_CACHE_* flags.
@@ -217,6 +217,12 @@ protected:
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile();
+    /**
+     * @brief Check if the cache file is open
+     * @return Returns true if the cache file is open; false if not.
+     */
+
+    bool                    is_open() const;
 
 private:
     /**
@@ -261,7 +267,7 @@ private:
      * @param[out] defaultsize - Default size of the file if it does not exist. This parameter can be zero in which case the size will be set to the system's page size.
      * @return Returns true if successful and fd, p, filesize, isdefaultsize filled in or false on error.
      */
-    bool                    map_file(const std::string & filename, int *fd, void **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const;
+    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const;
     /**
      * @brief Umnap memory from file.
      * @param[in] filename - Name of cache file to unmap.
@@ -270,11 +276,10 @@ private:
      * @param[in] filesize - Actual size of the cache file.
      * @return Returns true on success; false on error.
      */
-    bool                    unmap_file(const std::string & filename, int fd, void *p, size_t filesize) const;
+    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, size_t *buffer_pos) const;
 
 private:
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
-    volatile bool           m_is_open;                      /**< @brief true if cache is open */
     std::string             m_cachefile;                    /**< @brief Cache file name */
     int                     m_fd;                           /**< @brief File handle for buffer */
     uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */

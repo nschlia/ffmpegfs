@@ -561,11 +561,6 @@ bool Buffer::reallocate(size_t newsize)
     return true;
 }
 
-const std::string & Buffer::filename() const
-{
-    return virtualfile()->m_origfile;
-}
-
 const std::string & Buffer::cachefile() const
 {
     return m_cachefile;

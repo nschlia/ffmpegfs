@@ -93,9 +93,19 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
 
 void FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
 {
-    //assert(virtualfile->m_type == type());
-
     m_virtualfile = virtualfile;
+
+    if (virtualfile != nullptr)
+    {
+        // Store path to original file without file name for fast access
+        m_path = m_virtualfile->m_origfile;
+
+        remove_filename(&m_path);
+    }
+    else
+    {
+        m_path.clear();
+    }
 }
 
 LPCVIRTUALFILE FileIO::virtualfile() const
@@ -103,12 +113,19 @@ LPCVIRTUALFILE FileIO::virtualfile() const
     return m_virtualfile;
 }
 
-const std::string & FileIO::set_path(const std::string & path)
+const std::string & FileIO::path() const
 {
-    m_path = path;
-
-    remove_filename(&m_path);
-
     return m_path;
+}
+
+const std::string & FileIO::filename() const
+{
+    if (virtualfile() == nullptr)
+    {
+        static const std::string empty;
+        return empty;
+    }
+
+    return virtualfile()->m_origfile;
 }
 

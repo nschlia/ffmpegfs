@@ -71,8 +71,6 @@ int VcdIO::open(LPCVIRTUALFILE virtualfile)
 
     set_virtualfile(virtualfile);
 
-    set_path(virtualfile->m_origfile);
-
     if (virtualfile != nullptr)
     {
         m_full_title    = virtualfile->m_full_title;
@@ -90,7 +88,7 @@ int VcdIO::open(LPCVIRTUALFILE virtualfile)
         m_end_pos       = size();
     }
 
-    VCDUTILS::locate_video(m_path, m_track_no, src_filename);
+    VCDUTILS::locate_video(path(), m_track_no, src_filename);
 
     Logging::info(src_filename.c_str(), "Opening input VCD.");
 

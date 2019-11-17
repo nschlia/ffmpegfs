@@ -187,11 +187,6 @@ public:
      */
     bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize);
     /**
-     * @brief Get source filename.
-     * @return Returns source filename.
-     */
-    const std::string &     filename() const;
-    /**
      * @brief Get cache filename.
      * @return Returns cache filename.
      */

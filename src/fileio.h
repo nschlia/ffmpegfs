@@ -295,23 +295,25 @@ public:
      * @return Current virtual file object or nullptr if unset.
      */
     LPCVIRTUALFILE      virtualfile() const;
+    /**
+     * @brief Get source filename.
+     * @return Returns source filename.
+     */
+    const std::string & filename() const;
+    /**
+     * @brief Path to source file (without file name)
+     * @return  Returns path to source file.
+     */
+    const std::string & path() const;
 
 protected:
     /** @brief Set the virtual file object.
      * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
      */
     void                set_virtualfile(LPCVIRTUALFILE virtualfile);
-    /**
-     * @brief Set the internal source path
-     * @param[in] path - Source path, with or without file name
-     * @return Source path without file name
-     */
-    const std::string & set_path(const std::string & path);
-
-protected:
-    std::string         m_path;                                     /**< @brief Source path (directory without file name) */
 
 private:
+    std::string         m_path;                                     /**< @brief Source path (directory without file name) */
     LPCVIRTUALFILE      m_virtualfile;                              /**< @brief Virtual file object of current file */
 };
 

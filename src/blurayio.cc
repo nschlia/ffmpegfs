@@ -82,9 +82,7 @@ int BlurayIO::open(LPCVIRTUALFILE virtualfile)
 
     set_virtualfile(virtualfile);
 
-    set_path(virtualfile->m_origfile);
-
-    bdpath = m_path.c_str();
+    bdpath = path().c_str();
 
     if (virtualfile != nullptr)
     {
@@ -206,7 +204,7 @@ size_t BlurayIO::read(void * data, size_t size)
         int res = bd_read(m_bd, m_data, maxsize);
         if (res < 0)
         {
-            Logging::error(m_path, "bd_read fail");
+            Logging::error(path(), "bd_read fail");
             return 0;
         }
 

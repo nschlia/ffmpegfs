@@ -206,11 +206,6 @@ public:
      */
     bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize);
     /**
-     * @brief Get source filename.
-     * @return Returns source filename.
-     */
-    const std::string &     filename() const;
-    /**
      * @brief Get cache filename.
      * @return Returns cache filename.
      */
@@ -219,7 +214,7 @@ public:
      * @brief Make up a cache file name including full path
      * @param[out] cachefile - Name of cache file.
      * @param[in] filename - Source file name.
-     * @param[in] fileext - Destination type (MP4, WEBM etc.).
+     * @param[in] fileext - File extension (MP4, WEBM etc.).
      * @param[in] is_idx - If true, create index file; otherwise create a cache.
      * @return Returns the name of the cache file.
      */

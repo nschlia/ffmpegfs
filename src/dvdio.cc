@@ -94,8 +94,6 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
 
     set_virtualfile(virtualfile);
 
-    set_path(virtualfile->m_origfile);
-
     if (virtualfile != nullptr)
     {
         m_full_title    = virtualfile->m_full_title;
@@ -113,13 +111,13 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
         m_duration      = AV_NOPTS_VALUE;
     }
 
-    Logging::debug(m_path, "Opening input DVD.");
+    Logging::debug(path(), "Opening input DVD.");
 
     // Open the disc.
-    m_dvd = DVDOpen(m_path.c_str());
+    m_dvd = DVDOpen(path().c_str());
     if (!m_dvd)
     {
-        Logging::error(m_path, "Couldn't open DVD.");
+        Logging::error(path(), "Couldn't open DVD.");
         return EINVAL;
     }
 
@@ -127,18 +125,18 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
     m_vmg_file = ifoOpen(m_dvd, 0);
     if (!m_vmg_file)
     {
-        Logging::error(m_path, "Can't open VMG info.");
+        Logging::error(path(), "Can't open VMG info.");
         DVDClose(m_dvd);
         return EINVAL;
     }
     tt_srpt = m_vmg_file->tt_srpt;
 
     // Make sure our title number is valid.
-    Logging::trace(m_path, "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts));
+    Logging::trace(path(), "There are %1 titles on this DVD.", static_cast<uint16_t>(tt_srpt->nr_of_srpts));
 
     if (m_title_idx < 0 || m_title_idx >= tt_srpt->nr_of_srpts)
     {
-        Logging::error(m_path, "Invalid title %1.", m_title_idx + 1);
+        Logging::error(path(), "Invalid title %1.", m_title_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
@@ -149,14 +147,14 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
 
     if (m_chapter_idx < 0 || m_chapter_idx >= tt_srpt->title[m_title_idx].nr_of_ptts)
     {
-        Logging::error(m_path, "Invalid chapter %1", m_chapter_idx + 1);
+        Logging::error(path(), "Invalid chapter %1", m_chapter_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
     }
 
     // Make sure the angle number is valid for this title.
-    Logging::trace(m_path, "There are %1 angles in this title.", tt_srpt->title[m_title_idx].nr_of_angles);
+    Logging::trace(path(), "There are %1 angles in this title.", tt_srpt->title[m_title_idx].nr_of_angles);
 
     if (m_angle_idx < 0 || m_angle_idx >= tt_srpt->title[m_title_idx].nr_of_angles)
     {
@@ -170,7 +168,7 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
     m_vts_file = ifoOpen(m_dvd, tt_srpt->title[m_title_idx].title_set_nr);
     if (!m_vts_file)
     {
-        Logging::error(m_path, "Can't open the title %1 info file.", tt_srpt->title[m_title_idx].title_set_nr);
+        Logging::error(path(), "Can't open the title %1 info file.", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
@@ -197,7 +195,7 @@ int DvdIO::open(LPCVIRTUALFILE virtualfile)
     m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_idx].title_set_nr, DVD_READ_TITLE_VOBS);
     if (!m_dvd_title)
     {
-        Logging::error(m_path, "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
+        Logging::error(path(), "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vts_file);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
@@ -602,28 +600,28 @@ size_t DvdIO::read(void * data, size_t size)
             maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
             if (maxlen != 1)
             {
-                Logging::error(m_path, "Read failed for block at %1", m_cur_block);
+                Logging::error(path(), "Read failed for block at %1", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
 
             if (!is_nav_pack(m_buffer))
             {
-                Logging::warning(m_path, "Block at %1 is probably not a NAV packet. Transcode may fail.", m_cur_block);
+                Logging::warning(path(), "Block at %1 is probably not a NAV packet. Transcode may fail.", m_cur_block);
             }
 
             // Parse the contained dsi packet.
             dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_vobu, m_buffer);
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
-                Logging::error(m_path, "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", m_cur_block);
+                Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
 
             if (cur_output_size >= 1024)
             {
-                Logging::error(m_path, "Read failed at %1 because current output size %2 >= 1024", m_cur_block, cur_output_size);
+                Logging::error(path(), "Read failed at %1 because current output size %2 >= 1024", m_cur_block, cur_output_size);
                 m_errno = EIO;
                 return 0;
             }
@@ -635,7 +633,7 @@ size_t DvdIO::read(void * data, size_t size)
 
             if (maxlen != static_cast<int>(cur_output_size))
             {
-                Logging::error(m_path, "Read failed for %1 blocks at %2", cur_output_size, m_cur_block);
+                Logging::error(path(), "Read failed for %1 blocks at %2", cur_output_size, m_cur_block);
                 m_errno = EIO;
                 return 0;
             }

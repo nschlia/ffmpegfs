@@ -200,7 +200,7 @@ public:
      * @brief Make up a cache file name including full path
      * @param[out] cachefile - Name of cache file.
      * @param[in] filename - Source file name.
-     * @param[in] desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] fileext - File extension (MP4, WEBM etc.).
      * @return Returns the name of the cache file.
      */
     static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &fileext);

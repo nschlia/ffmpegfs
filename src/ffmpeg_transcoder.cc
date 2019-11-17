@@ -3739,16 +3739,8 @@ size_t FFmpeg_Transcoder::predicted_filesize()
 
 int FFmpeg_Transcoder::encode_finish()
 {
-    int ret = 0;
-
     // Write the trailer of the output file container.
-    ret = write_output_file_trailer();
-    if (ret < 0)
-    {
-        Logging::error(destname(), "Error writing trailer (error '%1').", ffmpeg_geterror(ret).c_str());
-    }
-
-    return ret;
+    return write_output_file_trailer();
 }
 
 const ID3v1 * FFmpeg_Transcoder::id3v1tag() const

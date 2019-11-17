@@ -91,13 +91,11 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
     }
 }
 
-const std::string &FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
+void FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
 {
     //assert(virtualfile->m_type == type());
 
     m_virtualfile = virtualfile;
-
-    return m_virtualfile->m_origfile;
 }
 
 LPCVIRTUALFILE FileIO::virtualfile() const

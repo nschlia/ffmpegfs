@@ -84,6 +84,11 @@ then
     # aiff
     check_filesize "obama" 208260 208694
     check_filesize "raven" 1739034 1740298
+elif [ "${DESTTYPE}" == "ts" ];
+then
+    # ts
+    check_filesize "obama" 150400 153408
+    check_filesize "raven" 196084 213568
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

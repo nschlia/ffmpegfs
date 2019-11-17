@@ -67,10 +67,11 @@ size_t VcdIO::bufsize() const
 
 int VcdIO::open(LPCVIRTUALFILE virtualfile)
 {
-    std::string filename = set_virtualfile(virtualfile);
     std::string src_filename;
 
-    set_path(filename);
+    set_virtualfile(virtualfile);
+
+    set_path(virtualfile->m_origfile);
 
     if (virtualfile != nullptr)
     {

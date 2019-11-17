@@ -41,8 +41,7 @@
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
-    : m_is_open(false)
-    , m_fd(-1)
+    : m_fd(-1)
     , m_buffer(nullptr)
     , m_buffer_pos(0)
     , m_buffer_watermark(0)
@@ -77,19 +76,120 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
         return (EOF);
     }
 
-    m_filename = set_virtualfile(virtualfile);
-    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->desttype(), false);
+    set_virtualfile(virtualfile);
+
+    make_cachefile_name(m_cachefile, filename(), params.current_format(virtualfile)->desttype(), false);
     if ((virtualfile->m_flags & VIRTUALFLAG_FILESET) && (virtualfile->m_flags & VIRTUALFLAG_FRAME))
     {
         // Create extra index cash for frame sets only
-        make_cachefile_name(m_cachefile_idx, m_filename, params.current_format(virtualfile)->desttype(), true);
+        make_cachefile_name(m_cachefile_idx, filename(), params.current_format(virtualfile)->desttype(), true);
     }
     return 0;
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, void **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
+bool Buffer::init(bool erase_cache)
+{
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (is_open())
+    {
+        return true;
+    }
+
+    bool success = true;
+
+    make_cachefile_name(m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
+
+    try
+    {
+        // Create the path to the cache file
+        char *cachefile = new_strdup(m_cachefile);
+
+        if (cachefile == nullptr)
+        {
+            Logging::error(m_cachefile, "Error opening cache file: Out of memory");
+            errno = ENOMEM;
+            throw false;
+        }
+
+        if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
+        {
+            Logging::error(m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
+            delete [] cachefile;
+            throw false;
+        }
+        errno = 0;  // reset EEXIST, error can safely be ignored here
+
+        delete [] cachefile;
+
+        m_buffer_size       = 0;
+        m_buffer            = nullptr;
+        m_buffer_pos        = 0;
+        m_buffer_watermark  = 0;
+
+        if (erase_cache)
+        {
+            remove_cachefile();
+            errno = 0;  // ignore this error
+        }
+
+        size_t filesize     = 0;
+        bool isdefaultsize  = false;
+        uint8_t *p          = nullptr;
+
+        if (!map_file(m_cachefile, &m_fd, &p, &filesize, &isdefaultsize, 0))
+        {
+            throw false;
+        }
+
+        if (!isdefaultsize)
+        {
+            m_buffer_pos = m_buffer_watermark = filesize;
+        }
+
+        m_buffer_size       = filesize;
+        m_buffer            = static_cast<uint8_t*>(p);
+
+        if (!m_cachefile_idx.empty())
+        {
+            assert(virtualfile()->m_video_frame_count > 0);
+            assert(sizeof(IMAGE_FRAME) == 32);
+
+            filesize            = 0;
+            isdefaultsize       = true;
+            p                   = nullptr;
+
+            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
+            {
+                throw false;
+            }
+
+            m_buffer_size_idx   = filesize;
+            m_buffer_idx        = static_cast<uint8_t*>(p);
+        }
+    }
+    catch (bool _success)
+    {
+        success = _success;
+
+        if (!success)
+        {
+            m_buffer            = nullptr;
+            m_buffer_pos        = 0;
+            m_buffer_watermark  = 0;
+            m_buffer_size       = 0;
+            m_fd 			= -1;
+        }
+    }
+
+    return success;
+}
+
+bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
 {
     bool success = true;
+
+    Logging::trace(filename, "Mapping cache file.");
 
     try
     {
@@ -129,17 +229,17 @@ bool Buffer::map_file(const std::string & filename, int *fd, void **p, size_t *f
                 throw false;
             }
 
-            *filesize = static_cast<size_t>(defaultsize);
-            *isdefaultsize = true;
+            *filesize       = static_cast<size_t>(defaultsize);
+            *isdefaultsize  = true;
         }
         else
         {
             // Keep size
-            *filesize = static_cast<size_t>(sb.st_size);
-            *isdefaultsize = false;
+            *filesize       = static_cast<size_t>(sb.st_size);
+            *isdefaultsize  = false;
         }
 
-        *p = mmap(nullptr, *filesize, PROT_READ | PROT_WRITE, MAP_SHARED, *fd, 0);
+        *p = static_cast<uint8_t *>(mmap(nullptr, *filesize, PROT_READ | PROT_WRITE, MAP_SHARED, *fd, 0));
         if (*p == MAP_FAILED)
         {
             Logging::error(filename, "File mapping failed: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
@@ -150,135 +250,53 @@ bool Buffer::map_file(const std::string & filename, int *fd, void **p, size_t *f
     {
         success = _success;
 
-        if (!success)
+        if (!success && *fd != -1)
         {
-            if (*fd != -1)
-            {
-                ::close(*fd);
-                *fd = -1;
-            }
+            ::close(*fd);
+            *fd = -1;
         }
     }
 
     return success;
 }
 
-bool Buffer::init(bool erase_cache)
-{
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
-
-    if (m_is_open)
-    {
-        return true;
-    }
-
-    m_is_open = true;   // Block this now
-
-    bool success = true;
-
-    try
-    {
-        // Create the path to the cache file
-        char *cachefile = new_strdup(m_cachefile);
-
-        if (cachefile == nullptr)
-        {
-            Logging::error(m_cachefile, "Error opening cache file: Out of memory");
-            errno = ENOMEM;
-            throw false;
-        }
-
-        if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
-        {
-            Logging::error(m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
-            delete [] cachefile;
-            throw false;
-        }
-        errno = 0;  // reset EEXIST, error can safely be ignored here
-
-        delete [] cachefile;
-
-        m_buffer_size       = 0;
-        m_buffer            = nullptr;
-        m_buffer_pos        = 0;
-        m_buffer_watermark  = 0;
-
-        if (erase_cache)
-        {
-            remove_cachefile();
-            errno = 0;  // ignore this error
-        }
-
-        size_t filesize     = 0;
-        bool isdefaultsize  = false;
-        void *p             = nullptr;
-
-        if (!map_file(m_cachefile, &m_fd, &p, &filesize, &isdefaultsize, 0))
-        {
-            throw false;
-        }
-
-        if (!isdefaultsize)
-        {
-            m_buffer_pos = m_buffer_watermark = filesize;
-        }
-
-        m_buffer_size       = filesize;
-        m_buffer            = static_cast<uint8_t*>(p);
-
-        if (!m_cachefile_idx.empty())
-        {
-            assert(virtualfile()->m_video_frame_count > 0);
-            assert(sizeof(IMAGE_FRAME) == 32);
-
-            filesize            = 0;
-            isdefaultsize       = true;
-            p                   = nullptr;
-
-            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
-            {
-                throw false;
-            }
-
-            m_buffer_size_idx   = filesize;
-            m_buffer_idx        = static_cast<uint8_t*>(p);
-        }
-    }
-    catch (bool _success)
-    {
-        success = _success;
-
-        if (!success)
-        {
-            m_is_open = false;  // Unblock now
-        }
-    }
-
-    return success;
-}
-
-bool Buffer::unmap_file(const std::string &filename, int fd, void *p, size_t filesize) const
+bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t * filesize, size_t *buffer_pos /*= nullptr*/) const
 {
     bool success = true;
 
-    if (p != nullptr)
+    Logging::trace(filename, "Unmapping cache file.");
+
+    void *  __p         = *p;
+    size_t  __filesize  = *filesize;
+    int     __fd        = *fd;
+
+    // Clear all variables
+    p           = nullptr;
+    *filesize   = 0;
+    if (buffer_pos != nullptr)
     {
-        if (munmap(p, filesize) == -1)
+        *buffer_pos = 0;
+    }
+    *fd         = -1;
+
+    if (__p != nullptr)
+    {
+        if (munmap(__p, __filesize) == -1)
         {
             Logging::error(filename, "File unmapping failed: (%1) %2", errno, strerror(errno));
             success = false;
         }
     }
 
-    if (fd != -1)
+    if (__fd != -1)
     {
-        if (ftruncate(fd, static_cast<off_t>(filesize)) == -1)
+        if (ftruncate(__fd, static_cast<off_t>(__filesize)) == -1)
         {
-            Logging::error(filename, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), fd);
+            Logging::error(filename, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
             success = false;
         }
 
-        ::close(fd);
+        ::close(__fd);
     }
 
     return success;
@@ -290,7 +308,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     bool success = true;
 
-    if (!m_is_open)
+    if (!is_open())
     {
         if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
         {
@@ -304,31 +322,14 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
     // Write it now to disk
     flush();
 
-    void *p         = m_buffer;
-    size_t size     = m_buffer_size;
-    int fd          = m_fd;
-
-    m_buffer        = nullptr;
-    m_buffer_size   = 0;
-    m_buffer_pos    = 0;
-    m_fd            = -1;
-
-    if (!unmap_file(m_cachefile, fd, p, size))
+    if (!unmap_file(m_cachefile, &m_fd, &m_buffer, &m_buffer_watermark, &m_buffer_pos))
     {
         success = false;
     }
 
     if (!m_cachefile_idx.empty())
     {
-        p                   = m_buffer_idx;
-        size                = m_buffer_size_idx;
-        fd                  = m_fd_idx;
-
-        m_buffer_idx        = nullptr;
-        m_buffer_size_idx   = 0;
-        m_fd_idx            = -1;
-
-        if (!unmap_file(m_cachefile_idx, fd, p, size))
+        if (!unmap_file(m_cachefile_idx, &m_fd_idx, &m_buffer_idx, &m_buffer_size_idx))
         {
             success = false;
         }
@@ -339,8 +340,6 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         remove_cachefile();
         errno = 0;  // ignore this error
     }
-
-    m_is_open       = false;
 
     return success;
 }
@@ -664,14 +663,14 @@ bool Buffer::reallocate(size_t newsize)
             return false;
         }
 
-        Logging::trace(m_filename, "Buffer reallocate: %1 -> %2.", oldsize, newsize);
+        Logging::trace(filename(), "Buffer reallocate: %1 -> %2.", oldsize, newsize);
     }
     return true;
 }
 
 const std::string & Buffer::filename() const
 {
-    return m_filename;
+    return virtualfile()->m_origfile;
 }
 
 const std::string & Buffer::cachefile() const
@@ -679,12 +678,13 @@ const std::string & Buffer::cachefile() const
     return m_cachefile;
 }
 
-const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype, bool is_idx)
+const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & fileext, bool is_idx)
 {
     transcoder_cache_path(cachefile);
 
     cachefile += params.m_mountpath;
     cachefile += filename;
+
     if (is_idx)
     {
         cachefile += ".idx.";
@@ -693,7 +693,7 @@ const std::string & Buffer::make_cachefile_name(std::string & cachefile, const s
     {
         cachefile += ".cache.";
     }
-    cachefile += desttype;
+    cachefile += fileext;
 
     return cachefile;
 }
@@ -780,3 +780,7 @@ bool Buffer::have_frame(uint32_t frame_no)
     return (image_frame->m_frame_no ? true : false);
 }
 
+bool Buffer::is_open() const
+{
+    return (m_fd != -1 && (fcntl(m_fd, F_GETFL) != -1 || errno != EBADF));
+}

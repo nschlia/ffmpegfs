@@ -208,7 +208,7 @@ public:
      */
     size_t                      predicted_filesize();
     /**
-     * @brief Calculate the number of video frames in file.
+     * @brief Get the number of video frames in file.
      * @return On success, returns the number of frames; on error, returns 0 (calculation failed or no video source file).
      */
     uint32_t                    video_frame_count() const;
@@ -255,15 +255,7 @@ public:
      * @brief Closes the output file of open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
      * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
      */
-    bool                        close_output_file_with_report();
-    /**
-     * @brief Closes the output file of open. Can safely be called again after the file was already closed or if the file was never open.
-     * @param[out] outfile - Name of output file. May be nullptr if not required.
-     * @param[out] audio_samples_left - If audio samples are left in buffer their number will be returned here. May be nullptr if not required.
-     * @param[out] video_frames_left - If video frames are left in buffer their number will be returned here. May be nullptr if not required.
-     * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
-     */
-    bool                        close_output_file(std::string * outfile = nullptr, int * audio_samples_left = nullptr, size_t * video_frames_left = nullptr);
+    bool                        close_output_file();
     /**
      * @brief Closes the input file of open. Can safely be called again after the file was already closed or if the file was never open.
      * @return Returns true if the input file was closed, false if it was not upon upon calling this function.
@@ -669,6 +661,10 @@ protected:
      */
     int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);
     /**
+     * @brief Purge FIFO buffers and report lost packet.
+     */
+    void                        purge_fifos();
+    /**
      * @brief Actually perform seek for frame.
      * This function ensures that it is positioned at a key frame, so the resulting position may be different from the requested.
      * If e.g. frame no. 24 is a key frame, and frame_no is set to 28, the actual position will be at frame 24.
@@ -729,7 +725,7 @@ private:
 
     FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
 
-    Buffer *                    m_buffer;                   /**< @brief Copy of the cache buffer object */
+    Buffer *                    m_buffer;                   /**< @brief Pointer to cache buffer object */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

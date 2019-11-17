@@ -126,17 +126,17 @@ typedef struct VIRTUALFILE
 
     }
 
-    VIRTUALTYPE     m_type;                                         /**< @brief Type of this virtual file */
-    int             m_flags;                                        /**< @brief One of the VIRTUALFLAG_* flags */
+    VIRTUALTYPE         m_type;                                     /**< @brief Type of this virtual file */
+    int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */
 
-    int             m_format_idx;                                   /**< @brief Index into params.format[] array */
-    std::string     m_origfile;                                     /**< @brief Sanitised original file name */
-    struct stat     m_st;                                           /**< @brief stat structure with size etc. */
+    int                 m_format_idx;                               /**< @brief Index into params.format[] array */
+    std::string         m_origfile;                                 /**< @brief Sanitised original file name */
+    struct stat         m_st;                                       /**< @brief stat structure with size etc. */
 
-    bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
-    int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
-    size_t          m_predicted_size;                               /**< @brief Use this as the size instead of computing it over and over. */
-    uint32_t        m_video_frame_count;                            /**< @brief Number of frames in video or 0 if not a video */
+    bool                m_full_title;                               /**< @brief If true, ignore m_chapter_no and provide full track */
+    int64_t             m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    size_t              m_predicted_size;                           /**< @brief Use this as the size instead of computing it over and over. */
+    uint32_t            m_video_frame_count;                        /**< @brief Number of frames in video or 0 if not a video */
 
     std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 
@@ -299,9 +299,8 @@ public:
 protected:
     /** @brief Set the virtual file object.
      * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
-     * @return File name and path of original file.
      */
-    const std::string & set_virtualfile(LPCVIRTUALFILE virtualfile);
+    void                set_virtualfile(LPCVIRTUALFILE virtualfile);
     /**
      * @brief Set the internal source path
      * @param[in] path - Source path, with or without file name

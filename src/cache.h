@@ -201,7 +201,7 @@ public:
      * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns true on success; false on error.
      */
-    bool                    remove_cachefile(const std::string & filename, const std::string &desttype);
+    bool                    remove_cachefile(const std::string & filename, const std::string &fileext);
 
 protected:
     /**

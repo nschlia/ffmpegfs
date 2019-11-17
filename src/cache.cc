@@ -1266,16 +1266,16 @@ bool Cache::clear()
     return success;
 }
 
-bool Cache::remove_cachefile(const std::string & filename, const std::string & desttype)
+bool Cache::remove_cachefile(const std::string & filename, const std::string & fileext)
 {
     std::string cachefile;
     bool success;
 
-    Buffer::make_cachefile_name(cachefile, filename, desttype, false);
+    Buffer::make_cachefile_name(cachefile, filename, fileext, false);
 
     success = Buffer::remove_file(cachefile);
 
-    Buffer::make_cachefile_name(cachefile, filename, desttype, true);
+    Buffer::make_cachefile_name(cachefile, filename, fileext, true);
 
     if (!Buffer::remove_file(cachefile) && errno != ENOENT)
     {

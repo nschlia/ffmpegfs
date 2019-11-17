@@ -76,6 +76,11 @@ then
 	# alac
 	check_audio "obama" "flac" 0.0
 	check_audio "raven" "ogg" 0.0
+elif [ "${DESTTYPE}" == "ts" ];
+then
+	# ts
+	check_audio "obama" "flac" 0.035
+	check_audio "raven" "ogg" 0.050
 else
         echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 	exit 99

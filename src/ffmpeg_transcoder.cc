@@ -505,7 +505,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     // Predict size of transcoded file as exact as possible
     virtualfile->m_predicted_size = m_predicted_size;
 
-    // Calulcate number or video frames in file based on duration and fram rate
+    // Calculate number or video frames in file based on duration and frame rate
     if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
     {
         // Number of frames: should be quite accurate

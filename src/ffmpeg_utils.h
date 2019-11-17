@@ -321,7 +321,7 @@ public:
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
     std::string m_desttype;                 /**< @brief Destination type: mp4, mp3 or other */
-    std::string m_fileext;                   /**< @brief File extensio: mp4, mp3, flac or other */
+    std::string m_fileext;                  /**< @brief File extension: mp4, mp3, flac or other */
     FILETYPE    m_filetype;                 /**< @brief File type, MP3, MP4, OPUS etc. */
     AVCodecID   m_video_codec_id;           /**< @brief AVCodec used for video encoding */
     AVCodecID   m_audio_codec_id;           /**< @brief AVCodec used for audio encoding */

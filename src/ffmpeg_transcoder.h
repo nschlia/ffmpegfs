@@ -249,15 +249,7 @@ public:
      * @brief Closes the output file of open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
      * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
      */
-    bool                        close_output_file_with_report();
-    /**
-     * @brief Closes the output file of open. Can safely be called again after the file was already closed or if the file was never open.
-     * @param[out] outfile - Name of output file. May be nullptr if not required.
-     * @param[out] audio_samples_left - If audio samples are left in buffer their number will be returned here. May be nullptr if not required.
-     * @param[out] video_frames_left - If video frames are left in buffer their number will be returned here. May be nullptr if not required.
-     * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
-     */
-    bool                        close_output_file(std::string * outfile = nullptr, int * audio_samples_left = nullptr, size_t * video_frames_left = nullptr);
+    bool                        close_output_file();
     /**
      * @brief Closes the input file of open. Can safely be called again after the file was already closed or if the file was never open.
      * @return Returns true if the input file was closed, false if it was not upon upon calling this function.
@@ -619,6 +611,10 @@ protected:
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);
+    /**
+     * @brief Purge FIFO buffers and report lost packet.
+     */
+    void                        purge_fifos();
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */

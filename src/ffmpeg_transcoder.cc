@@ -3847,33 +3847,20 @@ bool FFmpeg_Transcoder::close_resample()
     return false;
 }
 
-bool FFmpeg_Transcoder::close_output_file(std::string *outfile, int *audio_samples_left, size_t *video_frames_left)
+void FFmpeg_Transcoder::purge_fifos()
 {
-    bool closed = false;
+    std::string outfile;
+    int audio_samples_left = 0;
+    size_t video_frames_left = 0;
 
-    if (m_audio_fifo)
+    if (m_audio_fifo != nullptr)
     {
-        if (audio_samples_left != nullptr)
-        {
-            *audio_samples_left = av_audio_fifo_size(m_audio_fifo);
-        }
-        else
-        {
-            av_audio_fifo_size(m_audio_fifo);
-        }
+        audio_samples_left = av_audio_fifo_size(m_audio_fifo);
         av_audio_fifo_free(m_audio_fifo);
         m_audio_fifo = nullptr;
-        closed = true;
     }
 
-    if (video_frames_left != nullptr)
-    {
-        *video_frames_left = m_video_fifo.size();
-    }
-    else
-    {
-        m_video_fifo.size();
-    }
+    video_frames_left = m_video_fifo.size();
 
     while (m_video_fifo.size())
     {
@@ -3881,8 +3868,38 @@ bool FFmpeg_Transcoder::close_output_file(std::string *outfile, int *audio_sampl
         m_video_fifo.pop();
 
         av_frame_free(&output_frame);
-        closed = true;
     }
+
+    if (m_out.m_format_ctx != nullptr)
+    {
+#if LAVF_DEP_FILENAME
+        if (m_out.m_format_ctx->url != nullptr)
+        {
+            outfile = m_out.m_format_ctx->url;
+        }
+#else
+        // lavf 58.7.100 - avformat.h - deprecated
+        outfile = m_out.m_format_ctx->filename;
+#endif
+    }
+
+    const char *p = outfile.empty() ? nullptr : outfile.c_str();
+    if (audio_samples_left)
+    {
+        Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", audio_samples_left);
+    }
+
+    if (video_frames_left)
+    {
+        Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
+    }
+}
+
+bool FFmpeg_Transcoder::close_output_file()
+{
+    bool closed = false;
+
+    purge_fifos();
 
     if (close_resample())
     {
@@ -3944,19 +3961,6 @@ bool FFmpeg_Transcoder::close_output_file(std::string *outfile, int *audio_sampl
 
     if (m_out.m_format_ctx != nullptr)
     {
-#if LAVF_DEP_FILENAME
-        if (m_out.m_format_ctx->url != nullptr && outfile != nullptr)
-        {
-            *outfile = m_out.m_format_ctx->url;
-        }
-#else
-        if (outfile != nullptr)
-        {
-            // lavf 58.7.100 - avformat.h - deprecated
-            *outfile = m_out.m_format_ctx->filename;
-        }
-#endif
-
         if (m_out.m_format_ctx->pb != nullptr)
         {
             // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
@@ -4064,33 +4068,6 @@ bool FFmpeg_Transcoder::close_input_file()
     return closed;
 }
 
-bool FFmpeg_Transcoder::close_output_file_with_report()
-{
-    std::string outfile;
-    int audio_samples_left = 0;
-    size_t video_frames_left = 0;
-    bool closed = false;
-
-    // Close output file
-    closed = close_output_file(&outfile, &audio_samples_left, &video_frames_left);
-
-    if (closed)
-    {
-        const char *p = outfile.empty() ? nullptr : outfile.c_str();
-        if (audio_samples_left)
-        {
-            Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", audio_samples_left);
-        }
-
-        if (video_frames_left)
-        {
-            Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
-        }
-    }
-
-    return closed;
-}
-
 void FFmpeg_Transcoder::close()
 {
     bool closed = false;
@@ -4099,7 +4076,7 @@ void FFmpeg_Transcoder::close()
     closed |= close_input_file();
 
     // Close output file
-    closed |= close_output_file_with_report();
+    closed |= close_output_file();
 
     if (closed)
     {

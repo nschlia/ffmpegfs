@@ -823,11 +823,11 @@ bool Cache::clear()
     return success;
 }
 
-bool Cache::remove_cachefile(const std::string & filename, const std::string & desttype)
+bool Cache::remove_cachefile(const std::string & filename, const std::string & fileext)
 {
     std::string cachefile;
 
-    Buffer::make_cachefile_name(cachefile, filename, desttype);
+    Buffer::make_cachefile_name(cachefile, filename, fileext);
 
     return Buffer::remove_file(cachefile);
 }

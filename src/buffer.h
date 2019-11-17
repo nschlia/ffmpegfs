@@ -203,7 +203,7 @@ public:
      * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return Returns the name of the cache file.
      */
-    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &desttype);
+    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &fileext);
     /**
      * @brief Remove (unlink) file.
      * @param[in] filename - Name of file to remove.

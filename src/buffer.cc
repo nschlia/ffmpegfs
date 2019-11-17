@@ -73,7 +73,7 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
     }
 
     m_filename = set_virtualfile(virtualfile);
-    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->desttype());
+    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->fileext());
     return 0;
 }
 
@@ -567,14 +567,14 @@ const std::string & Buffer::cachefile() const
     return m_cachefile;
 }
 
-const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & desttype)
+const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & fileext)
 {
     transcoder_cache_path(cachefile);
 
     cachefile += params.m_mountpath;
     cachefile += filename;
     cachefile += ".cache.";
-    cachefile += desttype;
+    cachefile += fileext;
 
     return cachefile;
 }

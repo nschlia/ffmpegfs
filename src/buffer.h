@@ -274,7 +274,6 @@ private:
 
 private:
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
-    std::string             m_filename;                     /**< @brief Source file name */
     volatile bool           m_is_open;                      /**< @brief true if cache is open */
     std::string             m_cachefile;                    /**< @brief Cache file name */
     int                     m_fd;                           /**< @brief File handle for buffer */

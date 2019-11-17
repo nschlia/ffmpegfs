@@ -249,9 +249,8 @@ public:
 protected:
     /** @brief Set the virtual file object.
      * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
-     * @return File name and path of original file.
      */
-    const std::string & set_virtualfile(LPCVIRTUALFILE virtualfile);
+    void                set_virtualfile(LPCVIRTUALFILE virtualfile);
     /**
      * @brief Set the internal source path
      * @param[in] path - Source path, with or without file name

@@ -72,8 +72,8 @@ int Buffer::open(LPCVIRTUALFILE virtualfile)
         return (EOF);
     }
 
-    m_filename = set_virtualfile(virtualfile);
-    make_cachefile_name(m_cachefile, m_filename, params.current_format(virtualfile)->fileext());
+    set_virtualfile(virtualfile);
+    make_cachefile_name(m_cachefile, virtualfile->m_origfile, params.current_format(virtualfile)->fileext());
     return 0;
 }
 
@@ -552,14 +552,14 @@ bool Buffer::reallocate(size_t newsize)
             return false;
         }
 
-        Logging::trace(m_filename, "Buffer reallocate: %1 -> %2.", oldsize, newsize);
+        Logging::trace(filename(), "Buffer reallocate: %1 -> %2.", oldsize, newsize);
     }
     return true;
 }
 
 const std::string & Buffer::filename() const
 {
-    return m_filename;
+    return virtualfile()->m_origfile;
 }
 
 const std::string & Buffer::cachefile() const

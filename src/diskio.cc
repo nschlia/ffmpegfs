@@ -58,13 +58,13 @@ size_t DiskIO::bufsize() const
 
 int DiskIO::open(LPCVIRTUALFILE virtualfile)
 {
-    std::string filename = set_virtualfile(virtualfile);
+    set_virtualfile(virtualfile);
 
-    Logging::debug(filename, "Opening input file.");
+    Logging::debug(virtualfile->m_origfile, "Opening input file.");
 
-    set_path(filename);
+    set_path(virtualfile->m_origfile);
 
-    m_fpi = fopen(filename.c_str(), "rb");
+    m_fpi = fopen(virtualfile->m_origfile.c_str(), "rb");
 
     if (m_fpi != nullptr)
     {

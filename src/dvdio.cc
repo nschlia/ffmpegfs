@@ -86,14 +86,15 @@ size_t DvdIO::bufsize() const
 
 int DvdIO::open(LPCVIRTUALFILE virtualfile)
 {
-    std::string filename = set_virtualfile(virtualfile);
     int pgc_id;
     int ttn;
     int pgn;
     tt_srpt_t *tt_srpt;
     vts_ptt_srpt_t *vts_ptt_srpt;
 
-    set_path(filename);
+    set_virtualfile(virtualfile);
+
+    set_path(virtualfile->m_origfile);
 
     if (virtualfile != nullptr)
     {

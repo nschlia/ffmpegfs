@@ -74,14 +74,15 @@ size_t BlurayIO::bufsize() const
 
 int BlurayIO::open(LPCVIRTUALFILE virtualfile)
 {
-    std::string filename = set_virtualfile(virtualfile);
     const char *bdpath = nullptr;
     uint32_t title_count;
     uint32_t chapter_end;
     char *keyfile = nullptr;
     BLURAY_TITLE_INFO *ti;
 
-    set_path(filename);
+    set_virtualfile(virtualfile);
+
+    set_path(virtualfile->m_origfile);
 
     bdpath = m_path.c_str();
 

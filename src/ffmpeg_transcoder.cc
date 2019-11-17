@@ -3035,7 +3035,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 {
                     if (pkt.dts != AV_NOPTS_VALUE &&
                             pkt.pts != AV_NOPTS_VALUE &&
-                            pkt.dts > pkt.pts)
+                            pkt.dts > pkt.pts &&
+                            m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                     {
 
                         Logging::warning(destname(), "Invalid DTS: %1 PTS: %2 in video output, replacing by guess.", pkt.dts, pkt.pts);

@@ -12,7 +12,7 @@ News
 ----
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
-* **Work on version 1.96 (2.0 pre-release) now in progress.**
+* **Work on version 1.97 (2.0 pre-release) now in progress.**
 * Feature: Added version check and auto update to cache database. Older database versions will
            now automatically upgraded to the latest structure.
 * Feature: Transcode videos to frame works transparently for any input now (DVD, Bluray and VideoCD).
@@ -106,7 +106,7 @@ Playing the file via http may fail or it may take quite long until the
 file starts playing. This is a Libav insufficiency. You may have to
 replace it with FFmpeg.
 
-**Debian 9**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
+**Debian 9**, **Debian 10**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
 version of the original FFmpeg library.
 
 Tested with:
@@ -114,6 +114,7 @@ Tested with:
 * `Debian 7 Wheezy` **AVLib 0.8.21-0+deb7u1+rpi1**: not working with Libav
 * `Debian 8 Jessie` **AVLib 11.11-1~deb8u1**: not working with Libav
 * `Debian 9 Stretch` **FFmpeg 3.2.8-1~deb9u1**: OK!
+* `Debian 10 Buster` **FFmpeg 3.2.14-1~deb9u1**: OK!
 * `Ubuntu 16.04.3 LTS` **FFmpeg 2.8.11-0ubuntu0.16.04.1**: OK!
 * `Ubuntu 17.10` **FFmpeg 3.3.4-2**: OK!
 * `Suse 42` **FFmpeg 3.3.4**: No H264/AAC support by default

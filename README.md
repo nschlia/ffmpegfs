@@ -13,11 +13,6 @@ News
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
 * **Work on release 1.10 now in progress.**
-* Support: Code has now been tested to work on ARMv7 (32 bit).
-* Feature: Documented the whole project with Doxygen.
-* Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.
-* Feature: Added Apple Lossles Audio Compression (ALAC) support.
-* Libav pulled tricks on me, again: Libav 12.3 won't compile anymore under Debian 10. To fix upgraded to master branch 13_dev0.
 
 * See [NEWS](NEWS) for details.
 

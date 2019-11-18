@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 1.9 (2019-11-XX)
+Important changes in 1.9 (2019-11-18)
 
 * Support: Code has now been tested to work on ARMv7 (32 bit).
 * Feature: Documented the whole project with Doxygen.
@@ -21,7 +21,6 @@ Important changes in 1.9 (2019-11-XX)
 * Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
     Deprecate use of avfilter_register(), avfilter_register_all(),
     avfilter_next(). Added av_filter_iterate().
-* Known bug:
 
 Important changes in 1.8 (2019-05-23)
 

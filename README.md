@@ -12,7 +12,7 @@ News
 ----
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
-* **Work on release 1.9 now in progress.**
+* **Work on release 1.10 now in progress.**
 * Support: Code has now been tested to work on ARMv7 (32 bit).
 * Feature: Documented the whole project with Doxygen.
 * Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.
@@ -80,7 +80,7 @@ Playing the file via http may fail or it may take quite long until the
 file starts playing. This is a Libav insufficiency. You may have to
 replace it with FFmpeg.
 
-**Debian 9**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
+**Debian 9**, **Debian 10**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
 version of the original FFmpeg library.
 
 Tested with:
@@ -88,6 +88,7 @@ Tested with:
 * `Debian 7 Wheezy` **AVLib 0.8.21-0+deb7u1+rpi1**: not working with Libav
 * `Debian 8 Jessie` **AVLib 11.11-1~deb8u1**: not working with Libav
 * `Debian 9 Stretch` **FFmpeg 3.2.8-1~deb9u1**: OK!
+* `Debian 10 Buster` **FFmpeg 3.2.14-1~deb9u1**: OK!
 * `Ubuntu 16.04.3 LTS` **FFmpeg 2.8.11-0ubuntu0.16.04.1**: OK!
 * `Ubuntu 17.10` **FFmpeg 3.3.4-2**: OK!
 * `Suse 42` **FFmpeg 3.3.4**: No H264/AAC support by default

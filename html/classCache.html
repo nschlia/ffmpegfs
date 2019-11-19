@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.9</span>
+   &#160;<span id="projectnumber">1.10</span>
    </div>
   </td>
  </tr>
@@ -108,9 +108,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a0f836c8aadfd27e44b2414d8968c7d02"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a0f836c8aadfd27e44b2414d8968c7d02">prune_disk_space</a> (size_t predicted_filesize)</td></tr>
 <tr class="memdesc:a0f836c8aadfd27e44b2414d8968c7d02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prune cache entries to ensure disk space.  <a href="#a0f836c8aadfd27e44b2414d8968c7d02">More...</a><br /></td></tr>
 <tr class="separator:a0f836c8aadfd27e44b2414d8968c7d02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada47915e682fb328570f3abfffb57e7f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#ada47915e682fb328570f3abfffb57e7f">remove_cachefile</a> (const std::string &amp;filename, const std::string &amp;desttype)</td></tr>
-<tr class="memdesc:ada47915e682fb328570f3abfffb57e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a cache file from disk.  <a href="#ada47915e682fb328570f3abfffb57e7f">More...</a><br /></td></tr>
-<tr class="separator:ada47915e682fb328570f3abfffb57e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4447f8c8409662a39ba55fa0328ee819"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a4447f8c8409662a39ba55fa0328ee819">remove_cachefile</a> (const std::string &amp;filename, const std::string &amp;fileext)</td></tr>
+<tr class="memdesc:a4447f8c8409662a39ba55fa0328ee819"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a cache file from disk.  <a href="#a4447f8c8409662a39ba55fa0328ee819">More...</a><br /></td></tr>
+<tr class="separator:a4447f8c8409662a39ba55fa0328ee819"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -607,8 +607,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 
 </div>
 </div>
-<a id="ada47915e682fb328570f3abfffb57e7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada47915e682fb328570f3abfffb57e7f">&#9670;&nbsp;</a></span>remove_cachefile()</h2>
+<a id="a4447f8c8409662a39ba55fa0328ee819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4447f8c8409662a39ba55fa0328ee819">&#9670;&nbsp;</a></span>remove_cachefile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -623,7 +623,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>desttype</em>&#160;</td>
+          <td class="paramname"><em>fileext</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

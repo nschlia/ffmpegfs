@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.9</span>
+   &#160;<span id="projectnumber">1.10</span>
    </div>
   </td>
  </tr>
@@ -170,7 +170,7 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00539">539</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache__entry_8h_source.html#l00216">Cache_Entry::m_buffer</a>, and <a class="el" href="buffer_8cc_source.html#l00489">Buffer::tell()</a>.</p>
+<p class="reference">References <a class="el" href="cache__entry_8h_source.html#l00216">Cache_Entry::m_buffer</a>, and <a class="el" href="buffer_8cc_source.html#l00491">Buffer::tell()</a>.</p>
 
 </div>
 </div>
@@ -202,7 +202,7 @@ Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00534">534</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00504">Buffer::buffer_watermark()</a>, and <a class="el" href="cache__entry_8h_source.html#l00216">Cache_Entry::m_buffer</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00506">Buffer::buffer_watermark()</a>, and <a class="el" href="cache__entry_8h_source.html#l00216">Cache_Entry::m_buffer</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00886">ffmpegfs_fgetattr()</a>.</p>
 
@@ -430,7 +430,7 @@ The structure is reference counted, after calling this function, if the cache en
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00285">285</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03870">FFmpeg_Transcoder::close()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="cache__entry_8cc_source.html#l00311">Cache_Entry::filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00977">format_size_ex()</a>, <a class="el" href="cache__entry_8h_source.html#l00220">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00055">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00239">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03748">FFmpeg_Transcoder::predicted_filesize()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04073">FFmpeg_Transcoder::close()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="cache__entry_8cc_source.html#l00311">Cache_Entry::filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00977">format_size_ex()</a>, <a class="el" href="cache__entry_8h_source.html#l00220">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00055">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00239">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03738">FFmpeg_Transcoder::predicted_filesize()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>.</p>
 
@@ -596,7 +596,7 @@ Returns number of bytes read, may be less than len bytes. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00250">250</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00233">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03548">FFmpeg_Transcoder::audio_size()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00208">FFmpegfs_Format::desttype()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="cache__entry_8cc_source.html#l00311">Cache_Entry::filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00977">format_size_ex()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00588">get_codec_name()</a>, <a class="el" href="cache__entry_8h_source.html#l00220">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00055">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8cc_source.html#l00491">Cache::open()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00228">FFmpegfs_Format::video_codec_id()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03628">FFmpeg_Transcoder::video_size()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00233">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03538">FFmpeg_Transcoder::audio_size()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00208">FFmpegfs_Format::desttype()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="cache__entry_8cc_source.html#l00311">Cache_Entry::filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00977">format_size_ex()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00588">get_codec_name()</a>, <a class="el" href="cache__entry_8h_source.html#l00220">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00055">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8cc_source.html#l00491">Cache::open()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00228">FFmpegfs_Format::video_codec_id()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03618">FFmpeg_Transcoder::video_size()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00323">create_bluray_virtualfile()</a>, and <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>.</p>
 

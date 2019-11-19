@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.9</span>
+   &#160;<span id="projectnumber">1.10</span>
    </div>
   </td>
  </tr>
@@ -90,12 +90,7 @@ $(function() {
 <h2>News </h2>
 <p><b>To switch to the branch for version 2, git clone and do "git checkout release2.x".</b></p>
 <ul>
-<li><b>Work on release 1.9 now in progress.</b></li>
-<li>Support: Code has now been tested to work on ARMv7 (32 bit).</li>
-<li>Feature: Documented the whole project with Doxygen.</li>
-<li>Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before. The thread pool also ensures that not more threads than configured are started. Defaults to 16x the number of processor cores available.</li>
-<li>Feature: Added Apple Lossles Audio Compression (ALAC) support.</li>
-<li>Libav pulled tricks on me, again: Libav 12.3 won't compile anymore under Debian 10. To fix upgraded to master branch 13_dev0.</li>
+<li><b>Work on release 1.10 now in progress.</b></li>
 <li>See [NEWS](NEWS) for details.</li>
 </ul>
 <h2>About </h2>
@@ -129,12 +124,13 @@ $(function() {
 <p>This Libav version is far too old and will not work.</p>
 <p><b>Debian 8</b> comes with Libav 11 clone of FFmpeg.</p>
 <p>FFmpegfs compiles with Libav 11 and 12, but streaming directly while transcoding does not work. The first time a file is accessed playback will fail. After it has been decoded fully to cache playback does work. Playing the file via http may fail or it may take quite long until the file starts playing. This is a Libav insufficiency. You may have to replace it with FFmpeg.</p>
-<p><b>Debian 9</b>, <b>Ubuntu 16</b> and <b>Ubuntu 17</b> include a decently recent version of the original FFmpeg library.</p>
+<p><b>Debian 9</b>, <b>Debian 10</b>, <b>Ubuntu 16</b> and <b>Ubuntu 17</b> include a decently recent version of the original FFmpeg library.</p>
 <p>Tested with:</p>
 <ul>
 <li><code>Debian 7 Wheezy</code> <b>AVLib 0.8.21-0+deb7u1+rpi1</b>: not working with Libav</li>
 <li><code>Debian 8 Jessie</code> <b>AVLib 11.11-1~deb8u1</b>: not working with Libav</li>
 <li><code>Debian 9 Stretch</code> <b>FFmpeg 3.2.8-1~deb9u1</b>: OK!</li>
+<li><code>Debian 10 Buster</code> <b>FFmpeg 3.2.14-1~deb9u1</b>: OK!</li>
 <li><code>Ubuntu 16.04.3 LTS</code> <b>FFmpeg 2.8.11-0ubuntu0.16.04.1</b>: OK!</li>
 <li><code>Ubuntu 17.10</code> <b>FFmpeg 3.3.4-2</b>: OK!</li>
 <li><code>Suse 42</code> <b>FFmpeg 3.3.4</b>: No H264/AAC support by default</li>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.9</span>
+   &#160;<span id="projectnumber">1.10</span>
    </div>
   </td>
  </tr>
@@ -80,7 +80,7 @@ $(function() {
 <dd>: The ffmpeg actually <em>can</em> transcode while presevering the SAR. Need to find out what I am doing wrong here...  </dd>
 <dt><a class="anchor" id="_todo000011"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#a854e9576e697fb877c2e344c5c203947">FFmpeg_Transcoder::calculate_predicted_filesize</a>  () const</dt>
 <dd>: Check source if not deinterlace is on  </dd>
-<dt><a class="anchor" id="_todo000010"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#acbf27f6da1c209883d7474897fe1a896">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt, int64_t *pts)</dt>
+<dt><a class="anchor" id="_todo000010"></a>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
 <dd>: Is this a FFmpeg bug or am I too stupid? OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value  </dd>
 <dt><a class="anchor" id="_todo000014"></a>Member <a class="el" href="ffmpegfs_8cc.html#a684834ac60520f3c7e2e37c9e43607a8">ffmpegfs_opt_proc</a>  (void *data, const char *arg, int key, struct fuse_args *outargs)</dt>
 <dd>: Also output this information in debug mode  </dd>

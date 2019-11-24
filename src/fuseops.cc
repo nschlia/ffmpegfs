@@ -953,7 +953,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
             if (cache_entry == nullptr)
             {
-                Logging::error(path, "Tried to stat unopen file.");
+                Logging::error(path, "fgetattr: Tried to stat unopen file.");
                 errno = EBADF;
                 return -errno;
             }
@@ -1081,7 +1081,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     int bytes_read = 0;
     Cache_Entry* cache_entry;
 
-    Logging::trace(path, "Reading %1 bytes from %2.", size, offset);
+    Logging::trace(path, "read: Reading %1 bytes from %2.", size, offset);
 
     translate_path(&origpath, path);
 
@@ -1158,7 +1158,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         {
             if (errno)
             {
-                Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+                Logging::error(origpath.c_str(), "read: Tried to read from unopen file: (%1) %2", errno, strerror(errno));
             }
             return -errno;
         }

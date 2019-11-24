@@ -198,7 +198,7 @@ public:
     /**
      * @brief Remove a cache file from disk.
      * @param[in] filename - Source file name.
-     * @param[in] desttype - Destination type (MP4, WEBM etc.).
+     * @param[in] fileext - File extension of target file.
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(const std::string & filename, const std::string &fileext);

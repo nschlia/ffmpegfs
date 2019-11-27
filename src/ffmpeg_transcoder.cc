@@ -2315,11 +2315,13 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (data_present)
         {
+#ifndef USING_LIBAV
             frame = send_filters(frame, ret);
             if (ret)
             {
                 return ret;
             }
+#endif
 
             if (m_sws_ctx != nullptr)
             {

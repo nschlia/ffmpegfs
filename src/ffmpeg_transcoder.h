@@ -619,13 +619,13 @@ protected:
 #ifndef USING_LIBAV
     /**
      * @brief Initialise video filters
-     * @param[in] pCodecContext - AVCodecContext object of output video.
+     * @param[in] codec_context - AVCodecContext object of output video.
      * @param[in] pix_fmt - Output stream pixel format.
      * @param[in] avg_frame_rate - Average output stream frame rate.
      * @param[in] time_base - Output stream time base.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
-    int                         init_deinterlace_filters(AVCodecContext *output_codec_context, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
+    int                         init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
     /**
      * @brief Send video frame to the filters.
      * @param[in] srcframe - Input video frame.

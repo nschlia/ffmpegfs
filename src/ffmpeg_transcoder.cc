@@ -777,7 +777,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     if (params.m_deinterlace)
     {
         // Init deinterlace filters
-        ret = init_deinterlace_filters(output_codec_ctx, output_codec_ctx->pix_fmt, output_codec_ctx->time_base, output_codec_ctx->time_base);
+#if LAVF_DEP_AVSTREAM_CODEC
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
+#else
+        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
+#endif
+        ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
         if (ret < 0)
         {
             return ret;
@@ -1879,11 +1884,11 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             {
                 // Init deinterlace filters
 #if LAVF_DEP_AVSTREAM_CODEC
-                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_out.m_video.m_stream->codecpar->format);
+                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
 #else
-                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_out.m_video.m_stream->codec->pix_fmt);
+                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
 #endif
-                ret = init_deinterlace_filters(m_out.m_video.m_codec_ctx, pix_fmt, m_out.m_video.m_stream->avg_frame_rate, m_out.m_video.m_stream->time_base);
+                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;
@@ -2494,6 +2499,14 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (data_present)
         {
+#ifndef USING_LIBAV
+            frame = send_filters(frame, ret);
+            if (ret)
+            {
+                return ret;
+            }
+#endif
+
             if (m_sws_ctx != nullptr)
             {
                 AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
@@ -2550,7 +2563,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-            m_video_fifo.push(send_filters(frame, ret));
+            m_video_fifo.push(frame);
 #else
             frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
             m_video_fifo.push(frame);
@@ -4206,7 +4219,7 @@ int FFmpeg_Transcoder::encode_finish()
         // Write the trailer of the output file container.
         ret = write_output_file_trailer();
     }
-	return ret;
+    return ret;
 }
 
 const ID3v1 * FFmpeg_Transcoder::id3v1tag() const
@@ -4562,7 +4575,7 @@ const char *FFmpeg_Transcoder::destname() const
 
 #ifndef USING_LIBAV
 // create
-int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
+int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
     const char * filters;
     char args[1024];
@@ -4597,9 +4610,9 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
         snprintf(args, sizeof(args), "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-                 output_codec_context->width, output_codec_context->height, pix_fmt,
+                 codec_context->width, codec_context->height, pix_fmt,
                  time_base.num, time_base.den,
-                 output_codec_context->sample_aspect_ratio.num, FFMAX(output_codec_context->sample_aspect_ratio.den, 1));
+                 codec_context->sample_aspect_ratio.num, FFMAX(codec_context->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)
@@ -4607,7 +4620,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":framerate=%d/%d", fr.num, fr.den);
         //}
         //
-        //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
+        //args.snprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
         ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args, nullptr, m_filter_graph);
         if (ret < 0)

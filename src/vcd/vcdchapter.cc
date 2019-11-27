@@ -145,11 +145,11 @@ std::string VcdChapter::get_filename() const
 
     if (m_is_svcd)
     {
-        sprintf(buffer, "MPEG2/AVSEQ%02u.MPG", m_track_no - 1);
+        snprintf(buffer, sizeof(buffer) - 1, "MPEG2/AVSEQ%02u.MPG", m_track_no - 1);
     }
     else
     {
-        sprintf(buffer, "MPEGAV/AVSEQ%02u.DAT", m_track_no - 1);
+        snprintf(buffer, sizeof(buffer) - 1, "MPEGAV/AVSEQ%02u.DAT", m_track_no - 1);
     }
     return buffer;
 }

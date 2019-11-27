@@ -1,5 +1,14 @@
 FFmpegfs NEWS
 
+Important changes in 1.97 (2019-11-XX)
+
+* Support:
+* Feature:
+* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
+          rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
+          created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
+* Known bug:
+
 Important changes in 1.96 (2019-11-18)
 
 This is a pre-release towards the new version 2.0 coming up soon.
@@ -19,6 +28,15 @@ This is a pre-release towards the new version 2.0 coming up soon.
            each video frame.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
            be recoded. Added --recodesame option to allow transcoding to the same format.
+
+Important changes in 1.10 (2019-11-XX)
+
+* Support:
+* Feature:
+* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
+          rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
+          created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
+* Known bug:
 
 Important changes in 1.9 (2019-11-18)
 

@@ -315,7 +315,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // Single chapter
             if (angles > 1)
             {
-                sprintf(title_buf, "%02d. Chapter %03d (Angle %d) [%s].%s",
+                snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d (Angle %d) [%s].%s",
                         title_no,
                         chapter_no,
                         angle_no,
@@ -324,7 +324,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
             else
             {
-                sprintf(title_buf, "%02d. Chapter %03d [%s].%s",
+                snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s].%s",
                         title_no,
                         chapter_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
@@ -336,7 +336,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // Full title
             if (angles > 1)
             {
-                sprintf(title_buf, "%02d. Title (Angle %d) [%s].%s",
+                snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title (Angle %d) [%s].%s",
                         title_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
@@ -344,7 +344,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
             else
             {
-                sprintf(title_buf, "%02d. Title [%s].%s",
+                snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s].%s",
                         title_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
                         params.m_format[0].fileext().c_str());

@@ -264,7 +264,7 @@ private:
      */
     bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const;
     /**
-     * @brief Umnap memory from file.
+     * @brief Unmap memory from file.
      * @param[in] filename - Name of cache file to unmap.
      * @param[in] fd - The file descriptor of the open cache file.
      * @param[in] p - Memory pointer to cache file.

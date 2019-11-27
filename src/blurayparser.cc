@@ -374,7 +374,11 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
     memcpy(&stbuf, statbuf, sizeof(struct stat));
 
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
     stbuf.st_size   = 0; //static_cast<__off_t>(size);
+#else
+    stbuf.st_size   = 0; //static_cast<__off64_t>(size);
+#endif
     stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
 
     if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))

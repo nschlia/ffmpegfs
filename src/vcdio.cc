@@ -65,7 +65,7 @@ size_t VcdIO::bufsize() const
     return (32 * 1024);
 }
 
-int VcdIO::open(LPCVIRTUALFILE virtualfile)
+int VcdIO::open(LPVIRTUALFILE virtualfile)
 {
     std::string src_filename;
 

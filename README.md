@@ -13,7 +13,8 @@ News
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
 * **Work on release 1.10 now in progress.**
-
+* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
+          
 * See [NEWS](NEWS) for details.
 
 About

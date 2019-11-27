@@ -90,7 +90,7 @@ int locate_video(const std::string & path, int track_no, std::string & fullname)
     char buffer[PATH_MAX + 1];
 
     // Try VCD
-    sprintf(buffer, "MPEGAV/AVSEQ%02u.DAT", track_no - 1);
+    snprintf(buffer, sizeof(buffer) - 1, "MPEGAV/AVSEQ%02u.DAT", track_no - 1);
     fullname = path + buffer;
     if (!access(fullname.c_str(), F_OK))
     {
@@ -98,7 +98,7 @@ int locate_video(const std::string & path, int track_no, std::string & fullname)
     }
 
     // Try SVCD
-    sprintf(buffer, "MPEG2/AVSEQ%02u.MPG", track_no - 1);
+    snprintf(buffer, sizeof(buffer) - 1, "MPEG2/AVSEQ%02u.MPG", track_no - 1);
     fullname = path + buffer;
     if (!access(fullname.c_str(), F_OK))
     {

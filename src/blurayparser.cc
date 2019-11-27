@@ -338,7 +338,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        sprintf(title_buf, "%02d. Title [%s]%s.%s",
+        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s]%s.%s",
                 title_idx + 1,
                 replace_all(format_duration(duration), ":", "-").c_str(),
                 is_main_title ? "+" : "",
@@ -354,7 +354,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        sprintf(title_buf, "%02d. Chapter %03d [%s]%s.%s",
+        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s]%s.%s",
                 title_idx + 1,
                 chapter_idx + 1,
                 replace_all(format_duration(duration), ":", "-").c_str(),

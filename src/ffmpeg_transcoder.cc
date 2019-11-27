@@ -4142,7 +4142,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *output_codec_con
         //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":framerate=%d/%d", fr.num, fr.den);
         //}
         //
-        //args.sprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
+        //args.snprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
         ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args, nullptr, m_filter_graph);
         if (ret < 0)

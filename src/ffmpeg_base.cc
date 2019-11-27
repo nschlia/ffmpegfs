@@ -352,7 +352,7 @@ std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t chann
     av_get_channel_layout_string(buffer, sizeof(buffer), nb_channels, channel_layout);
 #else
     // av_get_channel_layout_string not supported by Libav
-    std::sprintf(buffer, "%" PRId64, channel_layout);
+    std::snprintf(buffer, sizeof(buffer) - 1, "%" PRId64, channel_layout);
 #endif
     return buffer;
 }

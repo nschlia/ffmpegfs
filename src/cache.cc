@@ -536,7 +536,7 @@ bool Cache::prune_expired()
 
     Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
 
-    sprintf(sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
+    snprintf(sql, sizeof(sql) - 1, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 

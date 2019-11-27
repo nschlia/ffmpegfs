@@ -56,7 +56,7 @@ size_t DiskIO::bufsize() const
     return (100 /* KB */ * 1024);
 }
 
-int DiskIO::open(LPCVIRTUALFILE virtualfile)
+int DiskIO::open(LPVIRTUALFILE virtualfile)
 {
     set_virtualfile(virtualfile);
 

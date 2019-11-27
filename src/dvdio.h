@@ -86,7 +86,7 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int     open(LPCVIRTUALFILE virtualfile);
+    virtual int     open(LPVIRTUALFILE virtualfile);
     /** @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * Special case: If set to nullptr as many bytes as possible are "read" (and discarded). Can be used

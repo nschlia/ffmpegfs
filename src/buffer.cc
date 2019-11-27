@@ -64,7 +64,7 @@ size_t Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::open(LPCVIRTUALFILE virtualfile)
+int Buffer::open(LPVIRTUALFILE virtualfile)
 {
     if (virtualfile == nullptr)
     {

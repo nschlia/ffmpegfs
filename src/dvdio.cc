@@ -84,7 +84,7 @@ size_t DvdIO::bufsize() const
     return sizeof(m_data);
 }
 
-int DvdIO::open(LPCVIRTUALFILE virtualfile)
+int DvdIO::open(LPVIRTUALFILE virtualfile)
 {
     int pgc_id;
     int ttn;

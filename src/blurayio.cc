@@ -72,7 +72,7 @@ size_t BlurayIO::bufsize() const
     return sizeof(m_data);
 }
 
-int BlurayIO::open(LPCVIRTUALFILE virtualfile)
+int BlurayIO::open(LPVIRTUALFILE virtualfile)
 {
     const char *bdpath = nullptr;
     uint32_t title_count;

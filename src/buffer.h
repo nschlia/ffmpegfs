@@ -90,7 +90,7 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int             open(LPCVIRTUALFILE virtualfile);
+    virtual int             open(LPVIRTUALFILE virtualfile);
     /**
      * @brief Not implemented.
      * @param[out] data - unused

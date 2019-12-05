@@ -623,11 +623,13 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::info(destname(), "Opening output file.");
 
-    // Pre-allocate the predicted file size to reduce memory reallocations
-    if (!buffer->reserve(predicted_filesize()))
+        // Pre-allocate the predicted file size to reduce memory reallocations
+        size_t buffsize = predicted_filesize();
+        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
-        Logging::error(filename(), "Out of memory pre-allocating buffer.");
-        return AVERROR(ENOMEM);
+	    int _errno = errno;
+        Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        return AVERROR(_errno);
     }
 
     // Open the output file for writing.

@@ -414,7 +414,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();
-        cache->close(&cache_entry, CLOSE_CACHE_DELETE);
+        cache->close(&cache_entry, CACHE_CLOSE_DELETE);
         cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
         errno = _errno;         // Restore last errno
     }
@@ -510,6 +510,8 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
         {
             len = 0;
+			// We already capped len to not overread the buffer, so it is an error if we end here.
+            throw false;
         }
 
         if (cache_entry->m_cache_info.m_error)
@@ -918,7 +920,7 @@ static void transcoder_thread(void *arg)
         }
     }
 
-    cache->close(&cache_entry, timeout ? CLOSE_CACHE_DELETE : CLOSE_CACHE_NOOPT);
+    cache->close(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
 
     delete thread_data;
 

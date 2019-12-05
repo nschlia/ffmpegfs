@@ -149,10 +149,10 @@ public:
      * If the cache entry is in use will not be deleted.
      *
      * @param[in, out] cache_entry - Cache entry object to be closed.
-     * @param[in] flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true if the object was deleted; false if not.
      */
-    bool                    close(Cache_Entry **cache_entry, int flags = CLOSE_CACHE_NOOPT);
+    bool                    close(Cache_Entry **cache_entry, int flags = CACHE_CLOSE_NOOPT);
     /**
      * @brief Load cache index from disk.
      * @return Returns true on success; false on error.
@@ -233,7 +233,7 @@ protected:
     /**
      * @brief Delete cache entry object.
      * @param[in, out] cache_entry - Cache entry object to be closed.
-     * @param[in] flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true if the object was deleted; false if not.
      */
     bool                    delete_entry(Cache_Entry **cache_entry, int flags);

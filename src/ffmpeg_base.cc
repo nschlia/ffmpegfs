@@ -60,6 +60,7 @@ extern "C" {
 #pragma GCC diagnostic pop
 
 FFmpeg_Base::FFmpeg_Base()
+    : m_virtualfile(nullptr)
 {
 }
 
@@ -307,7 +308,7 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
-    Logging::info(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
+    Logging::debug(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
                   out_file ? "out" : "in",
                   get_codec_name(CODECPAR(stream)->codec_id, false),
                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
@@ -323,7 +324,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
-    Logging::info(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
+    Logging::debug(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
                   out_file ? "out" : "in",
                   get_codec_name(CODECPAR(stream)->codec_id, false),
                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),

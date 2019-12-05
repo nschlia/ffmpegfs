@@ -282,28 +282,41 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
 
     if (__p != nullptr)
     {
-        if (munmap(__p, __filesize) == -1)
+        if (munmap(__p, __filesize ? __filesize : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spitzs EINVBAL error)
         {
-            Logging::error(filename, "File unmapping failed: (%1) %2", errno, strerror(errno));
+            Logging::error(filename, "Unmapping cache file failed: (%1) %2 %3", errno, strerror(errno), __filesize);
+            fprintf(stderr, "P = %p size = %zi\n", __p, __filesize);
             success = false;
         }
     }
 
     if (__fd != -1)
     {
-        if (ftruncate(__fd, static_cast<off_t>(__filesize)) == -1)
+        if (__filesize)
         {
-            Logging::error(filename, "Error calling ftruncate() to resize and close the file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
-            success = false;
+            if (ftruncate(__fd, static_cast<off_t>(__filesize)) == -1)
+            {
+                Logging::error(filename, "Error calling ftruncate() to resize and close the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
+                success = false;
+            }
+            ::close(__fd);
         }
+        else
+        {
+            ::close(__fd);
 
-        ::close(__fd);
+            if (unlink(filename.c_str()))
+            {
+                Logging::error(filename, "Error removing the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
+                success = false;
+            }
+        }
     }
 
     return success;
 }
 
-bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
+bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
@@ -311,7 +324,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (!is_open())
     {
-        if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
+        if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
         {
             remove_cachefile();
             errno = 0;  // ignore this error
@@ -336,7 +349,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         }
     }
 
-    if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
+    if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
     {
         remove_cachefile();
         errno = 0;  // ignore this error

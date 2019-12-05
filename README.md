@@ -32,6 +32,7 @@ News
 * Bugfix: Removed unused xmlint prerequisite from configure.
 * Bugfix: Video and audio was out of sync on android devices.
 * Bugfix: Fix crash when Bluray video without audio was opened.
+* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
 * Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
     Deprecate use of avfilter_register(), avfilter_register_all(),
     avfilter_next(). Added av_filter_iterate().

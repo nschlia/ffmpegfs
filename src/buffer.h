@@ -42,9 +42,9 @@
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))  /**< @brief Check bit in bitmask */
 
-#define CLOSE_CACHE_NOOPT   0x00                                /**< @brief Dummy, do nothing special */
-#define CLOSE_CACHE_FREE    0x01                                /**< @brief Free memory for cache entry */
-#define CLOSE_CACHE_DELETE  (0x02 | CLOSE_CACHE_FREE)           /**< @brief Delete cache entry, will unlink cached file! Implies CLOSE_CACHE_FREE. */
+#define CACHE_CLOSE_NOOPT   0x00                                /**< @brief Dummy, do nothing special */
+#define CACHE_CLOSE_FREE    0x01                                /**< @brief Free memory for cache entry */
+#define CACHE_CLOSE_DELETE  (0x02 | CACHE_CLOSE_FREE)           /**< @brief Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. */
 
 /**
  * @brief The #Buffer class
@@ -75,10 +75,10 @@ public:
     bool                    init(bool erase_cache);
     /**
      * @brief Release cache buffer.
-     * @param[in] flags - One of the CLOSE_CACHE_* flags.
+     * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true on success; false on error.
      */
-    bool                    release(int flags = CLOSE_CACHE_NOOPT);
+    bool                    release(int flags = CACHE_CLOSE_NOOPT);
     /**
      * @brief Size of this buffer.
      * @return Not applicable, returns 0.

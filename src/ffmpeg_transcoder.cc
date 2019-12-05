@@ -250,9 +250,17 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     AVDictionary * opt = nullptr;
     int ret;
 
-    m_in.m_filename     = virtualfile->m_origfile;
-    m_mtime             = virtualfile->m_st.st_mtime;
-    m_current_format    = params.current_format(virtualfile);
+    if (virtualfile == nullptr)
+    {
+        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): virtualfile is NULL.");
+        return AVERROR(EINVAL);
+    }
+
+    m_virtualfile = virtualfile;
+
+    m_in.m_filename     = m_virtualfile->m_origfile;
+    m_mtime             = m_virtualfile->m_st.st_mtime;
+    m_current_format    = params.current_format(m_virtualfile);
 
     if (is_open())
     {
@@ -294,7 +302,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (fio == nullptr)
     {
         // Open new file io
-        m_fileio = FileIO::alloc(virtualfile->m_type);
+        m_fileio = FileIO::alloc(m_virtualfile->m_type);
         m_close_fileio = true;  // do not close and delete
     }
     else
@@ -311,7 +319,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(_errno);
     }
 
-    ret = m_fileio->open(virtualfile);
+    ret = m_fileio->open(m_virtualfile);
     if (ret)
     {
         return AVERROR(ret);
@@ -348,21 +356,21 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     AVInputFormat * infmt = nullptr;
 
 #ifdef USE_LIBVCD
-    if (virtualfile->m_type == VIRTUALTYPE_VCD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_VCD)
     {
         Logging::debug(filename(), "Forcing mpeg format for VCD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
         Logging::debug(filename(), "Forcing mpegts format for Bluray source to avoid misdetections.");
         infmt = av_find_input_format("mpegts");
@@ -405,14 +413,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
 #ifdef USE_LIBDVD
-    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         // FFmpeg API calculcates a wrong duration, so use value from IFO
         m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
         // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
         m_in.m_format_ctx->duration = m_fileio->duration();
@@ -427,7 +435,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
-    virtualfile->m_duration = m_in.m_format_ctx->duration;
+    m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
     if (m_in.m_video.m_stream_idx >= 0)
     {
@@ -435,14 +443,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
         {
             // FFmpeg API calculcates a wrong duration, so use value from Bluray
             m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
@@ -477,14 +485,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
         {
             // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
@@ -500,28 +508,24 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
-    m_predicted_size = calculate_predicted_filesize();
-
     // Predict size of transcoded file as exact as possible
-    virtualfile->m_predicted_size = m_predicted_size;
+    m_virtualfile->m_predicted_size = calculate_predicted_filesize();
 
     // Calculate number or video frames in file based on duration and frame rate
     if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
     {
         // Number of frames: should be quite accurate
-        m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
+        m_virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
     }
 
-    virtualfile->m_video_frame_count = m_video_frame_count;
-
     // Make sure this is set, although should already have happened
-    virtualfile->m_format_idx = params.guess_format_idx(filename());
+    m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
     // Unfortunately it is too late to do this here, the filename has already been selected and cannot be changed.
     //    if (!params.smart_transcode())
     //    {
     //        // Not smart encoding: use first format (video file)
-    //        virtualfile->m_format_idx = 0;
+    //        m_virtualfile->m_format_idx = 0;
     //    }
     //    else
     //    {
@@ -529,14 +533,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //        if (m_is_video)
     //        {
     //            // Is a video: use first format (video file)
-    //            virtualfile->m_format_idx = 0;
+    //            m_virtualfile->m_format_idx = 0;
 
     //            Logging::debug(filename(), "Smart transcode: using video format.");
     //        }
     //        else
     //        {
     //            // For audio only, use second format (audio only file)
-    //            virtualfile->m_format_idx = 1;
+    //            m_virtualfile->m_format_idx = 1;
 
     //            Logging::debug(filename(), "Smart transcode: using audio format.");
     //        }
@@ -644,8 +648,9 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = predicted_filesize();
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating %1 bytes buffer.", buffsize);
-            return AVERROR(ENOMEM);
+	    	int _errno = errno;
+        	Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        	return AVERROR(_errno);
         }
 
         // Not a frame set, open regular buffer
@@ -659,8 +664,9 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-            Logging::error(filename(), "Out of memory pre-allocating %1 bytes buffer.", buffsize);
-            return AVERROR(ENOMEM);
+	    	int _errno = errno;
+        	Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        	return AVERROR(_errno);
         }
 
         // Open frame set buffer
@@ -698,7 +704,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
-    output_codec_ctx->bit_rate             = 400000;   /**  @todo: Make command line settable */
+    output_codec_ctx->bit_rate             = 400000;   /**  @todo: Make frame image compression rate command line settable */
     output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
     output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
     output_codec_ctx->time_base            = {1, 25};
@@ -1211,7 +1217,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     return AVERROR(EINVAL);
                 }
 
-                Logging::info(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
+                Logging::debug(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
                               format_samplerate(orig_sample_rate).c_str(),
                               format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
@@ -1329,7 +1335,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
-            /** @todo: The ffmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
+            /** @todo: FFmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
 
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
@@ -2003,7 +2009,7 @@ int FFmpeg_Transcoder::init_resampler()
     {
         int ret;
 
-        Logging::info(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
+        Logging::debug(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
                       get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
                       get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
                       format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),
@@ -2179,8 +2185,8 @@ int FFmpeg_Transcoder::write_output_file_header()
         buffer->copy(reinterpret_cast<uint8_t*>(&list_header), sizeof(WAV_HEADER), sizeof(WAV_LIST_HEADER));
         buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, sizeof(WAV_DATA_HEADER));
 
-        wav_header.m_wav_size = static_cast<unsigned int>(m_predicted_size - 8);
-        data_header.m_data_bytes = static_cast<unsigned int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
+        wav_header.m_wav_size = static_cast<unsigned int>(predicted_filesize() - 8);
+        data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
 
         buffer->seek(0, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
@@ -3587,7 +3593,7 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 
     m_have_seeked           = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
-    //m_skip_next_frame = true;/**< @todo: params.m_deinterlace beachten */
+    //m_skip_next_frame = true; /**< @todo: Take deinterlace into account */
 
     if (m_skip_next_frame)
     {
@@ -3613,7 +3619,7 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
         sleep(0);
     }
 
-    if (next_frame_no > m_video_frame_count)
+    if (next_frame_no > m_virtualfile->m_video_frame_count)
     {
         // Reached end of file
         // Set PTS to end of file
@@ -3688,7 +3694,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     if (seek_frame_no > PRESCAN_FRAMES)
                     {
                         seek_frame_no -= PRESCAN_FRAMES;
-                        //m_skip_next_frame = true;/**< @todo: params.m_deinterlace beachten */
+                        //m_skip_next_frame = true; /**< @todo: Take deinterlace into account */
                     }
                     else
                     {
@@ -4177,9 +4183,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
             int width = CODECPAR(m_in.m_video.m_stream)->width;
             int height = CODECPAR(m_in.m_video.m_stream)->height;
 #ifdef USING_LIBAV
-            int interleaved = 0;    /** @todo: Check source if not deinterlace is on */
+            int interleaved = 0;    /** @todo: Check source if interlaced and do interlace if required */
 #else
-            int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
+            int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);    // Deinterlace only if source is interlaced
 #endif // !USING_LIBAV
 #if LAVF_DEP_AVSTREAM_CODEC
             AVRational framerate = m_in.m_video.m_stream->avg_frame_rate;
@@ -4201,12 +4207,26 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
 size_t FFmpeg_Transcoder::predicted_filesize()
 {
-    return m_predicted_size;
+    if (m_virtualfile != nullptr)
+    {
+        return m_virtualfile->m_predicted_size;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 uint32_t FFmpeg_Transcoder::video_frame_count() const
 {
-    return m_video_frame_count;
+    if (m_virtualfile != nullptr)
+    {
+        return m_virtualfile->m_video_frame_count;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int FFmpeg_Transcoder::encode_finish()
@@ -4818,7 +4838,7 @@ void FFmpeg_Transcoder::free_filters()
 
 int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
 {
-    if (frame_no > 0 && frame_no <= m_video_frame_count)
+    if (frame_no > 0 && frame_no <= video_frame_count())
     {
         std::lock_guard<std::recursive_mutex> lck (m_mutex);
         m_seek_frame_fifo.push(frame_no);  // Seek to this frame next decoding operation
@@ -4827,7 +4847,7 @@ int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
     else
     {
         errno = EINVAL;
-        Logging::error(destname(), "seek_frame failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, m_video_frame_count);
+        Logging::error(destname(), "seek_frame failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, video_frame_count());
         return AVERROR(EINVAL);
     }
 }

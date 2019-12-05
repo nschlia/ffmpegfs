@@ -38,6 +38,8 @@
 
 #define INVALID_STREAM  -1              /**< @brief Denote an invalid stream */
 
+struct VIRTUALFILE;
+
 /**
  * @brief The #FFmpeg_Base class
  */
@@ -172,7 +174,8 @@ protected:
      * @return Returns PTS of frame in stream's time_base units.
      */
     int64_t frame_to_pts(AVStream* stream, uint32_t frame_no) const;
-private:
+protected:
+    VIRTUALFILE * m_virtualfile;
 };
 
 #endif // FFMPEG_BASE_H

@@ -1315,10 +1315,10 @@ std::string sanitise_filepath(std::string * filepath)
     if (realpath(filepath->c_str(), resolved_name) != nullptr)
     {
         *filepath = resolved_name;
-    	return *filepath;
+        return *filepath;
     }
 
-	// realpath has the strange feature to remove a traling slash if there.
+    // realpath has the strange feature to remove a traling slash if there.
     // To mimick its behaviour, if realpath fails, at least remove it.
     std::string _filepath(*filepath);
     remove_sep(&_filepath);

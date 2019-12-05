@@ -490,6 +490,12 @@ static int selector(const struct dirent * de)
     }
 }
 
+LPVIRTUALFILE find_original(const std::string & origpath)
+{
+    std::string buffer(origpath);
+    return find_original(&buffer);
+}
+
 LPVIRTUALFILE find_original(std::string * filepath)
 {
     sanitise_filepath(filepath);
@@ -566,6 +572,16 @@ LPVIRTUALFILE find_original(std::string * filepath)
     return nullptr;
 }
 
+LPVIRTUALFILE find_parent(const std::string & origpath)
+{
+    std::string filepath(origpath);
+
+    remove_filename(&filepath);
+    remove_sep(&filepath);
+
+    return find_original(&filepath);
+}
+
 /**
  * @brief Read the target of a symbolic link.
  * @param[in] path
@@ -582,7 +598,6 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
     Logging::trace(path, "readlink");
 
     translate_path(&origpath, path);
-
     find_original(&origpath);
 
     len = readlink(origpath.c_str(), buf, size - 2);

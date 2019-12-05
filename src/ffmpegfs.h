@@ -37,7 +37,6 @@
  * Copyright (C) 2017-2019 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
-
 /** @mainpage FFmpegfs FUSE Filesystem
  *
  * @section ffmpeg_introduction Introduction to FFmpegfs
@@ -277,11 +276,23 @@ bool            check_path(const std::string & path);
  */
 int             load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 /**
+ * @brief Given the destination (post-transcode) file name, determine the parent of the file to be transcoded.
+ * @param[in] origpath - The original file
+ * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
+ */
+LPVIRTUALFILE   find_original(const std::string & origpath);
+/**
  * @brief Given the destination (post-transcode) file name, determine the name of the original file to be transcoded.
  * @param[inout] filepath - Input the original file, output name of transcoded file.
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_original(std::string *filepath);
+/**
+ * @brief Given the destination (post-transcode) file name, determine the parent of the file to be transcoded.
+ * @param[in] origpath - The original file
+ * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
+ */
+LPVIRTUALFILE   find_parent(const std::string & origpath);
 
 #endif // FFMPEGFS_H
 

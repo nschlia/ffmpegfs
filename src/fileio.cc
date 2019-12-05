@@ -91,7 +91,7 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
     }
 }
 
-void FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
+void FileIO::set_virtualfile(LPVIRTUALFILE virtualfile)
 {
     m_virtualfile = virtualfile;
 
@@ -108,7 +108,7 @@ void FileIO::set_virtualfile(LPCVIRTUALFILE virtualfile)
     }
 }
 
-LPCVIRTUALFILE FileIO::virtualfile() const
+LPVIRTUALFILE FileIO::virtualfile()
 {
     return m_virtualfile;
 }
@@ -120,12 +120,12 @@ const std::string & FileIO::path() const
 
 const std::string & FileIO::filename() const
 {
-    if (virtualfile() == nullptr)
+    if (m_virtualfile == nullptr)
     {
         static const std::string empty;
         return empty;
     }
 
-    return virtualfile()->m_origfile;
+    return m_virtualfile->m_origfile;
 }
 

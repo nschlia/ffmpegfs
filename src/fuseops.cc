@@ -67,7 +67,7 @@ static void             prepare_script();
 static void             translate_path(std::string *origpath, const char* path);
 static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
-static int 			get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int 			get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 
 static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -80,6 +80,7 @@ static int              ffmpegfs_release(const char *path, struct fuse_file_info
 static void             sighandler(int signum);
 static void *           ffmpegfs_init(struct fuse_conn_info *conn);
 static void             ffmpegfs_destroy(__attribute__((unused)) void * p);
+static std::string      get_number(const char *path, uint32_t *value);
 
 static filenamemap          filenames;          /**< @brief Map files to virtual files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
@@ -662,7 +663,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
  * @param[inout] virtualfile - Virtual file object to modify.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile)
+static int get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
     if (cache_entry == nullptr)
@@ -704,8 +705,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         virtualfile->m_file_contents = script_file;
     }
 
-    std::string buffer(origpath);
-    LPVIRTUALFILE virtualfile = find_original(&buffer);
+    LPVIRTUALFILE virtualfile = find_original(origpath);
 
     if (virtualfile == nullptr)
     {
@@ -815,7 +815,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     {
         if (!virtualfile->m_video_frame_count)
         {
-            int res = get_video_frame_count(origpath, virtualfile);
+            int res = get_source_properties(origpath, virtualfile);
             if (res < 0)
             {
                 return res;
@@ -851,7 +851,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     Logging::trace(path, "getattr");
 
     translate_path(&origpath, path);
-
     LPVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
 
@@ -977,33 +976,30 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #endif // USE_LIBBLURAY
 
                     {
-                        std::string filepath(origpath);
+                        LPVIRTUALFILE parent_file = find_parent(origpath);
 
-                        remove_filename(&filepath);
-                        remove_sep(&filepath);
-
-                        LPVIRTUALFILE virtualfile2 = find_original(&filepath);
-
-                        if (virtualfile2 != nullptr && (virtualfile2->m_flags & VIRTUALFLAG_DIRECTORY) && (virtualfile2->m_flags & VIRTUALFLAG_FILESET))
+                        if (parent_file != nullptr && (parent_file->m_flags & VIRTUALFLAG_DIRECTORY) && (parent_file->m_flags & VIRTUALFLAG_FILESET))
                         {
-                            struct stat stbuf2;
+                            struct stat parent_stbuf;
 
-                            if (!virtualfile2->m_video_frame_count)
+                            if (!parent_file->m_video_frame_count)
                             {
-                                int res = get_video_frame_count(origpath, virtualfile2);
+                                int res = get_source_properties(origpath, parent_file);
                                 if (res < 0)
                                 {
                                     return res;
                                 }
                             }
 
+                            assert(parent_file->m_video_frame_count);
+
                             //memcpy(&stbuf2, &virtualfile->m_st, sizeof(struct stat));
 
-                            init_stat(&stbuf2, virtualfile2->m_predicted_size, virtualfile2->m_st.st_ctime, false); /**< @todo Dateigrösse */
+                            init_stat(&parent_stbuf, parent_file->m_predicted_size, parent_file->m_st.st_ctime, false); /**< @todo Calculate correct file size for frame image */
 
-                            insert_file(VIRTUALTYPE_DISK, origpath, &stbuf2, VIRTUALFLAG_FRAME);
+                            insert_file(VIRTUALTYPE_DISK, origpath, &parent_stbuf, VIRTUALFLAG_FRAME);
 
-                            mempcpy(stbuf, &stbuf2, sizeof(struct stat));
+                            mempcpy(stbuf, &parent_stbuf, sizeof(struct stat));
 
                             // Clear errors
                             errno = 0;
@@ -1113,7 +1109,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     errno = 0;
 
     translate_path(&origpath, path);
-
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
     if ((virtualfile == nullptr || virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
@@ -1173,7 +1168,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
                 if (cache_entry == nullptr)
                 {
-                	Logging::error(path, "fgetattr: Tried to stat unopen file.");
+                    Logging::error(path, "fgetattr: Tried to stat unopen file.");
                     errno = EBADF;
                     return -errno;
                 }
@@ -1222,7 +1217,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     Logging::trace(path, "open");
 
     translate_path(&origpath, path);
-
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     if (virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH))
@@ -1272,16 +1266,11 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     {
         if (virtualfile->m_flags & VIRTUALFLAG_FRAME)
         {
-            std::string filepath(origpath);
+            LPVIRTUALFILE parent_file = find_parent(origpath);
 
-            remove_filename(&filepath);
-            remove_sep(&filepath);
-
-            LPVIRTUALFILE virtualfile2 = find_original(&filepath);
-
-            if (virtualfile2 != nullptr)
+            if (parent_file != nullptr)
             {
-                cache_entry = transcoder_new(virtualfile2, true);
+                cache_entry = transcoder_new(parent_file, true);
                 if (cache_entry == nullptr)
                 {
                     return -errno;
@@ -1348,7 +1337,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     Logging::trace(path, "read: Reading %1 bytes from %2.", size, offset);
 
     translate_path(&origpath, path);
-
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     if (virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH))
@@ -1428,21 +1416,17 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
             {
                 if (errno)
                 {
-                	Logging::error(origpath.c_str(), "read: Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+                    Logging::error(origpath.c_str(), "read: Tried to read from unopen file: (%1) %2", errno, strerror(errno));
                 }
                 return -errno;
             }
 
-            std::string filename(path);
-
-            // Get frame number
-            remove_path(&filename);
-
-            uint32_t frame_no = static_cast<uint32_t>(atoi(filename.c_str()));
+            uint32_t frame_no = 0;
+            std::string filename = get_number(path, &frame_no);
             if (!frame_no)
             {
                 errno = EINVAL;
-                Logging::error(origpath.c_str(), "Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                Logging::error(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
                 return -errno;
             }
 
@@ -1456,7 +1440,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
             {
                 if (errno)
                 {
-                    Logging::error(origpath.c_str(), "Tried to read from unopen file: (%1) %2", errno, strerror(errno));
+                    Logging::error(origpath.c_str(), "read: Tried to read from unopen file: (%1) %2", errno, strerror(errno));
                 }
                 return -errno;
             }
@@ -1633,3 +1617,22 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
 }
+
+/**
+ * @brief Extract the number for a file name
+ * @param path - Path and filename of requested file
+ * @param value - Returns the number extracted
+ * @return Returns the filename that was processed, without path.
+ */
+static std::string get_number(const char *path, uint32_t *value)
+{
+    std::string filename(path);
+
+    // Get frame number
+    remove_path(&filename);
+
+    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
+
+    return filename;
+}
+

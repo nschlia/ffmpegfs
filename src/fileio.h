@@ -294,7 +294,7 @@ public:
      * @brief Get virtual file object
      * @return Current virtual file object or nullptr if unset.
      */
-    LPCVIRTUALFILE      virtualfile() const;
+    LPVIRTUALFILE       virtualfile();
     /**
      * @brief Get source filename.
      * @return Returns source filename.
@@ -310,11 +310,11 @@ protected:
     /** @brief Set the virtual file object.
      * @param[in] virtualfile - LPCVIRTUALFILE of file to set.
      */
-    void                set_virtualfile(LPCVIRTUALFILE virtualfile);
+    void                set_virtualfile(LPVIRTUALFILE virtualfile);
 
 private:
     std::string         m_path;                                     /**< @brief Source path (directory without file name) */
-    LPCVIRTUALFILE      m_virtualfile;                              /**< @brief Virtual file object of current file */
+    LPVIRTUALFILE       m_virtualfile;                              /**< @brief Virtual file object of current file */
 };
 
 #endif // FILEIO_H

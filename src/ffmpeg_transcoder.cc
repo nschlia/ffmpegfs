@@ -241,9 +241,17 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     AVDictionary * opt = nullptr;
     int ret;
 
-    m_in.m_filename     = virtualfile->m_origfile;
-    m_mtime             = virtualfile->m_st.st_mtime;
-    m_current_format    = params.current_format(virtualfile);
+    if (virtualfile == nullptr)
+    {
+        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): virtualfile is NULL.");
+        return AVERROR(EINVAL);
+    }
+
+    m_virtualfile = virtualfile;
+
+    m_in.m_filename     = m_virtualfile->m_origfile;
+    m_mtime             = m_virtualfile->m_st.st_mtime;
+    m_current_format    = params.current_format(m_virtualfile);
 
     if (is_open())
     {
@@ -285,7 +293,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (fio == nullptr)
     {
         // Open new file io
-        m_fileio = FileIO::alloc(virtualfile->m_type);
+        m_fileio = FileIO::alloc(m_virtualfile->m_type);
         m_close_fileio = true;  // do not close and delete
     }
     else
@@ -302,7 +310,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(_errno);
     }
 
-    ret = m_fileio->open(virtualfile);
+    ret = m_fileio->open(m_virtualfile);
     if (ret)
     {
         return AVERROR(ret);
@@ -339,21 +347,21 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     AVInputFormat * infmt = nullptr;
 
 #ifdef USE_LIBVCD
-    if (virtualfile->m_type == VIRTUALTYPE_VCD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_VCD)
     {
         Logging::debug(filename(), "Forcing mpeg format for VCD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
         Logging::debug(filename(), "Forcing mpegts format for Bluray source to avoid misdetections.");
         infmt = av_find_input_format("mpegts");
@@ -396,14 +404,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
 #ifdef USE_LIBDVD
-    if (virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
         // FFmpeg API calculcates a wrong duration, so use value from IFO
         m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
         // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
         m_in.m_format_ctx->duration = m_fileio->duration();
@@ -418,7 +426,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
-    virtualfile->m_duration = m_in.m_format_ctx->duration;
+    m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
     if (m_in.m_video.m_stream_idx >= 0)
     {
@@ -426,14 +434,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
         {
             // FFmpeg API calculcates a wrong duration, so use value from Bluray
             m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
@@ -468,14 +476,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (virtualfile->m_type == VIRTUALTYPE_DVD)
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
         {
             // FFmpeg API calculcates a wrong duration, so use value from IFO
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
         {
             // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
@@ -494,13 +502,13 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_predicted_size = calculate_predicted_filesize();
 
     // Make sure this is set, although should already have happened
-    virtualfile->m_format_idx = params.guess_format_idx(filename());
+    m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
     // Unfortunately it is too late to do this here, the filename has already been selected and cannot be changed.
     //    if (!params.smart_transcode())
     //    {
     //        // Not smart encoding: use first format (video file)
-    //        virtualfile->m_format_idx = 0;
+    //        m_virtualfile->m_format_idx = 0;
     //    }
     //    else
     //    {
@@ -508,14 +516,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //        if (m_is_video)
     //        {
     //            // Is a video: use first format (video file)
-    //            virtualfile->m_format_idx = 0;
+    //            m_virtualfile->m_format_idx = 0;
 
     //            Logging::debug(filename(), "Smart transcode: using video format.");
     //        }
     //        else
     //        {
     //            // For audio only, use second format (audio only file)
-    //            virtualfile->m_format_idx = 1;
+    //            m_virtualfile->m_format_idx = 1;
 
     //            Logging::debug(filename(), "Smart transcode: using audio format.");
     //        }
@@ -1995,8 +2003,8 @@ int FFmpeg_Transcoder::write_output_file_header()
         buffer->copy(reinterpret_cast<uint8_t*>(&list_header), sizeof(WAV_HEADER), sizeof(WAV_LIST_HEADER));
         buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, sizeof(WAV_DATA_HEADER));
 
-        wav_header.m_wav_size = static_cast<unsigned int>(m_predicted_size - 8);
-        data_header.m_data_bytes = static_cast<unsigned int>(m_predicted_size - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
+        wav_header.m_wav_size = static_cast<unsigned int>(predicted_filesize() - 8);
+        data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
 
         buffer->seek(0, SEEK_SET);
         buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));

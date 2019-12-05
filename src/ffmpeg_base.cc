@@ -60,6 +60,7 @@ extern "C" {
 #pragma GCC diagnostic pop
 
 FFmpeg_Base::FFmpeg_Base()
+    : m_virtualfile(nullptr)
 {
 }
 

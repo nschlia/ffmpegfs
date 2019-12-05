@@ -38,6 +38,8 @@
 
 #define INVALID_STREAM  -1              /**< @brief Denote an invalid stream */
 
+struct VIRTUALFILE;
+
 /**
  * @brief The #FFmpeg_Base class
  */
@@ -159,7 +161,8 @@ protected:
      */
     virtual const char *destname() const = 0;
 
-private:
+protected:
+    VIRTUALFILE * m_virtualfile;
 };
 
 #endif // FFMPEG_BASE_H

@@ -1027,7 +1027,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     return AVERROR(EINVAL);
                 }
 
-                Logging::info(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
+                Logging::debug(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
                               format_samplerate(orig_sample_rate).c_str(),
                               format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
@@ -1819,7 +1819,7 @@ int FFmpeg_Transcoder::init_resampler()
     {
         int ret;
 
-        Logging::info(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
+        Logging::debug(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
                       get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
                       get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
                       format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),

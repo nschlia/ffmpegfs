@@ -405,7 +405,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();
-        cache->close(&cache_entry, CLOSE_CACHE_DELETE);
+        cache->close(&cache_entry, CACHE_CLOSE_DELETE);
         cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
         errno = _errno;         // Restore last errno
     }
@@ -765,7 +765,7 @@ static void transcoder_thread(void *arg)
         }
     }
 
-    cache->close(&cache_entry, timeout ? CLOSE_CACHE_DELETE : CLOSE_CACHE_NOOPT);
+    cache->close(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
 
     delete thread_data;
 

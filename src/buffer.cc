@@ -288,7 +288,7 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
     return success;
 }
 
-bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
+bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
@@ -296,7 +296,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
 
     if (!is_open())
     {
-        if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
+        if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
         {
             remove_cachefile();
             errno = 0;  // ignore this error
@@ -313,7 +313,7 @@ bool Buffer::release(int flags /*= CLOSE_CACHE_NOOPT*/)
         success = false;
     }
 
-    if (CACHE_CHECK_BIT(CLOSE_CACHE_DELETE, flags))
+    if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
     {
         remove_cachefile();
         errno = 0;  // ignore this error

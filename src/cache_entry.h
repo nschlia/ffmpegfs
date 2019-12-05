@@ -165,7 +165,7 @@ public:
     LPVIRTUALFILE           virtualfile();
 
     /** @brief Close the cache entry
-     *  @param[in] flags - one of the CLOSE_CACHE_* flags
+     *  @param[in] flags - one of the CACHE_CLOSE_* flags
      *  @return Returns true if entry may be deleted, false if still in use.
      */
     bool                    close(int flags);
@@ -185,7 +185,7 @@ public:
 protected:
     /**
      * @brief Close buffer object.
-     *  @param[in] flags - one of the CLOSE_CACHE_* flags
+     *  @param[in] flags - one of the CACHE_CLOSE_* flags
      */
     void                    close_buffer(int flags);
     /**

@@ -501,6 +501,8 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
         {
             len = 0;
+			// We already capped len to not overread the buffer, so it is an error if we end here.
+            throw false;
         }
 
         if (cache_entry->m_cache_info.m_error)

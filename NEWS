@@ -7,6 +7,8 @@ Important changes in 1.97 (2019-12-XX)
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
           rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
           created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
+* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
+* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
 * Known bug:
 
 Important changes in 1.96 (2019-11-18)

@@ -219,6 +219,24 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     int ret;
     bool success = true;
 
+    //cache_info->m_enable_ismv        = 0;
+    cache_info->m_audiobitrate       = 0;
+    cache_info->m_audiosamplerate    = 0;
+    cache_info->m_videobitrate       = 0;
+    cache_info->m_videowidth         = 0;
+    cache_info->m_videoheight        = 0;
+    cache_info->m_deinterlace        = 0;
+    cache_info->m_predicted_filesize = 0;
+    cache_info->m_encoded_filesize   = 0;
+    cache_info->m_finished           = 0;
+    cache_info->m_error              = 0;
+    cache_info->m_errno              = 0;
+    cache_info->m_averror            = 0;
+    cache_info->m_creation_time      = 0;
+    cache_info->m_access_time        = 0;
+    cache_info->m_file_time          = 0;
+    cache_info->m_file_size          = 0;
+
     if (m_cacheidx_select_stmt == nullptr)
     {
         Logging::error(m_cacheidx_file, "SQLite3 select statement not open.");

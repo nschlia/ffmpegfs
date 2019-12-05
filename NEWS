@@ -8,6 +8,7 @@ Important changes in 1.10 (2019-11-XX)
           rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
           created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
 * Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
+* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
 * Known bug:
 
 Important changes in 1.9 (2019-11-18)

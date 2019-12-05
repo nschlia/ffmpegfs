@@ -61,25 +61,25 @@
  */
 typedef std::map<std::string, VIRTUALFILE> filenamemap;
 
-static void 	init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
-static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
-static void 	prepare_script();
-static void 	translate_path(std::string *origpath, const char* path);
-static bool 	transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
+static void             init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
+static LPVIRTUALFILE    make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
+static void             prepare_script();
+static void             translate_path(std::string *origpath, const char* path);
+static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
-static int get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int 			get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile);
 
-static int      ffmpegfs_readlink(const char *path, char *buf, size_t size);
-static int      ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
-static int      ffmpegfs_getattr(const char *path, struct stat *stbuf);
-static int      ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
-static int      ffmpegfs_open(const char *path, struct fuse_file_info *fi);
-static int      ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
-static int      ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
-static int      ffmpegfs_release(const char *path, struct fuse_file_info *fi);
-static void     sighandler(int signum);
-static void *   ffmpegfs_init(struct fuse_conn_info *conn);
-static void     ffmpegfs_destroy(__attribute__((unused)) void * p);
+static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
+static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
+static int              ffmpegfs_getattr(const char *path, struct stat *stbuf);
+static int              ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
+static int              ffmpegfs_open(const char *path, struct fuse_file_info *fi);
+static int              ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
+static int              ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
+static int              ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+static void             sighandler(int signum);
+static void *           ffmpegfs_init(struct fuse_conn_info *conn);
+static void             ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static filenamemap          filenames;          /**< @brief Map files to virtual files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
@@ -659,7 +659,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 /**
  * @brief Calculate the video frame count.
  * @param[in] origpath - Path of original file.
- * @param[in] virtualfile - Virtual file object to modify.
+ * @param[inout] virtualfile - Virtual file object to modify.
  * @return On success, returns 0. On error, returns -errno.
  */
 static int get_video_frame_count(const std::string & origpath, LPVIRTUALFILE virtualfile)

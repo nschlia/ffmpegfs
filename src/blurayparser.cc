@@ -403,7 +403,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         append_sep(&origpath);
 
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_FILESET);
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME);
     }
 
     // Bluray is video format anyway

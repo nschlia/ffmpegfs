@@ -386,7 +386,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
             append_sep(&origpath);
 
-            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_FILESET);
+            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME);
         }
 
         // DVD is video format anyway

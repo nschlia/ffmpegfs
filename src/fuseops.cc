@@ -1426,7 +1426,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
             if (!frame_no)
             {
                 errno = EINVAL;
-                Logging::error(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                Logging::trace(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
                 return -errno;
             }
 

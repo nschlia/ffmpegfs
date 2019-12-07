@@ -780,7 +780,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             }
                             else
                             {
-                                int flags = VIRTUALFLAG_FILESET;
+                                int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
                                 // Change file to directory for the frame set
                                 stbuf.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
@@ -1039,7 +1039,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 append_sep(&origpath);
 
-                insert_file(type, origpath, stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY);
+                insert_file(type, origpath, stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FRAME);
             }
             else if (S_ISREG(stbuf->st_mode))
             {

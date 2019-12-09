@@ -167,18 +167,18 @@ default this is only possible for the user who launched FFmpegfs.
 
 Examples:
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache
 
 Run FFmpegfs transcoding files from /test/in to /test/out, logging up to
 a chatty TRACE level to stderr. The cache resides in test/cache. All directories
 are under the current user's home directory.
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
 
 Same as above, but also limit video with to 640 pixels. Larger videos will be
 scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
 
 Enable deinterlacing to enhance image quality.
 

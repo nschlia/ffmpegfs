@@ -2,6 +2,8 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+VIDEO=$2
+
 # Fixes to make these checks work with Libav 12
 #
 # Change...
@@ -58,24 +60,24 @@ else
 	exit 99
 fi
 
-TAGFILE=tags/${LIBRARY}${VERSION}/obama.${DESTTYPE}.tag
-get_metadata "${DIRNAME}/obama.${FILEEXT}" TAGS
-echo "${TAGS}" > "obama.${DESTTYPE}.tag"
-echo "Compare file: ${TAGFILE}" 
-echo "Tags found:"
-echo "${TAGS}"
-cmp -c ${TAGFILE} "obama.${DESTTYPE}.tag"
-printf "*** PASS ***\n\n"
-rm -f "obama.${DESTTYPE}.tag"
+if [ "${VIDEO}" == "1" ];
+then
+	FILELIST="obama raven snowboard"
+else
+        FILELIST="obama raven"
+fi
 
-TAGFILE=tags/${LIBRARY}${VERSION}/raven.${DESTTYPE}.tag
-get_metadata "${DIRNAME}/raven.${FILEEXT}" TAGS
-echo "${TAGS}" > "raven.${DESTTYPE}.tag"
-echo "Compare file: ${TAGFILE}"
-echo "Tags found:"
-echo "${TAGS}"
-cmp -b ${TAGFILE} "raven.${DESTTYPE}.tag"
-printf "*** PASS ***\n\n"
-rm -f "raven.${DESTTYPE}.tag"
+for FILE in ${FILELIST}
+do
+	TAGFILE=tags/${LIBRARY}${VERSION}/${FILE}.${DESTTYPE}.tag
+	get_metadata "${DIRNAME}/${FILE}.${FILEEXT}" TAGS
+	echo "${TAGS}" > "${FILE}.${DESTTYPE}.tag"
+	echo "Compare file: ${TAGFILE}" 
+	echo "Tags found:"
+	echo "${TAGS}"
+	cmp -c ${TAGFILE} "${FILE}.${DESTTYPE}.tag"
+	printf "*** PASS ***\n\n"
+	rm -f "${FILE}.${DESTTYPE}.tag"
+done 
 
 echo OK

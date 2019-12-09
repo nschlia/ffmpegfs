@@ -17,6 +17,9 @@ News
           
 * See [NEWS](NEWS) for details.
 
+Libav video support currenty seems broken. I have not yet decided whether 
+to fix that or to drop Libav as a whole.
+
 About
 -----
 

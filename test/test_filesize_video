@@ -1,0 +1,57 @@
+#!/bin/bash
+
+. "${BASH_SOURCE%/*}/funcs.sh" "$1"
+
+check_filesize() {
+    FILE="$1.${FILEEXT}"
+    MIN="$2"
+    MAX="$3"
+
+    if [ -z ${MAX}  ]
+    then
+        MAX=${MIN}
+    fi
+
+    SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
+    echo "File: ${FILE}"
+    if [ ${MIN} -eq ${MAX} ]
+    then
+        echo "Size: ${SIZE} (expected ${MIN})"
+    else
+        echo "Size: ${SIZE} (expected ${MIN}...${MAX})"
+    fi
+
+    if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]
+    then
+        echo "Pass"
+    else
+        echo "FAIL!"
+        exit 1
+    fi
+}
+
+# Ensure log contains file sizes, predicted and actual
+cat "${DIRNAME}/obama.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven.${FILEEXT}" > /dev/null
+
+if [ "${DESTTYPE}" == "mp4" ];
+then
+    # mp4
+    check_filesize "snowboard" 47852671
+elif [ "${DESTTYPE}" == "webm" ];
+then
+    # webm
+    check_filesize "snowboard" 9360527
+elif [ "${DESTTYPE}" == "mov" ];
+then
+    # mov
+    check_filesize "snowboard" 8888289
+elif [ "${DESTTYPE}" == "prores" ];
+then
+    # prores
+    check_filesize "snowboard" 798474008
+else
+echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
+exit 99
+fi
+

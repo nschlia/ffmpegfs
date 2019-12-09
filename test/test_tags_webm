@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./test_tags webm
+./test_tags webm 1
 

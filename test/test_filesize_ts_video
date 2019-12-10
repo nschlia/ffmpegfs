@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./test_filesize_video ts
+

@@ -13,30 +13,12 @@ News
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
 * **Work on version 1.97 (2.0 pre-release) now in progress.**
-* Feature: Added version check and auto update to cache database. Older database versions will
-           now automatically upgraded to the latest structure.
-* Feature: Transcode videos to frame works transparently for any input now (DVD, Bluray and VideoCD).
-* Bugfix:  Fix for "prores can't allocate memory #41".
-* Bugfix:  Do not shrink cache when reopening it.
-* Support: Code has now been tested to work on ARMv7 (32 bit).
-* Feature: Documented the whole project with Doxygen.
-* Feature: Implemented a thread pool. File open (and thread starts) are now much faster than before.
-           The thread pool also ensures that not more threads than configured are started. Defaults
-           to 16x the number of processor cores available.
-* Feature: Added Apple Lossles Audio Compression (ALAC) support.
-* Feature: Added optional graphviz to configure, only required for Doxygen.
-* Feature: Updated INSTALL.md with missing prerequisites. Rearranged paragraphs, mentioning building
-           from git first was confusing.
-* Feature: Moved cache directory from rather unusual /tmp/ffmpegfs location to /var/cache/ffmpegfs.
-* Bugfix: Fixed several warnings if compiled for 32 bit.
-* Bugfix: Removed unused xmlint prerequisite from configure.
-* Bugfix: Video and audio was out of sync on android devices.
-* Bugfix: Fix crash when Bluray video without audio was opened.
+* Feature: Added checks for mov/mp4/prores/webm video format.
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
-* Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h
-    Deprecate use of avfilter_register(), avfilter_register_all(),
-    avfilter_next(). Added av_filter_iterate().
-* Libav pulled tricks on me, again: Libav 12.3 won't compile anymore under Debian 10. To fix upgraded to master branch 13_dev0.
+* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
+* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
+* Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
+          simply dropped.
 
 * See [NEWS](NEWS) for details.
 

@@ -50,6 +50,10 @@ elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
     check_filesize "snowboard" 798474008
+elif [ "${DESTTYPE}" == "ts" ];
+then
+    # ts
+    check_filesize "snowboard" 8888289
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

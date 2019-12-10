@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./test_tags ts
+./test_tags ts 1
 

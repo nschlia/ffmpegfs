@@ -17,10 +17,12 @@ News
           
 * See [NEWS](NEWS) for details.
 
-Libav video support currenty seems broken. I have not yet decided whether 
+*Libav video support currenty seems broken. I have not yet decided whether 
 to fix that or to drop Libav as a whole. Libav only poorly supports extensions
 required to do on-the-fly transcoding. The results are only fair to good, and
-Libav problems begin to cost me too much effort to fix.
+Libav problems begin to cost me too much effort to fix.*
+
+*Objections anyone? If nobody misses Libav I'll stop supporting it soon.*
 
 About
 -----

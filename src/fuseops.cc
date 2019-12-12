@@ -428,21 +428,38 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
     return insert_file(type, virtfilepath, virtfilepath, stbuf, flags);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat  * stbuf, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat * stbuf, int flags)
 {
-    VIRTUALFILE virtualfile;
     std::string sanitised_filepath = sanitise_filepath(virtfilepath);
 
-    virtualfile.m_type          = type;
-    virtualfile.m_flags         = flags;
-    virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-    virtualfile.m_origfile      = sanitise_filepath(origfile);
-
-    memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
-
-    filenames.insert(make_pair(sanitised_filepath, virtualfile));
-
     filenamemap::iterator it    = filenames.find(sanitised_filepath);
+
+    if (it != filenames.end())
+    {
+        VIRTUALFILE & virtualfile = it->second;
+
+        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
+
+        virtualfile.m_type          = type;
+        virtualfile.m_flags         = flags;
+        virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_origfile      = sanitise_filepath(origfile);
+    }
+    else
+    {
+        VIRTUALFILE virtualfile;
+
+        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
+
+        virtualfile.m_type          = type;
+        virtualfile.m_flags         = flags;
+        virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_origfile      = sanitise_filepath(origfile);
+
+        filenames.insert(make_pair(sanitised_filepath, virtualfile));
+        it    = filenames.find(sanitised_filepath);
+    }
+
     return &it->second;
 }
 

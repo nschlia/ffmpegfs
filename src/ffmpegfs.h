@@ -245,7 +245,7 @@ bool            transcoder_cache_clear(void);
  */
 LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *stbuf);
 /**
- * @brief Add new virtual file to internal list.
+ * @brief Add new virtual file to internal list. If the file already exists, it will be updated.
  * @param[in] type - Type of virtual file.
  * @param[in] virtfilepath - Name of virtual file.
  * @param[in] origfile - Original file name.

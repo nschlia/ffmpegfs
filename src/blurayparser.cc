@@ -395,6 +395,9 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     {
         std::string origpath(path + filename);
 
+        int flags = VIRTUALFLAG_FILESET;
+
+        // Change file to directory for the frame set
         // Change file to virtual directory for the frame set. Keep permissions.
         stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
         stbuf.st_mode  |= S_IFDIR;
@@ -403,7 +406,16 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         append_sep(&origpath);
 
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME);
+        if (params.m_format[0].is_frameset())
+        {
+            flags |= VIRTUALFLAG_FRAME;
+        }
+        else if (params.m_format[0].is_hls())
+        {
+            flags |= VIRTUALFLAG_HLS;
+        }
+
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, flags);
     }
 
     // Bluray is video format anyway
@@ -466,6 +478,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
         virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
+    	virtualfile->m_segment_count = static_cast<uint32_t>(duration / params.m_segment_duration) + 1;
     }
 
     return true;

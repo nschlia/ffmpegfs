@@ -43,10 +43,10 @@
 #define     DB_BASE_VERSION_MINOR   0           /**< brief The oldest database version minor (Release < 1.95) */
 
 #define     DB_VERSION_MAJOR        1           /**< brief Current database version major */
-#define     DB_VERSION_MINOR        95          /**< brief Current database version minor */
+#define     DB_VERSION_MINOR        97          /**< brief Current database version minor */
 
 #define     DB_MIN_VERSION_MAJOR    1           /**< brief Required database version major (required 1.95) */
-#define     DB_MIN_VERSION_MINOR    95          /**< brief Required database version minor (required 1.95) */
+#define     DB_MIN_VERSION_MINOR    97          /**< brief Required database version minor (required 1.95) */
 
 /**
   * @brief RESULTCODE of transcoding operation
@@ -75,9 +75,11 @@ typedef struct CACHE_INFO
     int             m_videowidth;               /**< @brief Video width */
     int             m_videoheight;              /**< @brief Video height */
     bool            m_deinterlace;              /**< @brief true if video was deinterlaced */
+    int64_t         m_duration;                 /**< @brief File  duration, in AV_TIME_BASE fractional seconds. */
     size_t          m_predicted_filesize;       /**< @brief Predicted file size */
     size_t          m_encoded_filesize;         /**< @brief Actual file size after encode */
     uint32_t        m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
+    uint32_t        m_segment_count;            /**< @brief Number of video segments for HLS */
     RESULTCODE      m_finished;                 /**< @brief Result code: */
     bool            m_error;                    /**< @brief true if encode failed */
     int             m_errno;                    /**< @brief errno if encode failed */
@@ -280,7 +282,7 @@ protected:
      * @param[in] version_minor_r - Right minor version
      * @return Returns +1 if left version is larger then right, 0 if versions are the same, -1 if right version is larger than left.
      */
-    int cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r);
+    int                     cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r);
     /**
      * @brief Begin a database transactio.n
      * @return Returns true on success; false on error.
@@ -304,18 +306,13 @@ protected:
     bool                    create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS columns[]);
     /*
      */
-#define     DB_VERSION_MAJOR_1      1       /**< @brief upgrade_db_1 upgrades to this major version */
-#define     DB_VERSION_MINOR_1      95      /**< @brief upgrade_db_1 upgrades to this minor version */
     /**
      * @brief Upgrade database from version below 1.95
      * @param[out] db_version_major - Upon return, contains the new major database version.
      * @param[out] db_version_minor - Upon return, contains the new minor database version.
      * @return Returns true on success; false on error.
      */
-    bool                    upgrade_db_1(int *db_version_major, int *db_version_minor);
-    // Future upgrades here...
-    //bool                    upgrade_db_2(int *db_version_major, int *db_version_minor);
-    //bool                    upgrade_db_3(int *db_version_major, int *db_version_minor);
+    bool                    upgrade_db(int *db_version_major, int *db_version_minor);
 
 private:
     static const

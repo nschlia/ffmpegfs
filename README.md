@@ -13,6 +13,7 @@ News
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
 * **Work on version 1.97 (2.0 pre-release) now in progress.**
+* Feature: Added support for HLS (HTTP Live Streaming). See the "HTTP Live Streaming" section about how to use it.
 * Feature: Added checks for mov/mp4/prores/webm video format.
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
 * Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
@@ -54,6 +55,7 @@ Supported output formats:
 * PNG (video to frameset)
 * BMP (video to frameset)
 * TS (MPEG transport stream)
+* HLS (HTTP Live Streaming)
 
 This can let you use a multi media file collection with software
 and/or hardware which only understands one of the supported output
@@ -165,6 +167,29 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
 
 Enable deinterlacing to enhance image quality.
+
+HTTP Live Streaming
+-------------------
+
+ffmpegfs now supports HLS (HTTP Live Streaming). ffmpegfs will create transport stream
+(ts) segments and the required m3u8 playlists. For your convenience it will also create
+a virtual test.html file that can playback the segments using the hls.js library
+(see https://github.com/video-dev/hls.js/).
+
+To use the new HLS feature invoke ffmpegfs with:
+
+     ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
+
+Please note that this will only work over http, so you need to publish the directory
+on a web server. Simply navigate to the directory and open test.html.
+Security restrictions prevent direct playback from disk.
+
+The feature is still experimental! Be prepared for unexpected results.
+
+Currently the segments are not properly created. Each segment may contain video or audio
+frames that actually belong to the previous or next segment. This will be fixed in
+future versions. hls.js does not seem to care about improperly cut segments, though,
+and playback appears fine. Playing a single segment separately will not work properly.
 
 AUTO COPY
 ---------

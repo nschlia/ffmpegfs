@@ -3,6 +3,7 @@ FFmpegfs NEWS
 Important changes in 1.97 (2019-12-XX)
 
 * Support:
+* Feature: Added support for HLS (HTTP Live Streaming). Select desttype=hls to enable.
 * Feature: Added checks for mov/mp4/prores/webm video format.
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
           rescaled videos, what a suprise. Especially caused strange results on Bluray sources,

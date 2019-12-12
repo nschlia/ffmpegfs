@@ -94,6 +94,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     #ifndef USING_LIBAV
     , m_deinterlace(0)                          // default: do not interlace video
     #endif  // !USING_LIBAV
+    , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -201,6 +202,7 @@ enum
     KEY_AUDIO_BITRATE,
     KEY_AUDIO_SAMPLERATE,
     KEY_VIDEO_BITRATE,
+    KEY_SEGMENT_DURATION,
     KEY_SCRIPTFILE,
     KEY_SCRIPTSOURCE,
     KEY_EXPIRY_TIME,
@@ -258,6 +260,9 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("--deinterlace",                   m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                     m_deinterlace, 1),
 #endif  // !USING_LIBAV
+    // HLS
+    FUSE_OPT_KEY("--segment_duration=%s",           KEY_SEGMENT_DURATION),
+    FUSE_OPT_KEY("segment_duration=%s",             KEY_SEGMENT_DURATION),
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -394,7 +399,9 @@ static int          get_profile(const std::string & arg, PROFILE *profile);
 static std::string  get_profile_text(PROFILE profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static std::string  get_level_text(PRORESLEVEL level);
+static int          get_segment_duration(const std::string & arg, int64_t *value);
 static int          get_value(const std::string & arg, std::string *value);
+static int          get_value(const std::string & arg, double *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults(void);
@@ -993,6 +1000,31 @@ static std::string get_level_text(PRORESLEVEL level)
 }
 
 /**
+ * @brief Get HLS segment duration. Input value must be in seconds.
+ * @param[in] arg - One of the ProRes levels.
+ * @param[out] value - Upon return contains segment duration in AV_TIME_BASE units.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_segment_duration(const std::string & arg, int64_t *value)
+{
+    double duration;
+    if (get_value(arg, &duration) < 0)
+    {
+        return -1;
+    }
+
+    if (*value <= 0)
+    {
+        std::fprintf(stderr, "INVALID PARAMETER: segment_duration %.1f is out of range. For obvious reasons this must be greater than zero.\n", duration);
+        return -1;
+    }
+
+    *value = static_cast<int>(duration * AV_TIME_BASE);
+
+    return 0;
+}
+
+/**
  * @brief Get value form command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
@@ -1006,6 +1038,29 @@ static int get_value(const std::string & arg, std::string *value)
     if (pos != std::string::npos)
     {
         *value = arg.substr(pos + 1);
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+
+    return -1;
+}
+
+/**
+ * @brief Get value form command line string.
+ * Finds whatever is after the "=" sign.
+ * @param[in] arg - Command line option.
+ * @param[in] value - Upon return, contains the value after the "=" sign.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_value(const std::string & arg, double *value)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        *value = atof(arg.substr(pos + 1).c_str());
 
         return 0;
     }
@@ -1152,6 +1207,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_bitrate(arg, &params.m_videobitrate);
     }
+    case KEY_SEGMENT_DURATION:
+    {
+        return get_segment_duration(arg, &params.m_segment_duration);
+    }
     case KEY_EXPIRY_TIME:
     {
         return get_time(arg, &params.m_expiry_time);
@@ -1243,32 +1302,34 @@ static void print_params(void)
                                          "Remove Album Arts : %17\n"
                                          "Video Codec       : %18\n"
                                          "Video Bitrate     : %19\n"
+                                         "\nHLS Options\n\n"
+                                         "Segment Duration  : %20\n"
                                          "\nVirtual Script\n\n"
-                                         "Create script     : %20\n"
-                                         "Script file name  : %21\n"
-                                         "Input file        : %22\n"
+                                         "Create script     : %21\n"
+                                         "Script file name  : %22\n"
+                                         "Input file        : %23\n"
                                          "\nLogging\n\n"
-                                         "Max. Log Level    : %23\n"
-                                         "Log to stderr     : %24\n"
-                                         "Log to syslog     : %25\n"
-                                         "Logfile           : %26\n"
+                                         "Max. Log Level    : %24\n"
+                                         "Log to stderr     : %25\n"
+                                         "Log to syslog     : %26\n"
+                                         "Logfile           : %27\n"
                                          "\nCache Settings\n\n"
-                                         "Expiry Time       : %27\n"
-                                         "Inactivity Suspend: %28\n"
-                                         "Inactivity Abort  : %29\n"
-                                         "Pre-buffer size   : %30\n"
-                                         "Max. Cache Size   : %31\n"
-                                         "Min. Disk Space   : %32\n"
-                                         "Cache Path        : %33\n"
-                                         "Disable Cache     : %34\n"
-                                         "Maintenance Timer : %35\n"
-                                         "Clear Cache       : %36\n"
+                                         "Expiry Time       : %28\n"
+                                         "Inactivity Suspend: %29\n"
+                                         "Inactivity Abort  : %20\n"
+                                         "Pre-buffer size   : %31\n"
+                                         "Max. Cache Size   : %32\n"
+                                         "Min. Disk Space   : %33\n"
+                                         "Cache Path        : %34\n"
+                                         "Disable Cache     : %35\n"
+                                         "Maintenance Timer : %36\n"
+                                         "Clear Cache       : %37\n"
                                          "\nVarious Options\n\n"
-                                         "Max. Threads      : %37\n"
-                                         "Decoding Errors   : %38\n"
-                                         "Min. DVD chapter  : %39\n"
+                                         "Max. Threads      : %38\n"
+                                         "Decoding Errors   : %39\n"
+                                         "Min. DVD chapter  : %40\n"
                                          "\nExperimental Options\n\n"
-                                         "Windows 10 Fix    : %40\n",
+                                         "Windows 10 Fix    : %41\n",
                    params.m_basepath.c_str(),
                    params.m_mountpath.c_str(),
                    params.smart_transcode() ? "yes" : "no",
@@ -1292,6 +1353,7 @@ static void print_params(void)
             params.m_noalbumarts ? "yes" : "no",
             get_codec_name(params.m_format[0].video_codec_id(), true),
             format_bitrate(params.m_videobitrate).c_str(),
+            format_time(params.m_segment_duration).c_str(),
             params.m_enablescript ? "yes" : "no",
             params.m_scriptfile.c_str(),
             params.m_scriptsource.c_str(),

@@ -39,6 +39,13 @@
 
 #include "vcd/vcdentries.h"
 
+extern "C" {
+#include <libavutil/rational.h>
+#ifdef USING_LIBAV
+#include "libavutil/mathematics.h"
+#endif
+}
+
 static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler);
 static bool create_vcd_virtualfile(const VcdEntries &vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no);
 
@@ -90,12 +97,15 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     LPVIRTUALFILE virtualfile = nullptr;
     if (!params.m_format[0].is_multiformat())
     {
-    	virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
+        virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
     }
     else
     {
         std::string origpath(vcd.get_disk_path() + filename);
 
+        int flags = VIRTUALFLAG_FILESET;
+
+        // Change file to directory for the frame set
         // Change file to virtual directory for the frame set. Keep permissions.
         stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
         stbuf.st_mode  |= S_IFDIR;
@@ -104,7 +114,16 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 
         append_sep(&origpath);
 
-        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME);
+        if (params.m_format[0].is_frameset())
+        {
+            flags |= VIRTUALFLAG_FRAME;
+        }
+        else if (params.m_format[0].is_hls())
+        {
+            flags |= VIRTUALFLAG_HLS;
+        }
+
+        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, flags);
     }
 
     // Video CD is video format anyway
@@ -125,6 +144,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     virtualfile->m_duration             = duration;
     AVRational framerate = av_make_q(25000, 1000);  //*** @todo: check disk which framerate is correct, can be 25 or 29.996 fps!
     virtualfile->m_video_frame_count 	= static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
+    virtualfile->m_segment_count 	= static_cast<uint32_t>(duration / params.m_segment_duration) + 1;
 
     return true;
 }

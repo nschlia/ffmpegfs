@@ -41,14 +41,7 @@
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
-    : m_fd(-1)
-    , m_buffer(nullptr)
-    , m_buffer_pos(0)
-    , m_buffer_watermark(0)
-    , m_buffer_size(0)
-    , m_fd_idx(-1)
-    , m_buffer_idx(nullptr)
-    , m_buffer_size_idx(0)
+    : m_cur_ci(nullptr)
 {
 }
 
@@ -78,13 +71,78 @@ int Buffer::open(LPVIRTUALFILE virtualfile)
 
     set_virtualfile(virtualfile);
 
-    make_cachefile_name(m_cachefile, filename(), params.current_format(virtualfile)->desttype(), false);
-    if ((virtualfile->m_flags & VIRTUALFLAG_FILESET) && (virtualfile->m_flags & VIRTUALFLAG_FRAME))
-    {
-        // Create extra index cash for frame sets only
-        make_cachefile_name(m_cachefile_idx, filename(), params.current_format(virtualfile)->desttype(), true);
-    }
     return 0;
+}
+
+bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
+{
+    uint32_t index = segment_no;
+    if (index)
+    {
+        index--;
+    }
+
+    m_ci[index].m_flags |= flags;
+
+    if (m_ci[index].m_fd != -1)
+    {
+        Logging::trace(m_ci[index].m_cachefile, "Cache file already open, no need to open again.");
+        // Already open
+        return true;
+    }
+
+    Logging::info(m_ci[index].m_cachefile, "Opening cache file %1.", (flags & CACHE_FLAG_RW) ? "read/write" : "readonly");
+
+    size_t filesize     = 0;
+    bool isdefaultsize  = false;
+    uint8_t *p          = nullptr;
+
+    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, 0))
+    {
+        return false;
+    }
+
+    if (!isdefaultsize)
+    {
+        m_ci[index].m_buffer_pos = m_ci[index].m_buffer_watermark = filesize;
+    }
+
+    m_ci[index].m_buffer_size       = filesize;
+    m_ci[index].m_buffer            = static_cast<uint8_t*>(p);
+
+    return true;
+}
+
+bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
+{
+    uint32_t index = segment_no;
+    if (index)
+    {
+        index--;
+    }
+
+    m_ci[index].m_flags &= ~flags;
+
+    if (m_ci[index].m_flags)
+    {
+        Logging::info(m_ci[index].m_cachefile, "Cache file still in use while trying to close.");
+        return true;
+    }
+
+    if (m_ci[index].m_fd == -1)
+    {
+        // Already closed
+        Logging::trace(m_ci[index].m_cachefile, "No need to close unopened cache file.");
+        return true;
+    }
+
+    Logging::info(m_ci[index].m_cachefile, "Closing cache file.");
+
+    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark, &m_ci[index].m_buffer_pos);
+
+    m_ci[index].m_buffer_size = 0;
+
+    return success;
 }
 
 bool Buffer::init(bool erase_cache)
@@ -98,23 +156,50 @@ bool Buffer::init(bool erase_cache)
 
     bool success = true;
 
-    make_cachefile_name(m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
+    if ((virtualfile()->m_flags & VIRTUALFLAG_HLS))
+    {
+        // HLS format: create several segments
+
+        assert(virtualfile()->m_segment_count); // Should be at least 1 segment
+
+        m_ci.resize(virtualfile()->m_segment_count);
+
+        for (uint32_t segment_no = 1; segment_no <= virtualfile()->m_segment_count; segment_no++)
+        {
+            make_cachefile_name(m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
+        }
+    }
+    else
+    {
+        // All other formats: create just a single segment.
+        m_ci.resize(1);
+
+        make_cachefile_name(m_ci[0].m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
+        if ((virtualfile()->m_flags & VIRTUALFLAG_FRAME))
+        {
+            // Create extra index cash for frame sets only
+            make_cachefile_name(m_ci[0].m_cachefile_idx, filename(), params.current_format(virtualfile())->fileext(), true);
+        }
+    }
+
+    // Set current segment
+    m_cur_ci = &m_ci[0];
 
     try
     {
-        // Create the path to the cache file
-        char *cachefile = new_strdup(m_cachefile);
+        // Create the path to the cache file. All paths are the same, so this is required only once.
+        char *cachefile = new_strdup(m_ci[0].m_cachefile);
 
         if (cachefile == nullptr)
         {
-            Logging::error(m_cachefile, "Error opening cache file: Out of memory");
+            Logging::error(m_ci[0].m_cachefile, "Error opening cache file: Out of memory");
             errno = ENOMEM;
             throw false;
         }
 
         if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            Logging::error(m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
+            Logging::error(m_ci[0].m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
             delete [] cachefile;
             throw false;
         }
@@ -122,51 +207,38 @@ bool Buffer::init(bool erase_cache)
 
         delete [] cachefile;
 
-        m_fd                = -1;
-        m_buffer            = nullptr;
-        m_buffer_pos        = 0;
-        m_buffer_watermark  = 0;
-        m_buffer_size       = 0;
-
-        if (erase_cache)
+        for (uint32_t index = 0; index < segment_count(); index++)
         {
-            remove_cachefile();
-            errno = 0;  // ignore this error
+            m_ci[index].m_fd                = -1;
+            m_ci[index].m_buffer            = nullptr;
+            m_ci[index].m_buffer_pos        = 0;
+            m_ci[index].m_buffer_watermark  = 0;
+            m_ci[index].m_buffer_size       = 0;
+
+            if (erase_cache)
+            {
+                remove_cachefile(index + 1);
+                errno = 0;  // ignore this error
+            }
         }
 
-        size_t filesize     = 0;
-        bool isdefaultsize  = false;
-        uint8_t *p          = nullptr;
-
-        if (!map_file(m_cachefile, &m_fd, &p, &filesize, &isdefaultsize, 0))
-        {
-            throw false;
-        }
-
-        if (!isdefaultsize)
-        {
-            m_buffer_pos = m_buffer_watermark = filesize;
-        }
-
-        m_buffer_size       = filesize;
-        m_buffer            = static_cast<uint8_t*>(p);
-
-        if (!m_cachefile_idx.empty())
+        // Index only required for frame sets and there is only one.
+        if (!m_ci[0].m_cachefile_idx.empty())
         {
             assert(virtualfile()->m_video_frame_count > 0);
             assert(sizeof(IMAGE_FRAME) == 32);
 
-            filesize            = 0;
-            isdefaultsize       = true;
-            p                   = nullptr;
+            size_t filesize     = 0;
+            bool isdefaultsize  = false;
+            uint8_t *p          = nullptr;
 
-            if (!map_file(m_cachefile_idx, &m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
+            if (!map_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
             {
                 throw false;
             }
 
-            m_buffer_size_idx   = filesize;
-            m_buffer_idx        = static_cast<uint8_t*>(p);
+            m_ci[0].m_buffer_size_idx     = filesize;
+            m_ci[0].m_buffer_idx          = static_cast<uint8_t*>(p);
         }
     }
     catch (bool _success)
@@ -175,15 +247,61 @@ bool Buffer::init(bool erase_cache)
 
         if (!success)
         {
-            m_fd                = -1;
-            m_buffer            = nullptr;
-            m_buffer_pos        = 0;
-            m_buffer_watermark  = 0;
-            m_buffer_size       = 0;
+            for (uint32_t index = 0; index < segment_count(); index++)
+            {
+                m_ci[index].m_fd                  = -1;
+                m_ci[index].m_buffer              = nullptr;
+                m_ci[index].m_buffer_pos          = 0;
+                m_ci[index].m_buffer_watermark    = 0;
+                m_ci[index].m_buffer_size         = 0;
+            }
         }
     }
 
     return success;
+}
+
+bool Buffer::set_segment(uint32_t segment_no)
+{
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (!segment_no || segment_no > segment_count())
+    {
+        errno = EINVAL;
+        return false;
+    }
+
+    if (!close_file(current_segment_no(), CACHE_FLAG_RW))
+    {
+        return false;
+    }
+
+    if (!open_file(segment_no, CACHE_FLAG_RW))
+    {
+        return false;
+    }
+
+    m_cur_ci = &m_ci[segment_no - 1];
+
+    return true;
+}
+
+uint32_t Buffer::segment_count()
+{
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    return static_cast<uint32_t>(m_ci.size());
+}
+
+uint32_t Buffer::current_segment_no()
+{
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (!segment_count() || m_cur_ci == nullptr)
+    {
+        return 0;
+    }
+    return static_cast<uint32_t>(m_cur_ci - &m_ci[0]) + 1;
 }
 
 bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
@@ -191,6 +309,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     bool success = true;
 
     Logging::trace(filename, "Mapping cache file.");
+    //Logging::error(filename, "MAPPING %<%11zu>1 %2", *filesize, *isdefaultsize);
 
     try
     {
@@ -285,7 +404,6 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
         if (munmap(__p, __filesize ? __filesize : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spitzs EINVBAL error)
         {
             Logging::error(filename, "Unmapping cache file failed: (%1) %2 %3", errno, strerror(errno), __filesize);
-            fprintf(stderr, "P = %p size = %zi\n", __p, __filesize);
             success = false;
         }
     }
@@ -326,45 +444,54 @@ bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
     {
         if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
         {
-            remove_cachefile();
+            for (uint32_t n = 1; n <= segment_count(); n++)
+            {
+                remove_cachefile(n);
+            }
             errno = 0;  // ignore this error
         }
 
         return true;
     }
 
-    // Write it now to disk
+    // Write active cache to disk
     flush();
 
-    if (!unmap_file(m_cachefile, &m_fd, &m_buffer, &m_buffer_watermark, &m_buffer_pos))
+    // Close anything that's still open
+    for (uint32_t index = 0; index < segment_count(); index++)
     {
-        success = false;
+        if (!close_file(index + 1, CACHE_FLAG_RO | CACHE_FLAG_RW))
+        {
+            success = false;
+        }
+
+        if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
+        {
+            remove_cachefile(index + 1);
+            errno = 0;  // ignore this error
+        }
     }
 
-    if (!m_cachefile_idx.empty())
+    // Remove index for frame sets. There is only one.
+    if (!m_ci[0].m_cachefile_idx.empty())
     {
-        if (!unmap_file(m_cachefile_idx, &m_fd_idx, &m_buffer_idx, &m_buffer_size_idx))
+        if (!unmap_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &m_ci[0].m_buffer_idx, &m_ci[0].m_buffer_size_idx))
         {
             success = false;
         }
     }
 
-    if (CACHE_CHECK_BIT(CACHE_CLOSE_DELETE, flags))
-    {
-        remove_cachefile();
-        errno = 0;  // ignore this error
-    }
-
     return success;
 }
 
-bool Buffer::remove_cachefile()
+bool Buffer::remove_cachefile(uint32_t segment_no)
 {
-    bool success = remove_file(m_cachefile);
+    LPCACHEINFO ci = !segment_no ? m_cur_ci : &m_ci[segment_no - 1];
+    bool success = remove_file(ci->m_cachefile);
 
-    if (!m_cachefile_idx.empty())
+    if (!ci->m_cachefile_idx.empty())
     {
-        if (!remove_file(m_cachefile_idx))
+        if (!remove_file(ci->m_cachefile_idx))
         {
             success = false;
         }
@@ -376,18 +503,25 @@ bool Buffer::flush()
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer != nullptr)
-    {
-        if (msync(m_buffer, m_buffer_size, MS_SYNC) == -1)
-        {
-            Logging::error(m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
-            return false;
-        }
-    }
-    else
+    if (!segment_count() || m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = EPERM;
         return false;
+    }
+
+    if (msync(m_cur_ci->m_buffer, m_cur_ci->m_buffer_size, MS_SYNC) == -1)
+    {
+        Logging::error(m_cur_ci->m_cachefile, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+        return false;
+    }
+
+    if (m_cur_ci->m_buffer_idx != nullptr)
+    {
+        if (msync(m_cur_ci->m_buffer_idx, m_cur_ci->m_buffer_size_idx, MS_SYNC) == -1)
+        {
+            Logging::error(m_cur_ci->m_cachefile_idx, "Could not sync to disk: (%1) %2", errno, strerror(errno));
+            return false;
+        }
     }
 
     return true;
@@ -397,7 +531,7 @@ bool Buffer::clear()
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer == nullptr)
+    if (!segment_count() || m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -405,22 +539,26 @@ bool Buffer::clear()
 
     bool success = true;
 
-    m_buffer_pos        = 0;
-    m_buffer_watermark  = 0;
-    m_buffer_size       = 0;
+    m_cur_ci->m_buffer_pos          = 0;
+    m_cur_ci->m_buffer_watermark    = 0;
+    m_cur_ci->m_buffer_size         = 0;
+    m_cur_ci->m_seg_finished        = false;
 
     // If empty set file size to 1 page
     long filesize = sysconf (_SC_PAGESIZE);
 
-    if (m_fd != -1 && ftruncate(m_fd, filesize) == -1)
+    if (m_cur_ci->m_fd != -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
-        success = false;
+        if (ftruncate(m_cur_ci->m_fd, filesize) == -1)
+        {
+            Logging::error(m_cur_ci->m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
+            success = false;
+        }
     }
 
-    if (m_fd_idx != -1)
+    if (m_cur_ci->m_fd_idx != -1)
     {
-        memset(m_buffer_idx, 0, m_buffer_size_idx);
+        memset(m_cur_ci->m_buffer_idx, 0, m_cur_ci->m_buffer_size_idx);
     }
 
     return success;
@@ -430,7 +568,7 @@ bool Buffer::reserve(size_t size)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer == nullptr)
+    if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -440,29 +578,29 @@ bool Buffer::reserve(size_t size)
 
     if (!size)
     {
-        size = m_buffer_size;
+        size = m_cur_ci->m_buffer_size;
     }
 
-    m_buffer = static_cast<uint8_t*>(mremap(m_buffer, m_buffer_size, size, MREMAP_MAYMOVE));
-    if (m_buffer != nullptr)
+    m_cur_ci->m_buffer = static_cast<uint8_t*>(mremap(m_cur_ci->m_buffer, m_cur_ci->m_buffer_size, size, MREMAP_MAYMOVE));
+    if (m_cur_ci->m_buffer != nullptr)
     {
-        m_buffer_size = size;
+        m_cur_ci->m_buffer_size = size;
     }
 
-    if (ftruncate(m_fd, static_cast<off_t>(m_buffer_size)) == -1)
+    if (ftruncate(m_cur_ci->m_fd, static_cast<off_t>(m_cur_ci->m_buffer_size)) == -1)
     {
-        Logging::error(m_cachefile, "Error calling ftruncate() to resize the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_fd);
+        Logging::error(m_cur_ci->m_cachefile, "Error calling ftruncate() to resize the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
         success = false;
     }
 
-    return ((m_buffer != nullptr) && success);
+    return ((m_cur_ci->m_buffer != nullptr) && success);
 }
 
 size_t Buffer::write(const uint8_t* data, size_t length)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer == nullptr)
+    if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = EBADF;
         return 0;
@@ -486,7 +624,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (data == nullptr || m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    if (data == nullptr || m_cur_ci == nullptr || m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
@@ -498,7 +636,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
     size_t bytes_written;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 
-    old_image_frame = reinterpret_cast<LPIMAGE_FRAME>(m_buffer_idx + start);
+    old_image_frame = reinterpret_cast<LPIMAGE_FRAME>(m_cur_ci->m_buffer_idx + start);
 
     if (old_image_frame->m_frame_no && (old_image_frame->m_size <= static_cast<uint32_t>(length)))
     {
@@ -530,7 +668,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
             return 0;
         }
 
-        memcpy(reinterpret_cast<void *>(m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
+        memcpy(reinterpret_cast<void *>(m_cur_ci->m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
     }
 
     return bytes_written;
@@ -538,13 +676,13 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
 
 uint8_t* Buffer::write_prepare(size_t length)
 {
-    if (reallocate(m_buffer_pos + length))
+    if (reallocate(m_cur_ci->m_buffer_pos + length))
     {
-        if (m_buffer_watermark < m_buffer_pos + length)
+        if (m_cur_ci->m_buffer_watermark < m_cur_ci->m_buffer_pos + length)
         {
-            m_buffer_watermark = m_buffer_pos + length;
+            m_cur_ci->m_buffer_watermark = m_cur_ci->m_buffer_pos + length;
         }
-        return m_buffer + m_buffer_pos;
+        return m_cur_ci->m_buffer + m_cur_ci->m_buffer_pos;
     }
     else
     {
@@ -555,12 +693,19 @@ uint8_t* Buffer::write_prepare(size_t length)
 
 void Buffer::increment_pos(size_t increment)
 {
-    m_buffer_pos += increment;
+    m_cur_ci->m_buffer_pos += increment;
 }
 
 int Buffer::seek(int64_t offset, int whence)
 {
-    if (m_buffer == nullptr)
+    return seek(offset, whence, 0);
+}
+
+int Buffer::seek(int64_t offset, int whence, uint32_t segment_no)
+{
+    LPCACHEINFO ci = cacheinfo(segment_no);
+
+    if (ci == nullptr || ci->m_buffer == nullptr)
     {
         errno = EBADF;
         return (EOF);
@@ -577,12 +722,12 @@ int Buffer::seek(int64_t offset, int whence)
     }
     case SEEK_CUR:
     {
-        seek_pos = static_cast<off_t>(tell()) + offset;
+        seek_pos = static_cast<off_t>(tell(segment_no)) + offset;
         break;
     }
     case SEEK_END:
     {
-        seek_pos = static_cast<off_t>(size()) + offset;
+        seek_pos = static_cast<off_t>(size(segment_no)) + offset;
         break;
     }
     default:
@@ -592,9 +737,9 @@ int Buffer::seek(int64_t offset, int whence)
     }
     }
 
-    if (seek_pos > static_cast<off_t>(size()))
+    if (seek_pos > static_cast<off_t>(size(segment_no)))
     {
-        m_buffer_pos = size();  // Cannot go beyond EOF. Set position to end, leave errno untouched.
+        ci->m_buffer_pos = size(segment_no);  // Cannot go beyond EOF. Set position to end, leave errno untouched.
         return 0;
     }
 
@@ -604,13 +749,27 @@ int Buffer::seek(int64_t offset, int whence)
         return (EOF);
     }
 
-    m_buffer_pos = static_cast<size_t>(seek_pos);
+    ci->m_buffer_pos = static_cast<size_t>(seek_pos);
     return 0;
 }
 
 size_t Buffer::tell() const
 {
-    return m_buffer_pos;
+    return tell(0);
+}
+
+size_t Buffer::tell(uint32_t segment_no) const
+{
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        assert(false);
+        errno = EBADF;
+        return 0;
+    }
+
+    return ci->m_buffer_pos;
 }
 
 int64_t Buffer::duration() const
@@ -620,24 +779,53 @@ int64_t Buffer::duration() const
 
 size_t Buffer::size() const
 {
-    return m_buffer_size;
+    return size(0);
 }
 
-size_t Buffer::buffer_watermark() const
+size_t Buffer::size(uint32_t segment_no) const
 {
-    return m_buffer_watermark;
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return 0;
+    }
+
+    return ci->m_buffer_size;
 }
 
-bool Buffer::copy(std::vector<uint8_t> * out_data, size_t offset)
+size_t Buffer::buffer_watermark(uint32_t segment_no) const
 {
-    return copy(out_data->data(), offset, out_data->size());
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return 0;
+    }
+
+    return ci->m_buffer_watermark;
 }
 
-bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
+bool Buffer::copy(std::vector<uint8_t> * out_data, size_t offset, uint32_t segment_no)
+{
+    return copy(out_data->data(), offset, out_data->size(), segment_no);
+}
+
+bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t segment_no)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer == nullptr)
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return false;
+    }
+
+    if (ci->m_buffer == nullptr)
     {
         errno = EBADF;
         return false;
@@ -645,14 +833,15 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize)
 
     bool success = true;
 
-    if (size() >= offset)
+    assert(ci->m_buffer_size == size(segment_no));
+    if (size(segment_no) >= offset)
     {
-        if (size() < offset + bufsize)
+        if (size(segment_no) < offset + bufsize)
         {
-            bufsize = size() - offset - 1;
+            bufsize = size(segment_no) - offset - 1;
         }
 
-        memcpy(out_data, m_buffer + offset, bufsize);
+        memcpy(out_data, ci->m_buffer + offset, bufsize);
     }
     else
     {
@@ -679,9 +868,18 @@ bool Buffer::reallocate(size_t newsize)
     return true;
 }
 
-const std::string & Buffer::cachefile() const
+const std::string & Buffer::cachefile(uint32_t segment_no) const
 {
-    return m_cachefile;
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        static std::string empty;
+        errno = EBADF;
+        return empty;
+    }
+
+    return ci->m_cachefile;
 }
 
 const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & fileext, bool is_idx)
@@ -729,7 +927,7 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (data == nullptr || m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    if (data == nullptr || m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
@@ -739,7 +937,7 @@ size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 
-    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_buffer_idx + start);
+    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_cur_ci->m_buffer_idx + start);
 
     if (!image_frame->m_frame_no)
     {
@@ -759,7 +957,12 @@ int Buffer::error() const
 
 bool Buffer::eof() const
 {
-    return (tell() == size());
+    return eof(0);
+}
+
+bool Buffer::eof(uint32_t segment_no) const
+{
+    return (tell(segment_no) == size(segment_no));
 }
 
 void Buffer::close()
@@ -771,7 +974,7 @@ bool Buffer::have_frame(uint32_t frame_no)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
+    if (m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
         // Invalid parameter
         errno = EINVAL;
@@ -781,12 +984,77 @@ bool Buffer::have_frame(uint32_t frame_no)
     LPCIMAGE_FRAME image_frame;
     size_t start = static_cast<size_t>(frame_no - 1) * sizeof(IMAGE_FRAME);
 
-    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_buffer_idx + start);
+    image_frame = reinterpret_cast<LPCIMAGE_FRAME>(m_cur_ci->m_buffer_idx + start);
 
     return (image_frame->m_frame_no ? true : false);
 }
 
 bool Buffer::is_open() const
 {
-    return (m_fd != -1 && (fcntl(m_fd, F_GETFL) != -1 || errno != EBADF));
+    if (m_cur_ci == nullptr)
+    {
+        return false;
+    }
+
+    return (m_cur_ci->m_fd != -1 && (fcntl(m_cur_ci->m_fd, F_GETFL) != -1 || errno != EBADF));
+}
+
+void Buffer::finished_segment()
+{
+    if (m_cur_ci == nullptr)
+    {
+        return;
+    }
+
+    m_cur_ci->m_seg_finished = true;
+
+    flush();
+}
+
+bool Buffer::is_segment_finished(uint32_t segment_no) const
+{
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return false;
+    }
+
+    return ci->m_seg_finished;
+}
+
+Buffer::LPCACHEINFO Buffer::cacheinfo(uint32_t segment_no)
+{
+    if (segment_no)
+    {
+        segment_no--;
+
+        assert(segment_no < segment_count());
+        if (segment_no >= segment_count())
+        {
+            return nullptr;
+        }
+        return (&m_ci[segment_no]);
+    }
+
+    return m_cur_ci;
+}
+
+Buffer::LPCCACHEINFO Buffer::const_cacheinfo(uint32_t segment_no) const
+{
+    uint32_t index = segment_no;
+    if (index)
+    {
+        index--;
+
+        assert(index < m_ci.size());
+        if (index >= m_ci.size())
+        {
+            return nullptr;
+        }
+        return (&m_ci[index]);
+    }
+
+    return m_cur_ci;
 }

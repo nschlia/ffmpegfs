@@ -156,9 +156,6 @@ const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
 FFmpeg_Transcoder::FFmpeg_Transcoder()
     : m_fileio(nullptr)
     , m_close_fileio(true)
-    , m_predicted_size(0)
-    , m_video_frame_count(0)
-    , m_current_write_pts(AV_NOPTS_VALUE)
     , m_last_seek_frame_no(0)
     , m_have_seeked(false)
     , m_skip_next_frame(false)
@@ -176,6 +173,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     #endif
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
+    , m_current_segment(1)
     , m_copy_audio(false)
     , m_copy_video(false)
     , m_current_format(nullptr)
@@ -518,6 +516,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
     }
 
+    m_virtualfile->m_segment_count = static_cast<uint32_t>(virtualfile->m_duration / params.m_segment_duration) + 1;
+
     // Make sure this is set, although should already have happened
     m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
@@ -641,6 +641,12 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     m_out.m_filetype    = m_current_format->filetype();
 
     Logging::info(destname(), "Opening output file.");
+
+    // Open for read/write
+    if (!buffer->open_file(0, CACHE_FLAG_RW))
+    {
+        throw false;
+    }
 
     if (!is_frameset())
     {
@@ -812,7 +818,15 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 {
     int ret = 0;
 
-    // Open the output file for writing.
+    m_buffer            = buffer;
+
+    if (!m_out.m_video_pts && is_hls())
+    {
+        m_current_segment = 1;
+        Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
+    }
+
+    // Open the output file for writing. If buffer == nullptr continue using existing buffer.
     ret = open_output_filestreams(buffer);
     if (ret)
     {
@@ -2143,7 +2157,7 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict,  FILETYPE filetype) c
         }
     }
 
-    if (filetype == FILETYPE_MP4 || filetype == FILETYPE_PRORES || filetype == FILETYPE_TS)
+    if (filetype == FILETYPE_MP4 || filetype == FILETYPE_PRORES || filetype == FILETYPE_TS || filetype == FILETYPE_HLS)
     {
         // All
         av_dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
@@ -3045,7 +3059,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
         {
             duration = pkt->duration;
 
-            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS)
+            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
             {
                 /** @todo: Is this a FFmpeg bug or am I too stupid?
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
@@ -3223,11 +3237,12 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             if (*data_present)
             {
                 // Store current video PTS
-                m_current_write_pts = pkt.pts;
+                m_out.m_video_pts = pkt.pts;
+
                 m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
 
                 {
-                    // uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
+                    // uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_out.m_video_pts);
 
                     if (m_last_seek_frame_no == frame_no)    // Skip frames until seek pos
                     {
@@ -3371,6 +3386,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     }
                 }
 
+                m_out.m_video_pts = pkt.pts;
                 m_out.m_last_mux_dts = pkt.dts;
 
 #ifndef USING_LIBAV
@@ -3623,13 +3639,13 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     {
         // Reached end of file
         // Set PTS to end of file
-        m_current_write_pts = m_in.m_video.m_stream->duration;
+        m_out.m_video_pts = m_in.m_video.m_stream->duration;
         // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
-        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_current_write_pts, AVSEEK_FLAG_ANY);
+        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
         return 0;
     }
 
-    uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_current_write_pts);
+    uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_out.m_video_pts);
 
     // Ignore seek if target is within the next 25 frames
     if (next_frame_no >= last_frame_no /*+ 1*/ && next_frame_no <= last_frame_no + 25)
@@ -3909,6 +3925,63 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 }
 
                 status = 1;
+            }
+        }
+
+        if (is_hls())
+        {
+            int64_t pos = 0;
+            uint32_t next_segment;
+
+            if (m_out.m_video_pts)
+            {
+                pos = av_rescale_q(m_out.m_video_pts, m_out.m_video.m_stream->time_base, av_get_time_base_q());
+            }
+            else if (m_out.m_audio_pts)
+            {
+                pos = av_rescale_q(m_out.m_audio_pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
+            }
+
+            next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+
+            if (next_segment > m_virtualfile->m_segment_count)
+            {
+                Logging::warning(destname(), "Current segment %1 > segment count %2", next_segment, m_virtualfile->m_segment_count);
+            }
+            else if (next_segment > m_current_segment)
+            {
+                encode_finish();
+
+                m_current_segment = next_segment;
+
+                Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
+
+                if (!m_buffer->set_segment(m_current_segment))
+                {
+                    throw AVERROR(errno);
+                }
+
+                // Process metadata. The decoder will call the encoder to set appropriate
+                // tag values for the output file.
+                int ret = process_metadata();
+                //                if (ret)
+                //                {
+                //                    return ret;
+                //                }
+
+                // Write the header of the output file container.
+                ret = write_output_file_header();
+                //                if (ret)
+                //                {
+                //                    return ret;
+                //                }
+
+                // Process album arts: copy all from source file to target.
+                ret = process_albumarts();
+                //                if (ret)
+                //                {
+                //                    return ret;
+                //                }
             }
         }
     }
@@ -4205,6 +4278,18 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     return filesize;
 }
 
+int64_t FFmpeg_Transcoder::duration()
+{
+    if (m_virtualfile != nullptr)
+    {
+        return m_virtualfile->m_duration;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 size_t FFmpeg_Transcoder::predicted_filesize()
 {
     if (m_virtualfile != nullptr)
@@ -4229,6 +4314,18 @@ uint32_t FFmpeg_Transcoder::video_frame_count() const
     }
 }
 
+uint32_t FFmpeg_Transcoder::segment_count() const
+{
+    if (m_virtualfile != nullptr)
+    {
+        return m_virtualfile->m_segment_count;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
@@ -4239,6 +4336,27 @@ int FFmpeg_Transcoder::encode_finish()
         // Write the trailer of the output file container.
         ret = write_output_file_trailer();
     }
+
+    if (is_hls())
+    {
+        m_buffer->finished_segment();
+
+        // Get segment VIRTUALFILE object
+        std::string filename(m_buffer->virtualfile()->m_origfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
+        LPVIRTUALFILE virtualfile = find_file(filename.c_str());
+
+        if (virtualfile != nullptr)
+        {
+            virtualfile->m_predicted_size   = m_buffer->buffer_watermark(m_current_segment);
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+            virtualfile->m_st.st_size       = static_cast<__off_t>(virtualfile->m_predicted_size);
+#else
+            virtualfile->m_st.st_size       = static_cast<__off64_t>(virtualfile->m_predicted_size);
+#endif
+            virtualfile->m_st.st_blocks     = (virtualfile->m_st.st_size + 512 - 1) / 512;
+        }
+    }
+
     return ret;
 }
 
@@ -4874,6 +4992,18 @@ bool FFmpeg_Transcoder::is_frameset() const
     else
     {
         return m_current_format->is_frameset();
+    }
+}
+
+bool FFmpeg_Transcoder::is_hls() const
+{
+    if (m_current_format == nullptr)
+    {
+        return false;
+    }
+    else
+    {
+        return m_current_format->is_hls();
     }
 }
 

@@ -220,6 +220,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         break;
     }
     case FILETYPE_TS:
+    case FILETYPE_HLS:
     {
         // AC3 possible in container, but not supported in browsers:
         // m_audio_codec_id    = AV_CODEC_ID_AC3;
@@ -263,12 +264,17 @@ FILETYPE FFmpegfs_Format::filetype() const
 
 bool FFmpegfs_Format::is_multiformat() const
 {
-    return  (is_frameset());
+    return  (is_frameset() || is_hls());
 }
 
 bool FFmpegfs_Format::is_frameset() const
 {
     return (m_filetype == FILETYPE_JPG || m_filetype == FILETYPE_PNG || m_filetype == FILETYPE_BMP);
+}
+
+bool FFmpegfs_Format::is_hls() const
+{
+    return (m_filetype == FILETYPE_HLS);
 }
 
 AVCodecID FFmpegfs_Format::video_codec_id() const
@@ -736,6 +742,7 @@ FILETYPE get_filetype(const std::string & desttype)
         { "jpg",    FILETYPE_JPG },
         { "bmp",    FILETYPE_BMP },
         { "ts",     FILETYPE_TS },
+        { "hls",    FILETYPE_HLS },
     };
 
     try
@@ -1376,3 +1383,7 @@ bool check_ignore(size_t size, size_t offset)
     return ignore;
 }
 
+std::string make_filename(uint32_t file_no, const std::string & fileext)
+{
+    return string_format("%06u.%s", file_no, fileext.c_str());
+}

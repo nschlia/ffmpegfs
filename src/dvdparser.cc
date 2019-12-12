@@ -378,6 +378,9 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         {
             std::string origpath(path + filename);
 
+            int flags = VIRTUALFLAG_FILESET;
+
+            // Change file to directory for the frame set
             // Change file to virtual directory for the frame set. Keep permissions.
             stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
             stbuf.st_mode  |= S_IFDIR;
@@ -386,7 +389,16 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
             append_sep(&origpath);
 
-            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME);
+            if (params.m_format[0].is_frameset())
+            {
+                flags |= VIRTUALFLAG_FRAME;
+            }
+            else if (params.m_format[0].is_hls())
+            {
+                flags |= VIRTUALFLAG_HLS;
+            }
+
+            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, flags);
         }
 
         // DVD is video format anyway
@@ -418,6 +430,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
 
             virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
+    		virtualfile->m_segment_count = static_cast<uint32_t>(duration / params.m_segment_duration) + 1;
         }
     }
 

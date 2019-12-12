@@ -186,11 +186,11 @@ FFmpeg_Profiles::~FFmpeg_Profiles() {}
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 {
     // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
-    { "profile",              "high",                       0,  0 },
-    { "level",                "3.1",                        0,  0 },
+    { "profile",                "high",                     0,  0 },
+    { "level",                  "3.1",                      0,  0 },
 
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",                 "ultrafast",                0,  0 },
     { nullptr,                  nullptr,                    0,  0 }
 };
 

@@ -44,6 +44,7 @@
 #include <sys/stat.h>
 #include <string>
 #include <vector>
+#include <map>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -107,8 +108,9 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 #define VIRTUALFLAG_NONE            0x00000000                      /**< @brief No flags */
 #define VIRTUALFLAG_PASSTHROUGH     0x00000001                      /**< @brief passthrough file, not used */
 #define VIRTUALFLAG_DIRECTORY       0x00000002                      /**< @brief File is a virtual directory */
-#define VIRTUALFLAG_FILESET         0x00000004                      /**< @brief File is file set (images, HLS, DASH) */
+#define VIRTUALFLAG_FILESET         0x00000004                      /**< @brief File is file set (images, HLS) */
 #define VIRTUALFLAG_FRAME           0x00000008                      /**< @brief File is part of a set of frames */
+#define VIRTUALFLAG_HLS             0x00000010                      /**< @brief File is part of a set of HLS transport stream (ts) files */
 
 /** @brief Virtual file definition
  */
@@ -122,6 +124,7 @@ typedef struct VIRTUALFILE
         , m_duration(0)
         , m_predicted_size(0)
         , m_video_frame_count(0)
+        , m_segment_count(0)
     {
 
     }
@@ -137,6 +140,7 @@ typedef struct VIRTUALFILE
     int64_t             m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     size_t              m_predicted_size;                           /**< @brief Use this as the size instead of computing it over and over. */
     uint32_t            m_video_frame_count;                        /**< @brief Number of frames in video or 0 if not a video */
+    uint32_t            m_segment_count;                            /**< @brief Number of segments for HLS sets */
 
     std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 

@@ -33,6 +33,7 @@ Supported output formats:
  * PNG (video to frameset)
  * BMP (video to frameset)
  * TS (MPEG transport stream)
+ * HLS (HTTP Live Streaming)
 
 == OPTIONS ==
 
@@ -45,9 +46,11 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 Select destination format. 'TYPE' can currently be:
 +
 *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *ALAC*, *OPUS*, *WAV*, *JPG*,
-*PNG*, *BMP* OR *TS*.
+*PNG*, *BMP*, *TS*, or *HLS*.
 +
 To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
++
+To use HTTP Live or Dynamic Adaptive Streaming, set *HLS*.
 +
 When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will no be available.
 +
@@ -185,6 +188,15 @@ Deinterlace video if necessary while transcoding.
 May need higher bit rate, but will increase picture quality when streaming via HTML5.
 +
 Default: no deinterlace
+
+=== HLS Options ===
+*--segment_duration*, -o *segment_duration*::
+Set duration of one video segment of HLS stream. This argument is a floating point value, e.g can be set
+to 2.5 for 2500 milliseconds.
++
+Should normally be left at default.
++
+Default: 10 seconds
 
 === Album Arts ===
 --*noalbumarts*, -o *noalbumarts*::

@@ -184,7 +184,8 @@ typedef enum FILETYPE
     FILETYPE_PNG,
     FILETYPE_JPG,
     FILETYPE_BMP,
-    FILETYPE_TS
+    FILETYPE_TS,
+    FILETYPE_HLS,
 } FILETYPE;
 
 /**
@@ -308,7 +309,7 @@ public:
     AVCodecID           audio_codec_id() const;
     /**
      * @brief Check if this si some sort of multi file format
-     * (any of the following: is_frameset(), is_hls() or is_dash()
+     * (any of the following: is_frameset() or is_hls()).
      * @return Returns true for a multi file format.
      */
     bool                is_multiformat() const;
@@ -317,6 +318,11 @@ public:
      * @return Returns true for formats that export all frames as images.
      */
     bool                is_frameset() const;
+    /**
+     * @brief Check for HLS format
+     * @return Returns true for formats that create an HLS set including the m3u file.
+     */
+    bool                is_hls() const;
 
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
@@ -691,5 +697,13 @@ size_t              get_disk_free(std::string & path);
  * @return If request should be ignored, returns true; otherwise false
  */
 bool                check_ignore(size_t size, size_t offset);
+
+/**
+ * @brief Make a file name from file number and file extension.
+ * @param file_no - File number 1...n
+ * @param fileext - Extension of file (e.g mp4, webm)
+ * @return Returns the file name.
+ */
+std::string         make_filename(uint32_t file_no, const std::string &fileext);
 
 #endif

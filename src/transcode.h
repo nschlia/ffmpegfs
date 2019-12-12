@@ -88,9 +88,10 @@ Cache_Entry*    transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode);
  *  @param[in] offset - byte offset to start reading at
  *  @param[in] len - length of data chunk to be read.
  *  @param[out] bytes_read - Bytes read from transcoder.
+ *  @param[in] segment_no - HLS segment file number.
  *  @return On success, returns true. On error, returns false and sets errno accordingly.
  */
-bool            transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int *bytes_read);
+bool            transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int *bytes_read, uint32_t segment_no);
 /** @brief Read one image frame from the internal buffer and into the given buffer.
  *  @note buff must be large enough to hold len number of bytes.
  *  @note Returns number of bytes read, may be less than len bytes.
@@ -128,14 +129,16 @@ size_t          transcoder_get_size(Cache_Entry* cache_entry);
  * This is the maximum byte offset until the file can be read so far.
  *
  *  @param[in] cache_entry - corresponding cache entry
+ *  @param[in] segment_no - HLS segment file number.
  *  @return Returns the current watermark
  */
-size_t          transcoder_buffer_watermark(Cache_Entry* cache_entry);
+size_t          transcoder_buffer_watermark(Cache_Entry* cache_entry, uint32_t segment_no);
 /** @brief Return the current file position in the file
  *  @param[in] cache_entry - corresponding cache entry
+ *  @param[in] segment_no - HLS segment file number.
  *  @return Returns the current file position
  */
-size_t          transcoder_buffer_tell(Cache_Entry* cache_entry);
+size_t          transcoder_buffer_tell(Cache_Entry* cache_entry, uint32_t segment_no);
 /** @brief Exit transcoding
  *
  * Send signal to exit transcoding (ending all transcoder threads).

@@ -47,6 +47,8 @@
 #include "blurayparser.h"
 #endif // USE_LIBBLURAY
 #include "thread_pool.h"
+#include "buffer.h"
+#include "cache_entry.h"
 
 #include <dirent.h>
 #include <unistd.h>
@@ -67,7 +69,7 @@ static void             prepare_script();
 static void             translate_path(std::string *origpath, const char* path);
 static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
-static int 			get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int              get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 
 static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -299,9 +301,9 @@ static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE ty
 
     init_stat(&stbuf, fsize, ftime, false);
 
-    if (filler(buf, filename.c_str(), &stbuf, 0))
+    if (buf != nullptr && filler != nullptr)
     {
-        // break;
+        filler(buf, filename.c_str(), &stbuf, 0);
     }
 
     return insert_file(type, origpath + filename, &stbuf, flags);
@@ -561,7 +563,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].fileext()) == 0)))
+        if (!params.m_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].fileext()) == 0)))
         {
             std::string dir(*filepath);
             std::string filename(*filepath);
@@ -690,8 +692,163 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
 
     transcoder_delete(cache_entry);
 
-    Logging::debug(origpath, "Duration: %1 Frames: %2", virtualfile->m_duration, virtualfile->m_video_frame_count);
+    Logging::debug(origpath, "Duration: %1 Frames: %2 Segments: %3", virtualfile->m_duration, virtualfile->m_video_frame_count, virtualfile->m_segment_count);
 
+    return 0;
+}
+
+int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
+{
+    // Generate set of TS segment files and necessary M3U lists
+    LPVIRTUALFILE child_file;
+    std::string master_contents;
+    std::string index_0_av_contents;
+
+    if (!virtualfile->m_segment_count)
+    {
+        int res = get_source_properties(origpath, virtualfile);
+        if (res < 0)
+        {
+            return res;
+        }
+    }
+
+    if (virtualfile->m_segment_count)
+    {
+        // Examples...
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1250,RESOLUTION=720x406,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_0_av.m3u8\n";
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2647000,RESOLUTION=1280x720,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_1_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=922000,RESOLUTION=640x360,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_2_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=448000,RESOLUTION=384x216,CODECS= \"avc1.66.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_3_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=61000,CODECS= \"mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_3_a.m3u8\n";
+
+        master_contents =
+                "#EXTM3U\n"
+                "#EXT-X-STREAM-INF:PROGRAM-ID=1\n"
+                "index_0_av.m3u8\n";
+
+        index_0_av_contents =
+                "#EXTM3U\n"
+                "#EXT-X-TARGETDURATION:10\n"
+                "#EXT-X-ALLOW-CACHE:YES\n"
+                "#EXT-X-PLAYLIST-TYPE:VOD\n"
+                "#EXT-X-VERSION:3\n"
+                "#EXT-X-MEDIA-SEQUENCE:1\n";
+
+        int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
+        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->m_segment_count; // @todo: Feature #2506 - calculate correct file size
+        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->m_segment_count; // @todo: Feature #2506 - calculate correct file size
+
+        for (uint32_t file_no = 1; file_no <= virtualfile->m_segment_count; file_no++)
+        {
+            std::string buffer;
+            std::string segment_name = make_filename(file_no, params.current_format(virtualfile)->fileext());
+
+            //**< @todo; Rework this test code
+            struct stat stbuf;
+            std::string cachefile;
+            std::string _origpath(origpath);
+            remove_sep(&_origpath);
+            Buffer::make_cachefile_name(cachefile, _origpath + "." + segment_name, params.current_format(virtualfile)->fileext(), false);
+
+            if (!lstat(cachefile.c_str(), &stbuf))
+            {
+                make_file(buf, filler, virtualfile->m_type, origpath, segment_name, static_cast<size_t>(stbuf.st_size), virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+                if (file_no < virtualfile->m_segment_count)
+                {
+                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
+                }
+                else
+                {
+                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
+                }
+            }
+            else
+            {
+                if (file_no < virtualfile->m_segment_count)
+                {
+                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
+                }
+                else
+                {
+                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, remaining_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
+                }
+            }
+
+            index_0_av_contents += buffer;
+#if 0			
+			std::string buffer2(origpath);
+			
+			//remove_filename(&buffer2);
+			buffer2 = replace_all(buffer2, "/mnt/sdc1/", "https://mp3mania.de/files/hls/1M/");
+            index_0_av_contents += buffer2 + "/" + segment_name;
+#else		
+            index_0_av_contents += segment_name;
+#endif
+            index_0_av_contents += "\n";
+        }
+
+        index_0_av_contents += "#EXT-X-ENDLIST\n";
+
+        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
+        std::copy(master_contents.begin(), master_contents.end(), std::back_inserter(child_file->m_file_contents));
+
+        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "index_0_av.m3u8", index_0_av_contents.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+        std::copy(index_0_av_contents.begin(), index_0_av_contents.end(), std::back_inserter(child_file->m_file_contents));
+
+        {
+            //**< @todo; Rework this test code
+            std::string hls_html;
+
+            hls_html =
+                    "<html>\n"
+                    "\n"
+                    "<head>\n"
+                    "    <title>HLS Demo</title>\n"
+                    "    <script src=\"https://cdn.jsdelivr.net/npm/hls.js@0.12.2/dist/hls.min.js\"></script>\n"
+                    "    <meta charset=\"utf-8\">\n"
+                    "</head>\n"
+                    "\n"
+                    "<body>\n"
+                    "    <center>\n"
+                    "        <h1>Hls.js demo - basic usage</h1>\n"
+                    "        <video height=\"600\" id=\"video\" controls></video>\n"
+                    "    </center>\n"
+                    "    <script>\n"
+                    "        if (Hls.isSupported()) {\n"
+                    "            var video = document.getElementById(\"video\");\n"
+                    "            var hls = new Hls();\n"
+                    "            hls.loadSource(\"index_0_av.m3u8\");\n"
+                    "            hls.attachMedia(video);\n"
+                    "            hls.on(Hls.Events.MANIFEST_PARSED, function() {\n"
+                    "                video.play();\n"
+                    "            });\n"
+                    "        }\n"
+                    "        // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.\n"
+                    "        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.\n"
+                    "        // This is using the built-in support of the plain video element, without using hls.js.\n"
+                    "        else if (video.canPlayType(\"application/vnd.apple.mpegurl\")) {\n"
+                    "            video.src = \"index_0_av.m3u8\";\n"
+                    "            video.addEventListener(\"canplay\", function() {\n"
+                    "                video.play();\n"
+                    "            });\n"
+                    "        }\n"
+                    "    </script>\n"
+                    "</body>\n"
+                    "\n"
+                    "</html>\n";
+
+            child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "hls.html", hls_html.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+            std::copy(hls_html.begin(), hls_html.end(), std::back_inserter(child_file->m_file_contents));
+        }
+    }
     return 0;
 }
 
@@ -806,7 +963,14 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                flags |= VIRTUALFLAG_FRAME;
+                                if (current_format->is_frameset()) 
+                                {
+                                    flags |= VIRTUALFLAG_FRAME;
+                                }
+                                else if (current_format->is_hls())
+                                {
+                                    flags |= VIRTUALFLAG_HLS;
+                                }
                                 insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
                             }
                         }
@@ -830,22 +994,34 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     else
     {
-        if (!virtualfile->m_video_frame_count)
+        FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
+
+        if (ffmpegfs_format->is_frameset())
         {
-            int res = get_source_properties(origpath, virtualfile);
+            // Generate set of all frames
+            if (!virtualfile->m_video_frame_count)
+            {
+                int res = get_source_properties(origpath, virtualfile);
+                if (res < 0)
+                {
+                    return res;
+                }
+            }
+
+            //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
+
+            for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
+            {
+                make_file(buf, filler, virtualfile->m_type, origpath, make_filename(frame_no, params.current_format(virtualfile)->fileext()), virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image */
+            }
+        }
+        else if (ffmpegfs_format->is_hls())
+        {
+            int res = make_hls(buf, filler, origpath, virtualfile);
             if (res < 0)
             {
                 return res;
             }
-        }
-
-        //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
-
-        for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
-        {
-            char filename[PATH_MAX + 1];
-                sprintf(filename, "%06u.%s", frame_no, params.current_format(virtualfile)->fileext().c_str());
-            make_file(buf, filler, virtualfile->m_type, origpath, filename, virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Dateigrösse */
         }
 
         errno = 0;  // Just to make sure - reset any error
@@ -894,6 +1070,15 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                 Logging::trace(origpath, "getattr: Creating frame set directory of file.");
 
                 flags |= VIRTUALFLAG_FILESET;
+
+                if (current_format->is_frameset()) 
+                {
+                    flags |= VIRTUALFLAG_FRAME;
+                }
+                else if (current_format->is_hls())
+                {
+                    flags |= VIRTUALFLAG_HLS;
+                }
             }
         }
         else
@@ -946,9 +1131,10 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DISK:
     {
-        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY)))
+        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_HLS)))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+
             errno = 0;  // Just to make sure - reset any error
             break;
         }
@@ -997,9 +1183,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                         if (parent_file != nullptr && (parent_file->m_flags & VIRTUALFLAG_DIRECTORY) && (parent_file->m_flags & VIRTUALFLAG_FILESET))
                         {
-                            struct stat parent_stbuf;
-
-                            if (!parent_file->m_video_frame_count)
+                            if (!parent_file->m_video_frame_count)  //***< @todo: was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?
                             {
                                 int res = get_source_properties(origpath, parent_file);
                                 if (res < 0)
@@ -1008,15 +1192,17 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            assert(parent_file->m_video_frame_count);
 
-                            //memcpy(&stbuf2, &virtualfile->m_st, sizeof(struct stat));
+                            make_hls(nullptr, nullptr, parent_file->m_origfile + "/", parent_file); // TEST
 
-                            init_stat(&parent_stbuf, parent_file->m_predicted_size, parent_file->m_st.st_ctime, false); /**< @todo Calculate correct file size for frame image */
+                            LPVIRTUALFILE virtualfile2 = find_original(origpath);
+                            if (virtualfile2 == nullptr)
+                            {
+                                // File does not exist
+                                return -ENOENT;
+                            }
 
-                            insert_file(VIRTUALTYPE_DISK, origpath, &parent_stbuf, VIRTUALFLAG_FRAME);
-
-                            mempcpy(stbuf, &parent_stbuf, sizeof(struct stat));
+                            mempcpy(stbuf, &virtualfile2->m_st, sizeof(struct stat));
 
                             // Clear errors
                             errno = 0;
@@ -1056,7 +1242,18 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 append_sep(&origpath);
 
-                insert_file(type, origpath, stbuf, VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FRAME);
+                int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
+
+                if (params.m_format[0].is_frameset()) 
+                {
+                    flags |= VIRTUALFLAG_FRAME;
+                }
+                else if (params.m_format[0].is_hls())
+                {
+                    flags |= VIRTUALFLAG_HLS;
+                }
+
+                insert_file(type, origpath, stbuf, flags);
             }
             else if (S_ISREG(stbuf->st_mode))
             {
@@ -1164,7 +1361,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
     case VIRTUALTYPE_DISK:
     {
-        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY))
+        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         }
@@ -1190,10 +1387,12 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
                     return -errno;
                 }
 
+                uint32_t segment_no = 0;
+                assert(false);
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-                stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry));
+                stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry, segment_no));
 #else
-                stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry));
+                stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry, segment_no));
 #endif
                 stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
             }
@@ -1281,7 +1480,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 #endif // USE_LIBBLURAY
     case VIRTUALTYPE_DISK:
     {
-        if (virtualfile->m_flags & VIRTUALFLAG_FRAME)
+        if (virtualfile->m_flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS))
         {
             LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -1443,7 +1642,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
             if (!frame_no)
             {
                 errno = EINVAL;
-                Logging::trace(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                Logging::error(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
                 return -errno;
             }
 
@@ -1462,7 +1661,20 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
                 return -errno;
             }
 
-            success = transcoder_read(cache_entry, buf, offset, size, &bytes_read);
+            uint32_t segment_no = 0;
+
+            if (virtualfile->m_flags & VIRTUALFLAG_HLS)
+            {
+                std::string filename = get_number(path, &segment_no);
+                if (!segment_no)
+                {
+                    errno = EINVAL;
+                    Logging::error(origpath.c_str(), "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                    return -errno;
+                }
+            }
+
+            success = transcoder_read(cache_entry, buf, offset, size, &bytes_read, segment_no);
         }
         break;
     }
@@ -1532,6 +1744,21 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 
     if (cache_entry != nullptr)
     {
+        uint32_t segment_no = 0;
+
+        if (cache_entry->virtualfile()->m_flags & VIRTUALFLAG_HLS)
+        {
+            std::string filename = get_number(path, &segment_no);
+            if (!segment_no)
+            {
+                errno = EINVAL;
+                Logging::error(path, "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+            }
+            else
+            {
+                cache_entry->m_buffer->close_file(segment_no - 1, CACHE_FLAG_RO);
+            }
+        }
         transcoder_delete(cache_entry);
     }
 

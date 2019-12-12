@@ -64,7 +64,7 @@ static Cache *cache;                            /**< @brief Global cache manager
 static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
 
 static void transcoder_thread(void *arg);
-static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len);
+static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
 
 /**
@@ -74,14 +74,15 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
  *  @param[in] cache_entry - corresponding cache entry
  *  @param[in] offset - byte offset to start reading at
  *  @param[in] len - length of data chunk to be read.
+ *  @param[in] segment_no - HLS segment file number.
  * @return On success, returns true. Returns false if an error occurred.
  */
-static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
+static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no)
 {
     size_t end = offset + len; // Cast OK: offset will never be < 0.
     bool success = true;
 
-    if (cache_entry->m_cache_info.m_finished == RESULTCODE_FINISHED || cache_entry->m_buffer->tell() >= end)
+    if (cache_entry->m_cache_info.m_finished == RESULTCODE_FINISHED || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end)
     {
         return true;
     }
@@ -92,7 +93,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
         if (cache_entry->m_is_decoding)
         {
             bool reported = false;
-            while (cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED && !cache_entry->m_cache_info.m_error && cache_entry->m_buffer->tell() < end)
+            while (!(cache_entry->m_cache_info.m_finished == RESULTCODE_FINISHED || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end) && !cache_entry->m_cache_info.m_error)
             {
                 if (fuse_interrupted())
                 {
@@ -108,7 +109,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
+                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
                     reported = true;
                 }
                 sleep(0);
@@ -116,7 +117,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len)
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size() - end).c_str());
+                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -143,8 +144,11 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
         return res;
     }
 
-    // Check encoded buffer size.
+    // Check encoded buffer size. Does not affect HLS segments.
+    cache_entry->m_cache_info.m_duration            = transcoder->duration();
     cache_entry->m_cache_info.m_encoded_filesize    = cache_entry->m_buffer->buffer_watermark();
+    cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
+    cache_entry->m_cache_info.m_segment_count       = transcoder->segment_count();
     cache_entry->m_cache_info.m_finished            = RESULTCODE_FINISHED;
     cache_entry->m_is_decoding                      = false;
     cache_entry->m_cache_info.m_errno               = 0;
@@ -303,6 +307,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
     {
         cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
         cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
+        cache_entry->m_cache_info.m_segment_count       = transcoder->segment_count();
 
         transcoder->close();
 
@@ -346,7 +351,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
             cache_entry->clear();
         }
 
-        virtualfile->m_video_frame_count = cache_entry->m_cache_info.m_video_frame_count; /***< @todo: duration? */
+        if (cache_entry->m_cache_info.m_predicted_filesize)
+        {
+            virtualfile->m_duration             = cache_entry->m_cache_info.m_duration;
+            virtualfile->m_predicted_size       = cache_entry->m_cache_info.m_predicted_filesize;
+            virtualfile->m_video_frame_count    = cache_entry->m_cache_info.m_video_frame_count;
+            virtualfile->m_segment_count        = cache_entry->m_cache_info.m_segment_count;
+        }
 
         if (!cache_entry->m_is_decoding && cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED)
         {
@@ -422,7 +433,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     return cache_entry;
 }
 
-bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int * bytes_read)
+bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int * bytes_read, uint32_t segment_no)
 {
     bool success = true;
 
@@ -436,6 +447,12 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     try
     {
+        // Open for reading if necessary
+        if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
+        {
+            throw false;
+        }
+
         if (cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED)
         {
             switch (params.current_format(cache_entry->virtualfile())->filetype())
@@ -446,7 +463,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                 // at the end of the file, do not encode data first up to that position.
                 // This optimises the case where applications read the end of the file
                 // first to read the ID3v1 tag.
-                if ((offset > cache_entry->m_buffer->tell()) &&
+                if ((offset > cache_entry->m_buffer->tell(segment_no)) &&
                         ((offset + len) > (cache_entry->size() - ID3V1_TAG_LENGTH)))
                 {
 
@@ -470,7 +487,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             // Access will only be ignored if occurring at the second access.
             if (params.m_win_smb_fix && cache_entry->read_count() == 2)
             {
-                if ((offset > cache_entry->m_buffer->tell()) &&
+                if ((offset > cache_entry->m_buffer->tell(segment_no)) &&
                         (len <= 65536) &&
                         check_ignore(cache_entry->size(), offset) &&
                         ((offset + len) > (cache_entry->size())))
@@ -489,7 +506,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         // Set last access time
         cache_entry->m_cache_info.m_access_time = time(nullptr);
 
-        bool success = transcode_until(cache_entry, offset, len);
+        bool success = transcode_until(cache_entry, offset, len, segment_no);
 
         if (!success)
         {
@@ -498,16 +515,16 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         }
 
         // truncate if we didn't actually get len
-        if (cache_entry->m_buffer->buffer_watermark() < offset)
+        if (cache_entry->m_buffer->buffer_watermark(segment_no) < offset)
         {
             len = 0;
         }
-        else if (cache_entry->m_buffer->buffer_watermark() < offset + len)
+        else if (cache_entry->m_buffer->buffer_watermark(segment_no) < offset + len)
         {
-            len = cache_entry->m_buffer->buffer_watermark() - offset;
+            len = cache_entry->m_buffer->buffer_watermark(segment_no) - offset;
         }
 
-        if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
+        if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len, segment_no))
         {
             len = 0;
             // We already capped len to not overread the buffer, so it is an error if we end here.
@@ -654,14 +671,14 @@ size_t transcoder_get_size(Cache_Entry* cache_entry)
     return cache_entry->size();
 }
 
-size_t transcoder_buffer_watermark(Cache_Entry* cache_entry)
+size_t transcoder_buffer_watermark(Cache_Entry* cache_entry, uint32_t segment_no)
 {
-    return cache_entry->m_buffer->buffer_watermark();
+    return cache_entry->m_buffer->buffer_watermark(segment_no);
 }
 
-size_t transcoder_buffer_tell(Cache_Entry* cache_entry)
+size_t transcoder_buffer_tell(Cache_Entry* cache_entry, uint32_t segment_no)
 {
-    return cache_entry->m_buffer->tell();
+    return cache_entry->m_buffer->tell(segment_no);
 }
 
 void transcoder_exit(void)
@@ -730,6 +747,12 @@ static void transcoder_thread(void *arg)
             throw (static_cast<int>(errno));
         }
 
+        if (!cache_entry->m_cache_info.m_duration)
+        {
+            Logging::error(nullptr, "m_duration YYY      : %1", transcoder->duration());
+            cache_entry->m_cache_info.m_duration = transcoder->duration();
+        }
+
         if (!cache_entry->m_cache_info.m_predicted_filesize)
         {
             cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
@@ -738,6 +761,11 @@ static void transcoder_thread(void *arg)
         if (!cache_entry->m_cache_info.m_video_frame_count)
         {
             cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
+        }
+
+        if (!cache_entry->m_cache_info.m_segment_count)
+        {
+            cache_entry->m_cache_info.m_segment_count   = transcoder->segment_count();
         }
 
         if (!cache->maintenance(transcoder->predicted_filesize()))

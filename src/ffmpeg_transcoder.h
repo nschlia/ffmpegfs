@@ -134,11 +134,13 @@ public:
     {
         OUTPUTFILE() :
             m_audio_pts(0),
+            m_video_pts(0),
             m_video_start_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
         int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames */
+        int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames */
         int64_t                 m_video_start_pts;      /**< @brief Video start PTS */
         int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
 
@@ -203,6 +205,11 @@ public:
      */
     time_t                      mtime() const;
     /**
+     * @brief Get the file duration.
+     * @return Returns the file in AV_TIME_BASE units.
+     */
+    int64_t                     duration();
+    /**
      * @brief Try to predict the recoded file size. This may (better will surely) be inaccurate.
      * @return Predicted file size in bytes.
      */
@@ -212,6 +219,11 @@ public:
      * @return On success, returns the number of frames; on error, returns 0 (calculation failed or no video source file).
      */
     uint32_t                    video_frame_count() const;
+    /**
+     * @brief Get the number of HLS segments of file.
+     * @return On success, returns the number of segments; on error, returns 0 (calculation failed).
+     */
+    uint32_t                    segment_count() const;
     /**
      * @brief Assemble an ID3v1 file tag
      * @return Returns an ID3v1 file tag.
@@ -278,6 +290,11 @@ public:
      * @return Returns true for formats that export all frames as images.
      */
     bool                        is_frameset() const;
+    /**
+     * @brief Check for HLS format
+     * @return Returns true for formats that create an HLS set including the m3u file.
+     */
+    bool                        is_hls() const;
     /**
      * @brief Check if we made a seek operation
      * @return Returns true if a seek was done, false if not.
@@ -684,9 +701,6 @@ private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
-    size_t                      m_predicted_size;           /**< @brief Use this as the size instead of computing it over and over. */
-    uint32_t                    m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
-    int64_t                     m_current_write_pts;        /**< @brief PTS or last frame written */
     std::recursive_mutex        m_mutex;                    /**< @brief Access mutex */
     std::queue<uint32_t>        m_seek_frame_fifo;          /**< @brief Stack of seek requests. Will be processed FIFO */
     volatile uint32_t           m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
@@ -718,6 +732,8 @@ private:
 
     INPUTFILE                   m_in;                       /**< @brief Input file information */
     OUTPUTFILE                  m_out;                      /**< @brief Output file information */
+
+    uint32_t                    m_current_segment;          /**< @brief HLS only: Segment file number currently being encoded */
 
     // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
     bool                        m_copy_audio;               /**< @brief If true, copy audio stream from source to target (just remux, no recode). */

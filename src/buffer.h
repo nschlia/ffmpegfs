@@ -42,15 +42,57 @@
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))  /**< @brief Check bit in bitmask */
 
-#define CACHE_CLOSE_NOOPT   0x00                                /**< @brief Dummy, do nothing special */
-#define CACHE_CLOSE_FREE    0x01                                /**< @brief Free memory for cache entry */
-#define CACHE_CLOSE_DELETE  (0x02 | CACHE_CLOSE_FREE)           /**< @brief Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. */
+#define CACHE_CLOSE_NOOPT   0x00000000                      /**< @brief Dummy, do nothing special */
+#define CACHE_CLOSE_FREE    0x00000001                      /**< @brief Free memory for cache entry */
+#define CACHE_CLOSE_DELETE  (0x00000002 | CACHE_CLOSE_FREE) /**< @brief Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. */
+
+#define CACHE_FLAG_RO       0x00000001                      /**< @brief Mark cache file read-only */
+#define CACHE_FLAG_RW       0x00000002                      /**< @brief Mark cache file writeable, implies read permissions */
 
 /**
  * @brief The #Buffer class
  */
 class Buffer : public FileIO
 {
+public:
+    /**
+     * @brief Structure to hold current cache state
+     */
+    typedef struct _tagCACHEINFO
+    {
+    public:
+        _tagCACHEINFO()
+            : m_fd(-1)
+            , m_buffer(nullptr)
+            , m_buffer_pos(0)
+            , m_buffer_watermark(0)
+            , m_buffer_size(0)
+            , m_seg_finished(false)
+            , m_fd_idx(-1)
+            , m_buffer_idx(nullptr)
+            , m_buffer_size_idx(0)
+            , m_flags(0)
+        {
+        }
+
+        // Main cache
+        std::string             m_cachefile;                    /**< @brief Cache file name */
+        int                     m_fd;                           /**< @brief File handle for buffer */
+        uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
+        size_t                  m_buffer_pos;                   /**< @brief Read/write position */
+        size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
+        size_t                  m_buffer_size;                  /**< @brief Current buffer size */
+        bool                    m_seg_finished;                 /**< @brief True if segment completely decoded */
+        // Index for frame sets
+        std::string             m_cachefile_idx;                /**< @brief Index file name */
+        int                     m_fd_idx;                       /**< @brief File handle for index */
+        uint8_t *               m_buffer_idx;                   /**< @brief Pointer to index memory */
+        size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
+        // Flags
+        uint32_t                m_flags;                        /**< @brief CACHE_FLAG_* options */
+    } CACHEINFO, *LPCACHEINFO;                                  /**< @brief Pointer version of CACHEINFO */
+    typedef CACHEINFO const * LPCCACHEINFO;                     /**< @brief Pointer to const version of CACHEINFO */
+
 public:
     /**
      * @brief Create #Buffer object
@@ -66,13 +108,29 @@ public:
      * @brief Get type of this virtual file.
      * @return Returns VIRTUALTYPE_BUFFER.
      */
-    virtual VIRTUALTYPE type() const;
+    virtual VIRTUALTYPE     type() const;
     /**
      * @brief Initialise cache
      * @param[in] erase_cache - if true delete old file before opening.
      * @return Returns true on success; false on error.
      */
     bool                    init(bool erase_cache);
+    /**
+     * @brief Set the current segment
+     * @param[in] segment_no - HLS segment file number [1..n].
+     * @return Returns true on success; if segment_no is 0 or greated then segment_count() returns false and sets errno to EINVALID.
+     */
+    bool                    set_segment(uint32_t segment_no);
+    /**
+     * @brief Get segment count.
+     * @return Number of segments.
+     */
+    uint32_t                segment_count();
+    /**
+     * @brief Get currently selected segment.
+     * @return Current segment number [1..n] or 0 if none selected.
+     */
+    uint32_t                current_segment_no();
     /**
      * @brief Release cache buffer.
      * @param[in] flags - One of the CACHE_CLOSE_* flags.
@@ -87,7 +145,7 @@ public:
 
     /** @brief Open a virtual file
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open
-     * @return Upon successful completion, #open() returns 0. @n
+     * @return Upon successful completion, #open() returns 0.
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
     virtual int             open(LPVIRTUALFILE virtualfile);
@@ -124,10 +182,22 @@ public:
      */
     virtual size_t          size() const;
     /**
+     * @brief Get the value of the internal buffer size pointer.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return Returns the value of the internal buffer size pointer.
+     */
+    virtual size_t          size(uint32_t segment_no) const;
+    /**
      * @brief Get the value of the internal read position pointer.
      * @return Returns the value of the internal read position pointer.
      */
     virtual size_t          tell() const;
+    /**
+     * @brief Get the value of the internal read position pointer.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return Returns the value of the internal read position pointer.
+     */
+    virtual size_t          tell(uint32_t segment_no) const;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
@@ -142,11 +212,32 @@ public:
      * from the beginning of the file.
      */
     virtual int             seek(int64_t offset, int whence);
+    /** @brief Seek to position in file
+     *
+     * Repositions the offset of the open file to the argument offset according to the directive whence.
+     * May block for a long time if buffer has not been filled to the requested offset.
+     *
+     * @param[in] offset - offset in bytes
+     * @param[in] whence - how to seek: @n
+     * SEEK_SET: The offset is set to offset bytes. @n
+     * SEEK_CUR: The offset is set to its current location plus offset bytes. @n
+     * SEEK_END: The offset is set to the size of the file plus offset bytes.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
+     * from the beginning of the file.
+     */
+    virtual int             seek(int64_t offset, int whence, uint32_t segment_no);
     /**
      * @brief Check if at end of file.
      * @return Returns true if at end of buffer.
      */
     virtual bool            eof() const;
+    /**
+     * @brief Check if at end of file.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return Returns true if at end of buffer.
+     */
+    virtual bool            eof(uint32_t segment_no) const;
     /**
      * @brief Close buffer.
      */
@@ -187,29 +278,34 @@ public:
      * While transcoding, this value reflects the current size of the transcoded file.
      * This is the maximum byte offset until the file can be read so far.
      *
+     * @param[in] segment_no - If > 0 returns watermark for specific segment.
+     * If 0, returns watermark for current write segment.
      *  @return Returns the current watermark.
      */
-    size_t                  buffer_watermark() const;
+    size_t                  buffer_watermark(uint32_t segment_no = 0) const;
     /**
      * @brief Copy buffered data into output buffer.
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
-    bool                    copy(std::vector<uint8_t> * out_data, size_t offset);
+    bool                    copy(std::vector<uint8_t> * out_data, size_t offset, uint32_t segment_no = 0);
     /**
      * @brief Copy buffered data into output buffer.
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
      * @param[in] bufsize - Size of out_data buffer.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
-    bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize);
+    bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t segment_no = 0);
     /**
      * @brief Get cache filename.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
      * @return Returns cache filename.
      */
-    const std::string &     cachefile() const;
+    const std::string &     cachefile(uint32_t segment_no) const;
     /**
      * @brief Make up a cache file name including full path
      * @param[out] cachefile - Name of cache file.
@@ -231,18 +327,42 @@ public:
      * @return Returns true of frame is already in cache, false if not.
      */
     bool                    have_frame(uint32_t frame_no);
+    /**
+     * @brief Finish decoded segment
+     */
+    void                    finished_segment();
+    /**
+     * @brief Return true if transcoding segement finished.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return Returns true if finished, false if not.
+     */
+    bool                    is_segment_finished(uint32_t segment_no) const;
+    /**
+     * @brief Open cache file if not already open.
+     * @param[in] index - Index of segment file number [0..n-1].
+     * @param[in] flags - CACHE_FLAG_* options
+     * @return Returns true on success or file already open; false on error.
+     */
+    bool                    open_file(uint32_t index, uint32_t flags);
+    /**
+     * @brief Close cache file if not already closed.
+     * @param[in] index - Index of segment file number [0..n-1].
+     * @param[in] flags - CACHE_FLAG_* options
+     * @return Returns true on success or file already closed; false on error.
+     */
+    bool                    close_file(uint32_t index, uint32_t flags);
 
 protected:
     /**
      * @brief Remove the cachefile.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
-    bool                    remove_cachefile();
+    bool                    remove_cachefile(uint32_t segment_no = 0);
     /**
      * @brief Check if the cache file is open
      * @return Returns true if the cache file is open; false if not.
      */
-
     bool                    is_open() const;
 
 private:
@@ -299,19 +419,24 @@ private:
      */
     bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, size_t *buffer_pos = nullptr) const;
 
+    /**
+     * @brief cacheinfo
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment or 0 for current segment.
+     * @return
+     */
+    LPCACHEINFO             cacheinfo(uint32_t segment_no);
+    /**
+     * @brief cacheinfo
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @return
+     */
+    LPCCACHEINFO            const_cacheinfo(uint32_t segment_no) const;
+
 private:
-    std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
-    std::string             m_cachefile;                    /**< @brief Cache file name */
-    int                     m_fd;                           /**< @brief File handle for buffer */
-    uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
-    size_t                  m_buffer_pos;                   /**< @brief Read/write position */
-    size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
-    size_t                  m_buffer_size;                  /**< @brief Current buffer size */
-    // Index for frame sets
-    std::string             m_cachefile_idx;                /**< @brief Index file name */
-    int                     m_fd_idx;                       /**< @brief File handle for index */
-    uint8_t *               m_buffer_idx;                   /**< @brief Pointer to index memory */
-    size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
+    std::recursive_mutex    m_mutex;                            /**< @brief Access mutex */
+    LPCACHEINFO             m_cur_ci;                           /**< @brief Convenience pointer to current write segment */
+
+    std::vector<CACHEINFO>  m_ci;                               /**< @brief Cache info */
 };
 
 #endif

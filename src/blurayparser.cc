@@ -443,7 +443,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (!bd_select_title(bd, title_idx))
         {
-            Logging::error(path, "Failed to open title: %1", title_idx);
+            Logging::error(path, "Failed to open bluray title %1", title_idx);
             errno = EIO;
             return false;
         }

@@ -121,7 +121,7 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
 
     if (!bd_select_title(m_bd, m_title_idx))
     {
-        Logging::error(bdpath, "Failed to open title: %1", m_title_idx);
+        Logging::error(bdpath, "Failed to open bluray title %1", m_title_idx);
         return 1;
     }
     ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);

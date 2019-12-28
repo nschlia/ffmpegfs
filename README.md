@@ -499,9 +499,11 @@ This program can be distributed under the terms of the GNU GPL version 3
 or later. It can be found [online](http://www.gnu.org/licenses/gpl-3.0.html)
 or in the COPYING file.
 
-This file and other documentation files can be distributed under the terms of
-the GNU Free Documentation License 1.3 or later. It can be found
-[online](http://www.gnu.org/licenses/fdl-1.3.html) or in the COPYING.DOC file.
+This and other documentation may be distributed under the GNU Free
+Documentation License (GFDL) 1.3 or later with no invariant sections, or
+alternatively under the GNU General Public License (GPL) version 3 or later.
+The GFDL can be found [online](http://www.gnu.org/licenses/fdl-1.3.html) or in
+the COPYING.DOC file.
 
 FFMPEG LICENSE
 --------------
@@ -525,7 +527,3 @@ K. Henriksson.
 
 This is free software: you are free to change and redistribute it under
 the terms of the GNU General Public License (GPL) version 3 or later.
-
-Manual is copyright \(C) 2010-2011 K. Henriksson. This fork 2017 to present
-by N. Schlia and may be distributed under GNU Free Documentation License 1.3
-or later.

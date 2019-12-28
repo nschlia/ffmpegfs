@@ -42,6 +42,7 @@ Important changes in 1.10 (2019-12-XX)
           created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
 * Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
 * Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
+* Bugfix: Skip corrupted and discarded video frames to avoid blurps.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 
@@ -503,9 +504,6 @@ Changes in this release:
 Copyright (C) 2010-2014 K. Henriksson
 Copyright (C) 2017-2019 Norbert Schlia (FFmpeg support)
 
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3 or
-any later version published by the Free Software Foundation; with no
-Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.  A copy of the license is included in the COPYING.DOC file as
-part of this distribution.
+This documentation may be distributed under the GNU Free Documentation License
+(GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU
+General Public License (GPL) version 3 or later.

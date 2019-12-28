@@ -623,11 +623,11 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::info(destname(), "Opening output file.");
 
-        // Pre-allocate the predicted file size to reduce memory reallocations
-        size_t buffsize = predicted_filesize();
-        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
+    // Pre-allocate the predicted file size to reduce memory reallocations
+    size_t buffsize = predicted_filesize();
+    if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
-	    int _errno = errno;
+        int _errno = errno;
         Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
         return AVERROR(_errno);
     }
@@ -1038,8 +1038,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 }
 
                 Logging::debug(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
-                              format_samplerate(orig_sample_rate).c_str(),
-                              format_samplerate(output_codec_ctx->sample_rate).c_str());
+                               format_samplerate(orig_sample_rate).c_str(),
+                               format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
         }
 
@@ -1830,12 +1830,12 @@ int FFmpeg_Transcoder::init_resampler()
         int ret;
 
         Logging::debug(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
-                      get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
-                      get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
-                      format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),
-                      format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate).c_str(),
-                      get_channel_layout_name(m_in.m_audio.m_codec_ctx->channels, m_in.m_audio.m_codec_ctx->channel_layout).c_str(),
-                      get_channel_layout_name(m_out.m_audio.m_codec_ctx->channels, m_out.m_audio.m_codec_ctx->channel_layout).c_str());
+                       get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                       get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                       format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),
+                       format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate).c_str(),
+                       get_channel_layout_name(m_in.m_audio.m_codec_ctx->channels, m_in.m_audio.m_codec_ctx->channel_layout).c_str(),
+                       get_channel_layout_name(m_out.m_audio.m_codec_ctx->channels, m_out.m_audio.m_codec_ctx->channel_layout).c_str());
 
         close_resample();
 
@@ -2323,7 +2323,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             m_pos = pkt->pos;
         }
 
-        if (data_present)
+        if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
         {
 #ifndef USING_LIBAV
             frame = send_filters(frame, ret);

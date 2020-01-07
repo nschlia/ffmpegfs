@@ -10,6 +10,7 @@ Important changes in 1.97 (2019-12-XX)
           created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
 * Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
 * Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
+* Bugfix: Properly handle case when start_time is AV_NOOPTS (frame sets only)
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

@@ -360,22 +360,24 @@ uint32_t FFmpeg_Base::pts_to_frame(AVStream* stream, int64_t pts) const
     {
         return 0;
     }
+    int64_t start_time = (stream->start_time != AV_NOPTS_VALUE) ? stream->start_time : 0;
 #ifndef USING_LIBAV
     AVRational factor = av_mul_q(stream->r_frame_rate, stream->time_base);
 #else   // !USING_LIBAV
     AVRational factor = av_mul_q(stream->avg_frame_rate, stream->time_base);
 #endif  // USING_LIBAV
-    return static_cast<uint32_t>(av_rescale(pts - stream->start_time, factor.num, factor.den) + 1);
+    return static_cast<uint32_t>(av_rescale(pts - start_time, factor.num, factor.den) + 1);
 }
 
 int64_t FFmpeg_Base::frame_to_pts(AVStream* stream, uint32_t frame_no) const
 {
+    int64_t start_time = (stream->start_time != AV_NOPTS_VALUE) ? stream->start_time : 0;
 #ifndef USING_LIBAV
     AVRational factor = av_mul_q(stream->r_frame_rate, stream->time_base);
 #else   // !USING_LIBAV
     AVRational factor = av_mul_q(stream->avg_frame_rate, stream->time_base);
 #endif  // USING_LIBAV
-    return static_cast<uint32_t>(av_rescale(frame_no - 1, factor.den, factor.num) + stream->start_time);
+    return static_cast<uint32_t>(av_rescale(frame_no - 1, factor.den, factor.num) + start_time);
 }
 
 

@@ -1984,7 +1984,7 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-    ret = avformat_write_header(m_out.m_format_ctx, &dict);
+	ret = avformat_write_header(m_out.m_format_ctx, &dict);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3025,7 +3025,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, &pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                throw ret;
+                av_packet_unref(&pkt);
+                break;
             }
             else if (ret < 0)
             {

@@ -78,9 +78,9 @@ protected:
     int         open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename = nullptr) const;
     /**
      * @brief Initialise one data packet for reading or writing.
-     * @param[in] packet
+     * @param[in] pkt - Packet to be initialised
      */
-    void        init_packet(AVPacket *packet) const;
+    void        init_packet(AVPacket *pkt) const;
     /**
      * @brief Initialise one frame for reading from the input file
      * @param[out] frame - Newly allocated frame.

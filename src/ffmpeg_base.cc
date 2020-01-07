@@ -151,12 +151,12 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
     return 0;
 }
 
-void FFmpeg_Base::init_packet(AVPacket *packet) const
+void FFmpeg_Base::init_packet(AVPacket *pkt) const
 {
-    av_init_packet(packet);
+    av_init_packet(pkt);
     // Set the packet data and size so that it is recognised as being empty.
-    packet->data = nullptr;
-    packet->size = 0;
+    pkt->data = nullptr;
+    pkt->size = 0;
 }
 
 int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
@@ -201,8 +201,6 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     }
     case AV_CODEC_ID_VP9:           // webm
     {
-        // 30 fps, 1k tbn, 30 tbc (default)
-
         time_base_tbn.num                       = 1;
         time_base_tbn.den                       = 1000;
         time_base_tbc                           = time_base_tbn;

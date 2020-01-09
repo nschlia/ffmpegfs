@@ -245,7 +245,7 @@ Default: 1 hour
 *--prune_cache*::
 Prune cache immediately according to the above settings.
 
-*--clear-cache*, *-o clear-cache*::
+*--clear_cache*, *-o clear_cache*::
 Clear cache on startup. All previously recoded files will be deleted.
 +
 *TIME*:: can be defined as...

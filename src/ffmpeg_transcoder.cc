@@ -654,9 +654,9 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = predicted_filesize();
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-	    	int _errno = errno;
-        	Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        	return AVERROR(_errno);
+            int _errno = errno;
+            Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+            return AVERROR(_errno);
         }
 
         // Not a frame set, open regular buffer
@@ -670,9 +670,9 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
         if (buffer->size() < buffsize && !buffer->reserve(buffsize))
         {
-	    	int _errno = errno;
-        	Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        	return AVERROR(_errno);
+            int _errno = errno;
+            Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+            return AVERROR(_errno);
         }
 
         // Open frame set buffer
@@ -2644,8 +2644,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
     {
-        //m_key_seen = (pkt->flags & AV_PKT_FLAG_KEY) ? true : false;
-
         if (!m_copy_video)
         {
             int decoded = 0;

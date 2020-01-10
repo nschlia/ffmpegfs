@@ -749,7 +749,6 @@ static void transcoder_thread(void *arg)
 
         if (!cache_entry->m_cache_info.m_duration)
         {
-            Logging::error(nullptr, "m_duration YYY      : %1", transcoder->duration());
             cache_entry->m_cache_info.m_duration = transcoder->duration();
         }
 

@@ -2650,7 +2650,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #if LAVC_NEW_PACKET_INTERFACE
             int lastret = 0;
 #endif
-
             // Can someone tell me why this seems required??? If this is not done some videos become garbled.
             do
             {
@@ -3367,8 +3366,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                     {
                         int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
-                        //                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
-                        //                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
+                        // AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
+                        // int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
 
                         if (pkt.dts < max)
                         {
@@ -3383,8 +3382,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     }
                 }
 
-                m_out.m_video_pts = pkt.pts;
-                m_out.m_last_mux_dts = pkt.dts;
+                m_out.m_video_pts       = pkt.pts;
+                m_out.m_last_mux_dts    = pkt.dts;
 
 #ifndef USING_LIBAV
                 if (frame != nullptr && !pkt.duration)

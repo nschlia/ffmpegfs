@@ -379,5 +379,3 @@ int64_t FFmpeg_Base::frame_to_pts(AVStream* stream, uint32_t frame_no) const
 #endif  // USING_LIBAV
     return static_cast<uint32_t>(av_rescale(frame_no - 1, factor.den, factor.num) + start_time);
 }
-
-

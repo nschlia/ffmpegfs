@@ -42,6 +42,7 @@
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
     : m_cur_ci(nullptr)
+    , m_cur_open(0)
 {
 }
 
@@ -110,6 +111,8 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
     m_ci[index].m_buffer_size       = filesize;
     m_ci[index].m_buffer            = static_cast<uint8_t*>(p);
 
+    ++m_cur_open;   // track open files
+
     return true;
 }
 
@@ -125,14 +128,14 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
     if (m_ci[index].m_flags)
     {
-        Logging::info(m_ci[index].m_cachefile, "Cache file still in use while trying to close.");
+        Logging::info(m_ci[index].m_cachefile, "Cache file still in use while trying to close. Currently open: %1", m_cur_open);
         return true;
     }
 
     if (m_ci[index].m_fd == -1)
     {
         // Already closed
-        Logging::trace(m_ci[index].m_cachefile, "No need to close unopened cache file.");
+        Logging::trace(m_ci[index].m_cachefile, "No need to close unopened cache file. Currenly open: %1", m_cur_open);
         return true;
     }
 
@@ -141,6 +144,11 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
     bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark, &m_ci[index].m_buffer_pos);
 
     m_ci[index].m_buffer_size = 0;
+
+    if (success && m_cur_open > 0)
+    {
+        --m_cur_open;   // track open files
+    }
 
     return success;
 }
@@ -989,14 +997,19 @@ bool Buffer::have_frame(uint32_t frame_no)
     return (image_frame->m_frame_no ? true : false);
 }
 
-bool Buffer::is_open() const
+bool Buffer::is_open()
 {
-    if (m_cur_ci == nullptr)
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    for (uint32_t index = 0; index < segment_count(); index++)
     {
-        return false;
+        if ((m_ci[index].m_fd != -1 && (fcntl(m_ci[index].m_fd, F_GETFL) != -1 || errno != EBADF)))
+        {
+            return true;
+        }
     }
 
-    return (m_cur_ci->m_fd != -1 && (fcntl(m_cur_ci->m_fd, F_GETFL) != -1 || errno != EBADF));
+    return false;
 }
 
 void Buffer::finished_segment()

@@ -117,7 +117,7 @@ public:
     bool                    init(bool erase_cache);
     /**
      * @brief Set the current segment
-     * @param[in] segment_no - HLS segment file number [1..n].
+     * @param[in] segment_no - HLS or DASH segment file number [1..n].
      * @return Returns true on success; if segment_no is 0 or greated then segment_count() returns false and sets errno to EINVALID.
      */
     bool                    set_segment(uint32_t segment_no);
@@ -183,7 +183,7 @@ public:
     virtual size_t          size() const;
     /**
      * @brief Get the value of the internal buffer size pointer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns the value of the internal buffer size pointer.
      */
     virtual size_t          size(uint32_t segment_no) const;
@@ -194,7 +194,7 @@ public:
     virtual size_t          tell() const;
     /**
      * @brief Get the value of the internal read position pointer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns the value of the internal read position pointer.
      */
     virtual size_t          tell(uint32_t segment_no) const;
@@ -222,7 +222,7 @@ public:
      * SEEK_SET: The offset is set to offset bytes. @n
      * SEEK_CUR: The offset is set to its current location plus offset bytes. @n
      * SEEK_END: The offset is set to the size of the file plus offset bytes.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
      * from the beginning of the file.
      */
@@ -234,7 +234,7 @@ public:
     virtual bool            eof() const;
     /**
      * @brief Check if at end of file.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns true if at end of buffer.
      */
     virtual bool            eof(uint32_t segment_no) const;
@@ -287,7 +287,7 @@ public:
      * @brief Copy buffered data into output buffer.
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
     bool                    copy(std::vector<uint8_t> * out_data, size_t offset, uint32_t segment_no = 0);
@@ -296,13 +296,13 @@ public:
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
      * @param[in] bufsize - Size of out_data buffer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
     bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t segment_no = 0);
     /**
      * @brief Get cache filename.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns cache filename.
      */
     const std::string &     cachefile(uint32_t segment_no) const;
@@ -333,7 +333,7 @@ public:
     void                    finished_segment();
     /**
      * @brief Return true if transcoding segement finished.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns true if finished, false if not.
      */
     bool                    is_segment_finished(uint32_t segment_no) const;
@@ -355,7 +355,7 @@ public:
 protected:
     /**
      * @brief Remove the cachefile.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(uint32_t segment_no = 0);
@@ -363,7 +363,7 @@ protected:
      * @brief Check if the cache file is open
      * @return Returns true if the cache file is open; false if not.
      */
-    bool                    is_open() const;
+    bool                    is_open();
 
 private:
     /**
@@ -421,13 +421,13 @@ private:
 
     /**
      * @brief cacheinfo
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment or 0 for current segment.
      * @return
      */
     LPCACHEINFO             cacheinfo(uint32_t segment_no);
     /**
      * @brief cacheinfo
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - HLS or DASH segment file number [1..n] or 0 for current segment.
      * @return
      */
     LPCCACHEINFO            const_cacheinfo(uint32_t segment_no) const;
@@ -435,6 +435,7 @@ private:
 private:
     std::recursive_mutex    m_mutex;                            /**< @brief Access mutex */
     LPCACHEINFO             m_cur_ci;                           /**< @brief Convenience pointer to current write segment */
+    uint32_t                m_cur_open;                         /**< @brief Number of open files */
 
     std::vector<CACHEINFO>  m_ci;                               /**< @brief Cache info */
 };

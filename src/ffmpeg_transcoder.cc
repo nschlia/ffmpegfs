@@ -3218,7 +3218,8 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, &pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                throw ret;
+                av_packet_unref(&pkt);
+                break;
             }
             else if (ret < 0)
             {

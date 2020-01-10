@@ -3185,10 +3185,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
     int ret = 0;
     try
     {
-        av_init_packet(&pkt);
-
-        pkt.data = nullptr;
-        pkt.size = 0;
+        init_packet(&pkt);
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 

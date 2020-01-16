@@ -103,7 +103,7 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
 #if LAVF_DEP_AVSTREAM_CODEC
     // allocate a new decoding context
-    dec_ctx = avcodec_alloc_context3(dec);
+    dec_ctx = avcodec_alloc_context3(nullptr);
     if (dec_ctx == nullptr)
     {
         Logging::error(filename, "Could not allocate a decoding context.");
@@ -227,9 +227,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // tbc
     output_codec_ctx->time_base                 = time_base_tbc;
 
-#if LAVF_DEP_AVSTREAM_CODEC
-    //output_stream->codecpar->time_base        = time_base_tbc;
-#else
+#if !LAVF_DEP_AVSTREAM_CODEC
     output_stream->codec->time_base             = time_base_tbc;
 #endif
 

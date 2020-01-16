@@ -1778,7 +1778,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    const size_t buf_size = 1024*1024;
+    const int buf_size = 5*1024*1024;
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer== nullptr)
     {

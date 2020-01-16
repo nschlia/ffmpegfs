@@ -184,30 +184,33 @@ typedef enum FILETYPE
 } FILETYPE;
 
 /**
-  * MP4 and MOV prfiles
+  * MP4/MOV/ALAC profiles
   */
 typedef enum PROFILE
 {
-    PROFILE_INVALID = -1,       /**< @brief Profile is invalid */
+    PROFILE_INVALID = -1,                       /**< @brief Profile is invalid */
 
-    PROFILE_NONE = 0,           /**< @brief No specific profile/Don't care */
+    PROFILE_DEFAULT = 0,                        /**< @brief No specific profile/Don't care */
 
     // MP4
-    PROFILE_MP4_FF = 1,         /**< @brief Firefox */
-    PROFILE_MP4_EDGE,			/**< @brief MS Edge */
-    PROFILE_MP4_IE,				/**< @brief MS Internet Explorer */
-    PROFILE_MP4_CHROME,			/**< @brief Google Chrome */
-    PROFILE_MP4_SAFARI,			/**< @brief Apple Safari */
-    PROFILE_MP4_OPERA,			/**< @brief Opera */
-    PROFILE_MP4_MAXTHON,        /**< @brief Maxthon */
+    PROFILE_MP4_FF = 1,                         /**< @brief Firefox */
+    PROFILE_MP4_EDGE,                           /**< @brief MS Edge */
+    PROFILE_MP4_IE,                             /**< @brief MS Internet Explorer */
+    PROFILE_MP4_CHROME,                         /**< @brief Google Chrome */
+    PROFILE_MP4_SAFARI,                         /**< @brief Apple Safari */
+    PROFILE_MP4_OPERA,                          /**< @brief Opera */
+    PROFILE_MP4_MAXTHON,                        /**< @brief Maxthon */
 
+    // HLS/ts
+    PROFILE_HLS_DEFAULT = PROFILE_DEFAULT,      /**< @brief HLS/ts uses no profile */
     // mov
-    PROFILE_MOV_NONE = 0,       /**< @brief Use for all */
-
-    // WEBM
-
-    // prores
-    PROFILE_PRORES_NONE = 0,    /**< @brief Use for all */
+    PROFILE_MOV_DEFAULT = PROFILE_DEFAULT,      /**< @brief MOV uses no profile */
+    // MOV/ProRes
+    PROFILE_PRORES_DEFAULT = PROFILE_DEFAULT,   /**< @brief MOV/ProRes uses no profile */
+    // MOV/ProRes
+    PROFILE_ALAC_DEFAULT = PROFILE_DEFAULT,     /**< @brief MOV/ALAC uses no profile */
+    // WebM
+    PROFILE_WEBM_DEFAULT = PROFILE_DEFAULT,     /**< @brief WebM uses no profile */
 
 } PROFILE;
 

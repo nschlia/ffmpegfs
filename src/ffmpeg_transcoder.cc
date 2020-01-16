@@ -1180,8 +1180,16 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 return ret;
             }
 
-            // Avoid mismatches for H264 and profile
+            // Set constant rate factor to avoid getting huge result files
+            // The default is 23, but values between 30..40 create properly sized results. Possible values are 0 (lossless) to 51 (very small but ugly results).
+            ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
 
+            // Avoid mismatches for H264 and profile
             uint8_t   *out_val;
             ret = av_opt_get(output_codec_ctx->priv_data, "profile", 0, &out_val);
             if (!ret)

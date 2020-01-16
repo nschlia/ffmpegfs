@@ -1173,7 +1173,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
         case AV_CODEC_ID_H264:
         {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_MP4);
+            ret = prepare_codec(output_codec_ctx->priv_data, m_out.m_filetype);
             if (ret < 0)
             {
                 Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());

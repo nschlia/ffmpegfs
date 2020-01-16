@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 1.10 (2019-12-XX)
+Important changes in 1.10 (2020-01-XX)
 
 * Support:
 * Feature: Added checks for mov/mp4/prores/webm video format.

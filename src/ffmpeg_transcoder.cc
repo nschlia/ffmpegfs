@@ -2461,48 +2461,59 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         if (!m_copy_video)
         {
             int decoded = 0;
-#if LAVC_NEW_PACKET_INTERFACE
-            int lastret = 0;
-#endif
-
-            // Can someone tell me why this seems required??? If this is not done some videos become garbled.
-            do
+            // Mit Fix: DVD OK, einige Blurays (Phil Collins) nicht
+            // Ohne Fix: alle DVDs kacka, Blurays dafür OK
+#ifndef USE_LIBDVD
+            ret = decode_video_frame(pkt, &decoded);
+#else //USE_LIBDVD
+            if (m_virtualfile->m_type != VIRTUALTYPE_DVD)
             {
-                // Decode one frame.
                 ret = decode_video_frame(pkt, &decoded);
-
-#if LAVC_NEW_PACKET_INTERFACE
-                if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
-                {
-                    // If EAGAIN reported twice or stream at EOF
-                    // quit loop, but this is not an error
-                    // (must process all streams).
-                    break;
-                }
-
-                if (ret < 0 && ret != AVERROR(EAGAIN))
-                {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-
-                lastret = ret;
-#else
-                if (ret < 0)
-                {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-#endif
-                pkt->data += decoded;
-                pkt->size -= decoded;
             }
+            else
+            {
 #if LAVC_NEW_PACKET_INTERFACE
-            while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
-#else
-            while (pkt->size > 0);
+                int lastret = 0;
 #endif
-            ret = 0;
+                // Can someone tell me why this seems required??? If this is not done some videos become garbled.
+                do
+                {
+                    // Decode one frame.
+                    ret = decode_video_frame(pkt, &decoded);
+#if LAVC_NEW_PACKET_INTERFACE
+                    if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
+                    {
+                        // If EAGAIN reported twice or stream at EOF
+                        // quit loop, but this is not an error
+                        // (must process all streams).
+                        break;
+                    }
+
+                    if (ret < 0 && ret != AVERROR(EAGAIN))
+                    {
+                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+
+                    lastret = ret;
+#else
+                    if (ret < 0)
+                    {
+                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+#endif
+                    pkt->data += decoded;
+                    pkt->size -= decoded;
+                }
+#if LAVC_NEW_PACKET_INTERFACE
+                while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
+#else
+                while (pkt->size > 0);
+#endif
+                ret = 0;
+            }
+#endif // USE_LIBDVD
         }
         else
         {

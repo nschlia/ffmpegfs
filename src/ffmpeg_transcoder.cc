@@ -1155,7 +1155,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
-            /** @todo: The ffmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
+            /** @todo: FFmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
 
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
@@ -1227,6 +1227,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            return ret;
+                        }
                         break;
                     }
                     case AV_PIX_FMT_YUV444P:
@@ -1274,6 +1279,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            return ret;
+                        }
                         break;
                     }
                     default:
@@ -1368,7 +1378,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
         m_out.m_video.m_stream                  = output_stream;
-
         break;
     }
     default:
@@ -1958,7 +1967,7 @@ int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION opti
     return ret;
 }
 
-int FFmpeg_Transcoder::prepare_format(AVDictionary** dict,  FILETYPE filetype) const
+int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) const
 {
     int ret = 0;
 
@@ -1992,7 +2001,7 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-	ret = avformat_write_header(m_out.m_format_ctx, &dict);
+    ret = avformat_write_header(m_out.m_format_ctx, &dict);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -2887,7 +2896,8 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
                 /** @todo: Is this a FFmpeg bug or am I too stupid?
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
                  * at 48 K sampling rate.
-                 * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value
+                 * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value.
+                 * Same applies to mpegts, so let's rescale.
                  */
                 if (duration > 0 && CODECPAR(m_out.m_audio.m_stream)->sample_rate > 0)
                 {
@@ -3088,8 +3098,8 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     if (pkt.dts != AV_NOPTS_VALUE && m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                     {
                         int64_t max = m_out.m_last_mux_dts + !(m_out.m_format_ctx->oformat->flags & AVFMT_TS_NONSTRICT);
-                        //                    AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
-                        //                    int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
+                        // AVRational avg_frame_rate = { m_out.m_video.m_stream->avg_frame_rate.den, m_out.m_video.m_stream->avg_frame_rate.num };
+                        // int64_t max = m_out.m_last_mux_dts + av_rescale_q(1, avg_frame_rate, m_out.m_video.m_stream->time_base);
 
                         if (pkt.dts < max)
                         {
@@ -3749,9 +3759,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
             int width = CODECPAR(m_in.m_video.m_stream)->width;
             int height = CODECPAR(m_in.m_video.m_stream)->height;
 #ifdef USING_LIBAV
-            int interleaved = 0;    /** @todo: Check source if not deinterlace is on */
+            int interleaved = 0;    /** @todo: Check source if interlaced and do interlace if required */
 #else
-            int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);
+            int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);    // Deinterlace only if source is interlaced
 #endif // !USING_LIBAV
 #if LAVF_DEP_AVSTREAM_CODEC
             AVRational framerate = m_in.m_video.m_stream->avg_frame_rate;

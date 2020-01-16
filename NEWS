@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 1.97 (2019-12-XX)
+Important changes in 1.97 (2020-01-XX)
 
 * Support:
 * Feature: Added support for HLS (HTTP Live Streaming). Select desttype=hls to enable.

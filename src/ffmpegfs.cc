@@ -81,7 +81,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_mountpath("")                           // required parameter
 
     , m_autocopy(AUTOCOPY_OFF)                  // default: off
-    , m_profile(PROFILE_NONE)                   // default: no profile
+    , m_profile(PROFILE_DEFAULT)                   // default: no profile
     , m_level(PRORESLEVEL_NONE)                 // default: no level
 
     // Format
@@ -349,7 +349,7 @@ static const AUTOCOPY_MAP autocopy_map =
   */
 static const PROFILE_MAP profile_map =
 {
-    { "NONE",           PROFILE_NONE },
+    { "NONE",           PROFILE_DEFAULT },
 
     // MP4
 

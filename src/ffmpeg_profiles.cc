@@ -179,11 +179,13 @@ FFmpeg_Profiles::~FFmpeg_Profiles() {}
  */
 
 // ****************************************************************************************************************
+// MP4 Container
+// ****************************************************************************************************************
 
 /**
  *  @brief No opimisations, just plain mp4. MP4 codec options.
  */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_default[] =
 {
     // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
     { "profile",                "high",                     0,  0 },
@@ -197,13 +199,15 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_none[] =
 /**
  *  @brief No optimisations, just plain mp4. MP4 format options.
  */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_none[] =
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_default[] =
 {
-    { "movflags",               "+delay_moov",              0, OPT_ALL },
+    { "movflags",               "+faststart",               0, OPT_ALL },
+    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+    { "movflags",               "+empty_moov",              0, OPT_ALL },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief Firefox profile: MP4 codec options.
@@ -232,7 +236,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief MS Edge profile: MP4 codec options.
@@ -258,7 +262,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief MS Internet Explorer profile: MP4 codec options.
@@ -284,7 +288,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ie[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief Google Chrome profile: MP4 codec options.
@@ -306,7 +310,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief Apple Safari profile: MP4 codec options.
@@ -328,7 +332,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief Opera profile: MP4 codec options.
@@ -349,7 +353,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
-// ****************************************************************************************************************
+// ----------------------------------------------------------------------------------------------------------------
 
 /**
  *  @brief Maxthon profile: MP4 codec options.
@@ -374,6 +378,9 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
+
+// ****************************************************************************************************************
+// MOV container
 // ****************************************************************************************************************
 
 /**
@@ -396,9 +403,11 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_format[] =
 };
 
 // ****************************************************************************************************************
+// ProRes/MOV container
+// ****************************************************************************************************************
 
 /**
- *  @brief ProRes profile: MOV codec options.
+ *  @brief ProRes profile: ProRes/MOV codec options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_codec[] =
 {
@@ -406,7 +415,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_codec[] =
 };
 
 /**
- *  @brief ProRes profile: MOV format options.
+ *  @brief ProRes profile: ProRes/MOV format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_format[] =
 {
@@ -415,9 +424,11 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_format[] =
 };
 
 // ****************************************************************************************************************
+// ProRes/ALAC container
+// ****************************************************************************************************************
 
 /**
- *  @brief ALAC profile: MOV codec options.
+ *  @brief ALAC profile: ProRes/ALAC codec options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_codec[] =
 {
@@ -425,7 +436,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_codec[] =
 };
 
 /**
- *  @brief ALAC profile: MOV format options.
+ *  @brief ALAC profile: ProRes/ALAC format options.
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_format[] =
 {
@@ -475,7 +486,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_format[] =
 /**
  *  @brief WebM codec options.
  */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_none[] =
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_default[] =
 {
     { "deadline",               "realtime",                 0,  0 },
 
@@ -511,22 +522,23 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_none[] =
 /**
  *  @brief WebM format options.
  */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_format_none[] =
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_format_default[] =
 {
     { nullptr,                  nullptr,                    0,  0 }
 };
 
 // ****************************************************************************************************************
+// Profiles
+// ****************************************************************************************************************
 
 const FFmpeg_Profiles::PROFILE_LIST FFmpeg_Profiles::m_profile[] =
 {
     // MP4
-
     {
         FILETYPE_MP4,
-        PROFILE_NONE,
-        m_option_mp4_codec_none,
-        m_option_mp4_format_none
+        PROFILE_DEFAULT,
+        m_option_mp4_codec_default,
+        m_option_mp4_format_default
     },
     {
         FILETYPE_MP4,
@@ -574,35 +586,33 @@ const FFmpeg_Profiles::PROFILE_LIST FFmpeg_Profiles::m_profile[] =
     // MOV
     {
         FILETYPE_MOV,
-        PROFILE_MOV_NONE,
+        PROFILE_MOV_DEFAULT,
         m_option_mov_codec,
         m_option_mov_format
     },
 
-    // prores
+    // MOV/ProRes
     {
         FILETYPE_PRORES,
-        PROFILE_PRORES_NONE,
+        PROFILE_PRORES_DEFAULT,
         m_option_prores_codec,
         m_option_prores_format
     },
 
-    // WebM
-
-    {
-        FILETYPE_WEBM,
-        PROFILE_NONE,
-        m_option_webm_codec_none,
-        m_option_webm_format_none
-    },
-
-    // ALAC (Apple Lossless Audio Coding)
-
+    // MOV/ALAC (Apple Lossless Audio Coding)
     {
         FILETYPE_ALAC,
-        PROFILE_NONE,
+        PROFILE_ALAC_DEFAULT,
         m_option_alac_codec,
         m_option_alac_format
+    },
+
+    // WebM
+    {
+        FILETYPE_WEBM,
+        PROFILE_WEBM_DEFAULT,
+        m_option_webm_codec_default,
+        m_option_webm_format_default
     },
 
     // Must be last entry

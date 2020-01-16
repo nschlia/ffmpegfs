@@ -1367,15 +1367,23 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
         case AV_CODEC_ID_H264:
         {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_MP4);
+            ret = prepare_codec(output_codec_ctx->priv_data, m_out.m_filetype);
             if (ret < 0)
             {
                 Logging::error(destname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
 
-            // Avoid mismatches for H264 and profile
+            // Set constant rate factor to avoid getting huge result files
+            // The default is 23, but values between 30..40 create properly sized results. Possible values are 0 (lossless) to 51 (very small but ugly results).
+            ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
 
+            // Avoid mismatches for H264 and profile
             uint8_t   *out_val;
             ret = av_opt_get(output_codec_ctx->priv_data, "profile", 0, &out_val);
             if (!ret)
@@ -1413,6 +1421,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            return ret;
+                        }
                         break;
                     }
                     case AV_PIX_FMT_YUV444P:
@@ -1460,6 +1473,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            return ret;
+                        }
                         break;
                     }
                     default:
@@ -1554,7 +1572,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
         m_out.m_video.m_stream                  = output_stream;
-
         break;
     }
     default:
@@ -1964,7 +1981,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    const size_t buf_size = 1024*1024;
+    const int buf_size = 5*1024*1024;
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer== nullptr)
     {
@@ -2144,7 +2161,7 @@ int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION opti
     return ret;
 }
 
-int FFmpeg_Transcoder::prepare_format(AVDictionary** dict,  FILETYPE filetype) const
+int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) const
 {
     int ret = 0;
 
@@ -2178,7 +2195,7 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-	ret = avformat_write_header(m_out.m_format_ctx, &dict);
+    ret = avformat_write_header(m_out.m_format_ctx, &dict);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -2647,47 +2664,59 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         if (!m_copy_video)
         {
             int decoded = 0;
-#if LAVC_NEW_PACKET_INTERFACE
-            int lastret = 0;
-#endif
-            // Can someone tell me why this seems required??? If this is not done some videos become garbled.
-            do
+            // Mit Fix: DVD OK, einige Blurays (Phil Collins) nicht
+            // Ohne Fix: alle DVDs kacka, Blurays dafür OK
+#ifndef USE_LIBDVD
+            ret = decode_video_frame(pkt, &decoded);
+#else //USE_LIBDVD
+            if (m_virtualfile->m_type != VIRTUALTYPE_DVD)
             {
-                // Decode one frame.
                 ret = decode_video_frame(pkt, &decoded);
-
-#if LAVC_NEW_PACKET_INTERFACE
-                if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
-                {
-                    // If EAGAIN reported twice or stream at EOF
-                    // quit loop, but this is not an error
-                    // (must process all streams).
-                    break;
-                }
-
-                if (ret < 0 && ret != AVERROR(EAGAIN))
-                {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-
-                lastret = ret;
-#else
-                if (ret < 0)
-                {
-                    Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-#endif
-                pkt->data += decoded;
-                pkt->size -= decoded;
             }
+            else
+            {
 #if LAVC_NEW_PACKET_INTERFACE
-            while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
-#else
-            while (pkt->size > 0);
+                int lastret = 0;
 #endif
-            ret = 0;
+                // Can someone tell me why this seems required??? If this is not done some videos become garbled.
+                do
+                {
+                    // Decode one frame.
+                    ret = decode_video_frame(pkt, &decoded);
+#if LAVC_NEW_PACKET_INTERFACE
+                    if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
+                    {
+                        // If EAGAIN reported twice or stream at EOF
+                        // quit loop, but this is not an error
+                        // (must process all streams).
+                        break;
+                    }
+
+                    if (ret < 0 && ret != AVERROR(EAGAIN))
+                    {
+                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+
+                    lastret = ret;
+#else
+                    if (ret < 0)
+                    {
+                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+#endif
+                    pkt->data += decoded;
+                    pkt->size -= decoded;
+                }
+#if LAVC_NEW_PACKET_INTERFACE
+                while (pkt->size > 0 && (ret == 0 || ret == AVERROR(EAGAIN)));
+#else
+                while (pkt->size > 0);
+#endif
+                ret = 0;
+            }
+#endif // USE_LIBDVD
         }
         else
         {
@@ -3960,24 +3989,24 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 // Process metadata. The decoder will call the encoder to set appropriate
                 // tag values for the output file.
                 int ret = process_metadata();
-                //                if (ret)
-                //                {
-                //                    return ret;
-                //                }
+                //if (ret)
+                //{
+                //    return ret;
+                //}
 
                 // Write the header of the output file container.
                 ret = write_output_file_header();
-                //                if (ret)
-                //                {
-                //                    return ret;
-                //                }
+                //if (ret)
+                //{
+                //    return ret;
+                //}
 
                 // Process album arts: copy all from source file to target.
                 ret = process_albumarts();
-                //                if (ret)
-                //                {
-                //                    return ret;
-                //                }
+                //if (ret)
+                //{
+                //    return ret;
+                //}
             }
         }
     }

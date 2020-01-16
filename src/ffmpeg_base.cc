@@ -103,7 +103,7 @@ int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFo
 
 #if LAVF_DEP_AVSTREAM_CODEC
     // allocate a new decoding context
-    dec_ctx = avcodec_alloc_context3(dec);
+    dec_ctx = avcodec_alloc_context3(nullptr);
     if (dec_ctx == nullptr)
     {
         Logging::error(filename, "Could not allocate a decoding context.");
@@ -204,6 +204,13 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
         time_base_tbn.num                       = 1;
         time_base_tbn.den                       = 1000;
         time_base_tbc                           = time_base_tbn;
+        break;
+    }
+    case AV_CODEC_ID_H264:          // h264
+    {
+        time_base_tbn.num                       = 1;
+        time_base_tbn.den                       = 90000;
+        time_base_tbc                           = av_inv_q(framerate);
         break;
     }
     default:                        // mp4 and all others

@@ -378,6 +378,35 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
     { nullptr,                  nullptr,                    0,  0 }
 };
 
+// ****************************************************************************************************************
+// HLS/ts container
+// ****************************************************************************************************************
+
+/**
+ *  @brief HLS/ts codec options.
+ */
+/*static*/ const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_codec_default[] =
+{
+    // Set speed (changes profile!)
+    { "preset",                 "ultrafast",                0,  0 },
+
+    { "profile",                "high",                     0,  0 },
+    { "level",                  "3.1",                      0,  0 },
+
+    { nullptr,                  nullptr,                    0,  0 }
+};
+
+/**
+ *  @brief No optimisations, just plain ts. ts format options.
+ */
+static const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_format_default[] =
+{
+    //{ "flags",                  "+cgop",                    0,  0 },
+    { "movflags",               "+faststart",               0, OPT_ALL },
+    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+    { "movflags",               "+empty_moov",              0, OPT_ALL },
+    { nullptr,                  nullptr,                    0,  0 }
+};
 
 // ****************************************************************************************************************
 // MOV container
@@ -605,6 +634,14 @@ const FFmpeg_Profiles::PROFILE_LIST FFmpeg_Profiles::m_profile[] =
         PROFILE_ALAC_DEFAULT,
         m_option_alac_codec,
         m_option_alac_format
+    },
+
+    // HLS/ts
+    {
+        FILETYPE_HLS,
+        PROFILE_HLS_DEFAULT,
+        m_option_hls_codec_default,
+        m_option_hls_format_default
     },
 
     // WebM

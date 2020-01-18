@@ -642,38 +642,14 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::info(destname(), "Opening output file.");
 
-    // Open for read/write
-    if (!buffer->open_file(0, CACHE_FLAG_RW))
-    {
-        throw false;
-    }
-
     if (!is_frameset())
     {
-        // Pre-allocate the predicted file size to reduce memory reallocations
-        size_t buffsize = predicted_filesize();
-        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
-        {
-            int _errno = errno;
-            Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-            return AVERROR(_errno);
-        }
-
         // Not a frame set, open regular buffer
         return open_output(buffer);
     }
     else
     {
         Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
-
-        // Pre-allocate the predicted file size to reduce memory reallocations
-        size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
-        if (buffer->size() < buffsize && !buffer->reserve(buffsize))
-        {
-            int _errno = errno;
-            Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-            return AVERROR(_errno);
-        }
 
         // Open frame set buffer
         return open_output_frame_set(buffer);
@@ -811,6 +787,21 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     m_out.m_audio.m_stream_idx              = -1;
     m_out.m_audio.m_stream                  = nullptr;
 
+    // Open for read/write
+    if (!buffer->open_file(0, CACHE_FLAG_RW))
+    {
+        return AVERROR(EPERM);
+    }
+
+    // Pre-allocate the predicted file size to reduce memory reallocations
+    size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
+    if (buffer->size() < buffsize && !buffer->reserve(buffsize))
+    {
+        int _errno = errno;
+        Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        return AVERROR(_errno);
+    }
+
     return 0;
 }
 
@@ -859,6 +850,21 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     if (m_out.m_video.m_stream_idx > -1)
     {
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
+    }
+
+    // Open for read/write
+    if (!buffer->open_file(0, CACHE_FLAG_RW))
+    {
+        return AVERROR(EPERM);
+    }
+
+    // Pre-allocate the predicted file size to reduce memory reallocations
+    size_t buffsize = predicted_filesize();
+    if (buffer->size() < buffsize && !buffer->reserve(buffsize))
+    {
+        int _errno = errno;
+        Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        return AVERROR(_errno);
     }
 
     // Process metadata. The decoder will call the encoder to set appropriate

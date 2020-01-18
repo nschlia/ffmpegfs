@@ -46,7 +46,7 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 Select destination format. 'TYPE' can currently be:
 +
 *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *ProRes*, *AIFF*, *ALAC*, *OPUS*, *WAV*, *JPG*,
-*PNG*, *BMP*, *TS*, or *HLS*.
+*PNG*, *BMP*, *TS* or *HLS*.
 +
 To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*ProRes* must be selected.
 +

@@ -217,7 +217,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     {
         time_base_tbn.num                       = 1;
         time_base_tbn.den                       = 90000;
-        time_base_tbc                       = time_base_tbn;
+        time_base_tbc                           = time_base_tbn;
         break;
     }
     }

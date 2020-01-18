@@ -317,7 +317,6 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     bool success = true;
 
     Logging::trace(filename, "Mapping cache file.");
-    //Logging::error(filename, "MAPPING %<%11zu>1 %2", *filesize, *isdefaultsize);
 
     try
     {

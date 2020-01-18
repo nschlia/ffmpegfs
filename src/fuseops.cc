@@ -963,7 +963,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                if (current_format->is_frameset()) 
+                                if (current_format->is_frameset())
                                 {
                                     flags |= VIRTUALFLAG_FRAME;
                                 }
@@ -971,6 +971,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                 {
                                     flags |= VIRTUALFLAG_HLS;
                                 }
+
                                 insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
                             }
                         }
@@ -1071,7 +1072,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 flags |= VIRTUALFLAG_FILESET;
 
-                if (current_format->is_frameset()) 
+                if (current_format->is_frameset())
                 {
                     flags |= VIRTUALFLAG_FRAME;
                 }
@@ -1178,6 +1179,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     }
 #endif // USE_LIBBLURAY
 
+                    if (params.m_format[0].is_hls())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -1244,7 +1246,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
-                if (params.m_format[0].is_frameset()) 
+                if (params.m_format[0].is_frameset())
                 {
                     flags |= VIRTUALFLAG_FRAME;
                 }

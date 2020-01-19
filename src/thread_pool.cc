@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2019-2020 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2019 Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2019-2020 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "thread_pool.h"

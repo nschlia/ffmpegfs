@@ -515,7 +515,7 @@ applies to all of FFmpeg.
 See https://www.ffmpeg.org/legal.html for details.
 
 == COPYRIGHT ==
-This fork with FFmpeg support copyright \(C) 2017-2019
+This fork with FFmpeg support copyright \(C) 2017-2020
 mailto:nschlia@oblivion-software.de[Norbert Schlia].
 
 Based on work copyright \(C) 2006-2008 David Collett, 2008-2013

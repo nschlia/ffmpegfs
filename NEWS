@@ -11,9 +11,12 @@ Important changes in 1.10 (2020-01-XX)
 * Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
 * Bugfix: Skip corrupted and discarded video frames to avoid blurps.
 * Bugfix: Corrected mistake in online help: clear-cache should be clear_cache instead.
-* BUgfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.
+* Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.
 * Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround, the problem is
               somewhere else.
+* Due to copyright uncertanties and because the public domain license used is controversal, all
+  demo files in test/srcdir have been replaced with own works and put under the CC0 1.0 Universal
+  license.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

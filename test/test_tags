@@ -62,9 +62,9 @@ fi
 
 if [ "${VIDEO}" == "1" ];
 then
-	FILELIST="obama raven snowboard"
+	FILELIST="raven_e raven_d snowboard"
 else
-        FILELIST="obama raven"
+        FILELIST="raven_e raven_d"
 fi
 
 for FILE in ${FILELIST}

@@ -1,29 +1,22 @@
 /*
- * Copyright (c) 2011 Reinhard Tartler
+ * Copyright (C) 2020 Norbert Schlia (nschlia@oblivion-software.de)
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-/**
- * @file
- * Shows how the metadata API can be used in application programs.
- * @example metadata.c
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * On Debian systems, the complete text of the GNU General Public License
+ * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
 
 #include <stdio.h>
@@ -39,15 +32,12 @@
 
 int main (int argc, char **argv)
 {
-    AVFormatContext *fmt_ctx = NULL;
-    AVDictionaryEntry *tag = NULL;
-    int ret;
-    unsigned int streamno;
-
-    if (argc != 2) {
-        printf("usage: %s <input_file>\n"
-               "example program to demonstrate the use of the libavformat metadata API.\n"
+    if (argc != 2)
+    {
+        fprintf(stderr, "usage: %s <input_file>\n"
+               "Print all file meta data to screen.\n"
                "\n", argv[0]);
+        fprintf(stderr, "ERROR: Exactly one parameter required\n\n");
         return 1;
     }
 
@@ -59,29 +49,35 @@ int main (int argc, char **argv)
 #endif
         return 0;
     }
+	
+	av_register_all();
 
-    av_register_all();
-
-    if ((ret = avformat_open_input(&fmt_ctx, argv[1], NULL, NULL))) {
+    const char *filename = argv[1];
+    AVFormatContext *fmt_ctx = NULL;
+    int ret = avformat_open_input(&fmt_ctx, filename, NULL, NULL);
+    if (ret)
+    {
         char error[AV_ERROR_MAX_STRING_SIZE];
         av_strerror(ret, error, AV_ERROR_MAX_STRING_SIZE);
-        fprintf(stderr, "avformat_open_input %s\n", error);
+        fprintf(stderr, "avformat_open_input() returns error for file '%s'\n%s\n", filename, error);
         return ret;
     }
 
-    for (streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
-    {
-        while ((tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+    for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
+    {        
+        for (AVDictionaryEntry *tag = NULL; (tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL;)
         {
             printf("%s=%s\n", tag->key, tag->value);
         }
     }
 
-    while ((tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)))
+
+    for (AVDictionaryEntry *tag = NULL; (tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL;)
     {
         printf("%s=%s\n", tag->key, tag->value);
     }
 
     avformat_close_input(&fmt_ctx);
+
     return 0;
 }

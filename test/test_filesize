@@ -31,64 +31,64 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-cat "${DIRNAME}/obama.${FILEEXT}" > /dev/null
-cat "${DIRNAME}/raven.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven_e.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "obama" 100547 103185
-    check_filesize "raven" 130730 139098
+    check_filesize "raven_e" 490440 494188
+    check_filesize "raven_d" 354319 355136
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "obama" 97231 97272
-    check_filesize "raven" 126430 126459
+    check_filesize "raven_e" 466981 490440
+    check_filesize "raven_d" 343527
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
-    check_filesize "obama" 1058636
-    check_filesize "raven" 1849780 3699264
+    check_filesize "raven_e" 5137772
+    check_filesize "raven_d" 4316536
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "obama" 66168 66201
-    check_filesize "raven" 124449 141211
+    check_filesize "raven_e" 356669 356771
+    check_filesize "raven_d" 264179
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "obama" 85231 92398
-    check_filesize "raven" 130581 149735
+    check_filesize "raven_e" 429639 440044
+    check_filesize "raven_d" 263171 271157
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "obama" 83532 89385
-    check_filesize "raven" 124449 127540 
+    check_filesize "raven_e" 421675 432222
+    check_filesize "raven_d" 255780 263994
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "obama" 100515 103132
-    check_filesize "raven" 130680 139073
+    check_filesize "raven_e" 491651 495399
+    check_filesize "raven_d" 355300 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "obama" 1058454 1058506
-    check_filesize "raven" 1849654 1849696
+    check_filesize "raven_e" 5137724
+    check_filesize "raven_d" 4316488
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "obama" 1059275 1061039
-    check_filesize "raven" 1850485 1853884
+    check_filesize "raven_e" 5140129
+    check_filesize "raven_d" 4318641 4318666
 elif [ "${DESTTYPE}" == "alac" ];
 then
     # aiff
-    check_filesize "obama" 208260 208694
-    check_filesize "raven" 1739034 1740298
+    check_filesize "raven_e" 3986423
+    check_filesize "raven_d" 3277326
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "obama" 150400 153408
-    check_filesize "raven" 196084 213568
+    check_filesize "raven_e" 725868 744480
+    check_filesize "raven_d" 479964 482408
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

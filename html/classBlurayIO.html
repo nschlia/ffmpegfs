@@ -105,9 +105,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a52d2acbf954e25466b1b60e653bbbb9d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a52d2acbf954e25466b1b60e653bbbb9d">bufsize</a> () const</td></tr>
 <tr class="memdesc:a52d2acbf954e25466b1b60e653bbbb9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="#a52d2acbf954e25466b1b60e653bbbb9d">More...</a><br /></td></tr>
 <tr class="separator:a52d2acbf954e25466b1b60e653bbbb9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3def0818e3a2f9436c5e7ccf4648133"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#af3def0818e3a2f9436c5e7ccf4648133">open</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
-<tr class="memdesc:af3def0818e3a2f9436c5e7ccf4648133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="#af3def0818e3a2f9436c5e7ccf4648133">More...</a><br /></td></tr>
-<tr class="separator:af3def0818e3a2f9436c5e7ccf4648133"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc9b18b858e04f2b894aeb7084b3e595"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#acc9b18b858e04f2b894aeb7084b3e595">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
+<tr class="memdesc:acc9b18b858e04f2b894aeb7084b3e595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="#acc9b18b858e04f2b894aeb7084b3e595">More...</a><br /></td></tr>
+<tr class="separator:acc9b18b858e04f2b894aeb7084b3e595"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa62b24280be776b0c8ec474cbec849d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aaa62b24280be776b0c8ec474cbec849d">read</a> (void *data, size_t <a class="el" href="classBlurayIO.html#aebc5cea79f4abe02833fb2c06029e2bc">size</a>)</td></tr>
 <tr class="memdesc:aaa62b24280be776b0c8ec474cbec849d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="#aaa62b24280be776b0c8ec474cbec849d">More...</a><br /></td></tr>
 <tr class="separator:aaa62b24280be776b0c8ec474cbec849d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -365,8 +365,8 @@ Some chapters stop playing after 30 seconds, sometimes a few seconds early. Prob
 
 </div>
 </div>
-<a id="af3def0818e3a2f9436c5e7ccf4648133"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3def0818e3a2f9436c5e7ccf4648133">&#9670;&nbsp;</a></span>open()</h2>
+<a id="acc9b18b858e04f2b894aeb7084b3e595"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc9b18b858e04f2b894aeb7084b3e595">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -377,7 +377,7 @@ Some chapters stop playing after 30 seconds, sometimes a few seconds early. Prob
         <tr>
           <td class="memname">int BlurayIO::open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a>&#160;</td>
           <td class="paramname"><em>virtualfile</em></td><td>)</td>
           <td></td>
         </tr>
@@ -396,14 +396,14 @@ Some chapters stop playing after 30 seconds, sometimes a few seconds early. Prob
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#af3def0818e3a2f9436c5e7ccf4648133" title="Open a virtual file. ">open()</a> returns 0. <br />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#acc9b18b858e04f2b894aeb7084b3e595" title="Open a virtual file. ">open()</a> returns 0. <br />
 On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#a73d127faf89871419d7d3dc34d6ef96b">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00075">75</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_angle_idx</a>, <a class="el" href="blurayio_8h_source.html#l00133">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_chapter_idx</a>, <a class="el" href="blurayio_8h_source.html#l00150">m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00143">m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00138">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00137">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00140">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00144">m_title_idx</a>, <a class="el" href="fileio_8cc_source.html#l00116">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00094">FileIO::set_virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_angle_idx</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="blurayio_8h_source.html#l00133">m_bd</a>, <a class="el" href="structVIRTUALFILE.html#a9e64065a093280e7d66810be6b1532f9">VIRTUALFILE::m_bluray</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_chapter_idx</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00089">VIRTUALFILE::m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00150">m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_end_pos</a>, <a class="el" href="fileio_8h_source.html#l00088">VIRTUALFILE::m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00143">m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00138">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00137">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00140">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00144">m_title_idx</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8cc_source.html#l00116">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00094">FileIO::set_virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
 </div>
 </div>

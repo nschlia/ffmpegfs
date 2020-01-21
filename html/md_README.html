@@ -91,8 +91,11 @@ $(function() {
 <p><b>To switch to the branch for version 2, git clone and do "git checkout release2.x".</b></p>
 <ul>
 <li><b>Work on release 1.10 now in progress.</b></li>
+<li>Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.</li>
 <li>See [NEWS](NEWS) for details.</li>
 </ul>
+<p><em>Libav video support currenty seems broken. I have not yet decided whether to fix that or to drop Libav as a whole. Libav only poorly supports extensions required to do on-the-fly transcoding. The results are only fair to good, and Libav problems begin to cost me too much effort to fix.</em></p>
+<p><em>Objections anyone? If nobody misses Libav I'll stop supporting it soon.</em></p>
 <h2>About </h2>
 <p>Web site:<br />
  <a href="https://nschlia.github.io/ffmpegfs/">https://nschlia.github.io/ffmpegfs/</a><br />
@@ -148,9 +151,9 @@ $(function() {
 <p>Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source bitrate is less it will not be scaled up but rather left at the lower value.</p>
 <p>Note that the "allow_other" option by default can only be used by root. You must either run FFmpegfs as root or better add a "user_allow_other" key to /etc/fuse.conf.</p>
 <p>"allow_other" is required to allow any user access to the mount, by default this is only possible for the user who launched FFmpegfs.</p>
-<p>Examples: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache
-</pre><p>Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
-</pre><p>Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=TRACE -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
+<p>Examples: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache
+</pre><p>Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
+</pre><p>Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
 </pre><p>Enable deinterlacing to enhance image quality.</p>
 <h2>AUTO COPY </h2>
 <p>"Auto copy" performs intelligent stream copy, e.g., if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it would be possible to simply repackage it to a mp4 container without recoding.</p>
@@ -267,15 +270,14 @@ aio read size = 1
 <p>Much thanks to them for the original work and giving me a good head start!</p>
 <h2>LICENSE </h2>
 <p>This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found <a href="http://www.gnu.org/licenses/gpl-3.0.html">online</a> or in the COPYING file.</p>
-<p>This file and other documentation files can be distributed under the terms of the GNU Free Documentation License 1.3 or later. It can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
+<p>This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
 <h2>FFMPEG LICENSE </h2>
 <p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.</p>
 <p>See <a href="https://www.ffmpeg.org/legal.html">https://www.ffmpeg.org/legal.html</a> for details.</p>
 <h2>COPYRIGHT </h2>
-<p>This fork with FFmpeg support copyright (C) 2017-2019 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
+<p>This fork with FFmpeg support copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>
-<p>This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later.</p>
-<p>Manual is copyright (C) 2010-2011 K. Henriksson. This fork 2017 to present by N. Schlia and may be distributed under GNU Free Documentation License 1.3 or later. </p>
+<p>This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

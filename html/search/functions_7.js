@@ -10,7 +10,7 @@ var searchData=
   ['init_5ffuse_5fops',['init_fuse_ops',['../ffmpegfs_8h.html#a98fc6202ddd48ca1ad9db1b96baf9d63',1,'init_fuse_ops(void):&#160;fuseops.cc'],['../fuseops_8cc.html#a98fc6202ddd48ca1ad9db1b96baf9d63',1,'init_fuse_ops(void):&#160;fuseops.cc']]],
   ['init_5fid3v1',['init_id3v1',['../ffmpeg__utils_8cc.html#adac0a04e397a67149ec8220d0cc78745',1,'init_id3v1(ID3v1 *id3v1):&#160;ffmpeg_utils.cc'],['../id3v1tag_8h.html#adac0a04e397a67149ec8220d0cc78745',1,'init_id3v1(ID3v1 *id3v1):&#160;ffmpeg_utils.cc']]],
   ['init_5flogging',['init_logging',['../classLogging.html#a77721bbb1fdfcb27bd8c4c36cf1bd848',1,'Logging::init_logging()'],['../ffmpegfs_8h.html#a9769c6d320fbff3c0a1af3a2dac24e70',1,'init_logging(const std::string &amp;logfile, const std::string &amp;max_level, bool to_stderr, bool to_syslog):&#160;transcode.cc'],['../transcode_8cc.html#a9769c6d320fbff3c0a1af3a2dac24e70',1,'init_logging(const std::string &amp;logfile, const std::string &amp;max_level, bool to_stderr, bool to_syslog):&#160;transcode.cc']]],
-  ['init_5fpacket',['init_packet',['../classFFmpeg__Base.html#a6a0bf024c64e5543aed03245b0ffe859',1,'FFmpeg_Base']]],
+  ['init_5fpacket',['init_packet',['../classFFmpeg__Base.html#ac4fb083c96960f22be6a6d63a6cff0be',1,'FFmpeg_Base']]],
   ['init_5fresampler',['init_resampler',['../classFFmpeg__Transcoder.html#a6573a50f95e464137ca200abb19dbf5e',1,'FFmpeg_Transcoder']]],
   ['init_5frescaler',['init_rescaler',['../classFFmpeg__Transcoder.html#abcb61c1ba5a92ec7d8c8797f57938228',1,'FFmpeg_Transcoder']]],
   ['init_5fstat',['init_stat',['../fuseops_8cc.html#a053308fb67403fe88247851b2806886b',1,'fuseops.cc']]],

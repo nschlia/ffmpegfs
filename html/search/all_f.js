@@ -5,7 +5,7 @@ var searchData=
   ['read_5fdecode_5fconvert_5fand_5fstore',['read_decode_convert_and_store',['../classFFmpeg__Transcoder.html#a6afa2189ecd068bcbaa1054835db27c4',1,'FFmpeg_Transcoder']]],
   ['read_5finfo',['read_info',['../classCache.html#aa4d8e6534895ca7691f19d4bcf8e3cf6',1,'Cache::read_info()'],['../classCache__Entry.html#af0fe994643b46dd551e2f93323fdf14e',1,'Cache_Entry::read_info()']]],
   ['ref_5fcount',['ref_count',['../classCache__Entry.html#a50ae5e8cf89329bd1e37ca42abc38564',1,'Cache_Entry']]],
-  ['release',['release',['../classBuffer.html#a1f397a10d7394421738814aa0102d181',1,'Buffer']]],
+  ['release',['release',['../classBuffer.html#a31676a28709fcd1cd236e4cbeb2d3bc2',1,'Buffer']]],
   ['remove_5fcachefile',['remove_cachefile',['../classBuffer.html#a8825bd1ed9f973556e9e156e01a54a56',1,'Buffer::remove_cachefile()'],['../classCache.html#a4447f8c8409662a39ba55fa0328ee819',1,'Cache::remove_cachefile()']]],
   ['remove_5fext',['remove_ext',['../ffmpeg__utils_8cc.html#a8f1dabfad48c9fad38d421b3c1f7ef38',1,'remove_ext(std::string *filepath):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a8f1dabfad48c9fad38d421b3c1f7ef38',1,'remove_ext(std::string *filepath):&#160;ffmpeg_utils.cc']]],
   ['remove_5ffile',['remove_file',['../classBuffer.html#a7d5aeca1d1b53238938a1d6d43b4e2dc',1,'Buffer']]],

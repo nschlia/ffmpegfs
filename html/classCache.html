@@ -87,9 +87,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCache__Entry.html">Cache_Entry</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a1eb8ef8d7c26bf16f6bc8c43590ae902">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> virtualfile)</td></tr>
 <tr class="memdesc:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open cache entry.  <a href="#a1eb8ef8d7c26bf16f6bc8c43590ae902">More...</a><br /></td></tr>
 <tr class="separator:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae43604a7ec3e4734db82759671732e72"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#ae43604a7ec3e4734db82759671732e72">close</a> (<a class="el" href="classCache__Entry.html">Cache_Entry</a> **cache_entry, int flags=<a class="el" href="buffer_8h.html#ace10b9f74ac52dc6ea2b1834b2710428">CLOSE_CACHE_NOOPT</a>)</td></tr>
-<tr class="memdesc:ae43604a7ec3e4734db82759671732e72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a cache entry.  <a href="#ae43604a7ec3e4734db82759671732e72">More...</a><br /></td></tr>
-<tr class="separator:ae43604a7ec3e4734db82759671732e72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaaa761aa07314098a97ac13963ed006"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#acaaa761aa07314098a97ac13963ed006">close</a> (<a class="el" href="classCache__Entry.html">Cache_Entry</a> **cache_entry, int flags=<a class="el" href="buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0">CACHE_CLOSE_NOOPT</a>)</td></tr>
+<tr class="memdesc:acaaa761aa07314098a97ac13963ed006"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a cache entry.  <a href="#acaaa761aa07314098a97ac13963ed006">More...</a><br /></td></tr>
+<tr class="separator:acaaa761aa07314098a97ac13963ed006"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a5e16f13d67ba31c847e3bd3e3db2abf7">load_index</a> ()</td></tr>
 <tr class="memdesc:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load cache index from disk.  <a href="#a5e16f13d67ba31c847e3bd3e3db2abf7">More...</a><br /></td></tr>
 <tr class="separator:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,14 +166,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <p>Clear cache: deletes all entries. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00781">781</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00799">799</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00166">Cache_Entry::open()</a>, and <a class="el" href="transcode_8cc_source.html#l00561">transcoder_cache_clear()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00166">Cache_Entry::open()</a>, and <a class="el" href="transcode_8cc_source.html#l00563">transcoder_cache_clear()</a>.</p>
 
 </div>
 </div>
-<a id="ae43604a7ec3e4734db82759671732e72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae43604a7ec3e4734db82759671732e72">&#9670;&nbsp;</a></span>close()</h2>
+<a id="acaaa761aa07314098a97ac13963ed006"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaaa761aa07314098a97ac13963ed006">&#9670;&nbsp;</a></span>close()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -188,7 +188,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>flags</em> = <code><a class="el" href="buffer_8h.html#ace10b9f74ac52dc6ea2b1834b2710428">CLOSE_CACHE_NOOPT</a></code>&#160;</td>
+          <td class="paramname"><em>flags</em> = <code><a class="el" href="buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0">CACHE_CLOSE_NOOPT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -203,17 +203,17 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">cache_entry</td><td>- <a class="el" href="classCache.html" title="The Cache class. ">Cache</a> entry object to be closed. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- One of the CLOSE_CACHE_* flags. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- One of the CACHE_CLOSE_* flags. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the object was deleted; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00510">510</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00528">528</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00156">FFMPEGFS_PARAMS::m_expiry_time</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="cache_8cc_source.html#l00534">prune_expired()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00155">FFMPEGFS_PARAMS::m_expiry_time</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="cache_8cc_source.html#l00552">prune_expired()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00491">open()</a>, <a class="el" href="transcode_8cc_source.html#l00524">transcoder_delete()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00577">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00509">open()</a>, <a class="el" href="transcode_8cc_source.html#l00526">transcoder_delete()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00579">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -261,9 +261,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to a <a class="el" href="classCache__Entry.html" title="The Cache_Entry class. ">Cache_Entry</a>. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00452">452</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00470">470</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00467">delete_entry()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00485">delete_entry()</a>.</p>
 
 </div>
 </div>
@@ -305,15 +305,15 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">cache_entry</td><td>- <a class="el" href="classCache.html" title="The Cache class. ">Cache</a> entry object to be closed. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- One of the CLOSE_CACHE_* flags. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- One of the CACHE_CLOSE_* flags. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the object was deleted; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00467">467</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00485">485</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00046">CLOSE_CACHE_FREE</a>, <a class="el" href="cache_8cc_source.html#l00452">create_entry()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00208">FFmpegfs_Format::desttype()</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="cache_8cc_source.html#l00491">open()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00046">CACHE_CLOSE_FREE</a>, <a class="el" href="cache_8cc_source.html#l00470">create_entry()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00208">FFmpegfs_Format::desttype()</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="cache_8cc_source.html#l00509">open()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
 </div>
 </div>
@@ -361,7 +361,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00383">383</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00401">401</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00211">Cache_Entry::close_buffer()</a>.</p>
 
@@ -400,7 +400,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the SQL string bound to the statement handle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00845">845</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00863">863</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -457,9 +457,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00765">765</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00783">783</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00549">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00577">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00551">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00579">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -489,11 +489,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to a <a class="el" href="classCache__Entry.html" title="The Cache_Entry class. ">Cache_Entry</a>. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00491">491</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00509">509</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00510">close()</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l00528">close()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00467">delete_entry()</a>, <a class="el" href="transcode_8cc_source.html#l00220">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00250">transcoder_set_filesize()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00485">delete_entry()</a>, <a class="el" href="transcode_8cc_source.html#l00220">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00312">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00250">transcoder_set_filesize()</a>.</p>
 
 </div>
 </div>
@@ -515,7 +515,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <p>Prune cache entries to keep cache size within limit. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00597">597</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00615">615</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -538,7 +538,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <p>Prune cache entries to ensure disk space. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00677">677</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00695">695</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -560,9 +560,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 <p>Prune expired cache entries. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00534">534</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00552">552</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00510">close()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00528">close()</a>.</p>
 
 </div>
 </div>
@@ -643,7 +643,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00836">836</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00854">854</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -680,7 +680,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00320">320</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00338">338</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00222">Cache_Entry::close()</a>.</p>
 

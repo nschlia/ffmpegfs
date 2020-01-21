@@ -115,23 +115,23 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#ab278c421e45594a30f6563c0f4e952f6">CACHE_CHECK_BIT</a>(<a class="el" href="cache__maintenance_8cc.html#a3e7dd1c4ea1eaddd39d1d1b6a45b89c6">mask</a>,  var)&#160;&#160;&#160;((<a class="el" href="cache__maintenance_8cc.html#a3e7dd1c4ea1eaddd39d1d1b6a45b89c6">mask</a>) == (<a class="el" href="cache__maintenance_8cc.html#a3e7dd1c4ea1eaddd39d1d1b6a45b89c6">mask</a> &amp; (var)))</td></tr>
 <tr class="memdesc:ab278c421e45594a30f6563c0f4e952f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check bit in bitmask. <br /></td></tr>
 <tr class="separator:ab278c421e45594a30f6563c0f4e952f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace10b9f74ac52dc6ea2b1834b2710428"><td class="memItemLeft" align="right" valign="top"><a id="ace10b9f74ac52dc6ea2b1834b2710428"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#ace10b9f74ac52dc6ea2b1834b2710428">CLOSE_CACHE_NOOPT</a>&#160;&#160;&#160;0x00</td></tr>
-<tr class="memdesc:ace10b9f74ac52dc6ea2b1834b2710428"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dummy, do nothing special. <br /></td></tr>
-<tr class="separator:ace10b9f74ac52dc6ea2b1834b2710428"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a035c5ec399ae6cebfe81c79c0a03be"><td class="memItemLeft" align="right" valign="top"><a id="a8a035c5ec399ae6cebfe81c79c0a03be"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#a8a035c5ec399ae6cebfe81c79c0a03be">CLOSE_CACHE_FREE</a>&#160;&#160;&#160;0x01</td></tr>
-<tr class="memdesc:a8a035c5ec399ae6cebfe81c79c0a03be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory for cache entry. <br /></td></tr>
-<tr class="separator:a8a035c5ec399ae6cebfe81c79c0a03be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d8c670e0a0763084ab0664b571a80d6"><td class="memItemLeft" align="right" valign="top"><a id="a2d8c670e0a0763084ab0664b571a80d6"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#a2d8c670e0a0763084ab0664b571a80d6">CLOSE_CACHE_DELETE</a>&#160;&#160;&#160;(0x02 | CLOSE_CACHE_FREE)</td></tr>
-<tr class="memdesc:a2d8c670e0a0763084ab0664b571a80d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete cache entry, will unlink cached file! Implies CLOSE_CACHE_FREE. <br /></td></tr>
-<tr class="separator:a2d8c670e0a0763084ab0664b571a80d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6bbe3443d78677335623b58e90dfbf0"><td class="memItemLeft" align="right" valign="top"><a id="ae6bbe3443d78677335623b58e90dfbf0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0">CACHE_CLOSE_NOOPT</a>&#160;&#160;&#160;0x00</td></tr>
+<tr class="memdesc:ae6bbe3443d78677335623b58e90dfbf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dummy, do nothing special. <br /></td></tr>
+<tr class="separator:ae6bbe3443d78677335623b58e90dfbf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa20eb623074772561adeaac20bf09ce4"><td class="memItemLeft" align="right" valign="top"><a id="aa20eb623074772561adeaac20bf09ce4"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#aa20eb623074772561adeaac20bf09ce4">CACHE_CLOSE_FREE</a>&#160;&#160;&#160;0x01</td></tr>
+<tr class="memdesc:aa20eb623074772561adeaac20bf09ce4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free memory for cache entry. <br /></td></tr>
+<tr class="separator:aa20eb623074772561adeaac20bf09ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add3a22822faa02f1d4d7191493f5243b"><td class="memItemLeft" align="right" valign="top"><a id="add3a22822faa02f1d4d7191493f5243b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="buffer_8h.html#add3a22822faa02f1d4d7191493f5243b">CACHE_CLOSE_DELETE</a>&#160;&#160;&#160;(0x02 | CACHE_CLOSE_FREE)</td></tr>
+<tr class="memdesc:add3a22822faa02f1d4d7191493f5243b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. <br /></td></tr>
+<tr class="separator:add3a22822faa02f1d4d7191493f5243b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classBuffer.html" title="The Buffer class. ">Buffer</a> class. </p>
 <dl class="section author"><dt>Author</dt><dd>Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2019 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="buffer_8h_source.html">buffer.h</a>.</p>
 </div></div><!-- contents -->

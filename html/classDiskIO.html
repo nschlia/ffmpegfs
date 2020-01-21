@@ -97,9 +97,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aacda7d4216981a43ae67fafb9048b291"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#aacda7d4216981a43ae67fafb9048b291">bufsize</a> () const</td></tr>
 <tr class="memdesc:aacda7d4216981a43ae67fafb9048b291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="#aacda7d4216981a43ae67fafb9048b291">More...</a><br /></td></tr>
 <tr class="separator:aacda7d4216981a43ae67fafb9048b291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0412fee1542312cee3d2d1cb770474a9"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a0412fee1542312cee3d2d1cb770474a9">open</a> (<a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
-<tr class="memdesc:a0412fee1542312cee3d2d1cb770474a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file.  <a href="#a0412fee1542312cee3d2d1cb770474a9">More...</a><br /></td></tr>
-<tr class="separator:a0412fee1542312cee3d2d1cb770474a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9ddc4285af9994ccc218c6fa05a2a32"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#ad9ddc4285af9994ccc218c6fa05a2a32">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#ae5577a5efda75a47674e260e4e7d45ab">virtualfile</a>)</td></tr>
+<tr class="memdesc:ad9ddc4285af9994ccc218c6fa05a2a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file.  <a href="#ad9ddc4285af9994ccc218c6fa05a2a32">More...</a><br /></td></tr>
+<tr class="separator:ad9ddc4285af9994ccc218c6fa05a2a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46dae26c127542fdd3c91670b2d6bf07"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a46dae26c127542fdd3c91670b2d6bf07">read</a> (void *data, size_t <a class="el" href="classDiskIO.html#a493ddab4877c52b983878fabc4690b6b">size</a>)</td></tr>
 <tr class="memdesc:a46dae26c127542fdd3c91670b2d6bf07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="#a46dae26c127542fdd3c91670b2d6bf07">More...</a><br /></td></tr>
 <tr class="separator:a46dae26c127542fdd3c91670b2d6bf07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -299,8 +299,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a0412fee1542312cee3d2d1cb770474a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0412fee1542312cee3d2d1cb770474a9">&#9670;&nbsp;</a></span>open()</h2>
+<a id="ad9ddc4285af9994ccc218c6fa05a2a32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9ddc4285af9994ccc218c6fa05a2a32">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -311,7 +311,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">int DiskIO::open </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="fileio_8h.html#a9c8b910d7d75e7e9813888a5489391b6">LPCVIRTUALFILE</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a>&#160;</td>
           <td class="paramname"><em>virtualfile</em></td><td>)</td>
           <td></td>
         </tr>
@@ -330,14 +330,14 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#a0412fee1542312cee3d2d1cb770474a9" title="Open a file. ">open()</a> returns 0. <br />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#ad9ddc4285af9994ccc218c6fa05a2a32" title="Open a file. ">open()</a> returns 0. <br />
 On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#a73d127faf89871419d7d3dc34d6ef96b">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="diskio_8cc_source.html#l00059">59</a> of file <a class="el" href="diskio_8cc_source.html">diskio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="diskio_8h_source.html#l00120">m_fpi</a>, and <a class="el" href="fileio_8cc_source.html#l00094">FileIO::set_virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="diskio_8h_source.html#l00120">m_fpi</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, and <a class="el" href="fileio_8cc_source.html#l00094">FileIO::set_virtualfile()</a>.</p>
 
 </div>
 </div>

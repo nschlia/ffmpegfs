@@ -2,7 +2,7 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
-[ "$(ls -m "$DIRNAME")" = "dir.flac, obama.${FILEEXT}, raven.${FILEEXT}, snowboard.${FILEEXT}" ]
+[ "$(ls -m "$DIRNAME")" = "copyright, dir.flac, raven_d.${FILEEXT}, raven_e.${FILEEXT}, snowboard.${FILEEXT}" ]
 echo "Pass"
 
 echo OK

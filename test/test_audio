@@ -29,58 +29,58 @@ check_audio() {
 if [ "${DESTTYPE}" == "mp4" ];
 then
 	# mp4
-        check_audio "obama" "flac" 0.04
-        check_audio "raven" "ogg" 0.05
+        check_audio "raven_e" "flac" 0.04
+        check_audio "raven_d" "ogg" 0.05
 elif [ "${DESTTYPE}" == "mp3" ];
 then
 	# mp3
-        check_audio "obama" "flac" 0.04
-        check_audio "raven" "ogg" 0.08
+        check_audio "raven_e" "flac" 0.04
+        check_audio "raven_d" "ogg" 0.08
 elif [ "${DESTTYPE}" == "wav" ];
 then
 	# wav
-	check_audio "obama" "flac" 0.0
-	check_audio "raven" "ogg" 0.0
+	check_audio "raven_e" "flac" 0.0
+	check_audio "raven_d" "ogg" 0.0
 elif [ "${DESTTYPE}" == "ogg" ];
 then
 	# ogg
-	check_audio "obama" "flac" 0.2
-	check_audio "raven" "ogg" 0.0
+	check_audio "raven_e" "flac" 0.2
+	check_audio "raven_d" "ogg" 0.0
 elif [ "${DESTTYPE}" == "webm" ];
 then
 	# webm
-	check_audio "obama" "flac" 0.03
-	check_audio "raven" "ogg" 0.03
+	check_audio "raven_e" "flac" 0.03
+	check_audio "raven_d" "ogg" 0.03
 elif [ "${DESTTYPE}" == "opus" ];
 then
 	# opus
-	check_audio "obama" "flac" 0.4
-	check_audio "raven" "ogg" 0.03
+	check_audio "raven_e" "flac" 0.4
+	check_audio "raven_d" "ogg" 0.03
 elif [ "${DESTTYPE}" == "mov" ];
 then
 	# mov
-	check_audio "obama" "flac" 0.04
-	check_audio "raven" "ogg" 0.05
+	check_audio "raven_e" "flac" 0.04
+	check_audio "raven_d" "ogg" 0.05
 elif [ "${DESTTYPE}" == "aiff" ];
 then
 	# aiff
-	check_audio "obama" "flac" 0.0
-	check_audio "raven" "ogg" 0.0
+	check_audio "raven_e" "flac" 0.0
+	check_audio "raven_d" "ogg" 0.0
 elif [ "${DESTTYPE}" == "prores" ];
 then
 	# prores
-	check_audio "obama" "flac" 0.0
-	check_audio "raven" "ogg" 0.0
+	check_audio "raven_e" "flac" 0.0
+	check_audio "raven_d" "ogg" 0.0
 elif [ "${DESTTYPE}" == "alac" ];
 then
 	# alac
-	check_audio "obama" "flac" 0.0
-	check_audio "raven" "ogg" 0.0
+	check_audio "raven_e" "flac" 0.0
+	check_audio "raven_d" "ogg" 0.0
 elif [ "${DESTTYPE}" == "ts" ];
 then
 	# ts
-	check_audio "obama" "flac" 0.035
-	check_audio "raven" "ogg" 0.050
+	check_audio "raven_e" "flac" 0.039
+	check_audio "raven_d" "ogg" 0.050
 else
         echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 	exit 99

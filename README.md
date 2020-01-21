@@ -12,19 +12,7 @@ News
 ----
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
-* **Work on version 1.97 (2.0 pre-release) now in progress.**
-* Feature: Added support for HLS (HTTP Live Streaming). The functionality is not yet complete! See the "HTTP Live Streaming" section about how to use it.
-* Feature: Added checks for mov/mp4/prores/webm video format.
-* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on rescaled videos, what a suprise. Especially caused strange results on Bluray sources, created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
-* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
-* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
-* Bugfix: Properly handle case when start_time is AV_NOOPTS (frame sets only)
-* Bugfix: Corrected mistake in online help: clear-cache should be clear_cache instead.
-* Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.
-* Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround, the problem is
-              somewhere else.
-* Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
-          simply dropped.
+* **Work on version 1.98 (2.0 pre-release) now in progress.**
 
 * See [NEWS](NEWS) for details.
 

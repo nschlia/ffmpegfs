@@ -13,7 +13,7 @@ TESTS += test_filesize_mov_video test_filesize_mp4_video test_filesize_webm_vide
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 
-EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize
+EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize test_filesize_video
 EXTRA_DIST += $(wildcard tags/*)
 # NOT IN RELEASE 1.0! Add later: test_picture
 

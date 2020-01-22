@@ -1,6 +1,14 @@
 FFmpegfs NEWS
 
-Important changes in 1.97 (2020-01-XX)
+Important changes in 1.98 (2020-01-XX)
+
+* Support:
+* Feature: 
+* Bugfix: 
+* Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
+          simply dropped.
+
+Important changes in 1.97 (2020-01-21)
 
 * Support:
 * Feature: Added support for HLS (HTTP Live Streaming). Select desttype=hls to enable.
@@ -15,6 +23,9 @@ Important changes in 1.97 (2020-01-XX)
 * Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.
 * Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround, the problem is
               somewhere else.
+* Due to copyright uncertanties and because the public domain license used is controversal, all
+  demo files in test/srcdir have been replaced with own works and put under the CC0 1.0 Universal
+  license.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

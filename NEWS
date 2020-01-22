@@ -1,6 +1,14 @@
 FFmpegfs NEWS
 
-Important changes in 1.10 (2020-01-XX)
+Important changes in 1.11 (2020-01-XX)
+
+* Support:
+* Feature: 
+* Bugfix:
+* Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
+          simply dropped.
+
+Important changes in 1.10 (2020-01-21)
 
 * Support:
 * Feature: Added checks for mov/mp4/prores/webm video format.

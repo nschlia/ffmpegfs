@@ -14,6 +14,14 @@ News
 
 * **Work on version 1.98 (2.0 pre-release) now in progress.**
 
+I am currently preparing the new 2.0 release. The only thing that is missing
+is direct access to HLS segements. Currently, when e.g. segmement no. 300
+is opened one has to wait until segment 1 to 299 have been created.
+Obviously it would be more efficient to instantly transcode no. 300 instead.
+
+Once this is implemented and after a stabilisation phase V2.0 will finally
+see the light.
+
 * See [NEWS](NEWS) for details.
 
 *Libav video support currenty seems broken. I have not yet decided whether 

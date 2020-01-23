@@ -162,7 +162,7 @@ protected:
     virtual const char *destname() const = 0;
 
 protected:
-    VIRTUALFILE * m_virtualfile;
+    VIRTUALFILE * m_virtualfile;            /**< @brief Underlying virtual file object */
 };
 
 #endif // FFMPEG_BASE_H

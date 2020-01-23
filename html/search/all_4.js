@@ -23,5 +23,6 @@ var searchData=
   ['dvdio_2eh',['dvdio.h',['../dvdio_8h.html',1,'']]],
   ['dvdparser_2ecc',['dvdparser.cc',['../dvdparser_8cc.html',1,'']]],
   ['dvdparser_2eh',['dvdparser.h',['../dvdparser_8h.html',1,'']]],
+  ['demo_20files_20license',['Demo Files License',['../ffmpegfs_COPYING_8CC0.html',1,'']]],
   ['documentation_20license',['Documentation License',['../ffmpegfs_COPYING_8DOC.html',1,'']]]
 ];

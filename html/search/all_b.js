@@ -198,7 +198,7 @@ var searchData=
   ['m_5fvideobitrate',['m_videobitrate',['../structCACHE__INFO.html#ae35203df2812763dd6111c07e99ca2cf',1,'CACHE_INFO::m_videobitrate()'],['../structFFMPEGFS__PARAMS.html#a5e449ddb9fe6a95b16358ceaeeb850d4',1,'FFMPEGFS_PARAMS::m_videobitrate()']]],
   ['m_5fvideoheight',['m_videoheight',['../structCACHE__INFO.html#ae1f3f89197b622006b36a9ef5f9b4725',1,'CACHE_INFO::m_videoheight()'],['../structFFMPEGFS__PARAMS.html#a6ade853371056eb6ec45901d0fca2653',1,'FFMPEGFS_PARAMS::m_videoheight()']]],
   ['m_5fvideowidth',['m_videowidth',['../structCACHE__INFO.html#ae0d4cc7a0389f82b5f40fea20f4d723f',1,'CACHE_INFO::m_videowidth()'],['../structFFMPEGFS__PARAMS.html#a5893f18ab083cc2c02ec7e569801936f',1,'FFMPEGFS_PARAMS::m_videowidth()']]],
-  ['m_5fvirtualfile',['m_virtualfile',['../classCache__Entry.html#a5ebcedefe032fd852233a6159906333e',1,'Cache_Entry']]],
+  ['m_5fvirtualfile',['m_virtualfile',['../classCache__Entry.html#a5ebcedefe032fd852233a6159906333e',1,'Cache_Entry::m_virtualfile()'],['../classFFmpeg__Base.html#a79f2cb50858ef7380255875619feb682',1,'FFmpeg_Base::m_virtualfile()']]],
   ['m_5fvmg_5ffile',['m_vmg_file',['../classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99',1,'DvdIO']]],
   ['m_5fvts_5ffile',['m_vts_file',['../classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d',1,'DvdIO']]],
   ['m_5fwav_5fsize',['m_wav_size',['../structWAV__HEADER.html#a6108e19070e8ab1b7c3bb89a62a644f3',1,'WAV_HEADER']]],

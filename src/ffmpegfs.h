@@ -56,6 +56,7 @@
  * @li @ref ffmpegfs_TODO
  * @li @ref ffmpegfs_COPYING
  * @li @ref ffmpegfs_COPYING.DOC
+ * @li @ref ffmpegfs_COPYING.CC0
  *
  * @section ffmpegfs_external External links
  *
@@ -79,6 +80,10 @@
  * @page ffmpegfs_COPYING.DOC Documentation License
  *
  * \include COPYING.DOC
+ *
+ * @page ffmpegfs_COPYING.CC0 Demo Files License
+ *
+ * \include COPYING.CC0
  */
 
 #define FUSE_USE_VERSION 26             /**< @brief Requested minimum FUSE version */

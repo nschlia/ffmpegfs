@@ -80,7 +80,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "EXAMPLE_PATH           += TODO" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += COPYING.DOC" >> doxyfile.inc
-	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc
+	@echo "EXAMPLE_PATH           += COPYING.CC0" >> doxyfile.inc
 	@echo "RECURSIVE              = YES" >> doxyfile.inc
 	@echo "SOURCE_BROWSER         = YES" >> doxyfile.inc
 	@echo "DISTRIBUTE_GROUP_DOC   = YES" >> doxyfile.inc

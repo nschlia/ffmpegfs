@@ -1124,6 +1124,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
+		// output_codec_ctx->rc_min_rate = output_codec_ctx->bit_rate * 75 / 100;
+		// output_codec_ctx->rc_max_rate =  output_codec_ctx->bit_rate * 125 / 100;
+
+		// output_codec_ctx->qmin = 1;
+		// output_codec_ctx->qmax = 31;
+
         int width = 0;
         int height = 0;
         if (get_video_size(&width, &height))
@@ -1182,12 +1188,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
             // Set constant rate factor to avoid getting huge result files
             // The default is 23, but values between 30..40 create properly sized results. Possible values are 0 (lossless) to 51 (very small but ugly results).
-            ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
-            if (ret < 0)
-            {
-                Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
+			// ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
+			// if (ret < 0)
+			// {
+			// 	Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+			// 	return ret;
+			// }
 
             // Avoid mismatches for H264 and profile
             uint8_t   *out_val;
@@ -2404,6 +2410,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->quality = m_out.m_video.m_codec_ctx->global_quality;
             }
 
+			// Fix for issue #46: bitrate too high.
+            // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
+			// This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
+            frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+
 #ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(frame);
@@ -3069,6 +3080,9 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             // Write one video frame from the temporary packet to the output buffer.
             if (*data_present)
             {
+				// Fix for issue #46: bitrate too high.
+            	av_packet_rescale_ts(&pkt, m_out.m_video.m_codec_ctx->time_base, m_out.m_video.m_stream->time_base);
+
                 if (pkt.pts != AV_NOPTS_VALUE)
                 {
                     pkt.pts -=  m_out.m_video_start_pts;

@@ -4,7 +4,8 @@ Important changes in 1.11 (2020-01-XX)
 
 * Support:
 * Feature: 
-* Bugfix:
+* Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
+        expected.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

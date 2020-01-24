@@ -175,7 +175,7 @@ protected:
      */
     int64_t frame_to_pts(AVStream* stream, uint32_t frame_no) const;
 protected:
-    VIRTUALFILE * m_virtualfile;
+    VIRTUALFILE * m_virtualfile;            /**< @brief Underlying virtual file object */
 };
 
 #endif // FFMPEG_BASE_H

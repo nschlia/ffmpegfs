@@ -4,7 +4,8 @@ Important changes in 1.98 (2020-01-XX)
 
 * Support:
 * Feature: 
-* Bugfix: 
+* Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
+        expected.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 
@@ -49,7 +50,16 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
            be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.10 (2019-12-XX)
+Important changes in 1.11 (2020-01-XX)
+
+* Support:
+* Feature: 
+* Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
+        expected.
+* Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
+          simply dropped.
+
+Important changes in 1.10 (2020-01-21)
 
 * Support:
 * Feature: Added checks for mov/mp4/prores/webm video format.

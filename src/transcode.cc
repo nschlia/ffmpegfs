@@ -437,7 +437,14 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 {
     bool success = true;
 
-    Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, offset);
+    if (!segment_no)
+    {
+        Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, offset);
+    }
+    else
+    {
+        Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2 for segment no. %3.", len, offset, segment_no);
+    }
 
     // Store access time
     cache_entry->update_access();

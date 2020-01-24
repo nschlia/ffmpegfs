@@ -1387,3 +1387,8 @@ std::string make_filename(uint32_t file_no, const std::string & fileext)
 {
     return string_format("%06u.%s", file_no, fileext.c_str());
 }
+
+bool file_exists(const std::string & filename)
+{
+    return (access(filename.c_str(), F_OK) != -1);
+}

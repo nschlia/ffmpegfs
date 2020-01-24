@@ -709,4 +709,11 @@ bool                check_ignore(size_t size, size_t offset);
  */
 std::string         make_filename(uint32_t file_no, const std::string &fileext);
 
+/**
+ * @brief Check if file exists.
+ * @param[in] filename - File to check.
+ * @return Returns true if file exists, false if not.
+ */
+bool                file_exists(const std::string & filename);
+
 #endif

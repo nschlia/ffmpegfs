@@ -703,8 +703,8 @@ bool                check_ignore(size_t size, size_t offset);
 
 /**
  * @brief Make a file name from file number and file extension.
- * @param file_no - File number 1...n
- * @param fileext - Extension of file (e.g mp4, webm)
+ * @param[in] file_no - File number 1...n
+ * @param[in] fileext - Extension of file (e.g mp4, webm)
  * @return Returns the file name.
  */
 std::string         make_filename(uint32_t file_no, const std::string &fileext);

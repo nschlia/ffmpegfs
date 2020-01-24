@@ -573,12 +573,13 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
         {
             bool reported = false;
 
+            // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
                 cache_entry->m_seek_frame_no = frame_no;
             }
 
-            int n = 300;
+            int retries = 300;
             while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
             {
                 if (errno != EAGAIN)
@@ -587,7 +588,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     throw false;
                 }
 
-                if (errno == EAGAIN && !--n)
+                if (errno == EAGAIN && !--retries)
                 {
                     errno = ETIMEDOUT;
                     Logging::error(cache_entry->destname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));

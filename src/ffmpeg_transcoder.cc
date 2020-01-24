@@ -73,6 +73,8 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
+#define FRAME_SEEK_THRESHOLD    25  // Ignore seek if target is within the next n frames
+
 const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
 {
     // SD
@@ -3282,15 +3284,10 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
                 m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
 
+                if (m_last_seek_frame_no == frame_no)    // Skip frames until seek pos
                 {
-                    // uint32_t current_frame_no = pts_to_frame(m_in.m_video.m_stream, m_out.m_video_pts);
-
-                    if (m_last_seek_frame_no == frame_no)    // Skip frames until seek pos
-                    {
-                        m_last_seek_frame_no = 0;
-                    }
+                    m_last_seek_frame_no = 0;
                 }
-
             }
 
             av_packet_unref(&pkt);
@@ -3692,8 +3689,8 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
 
     uint32_t last_frame_no = pts_to_frame(m_in.m_video.m_stream, m_out.m_video_pts);
 
-    // Ignore seek if target is within the next 25 frames
-    if (next_frame_no >= last_frame_no /*+ 1*/ && next_frame_no <= last_frame_no + 25)
+    // Ignore seek if target is within the next FRAME_SEEK_THRESHOLD frames
+    if (next_frame_no >= last_frame_no /*+ 1*/ && next_frame_no <= last_frame_no + FRAME_SEEK_THRESHOLD)
     {
         return 0;
     }
@@ -3723,6 +3720,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
     {
         if (m_in.m_video.m_stream != nullptr && is_frameset())
         {
+            // Direct access handling for frame sets: seek to frame if requested.
             if (!m_last_seek_frame_no)
             {
                 // No current seek frame, check if new seek frame was stacked.

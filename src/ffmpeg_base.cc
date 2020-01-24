@@ -234,11 +234,11 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
 #ifndef USING_LIBAV
     // tbr
     // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
-    // output_stream->r_frame_rate              = { .num = 25, .den = 1 };
+    output_stream->r_frame_rate                 = framerate;
 
     // fps
     output_stream->avg_frame_rate               = framerate;
-    output_codec_ctx->framerate                 = framerate;
+    // output_codec_ctx->framerate                 = framerate;
 #endif
     int alpha = 0;
     int loss = 0;

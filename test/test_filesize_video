@@ -46,11 +46,11 @@ then
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "snowboard" 3906482 3911583
+    check_filesize "snowboard" 3906379 3911583
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "snowboard" 158322729
+    check_filesize "snowboard" 158322626 158322729
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

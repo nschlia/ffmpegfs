@@ -4,9 +4,7 @@ export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -W
 export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 
-export USERNAME=ffmpegfs
-export USERGROUP=ffmpegfs
-export CACHEDIR=/var/cache/ffmpegfs
+export CACHEDIR="$(DESTDIR)/var/cache/ffmpegfs"
 
 SUBDIRS = src test
 
@@ -106,40 +104,24 @@ wipe-all: doxy-clean distclean
 	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in src/Makefile.in
 	
 install-exec-hook:
-	@if getent passwd $(USERNAME) > /dev/null 2>&1; \
-	then \
-		echo "User $(USERNAME) already exists."; \
-	else \
-		echo "Creating user $(USERNAME)."; \
-		useradd -M $(USERNAME); \
-		usermod -L $(USERNAME); \
-	fi
-
 	@if [ -d "$(CACHEDIR)" ]; \
 	then \
 		echo "$(CACHEDIR) already exists."; \
 	else \
 		echo "Creating cache in $(CACHEDIR)."; \
-		mkdir $(CACHEDIR); \
+		mkdir -p $(CACHEDIR); \
 		if [ -d "/tmp/ffmpegfs" ]; \
 		then \
 			echo "Moving old cache from /tmp to $(CACHEDIR)."; \
-			mv /tmp/ffmpegfs/* $(CACHEDIR)/ || true; \
+			mv /tmp/ffmpegfs/* "$(CACHEDIR)"/ || true; \
 			rmdir /tmp/ffmpegfs/; \
 		fi \
 	fi
-	@chown -R $(USERNAME):$(USERGROUP) $(CACHEDIR)
-	@chmod -R 777 $(CACHEDIR)
+	@chmod -R 777 "$(CACHEDIR)"
 
 uninstall-hook:
 	@if [ -d "$(CACHEDIR)" ]; \
 	then \
 		echo "Removing cache directory $(CACHEDIR)."; \
 		rm -Rf "$(CACHEDIR)"; \
-	fi
-	
-	@if getent passwd $(USERNAME) > /dev/null 2>&1; \
-	then \
-		echo "Removing user $(USERNAME)."; \
-		userdel $(USERNAME); \
 	fi

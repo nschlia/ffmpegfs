@@ -226,7 +226,7 @@ public:
 
     ID3v1                   m_id3v1;                        /**< @brief ID3v1 structure which is used to send to clients */
 
-    volatile uint32_t       m_seek_frame_no;                /**< @brief If not 0, seeks to specified frame */
+    volatile uint32_t       m_seek_to_no;                   /**< @brief If not 0, seeks to specified frame */
 };
 
 #endif // CACHE_ENTRY_H

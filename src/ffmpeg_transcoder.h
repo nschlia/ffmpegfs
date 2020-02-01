@@ -279,7 +279,7 @@ public:
      * @param[in] frame_no - Frame number to seek 1...n
      * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
      */
-    int                         seek_frame(uint32_t frame_no);
+    int                         stack_seek_frame(uint32_t frame_no);
     /**
      * @brief Check for an export frame format
      * @return Returns true for formats that export all frames as images.
@@ -702,9 +702,9 @@ private:
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
     std::recursive_mutex        m_mutex;                    /**< @brief Access mutex */
-    std::queue<uint32_t>        m_seek_frame_fifo;          /**< @brief Stack of seek requests. Will be processed FIFO */
+    std::queue<uint32_t>        m_seek_to_fifo;             /**< @brief Stack of seek requests. Will be processed FIFO */
     volatile uint32_t           m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
-    bool                        m_have_seeked;              /**< @brief After seek operations this is set */
+    bool                        m_have_seeked;              /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
     bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                 /**< @brief true if input is a video file */
 

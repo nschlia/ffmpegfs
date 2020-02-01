@@ -667,9 +667,9 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     m_buffer            = buffer;
     {
         std::lock_guard<std::recursive_mutex> lck (m_mutex);
-        while (m_seek_frame_fifo.size())
+        while (m_seek_to_fifo.size())
         {
-            m_seek_frame_fifo.pop();
+            m_seek_to_fifo.pop();
         }
     }
     m_have_seeked       = false;
@@ -3732,10 +3732,10 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 {
                     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-                    while (!m_seek_frame_fifo.empty())
+                    while (!m_seek_to_fifo.empty())
                     {
-                        uint32_t frame_no = m_seek_frame_fifo.front();
-                        m_seek_frame_fifo.pop();
+                        uint32_t frame_no = m_seek_to_fifo.front();
+                        m_seek_to_fifo.pop();
 
                         if (!m_buffer->have_frame(frame_no))
                         {
@@ -5003,18 +5003,18 @@ void FFmpeg_Transcoder::free_filters()
 }
 #endif  // !USING_LIBAV
 
-int FFmpeg_Transcoder::seek_frame(uint32_t frame_no)
+int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
 {
     if (frame_no > 0 && frame_no <= video_frame_count())
     {
         std::lock_guard<std::recursive_mutex> lck (m_mutex);
-        m_seek_frame_fifo.push(frame_no);  // Seek to this frame next decoding operation
+        m_seek_to_fifo.push(frame_no);  // Seek to this frame next decoding operation
         return 0;
     }
     else
     {
         errno = EINVAL;
-        Logging::error(destname(), "seek_frame failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, video_frame_count());
+        Logging::error(destname(), "stack_seek_frame() failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, video_frame_count() + 1);
         return AVERROR(EINVAL);
     }
 }

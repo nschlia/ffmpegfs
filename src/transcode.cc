@@ -583,7 +583,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
-                cache_entry->m_seek_frame_no = frame_no;
+                cache_entry->m_seek_to_no = frame_no;
             }
 
             int retries = 300;
@@ -815,12 +815,12 @@ static void transcoder_thread(void *arg)
 
             if (transcoder->is_frameset())
             {
-                uint32_t frame_no = cache_entry->m_seek_frame_no;
+                uint32_t frame_no = cache_entry->m_seek_to_no;
                 if (frame_no)
                 {
-                    cache_entry->m_seek_frame_no = 0;
+                    cache_entry->m_seek_to_no = 0;
 
-                    averror = transcoder->seek_frame(frame_no);
+                    averror = transcoder->stack_seek_frame(frame_no);
                     if (averror < 0)
                     {
                         throw (static_cast<int>(errno));

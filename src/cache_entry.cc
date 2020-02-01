@@ -40,7 +40,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     : m_owner(owner)
     , m_ref_count(0)
     , m_virtualfile(virtualfile)
-    , m_seek_frame_no(0)
+    , m_seek_to_no(0)
 {
     m_cache_info.m_origfile = virtualfile->m_origfile;
 

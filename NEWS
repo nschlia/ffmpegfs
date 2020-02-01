@@ -52,16 +52,17 @@ This is a pre-release towards the new version 2.0 coming up soon.
 
 Important changes in 1.11 (2020-01-XX)
 
-* Support:
+* Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
+           required, just bloats the system's user database.
 * Feature: 
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
-        expected.
+          expected. There's a strange FFmpeg API behaviour behind that, added the solution used
+          in ffmpeg.c to fix. 
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
-          simply dropped.
+             simply dropped.
 
 Important changes in 1.10 (2020-01-21)
 
-* Support:
 * Feature: Added checks for mov/mp4/prores/webm video format.
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
           rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
@@ -77,7 +78,7 @@ Important changes in 1.10 (2020-01-21)
   demo files in test/srcdir have been replaced with own works and put under the CC0 1.0 Universal
   license.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
-          simply dropped.
+             simply dropped.
 
 Important changes in 1.9 (2019-11-18)
 

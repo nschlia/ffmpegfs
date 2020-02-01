@@ -819,6 +819,11 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
     }
 
+    m_out.m_audio_pts         = 0;
+    m_out.m_video_pts         = 0;
+    m_out.m_video_start_pts   = 0;
+    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
+
     // Open the output file for writing. If buffer == nullptr continue using existing buffer.
     ret = open_output_filestreams(buffer);
     if (ret)

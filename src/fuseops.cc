@@ -1740,7 +1740,7 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
  */
 static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 {
-    Cache_Entry*     cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
+    Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
     Logging::trace(path, "release");
 

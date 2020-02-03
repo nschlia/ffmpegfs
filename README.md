@@ -24,7 +24,7 @@ see the light.
 
 * HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
   ffmpegfs will seek to this position and start transcoding the segment
-  immediately. *Please not that this feature is still experimental and may
+  immediately. *Please note that this feature is still experimental and may
   produce unexpected results.*
 * See [NEWS](NEWS) for details.
 

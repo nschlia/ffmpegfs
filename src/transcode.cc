@@ -454,6 +454,15 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     try
     {
+#define MIN_SEGMENT 3   //**< @todo Should count in seconds, not segments...
+        // Try to read requested segment, stack a seek to if if this fails.
+        // No seek if not HLS (segment_no) and not required if < MIN_SEGMENT
+        if (segment_no > MIN_SEGMENT && !cache_entry->m_buffer->segment_exists(segment_no))
+        {
+            //Logging::error(nullptr, "**************************** NOT FOUND: %1", segment_no);
+            cache_entry->m_seek_to_no = segment_no;
+        }
+		
         // Open for reading if necessary
         if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
         {
@@ -821,6 +830,20 @@ static void transcoder_thread(void *arg)
                     cache_entry->m_seek_to_no = 0;
 
                     averror = transcoder->stack_seek_frame(frame_no);
+                    if (averror < 0)
+                    {
+                        throw (static_cast<int>(errno));
+                    }
+                }
+            }
+            else if (transcoder->is_hls())
+            {
+                uint32_t segment_no = cache_entry->m_seek_to_no;
+                if (segment_no)
+                {
+                    cache_entry->m_seek_to_no = 0;
+
+                    averror = transcoder->stack_seek_segment(segment_no);
                     if (averror < 0)
                     {
                         throw (static_cast<int>(errno));

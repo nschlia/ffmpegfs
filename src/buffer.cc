@@ -312,6 +312,17 @@ uint32_t Buffer::current_segment_no()
     return static_cast<uint32_t>(m_cur_ci - &m_ci[0]) + 1;
 }
 
+bool Buffer::segment_exists(uint32_t segment_no)
+{
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+
+    if (!segment_count() || m_cur_ci == nullptr)
+    {
+        return 0;
+    }
+    return file_exists(m_ci[segment_no - 1].m_cachefile);
+}
+
 bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
 {
     bool success = true;

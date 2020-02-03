@@ -281,6 +281,12 @@ public:
      */
     int                         stack_seek_frame(uint32_t frame_no);
     /**
+     * @brief Seek to a specific HLS segment. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
+     * @param[in] segment_no - Segment number to seek 1...n
+     * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
+     */
+    int                         stack_seek_segment(uint32_t segment_no);
+    /**
      * @brief Check for an export frame format
      * @return Returns true for formats that export all frames as images.
      */
@@ -316,6 +322,12 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output(Buffer *buffer);
+    /**
+     * @brief Process headers of output file
+     * Write file header, process meta data and add album arts.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         process_output();
     /**
      * FFmpeg handles cover arts like video streams.
      * Try to find out if we have a video stream or a cover art.
@@ -742,6 +754,8 @@ private:
     FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
 
     Buffer *                    m_buffer;                   /**< @brief Pointer to cache buffer object */
+
+    bool                        m_reset_pts;
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

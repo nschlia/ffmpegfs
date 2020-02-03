@@ -68,6 +68,7 @@ extern "C" {
 #include <libavfilter/avfilter.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
+#include <libavcodec/avcodec.h>
 #ifdef __cplusplus
 }
 #endif
@@ -180,6 +181,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_copy_video(false)
     , m_current_format(nullptr)
     , m_buffer(nullptr)
+    , m_reset_pts(false)
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -874,9 +876,14 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         return AVERROR(_errno);
     }
 
+    return process_output();
+}
+
+int FFmpeg_Transcoder::process_output()
+{
     // Process metadata. The decoder will call the encoder to set appropriate
     // tag values for the output file.
-    ret = process_metadata();
+    int ret = process_metadata();
     if (ret)
     {
         return ret;
@@ -890,13 +897,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     }
 
     // Process album arts: copy all from source file to target.
-    ret = process_albumarts();
-    if (ret)
-    {
-        return ret;
-    }
-
-    return 0;
+    return process_albumarts();
 }
 
 bool FFmpeg_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate /*= nullptr*/)
@@ -2658,6 +2659,17 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
     if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
     {
+        if (m_reset_pts)
+        {
+            m_reset_pts = false;
+
+            m_out.m_audio_pts = pkt->pts;
+            if (m_out.m_video.m_stream != nullptr)
+            {
+                m_out.m_video_pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, m_out.m_video.m_stream->time_base);
+            }
+        }
+
         if (!m_copy_audio)
         {
             int decoded = 0;
@@ -2685,6 +2697,17 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
     {
+        if (m_reset_pts)
+        {
+            m_reset_pts = false;
+
+            if (m_out.m_audio.m_stream != nullptr)
+            {
+                m_out.m_audio_pts = av_rescale_q(pkt->pts, m_out.m_video.m_stream->time_base, m_out.m_audio.m_stream->time_base);
+            }
+            m_out.m_video_pts = pkt->pts;
+        }
+
         if (!m_copy_video)
         {
             int decoded = 0;
@@ -2744,10 +2767,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         }
         else
         {
-            pkt->stream_index   = m_out.m_video.m_stream_idx;
-            av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
-            pkt->pos            = -1;
-
             ret = store_packet(pkt, "video");
         }
     }
@@ -3994,11 +4013,58 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (next_segment > m_virtualfile->m_segment_count)
             {
-                Logging::warning(destname(), "Current segment %1 > segment count %2", next_segment, m_virtualfile->m_segment_count);
+                Logging::error(destname(), "Current segment %1 > segment count %2", next_segment, m_virtualfile->m_segment_count);
+                throw AVERROR(ESPIPE);
             }
-            else if (next_segment > m_current_segment)
+            else if (next_segment == m_current_segment + 1)
             {
+                bool opened = false;
+
                 encode_finish();
+
+                // Go to next requested segment
+                while (!m_seek_to_fifo.empty())
+                {
+                    uint32_t segment_no = m_seek_to_fifo.front();
+                    m_seek_to_fifo.pop();
+
+                    if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
+                    {
+                        m_reset_pts    = true;      // Note that we have to reset audio/video pts to the new position
+                        m_have_seeked   = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
+
+                        pos = (segment_no - 1) * params.m_segment_duration;
+
+                        ret = av_seek_frame(m_in.m_format_ctx, -1, pos, AVSEEK_FLAG_BACKWARD);
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
+                            throw ret;
+                        }
+
+                        if (m_in.m_audio.m_codec_ctx != nullptr)
+                        {
+                            avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
+                        }
+
+                        if (m_in.m_video.m_codec_ctx != nullptr)
+                        {
+                            avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
+                        }
+
+                        close_output_file();
+
+                        open_output(m_buffer);
+
+                        //m_out.m_video_start_pts = 0;
+
+                        next_segment = segment_no;
+
+                        opened = true;
+
+                        break;
+                    }
+                }
 
                 m_current_segment = next_segment;
 
@@ -4009,27 +4075,15 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     throw AVERROR(errno);
                 }
 
-                // Process metadata. The decoder will call the encoder to set appropriate
-                // tag values for the output file.
-                int ret = process_metadata();
-                //if (ret)
-                //{
-                //    return ret;
-                //}
-
-                // Write the header of the output file container.
-                ret = write_output_file_header();
-                //if (ret)
-                //{
-                //    return ret;
-                //}
-
-                // Process album arts: copy all from source file to target.
-                ret = process_albumarts();
-                //if (ret)
-                //{
-                //    return ret;
-                //}
+                if (!opened)
+                {
+                    // Process output file, already done by open_output() if file has ben newly opened.
+                    ret = process_output();
+                    if (ret)
+                    {
+                        throw ret;
+                    }
+                }
             }
         }
     }
@@ -5014,6 +5068,22 @@ int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
     {
         errno = EINVAL;
         Logging::error(destname(), "stack_seek_frame() failed: Frame %1 was requested, but is out of range (1...%2)", frame_no, video_frame_count() + 1);
+        return AVERROR(EINVAL);
+    }
+}
+
+int FFmpeg_Transcoder::stack_seek_segment(uint32_t segment_no)
+{
+    if (segment_no > 0 && segment_no <= segment_count())
+    {
+        std::lock_guard<std::recursive_mutex> lck (m_mutex);
+        m_seek_to_fifo.push(segment_no);  // Seek to this segment next decoding operation
+        return 0;
+    }
+    else
+    {
+        errno = EINVAL;
+        Logging::error(destname(), "stack_seek() failed: Segment %1 was requested, but is out of range (1...%2)", segment_no, video_frame_count() + 1);
         return AVERROR(EINVAL);
     }
 }

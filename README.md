@@ -22,6 +22,10 @@ would be more efficient to instantly transcode no. 300 instead.
 Once this is implemented and after a stabilisation phase V2.0 will finally
 see the light.
 
+* HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
+  ffmpegfs will seek to this position and start transcoding the segment
+  immediately. *Please not that this feature is still experimental and may
+  produce unexpected results.*
 * See [NEWS](NEWS) for details.
 
 *Libav video support currenty seems broken. I have not yet decided whether 

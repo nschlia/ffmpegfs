@@ -132,6 +132,13 @@ public:
      */
     uint32_t                current_segment_no();
     /**
+     * @brief Check if segment exists.
+     * Returns true if it exists, or false if it still has to be decoded.
+     * @param[in] segment_no - HLS segment file number [1..n].
+     * @return Returns true if it exists, or false if not.
+     */
+    bool                    segment_exists(uint32_t segment_no);
+    /**
      * @brief Release cache buffer.
      * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true on success; false on error.

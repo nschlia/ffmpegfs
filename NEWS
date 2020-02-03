@@ -1,11 +1,14 @@
 FFmpegfs NEWS
 
-Important changes in 1.98 (2020-01-XX)
+Important changes in 1.98 (2020-02-XX)
 
 * Support:
-* Feature: 
+* Feature: HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
+           ffmpegfs will seek to this position and start transcoding the segment
+           immediately. *Please not that this feature is still experimental and may
+           produce unexpected results.*
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
-        expected.
+          expected.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

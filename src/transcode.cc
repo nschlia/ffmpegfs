@@ -173,13 +173,22 @@ void transcoder_cache_path(std::string & path)
     }
     else
     {
-        if (const char* cache_home = std::getenv("XDG_CACHE_HOME"))
+        if (geteuid() == 0)
         {
-            path = cache_home;
+            // Running as root
+            path = "/var/cache";
         }
         else
         {
-            expand_path(&path, "~/.cache");
+            // Running as regular user, put cache in home dir
+            if (const char* cache_home = std::getenv("XDG_CACHE_HOME"))
+            {
+                path = cache_home;
+            }
+            else
+            {
+                expand_path(&path, "~/.cache");
+            }
         }
     }
 
@@ -508,7 +517,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len))
         {
             len = 0;
-			// We already capped len to not overread the buffer, so it is an error if we end here.
+            // We already capped len to not overread the buffer, so it is an error if we end here.
             throw false;
         }
 

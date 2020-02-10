@@ -102,26 +102,3 @@ clean-local: doxy-clean
 # Really clean up everything
 wipe-all: doxy-clean distclean
 	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in src/Makefile.in
-	
-install-exec-hook:
-	@if [ -d "$(CACHEDIR)" ]; \
-	then \
-		echo "$(CACHEDIR) already exists."; \
-	else \
-		echo "Creating cache in $(CACHEDIR)."; \
-		mkdir -p $(CACHEDIR); \
-		if [ -d "/tmp/ffmpegfs" ]; \
-		then \
-			echo "Moving old cache from /tmp to $(CACHEDIR)."; \
-			mv /tmp/ffmpegfs/* "$(CACHEDIR)"/ || true; \
-			rmdir /tmp/ffmpegfs/; \
-		fi \
-	fi
-	@chmod -R 777 "$(CACHEDIR)"
-
-uninstall-hook:
-	@if [ -d "$(CACHEDIR)" ]; \
-	then \
-		echo "Removing cache directory $(CACHEDIR)."; \
-		rm -Rf "$(CACHEDIR)"; \
-	fi

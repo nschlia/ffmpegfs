@@ -173,7 +173,14 @@ void transcoder_cache_path(std::string & path)
     }
     else
     {
-        path = "/var/cache";
+        if (const char* cache_home = std::getenv("XDG_CACHE_HOME"))
+        {
+            path = cache_home;
+        }
+        else
+        {
+            expand_path(&path, "~/.cache");
+        }
     }
 
     append_sep(&path);

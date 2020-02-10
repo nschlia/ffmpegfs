@@ -388,7 +388,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     ret = cache_entry->m_cache_info.m_errno;
                     if (!ret)
                     {
-                        ret = EIO; // Must return anything...
+                        ret = EIO; // Must return something, be it a simple I/O error...
                     }
                     throw ret;
                 }

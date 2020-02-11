@@ -1390,7 +1390,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
                 }
 
                 uint32_t segment_no = 0;
-                assert(false);
+
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
                 stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry, segment_no));
 #else

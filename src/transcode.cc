@@ -183,7 +183,23 @@ void transcoder_cache_path(std::string & path)
     }
     else
     {
-        path = "/var/cache";
+        if (geteuid() == 0)
+        {
+            // Running as root
+            path = "/var/cache";
+        }
+        else
+        {
+            // Running as regular user, put cache in home dir
+            if (const char* cache_home = std::getenv("XDG_CACHE_HOME"))
+            {
+                path = cache_home;
+            }
+            else
+            {
+                expand_path(&path, "~/.cache");
+            }
+        }
     }
 
     append_sep(&path);
@@ -401,7 +417,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     ret = cache_entry->m_cache_info.m_errno;
                     if (!ret)
                     {
-                        ret = EIO; // Must return anything...
+                        ret = EIO; // Must return something, be it a simple I/O error...
                     }
                     throw ret;
                 }

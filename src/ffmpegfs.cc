@@ -114,7 +114,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_prebuffer_size(100 /* KB */ * 1024)     // default: 100 KB
     , m_max_cache_size(0)                       // default: no limit
     , m_min_diskspace(0)                        // default: no minimum
-    , m_cachepath("")                           // default: /var/cache/ffmpegfs
+    , m_cachepath("")                           // default: $XDG_CACHE_HOME/ffmpegfs
     , m_disable_cache(0)                        // default: enabled
     , m_cache_maintenance((60*60))              // default: prune every 60 minutes
     , m_prune_cache(0)                          // default: Do not prune cache immediately

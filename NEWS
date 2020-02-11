@@ -53,11 +53,14 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
            be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.11 (2020-01-XX)
+Important changes in 1.11 (2020-02-XX)
 
 * Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
            required, just bloats the system's user database.
-* Feature: 
+* Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG 
+           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
+           defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 
+           (e.g. if invoked via /etc/fstab entry).
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 

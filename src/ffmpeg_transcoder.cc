@@ -4077,7 +4077,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (!opened)
                 {
-                    // Process output file, already done by open_output() if file has ben newly opened.
+                    // Process output file, already done by open_output() if file has been newly opened.
                     ret = process_output();
                     if (ret)
                     {

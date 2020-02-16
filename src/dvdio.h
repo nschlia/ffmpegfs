@@ -173,13 +173,13 @@ private:
     size_t          demux_pes(uint8_t *out, const uint8_t *in, size_t len) const;
     /**
      * @brief Handle DSI (Data Search Information) packet
-     * @param[in] _dsi_pack - buffer with DSI packet.
+     * @param[out] _dsi_pack - buffer with DSI packet.
      * @param[out] cur_output_size - Net size of packet.
-     * @param[in] next_vobu - Address of next VOBU (Video Object Unit).
-     * @param[in] data - Data extracted from DSI packet.
+     * @param[out] next_block - Address of next VOBU (Video Object Unit).
+     * @param[out] data - Data extracted from DSI packet.
      * @return
      */
-    DSITYPE         handle_DSI(void * _dsi_pack, size_t *cur_output_size, unsigned int * next_vobu, uint8_t *data);
+    DSITYPE         handle_DSI(void *_dsi_pack, size_t *cur_output_size, unsigned int * next_block, uint8_t *data);
     /**
      * @brief Goto next DVD cell
      */

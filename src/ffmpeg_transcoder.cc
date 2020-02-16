@@ -2510,7 +2510,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         }
 
         ret = decode(m_in.m_video.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
-
         if (!data_present)
         {
             // unused frame
@@ -3042,6 +3041,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             {
                 // If we are the the end of the file, flush the decoder below.
                 *finished = 1;
+                Logging::trace(destname(), "Read to EOF.");
             }
             else
             {

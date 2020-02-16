@@ -442,6 +442,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
     DSITYPE dsitype = DSITYPE_CONTINUE;
+    bool end_of_cell;
 
     navRead_DSI(dsi_pack, &data[DSI_START_BYTE]);
 
@@ -457,8 +458,9 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
     // really happy.
 
     *next_block = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+    end_of_cell = (dsi_pack->vobu_sri.next_vobu == SRI_END_OF_CELL || *next_block >= m_cur_pgc->cell_playback[m_cur_cell].last_sector); // Double check end of cell: DVD transcoding stops in the middle of the chapter #48
 
-    if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_idx > 1)
+    if (!end_of_cell && m_angle_idx > 1)
     {
         switch ((dsi_pack->sml_pbi.category & 0xf000) >> 12)
         {
@@ -502,7 +504,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
         }
         }
     }
-    else if (dsi_pack->vobu_sri.next_vobu == SRI_END_OF_CELL)
+    else if (end_of_cell)
     {
         if (m_next_cell >= m_cur_pgc->nr_of_cells)
         {

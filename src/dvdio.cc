@@ -438,7 +438,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
     return netsize;
 }
 
-DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int *next_vobu, uint8_t *data)
+DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int *next_block, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
     DSITYPE dsitype = DSITYPE_CONTINUE;
@@ -456,7 +456,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
     // avoiding the doubled scenes in The Matrix, and makes our life
     // really happy.
 
-    *next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+    *next_block = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
 
     if (dsi_pack->vobu_sri.next_vobu != SRI_END_OF_CELL && m_angle_idx > 1)
     {
@@ -471,12 +471,12 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
             // ff ff ff ff for the last interleaved block, indicating the end of interleaving
             if (dsi_pack->sml_pbi.ilvu_sa != 0 && dsi_pack->sml_pbi.ilvu_sa != 0xffffffff)
             {
-                *next_vobu = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
+                *next_block = m_cur_block + dsi_pack->sml_pbi.ilvu_sa;
                 *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
             }
             else
             {
-                *next_vobu = m_cur_block + dsi_pack->dsi_gi.vobu_ea + 1;
+                *next_block = m_cur_block + dsi_pack->dsi_gi.vobu_ea + 1;
             }
             break;
         }
@@ -485,7 +485,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
             // vobu is end of ilvu
             if (dsi_pack->sml_agli.data[m_angle_idx].address)
             {
-                *next_vobu = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
+                *next_block = m_cur_block + dsi_pack->sml_agli.data[m_angle_idx].address;
                 *cur_output_size = dsi_pack->sml_pbi.ilvu_ea;
                 break;
             }
@@ -497,7 +497,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
         case 0x8:   // non interleaved cells in interleaved section
         default:
         {
-            *next_vobu = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
+            *next_block = m_cur_block + (dsi_pack->vobu_sri.next_vobu & 0x7fffffff);
             break;
         }
         }
@@ -506,7 +506,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
     {
         if (m_next_cell >= m_cur_pgc->nr_of_cells)
         {
-            *next_vobu = 0;
+            *next_block = 0;
             dsitype = DSITYPE_EOF_TITLE;
         }
         else
@@ -520,7 +520,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
                 dsitype = DSITYPE_EOF_CHAPTER;
             }
 
-            *next_vobu = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
+            *next_block = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
         }
     }
 
@@ -590,11 +590,11 @@ size_t DvdIO::read(void * data, size_t size)
         }
 
         // We loop until we're out of this cell.
-        //        for(cur_pack = cur_pgc->cell_playback[cur_cell].first_sector;
-        //             cur_pack < cur_pgc->cell_playback[cur_cell].last_sector;)
+        //for(cur_pack = cur_pgc->cell_playback[cur_cell].first_sector;
+        //     cur_pack < cur_pgc->cell_playback[cur_cell].last_sector;)
         {
             dsi_t dsi_pack;
-            unsigned int next_vobu;
+            unsigned int next_block;
 
             // Read NAV packet.
             maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
@@ -611,7 +611,7 @@ size_t DvdIO::read(void * data, size_t size)
             }
 
             // Parse the contained dsi packet.
-            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_vobu, m_buffer);
+            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer);
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
                 Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", m_cur_block);
@@ -672,7 +672,7 @@ size_t DvdIO::read(void * data, size_t size)
                 }
             }
 
-            m_cur_block = next_vobu;
+            m_cur_block = next_block;
         }
 
         //break;

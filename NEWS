@@ -64,6 +64,8 @@ Important changes in 1.11 (2020-02-XX)
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 
+* Bugfix: Issue #48 - Properly handle incorrectly authored DVDs with missing SRI_END_OF_CELL
+          marks after cells.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
              simply dropped.
 

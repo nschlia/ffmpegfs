@@ -30,7 +30,7 @@
  */
 
 #include "fileio.h"
-#include "ffmpeg_utils.h"
+#include "ffmpegfs.h"
 #include "buffer.h"
 #include "diskio.h"
 #ifdef USE_LIBVCD
@@ -44,6 +44,18 @@
 #endif // USE_LIBBLURAY
 
 //#include <assert.h>
+
+uint32_t VIRTUALFILE::get_segment_count() const
+{
+    if (m_duration && params.m_segment_duration)
+    {
+        return static_cast<uint32_t>((m_duration - 1) / params.m_segment_duration) + 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 FileIO::FileIO()
     : m_virtualfile(nullptr)

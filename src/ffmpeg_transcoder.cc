@@ -520,8 +520,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         m_virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
     }
 
-    m_virtualfile->m_segment_count = static_cast<uint32_t>(virtualfile->m_duration / params.m_segment_duration) + 1;
-
     // Make sure this is set, although should already have happened
     m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
@@ -4011,9 +4009,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
 
-            if (next_segment > m_virtualfile->m_segment_count)
+            if (next_segment > m_virtualfile->get_segment_count())
             {
-                Logging::error(destname(), "Current segment %1 > segment count %2", next_segment, m_virtualfile->m_segment_count);
+                Logging::error(destname(), "Current segment %1 > segment count %2", next_segment, m_virtualfile->get_segment_count());
                 throw AVERROR(ESPIPE);
             }
             else if (next_segment == m_current_segment + 1)
@@ -4420,7 +4418,7 @@ uint32_t FFmpeg_Transcoder::segment_count() const
 {
     if (m_virtualfile != nullptr)
     {
-        return m_virtualfile->m_segment_count;
+        return m_virtualfile->get_segment_count();
     }
     else
     {

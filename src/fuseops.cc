@@ -692,7 +692,7 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
 
     transcoder_delete(cache_entry);
 
-    Logging::debug(origpath, "Duration: %1 Frames: %2 Segments: %3", virtualfile->m_duration, virtualfile->m_video_frame_count, virtualfile->m_segment_count);
+    Logging::debug(origpath, "Duration: %1 Frames: %2 Segments: %3", virtualfile->m_duration, virtualfile->m_video_frame_count, virtualfile->get_segment_count());
 
     return 0;
 }
@@ -704,7 +704,7 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
     std::string master_contents;
     std::string index_0_av_contents;
 
-    if (!virtualfile->m_segment_count)
+    if (!virtualfile->get_segment_count())
     {
         int res = get_source_properties(origpath, virtualfile);
         if (res < 0)
@@ -713,7 +713,7 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
         }
     }
 
-    if (virtualfile->m_segment_count)
+    if (virtualfile->get_segment_count())
     {
         // Examples...
         //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1250,RESOLUTION=720x406,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
@@ -741,10 +741,10 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
                 "#EXT-X-MEDIA-SEQUENCE:1\n";
 
         int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
-        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->m_segment_count; // @todo: Feature #2506 - calculate correct file size
-        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->m_segment_count; // @todo: Feature #2506 - calculate correct file size
+        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count(); // @todo: Feature #2506 - calculate correct file size
+        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count(); // @todo: Feature #2506 - calculate correct file size
 
-        for (uint32_t file_no = 1; file_no <= virtualfile->m_segment_count; file_no++)
+        for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
         {
             std::string buffer;
             std::string segment_name = make_filename(file_no, params.current_format(virtualfile)->fileext());
@@ -759,7 +759,7 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
             if (!lstat(cachefile.c_str(), &stbuf))
             {
                 make_file(buf, filler, virtualfile->m_type, origpath, segment_name, static_cast<size_t>(stbuf.st_size), virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                if (file_no < virtualfile->m_segment_count)
+                if (file_no < virtualfile->get_segment_count())
                 {
                     buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
                 }
@@ -770,7 +770,7 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
             }
             else
             {
-                if (file_no < virtualfile->m_segment_count)
+                if (file_no < virtualfile->get_segment_count())
                 {
                     make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
                     buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);

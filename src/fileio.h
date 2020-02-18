@@ -124,10 +124,11 @@ typedef struct VIRTUALFILE
         , m_duration(0)
         , m_predicted_size(0)
         , m_video_frame_count(0)
-        , m_segment_count(0)
     {
 
     }
+
+    uint32_t get_segment_count() const;
 
     VIRTUALTYPE         m_type;                                     /**< @brief Type of this virtual file */
     int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */
@@ -140,7 +141,6 @@ typedef struct VIRTUALFILE
     int64_t             m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     size_t              m_predicted_size;                           /**< @brief Use this as the size instead of computing it over and over. */
     uint32_t            m_video_frame_count;                        /**< @brief Number of frames in video or 0 if not a video */
-    uint32_t            m_segment_count;                            /**< @brief Number of segments for HLS sets */
 
     std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
 

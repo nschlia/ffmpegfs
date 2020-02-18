@@ -144,7 +144,6 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     virtualfile->m_duration             = duration;
     AVRational framerate = av_make_q(25000, 1000);  //*** @todo: check disk which framerate is correct, can be 25 or 29.996 fps!
     virtualfile->m_video_frame_count 	= static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
-    virtualfile->m_segment_count 	= static_cast<uint32_t>(duration / params.m_segment_duration) + 1;
 
     return true;
 }

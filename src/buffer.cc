@@ -168,11 +168,11 @@ bool Buffer::init(bool erase_cache)
     {
         // HLS format: create several segments
 
-        assert(virtualfile()->m_segment_count); // Should be at least 1 segment
+        assert(virtualfile()->get_segment_count()); // Should be at least 1 segment
 
-        m_ci.resize(virtualfile()->m_segment_count);
+        m_ci.resize(virtualfile()->get_segment_count());
 
-        for (uint32_t segment_no = 1; segment_no <= virtualfile()->m_segment_count; segment_no++)
+        for (uint32_t segment_no = 1; segment_no <= virtualfile()->get_segment_count(); segment_no++)
         {
             make_cachefile_name(m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
         }

@@ -146,7 +146,7 @@ extern struct FFMPEGFS_PARAMS
     int                 m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
 #endif // !USING_LIBAV
     // HLS Options
-    int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file */
+    int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */
     // Virtual script

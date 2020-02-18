@@ -4007,7 +4007,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 pos = av_rescale_q(m_out.m_audio_pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
             }
 
-            next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+            next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1); // ????
 
             if (next_segment > m_virtualfile->get_segment_count())
             {

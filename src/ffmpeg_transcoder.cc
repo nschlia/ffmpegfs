@@ -2656,7 +2656,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
     if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
     {
-        if (m_reset_pts)
+        if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
             m_reset_pts = false;
 
@@ -2694,7 +2694,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
     {
-        if (m_reset_pts)
+        if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
             m_reset_pts = false;
 

@@ -815,7 +815,7 @@ static void transcoder_thread(void *arg)
         thread_data->m_initialised = true;
 
         bool unlocked = false;
-        if (!params.m_prebuffer_size || transcoder->is_multiformat())
+        if (!params.m_prebuffer_size || transcoder->is_frameset())
         {
             // Unlock frame set from beginning
             unlocked = true;

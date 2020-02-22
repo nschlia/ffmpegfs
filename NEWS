@@ -57,6 +57,9 @@ Important changes in 1.11 (2020-02-XX)
 
 * Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
            required, just bloats the system's user database.
+* Support: Reduced quality of the test video to make the distribution archive slimmer. A full
+           HD (1920x1280) video at 60 frames per second was a bit of an overkill anyway.
+           720x400 at 30 fps should be enough for everybody.
 * Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG 
            Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
            defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 

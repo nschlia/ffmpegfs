@@ -11,6 +11,8 @@ Important changes in 1.11 (2020-02-XX)
            Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
            defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 
            (e.g. if invoked via /etc/fstab entry).
+* Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
+           chapter, but at the real time the chapter begins in its title.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 

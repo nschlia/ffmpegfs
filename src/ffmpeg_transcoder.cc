@@ -632,10 +632,6 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         return AVERROR(_errno);
     }
 
-    m_out.m_audio_pts         = 0;
-    m_out.m_video_start_pts   = 0;
-    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
-
     // Open the output file for writing. If buffer == nullptr continue using existing buffer.
     ret = open_output_filestreams(buffer);
     if (ret)
@@ -1809,13 +1805,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 output_write,   // write
                 (m_current_format->audio_codec_id() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
-    // Some formats require the time stamps to start at 0, so if there is a difference between
-    // the streams we need to drop audio or video until we are in sync.
-    if ((m_out.m_video.m_stream != nullptr) && (m_in.m_audio.m_stream != nullptr))
-    {
-        // Calculate difference
-        m_out.m_video_start_pts = av_rescale_q(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_video.m_stream->time_base);
-    }
+    m_out.m_audio_pts         = m_in.m_audio.m_stream != nullptr ? m_in.m_audio.m_stream->start_time : 0;
+    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
 
     return 0;
 }
@@ -2818,7 +2809,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     {
         // Read one frame from the input file into a temporary packet.
         ret = av_read_frame(m_in.m_format_ctx, &pkt);
-
         if (ret < 0)
         {
             if (ret == AVERROR_EOF)
@@ -3093,16 +3083,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 				// Fix for issue #46: bitrate too high.
             	av_packet_rescale_ts(&pkt, m_out.m_video.m_codec_ctx->time_base, m_out.m_video.m_stream->time_base);
 
-                if (pkt.pts != AV_NOPTS_VALUE)
-                {
-                    pkt.pts -=  m_out.m_video_start_pts;
-                }
-
-                if (pkt.dts != AV_NOPTS_VALUE)
-                {
-                    pkt.dts -=  m_out.m_video_start_pts;
-                }
-
                 if (!(m_out.m_format_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
                 {
                     if (pkt.dts != AV_NOPTS_VALUE &&
@@ -3138,7 +3118,10 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     }
                 }
 
-                m_out.m_last_mux_dts = pkt.dts;
+                if (pkt.pts != AV_NOPTS_VALUE)
+                {
+                    m_out.m_last_mux_dts    = pkt.dts;
+                }
 
 #ifndef USING_LIBAV
                 if (frame != nullptr && !pkt.duration)

@@ -2080,7 +2080,19 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(filename(), "Could not send packet to decoder (error '%1').", ffmpeg_geterror(ret).c_str());
+            if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
+            {
+                Logging::error(filename(), "Could not send audio packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+            }
+            else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+            {
+                Logging::error(filename(), "Could not send video packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+            }
+            else
+            {
+                // Should never come here, but what the heck...
+                Logging::error(filename(), "Could not send packet at PTS=%1 to decoder (error '%2').", pkt->pts, ffmpeg_geterror(ret).c_str());
+            }
             return ret;
         }
     }
@@ -2954,7 +2966,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
     if (ret < 0 && ret != AVERROR_EOF)
     {
-        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -3051,7 +3063,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        	Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 

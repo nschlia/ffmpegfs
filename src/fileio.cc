@@ -49,7 +49,7 @@ uint32_t VIRTUALFILE::get_segment_count() const
 {
     if (m_duration && params.m_segment_duration)
     {
-        return static_cast<uint32_t>((m_duration - 1) / params.m_segment_duration) + 1;
+        return static_cast<uint32_t>((m_duration - 200000) / params.m_segment_duration) + 1;
     }
     else
     {

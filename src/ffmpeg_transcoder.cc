@@ -819,11 +819,6 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
     }
 
-    m_out.m_audio_pts         = 0;
-    m_out.m_video_pts         = 0;
-    m_out.m_video_start_pts   = 0;
-    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
-
     // Open the output file for writing. If buffer == nullptr continue using existing buffer.
     ret = open_output_filestreams(buffer);
     if (ret)
@@ -2017,13 +2012,9 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 output_write,   // write
                 (m_current_format->audio_codec_id() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
-    // Some formats require the time stamps to start at 0, so if there is a difference between
-    // the streams we need to drop audio or video until we are in sync.
-    if (!m_reset_pts && (m_out.m_video.m_stream != nullptr) && (m_in.m_audio.m_stream != nullptr))
-    {
-        // Calculate difference
-        m_out.m_video_start_pts = av_rescale_q(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_video.m_stream->time_base);
-    }
+    m_out.m_audio_pts         = m_in.m_audio.m_stream != nullptr ? m_in.m_audio.m_stream->start_time : 0;
+    m_out.m_video_pts         = m_in.m_video.m_stream != nullptr ? m_in.m_video.m_stream->start_time : 0;
+    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
 
     return 0;
 }
@@ -2288,7 +2279,19 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(filename(), "Could not send packet to decoder (error '%1').", ffmpeg_geterror(ret).c_str());
+            if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
+            {
+                Logging::error(filename(), "Could not send audio packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+            }
+            else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+            {
+                Logging::error(filename(), "Could not send video packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+            }
+            else
+            {
+                // Should never come here, but what the heck...
+                Logging::error(filename(), "Could not send packet at PTS=%1 to decoder (error '%2').", pkt->pts, ffmpeg_geterror(ret).c_str());
+            }
             return ret;
         }
     }
@@ -2658,12 +2661,13 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     {
         if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
+            int64_t pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
             m_reset_pts = false;
 
-            m_out.m_audio_pts = pkt->pts;
+            m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
             if (m_out.m_video.m_stream != nullptr)
             {
-                m_out.m_video_pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, m_out.m_video.m_stream->time_base);
+                m_out.m_video_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_video.m_stream->time_base);
             }
         }
 
@@ -2696,13 +2700,14 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     {
         if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
+            int64_t pts = av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q());
             m_reset_pts = false;
 
             if (m_out.m_audio.m_stream != nullptr)
             {
-                m_out.m_audio_pts = av_rescale_q(pkt->pts, m_out.m_video.m_stream->time_base, m_out.m_audio.m_stream->time_base);
+                m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
             }
-            m_out.m_video_pts = pkt->pts;
+            m_out.m_video_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_video.m_stream->time_base);
         }
 
         if (!m_copy_video)
@@ -2764,6 +2769,10 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         }
         else
         {
+            pkt->stream_index   = m_out.m_video.m_stream_idx;
+            av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+            pkt->pos            = -1;
+
             ret = store_packet(pkt, "video");
         }
     }
@@ -3032,7 +3041,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     {
         // Read one frame from the input file into a temporary packet.
         ret = av_read_frame(m_in.m_format_ctx, &pkt);
-
         if (ret < 0)
         {
             if (ret == AVERROR_EOF)
@@ -3180,7 +3188,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
     if (ret < 0 && ret != AVERROR_EOF)
     {
-        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
         av_packet_unref(&pkt);
         return ret;
     }
@@ -3302,7 +3310,10 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             if (*data_present)
             {
                 // Store current video PTS
-                m_out.m_video_pts = pkt.pts;
+                if (pkt.pts != AV_NOPTS_VALUE)
+                {
+                    m_out.m_video_pts = pkt.pts;
+                }
 
                 m_buffer->write_frame(pkt.data, static_cast<size_t>(pkt.size), frame_no);
 
@@ -3375,7 +3386,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        	Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
@@ -3404,16 +3415,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             {
                 // Fix for issue #46: bitrate too high.
                 av_packet_rescale_ts(&pkt, m_out.m_video.m_codec_ctx->time_base, m_out.m_video.m_stream->time_base);
-
-                if (pkt.pts != AV_NOPTS_VALUE)
-                {
-                    pkt.pts -=  m_out.m_video_start_pts;
-                }
-
-                if (pkt.dts != AV_NOPTS_VALUE)
-                {
-                    pkt.dts -=  m_out.m_video_start_pts;
-                }
 
                 if (!(m_out.m_format_ctx->oformat->flags & AVFMT_NOTIMESTAMPS))
                 {
@@ -3450,8 +3451,11 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     }
                 }
 
-                m_out.m_video_pts       = pkt.pts;
-                m_out.m_last_mux_dts    = pkt.dts;
+                if (pkt.pts != AV_NOPTS_VALUE)
+                {
+                    m_out.m_video_pts       = pkt.pts;
+                    m_out.m_last_mux_dts    = pkt.dts;
+                }
 
 #ifndef USING_LIBAV
                 if (frame != nullptr && !pkt.duration)
@@ -3459,6 +3463,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     pkt.duration = frame->pkt_duration;
                 }
 #endif
+
                 // Write packet to buffer
                 ret = store_packet(&pkt, "video");
                 if (ret < 0)
@@ -3668,8 +3673,6 @@ void FFmpeg_Transcoder::flush_buffers()
 
 int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 {
-    int ret = -1;
-
     m_have_seeked           = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
     //m_skip_next_frame = true; /**< @todo: Take deinterlace into account */
@@ -3681,11 +3684,12 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 
     int64_t pts = frame_to_pts(m_in.m_video.m_stream, frame_no);
 
-    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+    if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+    {
+        pts += m_in.m_video.m_stream->start_time;
+    }
 
-    //flush_buffers();
-
-    return ret;
+    return av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
 }
 
 int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
@@ -3703,6 +3707,10 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
         // Reached end of file
         // Set PTS to end of file
         m_out.m_video_pts = m_in.m_video.m_stream->duration;
+        if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+        {
+            m_out.m_video_pts += m_in.m_video.m_stream->start_time;
+        }
         // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
         ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
         return 0;
@@ -3995,23 +4003,39 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
         if (is_hls())
         {
-            int64_t pos = 0;
             uint32_t next_segment;
+            int64_t pos = 0;
+            if (m_out.m_video_pts && m_in.m_video.m_stream != nullptr && m_out.m_video.m_stream != nullptr)
+            {
+                int64_t pts = m_out.m_video_pts;
 
-            if (m_out.m_video_pts)
-            {
-                pos = av_rescale_q(m_out.m_video_pts, m_out.m_video.m_stream->time_base, av_get_time_base_q());
+                if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+                {
+                    pts -= m_in.m_video.m_stream->start_time;
+                }
+
+                pos = av_rescale_q(pts, m_out.m_video.m_stream->time_base, av_get_time_base_q());
             }
-            else if (m_out.m_audio_pts)
+            else if (m_out.m_audio_pts && m_in.m_audio.m_stream != nullptr && m_out.m_audio.m_stream != nullptr)
             {
-                pos = av_rescale_q(m_out.m_audio_pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
+                int64_t pts = m_out.m_audio_pts;
+
+                if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+                {
+                    pts -= m_in.m_audio.m_stream->start_time;
+                }
+                pos = av_rescale_q(pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
+            }
+			else
+            {
+                throw ESPIPE;
             }
 
             next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1); // ????
 
             if (next_segment > m_virtualfile->get_segment_count())
             {
-                Logging::error(destname(), "Requested position %1 or segment %2 which exceeds segment count %3.", format_duration(pos), next_segment, m_virtualfile->get_segment_count());
+                Logging::error(destname(), "Requested position %1 or segment %2 exceeds segment count %3.", format_duration(pos), next_segment, m_virtualfile->get_segment_count());
                 throw AVERROR(ESPIPE);
             }
             else if (next_segment == m_current_segment + 1)
@@ -4031,9 +4055,31 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         m_reset_pts    = true;      // Note that we have to reset audio/video pts to the new position
                         m_have_seeked   = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
-                        pos = (segment_no - 1) * params.m_segment_duration;
+                        int64_t pos = (segment_no - 1) * params.m_segment_duration;
 
-                        ret = av_seek_frame(m_in.m_format_ctx, -1, pos, AVSEEK_FLAG_BACKWARD);
+                        if (m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+                        {
+                            int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+
+                            if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+                            {
+                                pts += m_in.m_video.m_stream->start_time;
+                            }
+
+                            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+                        }
+                        else // if (m_out.m_audio.m_stream_idx > -1)
+                        {
+                            int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+
+                            if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+                            {
+                                pts += m_in.m_audio.m_stream->start_time;
+                            }
+
+                            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+                        }
+
                         if (ret < 0)
                         {
                             Logging::error(destname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -4053,8 +4099,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         close_output_file();
 
                         open_output(m_buffer);
-
-                        //m_out.m_video_start_pts = 0;
 
                         next_segment = segment_no;
 

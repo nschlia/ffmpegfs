@@ -7,8 +7,24 @@ Important changes in 1.98 (2020-02-XX)
            ffmpegfs will seek to this position and start transcoding the segment
            immediately. *Please note that this feature is still experimental and may
            produce unexpected results.*
+* Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
+           required, just bloats the system's user database.
+* Support: Reduced quality of the test video to make the distribution archive slimmer. A full
+           HD (1920x1280) video at 60 frames per second was a bit of an overkill anyway.
+           720x400 at 30 fps should be enough for everybody.
+* Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG 
+           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
+           defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 
+           (e.g. if invoked via /etc/fstab entry).
+* Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
+           chapter, but at the real time the chapter begins in its title. Fixes #51.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
-          expected.
+          expected. There's a strange FFmpeg API behaviour behind that, added the solution used
+          in ffmpeg.c to fix. 
+* Bugfix: Issue #48 - Properly handle incorrectly authored DVDs with missing SRI_END_OF_CELL
+          marks after cells.	   
+* Bugfix: Issue #49 - Avoid creating HLS last segments shorter than 200 ms, avoid stalls when 
+          the total playtime is a multiple of the segment size, e.g. 10 seconds.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 
@@ -64,6 +80,8 @@ Important changes in 1.11 (2020-02-XX)
            Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
            defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 
            (e.g. if invoked via /etc/fstab entry).
+* Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
+           chapter, but at the real time the chapter begins in its title.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 

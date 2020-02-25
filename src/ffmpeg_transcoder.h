@@ -135,13 +135,11 @@ public:
         OUTPUTFILE() :
             m_audio_pts(0),
             m_video_pts(0),
-            m_video_start_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
         int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames */
         int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames */
-        int64_t                 m_video_start_pts;      /**< @brief Video start PTS */
         int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
 
         ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */

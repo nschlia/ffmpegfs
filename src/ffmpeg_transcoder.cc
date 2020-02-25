@@ -687,13 +687,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
 
     // Process album arts: copy all from source file to target.
-    ret = process_albumarts();
-    if (ret)
-    {
-        return ret;
-    }
-
-    return 0;
+    return process_albumarts();
 }
 
 bool FFmpeg_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sample_rate, int *output_sample_rate /*= nullptr*/)

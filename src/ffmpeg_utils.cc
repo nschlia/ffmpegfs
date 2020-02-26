@@ -378,9 +378,16 @@ const std::string & get_destname(std::string *destfilepath, const std::string & 
 
 std::string ffmpeg_geterror(int errnum)
 {
-    char error[AV_ERROR_MAX_STRING_SIZE];
-    av_strerror(errnum, error, AV_ERROR_MAX_STRING_SIZE);
-    return error;
+    if (errnum < 0)
+    {
+        char error[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(errnum, error, AV_ERROR_MAX_STRING_SIZE);
+        return error;
+    }
+    else
+    {
+        return strerror(errnum);
+    }
 }
 
 int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)

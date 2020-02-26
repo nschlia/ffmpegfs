@@ -4029,10 +4029,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 }
                 pos = av_rescale_q(pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
             }
-            else
-            {
-                throw ESPIPE;
-            }
 
             next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1); // ????
 

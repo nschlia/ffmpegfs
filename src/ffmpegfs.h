@@ -137,6 +137,7 @@ extern struct FFMPEGFS_PARAMS
     // Audio
     BITRATE             m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */
+    int                 m_audiochannels;            /**< @brief Max. number of audio channels */
     // Video
     BITRATE             m_videobitrate;             /**< @brief Output video bit rate (bits per second) */
     int                 m_videowidth;               /**< @brief Output video width */

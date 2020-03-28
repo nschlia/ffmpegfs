@@ -132,6 +132,21 @@ Default: 44.1 kHz
  * In Hz:  #  or #Hz
  * In kHz: #K or #KHz
 
+*--audiochannels*=CHANNELS, *-o audiochannels*=CHANNELS::
+Limits the number of output channels to 'CHANNELS'. If the source has more channels, the number will be reduced to this limit.
++
+Typical values are 1, 2 or 6 (e.g. 5.1) channels.
++
+If the target codec does not support the selected number of channels, transcoding may fail.
++
+Set to 0 to keep the number of channels.
++
+Default: 2 channels (stereo)
++
+*SAMPLERATE*:: can be defined as...
+ * In Hz:  #  or #Hz
+ * In kHz: #K or #KHz
+
 === Video Options ===
 *--videobitrate*=BITRATE, *-o videobitrate*=BITRATE::
 Video encoding bit rate. Setting this too high or low may cause transcoding to fail.

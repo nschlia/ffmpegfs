@@ -1282,99 +1282,55 @@ static void print_params(void)
 
     transcoder_cache_path(cachepath);
 
-    Logging::trace(nullptr, PACKAGE_NAME " options:\n\n"
-                                         "Base Path         : %1\n"
-                                         "Mount Path        : %2\n\n"
-                                         "Smart Transcode   : %3\n"
-                                         "Auto Copy         : %4\n"
-                                         "Recode to same fmt: %5\n"
-                                         "Audio File Type   : %6\n"
-                                         "Video File Type   : %7\n"
-                                         "Profile           : %8\n"
-                                         "Level             : %9\n"
-                                         "\nAudio\n\n"
-                                         "Audio Codecs      : %10+%11\n"
-                                         "Audio Bitrate     : %12\n"
-                                         "Audio Sample Rate : %13\n"
-                                         "\nVideo\n\n"
-                                         "Video Size/Pixels : width=%14 height=%15\n"
-                                         "Deinterlace       : %16\n"
-                                         "Remove Album Arts : %17\n"
-                                         "Video Codec       : %18\n"
-                                         "Video Bitrate     : %19\n"
-                                         "\nHLS Options\n\n"
-                                         "Segment Duration  : %20\n"
-                                         "\nVirtual Script\n\n"
-                                         "Create script     : %21\n"
-                                         "Script file name  : %22\n"
-                                         "Input file        : %23\n"
-                                         "\nLogging\n\n"
-                                         "Max. Log Level    : %24\n"
-                                         "Log to stderr     : %25\n"
-                                         "Log to syslog     : %26\n"
-                                         "Logfile           : %27\n"
-                                         "\nCache Settings\n\n"
-                                         "Expiry Time       : %28\n"
-                                         "Inactivity Suspend: %29\n"
-                                         "Inactivity Abort  : %20\n"
-                                         "Pre-buffer size   : %31\n"
-                                         "Max. Cache Size   : %32\n"
-                                         "Min. Disk Space   : %33\n"
-                                         "Cache Path        : %34\n"
-                                         "Disable Cache     : %35\n"
-                                         "Maintenance Timer : %36\n"
-                                         "Clear Cache       : %37\n"
-                                         "\nVarious Options\n\n"
-                                         "Max. Threads      : %38\n"
-                                         "Decoding Errors   : %39\n"
-                                         "Min. DVD chapter  : %40\n"
-                                         "\nExperimental Options\n\n"
-                                         "Windows 10 Fix    : %41\n",
-                   params.m_basepath.c_str(),
-                   params.m_mountpath.c_str(),
-                   params.smart_transcode() ? "yes" : "no",
-                   get_autocopy_text(params.m_autocopy).c_str(),
-                   get_recodesame_text(params.m_recodesame).c_str(),
-                   params.m_format[1].desttype().c_str(),
-            params.m_format[0].desttype().c_str(),
-            get_profile_text(params.m_profile).c_str(),
-            get_level_text(params.m_level).c_str(),
-            get_codec_name(params.m_format[0].audio_codec_id(), true),
-            get_codec_name(params.m_format[1].audio_codec_id(), true),
-            format_bitrate(params.m_audiobitrate).c_str(),
-            format_samplerate(params.m_audiosamplerate).c_str(),
-            format_number(params.m_videowidth).c_str(),
-            format_number(params.m_videoheight).c_str(),
-        #ifndef USING_LIBAV
-            params.m_deinterlace ? "yes" : "no",
-        #else
-            "not supported",
-        #endif  // !USING_LIBAV
-            params.m_noalbumarts ? "yes" : "no",
-            get_codec_name(params.m_format[0].video_codec_id(), true),
-            format_bitrate(params.m_videobitrate).c_str(),
-            format_time(params.m_segment_duration).c_str(),
-            params.m_enablescript ? "yes" : "no",
-            params.m_scriptfile.c_str(),
-            params.m_scriptsource.c_str(),
-            params.m_log_maxlevel.c_str(),
-            params.m_log_stderr ? "yes" : "no",
-            params.m_log_syslog ? "yes" : "no",
-            !params.m_logfile.empty() ? params.m_logfile.c_str() : "none",
-            format_time(params.m_expiry_time).c_str(),
-            format_time(params.m_max_inactive_suspend).c_str(),
-            format_time(params.m_max_inactive_abort).c_str(),
-            format_size(params.m_prebuffer_size).c_str(),
-            format_size(params.m_max_cache_size).c_str(),
-            format_size(params.m_min_diskspace).c_str(),
-            cachepath.c_str(),
-            params.m_disable_cache ? "yes" : "no",
-            params.m_cache_maintenance ? format_time(params.m_cache_maintenance).c_str() : "inactive",
-            params.m_clear_cache ? "yes" : "no",
-            format_number(params.m_max_threads).c_str(),
-            params.m_decoding_errors ? "break transcode" : "ignore",
-            format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str(),
-            params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
+    Logging::trace(nullptr, "********* " PACKAGE_NAME " Options *********");
+    Logging::trace(nullptr, "Base Path         : %1", params.m_basepath.c_str());
+    Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath.c_str());
+    Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
+    Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
+    Logging::trace(nullptr, "Audio File Type   : %1", params.m_format[1].desttype().c_str());
+    Logging::trace(nullptr, "Video File Type   : %1", params.m_format[0].desttype().c_str());
+    Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
+    Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
+    Logging::trace(nullptr, "--------- Audio ---------");
+    Logging::trace(nullptr, "Audio Codecs      : %1+%2", get_codec_name(params.m_format[0].audio_codec_id(), true), get_codec_name(params.m_format[1].audio_codec_id(), true));
+    Logging::trace(nullptr, "Audio Bitrate     : %1", format_bitrate(params.m_audiobitrate).c_str());
+    Logging::trace(nullptr, "Audio Sample Rate : %1", format_samplerate(params.m_audiosamplerate).c_str());
+    Logging::trace(nullptr, "--------- Video ---------");
+    Logging::trace(nullptr, "Video Size/Pixels : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
+#ifndef USING_LIBAV
+    Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
+#else
+    Logging::trace(nullptr, "Deinterlace       : not supported");
+#endif  // !USING_LIBAV
+    Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
+    Logging::trace(nullptr, "Video Codec       : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
+    Logging::trace(nullptr, "Video Bitrate     : %1", format_bitrate(params.m_videobitrate).c_str());
+    Logging::trace(nullptr, "--------- Virtual Script ---------");
+    Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
+    Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());
+    Logging::trace(nullptr, "Input file        : %1", params.m_scriptsource.c_str());
+    Logging::trace(nullptr, "--------- Logging ---------");
+    Logging::trace(nullptr, "Max. Log Level    : %1", params.m_log_maxlevel.c_str());
+    Logging::trace(nullptr, "Log to stderr     : %1", params.m_log_stderr ? "yes" : "no");
+    Logging::trace(nullptr, "Log to syslog     : %1", params.m_log_syslog ? "yes" : "no");
+    Logging::trace(nullptr, "Logfile           : %1", !params.m_logfile.empty() ? params.m_logfile.c_str() : "none");
+    Logging::trace(nullptr, "--------- Cache Settings ---------");
+    Logging::trace(nullptr, "Expiry Time       : %1", format_time(params.m_expiry_time).c_str());
+    Logging::trace(nullptr, "Inactivity Suspend: %1", format_time(params.m_max_inactive_suspend).c_str());
+    Logging::trace(nullptr, "Inactivity Abort  : %1", format_time(params.m_max_inactive_abort).c_str());
+    Logging::trace(nullptr, "Pre-buffer size   : %1", format_size(params.m_prebuffer_size).c_str());
+    Logging::trace(nullptr, "Max. Cache Size   : %1", format_size(params.m_max_cache_size).c_str());
+    Logging::trace(nullptr, "Min. Disk Space   : %1", format_size(params.m_min_diskspace).c_str());
+    Logging::trace(nullptr, "Cache Path        : %1", cachepath.c_str());
+    Logging::trace(nullptr, "Disable Cache     : %1", params.m_disable_cache ? "yes" : "no");
+    Logging::trace(nullptr, "Maintenance Timer : %1", params.m_cache_maintenance ? format_time(params.m_cache_maintenance).c_str() : "inactive");
+    Logging::trace(nullptr, "Clear Cache       : %1", params.m_clear_cache ? "yes" : "no");
+    Logging::trace(nullptr, "--------- Various Options ---------");
+    Logging::trace(nullptr, "Max. Threads      : %1", format_number(params.m_max_threads).c_str());
+    Logging::trace(nullptr, "Decoding Errors   : %1", params.m_decoding_errors ? "break transcode" : "ignore");
+    Logging::trace(nullptr, "Min. DVD chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());
+    Logging::trace(nullptr, "--------- Experimental Options ---------");
+    Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
 }
 
 /**

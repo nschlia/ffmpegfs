@@ -49,7 +49,7 @@ var searchData=
   ['get_5ftrack_5fno',['get_track_no',['../classVcdChapter.html#a152fb40cb4db37a5b70825308a8f2b4e',1,'VcdChapter']]],
   ['get_5ftype',['get_type',['../classVcdEntries.html#a2f306e044a0f7441af6151f6e6635ced',1,'VcdEntries::get_type()'],['../classVcdInfo.html#a79e9f1f4f7ba97caf76edf71d9eae3cd',1,'VcdInfo::get_type()']]],
   ['get_5ftype_5fstr',['get_type_str',['../classVcdEntries.html#ace40fde69b6404818f85275df8e5cfbe',1,'VcdEntries::get_type_str()'],['../classVcdInfo.html#a2b24a28ee998e16df44ba61621537fb5',1,'VcdInfo::get_type_str()'],['../namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66',1,'VCDUTILS::get_type_str()']]],
-  ['get_5fvalue',['get_value',['../ffmpegfs_8cc.html#a4441cbad4c7313fa1f3c4fe1504a115c',1,'ffmpegfs.cc']]],
+  ['get_5fvalue',['get_value',['../ffmpegfs_8cc.html#a0578c7c76836822fa2fade51e25c5777',1,'get_value(const std::string &amp;arg, int *value):&#160;ffmpegfs.cc'],['../ffmpegfs_8cc.html#a4441cbad4c7313fa1f3c4fe1504a115c',1,'get_value(const std::string &amp;arg, std::string *value):&#160;ffmpegfs.cc']]],
   ['get_5fvideo_5fsize',['get_video_size',['../classFFmpeg__Transcoder.html#af7c3726c0165e3061d1fc4ef66985e87',1,'FFmpeg_Transcoder']]],
   ['getfail',['GetFail',['../classLogging.html#a166c1f15637a47c858b80ac1ca3f8dd8',1,'Logging']]],
   ['guess_5fformat_5fidx',['guess_format_idx',['../structFFMPEGFS__PARAMS.html#ac0e58e320facd622ae9343946d010680',1,'FFMPEGFS_PARAMS']]]

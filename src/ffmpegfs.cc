@@ -87,6 +87,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     // Format
     , m_audiobitrate(128*1024)                  // default: 128 kBit
     , m_audiosamplerate(44100)                  // default: 44.1 kHz
+    , m_audiochannels(2)                        // default: 2 channels
 
     , m_videobitrate(2*1024*1024)               // default: 2 MBit
     , m_videowidth(0)                           // default: do not change width
@@ -201,6 +202,7 @@ enum
     KEY_DESTTYPE,
     KEY_AUDIO_BITRATE,
     KEY_AUDIO_SAMPLERATE,
+    KEY_AUDIO_CHANNELS,
     KEY_VIDEO_BITRATE,
     KEY_SEGMENT_DURATION,
     KEY_SCRIPTFILE,
@@ -248,6 +250,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("audiobitrate=%s",                 KEY_AUDIO_BITRATE),
     FUSE_OPT_KEY("--audiosamplerate=%s",            KEY_AUDIO_SAMPLERATE),
     FUSE_OPT_KEY("audiosamplerate=%s",              KEY_AUDIO_SAMPLERATE),
+    FUSE_OPT_KEY("--audiochannels=%s",              KEY_AUDIO_CHANNELS),
+    FUSE_OPT_KEY("audiochannels=%s",                KEY_AUDIO_CHANNELS),
 
     // Video
     FUSE_OPT_KEY("--videobitrate=%s",               KEY_VIDEO_BITRATE),
@@ -400,6 +404,7 @@ static std::string  get_profile_text(PROFILE profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static std::string  get_level_text(PRORESLEVEL level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
+static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
 static int          get_value(const std::string & arg, double *value);
 
@@ -1031,6 +1036,29 @@ static int get_segment_duration(const std::string & arg, int64_t *value)
  * @param[in] value - Upon return, contains the value after the "=" sign.
  * @return Returns 0 if found; if not found returns -1.
  */
+static int get_value(const std::string & arg, int *value)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        *value = atoi(arg.substr(pos + 1).c_str());
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+
+    return -1;
+}
+
+/**
+ * @brief Get value form command line string.
+ * Finds whatever is after the "=" sign.
+ * @param[in] arg - Command line option.
+ * @param[in] value - Upon return, contains the value after the "=" sign.
+ * @return Returns 0 if found; if not found returns -1.
+ */
 static int get_value(const std::string & arg, std::string *value)
 {
     size_t pos = arg.find('=');
@@ -1195,6 +1223,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_samplerate(arg, &params.m_audiosamplerate);
     }
+    case KEY_AUDIO_CHANNELS:
+    {
+        return get_value(arg, &params.m_audiochannels);
+    }
     case KEY_SCRIPTFILE:
     {
         return get_value(arg, &params.m_scriptfile);
@@ -1293,19 +1325,19 @@ static void print_params(void)
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
-    Logging::trace(nullptr, "Audio Codecs      : %1+%2", get_codec_name(params.m_format[0].audio_codec_id(), true), get_codec_name(params.m_format[1].audio_codec_id(), true));
-    Logging::trace(nullptr, "Audio Bitrate     : %1", format_bitrate(params.m_audiobitrate).c_str());
-    Logging::trace(nullptr, "Audio Sample Rate : %1", format_samplerate(params.m_audiosamplerate).c_str());
+    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(params.m_format[0].audio_codec_id(), true), get_codec_name(params.m_format[1].audio_codec_id(), true));
+    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
+    Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate).c_str());
+    Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
     Logging::trace(nullptr, "--------- Video ---------");
-    Logging::trace(nullptr, "Video Size/Pixels : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
+    Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
 #ifndef USING_LIBAV
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
 #else
     Logging::trace(nullptr, "Deinterlace       : not supported");
 #endif  // !USING_LIBAV
-    Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
-    Logging::trace(nullptr, "Video Codec       : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
-    Logging::trace(nullptr, "Video Bitrate     : %1", format_bitrate(params.m_videobitrate).c_str());
+    Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
+    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "--------- HLS Options ---------");
     Logging::trace(nullptr, "Segment Duration  : %1", format_time(params.m_segment_duration).c_str());
     Logging::trace(nullptr, "--------- Virtual Script ---------");
@@ -1329,6 +1361,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Maintenance Timer : %1", params.m_cache_maintenance ? format_time(params.m_cache_maintenance).c_str() : "inactive");
     Logging::trace(nullptr, "Clear Cache       : %1", params.m_clear_cache ? "yes" : "no");
     Logging::trace(nullptr, "--------- Various Options ---------");
+    Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
     Logging::trace(nullptr, "Max. Threads      : %1", format_number(params.m_max_threads).c_str());
     Logging::trace(nullptr, "Decoding Errors   : %1", params.m_decoding_errors ? "break transcode" : "ignore");
     Logging::trace(nullptr, "Min. DVD chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());

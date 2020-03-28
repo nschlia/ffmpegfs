@@ -69,7 +69,7 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
            be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.11 (2020-02-XX)
+Important changes in 1.11 (2020-03-XX)
 
 * Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
            required, just bloats the system's user database.
@@ -82,6 +82,9 @@ Important changes in 1.11 (2020-02-XX)
            (e.g. if invoked via /etc/fstab entry).
 * Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
            chapter, but at the real time the chapter begins in its title.
+* Feature: Issue #52 - Added --audiochannels option to select a different number of channels.
+           Defaults to 2 (stereo), may be set to 1 to create mono files. Set to 0 to keep the
+           original number of channels.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 

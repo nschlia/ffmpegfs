@@ -1158,7 +1158,18 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
-        output_codec_ctx->channels              = m_in.m_audio.m_codec_ctx->channels > 2 ? 2 : m_in.m_audio.m_codec_ctx->channels;
+        if (params.m_audiochannels > 0 && m_in.m_audio.m_codec_ctx->channels > params.m_audiochannels)
+        {
+            Logging::trace(destname(), "Limiting audio channels from %1 to %2.",
+                           m_in.m_audio.m_codec_ctx->channels,
+                           params.m_audiochannels);
+            output_codec_ctx->channels         = params.m_audiochannels;
+        }
+        else
+        {
+            output_codec_ctx->channels          = m_in.m_audio.m_codec_ctx->channels;
+        }
+
         output_codec_ctx->channel_layout        = static_cast<uint64_t>(av_get_default_channel_layout(output_codec_ctx->channels));
         output_codec_ctx->sample_rate           = m_in.m_audio.m_codec_ctx->sample_rate;
         orig_sample_rate                        = m_in.m_audio.m_codec_ctx->sample_rate;

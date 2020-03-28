@@ -35,3 +35,5 @@ Makefile.in
 /test/*.trs
 /test/.deps/
 /test/fpcompare
+mkdoxy
+

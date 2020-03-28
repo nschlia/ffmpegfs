@@ -1287,6 +1287,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath.c_str());
     Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
     Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
+    Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
     Logging::trace(nullptr, "Audio File Type   : %1", params.m_format[1].desttype().c_str());
     Logging::trace(nullptr, "Video File Type   : %1", params.m_format[0].desttype().c_str());
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
@@ -1305,6 +1306,8 @@ static void print_params(void)
     Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
     Logging::trace(nullptr, "Video Codec       : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
     Logging::trace(nullptr, "Video Bitrate     : %1", format_bitrate(params.m_videobitrate).c_str());
+    Logging::trace(nullptr, "--------- HLS Options ---------");
+    Logging::trace(nullptr, "Segment Duration  : %1", format_time(params.m_segment_duration).c_str());
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
     Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());

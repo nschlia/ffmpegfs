@@ -378,7 +378,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         {
             std::string origpath(path + filename);
 
-            int flags = VIRTUALFLAG_FILESET;
+            int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
             // Change file to directory for the frame set
             // Change file to virtual directory for the frame set. Keep permissions.

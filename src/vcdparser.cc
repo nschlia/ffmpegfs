@@ -103,7 +103,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     {
         std::string origpath(vcd.get_disk_path() + filename);
 
-        int flags = VIRTUALFLAG_FILESET;
+        int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
         // Change file to directory for the frame set
         // Change file to virtual directory for the frame set. Keep permissions.

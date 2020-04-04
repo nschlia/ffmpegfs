@@ -395,7 +395,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     {
         std::string origpath(path + filename);
 
-        int flags = VIRTUALFLAG_FILESET;
+        int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
         // Change file to directory for the frame set
         // Change file to virtual directory for the frame set. Keep permissions.

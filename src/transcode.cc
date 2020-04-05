@@ -402,6 +402,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                     tp->schedule_thread(&transcoder_thread, thread_data);
 
+					// Let decoder get into gear before returning from open
                     while (!thread_data->m_lock_guard)
                     {
                         thread_data->m_cond.wait(lock);

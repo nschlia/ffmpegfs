@@ -2446,7 +2446,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
 int FFmpeg_Transcoder::store_packet(AVPacket *pkt, const char *type)
 {
-    int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
+    int ret = av_write_frame(m_out.m_format_ctx, pkt);
 
     if (ret < 0)
     {

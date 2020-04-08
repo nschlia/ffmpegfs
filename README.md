@@ -12,10 +12,7 @@ News
 
 * **Work on version 1.98 (2.0 pre-release) now in progress.**
 
-I am currently preparing the new 2.0 release. The only thing that is missing
-is direct access to HLS segments. Currently, when e.g. segment no. 300
-is opened one has to wait until 1 to 299 have been created. Obviously it 
-would be more efficient to instantly transcode no. 300 instead.
+I am currently preparing the new 2.0 release. This should be ready soon.
 
 Once this is implemented and after a stabilisation phase V2.0 will finally
 see the light.

@@ -156,7 +156,7 @@ Then do
 Installation from repository
 ----------------------------
 
-FFmpegfs 1.11 has recently been added to Debian Bullseye and sid, so it is
+FFmpegfs 1.10 has recently been added to Debian Bullseye and sid, so it is
 available as binary distribution. 
 
 On Debian 11 Bullseye you can simply do

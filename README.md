@@ -25,7 +25,7 @@ see the light.
   immediately. *Please note that this feature is still experimental and may
   produce unexpected results.*
 * See [NEWS](NEWS) for details.
-* FFmpegfs has been added to Debian sid and Ubuntu 20.04. See [INSTALL.md](INSTALL)
+* FFmpegfs has been added to Debian sid and Ubuntu 20.04. See [INSTALL](INSTALL.md)
   "Installation from repository" for details.
 * Cool, there's an online revivew on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html

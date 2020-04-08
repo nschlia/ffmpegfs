@@ -1,8 +1,11 @@
 FFmpegfs NEWS
 
-Important changes in 1.98 (2020-02-XX)
+Important changes in 1.98 (2020-03-XX)
 
-* Support:
+* Cool, there's an online revivew on Linux Uprising, you can read it here:
+  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+* Support: FFmpegfs has recently been added to Debian sid and Debian Bullseye. It is also
+           available in Ubuntu 20.04 and Linux distributions based on it.
 * Feature: HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
            ffmpegfs will seek to this position and start transcoding the segment
            immediately. *Please note that this feature is still experimental and may
@@ -18,6 +21,9 @@ Important changes in 1.98 (2020-02-XX)
            (e.g. if invoked via /etc/fstab entry).
 * Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
            chapter, but at the real time the chapter begins in its title. Fixes #51.
+* Feature: Issue #52 - Added --audiochannels option to select a different number of channels.
+           Defaults to 2 (stereo), may be set to 1 to create mono files. Set to 0 to keep the
+           original number of channels.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
           in ffmpeg.c to fix. 

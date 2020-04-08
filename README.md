@@ -5,8 +5,6 @@ FFmpegfs
 | ------------- | ------------- | ------------- |
 | gcc 8.2.0 | FFmpeg 4.1.4| ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
 | clang 7.0.1 | FFmpeg 4.1.4 | ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
-| gcc 8.2.0 | Libav 13_dev0 | ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav)) |
-| clang 7.0.1 | Libav 13_dev0 | ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libavl-clang)) |
 
 News
 ----
@@ -27,13 +25,10 @@ see the light.
   immediately. *Please note that this feature is still experimental and may
   produce unexpected results.*
 * See [NEWS](NEWS) for details.
-
-*Libav video support currenty seems broken. I have not yet decided whether 
-to fix that or to drop Libav as a whole. Libav only poorly supports extensions
-required to do on-the-fly transcoding. The results are only fair to good, and
-Libav problems begin to cost me too much effort to fix.*
-
-*Objections anyone? If nobody misses Libav I'll stop supporting it soon.*
+* FFmpegfs has been added to Debian sid and Ubuntu 20.04. See [INSTALL.md](INSTALL)
+  "Installation from repository" for details.
+* Cool, there's an online revivew on Linux Uprising, you can read it here:
+  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
 About
 -----

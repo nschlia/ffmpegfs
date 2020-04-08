@@ -71,6 +71,10 @@ This is a pre-release towards the new version 2.0 coming up soon.
 
 Important changes in 1.11 (2020-03-XX)
 
+* Cool, there's an online revivew on Linux Uprising, you can read it here:
+  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+* Support: FFmpegfs has recently been added to Debian sid and Debian Bullseye. It is also
+           available in Ubuntu 20.04 and Linux distributions based on it.
 * Support: No longer creating a user/group ffmpegfs while "make install". The user is not really
            required, just bloats the system's user database.
 * Support: Reduced quality of the test video to make the distribution archive slimmer. A full

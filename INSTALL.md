@@ -153,8 +153,29 @@ Then do
     ./autogen.sh
     ./configure
 
-Installation
-------------
+Installation from repository
+----------------------------
+
+FFmpegfs 1.11 has recently been added to Debian Bullseye and sid, so it is
+available as binary distribution. 
+
+On Debian 11 Bullseye you can simply do
+
+   apt-get install ffmpegfs
+
+For Ubuntu 20.04 and Linux distributions based on it this is
+
+   apt install ffmpegfs
+
+For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR).
+It is available as either the latest stable version or the latest code 
+from Git.
+
+Installation from source
+------------------------
+
+If you want to build FFmpegfs yourself, e.g. check out the latest version
+from Git, you may build it yourself.
 
 FFmpegfs uses the GNU build system. If you are installing from git, you'll
 need to first run:

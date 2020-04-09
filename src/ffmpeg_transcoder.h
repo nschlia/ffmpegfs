@@ -643,7 +643,6 @@ protected:
      */
     bool                        get_aspect_ratio(int width, int height, const AVRational & sar, AVRational * ar) const;
 
-#ifndef USING_LIBAV
     /**
      * @brief Initialise video filters
      * @param[in] codec_context - AVCodecContext object of output video.
@@ -664,7 +663,6 @@ protected:
      * @brief Free filter sinks.
      */
     void                        free_filters();
-#endif // !USING_LIBAV
     /**
      * @brief Check if stream can be copied from input to output (AUTOCOPY option).
      * @param[in] stream - Input stream to check.
@@ -731,11 +729,9 @@ private:
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                  /**< @brief Context for video filtering */
-#ifndef USING_LIBAV
     AVFilterContext *           m_buffer_sink_context;      /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;    /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;             /**< @brief Video filter graph */
-#endif
     std::queue<AVFrame*>        m_video_fifo;               /**< @brief Video frame FIFO */
     int64_t                     m_pts;                      /**< @brief Generated PTS */
     int64_t                     m_pos;                      /**< @brief Generated position */

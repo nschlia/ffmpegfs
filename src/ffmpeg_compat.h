@@ -23,7 +23,7 @@
  * @file
  * @brief FFmpeg API compatibility
  *
- * This file makes it possible to support FFmpeg 2.x to 4 and Libav.
+ * This file makes it possible to support FFmpeg 2.x to 4.
  *
  * @ingroup ffmpegfs
  *

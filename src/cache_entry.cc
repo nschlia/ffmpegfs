@@ -58,7 +58,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
     clear();
 
-    Logging::debug(filename(), "Created new cache entry.");
+    Logging::trace(filename(), "Created new cache entry.");
 }
 
 Cache_Entry::~Cache_Entry()
@@ -99,11 +99,7 @@ void Cache_Entry::clear(bool fetch_file_time /*= true*/)
     m_cache_info.m_videobitrate         = params.m_videobitrate;
     m_cache_info.m_videowidth           = params.m_videowidth;
     m_cache_info.m_videoheight          = params.m_videoheight;
-#ifndef USING_LIBAV
     m_cache_info.m_deinterlace          = params.m_deinterlace;
-#else   // !USING_LIBAV
-    m_cache_info.m_deinterlace          = 0;
-#endif  // USING_LIBAV
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
     m_cache_info.m_video_frame_count    = 0;
@@ -368,13 +364,11 @@ bool Cache_Entry::outdated() const
         return true;
     }
 
-#ifndef USING_LIBAV
     if (m_cache_info.m_deinterlace != params.m_deinterlace)
     {
         Logging::debug(filename(), "Triggering re-transcode: Selected video deinterlace changed from %1 to %2.", m_cache_info.m_deinterlace, params.m_deinterlace);
         return true;
     }
-#endif  // !USING_LIBAV
 
     if (stat(filename().c_str(), &sb) != -1)
     {

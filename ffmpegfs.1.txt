@@ -491,9 +491,9 @@ FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
 
 * http://fuse.sourceforge.net/[FUSE]
 
-If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
+FFmpeg home pages:
 
-* https://www.FFmpeg.org/[FFmpeg] or https://www.Libav.org/[Libav]
+* https://www.FFmpeg.org/[FFmpeg]
 
 == Future Plans ==
 * Create a windows version

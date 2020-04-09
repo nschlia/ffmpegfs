@@ -87,14 +87,6 @@ extern "C" {
 #error "LIBAVUTIL_VERSION_MICRO not defined. Missing include header?"
 #endif
 
-// Libav detection:
-// FFmpeg has library micro version >= 100
-// Libav  has library micro version < 100
-// So if micro < 100, it's Libav, else it's FFmpeg.
-#if LIBAVUTIL_VERSION_MICRO < 100
-#define USING_LIBAV                         /**< @brief If defined, we are linking to Libav */
-#endif
-
 /**
  * Allow use of av_format_inject_global_side_data when available
  */
@@ -150,14 +142,14 @@ const char *get_media_type_string(enum AVMediaType media_type);
 #define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE           /**< @brief AV_CODEC_CAP_VARIABLE_FRAME_SIZE is missing in older FFmpeg versions */
 #endif
 
-#if !defined(USING_LIBAV) && (LIBAVUTIL_VERSION_MAJOR > 54)
+#if (LIBAVUTIL_VERSION_MAJOR > 54)
 #define BITRATE int64_t                                                             /**< @brief For FFmpeg bit rate is an int64. */
-#else // USING_LIBAV
+#else
 #define BITRATE int                                                                 /**< @brief For FFmpeg bit rate is an int. */
 #endif
 
 // Make access possible over codecpar if available
-#if LAVF_DEP_AVSTREAM_CODEC || defined(USING_LIBAV)
+#if LAVF_DEP_AVSTREAM_CODEC
 #define CODECPAR(s)     ((s)->codecpar)                                             /**< @brief Map to codecpar */
 #else
 #define CODECPAR(s)     ((s)->codec)                                                /**< @brief Map to codec */
@@ -593,35 +585,6 @@ int                 mktree(const std::string & path, mode_t mode);
  * @param[out] path - Path to temporary directory.
  */
 void                tempdir(std::string & path);
-
-#ifdef USING_LIBAV
-/**
- * @brief Implement missing avformat_alloc_output_context2() for Libav.
- * @param[in] avctx - See FFmpeg avformat_alloc_output_context2() function.
- * @param[in] oformat - See FFmpeg avformat_alloc_output_context2() function.
- * @param[in] format - See FFmpeg avformat_alloc_output_context2() function.
- * @param[in] filename - See FFmpeg avformat_alloc_output_context2() function.
- * @return See FFmpeg avformat_alloc_output_context2() function.
- */
-int                 avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename);
-/**
- * @brief Implement missing avcodec_get_name for Libav.
- * @param[in] id - See FFmpeg avformat_alloc_output_context2() function.
- * @return See FFmpeg avformat_alloc_output_context2() function.
- */
-const char *        avcodec_get_name(AVCodecID id);
-
-/**
- * Create a rational.
- * Useful for compilers that do not support compound literals.
- * @note  The return value is not reduced.
- */
-static inline AVRational av_make_q(int num, int den)
-{
-    AVRational r = { num, den };
-    return r;
-}
-#endif
 
 /**
  * @brief Split string into an array delimited by a regular expression.

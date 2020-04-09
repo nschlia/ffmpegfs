@@ -169,11 +169,9 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_audio_resample_ctx(nullptr)
     , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
-    #ifndef USING_LIBAV
     , m_buffer_sink_context(nullptr)
     , m_buffer_source_context(nullptr)
     , m_filter_graph(nullptr)
-    #endif
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
     , m_current_segment(1)
@@ -208,18 +206,6 @@ bool FFmpeg_Transcoder::is_video() const
         {
             is_video = false;
 
-#ifdef USING_LIBAV
-            if (m_in.m_video.m_stream->avg_frame_rate.den)
-            {
-                double dbFrameRate = static_cast<double>(m_in.m_video.m_stream->avg_frame_rate.num) / m_in.m_video.m_stream->avg_frame_rate.den;
-
-                // If frame rate is < 100 fps this should be a video
-                if (dbFrameRate < 100)
-                {
-                    is_video = true;
-                }
-            }
-#else
             if (m_in.m_video.m_stream->r_frame_rate.den)
             {
                 double dbFrameRate = static_cast<double>(m_in.m_video.m_stream->r_frame_rate.num) / m_in.m_video.m_stream->r_frame_rate.den;
@@ -230,7 +216,6 @@ bool FFmpeg_Transcoder::is_video() const
                     is_video = true;
                 }
             }
-#endif
         }
         else
         {
@@ -693,14 +678,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
     output_codec_ctx->time_base            = {1, 25};
 
-#ifndef USING_LIBAV
     const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
     int loss = 0;
 
     output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA, &loss);
 
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
-#endif // !USING_LIBAV
     {
         // No best match found, use default
         switch (m_current_format->video_codec_id())
@@ -726,12 +709,10 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
             break;
         }
         }
-#ifndef USING_LIBAV
         Logging::debug(destname(), "No best match output pixel format found, using default: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
     }
     else
     {
-#endif // !USING_LIBAV
         Logging::debug(destname(), "Output pixel format: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
     }
 
@@ -763,7 +744,6 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         return ret;
     }
 
-#ifndef USING_LIBAV
     if (params.m_deinterlace)
     {
         // Init deinterlace filters
@@ -778,7 +758,6 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
             return ret;
         }
     }
-#endif // !USING_LIBAV
 
     m_out.m_video.m_codec_ctx               = output_codec_ctx;
     m_out.m_video.m_stream_idx              = -1;
@@ -829,14 +808,6 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     if (m_out.m_audio.m_stream_idx > -1)
     {
         audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_stream);
-
-#ifdef USING_LIBAV
-        ret = init_resampler();
-        if (ret)
-        {
-            return ret;
-        }
-#endif
 
         if (m_out.m_audio.m_codec_ctx != nullptr)
         {
@@ -1292,7 +1263,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         output_stream->time_base.num            = 1;
         output_codec_ctx->time_base             = output_stream->time_base;
 
-#if !FFMPEG_VERSION3 | defined(USING_LIBAV) // Check for FFmpeg 3
+#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         av_dict_set_with_check(&opt, "strict", "-2", 0);
 
@@ -1437,12 +1408,10 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     case AV_PIX_FMT_NV20BE:
                     case AV_PIX_FMT_YVYU422:
                     case AV_PIX_FMT_YUVA422P:
-#ifndef USING_LIBAV
                     case AV_PIX_FMT_YUV422P12BE:
                     case AV_PIX_FMT_YUV422P12LE:
                     case AV_PIX_FMT_YUV422P14BE:
                     case AV_PIX_FMT_YUV422P14LE:
-#endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
                         if (ret < 0)
@@ -1483,7 +1452,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     case AV_PIX_FMT_GBRAP:
                     case AV_PIX_FMT_GBRAP16BE:
                     case AV_PIX_FMT_GBRAP16LE:
-#ifndef USING_LIBAV
                     case AV_PIX_FMT_YUV444P12BE:
                     case AV_PIX_FMT_YUV444P12LE:
                     case AV_PIX_FMT_YUV444P14BE:
@@ -1494,7 +1462,6 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     case AV_PIX_FMT_GBRP14LE:
                     case AV_PIX_FMT_AYUV64LE:
                     case AV_PIX_FMT_AYUV64BE:
-#endif
                     {
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
                         if (ret < 0)
@@ -1604,9 +1571,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     // Although docs state this is "Demuxing only", this is actually used by encoders like Matroska/WebM, so we need to set this here.
     m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
-#ifndef USING_LIBAV
+
     av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
-#endif // !USING_LIBAV
 
     // Some formats want stream headers to be separate.
     if (m_out.m_format_ctx->oformat->flags & AVFMT_GLOBALHEADER)
@@ -1856,7 +1822,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     AVPacket *tmp_pkt;
     int ret = 0;
 
-#if LAVF_DEP_AV_COPY_PACKET || defined(USING_LIBAV)
+#if LAVF_DEP_AV_COPY_PACKET
     tmp_pkt = av_packet_clone(pkt_in);
     if (tmp_pkt == nullptr)
     {
@@ -1940,7 +1906,6 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 return ret;
             }
 
-#ifndef USING_LIBAV
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
@@ -1955,8 +1920,6 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                     return ret;
                 }
             }
-#endif // !USING_LIBAV
-
         }
         else
         {
@@ -2410,13 +2373,11 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             try
             {
                 // Initialise the resampler to be able to convert audio sample formats.
-#ifndef USING_LIBAV
                 ret = init_resampler();
                 if (ret)
                 {
                     throw ret;
                 }
-#endif
 
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.
@@ -2567,13 +2528,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
         {
-#ifndef USING_LIBAV
             frame = send_filters(frame, ret);
             if (ret)
             {
                 return ret;
             }
-#endif
 
             if (m_sws_ctx != nullptr)
             {
@@ -2591,16 +2550,13 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                           tmp_frame->data, tmp_frame->linesize);
 
                 tmp_frame->pts = frame->pts;
-#ifndef USING_LIBAV
                 tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
-#endif
 
                 av_frame_free(&frame);
 
                 frame = tmp_frame;
             }
 
-#ifndef USING_LIBAV
 #if LAVF_DEP_AVSTREAM_CODEC
             int64_t best_effort_timestamp = frame->best_effort_timestamp;
 #else
@@ -2611,7 +2567,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             {
                 frame->pts = best_effort_timestamp;
             }
-#endif
 
             if (frame->pts == AV_NOPTS_VALUE)
             {
@@ -2637,13 +2592,8 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
             }
 
-#ifndef USING_LIBAV
             frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
             m_video_fifo.push(frame);
-#else
-            frame->pict_type = (AVPictureType)0;        // other than 0 causes warnings
-            m_video_fifo.push(frame);
-#endif
         }
         else
         {
@@ -2823,12 +2773,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Each pointer will later point to the audio samples of the corresponding
     // channels (although it may be nullptr for interleaved formats).
 
-#ifndef USING_LIBAV
     *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(m_out.m_audio.m_codec_ctx->channels), sizeof(**converted_input_samples)));
-#else
-    // Libav does not provide av_calloc
-    *converted_input_samples = static_cast<uint8_t **>(av_malloc(m_out.m_audio.m_codec_ctx->channels * sizeof(**converted_input_samples)));
-#endif  // !USING_LIBAV
 
     if (*converted_input_samples == nullptr)
     {
@@ -3471,12 +3416,10 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     m_out.m_last_mux_dts    = pkt.dts;
                 }
 
-#ifndef USING_LIBAV
                 if (frame != nullptr && !pkt.duration)
                 {
                     pkt.duration = frame->pkt_duration;
                 }
-#endif
 
                 // Write packet to buffer
                 ret = store_packet(&pkt, "video");
@@ -4409,11 +4352,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
         {
             int width = CODECPAR(m_in.m_video.m_stream)->width;
             int height = CODECPAR(m_in.m_video.m_stream)->height;
-#ifdef USING_LIBAV
-            int interleaved = 0;    /** @todo: Check source if interlaced and do interlace if required */
-#else
             int interleaved = params.m_deinterlace ? 0 : (CODECPAR(m_in.m_video.m_stream)->field_order != AV_FIELD_PROGRESSIVE);    // Deinterlace only if source is interlaced
-#endif // !USING_LIBAV
 #if LAVF_DEP_AVSTREAM_CODEC
             AVRational framerate = m_in.m_video.m_stream->avg_frame_rate;
 #else
@@ -4831,9 +4770,7 @@ bool FFmpeg_Transcoder::close_input_file()
         closed = true;
     }
 
-#ifndef USING_LIBAV
     free_filters();
-#endif  // !USING_LIBAV
 
     return closed;
 }
@@ -4865,7 +4802,6 @@ const char *FFmpeg_Transcoder::destname() const
     return m_out.m_filename.c_str();
 }
 
-#ifndef USING_LIBAV
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
@@ -5106,7 +5042,6 @@ void FFmpeg_Transcoder::free_filters()
         m_filter_graph = nullptr;
     }
 }
-#endif  // !USING_LIBAV
 
 int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
 {

@@ -41,9 +41,6 @@
 
 extern "C" {
 #include <libavutil/rational.h>
-#ifdef USING_LIBAV
-#include "libavutil/mathematics.h"
-#endif
 }
 
 static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved);

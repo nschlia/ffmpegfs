@@ -41,9 +41,6 @@
 
 extern "C" {
 #include <libavutil/rational.h>
-#ifdef USING_LIBAV
-#include "libavutil/mathematics.h"
-#endif
 }
 
 static int parse_vcd(const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler);

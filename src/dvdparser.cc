@@ -42,9 +42,6 @@
 
 extern "C" {
 #include <libavutil/rational.h>
-#ifdef USING_LIBAV
-#include "libavutil/mathematics.h"
-#endif
 }
 //#pragma GCC diagnostic pop
 

@@ -241,8 +241,6 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
         return false;
     }
 
-    Logging::trace(cache_entry->destname(), "Retrieving encoded size.");
-
     size_t encoded_filesize = cache_entry->m_cache_info.m_encoded_filesize;
 
     if (!encoded_filesize)

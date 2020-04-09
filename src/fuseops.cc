@@ -1507,7 +1507,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
             cache_entry = transcoder_new(virtualfile, true);
-
             if (cache_entry == nullptr)
             {
                 return -errno;

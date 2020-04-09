@@ -789,7 +789,6 @@ static void transcoder_thread(void *arg)
     errno = syserror;
 }
 
-#ifndef USING_LIBAV
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
@@ -863,7 +862,6 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     av_free(line);
 #endif
 }
-#endif
 
 bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
 {

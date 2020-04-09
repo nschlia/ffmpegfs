@@ -26,8 +26,7 @@ libraries:
 * libswscale     (>= 3.0.0)
 
 One of these is required, preferably libswresample as libavresample is deprecated.
-It will be removed, but as for now is required if Libav is used (which has no
-libswresample).
+It will be removed some day from FFmpeg API.
 
 * libswresample  (>= 1.0.0)
 * libavresample  (>= 2.1.0)

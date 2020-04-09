@@ -92,9 +92,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_videobitrate(2*1024*1024)               // default: 2 MBit
     , m_videowidth(0)                           // default: do not change width
     , m_videoheight(0)                          // default: do not change height
-    #ifndef USING_LIBAV
     , m_deinterlace(0)                          // default: do not interlace video
-    #endif  // !USING_LIBAV
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -255,10 +253,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("videoheight=%u",                  m_videoheight, 0),
     FFMPEGFS_OPT("--videowidth=%u",                 m_videowidth, 0),
     FFMPEGFS_OPT("videowidth=%u",                   m_videowidth, 0),
-#ifndef USING_LIBAV
     FFMPEGFS_OPT("--deinterlace",                   m_deinterlace, 1),
     FFMPEGFS_OPT("deinterlace",                     m_deinterlace, 1),
-#endif  // !USING_LIBAV
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -1204,11 +1200,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
     Logging::trace(nullptr, "--------- Video ---------");
     Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
-#ifndef USING_LIBAV
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
-#else
-    Logging::trace(nullptr, "Deinterlace       : not supported");
-#endif  // !USING_LIBAV
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "--------- Virtual Script ---------");
@@ -1275,10 +1267,8 @@ int main(int argc, char *argv[])
 #if !LAVC_DEP_AV_FILTER_REGISTER
     avfilter_register_all();
 #endif // LAVC_DEP_AV_FILTER_REGISTER
-#ifndef USING_LIBAV
     // Redirect FFmpeg logs
     av_log_set_callback(ffmpeg_log);
-#endif
 
     // Set default
     params.m_max_threads = static_cast<unsigned int>(get_nprocs() * 16);

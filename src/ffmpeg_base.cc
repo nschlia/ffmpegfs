@@ -231,7 +231,6 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_stream->codec->time_base             = time_base_tbc;
 #endif
 
-#ifndef USING_LIBAV
     // tbr
     // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
     output_stream->r_frame_rate                 = framerate;
@@ -239,7 +238,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // fps
     output_stream->avg_frame_rate               = framerate;
     // output_codec_ctx->framerate                 = framerate;
-#endif
+
     int alpha = 0;
     int loss = 0;
 
@@ -247,12 +246,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     AVPixelFormat  dst_pix_fmt                  = AV_PIX_FMT_NONE;
     if (output_codec_ctx->codec->pix_fmts != nullptr)
     {
-#ifndef USING_LIBAV
         dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
-#else
-        // Yes, casting const away is bad. Libav is bad, too. OK, two wrongs make no right. To fix that use FFmpeg. Don't use libav. Did I mention it's bad?
-        dst_pix_fmt = avcodec_find_best_pix_fmt2(const_cast<AVPixelFormat *>(output_codec_ctx->codec->pix_fmts), src_pix_fmt, alpha, &loss);
-#endif
     }
 
     if (dst_pix_fmt == AV_PIX_FMT_NONE)
@@ -352,12 +346,7 @@ std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt) const
 std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout) const
 {
     char buffer[1024];
-#ifndef USING_LIBAV
     av_get_channel_layout_string(buffer, sizeof(buffer), nb_channels, channel_layout);
-#else
-    // av_get_channel_layout_string not supported by Libav
-    std::snprintf(buffer, sizeof(buffer) - 1, "%" PRId64, channel_layout);
-#endif
     return buffer;
 }
 

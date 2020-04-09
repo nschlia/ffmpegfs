@@ -61,7 +61,6 @@
  * @section ffmpegfs_external External links
  *
  * @li [FFmpeg Homepages](https://www.ffmpeg.org/) @n
- * @li [Libav Homepages](https://www.libav.org/) @n
  */
 
 /**
@@ -142,9 +141,7 @@ extern struct FFMPEGFS_PARAMS
     BITRATE             m_videobitrate;             /**< @brief Output video bit rate (bits per second) */
     int                 m_videowidth;               /**< @brief Output video width */
     int                 m_videoheight;              /**< @brief Output video height */
-#ifndef USING_LIBAV
     int                 m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
-#endif // !USING_LIBAV
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */
     // Virtual script
@@ -195,7 +192,6 @@ extern thread_pool*         tp;
  */
 void            init_fuse_ops(void);
 
-#ifndef USING_LIBAV
 /**
  * @brief Custom FFmpeg log function. Used with av_log_set_callback().
  * @param[in] ptr - See av_log_set_callback() in FFmpeg API.
@@ -299,6 +295,3 @@ LPVIRTUALFILE   find_original(std::string *filepath);
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_parent(const std::string & origpath);
-
-#endif // FFMPEGFS_H
-

@@ -17,6 +17,10 @@ News
   [INSTALL](INSTALL.md) "Installation from repository" for details.
 * Cool, there's an online revivew on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+* Libav support has been dropped. There is not activity on https://git.libav.org/?p=libav.git
+  since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg
+  API. Supporting Libav already bound a lot of my time that I could better spend on new features
+  or fixes for FFmpegfs.
 
 About
 -----
@@ -64,26 +68,11 @@ the distribution FFmpeg is crippled. FFmpegfs will not be able to encode
 to H264 and AAC. End of story.
 See https://en.opensuse.org/Restricted_formats.
 
-**Debian 7** comes with Libav 0.8 clone of FFmpeg.
-
-This Libav version is far too old and will not work.
-
-**Debian 8** comes with Libav 11 clone of FFmpeg.
-
-FFmpegfs compiles with Libav 11 and 12, but streaming directly while
-transcoding does not work. The first time a file is accessed playback
-will fail. After it has been decoded fully to cache playback does work.
-Playing the file via http may fail or it may take quite long until the
-file starts playing. This is a Libav insufficiency. You may have to
-replace it with FFmpeg.
-
 **Debian 9**, **Debian 10**, **Ubuntu 16** and **Ubuntu 17** include a decently recent
 version of the original FFmpeg library.
 
 Tested with:
 
-* `Debian 7 Wheezy` **AVLib 0.8.21-0+deb7u1+rpi1**: not working with Libav
-* `Debian 8 Jessie` **AVLib 11.11-1~deb8u1**: not working with Libav
 * `Debian 9 Stretch` **FFmpeg 3.2.8-1~deb9u1**: OK!
 * `Debian 10 Buster` **FFmpeg 3.2.14-1~deb9u1**: OK!
 * `Ubuntu 16.04.3 LTS` **FFmpeg 2.8.11-0ubuntu0.16.04.1**: OK!
@@ -383,9 +372,9 @@ FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
 
 * [FUSE](http://fuse.sourceforge.net/)
 
-If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):
+FFmpeg library:
 
-* [FFmpeg](https://www.FFmpeg.org/) or [Libav](https://www.Libav.org/)
+* [FFmpeg](https://www.FFmpeg.org/)
 
 Please note that FFmpegfs is in active development, so the main branch may
 be unstable (but offer nice gimmicks, though). If you need a stable version

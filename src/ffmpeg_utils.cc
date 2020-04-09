@@ -65,13 +65,7 @@ extern "C" {
 #else
 #include <libavresample/avresample.h>
 #endif
-#ifndef USING_LIBAV
-// Does not exist in Libav
 #include "libavutil/ffversion.h"
-#else
-#include "libavutil/avstring.h"
-#include "libavutil/opt.h"
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -462,11 +456,7 @@ std::string ffmpeg_libinfo()
 {
     std::string info;
 
-#ifdef USING_LIBAV
-    info = "Libav Version       :\n";
-#else
     info = "FFmpeg Version      : " FFMPEG_VERSION "\n";
-#endif
 
     info += PRINT_LIB_INFO(avutil,      AVUTIL);
     info += PRINT_LIB_INFO(avcodec,     AVCODEC);
@@ -718,88 +708,6 @@ FILETYPE get_filetype_from_list(const std::string & desttypelist)
     }
     return filetype;
 }
-
-#ifdef USING_LIBAV
-int avformat_alloc_output_context2(AVFormatContext **avctx, AVOutputFormat *oformat, const char *format, const char *filename)
-{
-    AVFormatContext *s = avformat_alloc_context();
-    int ret = 0;
-
-    *avctx = nullptr;
-    if (s == nullptr)
-        goto nomem;
-
-    if (oformat == nullptr)
-    {
-        if (format != nullptr)
-        {
-            oformat = av_guess_format(format, nullptr, nullptr);
-            if (oformat == nullptr)
-            {
-                av_log(s, AV_LOG_ERROR, "Requested output format '%s' is not a suitable output format\n", format);
-                ret = AVERROR(EINVAL);
-                goto error;
-            }
-        }
-        else
-        {
-            oformat = av_guess_format(nullptr, filename, nullptr);
-            if (oformat == nullptr)
-            {
-                ret = AVERROR(EINVAL);
-                av_log(s, AV_LOG_ERROR, "%s * Unable to find a suitable output format\n", filename);
-                goto error;
-            }
-        }
-    }
-
-    s->oformat = oformat;
-    if (s->oformat->priv_data_size > 0)
-    {
-        s->priv_data = av_mallocz(s->oformat->priv_data_size);
-        if (s->priv_data == nullptr)
-            goto nomem;
-        if (s->oformat->priv_class != nullptr)
-        {
-            *(const AVClass**)s->priv_data= s->oformat->priv_class;
-            av_opt_set_defaults(s->priv_data);
-        }
-    }
-    else
-        s->priv_data = nullptr;
-
-    if (filename)
-        av_strlcpy(s->filename, filename, sizeof(s->filename));
-    *avctx = s;
-    return 0;
-nomem:
-    av_log(s, AV_LOG_ERROR, "Out of memory\n");
-    ret = AVERROR(ENOMEM);
-error:
-    avformat_free_context(s);
-    return ret;
-}
-
-const char *avcodec_get_name(enum AVCodecID id)
-{
-    const AVCodecDescriptor *cd;
-    AVCodec *codec;
-
-    if (id == AV_CODEC_ID_NONE)
-        return "none";
-    cd = avcodec_descriptor_get(id);
-    if (cd)
-        return cd->name;
-    av_log(nullptr, AV_LOG_WARNING, "Codec 0x%x is not in the full list.\n", id);
-    codec = avcodec_find_decoder(id);
-    if (codec)
-        return codec->name;
-    codec = avcodec_find_encoder(id);
-    if (codec)
-        return codec->name;
-    return "unknown_codec";
-}
-#endif
 
 void init_id3v1(ID3v1 *id3v1)
 {
@@ -1067,18 +975,14 @@ int print_stream_info(const AVStream* stream)
     AVCodecContext *avctx = stream->codec;
 #endif
     int fps = stream->avg_frame_rate.den && stream->avg_frame_rate.num;
-#ifndef USING_LIBAV
     int tbr = stream->r_frame_rate.den && stream->r_frame_rate.num;
-#endif
     int tbn = stream->time_base.den && stream->time_base.num;
     int tbc = avctx->time_base.den && avctx->time_base.num; // Even the currently latest (lavf 58.10.100) refers to AVStream codec->time_base member... (See dump.c dump_stream_format)
 
     if (fps)
         print_fps(av_q2d(stream->avg_frame_rate), "avg fps");
-#ifndef USING_LIBAV
     if (tbr)
         print_fps(av_q2d(stream->r_frame_rate), "Real base framerate (tbr)");
-#endif
     if (tbn)
         print_fps(1 / av_q2d(stream->time_base), "stream timebase (tbn)");
     if (tbc)

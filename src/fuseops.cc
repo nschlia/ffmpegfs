@@ -458,8 +458,9 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
     filenamemap::const_iterator it = filenames.lower_bound(path);
     while (it != filenames.end())
     {
-        const std::string & key = it->first;
-        if (key.compare(0, path.size(), path) == 0) // Really a prefix?
+        std::string key = it->first;
+        remove_filename(&key);
+        if (key == path) // Really a prefix?
         {
             LPCVIRTUALFILE virtualfile = &it->second;
             struct stat stbuf;

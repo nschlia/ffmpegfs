@@ -179,16 +179,16 @@ frames that actually belong to the previous or next segment. This will be fixed 
 future versions. hls.js does not seem to care about improperly cut segments, though,
 and playback appears fine. Playing a single segment separately will not work properly.
 
-* Positioning is not implemented yet, i.e., if segment 150 is accessed 
+* Positioning is not implemented yet, i.e., if segment 150 is accessed
 transcoding will start from 1 and continue until 150 is reached. This is
 not efficient. Later version will start transcoding the requested segment
 immediately, like for frame sets.
 
 * Due to the nature of HLS, which relies heavily on caching (good), and
 the missing afformentioned positioning feature, transcoding may fail
-miserably (not good): Consider starting playback, your browser plays the 
-first 10 segments (100 seconds) from cache. The first segment accessed 
-will be 11, which triggers transcoding. Alas, ffmpegfs starts at segment 1 
+miserably (not good): Consider starting playback, your browser plays the
+first 10 segments (100 seconds) from cache. The first segment accessed
+will be 11, which triggers transcoding. Alas, ffmpegfs starts at segment 1
 and playback stalls until it provides no. 11...
 
 *There is still a lot to do, but the biggest pile of work has been done.

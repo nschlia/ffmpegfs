@@ -15,9 +15,9 @@ Important changes in 1.98 (2020-03-XX)
 * Support: Reduced quality of the test video to make the distribution archive slimmer. A full
            HD (1920x1280) video at 60 frames per second was a bit of an overkill anyway.
            720x400 at 30 fps should be enough for everybody.
-* Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG 
-           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not 
-           defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used 
+* Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG
+           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not
+           defined. Only if executed with root privileges, "/var/cache/ffmpegfs" will be used
            (e.g. if invoked via /etc/fstab entry).
 * Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each
            chapter, but at the real time the chapter begins in its title. Fixes #51.
@@ -26,10 +26,10 @@ Important changes in 1.98 (2020-03-XX)
            original number of channels.
 * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become much larger than
           expected. There's a strange FFmpeg API behaviour behind that, added the solution used
-          in ffmpeg.c to fix. 
+          in ffmpeg.c to fix.
 * Bugfix: Issue #48 - Properly handle incorrectly authored DVDs with missing SRI_END_OF_CELL
-          marks after cells.	   
-* Bugfix: Issue #49 - Avoid creating HLS last segments shorter than 200 ms, avoid stalls when 
+          marks after cells.
+* Bugfix: Issue #49 - Avoid creating HLS last segments shorter than 200 ms, avoid stalls when
           the total playtime is a multiple of the segment size, e.g. 10 seconds.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
@@ -42,7 +42,7 @@ Important changes in 1.97 (2020-01-21)
 * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on
           rescaled videos, what a suprise. Especially caused strange results on Bluray sources,
           created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.
-* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.	  
+* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.
 * Bugfix: Cache structure was not properly initialised, causing invalid values in the database.
 * Bugfix: Properly handle case when start_time is AV_NOOPTS (frame sets only)
 * Bugfix: Corrected mistake in online help: clear-cache should be clear_cache instead.

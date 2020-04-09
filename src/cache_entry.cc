@@ -57,7 +57,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
     clear();
 
-    Logging::debug(filename(), "Created new cache entry.");
+    Logging::trace(filename(), "Created new cache entry.");
 }
 
 Cache_Entry::~Cache_Entry()

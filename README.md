@@ -19,8 +19,7 @@ see the light.
 
 * HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
   ffmpegfs will seek to this position and start transcoding the segment
-  immediately. *Please note that this feature is still experimental and may
-  produce unexpected results.*
+  immediately.
 * See [NEWS](NEWS) for details.
 * FFmpegfs has been added to Debian sid, Debian 11 Bullseye and Ubuntu 20.04. See
   [INSTALL](INSTALL.md) "Installation from repository" for details.

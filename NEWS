@@ -31,6 +31,13 @@ Important changes in 1.98 (2020-03-XX)
           marks after cells.
 * Bugfix: Issue #49 - Avoid creating HLS last segments shorter than 200 ms, avoid stalls when
           the total playtime is a multiple of the segment size, e.g. 10 seconds.
+* Bugfix: Issue #54 - Made sure no duplicate filenames get created. This changes the output name
+          scheme, e.g. if two files xyz.ts and xyz.wmv exist and the destination type is mp4,
+          two output files named xyz.ts.mp4 and xyz.wmv.mp4 appear. An additional file xyz.mp4
+          will show up with its real name.
+          To continue using the old names, add --oldnamescheme=1 to the command line.
+* Bugfix: Online help and docs state --autocopy=OFF would turn the function off, but this
+          actually was NONE. Changed to match documentation.
 * Known bug: Libav support for videos seems broken. Not sure if this will be fixed or Libav be
           simply dropped.
 

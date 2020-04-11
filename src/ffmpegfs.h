@@ -170,6 +170,7 @@ extern struct FFMPEGFS_PARAMS
     // Miscellanous options
     int                 m_decoding_errors;          /**< @brief Break transcoding on decoding error */
     int                 m_min_dvd_chapter_duration; /**< @brief Min. DVD chapter duration. Shorter chapters will be ignored. */
+    int                 m_oldnamescheme;            /**< @brief Use old output name scheme, can create duplicate filenames */
     // Experimental options
     int                 m_win_smb_fix;              /**< @brief Experimental Windows fix for access to EOF at file open */
 } params;                                           /**< @brief Command line parameters */

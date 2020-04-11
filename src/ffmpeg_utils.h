@@ -344,11 +344,18 @@ const std::string & remove_ext(std::string *filepath);
 bool                find_ext(std::string * ext, const std::string & filename);
 /**
  * @brief Replace extension in filename, taking into account that there might not be an extension already.
+ * @param[in] filepath - Filename to replace extension.
+ * @param[in] ext - Extension to replace.
+ * @return Returns constant reference to filename.
+ */
+const std::string & replace_ext(std::string * filepath, const std::string & ext);
+/**
+ * @brief Append extension to filename. If ext is the same as
  * @param[in] filepath - Filename to add extension to.
  * @param[in] ext - Extension to add.
  * @return Returns constant reference to filename.
  */
-const std::string & replace_ext(std::string * filepath, const std::string & ext);
+const std::string & append_ext(std::string * filepath, const std::string & ext);
 /**
  * @brief strdup() variant taking a std::string as input.
  * @param[in] str - String to duplicate.

@@ -120,6 +120,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
     , m_decoding_errors(0)                      // default: ignore errors
     , m_min_dvd_chapter_duration(1)             // default: 1 second
+    , m_oldnamescheme(0)                        // default: new scheme
     , m_win_smb_fix(0)                          // default: no fix
 {
 }
@@ -296,6 +297,9 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("decoding_errors=%u",              m_decoding_errors, 0),
     FFMPEGFS_OPT("--min_dvd_chapter_duration=%u",   m_min_dvd_chapter_duration, 0),
     FFMPEGFS_OPT("min_dvd_chapter_duration=%u",     m_min_dvd_chapter_duration, 0),
+    FFMPEGFS_OPT("--oldnamescheme=%u",              m_oldnamescheme, 0),
+    FFMPEGFS_OPT("oldnamescheme=%u",                m_oldnamescheme, 0),
+    // Experimental
     FFMPEGFS_OPT("--win_smb_fix=%u",                m_win_smb_fix, 0),
     FFMPEGFS_OPT("win_smb_fix=%u",                  m_win_smb_fix, 0),
     // FFmpegfs options
@@ -1227,7 +1231,8 @@ static void print_params(void)
     Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
     Logging::trace(nullptr, "Max. Threads      : %1", format_number(params.m_max_threads).c_str());
     Logging::trace(nullptr, "Decoding Errors   : %1", params.m_decoding_errors ? "break transcode" : "ignore");
-    Logging::trace(nullptr, "Min. DVD chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());
+    Logging::trace(nullptr, "Min. DVD Chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());
+    Logging::trace(nullptr, "Old Name Scheme   : %1", params.m_oldnamescheme ? "yes" : "no");
     Logging::trace(nullptr, "--------- Experimental Options ---------");
     Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
 }

@@ -25,6 +25,11 @@ Important changes in 1.11 (2020-03-XX)
           in ffmpeg.c to fix.
 * Bugfix: Issue #48 - Properly handle incorrectly authored DVDs with missing SRI_END_OF_CELL
           marks after cells.
+* Bugfix: Issue #54 - Made sure no duplicate filenames get created. This changes the output name
+          scheme, e.g. if two files xyz.ts and xyz.wmv exist and the destination type is mp4,
+          two output files named xyz.ts.mp4 and xyz.wmv.mp4 appear. An additional file xyz.mp4
+          will show up with its real name.
+          To continue using the old names, add --oldnamescheme=1 to the command line.
 * Libav support has been dropped. There is not activity on https://git.libav.org/?p=libav.git
   since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg
   API. Supporting Libav already bound a lot of my time that I could better spend on new features

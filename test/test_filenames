@@ -2,7 +2,16 @@
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
-[ "$(ls -m "$DIRNAME")" = "copyright, dir.flac, raven_d.${FILEEXT}, raven_e.${FILEEXT}, snowboard.${FILEEXT}" ]
+if [ "${FILEEXT}" == "mp4" ]
+then
+    [ "$(ls -m "$DIRNAME")" = "copyright, dir.flac, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.${FILEEXT}" ]
+elif [ "${FILEEXT}" == "ogg" ]
+then
+    [ "$(ls -m "$DIRNAME")" = "copyright, dir.flac, raven_d.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+else
+    [ "$(ls -m "$DIRNAME")" = "copyright, dir.flac, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+fi
+
 echo "Pass"
 
 echo OK

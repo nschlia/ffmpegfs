@@ -397,6 +397,21 @@ const std::string & replace_ext(std::string * filepath, const std::string & ext)
     return *filepath;
 }
 
+const std::string & append_ext(std::string * filepath, const std::string & ext)
+{
+    size_t found;
+
+    found = filepath->rfind('.');
+
+    if (found == std::string::npos || strcasecmp(filepath->substr(found + 1), ext))
+    {
+        // No extension or different extension
+        *filepath += '.' + ext;
+    }
+
+    return *filepath;
+}
+
 char * new_strdup(const std::string & str)
 {
     size_t n = str.size() + 1;

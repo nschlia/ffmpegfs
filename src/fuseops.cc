@@ -392,7 +392,16 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
                     (ffmpegfs_format->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
             {
                 *current_format = params.current_format(*filepath);
-                replace_ext(filepath, (*current_format)->fileext());
+                if (params.m_oldnamescheme)
+                {
+                    // Old filename scheme, creates duplicates
+                    replace_ext(filepath, (*current_format)->fileext());
+                }
+                else
+                {
+                    // New name scheme
+                    append_ext(filepath, (*current_format)->fileext());
+                }
                 return true;
             }
         }

@@ -332,7 +332,7 @@ typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map 
   */
 static const AUTOCOPY_MAP autocopy_map =
 {
-    { "NONE",           AUTOCOPY_OFF },
+    { "OFF",            AUTOCOPY_OFF },
     { "MATCH",          AUTOCOPY_MATCH },
     { "MATCHLIMIT",     AUTOCOPY_MATCHLIMIT },
     { "STRICT",         AUTOCOPY_STRICT },

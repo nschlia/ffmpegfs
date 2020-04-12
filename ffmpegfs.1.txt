@@ -87,7 +87,7 @@ Select recode to same format option, 'OPTION' can be:
 |*YES* |Always recode to same format.
 |===================================================================================
 +
-Default: *NEVER*
+Default: *NO*
 
 *--profile*=NAME, *-oprofile*=NAME::
 Set profile for target audience, 'NAME' can be:

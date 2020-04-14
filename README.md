@@ -10,7 +10,7 @@ News
 ----
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
-* **Work on release 1.11 now in progress.**
+* **Work on release 1.12 now in progress.**
 
 * See [NEWS](NEWS) for details.
 * FFmpegfs has been added to Debian sid, Debian 11 Bullseye and Ubuntu 20.04. See

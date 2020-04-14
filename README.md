@@ -90,21 +90,21 @@ Mount your filesystem like this:
 
     ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 
-For example, to run FFmpegfs as daemon,
+For example, to run FFmpegfs as daemon, encode to MPEG-4:
 
-    ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
+    ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
 
 This will run ffmpegs in the foreground and print the log output to the screen:
 
-    ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
+    ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
 
 In recent versions of FUSE the same can be achieved with the following entry in `/etc/fstab`:
 
-    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
+    ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
 
 Another (more modern) form of this command:
 
-    /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
+    /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
 
 At this point files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will
 show up as `/mnt/ffmpegfs/**.mp4`.
@@ -121,18 +121,18 @@ default this is only possible for the user who launched FFmpegfs.
 
 Examples:
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache
 
 Run FFmpegfs transcoding files from /test/in to /test/out, logging up to
 a chatty TRACE level to stderr. The cache resides in test/cache. All directories
 are under the current user's home directory.
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 
 Same as above, but also limit video with to 640 pixels. Larger videos will be
 scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
-     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
+     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 
 Enable deinterlacing to enhance image quality.
 

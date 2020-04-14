@@ -10,7 +10,7 @@ News
 ----
 **To switch to the branch for version 2, git clone and do "git checkout release2.x".**
 
-* **Work on version 1.98 (2.0 pre-release) now in progress.**
+* **Work on version 1.99 (2.0 pre-release) now in progress.**
 
 I am currently preparing the new 2.0 release. This should be ready soon.
 

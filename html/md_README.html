@@ -76,25 +76,16 @@ $(function() {
 <img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status"/>
 </div>
  </td></tr>
-<tr>
-<td>gcc 8.2.0 </td><td>Libav 13_dev0 </td><td><div class="image">
-<img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libav)" alt="Build Status"/>
-</div>
- </td></tr>
-<tr>
-<td>clang 7.0.1 </td><td>Libav 13_dev0 </td><td><div class="image">
-<img src="https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-libavl-clang)" alt="Build Status"/>
-</div>
- </td></tr>
 </table>
 <h2>News </h2>
 <p><b>To switch to the branch for version 2, git clone and do "git checkout release2.x".</b></p>
 <ul>
 <li><b>Work on release 1.11 now in progress.</b></li>
 <li>See [NEWS](NEWS) for details.</li>
+<li>FFmpegfs has been added to Debian sid, Debian 11 Bullseye and Ubuntu 20.04. See <a class="el" href="md_INSTALL.html">INSTALL</a> "Installation from repository" for details.</li>
+<li>Cool, there's an online review on Linux Uprising, you can read it here: <a href="https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html">https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</a></li>
+<li>Libav support has been dropped. There is no activity on <a href="https://git.libav.org/?p=libav.git">https://git.libav.org/?p=libav.git</a> since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg API. Supporting Libav already bound a lot of my time that I could better spend on new features or fixes for FFmpegfs.</li>
 </ul>
-<p><em>Libav video support currenty seems broken. I have not yet decided whether to fix that or to drop Libav as a whole. Libav only poorly supports extensions required to do on-the-fly transcoding. The results are only fair to good, and Libav problems begin to cost me too much effort to fix.</em></p>
-<p><em>Objections anyone? If nobody misses Libav I'll stop supporting it soon.</em></p>
 <h2>About </h2>
 <p>Web site:<br />
  <a href="https://nschlia.github.io/ffmpegfs/">https://nschlia.github.io/ffmpegfs/</a><br />
@@ -122,15 +113,9 @@ $(function() {
 </ul>
 <h2>Supported Linux Distributions </h2>
 <p><b>Suse</b> does not provide proprietary formats like AAC and H264, thus the distribution FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story. See <a href="https://en.opensuse.org/Restricted_formats">https://en.opensuse.org/Restricted_formats</a>.</p>
-<p><b>Debian 7</b> comes with Libav 0.8 clone of FFmpeg.</p>
-<p>This Libav version is far too old and will not work.</p>
-<p><b>Debian 8</b> comes with Libav 11 clone of FFmpeg.</p>
-<p>FFmpegfs compiles with Libav 11 and 12, but streaming directly while transcoding does not work. The first time a file is accessed playback will fail. After it has been decoded fully to cache playback does work. Playing the file via http may fail or it may take quite long until the file starts playing. This is a Libav insufficiency. You may have to replace it with FFmpeg.</p>
 <p><b>Debian 9</b>, <b>Debian 10</b>, <b>Ubuntu 16</b> and <b>Ubuntu 17</b> include a decently recent version of the original FFmpeg library.</p>
 <p>Tested with:</p>
 <ul>
-<li><code>Debian 7 Wheezy</code> <b>AVLib 0.8.21-0+deb7u1+rpi1</b>: not working with Libav</li>
-<li><code>Debian 8 Jessie</code> <b>AVLib 11.11-1~deb8u1</b>: not working with Libav</li>
 <li><code>Debian 9 Stretch</code> <b>FFmpeg 3.2.8-1~deb9u1</b>: OK!</li>
 <li><code>Debian 10 Buster</code> <b>FFmpeg 3.2.14-1~deb9u1</b>: OK!</li>
 <li><code>Ubuntu 16.04.3 LTS</code> <b>FFmpeg 2.8.11-0ubuntu0.16.04.1</b>: OK!</li>
@@ -142,17 +127,17 @@ $(function() {
 <p><b>Tips on other OSs and distributions like Mac or other *nixes are welcome.</b></p>
 <h2>Usage </h2>
 <p>Mount your filesystem like this: </p><pre class="fragment">ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
-</pre><p>For example, to run FFmpegfs as daemon, </p><pre class="fragment">ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
-</pre><p>This will run ffmpegs in the foreground and print the log output to the screen: </p><pre class="fragment">ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro
-</pre><p>In recent versions of FUSE the same can be achieved with the following entry in <code>/etc/fstab</code>: </p><pre class="fragment">ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
-</pre><p>Another (more modern) form of this command: </p><pre class="fragment">/mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
+</pre><p>For example, to run FFmpegfs as daemon, encode to MPEG-4: </p><pre class="fragment">ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
+</pre><p>This will run ffmpegs in the foreground and print the log output to the screen: </p><pre class="fragment">ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
+</pre><p>In recent versions of FUSE the same can be achieved with the following entry in <code>/etc/fstab</code>: </p><pre class="fragment">ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
+</pre><p>Another (more modern) form of this command: </p><pre class="fragment">/mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
 </pre><p>At this point files like <code>/mnt/music/**.flac</code> and <code>/mnt/music/**.ogg</code> will show up as <code>/mnt/ffmpegfs/**.mp4</code>.</p>
 <p>Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source bitrate is less it will not be scaled up but rather left at the lower value.</p>
 <p>Note that the "allow_other" option by default can only be used by root. You must either run FFmpegfs as root or better add a "user_allow_other" key to /etc/fuse.conf.</p>
 <p>"allow_other" is required to allow any user access to the mount, by default this is only possible for the user who launched FFmpegfs.</p>
-<p>Examples: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache
-</pre><p>Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,videowidth=640
-</pre><p>Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,cachepath=$HOME/test/cache,deinterlace
+<p>Examples: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache
+</pre><p>Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
+</pre><p>Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 </pre><p>Enable deinterlacing to enhance image quality.</p>
 <h2>AUTO COPY </h2>
 <p>"Auto copy" performs intelligent stream copy, e.g., if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it would be possible to simply repackage it to a mp4 container without recoding.</p>
@@ -252,9 +237,9 @@ aio read size = 1
 <ul>
 <li><a href="http://fuse.sourceforge.net/">FUSE</a></li>
 </ul>
-<p>If using the FFmpeg support (Libav works as well, but FFmpeg is recommended):</p>
+<p>FFmpeg library:</p>
 <ul>
-<li><a href="https://www.FFmpeg.org/">FFmpeg</a> or <a href="https://www.Libav.org/">Libav</a></li>
+<li><a href="https://www.FFmpeg.org/">FFmpeg</a></li>
 </ul>
 <p>Please note that FFmpegfs is in active development, so the main branch may be unstable (but offer nice gimmicks, though). If you need a stable version please get one (preferrably the latest) release.</p>
 <p>Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!</p>

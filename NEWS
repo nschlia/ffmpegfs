@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 1.98 (2020-03-XX)
+Important changes in 1.98 (2020-04-15)
 
 * Cool, there's an online revivew on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
@@ -82,7 +82,7 @@ This is a pre-release towards the new version 2.0 coming up soon.
 * Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
            be recoded. Added --recodesame option to allow transcoding to the same format.
 
-Important changes in 1.11 (2020-03-XX)
+Important changes in 1.11 (2020-04-15)
 
 * Cool, there's an online revivew on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html

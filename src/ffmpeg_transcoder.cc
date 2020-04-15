@@ -1263,13 +1263,13 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         output_stream->time_base.num            = 1;
         output_codec_ctx->time_base             = output_stream->time_base;
 
-#if !FFMPEG_VERSION3 // Check for FFmpeg 3
+//#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         av_dict_set_with_check(&opt, "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
-#endif
+//#endif
 
         // Set duration as hint for muxer
         if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)

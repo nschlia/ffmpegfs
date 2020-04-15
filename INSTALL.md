@@ -159,7 +159,7 @@ FFmpegfs 1.10 has recently been added to Debian Bullseye and sid, so it is
 available as binary distribution.
 
 On Debian 11 Bullseye you can simply do
-    
+
     apt-get install ffmpegfs
 
 For Ubuntu 20.04 and Linux distributions based on it this is

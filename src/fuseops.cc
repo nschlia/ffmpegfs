@@ -70,6 +70,7 @@ static void             translate_path(std::string *origpath, const char* path);
 static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
 static int              get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int              make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
 
 static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -707,7 +708,7 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
     return 0;
 }
 
-int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
+static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     // Generate set of TS segment files and necessary M3U lists
     LPVIRTUALFILE child_file;
@@ -1028,7 +1029,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         }
         else if (ffmpegfs_format->is_hls())
         {
-            int res = make_hls(buf, filler, origpath, virtualfile);
+            int res = make_hls_fileset(buf, filler, origpath, virtualfile);
             if (res < 0)
             {
                 return res;
@@ -1204,7 +1205,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            make_hls(nullptr, nullptr, parent_file->m_origfile + "/", parent_file); // TEST
+                            make_hls_fileset(nullptr, nullptr, parent_file->m_origfile + "/", parent_file); // TEST
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
                             if (virtualfile2 == nullptr)

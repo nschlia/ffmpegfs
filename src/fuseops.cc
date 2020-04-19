@@ -1103,7 +1103,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     else if (flags & VIRTUALFLAG_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)
     {
         // File physically exists and is marked as passthrough
-        Logging::trace(origpath, "getattr: File is marked as passthrough.");
+        Logging::debug(origpath, "getattr: File not recoded because --recodesame=NO.");
         errno = 0;
         return 0;
     }

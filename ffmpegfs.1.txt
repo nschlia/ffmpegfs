@@ -60,7 +60,7 @@ Select auto copy option, 'OPTION' can be:
 +
 This can speed up transcoding significantly as copying streams uses much less computing power as compared to transcoding.
 +
-MATCH copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although ffmepeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
+MATCH copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although FFmpeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
 +
 STRICT would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to strictly adhere to the output format setting. This will create homogenous results which might prevent problems with picky playback software.
 +
@@ -191,7 +191,7 @@ Default: add album arts
 
 === Virtual Script ===
 --*enablescript*, -o *enablescript*::
-Add virtual index.php to every directory. It reads scripts/videotag.php from the ffmpegs binary directory.
+Add virtual index.php to every directory. It reads scripts/videotag.php from the FFmpegfs binary directory.
 +
 This can be very handy to test video playback. Of course, feel free to replace videotag.php with your own script.
 +
@@ -241,7 +241,7 @@ Set the required diskspace on the cachepath mount. If the remaining space would 
 Default: 0 (no minimum space)
 
 *--cachepath*=DIR, *-o cachepath*=DIR::
-Sets the disk cache directory to 'DIR'. Will be created if not existing. The user running ffmpegfs must have write access to the location.
+Sets the disk cache directory to 'DIR'. Will be created if not existing. The user running FFmpegfs must have write access to the location.
 +
 Default: ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as specified in the XDG Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not defined. If executed with root privileges, "/var/cache/ffmpegfs" will be used.
 
@@ -253,7 +253,7 @@ Default: enabled
 *--cache_maintenance*=TIME, *-o cache_maintenance*=TIME::
 Starts cache maintenance in 'TIME' intervals. This will enforce the expery_time, max_cache_size and min_diskspace settings. Do not set too low as this can slow down transcoding.
 +
-Only one ffmpegfs process will do the maintenance by becoming the master. If that process exits, another will take over so that always one will do the maintenance.
+Only one FFmpegfs process will do the maintenance by becoming the master. If that process exits, another will take over so that always one will do the maintenance.
 +
 Default: 1 hour
 
@@ -461,7 +461,7 @@ FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
 
 FFmpeg home pages:
 
-* https://www.FFmpeg.org/[FFmpeg]
+* https://www.ffmpeg.org/[FFmpeg]
 
 == Future Plans ==
 * Create a windows version

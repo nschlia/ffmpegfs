@@ -842,7 +842,7 @@ int make_hls(void * buf, fuse_fill_dir_t filler, const std::string & origpath, L
                     "            });\n"
                     "        }\n"
                     "        // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.\n"
-                    "        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.\n"
+                    "        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element through the `src` property.\n"
                     "        // This is using the built-in support of the plain video element, without using hls.js.\n"
                     "        else if (video.canPlayType(\"application/vnd.apple.mpegurl\")) {\n"
                     "            video.src = \"index_0_av.m3u8\";\n"
@@ -1102,7 +1102,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     else if (flags & VIRTUALFLAG_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)
     {
-        // File pysically exists and is marked as pass-through
+        // File physically exists and is marked as passthrough
         Logging::trace(origpath, "getattr: File is marked as passthrough.");
         errno = 0;
         return 0;
@@ -1338,7 +1338,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
     if ((virtualfile == nullptr || virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
     {
-        // pass-through for regular files
+        // passthrough for regular files
         errno = 0;
         return 0;
     }
@@ -1720,7 +1720,7 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
     translate_path(&origpath, path);
 
-    // pass-through for regular files
+    // passthrough for regular files
     if (statvfs(origpath.c_str(), stbuf) == 0)
     {
         return -errno;

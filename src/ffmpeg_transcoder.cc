@@ -3988,7 +3988,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (next_segment > m_virtualfile->get_segment_count())
             {
-                Logging::error(destname(), "Requested position %1 or segment %2 exceeds segment count %3.", format_duration(pos), next_segment, m_virtualfile->get_segment_count());
+                Logging::error(destname(), "Requested position %1 or segment %2 exceeds segment count %3.", format_duration(pos).c_str(), next_segment, m_virtualfile->get_segment_count());
                 throw AVERROR(ESPIPE);
             }
             else if (next_segment == m_current_segment + 1)

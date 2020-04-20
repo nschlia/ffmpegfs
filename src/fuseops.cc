@@ -1653,7 +1653,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
             if (!frame_no)
             {
                 errno = EINVAL;
-                Logging::error(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                Logging::error(origpath.c_str(), "read: Unable to deduct frame no. from file name (%1): (%2) %3", filename.c_str(), errno, strerror(errno));
                 return -errno;
             }
 
@@ -1680,7 +1680,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
                 if (!segment_no)
                 {
                     errno = EINVAL;
-                    Logging::error(origpath.c_str(), "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                    Logging::error(origpath.c_str(), "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename.c_str(), errno, strerror(errno));
                     return -errno;
                 }
             }
@@ -1763,7 +1763,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
             if (!segment_no)
             {
                 errno = EINVAL;
-                Logging::error(path, "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename, errno, strerror(errno));
+                Logging::error(path, "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename.c_str(), errno, strerror(errno));
             }
             else
             {

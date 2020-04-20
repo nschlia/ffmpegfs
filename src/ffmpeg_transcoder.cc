@@ -74,7 +74,7 @@ extern "C" {
 #endif
 #pragma GCC diagnostic pop
 
-#define FRAME_SEEK_THRESHOLD    25  // Ignore seek if target is within the next n frames
+#define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
 const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
 {

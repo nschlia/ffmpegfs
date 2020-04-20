@@ -39,14 +39,14 @@
 #include <map>
 #include <sqlite3.h>
 
-#define     DB_BASE_VERSION_MAJOR   1           /**< brief The oldest database version major (Release < 1.95) */
-#define     DB_BASE_VERSION_MINOR   0           /**< brief The oldest database version minor (Release < 1.95) */
+#define     DB_BASE_VERSION_MAJOR   1           /**< @brief The oldest database version major (Release < 1.95) */
+#define     DB_BASE_VERSION_MINOR   0           /**< @brief The oldest database version minor (Release < 1.95) */
 
-#define     DB_VERSION_MAJOR        1           /**< brief Current database version major */
-#define     DB_VERSION_MINOR        97          /**< brief Current database version minor */
+#define     DB_VERSION_MAJOR        1           /**< @brief Current database version major */
+#define     DB_VERSION_MINOR        97          /**< @brief Current database version minor */
 
-#define     DB_MIN_VERSION_MAJOR    1           /**< brief Required database version major (required 1.95) */
-#define     DB_MIN_VERSION_MINOR    97          /**< brief Required database version minor (required 1.95) */
+#define     DB_MIN_VERSION_MAJOR    1           /**< @brief Required database version major (required 1.95) */
+#define     DB_MIN_VERSION_MINOR    97          /**< @brief Required database version minor (required 1.95) */
 
 /**
   * @brief RESULTCODE of transcoding operation

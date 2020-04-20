@@ -464,6 +464,11 @@ Future Plans
 * Create a windows version
 * and more, see [TODO](TODO)
 
+DEMO CODE
+---------
+
+HLS player and demo code see: https://github.com/video-dev/hls.js/
+
 AUTHORS
 -------
 

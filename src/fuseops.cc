@@ -794,15 +794,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
             }
 
             index_0_av_contents += buffer;
-#if 0			
-			std::string buffer2(origpath);
-			
-			//remove_filename(&buffer2);
-			buffer2 = replace_all(buffer2, "/mnt/sdc1/", "https://mp3mania.de/files/hls/1M/");
-            index_0_av_contents += buffer2 + "/" + segment_name;
-#else		
             index_0_av_contents += segment_name;
-#endif
             index_0_av_contents += "\n";
         }
 
@@ -815,7 +807,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
         std::copy(index_0_av_contents.begin(), index_0_av_contents.end(), std::back_inserter(child_file->m_file_contents));
 
         {
-            //**< @todo; Rework this test code
+            // Demo code adapted from: https://github.com/video-dev/hls.js/
             std::string hls_html;
 
             hls_html =

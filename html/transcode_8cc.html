@@ -100,7 +100,7 @@ Include dependency graph for transcode.cc:</div>
 <area shape="rect" id="node30" href="cache__entry_8h.html" title="Cache entry " alt="" coords="779,80,883,107"/>
 <area shape="rect" id="node31" href="thread__pool_8h_source.html" title="thread_pool.h" alt="" coords="1142,155,1242,181"/>
 <area shape="rect" id="node12" href="fileio_8h.html" title="FileIO class. " alt="" coords="243,304,303,331"/>
-<area shape="rect" id="node6" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="393,304,497,331"/>
+<area shape="rect" id="node6" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="405,304,509,331"/>
 <area shape="rect" id="node7" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="325,379,448,405"/>
 <area shape="rect" id="node17" href="ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="322,229,430,256"/>
 <area shape="rect" id="node18" href="id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="601,229,684,256"/>
@@ -533,7 +533,7 @@ Copyright (C) 2017-2020 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="buffer_8cc_source.html#l00816">Buffer::buffer_watermark()</a>, and <a class="el" href="cache__entry_8h_source.html#l00221">Cache_Entry::m_buffer</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01324">ffmpegfs_fgetattr()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01332">ffmpegfs_fgetattr()</a>.</p>
 
 </div>
 </div>
@@ -663,7 +663,7 @@ Copyright (C) 2017-2020 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="cache__entry_8h_source.html#l00225">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00080">CACHE_INFO::m_encoded_filesize</a>, <a class="el" href="cache_8h_source.html#l00079">CACHE_INFO::m_predicted_filesize</a>, and <a class="el" href="cache_8cc_source.html#l00996">Cache::open()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, and <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, and <a class="el" href="fuseops_8cc_source.html#l01054">ffmpegfs_getattr()</a>.</p>
 
 </div>
 </div>
@@ -697,7 +697,7 @@ The structure is reference counted, after calling this function, if the cache en
 
 <p class="reference">References <a class="el" href="cache_8cc_source.html#l01015">Cache::close()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01745">ffmpegfs_release()</a>, and <a class="el" href="fuseops_8cc_source.html#l00696">get_source_properties()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01054">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l01753">ffmpegfs_release()</a>, and <a class="el" href="fuseops_8cc_source.html#l00696">get_source_properties()</a>.</p>
 
 </div>
 </div>
@@ -724,7 +724,7 @@ The structure is reference counted, after calling this function, if the cache en
 
 <p class="reference">References <a class="el" href="transcode_8cc_source.html#l00064">thread_exit</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01849">ffmpegfs_destroy()</a>, and <a class="el" href="fuseops_8cc_source.html#l01783">sighandler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01857">ffmpegfs_destroy()</a>, and <a class="el" href="fuseops_8cc_source.html#l01791">sighandler()</a>.</p>
 
 </div>
 </div>
@@ -757,6 +757,8 @@ The structure is reference counted, after calling this function, if the cache en
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00700">700</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="cache__entry_8cc_source.html#l00263">Cache_Entry::size()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01054">ffmpegfs_getattr()</a>.</p>
 
 </div>
 </div>
@@ -828,7 +830,7 @@ The structure is reference counted, after calling this function, if the cache en
 
 <p class="reference">References <a class="el" href="buffer_8h_source.html#l00047">CACHE_CLOSE_DELETE</a>, <a class="el" href="cache__entry_8cc_source.html#l00089">Cache_Entry::clear()</a>, <a class="el" href="cache_8cc_source.html#l01015">Cache::close()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="cache__entry_8cc_source.html#l00319">Cache_Entry::destname()</a>, <a class="el" href="cache__entry_8cc_source.html#l00314">Cache_Entry::filename()</a>, <a class="el" href="cache__entry_8cc_source.html#l00324">Cache_Entry::lock()</a>, <a class="el" href="transcode_8cc_source.html#l00060">THREAD_DATA::m_arg</a>, <a class="el" href="cache__entry_8h_source.html#l00225">Cache_Entry::m_cache_info</a>, <a class="el" href="transcode_8cc_source.html#l00057">THREAD_DATA::m_cond</a>, <a class="el" href="ffmpegfs_8h_source.html#l00168">FFMPEGFS_PARAMS::m_disable_cache</a>, <a class="el" href="cache_8h_source.html#l00078">CACHE_INFO::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::m_duration</a>, <a class="el" href="cache_8h_source.html#l00085">CACHE_INFO::m_errno</a>, <a class="el" href="cache_8h_source.html#l00084">CACHE_INFO::m_error</a>, <a class="el" href="cache_8h_source.html#l00083">CACHE_INFO::m_finished</a>, <a class="el" href="transcode_8cc_source.html#l00059">THREAD_DATA::m_initialised</a>, <a class="el" href="cache__entry_8h_source.html#l00222">Cache_Entry::m_is_decoding</a>, <a class="el" href="transcode_8cc_source.html#l00058">THREAD_DATA::m_lock_guard</a>, <a class="el" href="transcode_8cc_source.html#l00056">THREAD_DATA::m_mutex</a>, <a class="el" href="cache_8h_source.html#l00079">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="cache_8h_source.html#l00081">CACHE_INFO::m_video_frame_count</a>, <a class="el" href="fileio_8h_source.html#l00143">VIRTUALFILE::m_video_frame_count</a>, <a class="el" href="cache__entry_8cc_source.html#l00164">Cache_Entry::open()</a>, <a class="el" href="cache_8cc_source.html#l00996">Cache::open()</a>, <a class="el" href="cache__entry_8cc_source.html#l00339">Cache_Entry::outdated()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="cache_8h_source.html#l00058">RESULTCODE_FINISHED</a>, <a class="el" href="thread__pool_8cc_source.html#l00084">thread_pool::schedule_thread()</a>, <a class="el" href="fuseops_8cc_source.html#l00095">tp</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00309">transcoder_predict_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>, and <a class="el" href="cache__entry_8cc_source.html#l00329">Cache_Entry::unlock()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01435">ffmpegfs_open()</a>, and <a class="el" href="fuseops_8cc_source.html#l00696">get_source_properties()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01054">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l01443">ffmpegfs_open()</a>, and <a class="el" href="fuseops_8cc_source.html#l00696">get_source_properties()</a>.</p>
 
 </div>
 </div>
@@ -947,7 +949,7 @@ Returns number of bytes read, may be less than len bytes. </dd></dl>
 
 <p class="reference">References <a class="el" href="cache__entry_8cc_source.html#l00319">Cache_Entry::destname()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="cache__entry_8cc_source.html#l00150">Cache_Entry::update_access()</a>, and <a class="el" href="cache__entry_8cc_source.html#l00397">Cache_Entry::update_read_count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01552">ffmpegfs_read()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01560">ffmpegfs_read()</a>.</p>
 
 </div>
 </div>
@@ -1029,7 +1031,7 @@ Returns number of bytes read, may be less than len bytes. </dd></dl>
 
 <p class="reference">References <a class="el" href="cache__entry_8cc_source.html#l00319">Cache_Entry::destname()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="logging_8h_source.html#l00208">Logging::info()</a>, <a class="el" href="cache_8h_source.html#l00088">CACHE_INFO::m_access_time</a>, <a class="el" href="cache__entry_8h_source.html#l00221">Cache_Entry::m_buffer</a>, <a class="el" href="cache__entry_8h_source.html#l00225">Cache_Entry::m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00084">CACHE_INFO::m_error</a>, <a class="el" href="cache__entry_8h_source.html#l00222">Cache_Entry::m_is_decoding</a>, <a class="el" href="cache__entry_8h_source.html#l00229">Cache_Entry::m_seek_to_no</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::m_st</a>, <a class="el" href="transcode_8cc_source.html#l00049">MS</a>, <a class="el" href="buffer_8cc_source.html#l00944">Buffer::read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00064">thread_exit</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="cache__entry_8cc_source.html#l00150">Cache_Entry::update_access()</a>, <a class="el" href="cache__entry_8cc_source.html#l00397">Cache_Entry::update_read_count()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01552">ffmpegfs_read()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01560">ffmpegfs_read()</a>.</p>
 
 </div>
 </div>

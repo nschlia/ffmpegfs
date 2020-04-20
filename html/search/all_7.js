@@ -45,6 +45,7 @@ var searchData=
   ['get_5fsample_5ffmt_5fname',['get_sample_fmt_name',['../classFFmpeg__Base.html#aa99e1123a196de9a6bc4a8f8899abf70',1,'FFmpeg_Base']]],
   ['get_5fsamplerate',['get_samplerate',['../ffmpegfs_8cc.html#ad3243c3e87b9251e5d48e08240a7000c',1,'ffmpegfs.cc']]],
   ['get_5fsec',['get_sec',['../classVcdChapter.html#a3f7ea09a0927a9853e4e8d9f4b950d7f',1,'VcdChapter']]],
+  ['get_5fsegment_5fcount',['get_segment_count',['../structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a',1,'VIRTUALFILE']]],
   ['get_5fsegment_5fduration',['get_segment_duration',['../ffmpegfs_8cc.html#abb62549fc3eef78ab87ff060e0e62d59',1,'ffmpegfs.cc']]],
   ['get_5fsize',['get_size',['../classVcdChapter.html#a1c86612674e35a642da1a1d456c1ec92',1,'VcdChapter::get_size()'],['../classVcdEntries.html#a4ba11bd317a2b6e791b61a99f9ab0c09',1,'VcdEntries::get_size()'],['../ffmpegfs_8cc.html#a15c275b9b2c8ba3cd59a49e132df4e82',1,'get_size():&#160;ffmpegfs.cc']]],
   ['get_5fsource_5fproperties',['get_source_properties',['../fuseops_8cc.html#a9676a5e6a30d145619a678d896b6a3d8',1,'fuseops.cc']]],

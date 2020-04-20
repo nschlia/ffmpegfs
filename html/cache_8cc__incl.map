@@ -1,6 +1,6 @@
 <map id="src/cache.cc" name="src/cache.cc">
 <area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management. " alt="" coords="501,155,569,181"/>
-<area shape="rect" id="node13" href="$cache__entry_8h.html" title="Cache entry " alt="" coords="562,80,666,107"/>
+<area shape="rect" id="node13" href="$cache__entry_8h.html" title="Cache entry " alt="" coords="561,80,665,107"/>
 <area shape="rect" id="node15" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="291,229,375,256"/>
 <area shape="rect" id="node18" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="322,304,426,331"/>
 <area shape="rect" id="node22" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="741,80,815,107"/>

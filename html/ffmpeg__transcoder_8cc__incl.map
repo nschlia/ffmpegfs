@@ -1,5 +1,5 @@
 <map id="src/ffmpeg_transcoder.cc" name="src/ffmpeg_transcoder.cc">
-<area shape="rect" id="node2" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="375,80,517,107"/>
+<area shape="rect" id="node2" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="377,80,518,107"/>
 <area shape="rect" id="node21" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="601,80,691,107"/>
 <area shape="rect" id="node22" href="$buffer_8h.html" title="Buffer class. " alt="" coords="818,80,885,107"/>
 <area shape="rect" id="node24" href="$wave_8h.html" title="WAVE file structures. " alt="" coords="950,80,1014,107"/>

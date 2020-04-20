@@ -14,8 +14,9 @@
 <area shape="rect" id="node17" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="1395,80,1557,107"/>
 <area shape="rect" id="node19" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation. " alt="" coords="1581,80,1715,107"/>
 <area shape="rect" id="node20" href="$ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation. " alt="" coords="1739,80,1853,107"/>
-<area shape="rect" id="node21" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation. " alt="" coords="1877,80,2024,107"/>
-<area shape="rect" id="node22" href="$vcdio_8cc.html" title="VcdIO class implementation. " alt="" coords="2048,80,2141,107"/>
+<area shape="rect" id="node21" href="$fileio_8cc.html" title="FileIO class implementation. " alt="" coords="1877,80,1966,107"/>
+<area shape="rect" id="node22" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation. " alt="" coords="1991,80,2137,107"/>
+<area shape="rect" id="node23" href="$vcdio_8cc.html" title="VcdIO class implementation. " alt="" coords="2161,80,2255,107"/>
 <area shape="rect" id="node6" href="$ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation. " alt="" coords="306,155,443,181"/>
 <area shape="rect" id="node7" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="1045,155,1216,181"/>
 <area shape="rect" id="node8" href="$fuseops_8cc.html" title="Fuse operations implementation. " alt="" coords="467,155,575,181"/>

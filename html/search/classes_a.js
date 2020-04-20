@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['thread_5fdata',['THREAD_DATA',['../structTHREAD__DATA.html',1,'']]],
-  ['thread_5fpool',['thread_pool',['../classthread__pool.html',1,'']]]
+  ['streamref',['STREAMREF',['../structFFmpeg__Transcoder_1_1STREAMREF.html',1,'FFmpeg_Transcoder']]]
 ];

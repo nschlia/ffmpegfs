@@ -1,8 +1,8 @@
 <map id="src/blurayio.cc" name="src/blurayio.cc">
-<area shape="rect" id="node2" href="$blurayio_8h.html" title="Bluray I/O. " alt="" coords="87,80,166,107"/>
-<area shape="rect" id="node7" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="223,80,307,107"/>
-<area shape="rect" id="node10" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="324,155,428,181"/>
-<area shape="rect" id="node14" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="439,80,513,107"/>
-<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="63,155,123,181"/>
-<area shape="rect" id="node11" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="272,229,395,256"/>
+<area shape="rect" id="node2" href="$blurayio_8h.html" title="Bluray I/O. " alt="" coords="267,80,346,107"/>
+<area shape="rect" id="node9" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="403,80,487,107"/>
+<area shape="rect" id="node12" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="504,155,608,181"/>
+<area shape="rect" id="node16" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="608,80,683,107"/>
+<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="243,155,303,181"/>
+<area shape="rect" id="node13" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="408,229,531,256"/>
 </map>

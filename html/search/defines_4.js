@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['ff_5finput_5fbuffer_5fpadding_5fsize',['FF_INPUT_BUFFER_PADDING_SIZE',['../ffmpeg__utils_8h.html#a9207dd7cb4ee4416f8fd1f7a63af34b7',1,'ffmpeg_utils.h']]],
-  ['ffmpeg_5fversion3',['FFMPEG_VERSION3',['../ffmpeg__compat_8h.html#aeffa2af1666a730b08c1c20d1f808bbe',1,'ffmpeg_compat.h']]],
-  ['ffmpegfs_5fopt',['FFMPEGFS_OPT',['../ffmpegfs_8cc.html#a2b7478b08c922e7542e6d29b2561223a',1,'ffmpegfs.cc']]],
-  ['fuse_5fuse_5fversion',['FUSE_USE_VERSION',['../ffmpegfs_8h.html#a0919197af2e154da2c05727b6d87cbda',1,'ffmpegfs.h']]]
+  ['db_5fbase_5fversion_5fmajor',['DB_BASE_VERSION_MAJOR',['../cache_8h.html#abb3edc13836a925237b2efa86d47f692',1,'cache.h']]],
+  ['db_5fbase_5fversion_5fminor',['DB_BASE_VERSION_MINOR',['../cache_8h.html#a7792bd91b3a91a0d4dafc4585012a78b',1,'cache.h']]],
+  ['db_5fmin_5fversion_5fmajor',['DB_MIN_VERSION_MAJOR',['../cache_8h.html#a194f9c6f56112682ff8ebd5593a57000',1,'cache.h']]],
+  ['db_5fmin_5fversion_5fminor',['DB_MIN_VERSION_MINOR',['../cache_8h.html#a1f4e485a6d3f7f43c271a2921a8b6b09',1,'cache.h']]],
+  ['db_5fversion_5fmajor',['DB_VERSION_MAJOR',['../cache_8h.html#a397112b4ccfa190bc7eec7d6a30fbf01',1,'cache.h']]],
+  ['db_5fversion_5fminor',['DB_VERSION_MINOR',['../cache_8h.html#a07e93196d535b91e79cda1b91fa5b6e5',1,'cache.h']]]
 ];

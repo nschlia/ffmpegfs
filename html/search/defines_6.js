@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['id3v1_5ftag_5flength',['ID3V1_TAG_LENGTH',['../id3v1tag_8h.html#a4c5ca436c60bcf8c0e9c7059e663accf',1,'id3v1tag.h']]],
-  ['invalid_5fstream',['INVALID_STREAM',['../ffmpeg__base_8h.html#af19a790dcacf636767ffc6a1681d43ec',1,'ffmpeg_base.h']]]
+  ['have_5fav_5fformat_5finject_5fglobal_5fside_5fdata',['HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA',['../ffmpeg__utils_8h.html#a821f2b88e86f4d67c6b95afc17622875',1,'ffmpeg_utils.h']]],
+  ['have_5fmedia_5ftype_5fstring',['HAVE_MEDIA_TYPE_STRING',['../ffmpeg__utils_8h.html#a970dbe9e67198da417e13f88b02d7311',1,'ffmpeg_utils.h']]]
 ];

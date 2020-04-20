@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -78,20 +78,21 @@ $(function() {
 <code>#include &quot;<a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="logging_8h_source.html">logging.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="vcdentries_8h_source.html">vcd/vcdentries.h</a>&quot;</code><br />
+<code>#include &lt;libavutil/rational.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for vcdparser.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="vcdparser_8cc__incl.png" border="0" usemap="#src_2vcdparser_8cc" alt=""/></div>
 <map name="src_2vcdparser_8cc" id="src_2vcdparser_8cc">
-<area shape="rect" id="node2" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="306,155,390,181"/>
-<area shape="rect" id="node5" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="191,229,295,256"/>
-<area shape="rect" id="node13" href="vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="331,80,421,107"/>
-<area shape="rect" id="node14" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="445,80,536,107"/>
-<area shape="rect" id="node15" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="560,80,635,107"/>
-<area shape="rect" id="node20" href="vcdentries_8h.html" title="S/VCD VcdEntries class. " alt="" coords="801,155,919,181"/>
-<area shape="rect" id="node11" href="fileio_8h.html" title="FileIO class. " alt="" coords="495,229,555,256"/>
+<area shape="rect" id="node2" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="310,155,394,181"/>
+<area shape="rect" id="node5" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="160,229,264,256"/>
+<area shape="rect" id="node15" href="vcdparser_8h.html" title="Video CD and Super Video CD parser. " alt="" coords="389,80,480,107"/>
+<area shape="rect" id="node16" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="504,80,595,107"/>
+<area shape="rect" id="node17" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="684,80,759,107"/>
+<area shape="rect" id="node21" href="vcdentries_8h.html" title="S/VCD VcdEntries class. " alt="" coords="418,155,537,181"/>
+<area shape="rect" id="node11" href="fileio_8h.html" title="FileIO class. " alt="" coords="637,229,697,256"/>
 <area shape="rect" id="node6" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,304,128,331"/>
-<area shape="rect" id="node21" href="vcdchapter_8h.html" title="S/VCD VcdChapter class. " alt="" coords="651,229,749,256"/>
+<area shape="rect" id="node22" href="vcdchapter_8h.html" title="S/VCD VcdChapter class. " alt="" coords="515,229,613,256"/>
 </map>
 </div>
 </div>
@@ -160,11 +161,11 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>-errno or number of chapters on S/VCD. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00149">149</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00186">186</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00232">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00456">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00463">load_path()</a>, <a class="el" href="vcdparser_8cc_source.html#l00120">parse_vcd()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00491">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00498">load_path()</a>, <a class="el" href="vcdparser_8cc_source.html#l00157">parse_vcd()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00763">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00653">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01051">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00873">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
@@ -240,11 +241,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if successful. Returns false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00055">55</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00059">59</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00212">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00795">format_duration()</a>, <a class="el" href="vcdentries_8cc_source.html#l00397">VcdEntries::get_chapter()</a>, <a class="el" href="vcdentries_8cc_source.html#l00423">VcdEntries::get_disk_path()</a>, <a class="el" href="vcdentries_8cc_source.html#l00406">VcdEntries::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00137">VcdChapter::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00162">VcdChapter::get_end_pos()</a>, <a class="el" href="vcdentries_8cc_source.html#l00411">VcdEntries::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00167">VcdChapter::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00157">VcdChapter::get_start_pos()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00117">VcdChapter::get_track_no()</a>, <a class="el" href="fuseops_8cc_source.html#l00405">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00106">VIRTUALFILE::VCD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00089">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00108">VIRTUALFILE::VCD_CHAPTER::m_end_pos</a>, <a class="el" href="ffmpegfs_8h_source.html#l00135">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00088">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00107">VIRTUALFILE::VCD_CHAPTER::m_start_pos</a>, <a class="el" href="fileio_8h_source.html#l00105">VIRTUALFILE::VCD_CHAPTER::m_track_no</a>, <a class="el" href="structVIRTUALFILE.html#af45ab3e9bcc01031dda5464ef46cf03f">VIRTUALFILE::m_vcd</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01047">replace_all()</a>, and <a class="el" href="fileio_8h_source.html#l00055">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">append_sep()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00249">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00852">format_duration()</a>, <a class="el" href="vcdentries_8cc_source.html#l00397">VcdEntries::get_chapter()</a>, <a class="el" href="vcdentries_8cc_source.html#l00423">VcdEntries::get_disk_path()</a>, <a class="el" href="vcdentries_8cc_source.html#l00406">VcdEntries::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00137">VcdChapter::get_duration()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00162">VcdChapter::get_end_pos()</a>, <a class="el" href="vcdentries_8cc_source.html#l00411">VcdEntries::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00167">VcdChapter::get_size()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00157">VcdChapter::get_start_pos()</a>, <a class="el" href="vcdchapter_8cc_source.html#l00117">VcdChapter::get_track_no()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00264">FFmpegfs_Format::is_frameset()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00259">FFmpegfs_Format::is_multiformat()</a>, <a class="el" href="fileio_8h_source.html#l00160">VIRTUALFILE::VCD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00162">VIRTUALFILE::VCD_CHAPTER::m_end_pos</a>, <a class="el" href="ffmpegfs_8h_source.html#l00136">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00140">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="fileio_8h_source.html#l00161">VIRTUALFILE::VCD_CHAPTER::m_start_pos</a>, <a class="el" href="fileio_8h_source.html#l00159">VIRTUALFILE::VCD_CHAPTER::m_track_no</a>, <a class="el" href="structVIRTUALFILE.html#af45ab3e9bcc01031dda5464ef46cf03f">VIRTUALFILE::m_vcd</a>, <a class="el" href="fileio_8h_source.html#l00143">VIRTUALFILE::m_video_frame_count</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01104">replace_all()</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_DIRECTORY</a>, <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_FILESET</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_FRAME</a>, <a class="el" href="fileio_8h_source.html#l00113">VIRTUALFLAG_HLS</a>, and <a class="el" href="fileio_8h_source.html#l00094">VIRTUALTYPE_VCD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00120">parse_vcd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00157">parse_vcd()</a>.</p>
 
 </div>
 </div>
@@ -306,11 +307,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00120">120</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdparser_8cc_source.html#l00157">157</a> of file <a class="el" href="vcdparser_8cc_source.html">vcdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vcdparser_8cc_source.html#l00055">create_vcd_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="vcdentries_8cc_source.html#l00392">VcdEntries::get_number_of_chapters()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00082">VcdEntries::load_file()</a>.</p>
+<p class="reference">References <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="vcdentries_8cc_source.html#l00392">VcdEntries::get_number_of_chapters()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00082">VcdEntries::load_file()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00149">check_vcd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdparser_8cc_source.html#l00186">check_vcd()</a>.</p>
 
 </div>
 </div>

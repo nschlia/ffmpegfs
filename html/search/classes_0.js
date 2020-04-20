@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['audio_5fsettings',['AUDIO_SETTINGS',['../structAUDIO__SETTINGS.html',1,'']]]
+  ['_5ftagcacheinfo',['_tagCACHEINFO',['../structBuffer_1_1__tagCACHEINFO.html',1,'Buffer']]]
 ];

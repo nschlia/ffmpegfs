@@ -19,6 +19,7 @@ var searchData=
   ['ffmpegfs_5freadlink',['ffmpegfs_readlink',['../fuseops_8cc.html#aa62555502b0803b643078ab86ba4202e',1,'fuseops.cc']]],
   ['ffmpegfs_5frelease',['ffmpegfs_release',['../fuseops_8cc.html#a3b6a5a4b01296278169ca568d5875cf8',1,'fuseops.cc']]],
   ['ffmpegfs_5fstatfs',['ffmpegfs_statfs',['../fuseops_8cc.html#aaea4779d4bb43472f16f47d7376a6e40',1,'fuseops.cc']]],
+  ['file_5fexists',['file_exists',['../ffmpeg__utils_8cc.html#acde73c899ec0618eeb8ae54b0a823f39',1,'file_exists(const std::string &amp;filename):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#acde73c899ec0618eeb8ae54b0a823f39',1,'file_exists(const std::string &amp;filename):&#160;ffmpeg_utils.cc']]],
   ['fileext',['fileext',['../classFFmpegfs__Format.html#ae1e9d3dce7ba04f880bcbdbcdf57c60b',1,'FFmpegfs_Format']]],
   ['fileio',['FileIO',['../classFileIO.html#a8b0d602c3461181e12c05f655dea5018',1,'FileIO']]],
   ['filename',['filename',['../classCache__Entry.html#ac8f3f17ee3010f75b223bb17d96d1c68',1,'Cache_Entry::filename()'],['../classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b',1,'FFmpeg_Base::filename()'],['../classFFmpeg__Transcoder.html#a7f26856440e06fbcec3bd208b8067bfc',1,'FFmpeg_Transcoder::filename()'],['../classFileIO.html#afcea64fae124756c68302ed355cc457f',1,'FileIO::filename()']]],
@@ -28,7 +29,9 @@ var searchData=
   ['find_5foriginal',['find_original',['../ffmpegfs_8h.html#a91259ded64f438cd678908b2c9061f65',1,'find_original(const std::string &amp;origpath):&#160;fuseops.cc'],['../ffmpegfs_8h.html#a7ad0a9782c3231049be5c9c9b22542a7',1,'find_original(std::string *filepath):&#160;fuseops.cc'],['../fuseops_8cc.html#a91259ded64f438cd678908b2c9061f65',1,'find_original(const std::string &amp;origpath):&#160;fuseops.cc'],['../fuseops_8cc.html#a7ad0a9782c3231049be5c9c9b22542a7',1,'find_original(std::string *filepath):&#160;fuseops.cc']]],
   ['find_5fparent',['find_parent',['../ffmpegfs_8h.html#a1169e3490bc783aed6623f74d1fba031',1,'find_parent(const std::string &amp;origpath):&#160;fuseops.cc'],['../fuseops_8cc.html#a1169e3490bc783aed6623f74d1fba031',1,'find_parent(const std::string &amp;origpath):&#160;fuseops.cc']]],
   ['find_5fprefix',['find_prefix',['../fuseops_8cc.html#a1057742433528c8fbe84339f316becbe',1,'fuseops.cc']]],
+  ['finished_5fsegment',['finished_segment',['../classBuffer.html#a3fab95e5034961d75f12cdc861337972',1,'Buffer']]],
   ['flush',['flush',['../classBuffer.html#a959151baf1ef09510d9e535844776690',1,'Buffer::flush()'],['../classCache__Entry.html#aaaf63a6308f12ead38b698e0be1f711c',1,'Cache_Entry::flush()']]],
+  ['flush_5fbuffers',['flush_buffers',['../classFFmpeg__Transcoder.html#a5b06bec039629fa6a2333ce2185b592d',1,'FFmpeg_Transcoder']]],
   ['flush_5fframes_5fall',['flush_frames_all',['../classFFmpeg__Transcoder.html#a0f90d7ec4715b359d5b666f5ab4b23b7',1,'FFmpeg_Transcoder']]],
   ['flush_5fframes_5fsingle',['flush_frames_single',['../classFFmpeg__Transcoder.html#ab9887b1d045884e2e822c5d1c3432e8d',1,'FFmpeg_Transcoder']]],
   ['format',['format',['../classLogging.html#a40fe836d9d3c27436f7a454a47973843',1,'Logging']]],
@@ -43,5 +46,6 @@ var searchData=
   ['format_5fsize',['format_size',['../ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71',1,'format_size(uint64_t value):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#ad417af55b0608ec2aa3efc36db9aca71',1,'format_size(uint64_t value):&#160;ffmpeg_utils.cc']]],
   ['format_5fsize_5fex',['format_size_ex',['../ffmpeg__utils_8cc.html#ae44ca86c19b9f7ca4b8aafb5f48252d1',1,'format_size_ex(uint64_t value):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#ae44ca86c19b9f7ca4b8aafb5f48252d1',1,'format_size_ex(uint64_t value):&#160;ffmpeg_utils.cc']]],
   ['format_5ftime',['format_time',['../ffmpeg__utils_8cc.html#a875d699aa7bd5502a777ac266967f660',1,'format_time(time_t value):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a875d699aa7bd5502a777ac266967f660',1,'format_time(time_t value):&#160;ffmpeg_utils.cc']]],
+  ['frame_5fto_5fpts',['frame_to_pts',['../classFFmpeg__Base.html#a4ec28fc43906be244bfd16b19202bcec',1,'FFmpeg_Base']]],
   ['free_5ffilters',['free_filters',['../classFFmpeg__Transcoder.html#aa0feb18e287c35ad3ffa184f727bdd67',1,'FFmpeg_Transcoder']]]
 ];

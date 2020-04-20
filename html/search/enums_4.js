@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['seekres',['SEEKRES',['../classVcdEntries.html#ac7683310baea553a144f280b024dcba9',1,'VcdEntries']]]
+  ['recodesame',['RECODESAME',['../ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aa',1,'ffmpeg_utils.h']]],
+  ['resultcode',['RESULTCODE',['../cache_8h.html#a4a32a646521d02ddc7897ffabe261429',1,'cache.h']]]
 ];

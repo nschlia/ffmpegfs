@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -61,6 +61,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structVIRTUALFILE-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -95,12 +96,22 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extra value structure for Video CDs.  <a href="structVIRTUALFILE_1_1VCD__CHAPTER.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:acafb54e5e1d87feeb3386b30a39ee23a"><td class="memItemLeft" align="right" valign="top"><a id="acafb54e5e1d87feeb3386b30a39ee23a"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>get_segment_count</b> () const</td></tr>
+<tr class="separator:acafb54e5e1d87feeb3386b30a39ee23a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a27038be2501f0f2a535748179cf90ec0"><td class="memItemLeft" align="right" valign="top"><a id="a27038be2501f0f2a535748179cf90ec0"></a>
 <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#a27038be2501f0f2a535748179cf90ec0">m_type</a></td></tr>
 <tr class="memdesc:a27038be2501f0f2a535748179cf90ec0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of this virtual file. <br /></td></tr>
 <tr class="separator:a27038be2501f0f2a535748179cf90ec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a374d9f510dc631fa5f1209b612549112"><td class="memItemLeft" align="right" valign="top"><a id="a374d9f510dc631fa5f1209b612549112"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#a374d9f510dc631fa5f1209b612549112">m_flags</a></td></tr>
+<tr class="memdesc:a374d9f510dc631fa5f1209b612549112"><td class="mdescLeft">&#160;</td><td class="mdescRight">One of the VIRTUALFLAG_* flags. <br /></td></tr>
+<tr class="separator:a374d9f510dc631fa5f1209b612549112"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a495a4e63d94f387107df875e8652c9fc"><td class="memItemLeft" align="right" valign="top"><a id="a495a4e63d94f387107df875e8652c9fc"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#a495a4e63d94f387107df875e8652c9fc">m_format_idx</a></td></tr>
 <tr class="memdesc:a495a4e63d94f387107df875e8652c9fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index into params.format[] array. <br /></td></tr>
@@ -121,6 +132,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a></td></tr>
 <tr class="memdesc:afd8b2f75b21fafbdd6d593a3723343a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Track/chapter duration, in AV_TIME_BASE fractional seconds. <br /></td></tr>
 <tr class="separator:afd8b2f75b21fafbdd6d593a3723343a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a268782e2bf4d90052dde498c63128f9e"><td class="memItemLeft" align="right" valign="top"><a id="a268782e2bf4d90052dde498c63128f9e"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a></td></tr>
+<tr class="memdesc:a268782e2bf4d90052dde498c63128f9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use this as the size instead of computing it over and over. <br /></td></tr>
+<tr class="separator:a268782e2bf4d90052dde498c63128f9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace2529c71e1d1422aa932fcdfe3a3d4f"><td class="memItemLeft" align="right" valign="top"><a id="ace2529c71e1d1422aa932fcdfe3a3d4f"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">m_video_frame_count</a></td></tr>
+<tr class="memdesc:ace2529c71e1d1422aa932fcdfe3a3d4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of frames in video or 0 if not a video. <br /></td></tr>
+<tr class="separator:ace2529c71e1d1422aa932fcdfe3a3d4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c068af6e52951d29c6c1de04dbd1042"><td class="memItemLeft" align="right" valign="top"><a id="a9c068af6e52951d29c6c1de04dbd1042"></a>
 std::vector&lt; char &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html#a9c068af6e52951d29c6c1de04dbd1042">m_file_contents</a></td></tr>
 <tr class="memdesc:a9c068af6e52951d29c6c1de04dbd1042"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class. ">Buffer</a> for virtual files. <br /></td></tr>
@@ -141,9 +160,10 @@ struct <a class="el" href="structVIRTUALFILE_1_1BLURAY__CHAPTER.html">VIRTUALFIL
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Virtual file definition. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00071">71</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00117">117</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+</div><hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/<a class="el" href="fileio_8h_source.html">fileio.h</a></li>
+<li>src/<a class="el" href="fileio_8cc_source.html">fileio.cc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

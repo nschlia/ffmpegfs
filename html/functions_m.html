@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -145,8 +145,24 @@ $(function() {
 : <a class="el" href="structVIRTUALFILE.html#a9e64065a093280e7d66810be6b1532f9">VIRTUALFILE</a>
 </li>
 <li>m_buffer
-: <a class="el" href="classCache__Entry.html#a228611d5d40f20416096f6e3e966fdcf">Cache_Entry</a>
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a4e8653a986a2132c56c912b819efb8b6">Buffer::_tagCACHEINFO</a>
+, <a class="el" href="classCache__Entry.html#a228611d5d40f20416096f6e3e966fdcf">Cache_Entry</a>
 , <a class="el" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">DvdIO</a>
+</li>
+<li>m_buffer_idx
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a905a4f910119f1982c64ebbc8193e407">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_buffer_pos
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#ae69cc3e97840bec695f6ee41ca804b2f">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_buffer_size
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a9a64de58b6d7a9ffc06b3ce88b92e2ff">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_buffer_size_idx
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a8c63452fc437d003fcea00307142ff05">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_buffer_watermark
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#adcc410f543bdb632b6f6a306389342bb">Buffer::_tagCACHEINFO</a>
 </li>
 <li>m_byte_rate
 : <a class="el" href="structWAV__HEADER.html#a89a798cdc7e757bafce4281fadab49c1">WAV_HEADER</a>
@@ -156,6 +172,12 @@ $(function() {
 </li>
 <li>m_cache_maintenance
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a0cacaec0a641bea45bd9485559935143">FFMPEGFS_PARAMS</a>
+</li>
+<li>m_cachefile
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#aa7647509ecd1e7ea9438960eece03a8e">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_cachefile_idx
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#ae76e64251681cfdb28085508d37b9b7b">Buffer::_tagCACHEINFO</a>
 </li>
 <li>m_cachepath
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a7c4f20d60dc983136521011565deb2bc">FFMPEGFS_PARAMS</a>
@@ -251,6 +273,7 @@ $(function() {
 </li>
 <li>m_duration
 : <a class="el" href="classBlurayIO.html#a34be6f6e276f4f59eef2029234ee2af0">BlurayIO</a>
+, <a class="el" href="structCACHE__INFO.html#a405fff6739792687e4119a3679d01077">CACHE_INFO</a>
 , <a class="el" href="classDvdIO.html#a64ec04044d0be4c68a0d513043de34be">DvdIO</a>
 , <a class="el" href="classVcdChapter.html#a31e03a6d11ce4ce70fe9895c302bd4c0">VcdChapter</a>
 , <a class="el" href="classVcdEntries.html#ac4f2d5521cc2ed040d6d999f9eb77810">VcdEntries</a>
@@ -289,6 +312,12 @@ $(function() {
 <li>m_expiry_time
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a32792bcfcc0aec0d522e518333d5d17a">FFMPEGFS_PARAMS</a>
 </li>
+<li>m_fd
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a26a5fae38aed6620fd782bd0ea2003c4">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_fd_idx
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#ad6adf9993f0edd66bf8c5203a35e0c72">Buffer::_tagCACHEINFO</a>
+</li>
 <li>m_file_contents
 : <a class="el" href="structVIRTUALFILE.html#a9c068af6e52951d29c6c1de04dbd1042">VIRTUALFILE</a>
 </li>
@@ -314,10 +343,12 @@ $(function() {
 , <a class="el" href="classFFmpegfs__Format.html#abedc64f43e4d3aaaa83572a84385257d">FFmpegfs_Format</a>
 </li>
 <li>m_finished
-: <a class="el" href="structCACHE__INFO.html#ab12b80e8065636e4fef46578dc02aaeb">CACHE_INFO</a>
+: <a class="el" href="structCACHE__INFO.html#a73fe78d0b7a07c43715a6effea1541a8">CACHE_INFO</a>
 </li>
 <li>m_flags
-: <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html#a31a96e751af621792dfc7eee7d541d6e">FFmpeg_Profiles::PROFILE_OPTION</a>
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#ab51e35240d51b8335d997f022476a7a6">Buffer::_tagCACHEINFO</a>
+, <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html#a31a96e751af621792dfc7eee7d541d6e">FFmpeg_Profiles::PROFILE_OPTION</a>
+, <a class="el" href="structVIRTUALFILE.html#a374d9f510dc631fa5f1209b612549112">VIRTUALFILE</a>
 </li>
 <li>m_fmt_chunk_size
 : <a class="el" href="structWAV__HEADER.html#ada96e32ef909ac51a60ff661b31a2b66">WAV_HEADER</a>
@@ -345,6 +376,9 @@ $(function() {
 : <a class="el" href="classVcdChapter.html#abe5d426b930b6c0b07e9405037773505">VcdChapter</a>
 , <a class="el" href="structVCDMSF.html#a871ef49607f59cd5b99d9c694ae991fe">VCDMSF</a>
 </li>
+<li>m_frame_no
+: <a class="el" href="structIMAGE__FRAME.html#a522ade92bd9c0860976049454c3b3c77">IMAGE_FRAME</a>
+</li>
 <li>m_framerate
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#ae6894761a64a7ec1d4c969c9173134f6">FFmpeg_Transcoder::PRORES_BITRATE</a>
 , <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html#ae490046dd49e79c5df9520b5e8459042">FFmpeg_Transcoder::PRORES_BITRATE::PRORES_FRAMERATE</a>
@@ -365,17 +399,17 @@ $(function() {
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#ab3d6b36fc5c3fb6f3f77c36ab38e7064">FFmpeg_Transcoder::PRORES_BITRATE</a>
 , <a class="el" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">VIDEO_SETTINGS</a>
 </li>
-<li>m_id
-: <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
-</li>
 <li>m_ID
 : <a class="el" href="structVCDENTRIES.html#ab8ea131b127ca18d6c56a47f9378b84c">VCDENTRIES</a>
 </li>
 <li>m_id
-: <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
+: <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
 </li>
 <li>m_ID
 : <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
+</li>
+<li>m_id
+: <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_id3v1
 : <a class="el" href="classCache__Entry.html#aa33524817fcebc9a0daca7864d1863ab">Cache_Entry</a>
@@ -484,6 +518,9 @@ $(function() {
 <li>m_numberof_cds
 : <a class="el" href="structVCDINFO.html#abb48ae32876d051932f06a74595302fc">VCDINFO</a>
 </li>
+<li>m_offset
+: <a class="el" href="structIMAGE__FRAME.html#a166c08177cd10feba5cf71ae6663ba48">IMAGE_FRAME</a>
+</li>
 <li>m_oldnamescheme
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a301db9d4e3b378380316767d4ba2d588">FFMPEGFS_PARAMS</a>
 </li>
@@ -518,6 +555,9 @@ $(function() {
 <li>m_predicted_filesize
 : <a class="el" href="structCACHE__INFO.html#a72723231c5cba6080d8637fb3d2869a6">CACHE_INFO</a>
 </li>
+<li>m_predicted_size
+: <a class="el" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">VIRTUALFILE</a>
+</li>
 <li>m_profile
 : <a class="el" href="classFFmpeg__Profiles.html#a6eb164df3aa9510cf0e3eaa726662422">FFmpeg_Profiles</a>
 , <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html#ad8bb501bbc83b07312c3d3396b94f735">FFmpeg_Profiles::PROFILE_LIST</a>
@@ -541,8 +581,14 @@ $(function() {
 <li>m_queue_shutdown
 : <a class="el" href="classthread__pool.html#a881826551bd22cdae5ef5ce50e0d0925">thread_pool</a>
 </li>
+<li>m_recodesame
+: <a class="el" href="structFFMPEGFS__PARAMS.html#a80f64efc71f09038dc18f84e49fb0bf4">FFMPEGFS_PARAMS</a>
+</li>
 <li>m_ref_count
 : <a class="el" href="classCache__Entry.html#ac15f85be9dd3a2315d405103c0e9bbd4">Cache_Entry</a>
+</li>
+<li>m_reserved
+: <a class="el" href="structIMAGE__FRAME.html#ac40ed49fc9ad1bf029c489ae3b5ee2eb">IMAGE_FRAME</a>
 </li>
 <li>m_rest_pos
 : <a class="el" href="classBlurayIO.html#a24d64d4d83b31b791b055fc130591907">BlurayIO</a>
@@ -572,8 +618,21 @@ $(function() {
 : <a class="el" href="classVcdChapter.html#a95b1296dab7d6a75334c48722dd88bcc">VcdChapter</a>
 , <a class="el" href="structVCDMSF.html#ab3b6e318911e1a7d8b2e401655d2ba94">VCDMSF</a>
 </li>
+<li>m_seek_to_no
+: <a class="el" href="classCache__Entry.html#aaef2c5d25969f4f7306b76c0ca2d8f14">Cache_Entry</a>
+</li>
+<li>m_seg_finished
+: <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#a548147d135603dcb611a1d6ad2313d22">Buffer::_tagCACHEINFO</a>
+</li>
+<li>m_segment_count
+: <a class="el" href="structCACHE__INFO.html#a47e04a80c9f42a3f3ed21e10c8fe4466">CACHE_INFO</a>
+</li>
+<li>m_segment_duration
+: <a class="el" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">FFMPEGFS_PARAMS</a>
+</li>
 <li>m_size
 : <a class="el" href="classDvdIO.html#a32bca4435a3b022a79e500658e93233f">DvdIO</a>
+, <a class="el" href="structIMAGE__FRAME.html#a1e99227c26eb31fa79f7b5066bccef96">IMAGE_FRAME</a>
 </li>
 <li>m_st
 : <a class="el" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">VIRTUALFILE</a>
@@ -595,6 +654,7 @@ $(function() {
 </li>
 <li>m_tag
 : <a class="el" href="structID3v1.html#a2ade75ad0b6418e1410085b85f627a48">ID3v1</a>
+, <a class="el" href="structIMAGE__FRAME.html#a524de909fb415a41c2966a77fb530683">IMAGE_FRAME</a>
 </li>
 <li>m_thread_pool
 : <a class="el" href="classthread__pool.html#a9f862a5bbdf2d5ebad2976dac59f7061">thread_pool</a>
@@ -624,8 +684,8 @@ $(function() {
 : <a class="el" href="classLogging.html#afe8ac8d94de71eecf43214b1380b32c0">Logging</a>
 </li>
 <li>m_track_no
-: <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
-, <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
+: <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
+, <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
 , <a class="el" href="classVcdIO.html#a75035ab02e01021aaa322f8e523f3c2e">VcdIO</a>
 , <a class="el" href="structVIRTUALFILE_1_1VCD__CHAPTER.html#ae6f9b5b821d631cfc547cec1f0134a5f">VIRTUALFILE::VCD_CHAPTER</a>
 </li>
@@ -650,6 +710,13 @@ $(function() {
 </li>
 <li>m_video_codec_id
 : <a class="el" href="classFFmpegfs__Format.html#a66001ab95bc56fe96abf1b583c43d057">FFmpegfs_Format</a>
+</li>
+<li>m_video_frame_count
+: <a class="el" href="structCACHE__INFO.html#a04de9113f5377b2b286a3815c728c751">CACHE_INFO</a>
+, <a class="el" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">VIRTUALFILE</a>
+</li>
+<li>m_video_pts
+: <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a19ff8c025fd24f6f0b123720b90a16e2">FFmpeg_Transcoder::OUTPUTFILE</a>
 </li>
 <li>m_videobitrate
 : <a class="el" href="structCACHE__INFO.html#ae35203df2812763dd6111c07e99ca2cf">CACHE_INFO</a>
@@ -693,7 +760,7 @@ $(function() {
 : <a class="el" href="classCache.html#a4485e186305c0d1057b3f5a0351361b1">Cache</a>
 </li>
 <li>make_cachefile_name()
-: <a class="el" href="classBuffer.html#ab5abb5faec3060698d4ed2309ae8e268">Buffer</a>
+: <a class="el" href="classBuffer.html#a53adb0d9d3cd9c426d4384e46c116a08">Buffer</a>
 </li>
 <li>mtime()
 : <a class="el" href="classFFmpeg__Transcoder.html#ac390e42bd912f1579fc27b33495f2f08">FFmpeg_Transcoder</a>

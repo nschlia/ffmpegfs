@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -65,6 +65,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
@@ -77,6 +78,8 @@ $(function() {
 <div class="textblock"><code>#include &lt;sys/stat.h&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;map&gt;</code><br />
+<code>#include &lt;libavutil/avutil.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for fileio.h:</div>
 <div class="dyncontent">
@@ -89,36 +92,36 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="fileio_8h__dep__incl.png" border="0" usemap="#src_2fileio_8hdep" alt=""/></div>
 <map name="src_2fileio_8hdep" id="src_2fileio_8hdep">
-<area shape="rect" id="node2" href="blurayio_8h.html" title="Bluray I/O. " alt="" coords="613,80,713,107"/>
-<area shape="rect" id="node4" href="fileio_8cc.html" title="FileIO class implementation. " alt="" coords="377,155,467,181"/>
-<area shape="rect" id="node5" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="1318,80,1425,107"/>
-<area shape="rect" id="node7" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="2255,155,2367,181"/>
-<area shape="rect" id="node20" href="ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="1095,155,1258,181"/>
-<area shape="rect" id="node26" href="buffer_8h.html" title="Buffer class. " alt="" coords="295,80,383,107"/>
-<area shape="rect" id="node29" href="diskio_8h.html" title="Direct disk I/O. " alt="" coords="740,80,829,107"/>
-<area shape="rect" id="node30" href="dvdio_8h.html" title="DVD I/O. " alt="" coords="853,80,940,107"/>
-<area shape="rect" id="node31" href="vcdio_8h.html" title="Video CD and Super Video CD I/O. " alt="" coords="964,80,1051,107"/>
-<area shape="rect" id="node3" href="blurayio_8cc.html" title="BlurayIO class implementation. " alt="" coords="610,155,717,181"/>
-<area shape="rect" id="node6" href="blurayparser_8cc.html" title="Bluray disk parser implementation. " alt="" coords="1837,229,1970,256"/>
-<area shape="rect" id="node8" href="dvdparser_8cc.html" title="dvdparser class implementation " alt="" coords="2047,229,2165,256"/>
-<area shape="rect" id="node12" href="transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="833,304,952,331"/>
-<area shape="rect" id="node13" href="vcdparser_8cc.html" title="Video/Super Video CD parser implementation. " alt="" coords="1591,229,1709,256"/>
-<area shape="rect" id="node14" href="buffer_8cc.html" title="Buffer class implementation. " alt="" coords="491,155,585,181"/>
-<area shape="rect" id="node15" href="cache_8cc.html" title="Cache class implementation. " alt="" coords="37,304,135,331"/>
-<area shape="rect" id="node16" href="cache__entry_8cc.html" title="Cache_Entry class implementation. " alt="" coords="171,304,305,331"/>
-<area shape="rect" id="node17" href="cache__maintenance_8cc.html" title="Cache maintenance implementation " alt="" coords="1535,155,1714,181"/>
-<area shape="rect" id="node18" href="diskio_8cc.html" title="DiskIO class implementation. " alt="" coords="741,155,837,181"/>
-<area shape="rect" id="node19" href="dvdio_8cc.html" title="DvdIO class implementation. " alt="" coords="861,155,954,181"/>
-<area shape="rect" id="node22" href="ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation. " alt="" coords="1738,155,1871,181"/>
-<area shape="rect" id="node23" href="ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation. " alt="" coords="1896,155,2009,181"/>
-<area shape="rect" id="node24" href="vcdentries_8cc.html" title="S/VCD VcdEntries class implementation. " alt="" coords="2034,155,2181,181"/>
-<area shape="rect" id="node25" href="vcdio_8cc.html" title="VcdIO class implementation. " alt="" coords="978,155,1071,181"/>
-<area shape="rect" id="node9" href="ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation. " alt="" coords="2189,229,2327,256"/>
-<area shape="rect" id="node10" href="ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="1087,229,1258,256"/>
-<area shape="rect" id="node11" href="fuseops_8cc.html" title="Fuse operations implementation. " alt="" coords="2403,229,2511,256"/>
-<area shape="rect" id="node21" href="ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations. " alt="" coords="912,229,1063,256"/>
-<area shape="rect" id="node27" href="cache_8h.html" title="Data cache management. " alt="" coords="75,155,166,181"/>
-<area shape="rect" id="node28" href="cache__entry_8h.html" title="Cache entry " alt="" coords="23,229,149,256"/>
+<area shape="rect" id="node2" href="blurayio_8h.html" title="Bluray I/O. " alt="" coords="523,80,623,107"/>
+<area shape="rect" id="node4" href="fileio_8cc.html" title="FileIO class implementation. " alt="" coords="405,155,495,181"/>
+<area shape="rect" id="node5" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="1142,80,1249,107"/>
+<area shape="rect" id="node7" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="2165,155,2277,181"/>
+<area shape="rect" id="node20" href="ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="1826,155,1989,181"/>
+<area shape="rect" id="node26" href="buffer_8h.html" title="Buffer class. " alt="" coords="179,80,267,107"/>
+<area shape="rect" id="node29" href="diskio_8h.html" title="Direct disk I/O. " alt="" coords="649,80,739,107"/>
+<area shape="rect" id="node30" href="dvdio_8h.html" title="DVD I/O. " alt="" coords="763,80,849,107"/>
+<area shape="rect" id="node31" href="vcdio_8h.html" title="Video CD and Super Video CD I/O. " alt="" coords="873,80,960,107"/>
+<area shape="rect" id="node3" href="blurayio_8cc.html" title="BlurayIO class implementation. " alt="" coords="519,155,626,181"/>
+<area shape="rect" id="node6" href="blurayparser_8cc.html" title="Bluray disk parser implementation. " alt="" coords="2049,229,2182,256"/>
+<area shape="rect" id="node8" href="dvdparser_8cc.html" title="dvdparser class implementation " alt="" coords="2207,229,2325,256"/>
+<area shape="rect" id="node12" href="transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="749,304,868,331"/>
+<area shape="rect" id="node13" href="vcdparser_8cc.html" title="Video/Super Video CD parser implementation. " alt="" coords="1905,229,2024,256"/>
+<area shape="rect" id="node14" href="buffer_8cc.html" title="Buffer class implementation. " alt="" coords="287,155,381,181"/>
+<area shape="rect" id="node15" href="cache_8cc.html" title="Cache class implementation. " alt="" coords="625,304,723,331"/>
+<area shape="rect" id="node16" href="cache__entry_8cc.html" title="Cache_Entry class implementation. " alt="" coords="331,304,465,331"/>
+<area shape="rect" id="node17" href="cache__maintenance_8cc.html" title="Cache maintenance implementation " alt="" coords="1106,155,1285,181"/>
+<area shape="rect" id="node18" href="diskio_8cc.html" title="DiskIO class implementation. " alt="" coords="650,155,746,181"/>
+<area shape="rect" id="node19" href="dvdio_8cc.html" title="DvdIO class implementation. " alt="" coords="770,155,863,181"/>
+<area shape="rect" id="node22" href="ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation. " alt="" coords="1309,155,1442,181"/>
+<area shape="rect" id="node23" href="ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation. " alt="" coords="1467,155,1580,181"/>
+<area shape="rect" id="node24" href="vcdentries_8cc.html" title="S/VCD VcdEntries class implementation. " alt="" coords="1605,155,1751,181"/>
+<area shape="rect" id="node25" href="vcdio_8cc.html" title="VcdIO class implementation. " alt="" coords="887,155,981,181"/>
+<area shape="rect" id="node9" href="ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation. " alt="" coords="2452,229,2589,256"/>
+<area shape="rect" id="node10" href="ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="1483,229,1654,256"/>
+<area shape="rect" id="node11" href="fuseops_8cc.html" title="Fuse operations implementation. " alt="" coords="493,304,601,331"/>
+<area shape="rect" id="node21" href="ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations. " alt="" coords="1679,229,1829,256"/>
+<area shape="rect" id="node27" href="cache_8h.html" title="Data cache management. " alt="" coords="70,155,161,181"/>
+<area shape="rect" id="node28" href="cache__entry_8h.html" title="Cache entry " alt="" coords="487,229,613,256"/>
 </map>
 </div>
 </div>
@@ -126,6 +129,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image frame header.  <a href="structIMAGE__FRAME.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVIRTUALFILE.html">VIRTUALFILE</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual file definition.  <a href="structVIRTUALFILE.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,8 +148,50 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for I/O.  <a href="classFileIO.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ae7f271d71d1077e451a989e785860cfb"><td class="memItemLeft" align="right" valign="top"><a id="ae7f271d71d1077e451a989e785860cfb"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#ae7f271d71d1077e451a989e785860cfb">IMAGE_FRAME_TAG</a>&#160;&#160;&#160;&quot;IMGFRAME&quot;</td></tr>
+<tr class="memdesc:ae7f271d71d1077e451a989e785860cfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tag of an image frame header for the frame images buffer. <br /></td></tr>
+<tr class="separator:ae7f271d71d1077e451a989e785860cfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2033d1ee76d555f1673f6139b27d865"><td class="memItemLeft" align="right" valign="top"><a id="ab2033d1ee76d555f1673f6139b27d865"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#ab2033d1ee76d555f1673f6139b27d865">VIRTUALFLAG_NONE</a>&#160;&#160;&#160;0x00000000</td></tr>
+<tr class="memdesc:ab2033d1ee76d555f1673f6139b27d865"><td class="mdescLeft">&#160;</td><td class="mdescRight">No flags. <br /></td></tr>
+<tr class="separator:ab2033d1ee76d555f1673f6139b27d865"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8a5258d8d434cec2454891667eef64c"><td class="memItemLeft" align="right" valign="top"><a id="ae8a5258d8d434cec2454891667eef64c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#ae8a5258d8d434cec2454891667eef64c">VIRTUALFLAG_PASSTHROUGH</a>&#160;&#160;&#160;0x00000001</td></tr>
+<tr class="memdesc:ae8a5258d8d434cec2454891667eef64c"><td class="mdescLeft">&#160;</td><td class="mdescRight">passthrough file, not used <br /></td></tr>
+<tr class="separator:ae8a5258d8d434cec2454891667eef64c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab098de5210efdaca9088d1bb13b272f0"><td class="memItemLeft" align="right" valign="top"><a id="ab098de5210efdaca9088d1bb13b272f0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#ab098de5210efdaca9088d1bb13b272f0">VIRTUALFLAG_DIRECTORY</a>&#160;&#160;&#160;0x00000002</td></tr>
+<tr class="memdesc:ab098de5210efdaca9088d1bb13b272f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">File is a virtual directory. <br /></td></tr>
+<tr class="separator:ab098de5210efdaca9088d1bb13b272f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f831d0e93ca388ff62190b7bd73495c"><td class="memItemLeft" align="right" valign="top"><a id="a9f831d0e93ca388ff62190b7bd73495c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#a9f831d0e93ca388ff62190b7bd73495c">VIRTUALFLAG_FILESET</a>&#160;&#160;&#160;0x00000004</td></tr>
+<tr class="memdesc:a9f831d0e93ca388ff62190b7bd73495c"><td class="mdescLeft">&#160;</td><td class="mdescRight">File is file set (images, HLS) <br /></td></tr>
+<tr class="separator:a9f831d0e93ca388ff62190b7bd73495c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7b51e62702c3941c14ea2d215d1872a"><td class="memItemLeft" align="right" valign="top"><a id="ac7b51e62702c3941c14ea2d215d1872a"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#ac7b51e62702c3941c14ea2d215d1872a">VIRTUALFLAG_FRAME</a>&#160;&#160;&#160;0x00000008</td></tr>
+<tr class="memdesc:ac7b51e62702c3941c14ea2d215d1872a"><td class="mdescLeft">&#160;</td><td class="mdescRight">File is part of a set of frames. <br /></td></tr>
+<tr class="separator:ac7b51e62702c3941c14ea2d215d1872a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf83b39a56394c5c7e16e51cd9d43441"><td class="memItemLeft" align="right" valign="top"><a id="aaf83b39a56394c5c7e16e51cd9d43441"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#aaf83b39a56394c5c7e16e51cd9d43441">VIRTUALFLAG_HLS</a>&#160;&#160;&#160;0x00000010</td></tr>
+<tr class="memdesc:aaf83b39a56394c5c7e16e51cd9d43441"><td class="mdescLeft">&#160;</td><td class="mdescRight">File is part of a set of HLS transport stream (ts) files. <br /></td></tr>
+<tr class="separator:aaf83b39a56394c5c7e16e51cd9d43441"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:aa67e895e3ea1da3cdfa543ce939e0e5c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#aa67e895e3ea1da3cdfa543ce939e0e5c">IMAGE_FRAME</a></td></tr>
+<tr class="memdesc:aa67e895e3ea1da3cdfa543ce939e0e5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image frame header.  <a href="#aa67e895e3ea1da3cdfa543ce939e0e5c">More...</a><br /></td></tr>
+<tr class="separator:aa67e895e3ea1da3cdfa543ce939e0e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bc54f843b008c314922d618a321af62"><td class="memItemLeft" align="right" valign="top"><a id="a8bc54f843b008c314922d618a321af62"></a>
+typedef <a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a> const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#a8bc54f843b008c314922d618a321af62">LPCIMAGE_FRAME</a></td></tr>
+<tr class="memdesc:a8bc54f843b008c314922d618a321af62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer version of <a class="el" href="structIMAGE__FRAME.html" title="Image frame header. ">IMAGE_FRAME</a>. <br /></td></tr>
+<tr class="separator:a8bc54f843b008c314922d618a321af62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54494119c681bdb19fa78a86bf38b487"><td class="memItemLeft" align="right" valign="top"><a id="a54494119c681bdb19fa78a86bf38b487"></a>
+typedef <a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#a54494119c681bdb19fa78a86bf38b487">LPIMAGE_FRAME</a></td></tr>
+<tr class="memdesc:a54494119c681bdb19fa78a86bf38b487"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to const version of <a class="el" href="structIMAGE__FRAME.html" title="Image frame header. ">IMAGE_FRAME</a>. <br /></td></tr>
+<tr class="separator:a54494119c681bdb19fa78a86bf38b487"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2003e6a527b6604a62ef0ee1b8dca293"><td class="memItemLeft" align="right" valign="top"><a id="a2003e6a527b6604a62ef0ee1b8dca293"></a>
 typedef enum <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#a2003e6a527b6604a62ef0ee1b8dca293">VIRTUALTYPE</a></td></tr>
 <tr class="memdesc:a2003e6a527b6604a62ef0ee1b8dca293"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual file types enum. <br /></td></tr>
@@ -172,12 +220,13 @@ typedef <a class="el" href="structVIRTUALFILE.html">VIRTUALFILE</a> *&#160;</td>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a1199d38534b11312b0210e527499a805"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> { <br />
-&#160;&#160;<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>, 
+&#160;&#160;<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a250e69c432372f302ea23088ed64a393">VIRTUALTYPE_PASSTHROUGH</a>, 
+<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>, 
 <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805ac40d6714b4ab94f0c1ae259bd0bb6585">VIRTUALTYPE_SCRIPT</a>, 
 <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a216ce6e555d22eba5b793f3b7fe9081d">VIRTUALTYPE_VCD</a>, 
-<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, 
 <br />
-&#160;&#160;<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805aced62b04e062f8e282ba110fcd117547">VIRTUALTYPE_BLURAY</a>, 
+&#160;&#160;<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, 
+<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805aced62b04e062f8e282ba110fcd117547">VIRTUALTYPE_BLURAY</a>, 
 <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a77f7782177bb9c59031e5ce8e4d4b1ae">VIRTUALTYPE_BUFFER</a>
 <br />
  }<tr class="memdesc:a1199d38534b11312b0210e527499a805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual file types enum.  <a href="fileio_8h.html#a1199d38534b11312b0210e527499a805">More...</a><br /></td></tr>
@@ -191,7 +240,25 @@ Enumerations</h2></td></tr>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="aa67e895e3ea1da3cdfa543ce939e0e5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa67e895e3ea1da3cdfa543ce939e0e5c">&#9670;&nbsp;</a></span>IMAGE_FRAME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a>  <a class="el" href="structIMAGE__FRAME.html">IMAGE_FRAME</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Image frame header. </p>
+<p>This image frame header will always start at a 8K boundary of the cache. It can be used to find the next image by seeking a 8K block starting with tag. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a1199d38534b11312b0210e527499a805"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1199d38534b11312b0210e527499a805">&#9670;&nbsp;</a></span>VIRTUALTYPE</h2>
 
@@ -206,7 +273,9 @@ Enumerations</h2></td></tr>
 
 <p>Virtual file types enum. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8"></a>VIRTUALTYPE_DISK&#160;</td><td class="fielddoc"><p>Regular disk file to transcode. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1199d38534b11312b0210e527499a805a250e69c432372f302ea23088ed64a393"></a>VIRTUALTYPE_PASSTHROUGH&#160;</td><td class="fielddoc"><p>passthrough file, not used </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8"></a>VIRTUALTYPE_DISK&#160;</td><td class="fielddoc"><p>Regular disk file to transcode. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a1199d38534b11312b0210e527499a805ac40d6714b4ab94f0c1ae259bd0bb6585"></a>VIRTUALTYPE_SCRIPT&#160;</td><td class="fielddoc"><p>Virtual script. </p>
 </td></tr>
@@ -220,7 +289,7 @@ Enumerations</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00050">50</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00088">88</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
 </div>
 </div>

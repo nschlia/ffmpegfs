@@ -1,9 +1,9 @@
 <map id="src/blurayparser.cc" name="src/blurayparser.cc">
-<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="457,155,541,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="253,229,357,256"/>
-<area shape="rect" id="node13" href="$blurayparser_8h.html" title="Bluray disk parser. " alt="" coords="640,80,744,107"/>
-<area shape="rect" id="node14" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="525,80,616,107"/>
-<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="768,80,843,107"/>
-<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="558,229,618,256"/>
+<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="434,155,518,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="280,229,384,256"/>
+<area shape="rect" id="node15" href="$blurayparser_8h.html" title="Bluray disk parser. " alt="" coords="543,155,647,181"/>
+<area shape="rect" id="node16" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="632,80,723,107"/>
+<area shape="rect" id="node17" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="747,80,821,107"/>
+<area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class. " alt="" coords="635,229,695,256"/>
 <area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,304,128,331"/>
 </map>

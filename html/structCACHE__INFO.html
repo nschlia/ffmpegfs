@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -110,6 +110,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a35568cf89fcb5150858573a3f7f1ff71">m_deinterlace</a></td></tr>
 <tr class="memdesc:a35568cf89fcb5150858573a3f7f1ff71"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if video was deinterlaced <br /></td></tr>
 <tr class="separator:a35568cf89fcb5150858573a3f7f1ff71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405fff6739792687e4119a3679d01077"><td class="memItemLeft" align="right" valign="top"><a id="a405fff6739792687e4119a3679d01077"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a405fff6739792687e4119a3679d01077">m_duration</a></td></tr>
+<tr class="memdesc:a405fff6739792687e4119a3679d01077"><td class="mdescLeft">&#160;</td><td class="mdescRight">File duration, in AV_TIME_BASE fractional seconds. <br /></td></tr>
+<tr class="separator:a405fff6739792687e4119a3679d01077"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72723231c5cba6080d8637fb3d2869a6"><td class="memItemLeft" align="right" valign="top"><a id="a72723231c5cba6080d8637fb3d2869a6"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a72723231c5cba6080d8637fb3d2869a6">m_predicted_filesize</a></td></tr>
 <tr class="memdesc:a72723231c5cba6080d8637fb3d2869a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predicted file size. <br /></td></tr>
@@ -118,10 +122,18 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a486c0fc6d3cfaa5f2f2843a92438476d">m_encoded_filesize</a></td></tr>
 <tr class="memdesc:a486c0fc6d3cfaa5f2f2843a92438476d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Actual file size after encode. <br /></td></tr>
 <tr class="separator:a486c0fc6d3cfaa5f2f2843a92438476d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab12b80e8065636e4fef46578dc02aaeb"><td class="memItemLeft" align="right" valign="top"><a id="ab12b80e8065636e4fef46578dc02aaeb"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#ab12b80e8065636e4fef46578dc02aaeb">m_finished</a></td></tr>
-<tr class="memdesc:ab12b80e8065636e4fef46578dc02aaeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if decode has finished <br /></td></tr>
-<tr class="separator:ab12b80e8065636e4fef46578dc02aaeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04de9113f5377b2b286a3815c728c751"><td class="memItemLeft" align="right" valign="top"><a id="a04de9113f5377b2b286a3815c728c751"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a04de9113f5377b2b286a3815c728c751">m_video_frame_count</a></td></tr>
+<tr class="memdesc:a04de9113f5377b2b286a3815c728c751"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of frames in video or 0 if not a video. <br /></td></tr>
+<tr class="separator:a04de9113f5377b2b286a3815c728c751"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47e04a80c9f42a3f3ed21e10c8fe4466"><td class="memItemLeft" align="right" valign="top"><a id="a47e04a80c9f42a3f3ed21e10c8fe4466"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a47e04a80c9f42a3f3ed21e10c8fe4466">m_segment_count</a></td></tr>
+<tr class="memdesc:a47e04a80c9f42a3f3ed21e10c8fe4466"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of video segments for HLS. <br /></td></tr>
+<tr class="separator:a47e04a80c9f42a3f3ed21e10c8fe4466"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73fe78d0b7a07c43715a6effea1541a8"><td class="memItemLeft" align="right" valign="top"><a id="a73fe78d0b7a07c43715a6effea1541a8"></a>
+<a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a73fe78d0b7a07c43715a6effea1541a8">m_finished</a></td></tr>
+<tr class="memdesc:a73fe78d0b7a07c43715a6effea1541a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result code: <br /></td></tr>
+<tr class="separator:a73fe78d0b7a07c43715a6effea1541a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a615f24fe70bfaff0a6170f1acb444629"><td class="memItemLeft" align="right" valign="top"><a id="a615f24fe70bfaff0a6170f1acb444629"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCACHE__INFO.html#a615f24fe70bfaff0a6170f1acb444629">m_error</a></td></tr>
 <tr class="memdesc:a615f24fe70bfaff0a6170f1acb444629"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if encode failed <br /></td></tr>
@@ -158,7 +170,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classCache.html" title="The Cache class. ">Cache</a> information block. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00044">44</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00067">67</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="cache_8h_source.html">cache.h</a></li>
 </ul>

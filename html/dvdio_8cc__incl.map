@@ -1,8 +1,8 @@
 <map id="src/dvdio.cc" name="src/dvdio.cc">
-<area shape="rect" id="node2" href="$dvdio_8h.html" title="DVD I/O. " alt="" coords="157,80,221,107"/>
-<area shape="rect" id="node8" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="324,80,408,107"/>
-<area shape="rect" id="node11" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="419,155,523,181"/>
-<area shape="rect" id="node15" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="538,80,613,107"/>
-<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="159,155,219,181"/>
-<area shape="rect" id="node12" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="367,229,490,256"/>
+<area shape="rect" id="node2" href="$dvdio_8h.html" title="DVD I/O. " alt="" coords="191,80,255,107"/>
+<area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="353,80,437,107"/>
+<area shape="rect" id="node13" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="504,155,608,181"/>
+<area shape="rect" id="node17" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="593,80,668,107"/>
+<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class. " alt="" coords="193,155,253,181"/>
+<area shape="rect" id="node14" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="656,229,779,256"/>
 </map>

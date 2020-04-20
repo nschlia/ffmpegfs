@@ -1,9 +1,9 @@
 <map id="src/ffmpeg_transcoder.h" name="src/ffmpeg_transcoder.h">
-<area shape="rect" id="node2" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="75,80,183,107"/>
-<area shape="rect" id="node9" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="208,80,291,107"/>
-<area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="462,80,546,107"/>
-<area shape="rect" id="node13" href="$fileio_8h.html" title="FileIO class. " alt="" coords="563,155,623,181"/>
-<area shape="rect" id="node15" href="$ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="315,80,437,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="259,155,363,181"/>
+<area shape="rect" id="node2" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="382,80,490,107"/>
+<area shape="rect" id="node9" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="275,80,357,107"/>
+<area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="514,80,598,107"/>
+<area shape="rect" id="node13" href="$fileio_8h.html" title="FileIO class. " alt="" coords="615,155,675,181"/>
+<area shape="rect" id="node17" href="$ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="128,80,251,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="301,155,405,181"/>
 <area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,229,128,256"/>
 </map>

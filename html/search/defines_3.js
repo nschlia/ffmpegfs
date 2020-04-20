@@ -4,6 +4,8 @@ var searchData=
   ['cache_5fclose_5fdelete',['CACHE_CLOSE_DELETE',['../buffer_8h.html#add3a22822faa02f1d4d7191493f5243b',1,'buffer.h']]],
   ['cache_5fclose_5ffree',['CACHE_CLOSE_FREE',['../buffer_8h.html#aa20eb623074772561adeaac20bf09ce4',1,'buffer.h']]],
   ['cache_5fclose_5fnoopt',['CACHE_CLOSE_NOOPT',['../buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0',1,'buffer.h']]],
+  ['cache_5fflag_5fro',['CACHE_FLAG_RO',['../buffer_8h.html#a04884ae9d40f3e297c007bda4b91b5c7',1,'buffer.h']]],
+  ['cache_5fflag_5frw',['CACHE_FLAG_RW',['../buffer_8h.html#a77cf900d38d322f73ad266730a9be6e4',1,'buffer.h']]],
   ['clockid',['CLOCKID',['../cache__maintenance_8cc.html#a2694a39dfd1fa087ca6f9f391c91dae7',1,'cache_maintenance.cc']]],
   ['codecpar',['CODECPAR',['../ffmpeg__utils_8h.html#a523889305ba84d2fa9547782e91a464a',1,'ffmpeg_utils.h']]],
   ['colour_5fblack',['COLOUR_BLACK',['../logging_8cc.html#aa4e78168e129717e6a02803114183e90',1,'logging.cc']]],

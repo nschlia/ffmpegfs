@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -87,12 +87,12 @@ Include dependency graph for dvdparser.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="dvdparser_8cc__incl.png" border="0" usemap="#src_2dvdparser_8cc" alt=""/></div>
 <map name="src_2dvdparser_8cc" id="src_2dvdparser_8cc">
-<area shape="rect" id="node2" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="445,155,529,181"/>
-<area shape="rect" id="node5" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="236,229,340,256"/>
-<area shape="rect" id="node13" href="dvdparser_8h.html" title="DVD parser. " alt="" coords="625,229,716,256"/>
-<area shape="rect" id="node14" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="524,80,615,107"/>
-<area shape="rect" id="node15" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="689,80,764,107"/>
-<area shape="rect" id="node11" href="fileio_8h.html" title="FileIO class. " alt="" coords="541,229,601,256"/>
+<area shape="rect" id="node2" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="443,155,527,181"/>
+<area shape="rect" id="node5" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="280,229,384,256"/>
+<area shape="rect" id="node15" href="dvdparser_8h.html" title="DVD parser. " alt="" coords="552,155,643,181"/>
+<area shape="rect" id="node16" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="635,80,725,107"/>
+<area shape="rect" id="node17" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="749,80,824,107"/>
+<area shape="rect" id="node11" href="fileio_8h.html" title="FileIO class. " alt="" coords="635,229,695,256"/>
 <area shape="rect" id="node6" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,304,128,331"/>
 </map>
 </div>
@@ -248,11 +248,11 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>-errno or number or titles on DVD </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00537">537</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00570">570</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00232">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00456">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00463">load_path()</a>, <a class="el" href="dvdparser_8cc_source.html#l00412">parse_dvd()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00491">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l00498">load_path()</a>, <a class="el" href="dvdparser_8cc_source.html#l00445">parse_dvd()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00763">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00653">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01051">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00873">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
@@ -376,13 +376,13 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if successful. Returns false on error. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00244">244</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dvdparser_8cc_source.html#l00204">BCDtime()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00148">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="dvdparser_8cc_source.html#l00169">dvd_frame_rate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00212">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00754">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00795">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00873">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00405">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00124">VIRTUALFILE::DVD_CHAPTER::m_angle_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00050">AUDIO_SETTINGS::m_audio_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00051">AUDIO_SETTINGS::m_channels</a>, <a class="el" href="fileio_8h_source.html#l00123">VIRTUALFILE::DVD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00089">VIRTUALFILE::m_duration</a>, <a class="el" href="structVIRTUALFILE.html#ae7b70ef5291f502dd6115de55e3d6a84">VIRTUALFILE::m_dvd</a>, <a class="el" href="ffmpegfs_8h_source.html#l00135">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00084">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00088">VIRTUALFILE::m_full_title</a>, <a class="el" href="dvdparser_8cc_source.html#l00061">VIDEO_SETTINGS::m_height</a>, <a class="el" href="ffmpegfs_8h_source.html#l00172">FFMPEGFS_PARAMS::m_min_dvd_chapter_duration</a>, <a class="el" href="fileio_8h_source.html#l00085">VIRTUALFILE::m_origfile</a>, <a class="el" href="dvdparser_8cc_source.html#l00052">AUDIO_SETTINGS::m_sample_rate</a>, <a class="el" href="fileio_8h_source.html#l00122">VIRTUALFILE::DVD_CHAPTER::m_title_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00059">VIDEO_SETTINGS::m_video_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00060">VIDEO_SETTINGS::m_width</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01047">replace_all()</a>, <a class="el" href="transcode_8cc_source.html#l00236">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00264">transcoder_set_filesize()</a>, and <a class="el" href="fileio_8h_source.html#l00058">VIRTUALTYPE_DVD</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">append_sep()</a>, <a class="el" href="dvdparser_8cc_source.html#l00204">BCDtime()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00148">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="dvdparser_8cc_source.html#l00169">dvd_frame_rate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00249">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00811">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00852">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00930">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00264">FFmpegfs_Format::is_frameset()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00259">FFmpegfs_Format::is_multiformat()</a>, <a class="el" href="fileio_8h_source.html#l00178">VIRTUALFILE::DVD_CHAPTER::m_angle_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00050">AUDIO_SETTINGS::m_audio_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00051">AUDIO_SETTINGS::m_channels</a>, <a class="el" href="fileio_8h_source.html#l00177">VIRTUALFILE::DVD_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::m_duration</a>, <a class="el" href="structVIRTUALFILE.html#ae7b70ef5291f502dd6115de55e3d6a84">VIRTUALFILE::m_dvd</a>, <a class="el" href="ffmpegfs_8h_source.html#l00136">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00140">VIRTUALFILE::m_full_title</a>, <a class="el" href="dvdparser_8cc_source.html#l00061">VIDEO_SETTINGS::m_height</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_min_dvd_chapter_duration</a>, <a class="el" href="fileio_8h_source.html#l00137">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="dvdparser_8cc_source.html#l00052">AUDIO_SETTINGS::m_sample_rate</a>, <a class="el" href="fileio_8h_source.html#l00176">VIRTUALFILE::DVD_CHAPTER::m_title_no</a>, <a class="el" href="dvdparser_8cc_source.html#l00059">VIDEO_SETTINGS::m_video_bit_rate</a>, <a class="el" href="fileio_8h_source.html#l00143">VIRTUALFILE::m_video_frame_count</a>, <a class="el" href="dvdparser_8cc_source.html#l00060">VIDEO_SETTINGS::m_width</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01104">replace_all()</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00246">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00274">transcoder_set_filesize()</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_DIRECTORY</a>, <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_FILESET</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_FRAME</a>, <a class="el" href="fileio_8h_source.html#l00113">VIRTUALFLAG_HLS</a>, and <a class="el" href="fileio_8h_source.html#l00097">VIRTUALTYPE_DVD</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00412">parse_dvd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00445">parse_dvd()</a>.</p>
 
 </div>
 </div>
@@ -439,7 +439,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00079">79</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00412">parse_dvd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00445">parse_dvd()</a>.</p>
 
 </div>
 </div>
@@ -540,11 +540,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of chapters found. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00412">412</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dvdparser_8cc_source.html#l00445">445</a> of file <a class="el" href="dvdparser_8cc_source.html">dvdparser.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="dvdparser_8cc_source.html#l00079">dvd_find_best_audio_stream()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="dvdparser_8cc_source.html#l00050">AUDIO_SETTINGS::m_audio_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00051">AUDIO_SETTINGS::m_channels</a>, <a class="el" href="dvdparser_8cc_source.html#l00061">VIDEO_SETTINGS::m_height</a>, <a class="el" href="dvdparser_8cc_source.html#l00052">AUDIO_SETTINGS::m_sample_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00059">VIDEO_SETTINGS::m_video_bit_rate</a>, <a class="el" href="dvdparser_8cc_source.html#l00060">VIDEO_SETTINGS::m_width</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00537">check_dvd()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="dvdparser_8cc_source.html#l00570">check_dvd()</a>.</p>
 
 </div>
 </div>

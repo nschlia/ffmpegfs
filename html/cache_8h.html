@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -65,7 +65,9 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">cache.h File Reference</div>  </div>
 </div><!--header-->
@@ -81,8 +83,8 @@ Include dependency graph for cache.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="cache_8h__incl.png" border="0" usemap="#src_2cache_8h" alt=""/></div>
 <map name="src_2cache_8h" id="src_2cache_8h">
-<area shape="rect" id="node2" href="buffer_8h.html" title="Buffer class. " alt="" coords="215,80,281,107"/>
-<area shape="rect" id="node3" href="fileio_8h.html" title="FileIO class. " alt="" coords="114,155,174,181"/>
+<area shape="rect" id="node2" href="buffer_8h.html" title="Buffer class. " alt="" coords="156,80,223,107"/>
+<area shape="rect" id="node3" href="fileio_8h.html" title="FileIO class. " alt="" coords="249,155,309,181"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -91,9 +93,10 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="center"><img src="cache_8h__dep__incl.png" border="0" usemap="#src_2cache_8hdep" alt=""/></div>
 <map name="src_2cache_8hdep" id="src_2cache_8hdep">
 <area shape="rect" id="node2" href="cache_8cc.html" title="Cache class implementation. " alt="" coords="5,155,103,181"/>
-<area shape="rect" id="node3" href="cache__entry_8h.html" title="Cache entry " alt="" coords="131,80,257,107"/>
-<area shape="rect" id="node5" href="transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="285,155,404,181"/>
+<area shape="rect" id="node3" href="cache__entry_8h.html" title="Cache entry " alt="" coords="176,80,303,107"/>
+<area shape="rect" id="node6" href="transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="417,155,536,181"/>
 <area shape="rect" id="node4" href="cache__entry_8cc.html" title="Cache_Entry class implementation. " alt="" coords="127,155,261,181"/>
+<area shape="rect" id="node5" href="fuseops_8cc.html" title="Fuse operations implementation. " alt="" coords="285,155,393,181"/>
 </map>
 </div>
 </div>
@@ -107,9 +110,42 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html">Cache</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classCache.html" title="The Cache class. ">Cache</a> class.  <a href="classCache.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCache_1_1TABLE__DEF.html">Cache::TABLE_DEF</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition of sql table.  <a href="structCache_1_1TABLE__DEF.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCache_1_1TABLE__COLUMNS.html">Cache::TABLE_COLUMNS</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Column definition of sql table.  <a href="structCache_1_1TABLE__COLUMNS.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:abb3edc13836a925237b2efa86d47f692"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#abb3edc13836a925237b2efa86d47f692">DB_BASE_VERSION_MAJOR</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:abb3edc13836a925237b2efa86d47f692"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7792bd91b3a91a0d4dafc4585012a78b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a7792bd91b3a91a0d4dafc4585012a78b">DB_BASE_VERSION_MINOR</a>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a7792bd91b3a91a0d4dafc4585012a78b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a397112b4ccfa190bc7eec7d6a30fbf01"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a397112b4ccfa190bc7eec7d6a30fbf01">DB_VERSION_MAJOR</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a397112b4ccfa190bc7eec7d6a30fbf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07e93196d535b91e79cda1b91fa5b6e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a07e93196d535b91e79cda1b91fa5b6e5">DB_VERSION_MINOR</a>&#160;&#160;&#160;97</td></tr>
+<tr class="separator:a07e93196d535b91e79cda1b91fa5b6e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a194f9c6f56112682ff8ebd5593a57000"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a194f9c6f56112682ff8ebd5593a57000">DB_MIN_VERSION_MAJOR</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a194f9c6f56112682ff8ebd5593a57000"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f4e485a6d3f7f43c271a2921a8b6b09"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a1f4e485a6d3f7f43c271a2921a8b6b09">DB_MIN_VERSION_MINOR</a>&#160;&#160;&#160;97</td></tr>
+<tr class="separator:a1f4e485a6d3f7f43c271a2921a8b6b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:ab42b01458b2ae124a6135782c281d977"><td class="memItemLeft" align="right" valign="top"><a id="ab42b01458b2ae124a6135782c281d977"></a>
+typedef enum <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#ab42b01458b2ae124a6135782c281d977">RESULTCODE</a></td></tr>
+<tr class="memdesc:ab42b01458b2ae124a6135782c281d977"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESULTCODE of transcoding operation. <br /></td></tr>
+<tr class="separator:ab42b01458b2ae124a6135782c281d977"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6160ebca564a87cacb194b9a900900f8"><td class="memItemLeft" align="right" valign="top"><a id="a6160ebca564a87cacb194b9a900900f8"></a>
+typedef <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a6160ebca564a87cacb194b9a900900f8">LPCRESULTCODE</a></td></tr>
+<tr class="memdesc:a6160ebca564a87cacb194b9a900900f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer version of RESULTCODE. <br /></td></tr>
+<tr class="separator:a6160ebca564a87cacb194b9a900900f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fb5a098569488528b2bc1d3fbbb6df9"><td class="memItemLeft" align="right" valign="top"><a id="a3fb5a098569488528b2bc1d3fbbb6df9"></a>
+typedef <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a3fb5a098569488528b2bc1d3fbbb6df9">LPRESULTCODE</a></td></tr>
+<tr class="memdesc:a3fb5a098569488528b2bc1d3fbbb6df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to const version of RESULTCODE. <br /></td></tr>
+<tr class="separator:a3fb5a098569488528b2bc1d3fbbb6df9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ca2b5b288874f5b42053b326d8c0ae7"><td class="memItemLeft" align="right" valign="top"><a id="a9ca2b5b288874f5b42053b326d8c0ae7"></a>
 typedef struct <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a9ca2b5b288874f5b42053b326d8c0ae7">CACHE_INFO</a></td></tr>
 <tr class="memdesc:a9ca2b5b288874f5b42053b326d8c0ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCache.html" title="The Cache class. ">Cache</a> information block. <br /></td></tr>
@@ -122,6 +158,16 @@ typedef <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a> const  *&#160
 typedef <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#accca8545f2916e87affc07c189306ce1">LPCACHE_INFO</a></td></tr>
 <tr class="memdesc:accca8545f2916e87affc07c189306ce1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to const version of <a class="el" href="structCACHE__INFO.html" title="Cache information block. ">CACHE_INFO</a>. <br /></td></tr>
 <tr class="separator:accca8545f2916e87affc07c189306ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a4a32a646521d02ddc7897ffabe261429"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> { <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080">RESULTCODE_NONE</a>, 
+<a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a553411c69587f79f93b5713bd69bffa7">RESULTCODE_INCOMPLETE</a>, 
+<a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a0189668130578f3939dc5b08a52786c0">RESULTCODE_FINISHED</a>, 
+<a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429afdc736994895f046a6db5d88c4c4ca64">RESULTCODE_ERROR</a>
+ }<tr class="memdesc:a4a32a646521d02ddc7897ffabe261429"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESULTCODE of transcoding operation.  <a href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a4a32a646521d02ddc7897ffabe261429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Data cache management. </p>
@@ -129,7 +175,151 @@ typedef <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a> *&#160;</td><
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="abb3edc13836a925237b2efa86d47f692"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb3edc13836a925237b2efa86d47f692">&#9670;&nbsp;</a></span>DB_BASE_VERSION_MAJOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_BASE_VERSION_MAJOR&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief The oldest database version major (Release &lt; 1.95) </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00042">42</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>.</p>
+
+</div>
+</div>
+<a id="a7792bd91b3a91a0d4dafc4585012a78b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7792bd91b3a91a0d4dafc4585012a78b">&#9670;&nbsp;</a></span>DB_BASE_VERSION_MINOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_BASE_VERSION_MINOR&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief The oldest database version minor (Release &lt; 1.95) </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00043">43</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>.</p>
+
+</div>
+</div>
+<a id="a194f9c6f56112682ff8ebd5593a57000"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a194f9c6f56112682ff8ebd5593a57000">&#9670;&nbsp;</a></span>DB_MIN_VERSION_MAJOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_MIN_VERSION_MAJOR&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief Required database version major (required 1.95) </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00048">48</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00227">Cache::check_min_version()</a>, and <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>.</p>
+
+</div>
+</div>
+<a id="a1f4e485a6d3f7f43c271a2921a8b6b09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f4e485a6d3f7f43c271a2921a8b6b09">&#9670;&nbsp;</a></span>DB_MIN_VERSION_MINOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_MIN_VERSION_MINOR&#160;&#160;&#160;97</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief Required database version minor (required 1.95) </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00049">49</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00227">Cache::check_min_version()</a>, and <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>.</p>
+
+</div>
+</div>
+<a id="a397112b4ccfa190bc7eec7d6a30fbf01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a397112b4ccfa190bc7eec7d6a30fbf01">&#9670;&nbsp;</a></span>DB_VERSION_MAJOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_VERSION_MAJOR&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief Current database version major </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00045">45</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>.</p>
+
+</div>
+</div>
+<a id="a07e93196d535b91e79cda1b91fa5b6e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07e93196d535b91e79cda1b91fa5b6e5">&#9670;&nbsp;</a></span>DB_VERSION_MINOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DB_VERSION_MINOR&#160;&#160;&#160;97</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>brief Current database version minor </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00046">46</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a4a32a646521d02ddc7897ffabe261429"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a32a646521d02ddc7897ffabe261429">&#9670;&nbsp;</a></span>RESULTCODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>RESULTCODE of transcoding operation. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080"></a>RESULTCODE_NONE&#160;</td><td class="fielddoc"><p>No result code available. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a553411c69587f79f93b5713bd69bffa7"></a>RESULTCODE_INCOMPLETE&#160;</td><td class="fielddoc"><p>Transcode finished, but incomplete. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a0189668130578f3939dc5b08a52786c0"></a>RESULTCODE_FINISHED&#160;</td><td class="fielddoc"><p>Transcode finished successfully. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429afdc736994895f046a6db5d88c4c4ca64"></a>RESULTCODE_ERROR&#160;</td><td class="fielddoc"><p>Transcode finished with error. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00054">54</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

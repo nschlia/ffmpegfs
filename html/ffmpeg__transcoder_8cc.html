@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -77,6 +77,8 @@ $(function() {
 <code>#include &quot;<a class="el" href="buffer_8h_source.html">buffer.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wave_8h_source.html">wave.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="logging_8h_source.html">logging.h</a>&quot;</code><br />
+<code>#include &lt;assert.h&gt;</code><br />
+<code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &lt;libswscale/swscale.h&gt;</code><br />
 <code>#include &lt;libavresample/avresample.h&gt;</code><br />
 <code>#include &lt;libavutil/imgutils.h&gt;</code><br />
@@ -85,23 +87,24 @@ $(function() {
 <code>#include &lt;libavfilter/avfilter.h&gt;</code><br />
 <code>#include &lt;libavfilter/buffersink.h&gt;</code><br />
 <code>#include &lt;libavfilter/buffersrc.h&gt;</code><br />
+<code>#include &lt;libavcodec/avcodec.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ffmpeg_transcoder.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="ffmpeg__transcoder_8cc__incl.png" border="0" usemap="#src_2ffmpeg__transcoder_8cc" alt=""/></div>
 <map name="src_2ffmpeg__transcoder_8cc" id="src_2ffmpeg__transcoder_8cc">
-<area shape="rect" id="node2" href="ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="318,80,459,107"/>
-<area shape="rect" id="node18" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="602,80,693,107"/>
-<area shape="rect" id="node19" href="buffer_8h.html" title="Buffer class. " alt="" coords="685,155,751,181"/>
-<area shape="rect" id="node22" href="wave_8h.html" title="WAVE file structures. " alt="" coords="771,80,835,107"/>
-<area shape="rect" id="node24" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="859,80,934,107"/>
-<area shape="rect" id="node3" href="ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="195,155,303,181"/>
-<area shape="rect" id="node10" href="id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="87,155,170,181"/>
-<area shape="rect" id="node11" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="475,155,559,181"/>
-<area shape="rect" id="node14" href="fileio_8h.html" title="FileIO class. " alt="" coords="593,229,653,256"/>
-<area shape="rect" id="node16" href="ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="327,155,450,181"/>
-<area shape="rect" id="node4" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="289,229,393,256"/>
-<area shape="rect" id="node5" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="35,304,158,331"/>
+<area shape="rect" id="node2" href="ffmpeg__transcoder_8h.html" title="FFmpeg transcoder. " alt="" coords="375,80,517,107"/>
+<area shape="rect" id="node21" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE) " alt="" coords="601,80,691,107"/>
+<area shape="rect" id="node22" href="buffer_8h.html" title="Buffer class. " alt="" coords="818,80,885,107"/>
+<area shape="rect" id="node24" href="wave_8h.html" title="WAVE file structures. " alt="" coords="950,80,1014,107"/>
+<area shape="rect" id="node26" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="1038,80,1113,107"/>
+<area shape="rect" id="node3" href="ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="5,155,113,181"/>
+<area shape="rect" id="node10" href="id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="219,155,302,181"/>
+<area shape="rect" id="node11" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="473,155,557,181"/>
+<area shape="rect" id="node14" href="fileio_8h.html" title="FileIO class. " alt="" coords="640,229,700,256"/>
+<area shape="rect" id="node18" href="ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="326,155,449,181"/>
+<area shape="rect" id="node4" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="335,229,439,256"/>
+<area shape="rect" id="node5" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="82,304,205,331"/>
 </map>
 </div>
 </div>
@@ -109,6 +112,9 @@ Include dependency graph for ffmpeg_transcoder.cc:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:aebd1dc5457c2950f8391bacd0213eee5"><td class="memItemLeft" align="right" valign="top"><a id="aebd1dc5457c2950f8391bacd0213eee5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FRAME_SEEK_THRESHOLD</b>&#160;&#160;&#160;25</td></tr>
+<tr class="separator:aebd1dc5457c2950f8391bacd0213eee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae96da51e62bda954b03049d84eb15b4d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__transcoder_8cc.html#ae96da51e62bda954b03049d84eb15b4d">tagcpy</a>(dst,  src)</td></tr>
 <tr class="memdesc:ae96da51e62bda954b03049d84eb15b4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save copy from FFmpeg tag dictionary to IDv3 tag.  <a href="#ae96da51e62bda954b03049d84eb15b4d">More...</a><br /></td></tr>
 <tr class="separator:ae96da51e62bda954b03049d84eb15b4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,7 +154,7 @@ Macros</h2></td></tr>
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">char</span> *p1 = (dst), *pend = p1 + <span class="keyword">sizeof</span>(dst), *p2 = (src); *p2 &amp;&amp; p1 &lt; pend; p1++, p2++) \</div><div class="line">    *p1 = *p2</div></div><!-- fragment -->
 <p>Save copy from FFmpeg tag dictionary to IDv3 tag. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03186">3186</a> of file <a class="el" href="ffmpeg__transcoder_8cc_source.html">ffmpeg_transcoder.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03517">3517</a> of file <a class="el" href="ffmpeg__transcoder_8cc_source.html">ffmpeg_transcoder.cc</a>.</p>
 
 </div>
 </div>

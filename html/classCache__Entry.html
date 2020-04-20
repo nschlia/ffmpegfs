@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -109,6 +109,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a07341f76da6b747ebd47f4d01b42ace4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache__Entry.html#a07341f76da6b747ebd47f4d01b42ace4">size</a> () const</td></tr>
 <tr class="memdesc:a07341f76da6b747ebd47f4d01b42ace4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return size of output file, as computed by encoder.  <a href="#a07341f76da6b747ebd47f4d01b42ace4">More...</a><br /></td></tr>
 <tr class="separator:a07341f76da6b747ebd47f4d01b42ace4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6030e4ca803427229d04f14e37c2a63"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache__Entry.html#aa6030e4ca803427229d04f14e37c2a63">video_frame_count</a> () const</td></tr>
+<tr class="memdesc:aa6030e4ca803427229d04f14e37c2a63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the video frame count.  <a href="#aa6030e4ca803427229d04f14e37c2a63">More...</a><br /></td></tr>
+<tr class="separator:aa6030e4ca803427229d04f14e37c2a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a294bcda65b5a78e1bc2fdd4a789ec65a"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache__Entry.html#a294bcda65b5a78e1bc2fdd4a789ec65a">age</a> () const</td></tr>
 <tr class="memdesc:a294bcda65b5a78e1bc2fdd4a789ec65a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the age of the cache entry.  <a href="#a294bcda65b5a78e1bc2fdd4a789ec65a">More...</a><br /></td></tr>
 <tr class="separator:a294bcda65b5a78e1bc2fdd4a789ec65a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,6 +193,10 @@ std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class
 <a class="el" href="structID3v1.html">ID3v1</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache__Entry.html#aa33524817fcebc9a0daca7864d1863ab">m_id3v1</a></td></tr>
 <tr class="memdesc:aa33524817fcebc9a0daca7864d1863ab"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structID3v1.html" title="ID3 version 1 tag ">ID3v1</a> structure which is used to send to clients. <br /></td></tr>
 <tr class="separator:aa33524817fcebc9a0daca7864d1863ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaef2c5d25969f4f7306b76c0ca2d8f14"><td class="memItemLeft" align="right" valign="top"><a id="aaef2c5d25969f4f7306b76c0ca2d8f14"></a>
+volatile uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache__Entry.html#aaef2c5d25969f4f7306b76c0ca2d8f14">m_seek_to_no</a></td></tr>
+<tr class="memdesc:aaef2c5d25969f4f7306b76c0ca2d8f14"><td class="mdescLeft">&#160;</td><td class="mdescRight">If not 0, seeks to specified frame. <br /></td></tr>
+<tr class="separator:aaef2c5d25969f4f7306b76c0ca2d8f14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -248,7 +255,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get the age of the cache entry. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the age of the cache entry in seconds since epoch. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00282">282</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00289">289</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -276,11 +283,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00088">88</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00089">89</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00729">init_id3v1()</a>, <a class="el" href="cache_8h_source.html#l00065">CACHE_INFO::m_access_count</a>, <a class="el" href="cache_8h_source.html#l00062">CACHE_INFO::m_access_time</a>, <a class="el" href="cache_8h_source.html#l00049">CACHE_INFO::m_audiobitrate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00137">FFMPEGFS_PARAMS::m_audiobitrate</a>, <a class="el" href="cache_8h_source.html#l00050">CACHE_INFO::m_audiosamplerate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00138">FFMPEGFS_PARAMS::m_audiosamplerate</a>, <a class="el" href="cache_8h_source.html#l00060">CACHE_INFO::m_averror</a>, <a class="el" href="cache__entry_8h_source.html#l00220">m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00061">CACHE_INFO::m_creation_time</a>, <a class="el" href="cache_8h_source.html#l00054">CACHE_INFO::m_deinterlace</a>, <a class="el" href="ffmpegfs_8h_source.html#l00144">FFMPEGFS_PARAMS::m_deinterlace</a>, <a class="el" href="cache_8h_source.html#l00056">CACHE_INFO::m_encoded_filesize</a>, <a class="el" href="cache_8h_source.html#l00059">CACHE_INFO::m_errno</a>, <a class="el" href="cache_8h_source.html#l00058">CACHE_INFO::m_error</a>, <a class="el" href="cache_8h_source.html#l00057">CACHE_INFO::m_finished</a>, <a class="el" href="cache__entry_8h_source.html#l00222">m_id3v1</a>, <a class="el" href="cache__entry_8h_source.html#l00217">m_is_decoding</a>, <a class="el" href="cache_8h_source.html#l00055">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8h_source.html#l00051">CACHE_INFO::m_videobitrate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00141">FFMPEGFS_PARAMS::m_videobitrate</a>, <a class="el" href="cache_8h_source.html#l00053">CACHE_INFO::m_videoheight</a>, <a class="el" href="ffmpegfs_8h_source.html#l00143">FFMPEGFS_PARAMS::m_videoheight</a>, <a class="el" href="cache_8h_source.html#l00052">CACHE_INFO::m_videowidth</a>, <a class="el" href="ffmpegfs_8h_source.html#l00142">FFMPEGFS_PARAMS::m_videowidth</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00786">init_id3v1()</a>, <a class="el" href="cache_8h_source.html#l00091">CACHE_INFO::m_access_count</a>, <a class="el" href="cache_8h_source.html#l00088">CACHE_INFO::m_access_time</a>, <a class="el" href="cache_8h_source.html#l00072">CACHE_INFO::m_audiobitrate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00138">FFMPEGFS_PARAMS::m_audiobitrate</a>, <a class="el" href="cache_8h_source.html#l00073">CACHE_INFO::m_audiosamplerate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00139">FFMPEGFS_PARAMS::m_audiosamplerate</a>, <a class="el" href="cache_8h_source.html#l00086">CACHE_INFO::m_averror</a>, <a class="el" href="cache__entry_8h_source.html#l00225">m_cache_info</a>, <a class="el" href="cache_8h_source.html#l00087">CACHE_INFO::m_creation_time</a>, <a class="el" href="cache_8h_source.html#l00077">CACHE_INFO::m_deinterlace</a>, <a class="el" href="ffmpegfs_8h_source.html#l00145">FFMPEGFS_PARAMS::m_deinterlace</a>, <a class="el" href="cache_8h_source.html#l00080">CACHE_INFO::m_encoded_filesize</a>, <a class="el" href="cache_8h_source.html#l00085">CACHE_INFO::m_errno</a>, <a class="el" href="cache_8h_source.html#l00084">CACHE_INFO::m_error</a>, <a class="el" href="cache_8h_source.html#l00083">CACHE_INFO::m_finished</a>, <a class="el" href="cache__entry_8h_source.html#l00227">m_id3v1</a>, <a class="el" href="cache__entry_8h_source.html#l00222">m_is_decoding</a>, <a class="el" href="cache_8h_source.html#l00079">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8h_source.html#l00081">CACHE_INFO::m_video_frame_count</a>, <a class="el" href="cache_8h_source.html#l00074">CACHE_INFO::m_videobitrate</a>, <a class="el" href="ffmpegfs_8h_source.html#l00142">FFMPEGFS_PARAMS::m_videobitrate</a>, <a class="el" href="cache_8h_source.html#l00076">CACHE_INFO::m_videoheight</a>, <a class="el" href="ffmpegfs_8h_source.html#l00144">FFMPEGFS_PARAMS::m_videoheight</a>, <a class="el" href="cache_8h_source.html#l00075">CACHE_INFO::m_videowidth</a>, <a class="el" href="ffmpegfs_8h_source.html#l00143">FFMPEGFS_PARAMS::m_videowidth</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>, and <a class="el" href="cache_8h_source.html#l00056">RESULTCODE_NONE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00326">transcoder_new()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00338">transcoder_new()</a>.</p>
 
 </div>
 </div>
@@ -309,9 +316,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if entry may be deleted, false if still in use. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00218">218</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00220">220</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00338">Cache::write_info()</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l00822">Cache::write_info()</a>.</p>
 
 </div>
 </div>
@@ -347,9 +354,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00207">207</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00209">209</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00401">Cache::delete_info()</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l00888">Cache::delete_info()</a>.</p>
 
 </div>
 </div>
@@ -397,7 +404,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns a <a class="el" href="classCache__Entry.html" title="The Cache_Entry class. ">Cache_Entry</a> object; on error (out of memory) returns a nullptr </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00074">74</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00075">75</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -419,11 +426,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Check for decode timeout. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if decoding timed out. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00302">302</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00309">309</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00160">FFMPEGFS_PARAMS::m_max_inactive_abort</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00163">FFMPEGFS_PARAMS::m_max_inactive_abort</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -453,7 +460,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Delete cache info. </p>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns true; returns false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00143">143</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00145">145</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -475,9 +482,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get the name of the transcoded file. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the name of the transcoded file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00312">312</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00319">319</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00076">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00326">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00431">transcoder_read()</a>, and <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00338">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00450">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00582">transcoder_read_frame()</a>, and <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -498,10 +505,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>Destroy this <a class="el" href="classCache__Entry.html" title="The Cache_Entry class. ">Cache_Entry</a> object. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if object was destroyed right away; false if it will be destroyed later (NOT IMPLEMENTED, WILL BE DESTROYED AT ONCE). </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>implement delete later mechanism </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>Return true when deleted, false if kept for delete later </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>implement delete later mechanism </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>Return true when deleted, false if kept for delete later </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00079">79</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00080">80</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -524,9 +531,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Checks if entry is older or larger than the limit.</p>
 <dl class="section return"><dt>Returns</dt><dd>If entry is expired, returns true. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00292">292</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00299">299</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00158">FFMPEGFS_PARAMS::m_expiry_time</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00161">FFMPEGFS_PARAMS::m_expiry_time</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
 
 </div>
 </div>
@@ -548,9 +555,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get the name of the source file. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the name of the source file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00307">307</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00314">314</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00326">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00299">transcoder_predict_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00264">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00338">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00309">transcoder_predict_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00274">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -572,9 +579,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Flush current memory cache to disk. </p>
 <dl class="section return"><dt>Returns</dt><dd>On success returns true; on error returns false and errno contains the error code. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00247">247</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00249">249</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00135">transcode_finish()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00139">transcode_finish()</a>.</p>
 
 </div>
 </div>
@@ -596,7 +603,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get last access time. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns last access time in seconds since epoch. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00287">287</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00294">294</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -625,11 +632,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success returns true; on error returns false and errno contains the error code. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00162">162</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00164">164</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00799">Cache::clear()</a>, <a class="el" href="cache_8cc_source.html#l00217">Cache::read_info()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l01286">Cache::clear()</a>, <a class="el" href="cache_8cc_source.html#l00696">Cache::read_info()</a>, <a class="el" href="cache_8h_source.html#l00058">RESULTCODE_FINISHED</a>, <a class="el" href="cache_8h_source.html#l00057">RESULTCODE_INCOMPLETE</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00326">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00338">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -652,7 +659,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>This is the number of read accesses to the cache entry.</p>
 <dl class="section return"><dt>Returns</dt><dd>Returns current read counter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00395">395</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00402">402</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -682,7 +689,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Read cache info. </p>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns true; returns false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00133">133</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00135">135</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -704,9 +711,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get the current reference counter. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the current reference counter. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00327">327</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00334">334</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -729,9 +736,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Returns the file size, either the predicted size (which may be inaccurate) or the real size (which is only available once the file was completely recoded).</p>
 <dl class="section return"><dt>Returns</dt><dd>The size of the file. Function never fails. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00261">261</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00263">263</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00546">transcoder_get_size()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00700">transcoder_get_size()</a>.</p>
 
 </div>
 </div>
@@ -753,11 +760,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Check for decode suspend timeout. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if decoding was suspended. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00297">297</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00304">304</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00159">FFMPEGFS_PARAMS::m_max_inactive_suspend</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00162">FFMPEGFS_PARAMS::m_max_inactive_suspend</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00077">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -786,9 +793,31 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If update was successful, returns true; returns false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00148">148</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00150">150</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00431">transcoder_read()</a>, and <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00450">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00582">transcoder_read_frame()</a>, and <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
+
+</div>
+</div>
+<a id="aa6030e4ca803427229d04f14e37c2a63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6030e4ca803427229d04f14e37c2a63">&#9670;&nbsp;</a></span>video_frame_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t Cache_Entry::video_frame_count </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the video frame count. </p>
+<dl class="section return"><dt>Returns</dt><dd>On success, returns the number of frames; on error, returns 0 (calculation failed or no video source file). </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00284">284</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>
@@ -810,9 +839,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Get the underlying <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object. </p>
 <dl class="section return"><dt>Returns</dt><dd>Return the underlying <a class="el" href="structVIRTUALFILE.html" title="Virtual file definition. ">VIRTUALFILE</a> object. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00385">385</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00392">392</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00431">transcoder_read()</a>, and <a class="el" href="transcode_8cc_source.html#l00594">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01750">ffmpegfs_release()</a>, and <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -842,7 +871,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Write cache info. </p>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns true; returns false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00138">138</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache__entry_8cc_source.html#l00140">140</a> of file <a class="el" href="cache__entry_8cc_source.html">cache_entry.cc</a>.</p>
 
 </div>
 </div>

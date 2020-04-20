@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.99</span>
    </div>
   </td>
  </tr>
@@ -88,17 +88,19 @@ $(function() {
   <tr><td class="entry"><a class="el" href="classCache__Entry.html#a476057ed6c5e8ac0b3c7a7e1369b4e7b">m_mutex</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a4e6a0ae562794dda930317e5c28d629b">m_owner</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="classCache__Entry.html#ac15f85be9dd3a2315d405103c0e9bbd4">m_ref_count</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a5ebcedefe032fd852233a6159906333e">m_virtualfile</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a01555933f10ccba187f7562addc3efc3">open</a>(bool create_cache=true)</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#ac6de93ccd4c9a3599cbfa52e31ffb899">outdated</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classCache__Entry.html#aa85a7c229617d801fd5086b4defb7aa6">read_count</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#af0fe994643b46dd551e2f93323fdf14e">read_info</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a50ae5e8cf89329bd1e37ca42abc38564">ref_count</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a07341f76da6b747ebd47f4d01b42ace4">size</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a4de32e407db58bc5a4d6b497d2b87d14">suspend_timeout</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#ab09cda74fd91fe7cab81e4352325a508">unlock</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a15e89b39f4dd87ec7eee9a9683965f76">update_access</a>(bool update_database=false)</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a8d0c949271485ec03d566477a0f20d5b">update_read_count</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#aaef2c5d25969f4f7306b76c0ca2d8f14">m_seek_to_no</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a5ebcedefe032fd852233a6159906333e">m_virtualfile</a></td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a01555933f10ccba187f7562addc3efc3">open</a>(bool create_cache=true)</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#ac6de93ccd4c9a3599cbfa52e31ffb899">outdated</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#aa85a7c229617d801fd5086b4defb7aa6">read_count</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#af0fe994643b46dd551e2f93323fdf14e">read_info</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a50ae5e8cf89329bd1e37ca42abc38564">ref_count</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a07341f76da6b747ebd47f4d01b42ace4">size</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a4de32e407db58bc5a4d6b497d2b87d14">suspend_timeout</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#ab09cda74fd91fe7cab81e4352325a508">unlock</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a15e89b39f4dd87ec7eee9a9683965f76">update_access</a>(bool update_database=false)</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classCache__Entry.html#a8d0c949271485ec03d566477a0f20d5b">update_read_count</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#aa6030e4ca803427229d04f14e37c2a63">video_frame_count</a>() const</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classCache__Entry.html#a64a6705c9c8a72f25d86874c76f80b1c">virtualfile</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classCache__Entry.html#a6b2f23bd7561705dabcc344a800a7694">write_info</a>()</td><td class="entry"><a class="el" href="classCache__Entry.html">Cache_Entry</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
 </table></div><!-- contents -->

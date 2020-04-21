@@ -37,7 +37,7 @@ cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e" 490440 494188
+    check_filesize "raven_e" 490440 494236
     check_filesize "raven_d" 354319 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
@@ -57,38 +57,38 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e" 429639 440044
-    check_filesize "raven_d" 263171 271157
+    check_filesize "raven_e" 429436 489814
+    check_filesize "raven_d" 262994 353367
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "raven_e" 421675 432222
-    check_filesize "raven_d" 255780 263994
+    check_filesize "raven_e" 421675 482727 
+    check_filesize "raven_d" 255780 347272 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "raven_e" 491651 495399
+    check_filesize "raven_e" 491651 495447
     check_filesize "raven_d" 355300 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "raven_e" 5137724
+    check_filesize "raven_e" 5137724 5140125
     check_filesize "raven_d" 4316488
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "raven_e" 5140129
+    check_filesize "raven_e" 5140125 5140129
     check_filesize "raven_d" 4318641 4318666
 elif [ "${DESTTYPE}" == "alac" ];
 then
-    # aiff
-    check_filesize "raven_e" 3986423
-    check_filesize "raven_d" 3277326
+    # alac
+    check_filesize "raven_e" 3986423 3986427
+    check_filesize "raven_d" 3277326 3277330
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "raven_e" 725868 744480
-    check_filesize "raven_d" 479964 482408
+    check_filesize "raven_e" 725868 811220 
+    check_filesize "raven_d" 479964 545388 
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

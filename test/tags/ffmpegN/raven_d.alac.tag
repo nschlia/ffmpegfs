@@ -1,5 +1,5 @@
 artist=Edgar Allan Poe
-compatible_brands=isomiso2iso6
+compatible_brands=M4A iso6isomiso2
 
 handler_name=SoundHandler
 language=und

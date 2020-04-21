@@ -1,7 +1,7 @@
 album=Snowboard
 artist=Norbert Schlia
 comment=Snowboard ride footage taken with action cam 2018-01-13 Saalbach/Austria
-compatible_brands=qt  iso6
+compatible_brands=qt  
 date=2018
 
 genre=Demo

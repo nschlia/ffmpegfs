@@ -59,9 +59,9 @@ To get Bluray support:
 
     apt-get install libbluray-dev
 
-To "make doxy (build Doxygen documentation):
+To "make doxy" (build Doxygen documentation):
 
-    apt-get install doxygen graphviz
+    apt-get install doxygen graphviz curl
 
 To "make check" (run test suite):
 

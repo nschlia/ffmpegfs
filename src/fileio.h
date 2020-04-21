@@ -128,7 +128,7 @@ typedef struct VIRTUALFILE
 
     }
 
-    uint32_t get_segment_count() const;
+    uint32_t get_segment_count() const;                             /**< @brief Number of HLS segments in set */
 
     VIRTUALTYPE         m_type;                                     /**< @brief Type of this virtual file */
     int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */

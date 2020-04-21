@@ -708,6 +708,14 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
     return 0;
 }
 
+/**
+ * @brief Build a virtual HLS file set
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] origpath - The original file
+ * @param[in] virtualfile - LPCVIRTUALFILE of file to create file set for
+ * @return On success, returns 0. On error, returns -errno.
+ */
 static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     // Generate set of TS segment files and necessary M3U lists

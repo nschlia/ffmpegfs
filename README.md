@@ -88,10 +88,13 @@ version of the original FFmpeg library.
 
 Tested with:
 
+* `Current FFmpeg version` **N-97345-g5216edbc54**: OK!
 * `Debian 9 Stretch` **FFmpeg 3.2.8-1~deb9u1**: OK!
 * `Debian 10 Buster` **FFmpeg 3.2.14-1~deb9u1**: OK!
+* `Debian 11 Bullseye` **FFmpeg 4.2.2-1+b1**: OK!
 * `Ubuntu 16.04.3 LTS` **FFmpeg 2.8.11-0ubuntu0.16.04.1**: OK!
 * `Ubuntu 17.10` **FFmpeg 3.3.4-2**: OK!
+* `Ubuntu 20.04` **4.2.2-1ubuntu1**: OK!
 * `Suse 42` **FFmpeg 3.3.4**: No H264/AAC support by default
 * `Red Hat 7` **FFmpeg must be compiled from sources**: OK!
 * `Funtoo 7.3.1` **FFmpeg 3.4.1**: FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md): OK!

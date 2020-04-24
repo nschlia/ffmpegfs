@@ -1066,17 +1066,16 @@ Buffer::LPCACHEINFO Buffer::cacheinfo(uint32_t segment_no)
 
 Buffer::LPCCACHEINFO Buffer::const_cacheinfo(uint32_t segment_no) const
 {
-    uint32_t index = segment_no;
-    if (index)
+    if (segment_no)
     {
-        index--;
+        segment_no--;
 
-        assert(index < m_ci.size());
-        if (index >= m_ci.size())
+        assert(segment_no < m_ci.size());
+        if (segment_no >= m_ci.size())
         {
             return nullptr;
         }
-        return (&m_ci[index]);
+        return (&m_ci[segment_no]);
     }
 
     return m_cur_ci;

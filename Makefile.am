@@ -1,6 +1,5 @@
 # Definitions for sub-makes
-export OPTIMISATION = -Ofast -march=native -g
-# Removed -fprofile-generate, creates strange assembler code
+export OPTIMISATION = -Ofast -g
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -W -Wno-psabi
 export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE

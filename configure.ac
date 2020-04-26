@@ -51,22 +51,18 @@ AS_IF([test "$ac_cv_sizeof_int" -lt 4],
     AC_MSG_ERROR([Integer type 'int' must be at least 4 bytes in size.]))
 
 dnl Figure out which format string to use for time_t
+AC_CHECK_SIZEOF([time_t],,[#include <time.h>])
 AC_MSG_CHECKING([size of time_t type])
-AC_RUN_IFELSE(
-  [AC_LANG_PROGRAM(
-    [[#include <time.h>]],
-    [[return (sizeof (time_t) == sizeof (long) ? 0 : 1);]])],
+AS_IF([test "$ac_cv_sizeof_time_t" = "$ac_cv_sizeof_long"],
   [AC_MSG_RESULT(long)
    AC_DEFINE([FFMPEGFS_FORMAT_TIME_T], ["ld"], [format string for time_t])],
   [AC_MSG_RESULT(int)
    AC_DEFINE([FFMPEGFS_FORMAT_TIME_T], ["d"], [format string for time_t])])
 
 dnl Figure out which format string to use for pthread_t
+AC_CHECK_SIZEOF([pthread_t],,[#include <pthread.h>])
 AC_MSG_CHECKING([size of pthread_t type])
-AC_RUN_IFELSE(
-  [AC_LANG_PROGRAM(
-    [[#include <pthread.h>]],
-    [[return (sizeof (pthread_t) == sizeof (long) ? 0 : 1);]])],
+AS_IF([test "$ac_cv_sizeof_pthread_t" = "$ac_cv_sizeof_long"],
   [AC_MSG_RESULT(long)
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["lx"], [format string for pthread_t])],
   [AC_MSG_RESULT(int)

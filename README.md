@@ -10,10 +10,10 @@ News
 ----
 * **Work on version 1.99 (2.0 pre-release) now in progress.**
 
-I am currently preparing the new 2.0 release. This should be ready soon.
+Release 2.0 is currently getting ready. Into release 1.99 only bugfixes
+will go. After a stabilisation phase V2.0 will finally see the light.
 
-Once this is implemented and after a stabilisation phase V2.0 will finally
-see the light.
+**New in 1.98:**
 
 * HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
   ffmpegfs will seek to this position and start transcoding the segment
@@ -62,16 +62,26 @@ and/or hardware which only understands one of the supported output
 formats, or transcode files through simple drag-and-drop in a file
 browser.
 
-For live streaming select WebM or MP4 for best results. If video
-transcoding is not required MP3 will also do, but WebM and MP4 will
-create better results. The OGG encoder is not fast enough for real-time
+For live streaming select *WebM* or *MP4* for best results. If video
+transcoding is not required *MP3* will also do, but *WebM* and *MP4* will
+create better results. The *OGG* encoder is not fast enough for real-time
 recoding files.
 
 When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a
 video source file will be presented in a virtual directory named after
 the source file. Audio will not be available.
 
-For installation instructions see the [install](INSTALL.md) file.
+Selecting *HLS* creates a directory with TS segments together with a
+M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a
+hls.html that can be opened in a browser to play the segments.
+
+Please note that the files must be on a webserver because restrictions
+prevent most browsers from opening the files from disk. See FIXING 
+PROBLEMS for details.
+
+INSTALLATION INSTRUCTIONS:
+
+* See the [INSTALL](INSTALL.md) file.
 
 RESTRICTIONS:
 
@@ -240,17 +250,17 @@ To transcode a video to frame images, set the destination type to
 JPG, PNG or BMP. This will convert videos to virtual folders with
 images for each frame.
 
-# ls /storage/videos
- video1.mp4
- video2.mov
-
-# ffmpegfs /storage/videos /mnt/ffmpegfs
-# find /mnt/ffmpegfs
-
- /mnt/ffmpegfs/video1.mp4/00001.png
- /mnt/ffmpegfs/video1.mp4/00002.png
- ...
- /mnt/ffmpegfs/video1.mov/00001.png
+ $ ls /storage/videos<br />
+ video1.mp4<br />
+ video2.mov<br />
+ <br />
+ $ ffmpegfs /storage/videos /mnt/ffmpegfs<br />
+ $ find /mnt/ffmpegfs<br />
+ <br />
+ /mnt/ffmpegfs/video1.mp4/00001.png<br />
+ /mnt/ffmpegfs/video1.mp4/00002.png<br />
+ ...<br />
+ /mnt/ffmpegfs/video1.mov/00001.png<br />
  /mnt/ffmpegfs/video1.mov/00002.png
 
 A FEW WORDS ON PRORES
@@ -437,6 +447,16 @@ This will copy all missing/changed files without missing parts. On the Windows
 side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only
 copy the predicted size first and not respond to size changes.
 
+**Play HLS output by opening hls.html from disk**
+
+Most browser prevent playback of files from disk. You may put them into
+a website directory, but sometimes even https must be used or playback
+will be blocked.
+
+To enable disk playback in Firefox:
+
+* Open about:config
+* Set security.fileuri.strict_origin_policy to false
 
 DEVELOPMENT
 -----------

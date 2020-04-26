@@ -1,12 +1,32 @@
 Installation Instructions for FFmpegfs
 ======================================
 
-Copyright (C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de)
-This file was originally copyright (C) 2013-2014 K. Henriksson.
+Installation from repository
+============================
 
-This documentation may be distributed under the GNU Free Documentation License
-(GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU
-General Public License (GPL) version 3 or later.
+Debian Bullseye
+---------------
+
+FFmpegfs 1.10 has been added to Debian 11 Bullseye so it is available as
+binary distribution.
+
+On Debian 11 Bullseye you can simply do
+
+    apt-get install ffmpegfs
+
+For Ubuntu 20.04 and Linux distributions based on it this is
+
+    apt install ffmpegfs
+
+Other Distributions
+-------------------
+
+For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR).
+It is available as either the latest stable version or the latest code
+from GIT.
+
+Building FFmpegfs yourself
+==========================
 
 Prerequisites
 -------------
@@ -136,53 +156,17 @@ FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
 
-**If building from git, you'll also need:**
+Building source code
+--------------------
 
-* autoconf
-* automake
-* asciidoc (or at least asciidoc-base to save disk space)
-* w3m
+Download a release archive:
 
-For those who are lazy like me, simply copy and issue this command to get all prerequisites:
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v1.98/ffmpegfs-1.98.tar.gz
 
-    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+You may check https://github.com/nschlia/ffmpegfs/releases to see if there are
+newer releases available.
 
-Then do
-
-    ./autogen.sh
-    ./configure
-
-Installation from repository
-----------------------------
-
-FFmpegfs 1.10 has recently been added to Debian Bullseye and sid, so it is
-available as binary distribution.
-
-On Debian 11 Bullseye you can simply do
-
-    apt-get install ffmpegfs
-
-For Ubuntu 20.04 and Linux distributions based on it this is
-
-    apt install ffmpegfs
-
-For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR).
-It is available as either the latest stable version or the latest code
-from Git.
-
-Installation from source
-------------------------
-
-If you want to build FFmpegfs yourself, e.g. check out the latest version
-from Git, you may build it yourself.
-
-FFmpegfs uses the GNU build system. If you are installing from git, you'll
-need to first run:
-
-    ./autogen.sh
-
-If you are downloading a release, this has already been done for you. To
-build and install, run:
+Then unpack and cd to the source directory. To build and install, run:
 
     ./configure
     make
@@ -196,6 +180,38 @@ This will test audio conversion, tagging and size prediction.
 
 NOTE: Image embedding is not yet implemented. The test has been
 disabled at the moment.
+
+Building from GIT
+-----------------
+
+If you want to build FFmpegfs yourself, e.g. check out the latest version
+from GIT and be at the bleeding edge, you may build it yourself.
+
+**If building from git, you'll need these additional prerequisites:**
+
+* autoconf
+* automake
+* asciidoc (or at least asciidoc-base to save disk space)
+* w3m
+
+For those who are lazy like me, simply copy and issue this command to get all prerequisites:
+
+    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+
+FFmpegfs uses the GNU build system, so you'll need to run first:
+
+    ./autogen.sh
+
+If you are downloading a release, this has already been done for you. To
+build and install, run:
+
+    ./configure
+    make
+    make install
+
+To build and run the check suite, do:
+
+    make checks
 
 Documentation
 -------------
@@ -316,3 +332,14 @@ When you see this message accessing blurays:
 To get rid of this message simply install "libbluray-bdj", this will make it go away.
 Though not necessary, as to read the bluray tracks java support is not required, so
 this is simply cosmetical.
+
+COPYRIGHT
+---------
+
+Copyright (C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de)
+This file was originally copyright (C) 2013-2014 K. Henriksson.
+
+This documentation may be distributed under the GNU Free Documentation License
+(GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU
+General Public License (GPL) version 3 or later.
+

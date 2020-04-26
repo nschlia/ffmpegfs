@@ -96,7 +96,7 @@ thread_pool*                tp;                 /**< @brief Thread pool object *
 
 /**
   *
-  * List of passthrough file extension
+  * List of passthrough file extensions
   *
   * Note: Must be in ascending aplhabetical order for the
   * binary_search function used on it to work! New elements
@@ -166,6 +166,7 @@ static const std::list<std::string> passthrough_map =
     "JXR",		// JPEG-XR/Microsoft HD Photo format
     "KDC",		// Kodak digital camera format
     "LBM",		// Interchange File Format
+    "M3U8",     // Apple HTTP Live Streaming
     "MIFF",
     "MNG",		// Multiple Network Graphics
     "MRC",		// MRC format

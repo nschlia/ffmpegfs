@@ -39,21 +39,23 @@ and video formats on the fly when opened and read.
 
 Supported output formats:
 
-* MP4 (MPEG-4)
-* WebM
-* OGG
-* MOV (QuickTime File Format)
-* Prores (a MOV container for Apple Prores video & PCM audio)
-* Opus (audio only)
-* MP3 (MPEG-2 Audio Layer III)
-* WAV (Waveform Audio File Format)
-* AIFF (Audio Interchange File Format)
-* ALAC (Apple Lossless Audio Codec)
-* JPG (video to frameset)
-* PNG (video to frameset)
-* BMP (video to frameset)
-* TS (MPEG transport stream)
-* HLS (HTTP Live Streaming)
+| Format | Description | Video | Audio |
+| ------------- | ------------- | ------------- | ------------- |
+| MP4 | MPEG-4 | H264 | AAC |
+| WebM|| VP9 | Opus |
+| OGG||| Theora | Vorbis |
+| MOV | QuickTime File Format | H264 | AAC |
+| Prores || Prores | AAC | PCM 16 bit LE |
+| Opus ||| Opus |
+| MP3 | MPEG-2 Audio Layer III || MP3 |
+| WAV | Waveform Audio File Format || PCM 16 bit LE |
+| AIFF | Audio Interchange File Format || PCM 16 bit BE |
+| ALAC | Apple Lossless Audio Codec || ALAC |
+| JPG | Video to frameset || JPEG |
+| PNG | Video to frameset || PNG |
+| BMP | Video to frameset || BMP |
+| TS | MPEG transport stream | H264 | AAC |
+| HLS | HTTP Live Streaming | H264 | AAC |
 
 This can let you use a multi media file collection with software
 and/or hardware which only understands one of the supported output

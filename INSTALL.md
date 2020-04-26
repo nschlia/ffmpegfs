@@ -185,7 +185,7 @@ Building from GIT
 -----------------
 
 If you want to build FFmpegfs yourself, e.g. check out the latest version
-from GIT and be at the bleeding edge, you may build it yourself.
+from GIT and be at the bleeding edge:
 
 **If building from git, you'll need these additional prerequisites:**
 

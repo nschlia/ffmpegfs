@@ -69,7 +69,7 @@ recoding files.
 
 When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a
 video source file will be presented in a virtual directory named after
-the source file. Audio will no be available.
+the source file. Audio will not be available.
 
 For installation instructions see the [install](INSTALL.md) file.
 

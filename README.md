@@ -15,7 +15,7 @@ will go. After a stabilisation phase V2.0 will finally see the light.
 
 **New in 1.98:**
 
-* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and 
+* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
   Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
@@ -73,7 +73,7 @@ M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a
 hls.html that can be opened in a browser to play the segments.
 
 Please note that the files must be on a webserver because restrictions
-prevent most browsers from opening the files from disk. See FIXING 
+prevent most browsers from opening the files from disk. See FIXING
 PROBLEMS for details.
 
 INSTALLATION INSTRUCTIONS:

@@ -15,18 +15,15 @@ will go. After a stabilisation phase V2.0 will finally see the light.
 
 **New in 1.98:**
 
-* HLS: Introducing direct segment access. If e.g. segment no. 333 is opened,
-  ffmpegfs will seek to this position and start transcoding the segment
-  immediately.
-* See [NEWS](NEWS) for details.
-* FFmpegfs has been added to Debian sid, Debian 11 Bullseye and Ubuntu 20.04. See
-  [INSTALL](INSTALL.md) "Installation from repository" for details.
+* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and 
+  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 * Libav support has been dropped. There is no activity on https://git.libav.org/?p=libav.git
   since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg
   API. Supporting Libav already bound a lot of my time that I could better spend on new features
   or fixes for FFmpegfs.
+* See [NEWS](NEWS) for details.
 
 About
 -----

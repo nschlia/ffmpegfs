@@ -83,7 +83,7 @@
             </td>
             <td>
                <table>
-                  <?php		  
+                  <?php
 function reverse_strrchr($haystack, $needle)
 {
     $pos = strrpos($haystack, $needle);
@@ -120,7 +120,7 @@ if ($back != "") {
     echo "<a href=\"" . $back . "\">Go back</a>";
     echo "</td>\n<td>";
     echo "</td></tr>\n";
-    
+
     echo "<tr><td height=20>";
     echo "</td>\n<td>";
     echo "</td></tr>\n";

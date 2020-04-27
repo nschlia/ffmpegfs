@@ -40,7 +40,7 @@ int main (int argc, char **argv)
         printf("FFmpeg " FFMPEG_VERSION "\n");
         return 0;
     }
-	
+
 	av_register_all();
 
     const char *filename = argv[1];
@@ -55,7 +55,7 @@ int main (int argc, char **argv)
     }
 
     for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
-    {        
+    {
         for (AVDictionaryEntry *tag = NULL; (tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL;)
         {
             printf("%s=%s\n", tag->key, tag->value);

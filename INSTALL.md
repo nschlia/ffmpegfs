@@ -4,6 +4,22 @@ Installation Instructions for FFmpegfs
 Installation from repository
 ============================
 
+Debian Buster
+-------------
+
+FFmpegfs 1.10 can be installed on Debian 10 Buster from Buster Backports and
+sid (which is not recommended and therefore not described here).
+
+To enable Buster Backports:
+
+     echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
+
+     sudo apt-get update
+
+Then install FFmpegfs:
+
+     sudo apt-get -t buster-backports install ffmpegfs
+
 Debian Bullseye
 ---------------
 

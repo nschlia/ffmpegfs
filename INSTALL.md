@@ -333,6 +333,28 @@ To get rid of this message simply install "libbluray-bdj", this will make it go 
 Though not necessary, as to read the bluray tracks java support is not required, so
 this is simply cosmetical.
 
+**Switching between repository version and source builds**
+
+It is easy to switch between both worlds. You can do that as many
+times as you want to, alas the cache directory will be cleared
+every time. But it will be rebuild in the background so this will
+almost go unnoticed.
+
+To switch from repository to a source build do
+
+   apt-get remove ffmpegfs
+
+Then follow the steps under "Building FFmpegfs yourself". If you do
+not remove the repository version, you self-build could be unadvertedly
+up- or downgraded when a new version becomes available from the repository.
+
+To switch from a source build to a repository installation change to
+the build directory and do
+
+   make uninstall
+
+Then follow the steps under "Installation from repository".
+
 COPYRIGHT
 ---------
 

@@ -1,9 +1,21 @@
 <map id="src/ffmpeg_transcoder.h" name="src/ffmpeg_transcoder.h">
-<area shape="rect" id="node2" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base. " alt="" coords="382,80,490,107"/>
-<area shape="rect" id="node9" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="275,80,357,107"/>
-<area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="514,80,598,107"/>
-<area shape="rect" id="node13" href="$fileio_8h.html" title="FileIO class. " alt="" coords="615,155,675,181"/>
-<area shape="rect" id="node17" href="$ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles. " alt="" coords="128,80,251,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="301,155,405,181"/>
-<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,229,128,256"/>
+<area shape="rect" id="node1" title="FFmpeg transcoder." alt="" coords="519,5,697,32"/>
+<area shape="rect" id="node2" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base." alt="" coords="419,80,538,107"/>
+<area shape="rect" id="node9" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="304,80,395,107"/>
+<area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="562,80,654,107"/>
+<area shape="rect" id="node13" href="$fileio_8h.html" title="FileIO class." alt="" coords="669,155,736,181"/>
+<area shape="rect" id="node17" href="$ffmpeg__profiles_8h.html" title="FFmpeg encoder profiles." alt="" coords="145,80,279,107"/>
+<area shape="rect" id="node18" title=" " alt="" coords="730,80,793,107"/>
+<area shape="rect" id="node19" title=" " alt="" coords="817,80,881,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="332,155,447,181"/>
+<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,229,141,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="496,229,555,256"/>
+<area shape="rect" id="node6" title=" " alt="" coords="579,229,642,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="165,229,272,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="297,229,471,256"/>
+<area shape="rect" id="node11" title=" " alt="" coords="483,155,546,181"/>
+<area shape="rect" id="node12" title=" " alt="" coords="571,155,645,181"/>
+<area shape="rect" id="node14" title=" " alt="" coords="667,229,752,256"/>
+<area shape="rect" id="node15" title=" " alt="" coords="776,229,827,256"/>
+<area shape="rect" id="node16" title=" " alt="" coords="851,229,979,256"/>
 </map>

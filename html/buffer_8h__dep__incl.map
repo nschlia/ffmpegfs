@@ -1,11 +1,12 @@
 <map id="src/buffer.h" name="src/buffer.h">
-<area shape="rect" id="node2" href="$buffer_8cc.html" title="Buffer class implementation. " alt="" coords="5,80,100,107"/>
-<area shape="rect" id="node3" href="$cache_8h.html" title="Data cache management. " alt="" coords="245,80,335,107"/>
-<area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation. " alt="" coords="343,229,477,256"/>
-<area shape="rect" id="node7" href="$fuseops_8cc.html" title="Fuse operations implementation. " alt="" coords="501,229,609,256"/>
-<area shape="rect" id="node8" href="$transcode_8cc.html" title="File transcoder interface implementation. " alt="" coords="79,229,197,256"/>
-<area shape="rect" id="node9" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation. " alt="" coords="530,80,701,107"/>
-<area shape="rect" id="node10" href="$fileio_8cc.html" title="FileIO class implementation. " alt="" coords="725,80,815,107"/>
-<area shape="rect" id="node4" href="$cache_8cc.html" title="Cache class implementation. " alt="" coords="221,229,319,256"/>
-<area shape="rect" id="node5" href="$cache__entry_8h.html" title="Cache entry " alt="" coords="277,155,404,181"/>
+<area shape="rect" id="node1" title="Buffer class." alt="" coords="408,5,503,32"/>
+<area shape="rect" id="node2" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="5,80,105,107"/>
+<area shape="rect" id="node3" href="$cache_8h.html" title="Data cache management." alt="" coords="249,80,344,107"/>
+<area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="357,229,497,256"/>
+<area shape="rect" id="node7" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="522,229,637,256"/>
+<area shape="rect" id="node8" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="80,229,207,256"/>
+<area shape="rect" id="node9" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="543,80,727,107"/>
+<area shape="rect" id="node10" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="752,80,847,107"/>
+<area shape="rect" id="node4" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="231,229,333,256"/>
+<area shape="rect" id="node5" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="283,155,417,181"/>
 </map>

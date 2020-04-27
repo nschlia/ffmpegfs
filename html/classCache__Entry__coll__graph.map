@@ -1,11 +1,12 @@
 <map id="Cache_Entry" name="Cache_Entry">
-<area shape="rect" id="node2" href="$structID3v1.html" title="ID3 version 1 tag " alt="" coords="353,17,410,44"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition. " alt="" coords="328,68,435,95"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs. " alt="" coords="5,5,221,32"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks. " alt="" coords="29,57,198,98"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs. " alt="" coords="5,123,221,149"/>
-<area shape="rect" id="node7" href="$structCACHE__INFO.html" title="Cache information block. " alt="" coords="327,119,436,145"/>
-<area shape="rect" id="node8" href="$classBuffer.html" title="The Buffer class. " alt="" coords="353,169,410,196"/>
-<area shape="rect" id="node9" href="$classFileIO.html" title="Base class for I/O. " alt="" coords="85,173,142,200"/>
-<area shape="rect" id="node10" href="$classCache.html" title="The Cache class. " alt="" coords="351,220,411,247"/>
+<area shape="rect" id="node1" title="The Cache_Entry class." alt="" coords="577,119,680,145"/>
+<area shape="rect" id="node2" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="351,17,411,44"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="329,68,433,95"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,32"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks." alt="" coords="29,57,191,98"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,215,149"/>
+<area shape="rect" id="node7" href="$structCACHE__INFO.html" title="Cache information block." alt="" coords="328,119,435,145"/>
+<area shape="rect" id="node8" href="$classBuffer.html" title="The Buffer class." alt="" coords="351,169,412,196"/>
+<area shape="rect" id="node9" href="$classFileIO.html" title="Base class for I/O." alt="" coords="81,173,139,200"/>
+<area shape="rect" id="node10" href="$classCache.html" title="The Cache class." alt="" coords="350,220,413,247"/>
 </map>

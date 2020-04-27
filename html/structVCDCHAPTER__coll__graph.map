@@ -1,3 +1,4 @@
 <map id="VCDCHAPTER" name="VCDCHAPTER">
-<area shape="rect" id="node2" href="$structVCDMSF.html" title="Video CD MSF time format. " alt="" coords="24,5,103,32"/>
+<area shape="rect" id="node1" title="Video CD chapter." alt="" coords="5,95,116,121"/>
+<area shape="rect" id="node2" href="$structVCDMSF.html" title="Video CD MSF time format." alt="" coords="21,5,100,32"/>
 </map>

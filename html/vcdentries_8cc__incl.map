@@ -1,9 +1,21 @@
 <map id="src/vcd/vcdentries.cc" name="src/vcd/vcdentries.cc">
-<area shape="rect" id="node4" href="$vcdentries_8h.html" title="S/VCD VcdEntries class. " alt="" coords="331,80,425,107"/>
-<area shape="rect" id="node7" href="$vcdutils_8h.html" title="S/VCD utility functions. " alt="" coords="5,80,84,107"/>
-<area shape="rect" id="node8" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="548,80,632,107"/>
-<area shape="rect" id="node5" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class. " alt="" coords="255,155,352,181"/>
-<area shape="rect" id="node11" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="377,155,481,181"/>
-<area shape="rect" id="node15" href="$fileio_8h.html" title="FileIO class. " alt="" coords="649,155,709,181"/>
-<area shape="rect" id="node12" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="130,229,253,256"/>
+<area shape="rect" id="node1" title="S/VCD VcdEntries class implementation." alt="" coords="331,5,490,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="41,229,100,256"/>
+<area shape="rect" id="node3" title=" " alt="" coords="115,80,207,107"/>
+<area shape="rect" id="node4" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="359,80,462,107"/>
+<area shape="rect" id="node7" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="5,80,91,107"/>
+<area shape="rect" id="node8" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="586,80,678,107"/>
+<area shape="rect" id="node16" title=" " alt="" coords="928,229,1013,256"/>
+<area shape="rect" id="node19" title=" " alt="" coords="923,80,994,107"/>
+<area shape="rect" id="node5" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="275,155,381,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="614,229,677,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="785,155,847,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="595,155,669,181"/>
+<area shape="rect" id="node11" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="405,155,520,181"/>
+<area shape="rect" id="node15" href="$fileio_8h.html" title="FileIO class." alt="" coords="693,155,760,181"/>
+<area shape="rect" id="node12" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="124,229,260,256"/>
+<area shape="rect" id="node13" title=" " alt="" coords="284,229,391,256"/>
+<area shape="rect" id="node14" title=" " alt="" coords="415,229,590,256"/>
+<area shape="rect" id="node17" title=" " alt="" coords="701,229,752,256"/>
+<area shape="rect" id="node18" title=" " alt="" coords="776,229,904,256"/>
 </map>

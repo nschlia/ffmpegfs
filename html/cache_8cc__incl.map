@@ -1,11 +1,28 @@
 <map id="src/cache.cc" name="src/cache.cc">
-<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management. " alt="" coords="501,155,569,181"/>
-<area shape="rect" id="node13" href="$cache__entry_8h.html" title="Cache entry " alt="" coords="561,80,665,107"/>
-<area shape="rect" id="node15" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project. " alt="" coords="291,229,375,256"/>
-<area shape="rect" id="node18" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="322,304,426,331"/>
-<area shape="rect" id="node22" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog. " alt="" coords="741,80,815,107"/>
-<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class. " alt="" coords="597,229,663,256"/>
-<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class. " alt="" coords="552,304,612,331"/>
-<area shape="rect" id="node14" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="594,155,677,181"/>
-<area shape="rect" id="node19" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="301,379,423,405"/>
+<area shape="rect" id="node1" title="Cache class implementation." alt="" coords="528,5,629,32"/>
+<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management." alt="" coords="556,155,628,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="497,379,559,405"/>
+<area shape="rect" id="node13" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="617,80,727,107"/>
+<area shape="rect" id="node15" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="338,229,430,256"/>
+<area shape="rect" id="node18" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="367,304,481,331"/>
+<area shape="rect" id="node22" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="808,80,891,107"/>
+<area shape="rect" id="node26" title=" " alt="" coords="915,80,989,107"/>
+<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class." alt="" coords="659,229,730,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="928,379,979,405"/>
+<area shape="rect" id="node12" title=" " alt="" coords="557,229,635,256"/>
+<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class." alt="" coords="607,304,673,331"/>
+<area shape="rect" id="node10" title=" " alt="" coords="697,304,761,331"/>
+<area shape="rect" id="node11" title=" " alt="" coords="785,304,860,331"/>
+<area shape="rect" id="node5" title=" " alt="" coords="667,379,752,405"/>
+<area shape="rect" id="node6" title=" " alt="" coords="584,379,643,405"/>
+<area shape="rect" id="node9" title=" " alt="" coords="776,379,904,405"/>
+<area shape="rect" id="node14" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="652,155,743,181"/>
+<area shape="rect" id="node16" title=" " alt="" coords="279,304,342,331"/>
+<area shape="rect" id="node17" title=" " alt="" coords="180,304,255,331"/>
+<area shape="rect" id="node19" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="336,379,472,405"/>
+<area shape="rect" id="node20" title=" " alt="" coords="5,379,112,405"/>
+<area shape="rect" id="node21" title=" " alt="" coords="137,379,311,405"/>
+<area shape="rect" id="node23" title=" " alt="" coords="999,155,1073,181"/>
+<area shape="rect" id="node24" title=" " alt="" coords="767,155,841,181"/>
+<area shape="rect" id="node25" title=" " alt="" coords="865,155,924,181"/>
 </map>

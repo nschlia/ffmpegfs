@@ -1281,7 +1281,18 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_LOGFILE:
     {
-        return get_value(arg, &params.m_logfile);
+        std::string logfile;
+        int res = get_value(arg, &logfile);
+
+        if (res)
+        {
+            return res;
+        }
+
+        expand_path(&params.m_logfile, logfile);
+        sanitise_filepath(&params.m_logfile);
+
+        return 0;
     }
     }
 

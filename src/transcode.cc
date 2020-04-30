@@ -615,7 +615,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 cache_entry->m_seek_to_no = frame_no;
             }
 
-            int retries = 300;
+            int retries = 120; // wait 120 x 250 ms = 30 sec.
             while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
             {
                 if (errno != EAGAIN)
@@ -649,7 +649,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     reported = true;
                 }
 
-                const struct timespec ts = { 0, 100 MS };
+                const struct timespec ts = { 0, 250 MS };
                 nanosleep(&ts, nullptr);
             }
 

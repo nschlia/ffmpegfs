@@ -9,6 +9,8 @@ Important changes in 1.99 (2020-04-XX)
 * Feature:
 * Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be
           passed through. Added to ignore and pass through list.
+* Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in
+          "ffmpegfs --logfile=~/ffmpegfs.log".
 
 Important changes in 1.98 (2020-04-15)
 

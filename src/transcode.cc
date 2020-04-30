@@ -593,6 +593,12 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
     try
     {
+        // Open for reading if necessary
+        if (!cache_entry->m_buffer->open_file(0, CACHE_FLAG_RO))
+        {
+            throw false;
+        }
+
         // Set last access time
         cache_entry->m_cache_info.m_access_time = time(nullptr);
 

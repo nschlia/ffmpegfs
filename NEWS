@@ -11,6 +11,8 @@ Important changes in 1.99 (2020-04-XX)
           passed through. Added to ignore and pass through list.
 * Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in
           "ffmpegfs --logfile=~/ffmpegfs.log".
+* Bugfix: Issue #60 - Reopen cache file after it has been closed so that image frames can
+          be accessed after the file has been fully decoded.
 
 Important changes in 1.98 (2020-04-15)
 

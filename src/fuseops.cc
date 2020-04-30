@@ -1210,10 +1210,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            Logging::error(path, "getattr FRAME COUNT %1", parent_file->m_video_frame_count);
-
-                            //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
-
                             for (uint32_t frame_no = 1; frame_no <= parent_file->m_video_frame_count; frame_no++)
                             {
                                 make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image */

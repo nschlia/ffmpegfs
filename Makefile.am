@@ -3,6 +3,10 @@ export OPTIMISATION = -Ofast -g
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -W -Wno-psabi
 export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
+if ENABLE_EXTRA_VERSION
+export AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
+export AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
+endif
 
 export CACHEDIR="$(DESTDIR)/var/cache/ffmpegfs"
 

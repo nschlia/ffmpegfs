@@ -1812,7 +1812,7 @@ static void sighandler(int signum)
  */
 static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
-    Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
 
     struct sigaction sa;
@@ -1857,8 +1857,8 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
  */
 static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
-    Logging::info(nullptr, "%1 V%2 terminating", PACKAGE_NAME, PACKAGE_VERSION);
-    std::printf("%s V%s terminating\n", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminating", PACKAGE_NAME, FFMPEFS_VERSION);
+    std::printf("%s V%s terminating\n", PACKAGE_NAME, FFMPEFS_VERSION);
 
     stop_cache_maintenance();
 
@@ -1874,7 +1874,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     script_file.clear();
 
-    Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, PACKAGE_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, FFMPEFS_VERSION);
 }
 
 /**

@@ -234,7 +234,8 @@ if test -z "$GRAPHVIZ";
 fi
 
 AC_ARG_ENABLE([changelog],
-[  --enable-changelog    Turn on changelog],
+[AS_HELP_STRING([--enable-changelog],
+    [Turn on changelog])],
 [case "${enableval}" in
   yes) changelog=yes ;;
   no)  changelog=no ;;
@@ -245,7 +246,16 @@ AM_CONDITIONAL([NOCHANGELOG], [test x$changelog = xno])
 # Outputs resulting files.
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 test/Makefile])
+                 test/Makefile])                
+
+dnl Extra version
+AC_ARG_WITH(extra-version,
+        [AS_HELP_STRING([--with-extra-version=STRING],
+    [append STRING to version])],
+        [EXTRA_VERSION="${withval}"])                 
+AC_SUBST(EXTRA_VERSION)
+AM_CONDITIONAL([ENABLE_EXTRA_VERSION],[test ! -z "${with_extra_version}"])
+
 AC_OUTPUT
 
 # Hints on options

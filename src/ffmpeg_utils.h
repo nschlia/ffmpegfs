@@ -38,6 +38,12 @@
 #include "config.h"
 #endif
 
+#if !defined(EXTRA_VERSION)
+#define FFMPEFS_VERSION     PACKAGE_VERSION
+#else
+#define FFMPEFS_VERSION     PACKAGE_VERSION "-" EXTRA_VERSION
+#endif
+
 #define __STDC_FORMAT_MACROS                    /**< @brief Force PRId64 defines */
 
 #include "ffmpeg_compat.h"

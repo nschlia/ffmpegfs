@@ -1162,7 +1162,6 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_VERSION:
     {
-        /** @todo: Also output this information in debug mode */
         std::printf("-------------------------------------------------------------------------------------------\n");
 
 #ifdef __GNUC__
@@ -1174,7 +1173,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 #endif
         std::printf("%-20s: %s\n\n", "configuration", CONFIGURE_ARGS);
 
-        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", PACKAGE_VERSION);
+        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", FFMPEFS_VERSION);
 
         std::printf("%s", ffmpeg_libinfo().c_str());
 
@@ -1197,7 +1196,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         std::printf("-------------------------------------------------------------------------------------------\n\n");
 
-        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", PACKAGE_VERSION);
+        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", FFMPEFS_VERSION);
         std::printf("%s", ffmpeg_libinfo().c_str());
 
         std::printf("\nFFMpeg capabilities\n\n");
@@ -1404,7 +1403,7 @@ int main(int argc, char *argv[])
     // Check if run from other process group like mount and if so, inhibit startup message
     if (getppid() == getpgid(0))
     {
-        std::printf("%s V%s\n", PACKAGE_NAME, PACKAGE_VERSION);
+        std::printf("%s V%s\n", PACKAGE_NAME, FFMPEFS_VERSION);
         std::printf("Copyright (C) 2006-2008 David Collett\n"
                     "Copyright (C) 2008-2012 K. Henriksson\n"
                     "Copyright (C) 2017-2020 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");

@@ -1147,7 +1147,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DISK:
     {
-        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_HLS)))
+        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY)))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
 
@@ -1194,7 +1194,47 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     }
 #endif // USE_LIBBLURAY
 
-                    if (params.m_format[0].is_hls())
+                    if (params.m_format[0].is_frameset())
+                    {
+                        LPVIRTUALFILE parent_file = find_parent(origpath);
+
+                        if (parent_file != nullptr && (parent_file->m_flags & VIRTUALFLAG_DIRECTORY) && (parent_file->m_flags & VIRTUALFLAG_FILESET))
+                        {
+                            // Generate set of all frames
+                            if (!parent_file->m_video_frame_count)
+                            {
+                                int res = get_source_properties(origpath, parent_file);
+                                if (res < 0)
+                                {
+                                    return res;
+                                }
+                            }
+
+                            Logging::error(path, "getattr FRAME COUNT %1", parent_file->m_video_frame_count);
+
+                            //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
+
+                            for (uint32_t frame_no = 1; frame_no <= parent_file->m_video_frame_count; frame_no++)
+                            {
+                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image */
+                            }
+
+                            LPVIRTUALFILE virtualfile2 = find_original(origpath);
+                            if (virtualfile2 == nullptr)
+                            {
+                                // File does not exist
+                                return -ENOENT;
+                            }
+
+                            mempcpy(stbuf, &virtualfile2->m_st, sizeof(struct stat));
+
+                            // Clear errors
+                            errno = 0;
+
+                            return 0;
+                        }
+                    }
+                    else if (params.m_format[0].is_hls())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 

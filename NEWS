@@ -7,8 +7,8 @@ Important changes in 1.99 (2020-04-XX)
 
 * Support:
 * Feature:
-* Bugfix: *.m3u8 files were tried to be transcoded while they should simply be passed
-          through. Added to ignore and pass through list.
+* Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be
+          passed through. Added to ignore and pass through list.
 
 Important changes in 1.98 (2020-04-15)
 

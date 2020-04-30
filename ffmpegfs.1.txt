@@ -359,6 +359,9 @@ Print usage information.
 *-V*, *--version*::
 Output version information.
 
+*-c*, *--capabilities*::
+Output FFmpeg capabilities: list on the system available codecs.
+
 *-s*::
 Force single-threaded operation.
 

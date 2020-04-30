@@ -556,7 +556,7 @@ static int is_device(__attribute__((unused)) const AVClass *avclass)
     //return AV_IS_INPUT_DEVICE(avclass->category) || AV_IS_OUTPUT_DEVICE(avclass->category);
 }
 
-int show_formats_devices(int device_only)
+int show_caps(int device_only)
 {
     const AVInputFormat *ifmt  = nullptr;
     const AVOutputFormat *ofmt = nullptr;

@@ -196,6 +196,7 @@ enum
 {
     KEY_HELP,
     KEY_VERSION,
+    KEY_FFMPEG_CAPS,
     KEY_KEEP_OPT,
     // Intelligent parameters
     KEY_DESTTYPE,
@@ -326,6 +327,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("--help",                          KEY_HELP),
     FUSE_OPT_KEY("-V",                              KEY_VERSION),
     FUSE_OPT_KEY("--version",                       KEY_VERSION),
+    FUSE_OPT_KEY("-c",                              KEY_FFMPEG_CAPS),
+    FUSE_OPT_KEY("--capabilities",                  KEY_FFMPEG_CAPS),
     FUSE_OPT_KEY("-d",                              KEY_KEEP_OPT),
     FUSE_OPT_KEY("debug",                           KEY_KEEP_OPT),
     FUSE_OPT_END
@@ -1188,10 +1191,18 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         fuse_opt_add_arg(outargs, "--version");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, nullptr);
 
+        exit(0);
+    }
+    case KEY_FFMPEG_CAPS:
+    {
         std::printf("-------------------------------------------------------------------------------------------\n\n");
-        std::printf("FFMpeg capabilities\n\n");
 
-        show_formats_devices(0);
+        std::printf("%-20s: %s\n", PACKAGE_NAME " Version", PACKAGE_VERSION);
+        std::printf("%s", ffmpeg_libinfo().c_str());
+
+        std::printf("\nFFMpeg capabilities\n\n");
+
+        show_caps(0);
 
         exit(0);
     }

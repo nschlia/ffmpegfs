@@ -6,7 +6,8 @@ Ubuntu 20.04. See INSTALL.md "Installation from repository" for details.
 Important changes in 1.99 (2020-04-XX)
 
 * Support:
-* Feature:
+* Feature: Moved FFmpeg capabilities (formats) from --version/-V command to new -caps/-c
+           parameter to keep version information brief.
 * Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be
           passed through. Added to ignore and pass through list.
 * Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in

@@ -527,7 +527,7 @@ std::string         ffmpeg_libinfo();
  * @param[in] device_only - If true lists devices only.
  * @return On success returns 0; on error negative AVERROR.
  */
-int                 show_formats_devices(int device_only);
+int                 show_caps(int device_only);
 /**
  * @brief Safe way to get the codec name. Function never fails, will return "unknown" on error.
  * @param[in] codec_id - ID of codec

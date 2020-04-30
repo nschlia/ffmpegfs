@@ -147,6 +147,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:a78f8149a0f01d1b7387d8acb7bda24ac"><td class="memItemLeft" align="right" valign="top"><a id="a78f8149a0f01d1b7387d8acb7bda24ac"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>FFMPEFS_VERSION</b>&#160;&#160;&#160;PACKAGE_VERSION</td></tr>
+<tr class="separator:a78f8149a0f01d1b7387d8acb7bda24ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacbb9e1f38be71e22df1584a37c56693"><td class="memItemLeft" align="right" valign="top"><a id="aacbb9e1f38be71e22df1584a37c56693"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#aacbb9e1f38be71e22df1584a37c56693">__STDC_FORMAT_MACROS</a></td></tr>
 <tr class="memdesc:aacbb9e1f38be71e22df1584a37c56693"><td class="mdescLeft">&#160;</td><td class="mdescRight">Force PRId64 defines. <br /></td></tr>
@@ -370,9 +373,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a46a68f22ee8cbefc932b35d999d4f44e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a46a68f22ee8cbefc932b35d999d4f44e">ffmpeg_libinfo</a> ()</td></tr>
 <tr class="memdesc:a46a68f22ee8cbefc932b35d999d4f44e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get info about the FFmpeg libraries used.  <a href="ffmpeg__utils_8h.html#a46a68f22ee8cbefc932b35d999d4f44e">More...</a><br /></td></tr>
 <tr class="separator:a46a68f22ee8cbefc932b35d999d4f44e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a416d980750fa29b627a02d7e86ff630f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a416d980750fa29b627a02d7e86ff630f">show_formats_devices</a> (int device_only)</td></tr>
-<tr class="memdesc:a416d980750fa29b627a02d7e86ff630f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lists all supported codecs and devices.  <a href="ffmpeg__utils_8h.html#a416d980750fa29b627a02d7e86ff630f">More...</a><br /></td></tr>
-<tr class="separator:a416d980750fa29b627a02d7e86ff630f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dcbff20971891a1ae2b556479afe1ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a7dcbff20971891a1ae2b556479afe1ad">show_caps</a> (int device_only)</td></tr>
+<tr class="memdesc:a7dcbff20971891a1ae2b556479afe1ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lists all supported codecs and devices.  <a href="ffmpeg__utils_8h.html#a7dcbff20971891a1ae2b556479afe1ad">More...</a><br /></td></tr>
+<tr class="separator:a7dcbff20971891a1ae2b556479afe1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a674164b019b83799fa92e677b325faad"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__utils_8h.html#a674164b019b83799fa92e677b325faad">get_codec_name</a> (AVCodecID codec_id, bool long_name)</td></tr>
 <tr class="memdesc:a674164b019b83799fa92e677b325faad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safe way to get the codec name. Function never fails, will return "unknown" on error.  <a href="ffmpeg__utils_8h.html#a674164b019b83799fa92e677b325faad">More...</a><br /></td></tr>
 <tr class="separator:a674164b019b83799fa92e677b325faad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -454,7 +457,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Ignore if this is missing </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00117">117</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00123">123</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -471,7 +474,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Allow use of av_format_inject_global_side_data when available </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00093">93</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00099">99</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -488,7 +491,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Add av_get_media_type_string function if missing </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00098">98</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00104">104</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -594,7 +597,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00230">230</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00236">236</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -611,7 +614,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>File types </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00163">163</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00169">169</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -658,7 +661,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00186">186</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00192">192</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -687,7 +690,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00217">217</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00223">223</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -710,7 +713,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00242">242</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00248">248</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -830,7 +833,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">284</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00294">append_filename()</a>, <a class="el" href="blurayparser_8cc_source.html#l00547">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00570">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00186">check_vcd()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="fuseops_8cc_source.html#l01055">ffmpegfs_getattr()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01109">ffmpegfs_opt_proc()</a>, <a class="el" href="fuseops_8cc_source.html#l00877">ffmpegfs_readdir()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01376">main()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00313">remove_filename()</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00294">append_filename()</a>, <a class="el" href="blurayparser_8cc_source.html#l00547">check_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00570">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00186">check_vcd()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="fuseops_8cc_source.html#l01055">ffmpegfs_getattr()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01112">ffmpegfs_opt_proc()</a>, <a class="el" href="fuseops_8cc_source.html#l00877">ffmpegfs_readdir()</a>, <a class="el" href="vcdutils_8cc_source.html#l00151">VCDUTILS::get_directory()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00313">remove_filename()</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
 
 </div>
 </div>
@@ -912,7 +915,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01129">1129</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00561">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00463">get_bitrate()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00532">get_samplerate()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00690">get_size()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00592">get_time()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00561">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00466">get_bitrate()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00535">get_samplerate()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00693">get_size()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00595">get_time()</a>.</p>
 
 </div>
 </div>
@@ -943,7 +946,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 </div><div class="memdoc">
 <p>Safe <a class="el" href="ffmpeg__utils_8h.html#a830b8db3b94d028c275c4dc1b63d7c28">countof()</a> implementation: Retuns number of elements in an array. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00608">608</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00614">614</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1018,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01148">1148</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01109">ffmpegfs_opt_proc()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01376">main()</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01112">ffmpegfs_opt_proc()</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
 
 </div>
 </div>
@@ -1048,7 +1051,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00078">AV_ERROR_MAX_STRING_SIZE</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01820">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01707">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02881">FFmpeg_Transcoder::add_samples_to_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01611">FFmpeg_Transcoder::add_stream_copy()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00277">FFmpeg_Base::av_dict_set_with_check()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00289">FFmpeg_Base::av_opt_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02836">FFmpeg_Transcoder::convert_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02243">FFmpeg_Transcoder::decode()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02285">FFmpeg_Transcoder::decode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02620">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02422">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03122">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03196">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03297">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03048">FFmpeg_Transcoder::init_audio_output_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02768">FFmpeg_Transcoder::init_converted_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01996">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03444">FFmpeg_Transcoder::load_encode_and_write()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00071">FFmpeg_Base::open_bestmatch_codec_context()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00090">FFmpeg_Base::open_codec_context()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00235">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03700">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02993">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04959">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02608">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="transcode_8cc_source.html#l00748">transcoder_thread()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02170">FFmpeg_Transcoder::write_output_file_header()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03498">FFmpeg_Transcoder::write_output_file_trailer()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01820">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01707">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02881">FFmpeg_Transcoder::add_samples_to_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01611">FFmpeg_Transcoder::add_stream_copy()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00277">FFmpeg_Base::av_dict_set_with_check()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00289">FFmpeg_Base::av_opt_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02836">FFmpeg_Transcoder::convert_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02243">FFmpeg_Transcoder::decode()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02285">FFmpeg_Transcoder::decode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02620">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02422">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03122">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03196">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03297">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03048">FFmpeg_Transcoder::init_audio_output_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02768">FFmpeg_Transcoder::init_converted_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01996">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03444">FFmpeg_Transcoder::load_encode_and_write()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00071">FFmpeg_Base::open_bestmatch_codec_context()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00090">FFmpeg_Base::open_codec_context()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00235">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03700">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02993">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04959">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02608">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="transcode_8cc_source.html#l00754">transcoder_thread()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02170">FFmpeg_Transcoder::write_output_file_header()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03498">FFmpeg_Transcoder::write_output_file_trailer()</a>.</p>
 
 </div>
 </div>
@@ -1215,7 +1218,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00811">811</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
 
 </div>
 </div>
@@ -1257,7 +1260,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00852">852</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03700">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03700">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
 
 </div>
 </div>
@@ -1288,7 +1291,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00796">796</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>.</p>
 
 </div>
 </div>
@@ -1405,7 +1408,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00832">832</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01996">FFmpeg_Transcoder::init_resampler()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01996">FFmpeg_Transcoder::init_resampler()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>.</p>
 
 </div>
 </div>
@@ -1436,7 +1439,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00930">930</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00969">format_result_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">format_result_size_ex()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00327">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00244">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00969">format_result_size()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">format_result_size_ex()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>.</p>
 
 </div>
 </div>
@@ -1498,7 +1501,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00878">878</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1543,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00652">652</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01707">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00090">FFmpeg_Base::open_codec_context()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01311">print_params()</a>, <a class="el" href="transcode_8cc_source.html#l00274">transcoder_set_filesize()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01707">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01080">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00317">FFmpeg_Base::audio_info()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00090">FFmpeg_Base::open_codec_context()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01332">print_params()</a>, <a class="el" href="transcode_8cc_source.html#l00274">transcoder_set_filesize()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00301">FFmpeg_Base::video_info()</a>.</p>
 
 </div>
 </div>
@@ -1770,7 +1773,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00415">new_strdup()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01109">ffmpegfs_opt_proc()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01112">ffmpegfs_opt_proc()</a>.</p>
 
 </div>
 </div>
@@ -1956,7 +1959,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01274">1274</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00653">comp::operator()()</a>, and <a class="el" href="fuseops_8cc_source.html#l00381">transcoded_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8h_source.html#l00659">comp::operator()()</a>, and <a class="el" href="fuseops_8cc_source.html#l00381">transcoded_name()</a>.</p>
 
 </div>
 </div>
@@ -2293,18 +2296,18 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01246">1246</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01109">ffmpegfs_opt_proc()</a>, <a class="el" href="fuseops_8cc_source.html#l00479">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00561">find_original()</a>, <a class="el" href="fuseops_8cc_source.html#l00444">insert_file()</a>, and <a class="el" href="fuseops_8cc_source.html#l00364">translate_path()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01112">ffmpegfs_opt_proc()</a>, <a class="el" href="fuseops_8cc_source.html#l00479">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00561">find_original()</a>, <a class="el" href="fuseops_8cc_source.html#l00444">insert_file()</a>, and <a class="el" href="fuseops_8cc_source.html#l00364">translate_path()</a>.</p>
 
 </div>
 </div>
-<a id="a416d980750fa29b627a02d7e86ff630f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a416d980750fa29b627a02d7e86ff630f">&#9670;&nbsp;</a></span>show_formats_devices()</h2>
+<a id="a7dcbff20971891a1ae2b556479afe1ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dcbff20971891a1ae2b556479afe1ad">&#9670;&nbsp;</a></span>show_caps()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int show_formats_devices </td>
+          <td class="memname">int show_caps </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>device_only</em></td><td>)</td>
@@ -2364,7 +2367,7 @@ template&lt;typename T , std::size_t N&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l01237">1237</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00781">get_desttype()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00784">get_desttype()</a>.</p>
 
 </div>
 </div>

@@ -82,11 +82,10 @@ News</h1>
 <p>Release 2.0 is currently getting ready. Into release 1.99 only bugfixes will go. After a stabilisation phase V2.0 will finally see the light.</p>
 <p><b>New in 1.98:</b></p>
 <ul>
-<li>HLS: Introducing direct segment access. If e.g. segment no. 333 is opened, ffmpegfs will seek to this position and start transcoding the segment immediately.</li>
-<li>See [NEWS](NEWS) for details.</li>
-<li>FFmpegfs has been added to Debian sid, Debian 11 Bullseye and Ubuntu 20.04. See <a class="el" href="md_INSTALL.html">INSTALL</a> "Installation from repository" for details.</li>
+<li>FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and Ubuntu 20.04. See <a class="el" href="md_INSTALL.html">INSTALL</a> "Installation from repository" for details.</li>
 <li>Cool, there's an online review on Linux Uprising, you can read it here: <a href="https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html">https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</a></li>
 <li>Libav support has been dropped. There is no activity on <a href="https://git.libav.org/?p=libav.git">https://git.libav.org/?p=libav.git</a> since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg API. Supporting Libav already bound a lot of my time that I could better spend on new features or fixes for FFmpegfs.</li>
+<li>See [NEWS](NEWS) for details.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md3"></a>
 About</h1>
@@ -166,14 +165,10 @@ HTTP Live Streaming</h1>
 <p>ffmpegfs now supports HLS (HTTP Live Streaming). ffmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also create a virtual test.html file that can playback the segments using the hls.js library (see <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a>).</p>
 <p>To use the new HLS feature invoke ffmpegfs with: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 </pre><p>Please note that this will only work over http, so you need to publish the directory on a web server. Simply navigate to the directory and open test.html. Security restrictions prevent direct playback from disk.</p>
-<p>The feature is still experimental! Be prepared for unexpected results.</p>
-<p>Uncompleted features:</p>
+<p>TODO:</p>
 <ul>
-<li>Currently the segments are not properly created. Each segment may contain video or audio frames that actually belong to the previous or next segment. This will be fixed in future versions. hls.js does not seem to care about improperly cut segments, though, and playback appears fine. Playing a single segment separately will not work properly.</li>
-<li>Positioning is not implemented yet, i.e., if segment 150 is accessed transcoding will start from 1 and continue until 150 is reached. This is not efficient. Later version will start transcoding the requested segment immediately, like for frame sets.</li>
-<li>Due to the nature of HLS, which relies heavily on caching (good), and the missing afformentioned positioning feature, transcoding may fail miserably (not good): Consider starting playback, your browser plays the first 10 segments (100 seconds) from cache. The first segment accessed will be 11, which triggers transcoding. Alas, ffmpegfs starts at segment 1 and playback stalls until it provides no. 11...</li>
+<li>Currently the segments are not properly created. Each segment may contain video or audio frames that actually belong to the previous or next segment. This will be fixed in future versions. hls.js does not seem to care about improperly cut segments, though, and playback appears fine. Playing a single segment separately may not work properly.</li>
 </ul>
-<p>*There is still a lot to do, but the biggest pile of work has been done.</p>
 <h1><a class="anchor" id="autotoc_md7"></a>
 AUTO COPY</h1>
 <p>"Auto copy" performs intelligent stream copy, e.g., if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it would be possible to simply repackage it to a mp4 container without recoding.</p>

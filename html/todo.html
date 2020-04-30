@@ -84,13 +84,11 @@ $(function() {
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
 <dd><a class="anchor" id="_todo000010"></a>: Is this a FFmpeg bug or am I too stupid? OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770">ffmpegfs_getattr</a>  (const char *path, struct stat *stbuf)</dt>
-<dd><a class="anchor" id="_todo000016"></a>Feature #2447 / Issue #25: Reencode to same file format as source file  </dd>
-<dt>Member <a class="el" href="ffmpegfs_8cc.html#a684834ac60520f3c7e2e37c9e43607a8">ffmpegfs_opt_proc</a>  (void *data, const char *arg, int key, struct fuse_args *outargs)</dt>
-<dd><a class="anchor" id="_todo000013"></a>: Also output this information in debug mode  </dd>
+<dd><a class="anchor" id="_todo000015"></a>Feature #2447 / Issue #25: Reencode to same file format as source file  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a6c0c07bc6805650f5da69fc23258cc51">ffmpegfs_readdir</a>  (const char *path, void *buf, fuse_fill_dir_t filler, off_t, struct fuse_file_info *)</dt>
-<dd><a class="anchor" id="_todo000015"></a>Calculate correct file size for frame image  </dd>
+<dd><a class="anchor" id="_todo000014"></a>Calculate correct file size for frame image  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a7ad0a9782c3231049be5c9c9b22542a7">find_original</a>  (std::string *filepath)</dt>
-<dd><a class="anchor" id="_todo000014"></a>Feature #2447 / Issue #25: add command line option  </dd>
+<dd><a class="anchor" id="_todo000013"></a>Feature #2447 / Issue #25: add command line option  </dd>
 <dt>Member <a class="el" href="ffmpegfs_8cc.html#a47cdec71e4661ee317ac825d0cf4afe2">get_desttype</a>  (const std::string &amp;arg, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class.">FFmpegfs_Format</a> format[2])</dt>
 <dd><a class="anchor" id="_todo000012"></a>: evaluate this function  </dd>
 <dt>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
@@ -100,8 +98,8 @@ $(function() {
 <dt>Member <a class="el" href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">parse_find_best_video_stream</a>  ()</dt>
 <dd><a class="anchor" id="_todo000002"></a>is 0 really OK or shall we better parse?  </dd>
 <dt>Member <a class="el" href="classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0">VcdIO::duration</a>  () const</dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000018"></a>Could work for VCD, but always returns AV_NOPTS_VALUE. </p>
-<p class="enddd"><a class="anchor" id="_todo000017"></a>: implement me </p>
+<dd><p class="startdd"><a class="anchor" id="_todo000017"></a>Could work for VCD, but always returns AV_NOPTS_VALUE. </p>
+<p class="enddd"><a class="anchor" id="_todo000016"></a>: implement me </p>
 </dd>
 </dl>
 </div></div><!-- contents -->

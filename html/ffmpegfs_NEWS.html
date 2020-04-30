@@ -68,11 +68,20 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
+<div class="line">FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and</div>
+<div class="line">Ubuntu 20.04. See INSTALL.md &quot;Installation from repository&quot; for details.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 1.99 (2020-04-XX)</div>
 <div class="line"> </div>
 <div class="line">* Support:</div>
-<div class="line">* Feature:</div>
-<div class="line">* Bugfix:</div>
+<div class="line">* Feature: Moved FFmpeg capabilities (formats) from --version/-V command to new -caps/-c</div>
+<div class="line">           parameter to keep version information brief.</div>
+<div class="line">* Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be</div>
+<div class="line">          passed through. Added to ignore and pass through list.</div>
+<div class="line">* Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in</div>
+<div class="line">          &quot;ffmpegfs --logfile=~/ffmpegfs.log&quot;.</div>
+<div class="line">* Bugfix: Issue #60 - Reopen cache file after it has been closed so that image frames can</div>
+<div class="line">          be accessed after the file has been fully decoded.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 1.98 (2020-04-15)</div>
 <div class="line"> </div>

@@ -9,7 +9,7 @@ TESTS += test_audio_wav test_filenames_wav test_filesize_wav test_tags_wav
 TESTS += test_audio_webm test_filenames_webm test_filesize_webm test_tags_webm
 TESTS += test_audio_alac test_filenames_alac test_filesize_alac test_tags_alac
 TESTS += test_audio_ts 	test_filenames_ts test_filesize_ts test_tags_ts
-TESTS += test_filesize_mov_video test_filesize_mp4_video test_filesize_webm_video test_filesize_prores_video test_filesize_ts_video
+TESTS += test_filesize_video_mov test_filesize_video_mp4 test_filesize_video_webm test_filesize_video_prores test_filesize_video_ts
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 

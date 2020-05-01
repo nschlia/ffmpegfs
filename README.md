@@ -76,13 +76,10 @@ Please note that the files must be on a webserver because restrictions
 prevent most browsers from opening the files from disk. See FIXING
 PROBLEMS for details.
 
-INSTALLATION INSTRUCTIONS:
+Installation Instructions
+-------------------------
 
 * See the [INSTALL](INSTALL.md) file.
-
-RESTRICTIONS:
-
-* See [TODO](TODO) for details.
 
 Supported Linux Distributions
 -----------------------------

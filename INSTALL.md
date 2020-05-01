@@ -166,11 +166,33 @@ This will enable H264, mp3, Opus and WebM support. Next...
 
 to build ffmpeg.
 
-FFmpeg compile notes:
+FFmpeg compile notes
+--------------------
 
 FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
+
+For a minimum build that contains all the libraries required by FFmpegfs and
+SSL support for convenience use:
+
+	configure \
+		--enable-gpl \
+		--enable-shared \
+		--enable-version3 \
+		--enable-nonfree \
+		--enable-pthreads \
+		--enable-postproc \
+		--enable-avresample \
+		--enable-libmp3lame \
+		--enable-libx264 \
+		--enable-libvpx \
+		--enable-libvorbis \
+		--enable-libtheora \
+		--enable-libxvid \
+		--enable-openssl
+
+This worked for me.
 
 Building source code
 --------------------

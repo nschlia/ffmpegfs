@@ -214,6 +214,7 @@ DISTFILES += \
     test/test_frameset_bmp \
     test/test_frameset_jpg \
     test/test_frameset_png \
+    test/test_hls \
     test/test_picture \
     test/test_picture_aiff \
     test/test_picture_alac \

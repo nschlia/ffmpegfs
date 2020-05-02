@@ -21,6 +21,40 @@ ffmpegfserr () {
     exit 99
 }
 
+check_filesize() {
+    MIN="$2"
+    MAX="$3"
+
+    if [ "${FILEEXT}" != "hls" ]
+    then
+        FILE="$1.${FILEEXT}"
+    else
+        FILE="$1"
+    fi
+
+    if [ -z ${MAX}  ]
+    then
+        MAX=${MIN}
+    fi
+
+    SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
+    echo "File: ${FILE}"
+    if [ ${MIN} -eq ${MAX} ]
+    then
+        echo "Size: ${SIZE} (expected ${MIN})"
+    else
+        echo "Size: ${SIZE} (expected ${MIN}...${MAX})"
+    fi
+
+    if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]
+    then
+        echo "Pass"
+    else
+        echo "FAIL!"
+        exit 1
+    fi
+}
+
 set -e
 trap cleanup EXIT
 trap ffmpegfserr USR1

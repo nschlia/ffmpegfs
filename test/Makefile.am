@@ -38,7 +38,8 @@ test_tags_wav \
 test_tags_webm \
 test_frameset_png \
 test_frameset_bmp \
-test_frameset_jpg
+test_frameset_jpg \
+test_hls
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 

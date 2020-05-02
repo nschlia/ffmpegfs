@@ -89,10 +89,10 @@ QMAKE_CXXFLAGS += -std=c++11 -Wextra -Wconversion -Wsign-compare -Wsign-conversi
 LIBS += -L$$(HOME)/dev/ffmpeg/lib
 INCLUDEPATH += $$(HOME)/dev/ffmpeg/include
 
-#INCLUDEPATH += "/home/dev special/dev/ffmpeg/include"
+#INCLUDEPATH += "${HONE}/dev/ffmpeg/include"
 #LIBS += \
-#        -L"/home/schlia/dev special/ffmpeg/lib" \
-#        -L"/home/schlia/dev special/ffmpeg/bin"
+#        -L"${HONE}/ffmpeg/lib" \
+#        -L"${HONE}/ffmpeg/bin"
 
 DISTFILES += \
     autogen.sh \

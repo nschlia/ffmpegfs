@@ -2696,6 +2696,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
                 {
                     // Decode one frame.
                     ret = decode_video_frame(pkt, &decoded);
+
 #if LAVC_NEW_PACKET_INTERFACE
                     if ((ret == AVERROR(EAGAIN) && ret == lastret) || ret == AVERROR_EOF)
                     {
@@ -3229,7 +3230,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
             av_packet_unref(&pkt);
             throw ret;
         }
@@ -3242,7 +3243,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
@@ -3259,7 +3260,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             }
             else if (ret < 0)
             {
-                Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 

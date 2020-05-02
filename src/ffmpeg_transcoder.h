@@ -749,7 +749,7 @@ private:
 
     Buffer *                    m_buffer;                   /**< @brief Pointer to cache buffer object */
 
-    bool                        m_reset_pts;
+    bool                        m_reset_pts;                /**< @brief We have to reset audio/video pts to the new position */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 };

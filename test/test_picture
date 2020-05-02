@@ -19,4 +19,4 @@ echo Checking ${DIRNAME}/raven_d.${FILEEXT}
 [ "$(hash_image "${DIRNAME}/raven_d.${FILEEXT}")" = 5cd44d9e64c90d137ed3614213e309afec060dbc ]
 echo "Pass"
 
-echo OK
+echo "OK"

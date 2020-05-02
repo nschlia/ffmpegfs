@@ -83,4 +83,4 @@ do
 	rm -f "${FILE}.${DESTTYPE}.tag"
 done 
 
-echo OK
+echo "OK"

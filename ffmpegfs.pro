@@ -170,52 +170,72 @@ DISTFILES += \
     test/tags/raven_d.webm.libav.tag \
     test/test_audio \
     test/test_audio_aiff \
+    test/test_audio_alac \
     test/test_audio_mov \
     test/test_audio_mp3 \
     test/test_audio_mp4 \
     test/test_audio_ogg \
     test/test_audio_opus \
     test/test_audio_prores \
+    test/test_audio_ts \
     test/test_audio_wav \
     test/test_audio_webm \
     test/test_filenames \
     test/test_filenames_aiff \
+    test/test_filenames_alac \
     test/test_filenames_mov \
     test/test_filenames_mp3 \
     test/test_filenames_mp4 \
     test/test_filenames_ogg \
     test/test_filenames_opus \
     test/test_filenames_prores \
+    test/test_filenames_ts \
     test/test_filenames_wav \
     test/test_filenames_webm \
     test/test_filesize \
     test/test_filesize_aiff \
+    test/test_filesize_alac \
     test/test_filesize_mov \
     test/test_filesize_mp3 \
     test/test_filesize_mp4 \
     test/test_filesize_ogg \
     test/test_filesize_opus \
     test/test_filesize_prores \
+    test/test_filesize_ts \
+    test/test_filesize_video \
+    test/test_filesize_video_mov \
+    test/test_filesize_video_mp4 \
+    test/test_filesize_video_prores \
+    test/test_filesize_video_ts \
+    test/test_filesize_video_webm \
     test/test_filesize_wav \
     test/test_filesize_webm \
+    test/test_frameset \
+    test/test_frameset_bmp \
+    test/test_frameset_jpg \
+    test/test_frameset_png \
     test/test_picture \
     test/test_picture_aiff \
+    test/test_picture_alac \
     test/test_picture_mov \
     test/test_picture_mp3 \
     test/test_picture_mp4 \
     test/test_picture_ogg \
     test/test_picture_opus \
     test/test_picture_prores \
+    test/test_picture_ts \
     test/test_picture_wav \
     test/test_picture_webm \
     test/test_tags \
     test/test_tags_aiff \
+    test/test_tags_alac \
     test/test_tags_mov \
     test/test_tags_mp3 \
     test/test_tags_mp4 \
     test/test_tags_ogg \
     test/test_tags_opus \
     test/test_tags_prores \
+    test/test_tags_ts \
     test/test_tags_wav \
     test/test_tags_webm \
     TODO \

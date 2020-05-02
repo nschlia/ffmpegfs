@@ -86,4 +86,4 @@ else
 	exit 99
 fi
 
-echo OK
+echo "OK"

@@ -12,6 +12,7 @@ Important changes in 1.99 (2020-05-XX)
            and correct file names.
 * Feature: Moved FFmpeg capabilities (formats) from --version/-V command to new -caps/-c
            parameter to keep version information brief.
+* Bugfix: Issue #61 - fix timeout problem when accessing JPG in arbitrary order.
 * Bugfix: Issue #58 - Build list when ls/cp path/to/flles/00001.png is done. Access failed
           because the file was not found.
 * Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be

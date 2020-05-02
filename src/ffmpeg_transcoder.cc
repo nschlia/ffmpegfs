@@ -3228,7 +3228,11 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
-        cloned_frame->pts = frame_to_pts(m_in.m_video.m_stream, ++m_fake_frame_no);
+        if (m_current_format->video_codec_id() == AV_CODEC_ID_MJPEG)
+        {
+            // The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks
+            cloned_frame->pts = frame_to_pts(m_in.m_video.m_stream, ++m_fake_frame_no);
+        }
 
 #if !LAVC_NEW_PACKET_INTERFACE
         ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);

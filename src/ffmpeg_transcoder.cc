@@ -180,6 +180,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_current_format(nullptr)
     , m_buffer(nullptr)
     , m_reset_pts(false)
+    , m_fake_frame_no(0)
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -3219,12 +3220,15 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
     }
 
     AVPacket pkt;
+    AVFrame *cloned_frame = av_frame_clone(frame);  // Clone frame. Does not copy data but references it, only the properties are copied. Not a big memory impact.
     int ret = 0;
     try
     {
         init_packet(&pkt);
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
+
+        cloned_frame->pts = frame_to_pts(m_in.m_video.m_stream, ++m_fake_frame_no);
 
 #if !LAVC_NEW_PACKET_INTERFACE
         ret = avcodec_encode_video2(m_out.m_video.m_codec_ctx, &pkt, frame, data_present);
@@ -3240,7 +3244,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         *data_present = 0;
 
         // send the frame for encoding
-        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, cloned_frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3283,11 +3287,13 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
+            av_frame_free(&cloned_frame);
             av_packet_unref(&pkt);
         }
     }
     catch (int _ret)
     {
+        av_frame_free(&cloned_frame);
         av_packet_unref(&pkt);
         ret = _ret;
     }

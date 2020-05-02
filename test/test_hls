@@ -18,8 +18,8 @@ cat "${DIRNAME}"/*.ts > /dev/null
 
 echo "File sizes"
 check_filesize "000001.ts" 1535020 1598752
-check_filesize "000002.ts" 1532764 1567356
-check_filesize "000003.ts" 1201508 1222188
+check_filesize "000002.ts" 1532764 1569236
+check_filesize "000003.ts" 1201508 1231588
 echo "File sizes OK"
 
 echo "Pass"

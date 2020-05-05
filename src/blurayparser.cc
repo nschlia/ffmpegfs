@@ -218,7 +218,7 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         }
         case BLURAY_AUDIO_FORMAT_STEREO:
         {
-            *channels = 2;  // Multi Channel
+            *channels = 2;  // Stereo
             break;
         }
         case BLURAY_AUDIO_FORMAT_MULTI_CHAN:

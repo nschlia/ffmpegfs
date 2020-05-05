@@ -364,7 +364,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration < AV_TIME_BASE)
         {
-            Logging::debug(path, "Title %1: skipping empty title", title_idx + 1);
+            Logging::trace(path, "Title %1: skipping empty title", title_idx + 1);
             return true;
         }
 
@@ -380,7 +380,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration < AV_TIME_BASE)
         {
-            Logging::debug(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
+            Logging::trace(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
             return true;
         }
 

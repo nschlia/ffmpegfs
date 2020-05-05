@@ -637,7 +637,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
     else
     {
-        Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+        Logging::debug(destname(), "Opening frame set type '%1'.", m_current_format->desttype().c_str());
 
         // Open frame set buffer
         return open_output_frame_set(buffer);

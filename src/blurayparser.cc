@@ -158,6 +158,14 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
             *interleaved = 0;
             break;
         }
+        default:
+        {
+            Logging::error(path, "Unknown video format %1. Assuming 1920x1080P - may be totally wrong.", ss->format);
+            *width = 1920;
+            *height = 1080;
+            *interleaved = 0;
+            break;
+        }
         }
 
         switch (ss->rate)
@@ -190,6 +198,12 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         case BLURAY_VIDEO_RATE_60000_1001:
         {
             *framerate = av_make_q(60000, 1001);
+            break;
+        }
+        default:
+        {
+            Logging::error(path, "Unknown video frame rate %1. Assuming 25 fps - may be totally wrong.", ss->rate);
+            *framerate = av_make_q(25000, 1000);
             break;
         }
         }
@@ -231,6 +245,12 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
             *channels = 2;  // Stereo ac3/dts
             break;
         }
+        default:
+        {
+            Logging::error(path, "Unknown number of audio channels %1. Assuming 2 channel/stereo - may be totally wrong.", ss->format);
+            *channels = 2;  // Stereo
+            break;
+        }
         }
 
         switch (ss->rate)
@@ -262,6 +282,12 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         case BLURAY_AUDIO_RATE_96_COMBO:
         {
             // *sample_rate = "48/96 Khz";
+            break;
+        }
+        default:
+        {
+            Logging::error(path, "Unknown audio sample rate %1. Assuming 48 kHz - may be totally wrong.", ss->rate);
+            *sample_rate = 48000;
             break;
         }
         }

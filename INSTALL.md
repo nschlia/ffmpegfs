@@ -23,7 +23,7 @@ Then install FFmpegfs:
 Debian Bullseye
 ---------------
 
-FFmpegfs 1.10 has been added to Debian 11 Bullseye so it is available as
+FFmpegfs 1.98 has been added to Debian 11 Bullseye so it is available as
 binary distribution.
 
 On Debian 11 Bullseye you can simply do

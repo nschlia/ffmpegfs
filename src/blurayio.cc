@@ -147,7 +147,7 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
 
     if (chapter_end > 0 && !m_full_title)
     {
-        m_end_pos = bd_chapter_pos(m_bd, chapter_end);
+        m_end_pos = bd_chapter_pos(m_bd, chapter_end) - 1;
     }
     else
     {

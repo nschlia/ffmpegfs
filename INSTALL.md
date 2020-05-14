@@ -166,33 +166,53 @@ This will enable H264, mp3, Opus and WebM support. Next...
 
 to build ffmpeg.
 
-FFmpeg compile notes
---------------------
+Build FFmpeg with optimisations
+-------------------------------
+
+The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built
+with common options so that it can run on many processors. To leverage the
+full potential it may be useful to build it with optimisation options for the
+target CPU. The resulting binaries may not run on other computers.
 
 FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
 Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
 formats should be used as source.
 
+**Attention!** Remember to do "apt remove ffmpeg" before proceeding with the next
+steps to avoid malefic blends of custom and official distribution binaries.
+
 For a minimum build that contains all the libraries required by FFmpegfs and
 SSL support for convenience use:
 
 	configure \
+		--extra-cflags='-march=native' \
+		--extra-cflags=-Ofast \
+		--enable-runtime-cpudetect \
+		--disable-static \
 		--enable-gpl \
 		--enable-shared \
 		--enable-version3 \
 		--enable-nonfree \
 		--enable-pthreads \
 		--enable-postproc \
-		--enable-avresample \
-		--enable-libmp3lame \
-		--enable-libx264 \
+		--enable-openssl \
 		--enable-libvpx \
 		--enable-libvorbis \
+		--enable-avresample \
+		--enable-libmp3lame \
 		--enable-libtheora \
 		--enable-libxvid \
-		--enable-openssl
+		--enable-libx264
+		
+Fix the complaints by configure, i.e. install the required 
+development packages, then
 
-This worked for me.
+	make install
+
+This works for me. Decoding runs much faster with these settings.
+
+**NOTE:** Depending on the source formats you have it may be required
+to add additional libraries.
 
 Building source code
 --------------------

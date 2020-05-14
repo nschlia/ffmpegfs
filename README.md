@@ -391,6 +391,10 @@ But that's the price of starting playback fast.
 FIXING PROBLEMS
 ---------------
 
+**Transcoding too slow**
+
+See [Build FFmpeg with optimisations](https://github.com/nschlia/ffmpegfs/blob/master/INSTALL.md#build-ffmpeg-with-optimisations)
+
 **Lock ups when accessing through Samba**
 
 When accessed via Samba the pending read can lock the whole share, causing

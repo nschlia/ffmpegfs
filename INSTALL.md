@@ -7,7 +7,7 @@ Installation from repository
 Debian Buster
 -------------
 
-FFmpegfs 1.10 can be installed on Debian 10 Buster from Buster Backports and
+FFmpegfs 1.18 can be installed on Debian 10 Buster from Buster Backports and
 sid (which is not recommended and therefore not described here).
 
 To enable Buster Backports:

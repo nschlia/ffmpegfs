@@ -1124,7 +1124,7 @@ std::string string_format(const std::string& format, Args ... args)
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-int compare(const std::string & value, const std::string & pattern)
+int reg_compare(const std::string & value, const std::string & pattern)
 {
     regex_t regex;
     int reti;

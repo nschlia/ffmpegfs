@@ -572,7 +572,7 @@ int                 print_stream_info(const AVStream* stream);
  * @param[in] pattern - Regexp pattern to match.
  * @return Returns 0 if pattern matches; 1 if not; -1 if pattern is no valid regex
  */
-int                 compare(const std::string &value, const std::string &pattern);
+int                 reg_compare(const std::string &value, const std::string &pattern);
 /**
  * @brief Expand path, e.g., expand ~/ to home directory.
  * @param[out] tgt - Expanded source path.

@@ -1112,7 +1112,7 @@ std::string replace_all(std::string str, const std::string& from, const std::str
 
 int strcasecmp(const std::string & s1, const std::string & s2)
 {
-    return strcasecmp(s1.c_str(), s2.c_str());
+    return ::strcasecmp(s1.c_str(), s2.c_str());
 }
 
 template<typename ... Args>

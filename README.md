@@ -3,8 +3,8 @@ FFmpegfs
 
 | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- |
-| gcc 8.2.0 | FFmpeg 4.1.4| ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| clang 7.0.1 | FFmpeg 4.1.4 | ![Build Status](https://www.oblivion-secure.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| gcc 8.2.0 | FFmpeg 4.1.4| ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| clang 7.0.1 | FFmpeg 4.1.4 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
 
 News
 ----

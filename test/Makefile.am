@@ -7,6 +7,7 @@ test_audio_prores \
 test_audio_ts \
 test_audio_wav \
 test_audio_webm \
+test_filecount_hls \
 test_filenames_alac \
 test_filenames_mp4 \
 test_filenames_ogg \
@@ -15,6 +16,7 @@ test_filenames_prores \
 test_filenames_ts \
 test_filenames_wav \
 test_filenames_webm \
+test_filenames_hls \
 test_filesize_alac \
 test_filesize_mp4 \
 test_filesize_ogg \
@@ -23,6 +25,7 @@ test_filesize_prores \
 test_filesize_ts \
 test_filesize_wav \
 test_filesize_webm \
+test_filesize_hls \
 test_filesize_video_mov \
 test_filesize_video_mp4 \
 test_filesize_video_prores \
@@ -38,8 +41,7 @@ test_tags_wav \
 test_tags_webm \
 test_frameset_png \
 test_frameset_bmp \
-test_frameset_jpg \
-test_hls
+test_frameset_jpg
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 

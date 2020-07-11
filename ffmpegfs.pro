@@ -180,6 +180,7 @@ DISTFILES += \
     test/test_audio_ts \
     test/test_audio_wav \
     test/test_audio_webm \
+    test/test_filecount_hls \
     test/test_filenames \
     test/test_filenames_aiff \
     test/test_filenames_alac \
@@ -192,6 +193,7 @@ DISTFILES += \
     test/test_filenames_ts \
     test/test_filenames_wav \
     test/test_filenames_webm \
+    test/test_filenames_hls \
     test/test_filesize \
     test/test_filesize_aiff \
     test/test_filesize_alac \
@@ -210,11 +212,11 @@ DISTFILES += \
     test/test_filesize_video_webm \
     test/test_filesize_wav \
     test/test_filesize_webm \
+    test/test_filesize_hls \
     test/test_frameset \
     test/test_frameset_bmp \
     test/test_frameset_jpg \
     test/test_frameset_png \
-    test/test_hls \
     test/test_picture \
     test/test_picture_aiff \
     test/test_picture_alac \

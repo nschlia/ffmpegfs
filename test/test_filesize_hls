@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. "${BASH_SOURCE%/*}/funcs.sh" "hls"
+
+DIRNAME="${DIRNAME}"/snowboard.mp4
+
+cat "${DIRNAME}"/*.ts > /dev/null
+
+echo "File sizes"
+check_filesize "000001.ts" 1535020 1599880
+check_filesize "000002.ts" 1532764 1569612
+check_filesize "000003.ts" 1201508 1231588
+echo "File sizes OK"
+
+echo "OK"

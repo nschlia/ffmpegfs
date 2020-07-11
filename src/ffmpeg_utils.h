@@ -50,6 +50,7 @@
 
 #include <string>
 #include <vector>
+#include <regex>
 
 #if !defined(USE_LIBSWRESAMPLE) && !defined(USE_LIBAVRESAMPLE)
 #error "Must have either libswresample (preferred choice for FFMpeg) or libavresample (with libav)."
@@ -570,9 +571,10 @@ int                 print_stream_info(const AVStream* stream);
  * @brief Compare value with pattern.
  * @param[in] value - Value to check.
  * @param[in] pattern - Regexp pattern to match.
+ * @param[in] flag - On of the flag_type constants, see https://en.cppreference.com/w/cpp/regex/basic_regex for options. Mostly std::regex::icase is used to make matches case insensitive.
  * @return Returns 0 if pattern matches; 1 if not; -1 if pattern is no valid regex
  */
-int                 reg_compare(const std::string &value, const std::string &pattern);
+int                 reg_compare(const std::string &value, const std::string &pattern, std::regex::flag_type flag = std::regex::ECMAScript);
 /**
  * @brief Expand path, e.g., expand ~/ to home directory.
  * @param[out] tgt - Expanded source path.

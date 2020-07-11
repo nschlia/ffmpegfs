@@ -33,13 +33,12 @@
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
 
+#include <iostream>
 #include <libgen.h>
 #include <unistd.h>
 #include <algorithm>
-#include <regex.h>
 #include <wordexp.h>
 #include <memory>
-#include <regex>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -1124,21 +1123,24 @@ std::string string_format(const std::string& format, Args ... args)
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-int reg_compare(const std::string & value, const std::string & pattern)
+int reg_compare(const std::string & value, const std::string & pattern, std::regex::flag_type flag)
 {
-    regex_t regex;
     int reti;
 
-    reti = regcomp(&regex, pattern.c_str(), REG_EXTENDED | REG_ICASE);
-    if (reti)
+    try
     {
-        std::fprintf(stderr, "Could not compile regex\n");
-        return -1;
+        std::regex rgx(pattern, flag);
+
+        reti = (std::regex_search(value, rgx) == true) ? 0 : 1;
     }
+    catch(const std::regex_error& e)
+    {
+        std::cerr << "regex_error caught: " << e.what() << '\n';
+        if(e.code() == std::regex_constants::error_brack)
+            std::cerr << "The code was error_brack\n";
 
-    reti = regexec(&regex, value.c_str(), 0, nullptr, 0);
-
-    regfree(&regex);
+        reti = -1;
+    }
 
     return reti;
 }

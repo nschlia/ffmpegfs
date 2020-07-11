@@ -473,7 +473,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         int reti;
 
         // Check for decimal number
-        reti = reg_compare(data, "^([1-9][0-9]*|0)?(bps)?$");
+        reti = reg_compare(data, "^([1-9][0-9]*|0)?(bps)?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -486,7 +486,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         }
 
         // Check for number with optional descimal point and K modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(bps)?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(bps)?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -499,7 +499,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         }
 
         // Check for number with optional descimal point and M modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?M(bps)?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?M(bps)?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -542,7 +542,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
         int reti;
 
         // Check for decimal number
-        reti = reg_compare(data, "^([1-9][0-9]*|0)(Hz)?$");
+        reti = reg_compare(data, "^([1-9][0-9]*|0)(Hz)?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -555,7 +555,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
         }
 
         // Check for number with optional descimal point and K modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(Hz)?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?K(Hz)?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -602,7 +602,7 @@ static int get_time(const std::string & arg, time_t *time)
         int reti;
 
         // Check for decimal number
-        reti = reg_compare(data, "^([1-9][0-9]*|0)?s?$");
+        reti = reg_compare(data, "^([1-9][0-9]*|0)?s?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -615,7 +615,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
 
         // Check for number with optional descimal point and m modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?m$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?m$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -628,7 +628,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
 
         // Check for number with optional descimal point and h modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?h$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?h$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -641,7 +641,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
 
         // Check for number with optional descimal point and d modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?d$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?d$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -654,7 +654,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
 
         // Check for number with optional descimal point and w modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?w$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?w$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -700,7 +700,7 @@ static int get_size(const std::string & arg, size_t *size)
         int reti;
 
         // Check for decimal number
-        reti = reg_compare(data, "^([1-9][0-9]*|0)?B?$");
+        reti = reg_compare(data, "^([1-9][0-9]*|0)?B?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -713,7 +713,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
 
         // Check for number with optional descimal point and K/KB modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?KB?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?KB?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -726,7 +726,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
 
         // Check for number with optional descimal point and M/MB modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?MB?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?MB?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -739,7 +739,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
 
         // Check for number with optional descimal point and G/GB modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?GB?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?GB?$", std::regex::icase);
 
         if (reti == -1)
         {
@@ -752,7 +752,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
 
         // Check for number with optional descimal point and T/TB modifier
-        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?TB?$");
+        reti = reg_compare(data, "^[1-9][0-9]*(\\.[0-9]+)?TB?$", std::regex::icase);
 
         if (reti == -1)
         {

@@ -605,7 +605,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
             for (int n = 0; n < count; n++)
             {
-                if (!found && !reg_compare(namelist[n]->d_name, filename))
+                if (!found && !reg_compare(namelist[n]->d_name, filename, std::regex::icase))
                 {
                     append_filename(&tmppath, namelist[n]->d_name);
                     found = 1;

@@ -103,7 +103,7 @@ Tested with:
 
 | Distribution | FFmpeg Version | Remarks | Result |
 |---|---|---|---|
-| `Current FFmpeg version` | **N-97739-g876cfa67f3** |  | OK! |
+| `Daily build FFmpeg version tested` | **N-97739-g876cfa67f3** |  | OK! |
 | `Debian 9 Stretch` | **FFmpeg 3.2.8-1~deb9u1** |  | OK! |
 | `Debian 10 Buster` | **FFmpeg 3.2.14-1~deb9u1** |  | OK! |
 | `Debian 11 Bullseye` | **FFmpeg 4.2.2-1+b1** |  | OK! |

@@ -104,16 +104,16 @@ Tested with:
 | Distribution | FFmpeg Version | Remarks | Result |
 |---|---|---|---|
 | `Daily build FFmpeg version tested` | **N-97739-g876cfa67f3** |  | OK! |
-| `Debian 9 Stretch` | **FFmpeg 3.2.8-1~deb9u1** |  | OK! |
-| `Debian 10 Buster` | **FFmpeg 3.2.14-1~deb9u1** |  | OK! |
-| `Debian 11 Bullseye` | **FFmpeg 4.2.2-1+b1** |  | OK! |
+| `Debian 9 Stretch` | **3.2.8-1~deb9u1** |  | OK! |
+| `Debian 10 Buster` | **3.2.14-1~deb9u1** |  | OK! |
+| `Debian 11 Bullseye` | **.2.2-1+b1** |  | OK! |
 | `Raspbian 10 Bullseye` | **4.1.6-1~deb10u1+rpt1** |  | OK! |
-| `Ubuntu 16.04.3 LTS` | **FFmpeg 2.8.11-0ubuntu0.16.04.1** |  | OK! |
-| `Ubuntu 17.10` | **FFmpeg 3.3.4-2** |  | OK! |
+| `Ubuntu 16.04.3 LTS` | **.8.11-0ubuntu0.16.04.1** |  | OK! |
+| `Ubuntu 17.10` | **3.3.4-2** |  | OK! |
 | `Ubuntu 20.04` | **4.2.2-1ubuntu1** |  | OK! |
-| `Suse 42` | **FFmpeg 3.3.4** | See notes below | not OK |
+| `Suse 42` | **3.3.4** | See notes below | not OK |
 | `Red Hat 7`| **FFmpeg must be compiled from sources** |  | OK! |
-| `Funtoo 7.3.1` | **FFmpeg 3.4.1** | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK! |
+| `Funtoo 7.3.1` | **3.4.1** | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK! |
 
 **Suse** does not provide proprietary formats like AAC and H264, thus
 the distribution FFmpeg is crippled. FFmpegfs will not be able to encode

@@ -8,12 +8,14 @@ FFmpegfs
 
 News
 ----
-* **Work on version 1.99 (2.0 pre-release) now in progress.**
 
-Release 2.0 is currently getting ready. Into release 1.99 only bugfixes
-will go. After a stabilisation phase V2.0 will finally see the light.
+**Version 1.99 released**
 
-**New in 1.98:**
+This is going to be the V2.0 release, only bug fixes will go into this
+version, new features will be developed in seperate branches. If no big
+issues appear, this will be made  V2.0 soon!
+
+**New in 1.99:**
 
 * FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
   Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.

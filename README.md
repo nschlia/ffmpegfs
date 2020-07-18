@@ -107,7 +107,7 @@ Tested with:
 | `Debian 9 Stretch` | **3.2.8-1~deb9u1** |  | OK! |
 | `Debian 10 Buster` | **3.2.14-1~deb9u1** |  | OK! |
 | `Debian 11 Bullseye` | **.2.2-1+b1** |  | OK! |
-| `Raspbian 10 Bullseye` | **4.1.6-1~deb10u1+rpt1** |  | OK! |
+| `Raspbian 10 Buster` | **4.1.6-1~deb10u1+rpt1** |  | OK! |
 | `Ubuntu 16.04.3 LTS` | **.8.11-0ubuntu0.16.04.1** |  | OK! |
 | `Ubuntu 17.10` | **3.3.4-2** |  | OK! |
 | `Ubuntu 20.04` | **4.2.2-1ubuntu1** |  | OK! |

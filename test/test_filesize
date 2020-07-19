@@ -29,8 +29,8 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e" 429433 489814
-    check_filesize "raven_d" 262994 353367
+    check_filesize "raven_e" 429358 489814
+    check_filesize "raven_d" 262919 353367
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus

@@ -9,11 +9,16 @@ FFmpegfs
 News
 ----
 
+**Planned features**
+
+* Issue #63: Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.
+* Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
+
 **Version 1.99 released**
 
 This is going to be the V2.0 release, only bug fixes will go into this
 version, new features will be developed in seperate branches. If no big
-issues appear, this will be made  V2.0 soon!
+issues appear, this will be made V2.0 soon!
 
 **New in 1.99:**
 

@@ -26,7 +26,6 @@ If your system supports VAAPI:
 * It could be possible that the rendering device on you system goes by a different name, if encoding fails check with ls /dev/dri/ how it is called.
 * Depending on what your renderer supports, setting a bitrate will fail. On my test system, for example, CQG (Constant Quantisation parameter) is the only valid rendering control mode. The driver ignores bitrate settings and accepts the qp option only.
 
-
 As found in libavcodec/vaapi_encode.c:
 
  Rate control mode selection:

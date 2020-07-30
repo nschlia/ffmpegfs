@@ -70,7 +70,7 @@ protected:
     /**
      * @brief Construct a FFmpeg_Profiles object.
      */
-    FFmpeg_Profiles();
+    explicit FFmpeg_Profiles();
     /**
      * @brief Destruct a FFmpeg_Profiles object.
      */

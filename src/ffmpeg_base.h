@@ -49,7 +49,7 @@ public:
     /**
      * @brief Construct FFmpeg_Base oject.
      */
-    FFmpeg_Base();
+    explicit FFmpeg_Base();
     /**
      * @brief Destruct FFmpeg_Base object.
      */

@@ -6,6 +6,21 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
+Important changes in 2.x (2020-07-xx)
+
+* Feature: Issue #63 - Hardware accelerated decoding/encoding has been added. See HWACCEL
+  for details how it works.
+* **This is completely experimental code**, so please expect that it will not work for you!
+* Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported
+  only. Also, decoding is done by software still, only the encoder can use hardware. This is
+  already giving a big performance boost, though.
+* Bugfix:
+
+Important changes in 2.0 (2020-07-xx)
+
+* Feature:
+* Bugfix:
+
 Important changes in 1.99 (2020-07-18)
 
 * Libav support has been dropped. There is no activity on https://git.libav.org/?p=libav.git

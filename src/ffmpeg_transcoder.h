@@ -531,7 +531,7 @@ protected:
      * (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
-    int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
+    int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt);
 #endif
     /**
      * @brief Encode one frame worth of audio to the output file.
@@ -705,6 +705,15 @@ protected:
      */
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
 
+    // Hardwar de/encoding
+    static enum AVPixelFormat   hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx,
+                                                        const enum AVPixelFormat *pix_fmts);
+    int                         hwdevice_ctx_create();
+    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx);
+    void                        hwdevice_ctx_free();
+    int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx);
+    int                         hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame);
+
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
@@ -753,6 +762,13 @@ private:
     uint32_t                    m_fake_frame_no;            /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
+
+    // Hardware accelerarion
+    bool						m_hwaccel;                  /**< @brief Enable hardware acceleration */
+    bool                        m_hwaccel_decoder;          /**< @brief Enable hardware acceleration for decoder, requires m_hwaccel == true */
+    bool                        m_encoder_initialised;      /**< @brief True if encoder has been initilialised */
+    bool						m_hwdecode;                 /**< @brief True if decoder runs in hardware */
+    AVBufferRef *               m_hw_device_ctx;            /**< @brief Hardware acceleration device context */
 };
 
 #endif // FFMPEG_TRANSCODER_H

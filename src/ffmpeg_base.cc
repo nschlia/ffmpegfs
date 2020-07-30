@@ -170,7 +170,7 @@ int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const
+void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat  dst_pix_fmt) const
 {
     AVRational time_base_tbn;
     AVRational time_base_tbc;
@@ -239,34 +239,37 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_stream->avg_frame_rate               = framerate;
     // output_codec_ctx->framerate                 = framerate;
 
-    int alpha = 0;
-    int loss = 0;
-
-    AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
-    AVPixelFormat  dst_pix_fmt                  = AV_PIX_FMT_NONE;
-    if (output_codec_ctx->codec->pix_fmts != nullptr)
-    {
-        dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
-    }
-
     if (dst_pix_fmt == AV_PIX_FMT_NONE)
     {
-        // Fail safe if avcodec_find_best_pix_fmt_of_list has no idea what to use.
-        switch (output_codec_ctx->codec_id)
+        // Automatic pix_fmt selection
+        int alpha = 0;
+        int loss = 0;
+
+        AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
+        if (output_codec_ctx->codec->pix_fmts != nullptr)
         {
-        case AV_CODEC_ID_PRORES:       // mov/prores
-        {
-            //  yuva444p10le
-            // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
-            dst_pix_fmt                         = AV_PIX_FMT_YUV422P10LE;
-            break;
+            dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
         }
-        default:                        // all others
+
+        if (dst_pix_fmt == AV_PIX_FMT_NONE)
         {
-            // At this moment the output format must be AV_PIX_FMT_YUV420P;
-            dst_pix_fmt                         = AV_PIX_FMT_YUV420P;
-            break;
-        }
+            // Fail safe if avcodec_find_best_pix_fmt_of_list has no idea what to use.
+            switch (output_codec_ctx->codec_id)
+            {
+            case AV_CODEC_ID_PRORES:       // mov/prores
+            {
+                //  yuva444p10le
+                // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
+                dst_pix_fmt                         = AV_PIX_FMT_YUV422P10LE;
+                break;
+            }
+            default:                        // all others
+            {
+                // At this moment the output format must be AV_PIX_FMT_YUV420P;
+                dst_pix_fmt                         = AV_PIX_FMT_YUV420P;
+                break;
+            }
+            }
         }
     }
 
@@ -308,10 +311,10 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
     }
 
     Logging::debug(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
-                  out_file ? "out" : "in",
-                  get_codec_name(CODECPAR(stream)->codec_id, false),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
-                  format_duration(duration).c_str());
+                   out_file ? "out" : "in",
+                   get_codec_name(CODECPAR(stream)->codec_id, false),
+                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                   format_duration(duration).c_str());
 }
 
 void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
@@ -324,12 +327,12 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
     }
 
     Logging::debug(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
-                  out_file ? "out" : "in",
-                  get_codec_name(CODECPAR(stream)->codec_id, false),
-                  format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
-                  CODECPAR(stream)->channels,
-                  format_samplerate(CODECPAR(stream)->sample_rate).c_str(),
-                  format_duration(duration).c_str());
+                   out_file ? "out" : "in",
+                   get_codec_name(CODECPAR(stream)->codec_id, false),
+                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                   CODECPAR(stream)->channels,
+                   format_samplerate(CODECPAR(stream)->sample_rate).c_str(),
+                   format_duration(duration).c_str());
 }
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const

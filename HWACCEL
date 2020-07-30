@@ -1,0 +1,14 @@
+Hardware Acceleration
+=====================
+The new hardware acceleration feature is a bit tricky. It depends a lot on the hardware used, I cannot buy and test all possible types. So I'll have to rely on you to report your issues so we can iron them out.
+
+The FFmpeg API we can use several types of graphics adapters:
+
+VAAPI: Intel
+VDPAU: Nividia, AMD
+OpenMAX: Encoding on Raspberry
+MMAL: Decoding on Raspberry
+
+News
+----
+ 

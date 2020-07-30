@@ -95,6 +95,7 @@ INCLUDEPATH += $$(HOME)/dev/ffmpeg/include
 #        -L"${HONE}/ffmpeg/bin"
 
 DISTFILES += \
+    HWACCEL \
     autogen.sh \
     buildloc \
     configure.ac \

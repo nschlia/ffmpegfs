@@ -12,7 +12,7 @@ News
 **Planned features**
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.
-* Experimental hardware acceleration support has been added. Very experimental, may feature are still missing and only VAAPI (Intel) is implemented. If you feel lucky do "git checkout FB" and try it out. 
+* Experimental hardware acceleration support has been added. Very experimental, many features are still missing and only VAAPI (Intel) is implemented. If you feel lucky do "git checkout FB" and try it out. 
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
 **Version 1.99 released**

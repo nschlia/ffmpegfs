@@ -1,14 +1,44 @@
 Hardware Acceleration
 =====================
-The new hardware acceleration feature is a bit tricky. It depends a lot on the hardware used, I cannot buy and test all possible types. So I'll have to rely on you to report your issues so we can iron them out.
+The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used, I cannot buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out.
 
-The FFmpeg API we can use several types of graphics adapters:
+Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs (may be incomplete):
 
-VAAPI: Intel
-VDPAU: Nividia, AMD
-OpenMAX: Encoding on Raspberry
-MMAL: Decoding on Raspberry
+* VAAPI: Intel, AMD (Decoders: H.264, MPEG-2, MPEG-4 part 2, VC-1. H.265, H.265 10-bit on recent devices. Encoder: H.264, H.265, MPJEPG, MPEG-2, VP8/9, MPEG-4 part 2 can probably be enabled.)
+* VDPAU: Nividia, AMD (H.264, MPEG-1/2/4 and VC-1)
+* v4l2m2m: Intel (Encoders: H.263, H.264, H.265, MPEG-4, VP8). Decoders: H.263, H.264, H.265, MPEG-1, MPEG-2, MPEG-4, VC-1, VP8, VP9.)
+* OpenMAX: Encoding on Raspberry (H.264, MPEG-4. Requires key to unlock.)
+* MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)
 
-News
-----
- 
+Details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
+
+Current implementation
+----------------------
+
+This version supports VAAPI only. It may be possible to use other APIs, but this requires changing code:
+
+* Call av_hwdevice_ctx_create with the correct enum instead of AV_HWDEVICE_TYPE_VAAPI.
+* Change the device parameter from "/dev/dri/renderD128" to whatever is appropriate.
+* Change frames_ctx->format = AV_PIX_FMT_VAAPI to your API.
+
+If your system supports VAAPI:
+
+* It could be possible that the rendering device on you system goes by a different name, if encoding fails check with ls /dev/dri/ how it is called.
+* Depending on what your renderer supports, setting a bitrate will fail. On my test system, for example, CQG (Constant Quantisation parameter) is the only valid rendering control mode. The driver ignores bitrate settings and accepts the qp option only.
+
+
+As found in libavcodec/vaapi_encode.c:
+
+ Rate control mode selection:
+ * If the user has set a mode explicitly with the rc_mode option,
+   use it and fail if it is not available.
+ * If an explicit QP option has been set, use CQP.
+ * If the codec is CQ-only, use CQP.
+ * If the QSCALE avcodec option is set, use CQP.
+ * If bitrate and quality are both set, try QVBR.
+ * If quality is set, try ICQ, then CQP.
+ * If bitrate and maxrate are set and have the same value, try CBR.
+ * If a bitrate is set, try AVBR, then VBR, then CBR.
+ * If no bitrate is set, try ICQ, then CQP.
+
+None of these values can currently be controlled by command line. This is planned of course, but not implemented on this version yet.

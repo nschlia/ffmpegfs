@@ -706,14 +706,88 @@ protected:
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
 
     // Hardware de/encoding
+    /**
+     * Callback to negotiate the pixelFormat
+     * @param[in] ctx - Codec context
+     * @param[in] pix_fmts is the list of formats which are supported by the codec,
+     * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
+     * The first is always the native one.
+     * @note The callback may be called again immediately if initialization for
+     * the selected (hardware-accelerated) pixel format failed.
+     * @warning Behavior is undefined if the callback returns a value not
+     * in the fmt list of formats.
+     * @return the chosen format
+     * - encoding: unused
+     * - decoding: Set by user, if not set the native format will be chosen.
+     */
     static enum AVPixelFormat   hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
-    int                         hwdevice_ctx_create(AVHWDeviceType type, std::string &device);
-    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx);
+    /**
+     * Open a device of the specified type and create an AVHWDeviceContext for it.
+     *
+     * This is a convenience function intended to cover the simple cases. Callers
+     * who need to fine-tune device creation/management should open the device
+     * manually and then wrap it in an AVHWDeviceContext using
+     * av_hwdevice_ctx_alloc()/av_hwdevice_ctx_init().
+     *
+     * The returned context is already initialized and ready for use, the caller
+     * should not call av_hwdevice_ctx_init() on it. The user_opaque/free fields of
+     * the created AVHWDeviceContext are set by this function and should not be
+     * touched by the caller.
+     *
+     * @param[in] type - The type of the device to create.
+     * @param[in] device - A type-specific string identifying the device to open.
+     *
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwdevice_ctx_create(AVHWDeviceType type, const std::string &device);
+    /**
+     * @brief Add reference to hardware device context.
+     * @param[in] input_codec_ctx - Input codec context
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) const;
+    /**
+     * @brief Free (remove reference) to hardware device context
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
     void                        hwdevice_ctx_free();
+    /**
+     * @brief Adds a reference to an existing decoder hardware frame context or
+     * allocates a new AVHWFramesContext tied to the given hardware device context
+     * if if the decoder runs in software.
+     * @param[in] encoder_ctx - Encoder codexc context
+     * @param[in] decoder_ctx - Decoder codexc context
+     * @param[in] hw_device_ctx - Existing hardware device context
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
     int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx);
-    int                         hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame);
+    /**
+     * Copy data software to a hardware surface.
+     * @param[in] ctx - Codec context
+     * @param[out] hw_frame - AVFrame to copy data to
+     * @param[in] sw_frame - AVFrame to copy data from
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    /**
+     * @brief Get the hardware codec name as string. This is required, because e.g.
+     * the name for the software codec is h264, for hardware it is h264_vaapi.
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[in] hwaccel_API - Name of the hardware acceleration API.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
     std::string                 get_hw_codec_name(AVCodecID codec_id, const std::string & hwaccel_API) const;
+    /**
+     * @brief Get the hardware pixel format for the given hardware acceleration.
+     * @param[in] type - Selected hardware acceleration.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
     static AVPixelFormat        find_hw_fmt_by_hw_type(AVHWDeviceType type);
+    /**
+     * @brief Get the software pixel format for the given hardware acceleration.
+     * @param[in] type - Selected hardware acceleration.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
     static AVPixelFormat        find_sw_fmt_by_hw_type(AVHWDeviceType type);
 
 private:

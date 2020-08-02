@@ -39,12 +39,12 @@
 #endif
 
 #if !defined(EXTRA_VERSION)
-#define FFMPEFS_VERSION     PACKAGE_VERSION
+#define FFMPEFS_VERSION     PACKAGE_VERSION                     /**< @brief FFmpegfs version number */
 #else
-#define FFMPEFS_VERSION     PACKAGE_VERSION "-" EXTRA_VERSION
+#define FFMPEFS_VERSION     PACKAGE_VERSION "-" EXTRA_VERSION   /**< @brief FFmpegfs version number */
 #endif
 
-#define __STDC_FORMAT_MACROS                    /**< @brief Force PRId64 defines */
+#define __STDC_FORMAT_MACROS                                    /**< @brief Force PRId64 defines */
 
 #include "ffmpeg_compat.h"
 
@@ -534,12 +534,12 @@ template<typename ... Args> std::string string_format(const std::string& format,
 int                 strcasecmp(const std::string & s1, const std::string & s2);
 /**
  * @brief Convert string to upper case
- * @param input[in] String to convert
+ * @param[inout] input String to convert
  */
 void                make_upper(std::string * input);
 /**
  * @brief Convert string to lower case
- * @param input[in] String to convert
+ * @param[inout] input String to convert
  */
 void                make_lower(std::string * input);
 /**

@@ -5309,8 +5309,9 @@ enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((u
     return AV_PIX_FMT_NONE;
 }
 
-int FFmpeg_Transcoder::hwdevice_ctx_create(AVHWDeviceType type, std::string & device)
+int FFmpeg_Transcoder::hwdevice_ctx_create(AVHWDeviceType type, const std::string & _device)
 {
+    std::string device(_device);
     int ret;
 
     if (device == "AUTO" && type == AV_HWDEVICE_TYPE_VAAPI)
@@ -5327,10 +5328,11 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVHWDeviceType type, std::string & de
     return 0;
 }
 
-int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx)
+int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) const
 {
     input_codec_ctx->hw_device_ctx = av_buffer_ref(m_hw_device_ctx);
-    if (!input_codec_ctx->hw_device_ctx) {
+    if (!input_codec_ctx->hw_device_ctx)
+    {
         int ret = AVERROR(ENOMEM);
         Logging::error(destname(), "A hardware device reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
@@ -5412,7 +5414,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     return 0;
 }
 
-int FFmpeg_Transcoder::hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame * sw_frame)
+int FFmpeg_Transcoder::hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame * sw_frame) const
 {
     int ret;
 

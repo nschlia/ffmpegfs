@@ -186,9 +186,8 @@ void Logging::log_with_level(Logging::level loglevel, const std::string & filena
     Log(loglevel, filename) << message;
 }
 
-std::string Logging::format_helper(
-        const std::string &string_to_update,
-        const size_t)
+std::string Logging::format_helper(const std::string &string_to_update,
+        const size_t __attribute__((unused)) size)
 {
     return string_to_update;
 }

@@ -279,16 +279,17 @@ protected:
     /**
      * @brief Standard format_helper without parameters
      * @param[in] string_to_update - original string
+     * @param size - unused
      * @return Original string
      */
     static std::string format_helper(
             const std::string &string_to_update,
-            const size_t);
+            const size_t __attribute__((unused)) size);
 
     /**
      * @brief format_helper with variadic parameters
      *
-     * Calls itself recurisively until all tokens are replaced.
+     * Calls itself recursively until all tokens are replaced.
      *
      * @param[in] string_to_search - format string to be searched
      * @param[in] index_to_replace - index numer (%n) to be replaced. May be present 0...x times.

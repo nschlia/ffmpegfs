@@ -94,6 +94,7 @@ protected:
      * @param[in] output_stream - Output stream object.
      * @param[in] input_codec_ctx - Input codec context.
      * @param[in] framerate - Frame rate of input stream.
+     * @param[in] dst_pix_fmt - Forcibly set destination pixel format. Set to AV_PIX_FMT_NONE for automatic selection.
      */
     void        video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat dst_pix_fmt) const;
     /**
@@ -103,7 +104,6 @@ protected:
      * @param[in] value - entry value to add to *pm.
      * @param[in] flags - AV_DICT_* flags.
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @param[in] dst_pix_fmt - Forcibly set destination pixel format. Set to AV_PIX_FMT_NONE for automatic selection.
      * @return On success returns 0; on error negative AVERROR.
      */
     int         av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr) const;

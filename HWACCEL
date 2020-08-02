@@ -2,28 +2,50 @@ Hardware Acceleration
 =====================
 The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used, I cannot buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out.
 
-Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs (may be incomplete):
+Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs (may be incomplete).
+
+These modes support hardware acceleration using hardware buffered frames:
 
 * VAAPI: Intel, AMD (Decoders: H.264, MPEG-2, MPEG-4 part 2, VC-1. H.265, H.265 10-bit on recent devices. Encoder: H.264, H.265, MPJEPG, MPEG-2, VP8/9, MPEG-4 part 2 can probably be enabled.)
 * VDPAU: Nividia, AMD (H.264, MPEG-1/2/4 and VC-1)
+* CUDA: Compute Unified Device Architecture (Decoders: VP9, H.264, MPEG-2, MPEG-4. Encoding: H.264, H.265), see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
+* QSV: QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+* OPENCL: Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
+* VULKAN: Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
+
+These use sogftware frames:
+
 * v4l2m2m: Intel (Encoders: H.263, H.264, H.265, MPEG-4, VP8). Decoders: H.263, H.264, H.265, MPEG-1, MPEG-2, MPEG-4, VC-1, VP8, VP9.)
 * OpenMAX: Encoding on Raspberry (H.264, MPEG-4. Requires key to unlock.)
 * MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)
 
-Details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
+More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 
 Current implementation
-----------------------
+======================
 
-This version supports VAAPI only. It may be possible to use other APIs, but this requires changing code:
+Tested On
+---------
 
-* Call av_hwdevice_ctx_create with the correct enum instead of AV_HWDEVICE_TYPE_VAAPI.
-* Change the device parameter from "/dev/dri/renderD128" to whatever is appropriate.
-* Change frames_ctx->format = AV_PIX_FMT_VAAPI to your API.
+Debian 10 [Intel Core i5-6500 CPU @ 3.20GHz]: VAAPI
+Debian 11 [Intel Core i5-8250U CPU @ 1.60GHz]: VAAPI
+Rasbian 10/Raspberry Pi 3 Model B Plus Rev 1.3 [ARMv7 Processor rev 4 (v7l)]: OpenMAX
+
+H264 is working, VP9 not!
+
+Hardware Encoding
+-----------------
+
+This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
+
+To enable hardware support, use these parameters respectively:
+
+-hwaccel_enc=VAAPI
+-hwaccel_enc=OMX
 
 If your system supports VAAPI:
 
-* It could be possible that the rendering device on you system goes by a different name, if encoding fails check with ls /dev/dri/ how it is called.
+* It could be possible that the rendering device on you system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set.
 * Depending on what your renderer supports, setting a bitrate will fail. On my test system, for example, CQG (Constant Quantisation parameter) is the only valid rendering control mode. The driver ignores bitrate settings and accepts the qp option only.
 
 As found in libavcodec/vaapi_encode.c:
@@ -41,3 +63,21 @@ As found in libavcodec/vaapi_encode.c:
  * If no bitrate is set, try ICQ, then CQP.
 
 None of these values can currently be controlled by command line. This is planned of course, but not implemented on this version yet.
+
+Hardware Decoding
+-----------------
+
+Not implemented yet.
+
+TODOs
+-----
+
+Hardware decoding will be implemented next, on slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load.
+
+On faster machines this impact may be smaller, yet noticable, because doing both de- and encoding in hardware makes costly transfers of frames between software and hardware memory unneccessary. Alhough, it is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some necessary processing with the frames (e.g., rescaling or deinterlacing) which probably cannot be done without transferring buffers. We'll see.
+
+Target bitrate turn out to be a bit tricky, see above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).
+
+On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, whiping the sweat off my chin :)
+
+

@@ -122,7 +122,7 @@ private:
         /**
          * @brief Construct Logger object
          */
-        Logger() :
+        explicit Logger() :
             m_loglevel(level::DEBUG) {}
         /**
          * @brief Destroy Logger object

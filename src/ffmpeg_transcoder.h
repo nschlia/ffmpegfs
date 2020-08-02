@@ -149,7 +149,7 @@ public:
     /**
      * Construct FFmpeg_Transcoder object
      */
-    FFmpeg_Transcoder();
+    explicit FFmpeg_Transcoder();
     /**
      * Destroy FFMPEG_Transcoder object
      * Close and free all internal structures.

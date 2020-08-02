@@ -43,7 +43,7 @@
 class DiskIO : public FileIO
 {
 public:
-    DiskIO();
+    explicit DiskIO();
     virtual ~DiskIO();
 
     /**

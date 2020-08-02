@@ -131,7 +131,7 @@ public:
     /**
      * @brief Construct #Cache object.
      */
-    Cache();
+    explicit Cache();
     /**
      * @brief Destruct #Cache object.
      */

@@ -42,11 +42,11 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard" 4376074 4433924
+    check_filesize "snowboard" 4376074 4443428
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "snowboard" 3906379 3911638
+    check_filesize "snowboard" 3906379 3912277
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
@@ -54,7 +54,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "snowboard" 4208192 4324940
+    check_filesize "snowboard" 4207816 4324940
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

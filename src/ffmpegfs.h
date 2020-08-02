@@ -145,6 +145,13 @@ extern struct FFMPEGFS_PARAMS
     int                 m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
     // HLS Options
     int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
+    // Hardware acceleration
+    AVHWDeviceType      m_hwaccel_enc_buffering;    /**< @brief Enable hardware acceleration buffering for encoder */
+    std::string         m_hwaccel_enc_API;          /**< @brief Encoder API */
+    std::string         m_hwaccel_enc_device;       /**< @brief Encoder device. May be AUTO to auto detect or empty */
+    AVHWDeviceType      m_hwaccel_dec_buffering;    /**< @brief Enable hardware acceleration buffering for decoder */
+    std::string         m_hwaccel_dec_API;          /**< @brief Decoder API */
+    std::string         m_hwaccel_dec_device;       /**< @brief Decoder device. May be AUTO to auto detect or empty */
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */
     // Virtual script
@@ -301,3 +308,33 @@ LPVIRTUALFILE   find_original(std::string *filepath);
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_parent(const std::string & origpath);
+/**
+ * @brief Convert AUTOCOPY enum to human readable text.
+ * @param[in] autocopy - AUTOCOPY enum value to convert.
+ * @return AUTOCOPY enum as text or "INVALID" if not known.
+ */
+std::string get_autocopy_text(AUTOCOPY autocopy);
+/**
+ * @brief Convert RECODESAME enum to human readable text.
+ * @param[in] recode - RECODESAME enum value to convert.
+ * @return RECODESAME enum as text or "INVALID" if not known.
+ */
+std::string get_recodesame_text(RECODESAME recode);
+/**
+ * @brief Convert PROFILE enum to human readable text.
+ * @param[in] profile - PROFILE enum value to convert.
+ * @return PROFILE enum as text or "INVALID" if not known.
+ */
+std::string get_profile_text(PROFILE profile);
+/**
+ * @brief Convert PRORESLEVEL enum to human readable text.
+ * @param[in] level - PRORESLEVEL enum value to convert.
+ * @return PRORESLEVEL enum as text or "INVALID" if not known.
+ */
+std::string get_level_text(PRORESLEVEL level);
+/**
+ * @brief Get the selected hardware accelerarion as text.
+ * @param[in] hwaccel - Hardware acceleration API.
+ * @return Hardware acceleration API.
+ */
+std::string  get_hwaccel_text(AVHWDeviceType hwaccel);

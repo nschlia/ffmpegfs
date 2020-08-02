@@ -102,12 +102,12 @@ extern "C" {
 /**
  * Add av_get_media_type_string function if missing
  */
-#define HAVE_MEDIA_TYPE_STRING              (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 34, 101))
+#define HAVE_MEDIA_TYPE_STRING                  (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 34, 101))
 #if HAVE_MEDIA_TYPE_STRING
 /**
  *  Map to av_get_media_type_string function.
  */
-#define get_media_type_string               av_get_media_type_string
+#define get_media_type_string                   av_get_media_type_string
 #else
 /**
  * @brief av_get_media_type_string is missing, so we provide our own.
@@ -116,6 +116,14 @@ extern "C" {
  */
 const char *get_media_type_string(enum AVMediaType media_type);
 #endif
+
+/**
+ * Min. FFmpeg version for VULKAN hardware acceleration support
+ * 2020-02-04 - xxxxxxxxxx - lavu 56.39.100 - hwcontext.h
+ *   Add AV_PIX_FMT_VULKAN
+ *   Add AV_HWDEVICE_TYPE_VULKAN and implementation.
+ */
+#define HAVE_VULKAN_HWACCEL                     (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(56, 39, 100))
 
 #ifndef AV_ROUND_PASS_MINMAX
 /**
@@ -126,27 +134,27 @@ const char *get_media_type_string(enum AVMediaType media_type);
 
 // These once had a different name
 #if !defined(AV_CODEC_CAP_DELAY) && defined(CODEC_CAP_DELAY)
-#define AV_CODEC_CAP_DELAY              	CODEC_CAP_DELAY                         /**< @brief AV_CODEC_CAP_DELAY is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_DELAY                      CODEC_CAP_DELAY                         /**< @brief AV_CODEC_CAP_DELAY is missing in older FFmpeg versions */
 #endif
 
 #if !defined(AV_CODEC_CAP_TRUNCATED) && defined(CODEC_CAP_TRUNCATED)
-#define AV_CODEC_CAP_TRUNCATED          	CODEC_CAP_TRUNCATED                     /**< @brief AV_CODEC_CAP_TRUNCATED is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_TRUNCATED                  CODEC_CAP_TRUNCATED                     /**< @brief AV_CODEC_CAP_TRUNCATED is missing in older FFmpeg versions */
 #endif
 
 #if !defined(AV_CODEC_FLAG_TRUNCATED) && defined(CODEC_FLAG_TRUNCATED)
-#define AV_CODEC_FLAG_TRUNCATED         	CODEC_FLAG_TRUNCATED                    /**< @brief AV_CODEC_FLAG_TRUNCATED is missing in older FFmpeg versions */
+#define AV_CODEC_FLAG_TRUNCATED                 CODEC_FLAG_TRUNCATED                    /**< @brief AV_CODEC_FLAG_TRUNCATED is missing in older FFmpeg versions */
 #endif
 
 #ifndef AV_CODEC_FLAG_GLOBAL_HEADER
-#define AV_CODEC_FLAG_GLOBAL_HEADER     	CODEC_FLAG_GLOBAL_HEADER                /**< @brief AV_CODEC_FLAG_GLOBAL_HEADER is missing in older FFmpeg versions */
+#define AV_CODEC_FLAG_GLOBAL_HEADER             CODEC_FLAG_GLOBAL_HEADER                /**< @brief AV_CODEC_FLAG_GLOBAL_HEADER is missing in older FFmpeg versions */
 #endif
 
 #ifndef FF_INPUT_BUFFER_PADDING_SIZE
-#define FF_INPUT_BUFFER_PADDING_SIZE    	256                                     /**< @brief FF_INPUT_BUFFER_PADDING_SIZE is missing in newer FFmpeg versions */
+#define FF_INPUT_BUFFER_PADDING_SIZE            256                                     /**< @brief FF_INPUT_BUFFER_PADDING_SIZE is missing in newer FFmpeg versions */
 #endif
 
 #ifndef AV_CODEC_CAP_VARIABLE_FRAME_SIZE
-#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE           /**< @brief AV_CODEC_CAP_VARIABLE_FRAME_SIZE is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE        CODEC_CAP_VARIABLE_FRAME_SIZE           /**< @brief AV_CODEC_CAP_VARIABLE_FRAME_SIZE is missing in older FFmpeg versions */
 #endif
 
 #if (LIBAVUTIL_VERSION_MAJOR > 54)
@@ -524,6 +532,16 @@ template<typename ... Args> std::string string_format(const std::string& format,
  * @return Returns same as strcasecmp() for char *.
  */
 int                 strcasecmp(const std::string & s1, const std::string & s2);
+/**
+ * @brief Convert string to upper case
+ * @param input[in] String to convert
+ */
+void                make_upper(std::string * input);
+/**
+ * @brief Convert string to lower case
+ * @param input[in] String to convert
+ */
+void                make_lower(std::string * input);
 /**
  * @brief Get info about the FFmpeg libraries used.
  * @return std::tring with info about the linked FFmpeg libraries.

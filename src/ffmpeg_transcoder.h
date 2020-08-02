@@ -705,14 +705,16 @@ protected:
      */
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
 
-    // Hardwar de/encoding
-    static enum AVPixelFormat   hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx,
-                                                        const enum AVPixelFormat *pix_fmts);
-    int                         hwdevice_ctx_create();
+    // Hardware de/encoding
+    static enum AVPixelFormat   hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
+    int                         hwdevice_ctx_create(AVHWDeviceType type, std::string &device);
     int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx);
     void                        hwdevice_ctx_free();
     int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx);
     int                         hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame);
+    std::string                 get_hw_codec_name(AVCodecID codec_id, const std::string & hwaccel_API) const;
+    static AVPixelFormat        find_hw_fmt_by_hw_type(AVHWDeviceType type);
+    static AVPixelFormat        find_sw_fmt_by_hw_type(AVHWDeviceType type);
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
@@ -764,8 +766,8 @@ private:
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 
     // Hardware accelerarion
-    bool						m_hwaccel;                  /**< @brief Enable hardware acceleration */
-    bool                        m_hwaccel_decoder;          /**< @brief Enable hardware acceleration for decoder, requires m_hwaccel == true */
+    bool						m_hwaccel_enc_buffering;    /**< @brief Enable hardware acceleration frame buffers for encoder */
+    bool                        m_hwaccel_dec_buffering;    /**< @brief Enable hardware acceleration frame buffers for decoder */
     bool                        m_encoder_initialised;      /**< @brief True if encoder has been initilialised */
     bool						m_hwdecode;                 /**< @brief True if decoder runs in hardware */
     AVBufferRef *               m_hw_device_ctx;            /**< @brief Hardware acceleration device context */

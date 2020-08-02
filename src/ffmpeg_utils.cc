@@ -1320,3 +1320,17 @@ bool file_exists(const std::string & filename)
 {
     return (access(filename.c_str(), F_OK) != -1);
 }
+
+void make_upper(std::string * input)
+{
+    std::for_each(std::begin(*input), std::end(*input), [](char& c) {
+        c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+    });
+}
+
+void make_lower(std::string * input)
+{
+    std::for_each(std::begin(*input), std::end(*input), [](char& c) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    });
+}

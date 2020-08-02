@@ -146,9 +146,9 @@ FFmpeg_Profiles::~FFmpeg_Profiles() {}
  * { "level",                  "3.1",                      0,  0 },
  *
  * // Set speed (changes profile!): utra/veryfast and zerolatency
- * { "preset",                 "ultrafast",                0,  0 },
- * { "preset",                 "veryfast",                 0,  0 },
- * { "tune",                   "zerolatency",              0,  0 },
+ * { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
+ * { "preset",                 "veryfast",                 0,  OPT_SW_ONLY },
+ * { "tune",                   "zerolatency",              0,  OPT_SW_ONLY },
  * @endcode
  *
  * Possible format options:
@@ -192,7 +192,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_default[] =
     { "level",                  "3.1",                      0,  0 },
 
     // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  0 },
+    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -222,7 +222,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ff[] =
     { "level",                "3.1",                        0,  0 },
 
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -246,7 +246,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_edge[] =
 {
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -276,7 +276,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ie[] =
     { "level",                "3.1",                        0,  0 },
 
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -298,7 +298,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_chrome[] =
 {
 
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -320,7 +320,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_safari[] =
 {
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -341,7 +341,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_opera[] =
 {
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -366,7 +366,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
     { "level",                "3.1",                        0,  0 },
 
     // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  0 },
+    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -387,11 +387,11 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
  */
 /*static*/ const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_codec_default[] =
 {
-    // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  0 },
-
     { "profile",                "high",                     0,  0 },
     { "level",                  "3.1",                      0,  0 },
+
+    // Set speed (changes profile!)
+    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
 
     { nullptr,                  nullptr,                    0,  0 }
 };
@@ -418,7 +418,7 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_format_default[] =
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_codec[] =
 {
     // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  0 },
+    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
     { nullptr,                  nullptr,                    0,  0 }
 };
 
@@ -517,33 +517,27 @@ static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_format[] =
  */
 static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_default[] =
 {
-    { "deadline",               "realtime",                 0,  0 },
+    { "deadline",               "realtime",                 0,  OPT_SW_ONLY },
 
-    { "cpu-used",               "8",                        0,  0 },
+    { "cpu-used",               "8",                        0,  OPT_SW_ONLY },
 
     //    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1
     //      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25
     //      -c:a libopus -b:a 64k -f webm out.webm
 
-
     //    Most of the current VP9 decoders use tile-based, multi-threaded decoding. In order for the decoders to take advantage
     //    of multiple cores, the encoder must set tile-columns and frame-parallel.
-
     //    Setting auto-alt-ref and lag-in-frames >= 12 will turn on VP9's alt-ref frames, a VP9 feature that enhances quality.
-
     //    speed 4 tells VP9 to encode really fast, sacrificing quality. Useful to speed up the first pass.
-
     //    speed 1 is a good speed vs. quality compromise. Produces output quality typically very close to speed 0, but usually encodes much faster.
-
     //    Multi-threaded encoding may be used if -threads > 1 and -tile-columns > 0.
 
-
-    //    { "threads",                "8",                        0,  0 },
-    //    { "speed",                  "4",                        0,  0 },
-    { "tile-columns",           "6",                        0,  0 },
-    { "frame-parallel",         "1",                        0,  0 },
-    { "auto-alt-ref",           "1",                        0,  0 },
-    { "lag-in-frames",          "25",                        0,  0 },
+    //{ "threads",                "8",                        0,  OPT_SW_ONLY },
+    //{ "speed",                  "4",                        0,  OPT_SW_ONLY },
+    { "tile-columns",           "6",                        0,  OPT_SW_ONLY },
+    { "frame-parallel",         "1",                        0,  OPT_SW_ONLY },
+    { "auto-alt-ref",           "1",                        0,  OPT_SW_ONLY },
+    { "lag-in-frames",          "25",                       0,  OPT_SW_ONLY },
 
     { nullptr,                  nullptr,                    0,  0 }
 };

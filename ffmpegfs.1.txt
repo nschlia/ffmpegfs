@@ -213,6 +213,53 @@ Should normally be left at default.
 +
 Default: 10 seconds
 
+=== Hardware Acceleration Options ===
+*--hwaccel_enc*=API, *-o hwaccel_enc*=API::
+Select the hardware acceleration API for encoding.
++
+Default: NONE (no acceleration)
++
+*API*:: can be defined as...
+ * NONE:    use software encoder
+ * VDPAU:   Video Decode and Presentation API for Unix
+ * CUDA:    Compute Unified Device Architecture
+ * VAAPI:   Video Acceleration API (VA-API)
+ * QSV:     QuickSync
+ * OPENCL:  Open Standard for Parallel Programming of Heterogeneous Systems
+ * OMX:     OpenMAX (Open Media Acceleration)
+ * VULKAN:  Low-overhead, cross-platform 3D graphics and computing API
+
+*--hwaccel_enc_device*=DEVICE, -o *hwaccel_enc_device*=DEVICE::
+Select the hardware acceleration device. My be required for VAAPI, especially
+if more the one device is available.
++
+Default: empty (no device)
++
+Example: /dev/dri/renderD128
+
+*--hwaccel_dec*=API, *-o hwaccel_dec*=API::
+Select the hardware acceleration API for decoding.
++
+Default: NONE (no acceleration)
++
+*API*:: can be defined as...
+ * NONE:    use software decoder
+ * VDPAU:   Video Decode and Presentation API for Unix
+ * CUDA:    Compute Unified Device Architecture
+ * VAAPI:   Video Acceleration API (VA-API)
+ * QSV:     QuickSync
+ * OPENCL:  Open Standard for Parallel Programming of Heterogeneous Systems
+ * MMAL:    Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the Raspberry Pi.
+ * VULKAN:  Low-overhead, cross-platform 3D graphics and computing API
+
+*--hwaccel_dec_device*=DEVICE, -o *hwaccel_dec_device*=DEVICE::
+Select the hardware acceleration device. My be required for VAAPI, especially
+if more the one device is available.
++
+Default: empty (no device)
++
+Example: /dev/dri/renderD128
+
 === Album Arts ===
 --*noalbumarts*, -o *noalbumarts*::
 Do not copy album arts into output file.

@@ -11,6 +11,7 @@ News
 
 **Planned features**
 
+* [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
 **New in 2.1:**

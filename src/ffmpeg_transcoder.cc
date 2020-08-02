@@ -1587,7 +1587,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
     }
 
-    // Open the encoder for the audio stream to use it later.
+    // Open the encoder for the stream to use it later.
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
@@ -1788,7 +1788,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
         output_codec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 
-    // Open the encoder for the audio stream to use it later.
+    // Open the encoder for the stream to use it later.
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {

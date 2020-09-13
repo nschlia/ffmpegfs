@@ -6,6 +6,13 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
+Important changes in 2.0 (2020-09-13)
+
+Hurray! This is release 2.0!
+
+* Feature: No new features, new release 2.0 after feature freeze.
+* Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
+
 Important changes in 1.99 (2020-07-18)
 
 * Libav support has been dropped. There is no activity on https://git.libav.org/?p=libav.git

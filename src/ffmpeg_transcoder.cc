@@ -2494,7 +2494,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         if (ret < 0)
         {
             // Anything else is an error, report it!
-            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
             // unused frame
             av_frame_free(&frame);
             break;

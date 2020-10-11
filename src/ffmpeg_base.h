@@ -136,20 +136,20 @@ protected:
      * @param[in] pix_fmt - AVPixelFormat enum to convert.
      * @return Returns a std::string with the pix format name.
      */
-    std::string get_pix_fmt_name(AVPixelFormat pix_fmt) const;
+    static std::string get_pix_fmt_name(AVPixelFormat pix_fmt);
     /**
      * @brief Calls av_get_sample_fmt_name and returns a std::string with the format name.
      * @param[in] sample_fmt - AVSampleFormat  enum to convert.
      * @return Returns a std::string with the format name.
      */
-    std::string get_sample_fmt_name(AVSampleFormat sample_fmt) const;
+    static std::string get_sample_fmt_name(AVSampleFormat sample_fmt);
     /**
      * @brief Calls av_get_channel_layout_string and returns a std::string with the channel layout.
      * @param[in] nb_channels - Number of channels.
      * @param[in] channel_layout - Channel layout index.
      * @return Returns a std::string with the channel layout.
      */
-    std::string get_channel_layout_name(int nb_channels, uint64_t channel_layout) const;
+    static std::string get_channel_layout_name(int nb_channels, uint64_t channel_layout);
 
     /**
      * @brief Return source filename. Must be implemented in child class.

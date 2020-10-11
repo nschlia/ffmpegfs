@@ -332,21 +332,21 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
                   format_duration(duration).c_str());
 }
 
-std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt) const
+std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)
 {
     const char *fmt_name = ::av_get_pix_fmt_name(pix_fmt);
     return (fmt_name != nullptr ? fmt_name : "none");
 }
 
-std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt) const
+std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt)
 {
     return av_get_sample_fmt_name(sample_fmt);
 }
 
-std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout) const
+std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout)
 {
     char buffer[1024];
-    av_get_channel_layout_string(buffer, sizeof(buffer), nb_channels, channel_layout);
+    av_get_channel_layout_string(buffer, sizeof(buffer) - 1, nb_channels, channel_layout);
     return buffer;
 }
 

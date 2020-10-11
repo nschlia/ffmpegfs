@@ -63,9 +63,6 @@ struct AVAudioFifo;
  * limit, In this particular case the machine has 32 GB RAM with 13 GB free.
  * Never happens if the files are copied via Samba or directly, but only if played
  * through a web server. Probably has to do with slow connections and time outs.
- *
- * @bug Issue #33: H265 decoding does not work.\n
- * Decoding H265 files fails.
  */
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {

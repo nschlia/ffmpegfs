@@ -14,11 +14,14 @@ News
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
-**Version 1.99 released**
+**Version 2.0 released**
 
-This is going to be the V2.0 release, only bug fixes will go into this
-version, new features will be developed in seperate branches. If no big
-issues appear, this will be made V2.0 soon!
+Finally. we are at 2.0!
+
+**New in 2.0:**
+
+* Feature: No new features, new release 2.0 after feature freeze.
+* Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
 
 **New in 1.99:**
 

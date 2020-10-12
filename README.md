@@ -21,6 +21,39 @@ News
 * Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only. Also, decoding is done by software still, only the encoder can use hardware. This is already giving a big performance boost, though.
 * See [NEWS](NEWS) for details.
 
+**Version 2.0 released**
+
+Finally. we are at 2.0!
+
+**New in 2.0:**
+
+* Feature: No new features, new release 2.0 after feature freeze.
+* Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
+
+**New in 1.99:**
+
+* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
+  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
+* Libav support has been dropped. There is no activity on https://git.libav.org/?p=libav.git
+  since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg
+  API. Supporting Libav already bound a lot of my time that I could better spend on new features
+  or fixes for FFmpegfs.
+* Feature: Add PNG/BMP/JPG frame sets to 'make check'. Checks number of files and cp
+           operations in arbitrary order with wildcards and absolute file names.
+* Feature: Add HLS segments to 'make check'. Checks number of segments, the segment sizes
+           and correct file names.
+* Feature: Moved FFmpeg capabilities (formats) from --version/-V command to new -caps/-c
+           parameter to keep version information brief.
+* Bugfix: Issue #61 - fix timeout problem when accessing JPG in arbitrary order.
+* Bugfix: Issue #58 - Build list when ls/cp path/to/flles/00001.png is done. Access failed
+          because the file was not found.
+* Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be
+          passed through. Added to ignore and pass through list.
+* Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in
+          "ffmpegfs --logfile=~/ffmpegfs.log".
+* Bugfix: Issue #60 - Reopen cache file after it has been closed so that image frames can
+          be accessed after the file has been fully decoded.
+
 About
 -----
 

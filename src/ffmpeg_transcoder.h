@@ -736,7 +736,7 @@ protected:
      *
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwdevice_ctx_create(AVHWDeviceType type, const std::string &device);
+    int                         hwdevice_ctx_create(AVBufferRef **hwaccel_enc_device_ctx, AVHWDeviceType type, const std::string &device) const;
     /**
      * @brief Add reference to hardware device context.
      * @param[in] input_codec_ctx - Input codec context
@@ -745,9 +745,10 @@ protected:
     int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) const;
     /**
      * @brief Free (remove reference) to hardware device context
+     * @param[inout] hwaccel_device_ctx - Hardware device context to free
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    void                        hwdevice_ctx_free();
+    void                        hwdevice_ctx_free(AVBufferRef **hwaccel_device_ctx);
     /**
      * @brief Adds a reference to an existing decoder hardware frame context or
      * allocates a new AVHWFramesContext tied to the given hardware device context
@@ -757,7 +758,15 @@ protected:
      * @param[in] hw_device_ctx - Existing hardware device context
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx);
+    int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx) const;
+    /**
+     * Copy data hardware surface to software.
+     * @param[in] ctx - Codec context
+     * @param[out] sw_frame - AVFrame to copy data to
+     * @param[in] hw_frame - AVFrame to copy data from
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwframe_copy_from_hw(AVCodecContext *, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
     /**
      * Copy data software to a hardware surface.
      * @param[in] ctx - Codec context
@@ -765,10 +774,11 @@ protected:
      * @param[in] sw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_transfer_data(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    int                         hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
     /**
      * @brief Get the hardware codec name as string. This is required, because e.g.
-     * the name for the software codec is h264, for hardware it is h264_vaapi.
+     * the name for the software codec is libx264, but for hardware it is h264_vaapi
+     * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
      * @param[in] hwaccel_API - Name of the hardware acceleration API.
      * @return 0 on success, a negative AVERROR code on failure.
@@ -839,9 +849,8 @@ private:
     // Hardware accelerarion
     bool						m_hwaccel_enc_buffering;    /**< @brief Enable hardware acceleration frame buffers for encoder */
     bool                        m_hwaccel_dec_buffering;    /**< @brief Enable hardware acceleration frame buffers for decoder */
-    bool                        m_encoder_initialised;      /**< @brief True if encoder has been initilialised */
-    bool						m_hwdecode;                 /**< @brief True if decoder runs in hardware */
-    AVBufferRef *               m_hw_device_ctx;            /**< @brief Hardware acceleration device context */
+    AVBufferRef *               m_hwaccel_enc_device_ctx;   /**< @brief Hardware acceleration device context for encoder */
+    AVBufferRef *               m_hwaccel_dec_device_ctx;   /**< @brief Hardware acceleration device context for decoder */
 };
 
 #endif // FFMPEG_TRANSCODER_H

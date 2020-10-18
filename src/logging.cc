@@ -88,49 +88,40 @@ Logging::Logger::~Logger()
     // Construct string containing time
     time_t now = time(nullptr);
     std::string time_string(30, '\0');
+    std::string loglevel;
+    std::string filename;
     std::string msg;
 
-    time_string.resize(strftime(&time_string[0], time_string.size(), "%F %T ", localtime(&now)));   // Mind the blank at the end
+    time_string.resize(strftime(&time_string[0], time_string.size(), "%F %T", localtime(&now)));   // Mind the blank at the end
 
-    msg = time_string + m_level_name_map.at(m_loglevel) + ": ";
+    loglevel = m_level_name_map.at(m_loglevel) + ":";
+
+    msg = str();
+    rtrim(msg);
 
     if (!m_filename.empty())
     {
-        msg += "[";
-        msg += m_filename;
-        msg += "] ";
+        filename = "[" + m_filename + "] ";
     }
-
-    msg += str();
-    rtrim(msg);
 
     if (m_logging->m_to_syslog)
     {
-        syslog(m_syslog_level_map.at(m_loglevel), "%s", msg.c_str());
+        syslog(m_syslog_level_map.at(m_loglevel), "%s %s%s", loglevel.c_str(), filename.c_str(), msg.c_str());
     }
 
     if (m_logging->m_logfile.is_open())
     {
-        m_logging->m_logfile << msg << std::endl;
+        m_logging->m_logfile << time_string << " " << loglevel << " " << filename << msg << std::endl;
     }
 
     if (m_logging->m_to_stderr)
     {
-        msg = COLOUR_DARK_GRAY + time_string + m_level_colour_map.at(m_loglevel) + m_level_name_map.at(m_loglevel) + COLOUR_RESET + ": ";
-
-        if (!m_filename.empty())
+        if (!filename.empty())
         {
-            msg += COLOUR_LIGHT_PURPLE;
-            msg += "[";
-            msg += m_filename;
-            msg += "] ";
-            msg += COLOUR_RESET;
+            filename = COLOUR_LIGHT_PURPLE + filename + COLOUR_RESET;
         }
 
-        msg += str();
-        rtrim(msg);
-
-        std::clog << msg << std::endl;
+        std::clog << COLOUR_DARK_GRAY << time_string << " " << loglevel << COLOUR_RESET << " " << filename << msg << std::endl;
     }
 }
 

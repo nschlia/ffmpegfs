@@ -92,7 +92,14 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
         return true;
     }
 
-    Logging::info(m_ci[index].m_cachefile, "Opening cache file %1.", (flags & CACHE_FLAG_RW) ? "read/write" : "readonly");
+    if (flags & CACHE_FLAG_RW)
+    {
+        Logging::info(m_ci[index].m_cachefile, "Writing cache file.");
+    }
+    else
+    {
+        Logging::info(m_ci[index].m_cachefile, "Reading cache file.");
+    }
 
     size_t filesize     = 0;
     bool isdefaultsize  = false;
@@ -128,7 +135,7 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
     if (m_ci[index].m_flags)
     {
-        Logging::info(m_ci[index].m_cachefile, "Cache file still in use while trying to close. Currently open: %1", m_cur_open);
+        Logging::trace(m_ci[index].m_cachefile, "Cache file still in use while trying to close. Currently open: %1", m_cur_open);
         return true;
     }
 
@@ -139,7 +146,7 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
         return true;
     }
 
-    Logging::info(m_ci[index].m_cachefile, "Closing cache file.");
+    Logging::trace(m_ci[index].m_cachefile, "Closing cache file.");
 
     bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark, &m_ci[index].m_buffer_pos);
 

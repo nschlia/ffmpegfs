@@ -3621,7 +3621,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 if (pkt.pts != AV_NOPTS_VALUE)
                 {
                     m_out.m_video_pts       = pkt.pts;
-                    m_out.m_last_mux_dts    = pkt.dts;
+                    m_out.m_last_mux_dts    = (pkt.dts != AV_NOPTS_VALUE) ? pkt.dts : (pkt.pts - pkt.duration);
                 }
 
                 if (frame != nullptr && !pkt.duration)

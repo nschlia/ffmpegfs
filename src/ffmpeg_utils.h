@@ -525,6 +525,16 @@ template<typename ... Args> std::string string_format(const std::string& format,
  */
 int                 strcasecmp(const std::string & s1, const std::string & s2);
 /**
+ * @brief Convert string to upper case
+ * @param[inout] input String to convert
+ */
+void                make_upper(std::string * input);
+/**
+ * @brief Convert string to lower case
+ * @param[inout] input String to convert
+ */
+void                make_lower(std::string * input);
+/**
  * @brief Get info about the FFmpeg libraries used.
  * @return std::tring with info about the linked FFmpeg libraries.
  */

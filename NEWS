@@ -31,9 +31,6 @@ Important changes in 2.1 (2020-10-XX)
 * Log cache close action at trace level
 * Shorter log entry when opening cache files
 
-* Feature:
-* Bugfix:
-
 Important changes in 2.0 (2020-09-13)
 
 Hurray! This is release 2.0!

@@ -14,7 +14,7 @@ News
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
-**New in 2.1:**
+**New in 2.x:**
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.
 * **This is completely experimental code**, so please expect that it will not work for you!
@@ -24,6 +24,15 @@ News
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decided that automatically.
 * See [NEWS](NEWS) for details.
 
+**New in 2.1:**
+
+* Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
+* Bugfix: Did not transcode some source files with invalid DTS.
+* Bugfix: Cosmetical - No need to log date/time twice in syslog.
+* Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
+* Log cache close action at trace level
+* Shorter log entry when opening cache files
+
 **Version 2.0 released**
 
 Finally. we are at 2.0!
@@ -32,30 +41,6 @@ Finally. we are at 2.0!
 
 * Feature: No new features, new release 2.0 after feature freeze.
 * Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
-
-**New in 1.99:**
-
-* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
-  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
-* Libav support has been dropped. There is no activity on https://git.libav.org/?p=libav.git
-  since 21.08.2019, and some features that FFmpegfs required were already lagging behind FFmpeg
-  API. Supporting Libav already bound a lot of my time that I could better spend on new features
-  or fixes for FFmpegfs.
-* Feature: Add PNG/BMP/JPG frame sets to 'make check'. Checks number of files and cp
-           operations in arbitrary order with wildcards and absolute file names.
-* Feature: Add HLS segments to 'make check'. Checks number of segments, the segment sizes
-           and correct file names.
-* Feature: Moved FFmpeg capabilities (formats) from --version/-V command to new -caps/-c
-           parameter to keep version information brief.
-* Bugfix: Issue #61 - fix timeout problem when accessing JPG in arbitrary order.
-* Bugfix: Issue #58 - Build list when ls/cp path/to/flles/00001.png is done. Access failed
-          because the file was not found.
-* Bugfix: Issue #59 - *.m3u8 files were tried to be transcoded while they should simply be
-          passed through. Added to ignore and pass through list.
-* Bugfix: Issue #57 - Correctly expand tilde when ~/ is used, for example in
-          "ffmpegfs --logfile=~/ffmpegfs.log".
-* Bugfix: Issue #60 - Reopen cache file after it has been closed so that image frames can
-          be accessed after the file has been fully decoded.
 
 About
 -----

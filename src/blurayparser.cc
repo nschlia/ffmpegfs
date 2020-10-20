@@ -38,6 +38,7 @@
 #include "logging.h"
 
 #include "libbluray/bluray.h"
+#include "libbluray/bluray-version.h"
 
 extern "C" {
 #include <libavutil/rational.h>
@@ -158,6 +159,17 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
             *interleaved = 0;
             break;
         }
+            // Added with libluray change 14aa7e9c0 (hpi1 2017-08-28 09:50:43 +0300)
+            // Available since version 1.1.0
+#if (BLURAY_VERSION_MAJOR > 1 || (BLURAY_VERSION_MAJOR == 1 && BLURAY_VERSION_MINOR >= 1))
+        case BLURAY_VIDEO_FORMAT_2160P: // UHD
+        {
+            *width = 3840;
+            *height = 2160;
+            *interleaved = 0;
+            break;
+        }
+#endif
         default:
         {
             Logging::error(path, "Unknown video format %1. Assuming 1920x1080P - may be totally wrong.", ss->format);
@@ -369,10 +381,10 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         }
 
         snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s]%s.%s",
-                title_idx + 1,
-                replace_all(format_duration(duration), ":", "-").c_str(),
-                is_main_title ? "+" : "",
-                params.m_format[0].fileext().c_str()); // can safely assume this is a video format
+                 title_idx + 1,
+                 replace_all(format_duration(duration), ":", "-").c_str(),
+                 is_main_title ? "+" : "",
+                 params.m_format[0].fileext().c_str()); // can safely assume this is a video format
     }
     else
     {
@@ -385,11 +397,11 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         }
 
         snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s]%s.%s",
-                title_idx + 1,
-                chapter_idx + 1,
-                replace_all(format_duration(duration), ":", "-").c_str(),
-                is_main_title ? "+" : "",
-                params.m_format[0].fileext().c_str()); // can safely assume this is a video format
+                 title_idx + 1,
+                 chapter_idx + 1,
+                 replace_all(format_duration(duration), ":", "-").c_str(),
+                 is_main_title ? "+" : "",
+                 params.m_format[0].fileext().c_str()); // can safely assume this is a video format
 
     }
 

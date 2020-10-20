@@ -11,9 +11,15 @@ Important changes in 2.x (2020-10-xx)
 * Feature: Issue #63 - Hardware accelerated decoding/encoding has been added. See HWACCEL
   for details how it works.
 * **This is completely experimental code**, so please expect that it will not work for you!
-* Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported
-  only. Also, decoding is done by software still, only the encoder can use hardware. This is
-  already giving a big performance boost, though.
+* Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only.
+* Hardware decoding does not work at all, yet.
+* Once I got decoding to work I'll do some testing with MMAL (decoding)/OpenMAX (encoding) on
+  a Raspberry.
+* The decoding part is a more tricky, if encoding is set set to hardware, this hardware is
+  there and capable of encoding, it will work. If decoding in hardware is possible depends on
+  the source file, thus the file needs to be checked first and then decided if hardware
+  acceleration can be used or fallback to software is required. FFmpeg requires that to be set
+  via command line, FFmpegfs must decided that automatically.
 * Bugfix:
 
 Important changes in 2.1 (2020-10-XX)

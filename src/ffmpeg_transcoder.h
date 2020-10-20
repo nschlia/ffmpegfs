@@ -781,9 +781,10 @@ protected:
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
      * @param[in] hwaccel_API - Name of the hardware acceleration API.
+     * @param[out] codec_name - Name of the codec.
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    std::string                 get_hw_codec_name(AVCodecID codec_id, const std::string & hwaccel_API) const;
+    static int                  get_hw_codec_name(AVCodecID codec_id, const std::string & hwaccel_API, std::string *codec_nameX);
     /**
      * @brief Get the hardware pixel format for the given hardware acceleration.
      * @param[in] type - Selected hardware acceleration.

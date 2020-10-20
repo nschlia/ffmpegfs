@@ -434,8 +434,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         // We have a video stream
         // Now that we know the input video codec we may decide whether to use a hardware decoder
         // Check to see if decoder hardware acceleration is both requested and supported by codec.
-        std::string hw_decoder_codec_name(get_hw_codec_name(m_in.m_video.m_codec_ctx->codec_id, params.m_hwaccel_dec_API));
-        if (!hw_decoder_codec_name.empty())
+        std::string hw_decoder_codec_name;
+        if (!get_hw_codec_name(m_in.m_video.m_codec_ctx->codec_id, params.m_hwaccel_dec_API, &hw_decoder_codec_name))
         {
             m_hwaccel_dec_buffering = params.m_hwaccel_dec_buffering;
         }
@@ -450,7 +450,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", params.m_hwaccel_dec_buffering, ffmpeg_geterror(ret));
                 return ret;
             }
-            Logging::info(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
+            Logging::info(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE)
         {
@@ -473,8 +473,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         }
 
         // Check to see if encoder hardware acceleration is both requested and supported by codec.
-        std::string hw_encoder_codec_name(get_hw_codec_name(m_current_format->video_codec_id(), params.m_hwaccel_enc_API));
-        if (!hw_encoder_codec_name.empty())
+        std::string hw_encoder_codec_name;
+        if (!get_hw_codec_name(m_current_format->video_codec_id(), params.m_hwaccel_enc_API, &hw_encoder_codec_name))
         {
             // API supports hardware frame buffers
             m_hwaccel_enc_buffering = params.m_hwaccel_enc_buffering;
@@ -490,7 +490,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", params.m_hwaccel_enc_buffering, ffmpeg_geterror(ret));
                 return ret;
             }
-            Logging::info(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
+            Logging::info(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
         {
@@ -499,7 +499,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         }
         else if (!hw_encoder_codec_name.empty())
         {
-            // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration ppossible.
+            // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
             Logging::info(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
 
@@ -1166,9 +1166,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     AVDictionary *  opt                 = nullptr;
     int ret;
 
-    std::string codec_name(get_hw_codec_name(codec_id, params.m_hwaccel_enc_API));
+    std::string codec_name;
 
-    if (codec_name.empty())
+    if (get_hw_codec_name(codec_id, params.m_hwaccel_enc_API, &codec_name))
     {
         // find the encoder
         output_codec = avcodec_find_encoder(codec_id);
@@ -3271,7 +3271,7 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
 
 void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 {
-    //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
+    //if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
     {
         int64_t duration;
         // Some encoders to not produce dts/pts.
@@ -5577,16 +5577,17 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
     return 0;
 }
 
-std::string FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &hwaccel_API) const
+int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &hwaccel_API, std::string *codec_name)
 {
-    std::string encoder_name;
     std::string api(hwaccel_API);
+
+    codec_name->clear();
 
     make_lower(&api);
 
     if (api.empty() || api == "none")
     {
-        return "";
+        return AVERROR_DECODER_NOT_FOUND;
     }
 
     // Supported formats:
@@ -5598,16 +5599,17 @@ std::string FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::
     //  vp8_vaapi            VP8 (VAAPI) (codec vp8)
     //  vp9_vaapi            VP9 (VAAPI) (codec vp9)
 
+	int ret = 0;
     switch (codec_id)
     {
     case AV_CODEC_ID_H264:
     {
-        encoder_name = "h264_" + api;
+        *codec_name = "h264_" + api;
         break;
     }
     case AV_CODEC_ID_HEVC:
     {
-        encoder_name = "hevc_" + api;
+        *codec_name = "hevc_" + api;
         break;
     }
         /**
@@ -5618,15 +5620,16 @@ std::string FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::
          */
         //case AV_CODEC_ID_VP9:
         //{
-        //    encoder_name = "vp9_" + api;
+        //    *codec_name = "vp9_" + api;
         //    break;
         //}
     default:
     {
+		ret = AVERROR_DECODER_NOT_FOUND;
         break;
     }
     }
-    return encoder_name;
+    return ret;
 }
 
 AVPixelFormat FFmpeg_Transcoder::find_hw_fmt_by_hw_type(AVHWDeviceType type)

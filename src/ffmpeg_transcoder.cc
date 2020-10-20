@@ -244,7 +244,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (virtualfile == nullptr)
     {
-        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): virtualfile is nullptr.");
+        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): virtualfile is NULL.");
         return AVERROR(EINVAL);
     }
 

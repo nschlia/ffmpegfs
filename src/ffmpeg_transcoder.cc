@@ -803,18 +803,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
     // Initialise pixel format conversion and rescaling if necessary
-#if LAVF_DEP_AVSTREAM_CODEC
-    AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
-#else
-    AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
-#endif
-    if (in_pix_fmt == AV_PIX_FMT_NONE)
-    {
-        // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-        in_pix_fmt = output_codec_ctx->pix_fmt;
-    }
+    AVPixelFormat in_pix_fmt;
+    AVPixelFormat out_pix_fmt;
 
-    ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
+
+    ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
     if (ret < 0)
     {
         return ret;
@@ -822,13 +816,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     if (params.m_deinterlace)
     {
-        // Init deinterlace filters
-#if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
-#else
-        AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
-#endif
-        ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+        ret = init_deinterlace_filters(output_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
         if (ret < 0)
         {
             return ret;
@@ -1661,22 +1649,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Initialise pixel format conversion and rescaling if necessary
-#if LAVF_DEP_AVSTREAM_CODEC
-        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
-#else
-        AVPixelFormat in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
-#endif
-        if (in_pix_fmt == AV_PIX_FMT_NONE)
-        {
-            // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-            in_pix_fmt = output_codec_ctx->pix_fmt;
-        }
+        AVPixelFormat in_pix_fmt;
+        AVPixelFormat out_pix_fmt;
 
-        in_pix_fmt = (m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE) ? AV_PIX_FMT_NV12 /*reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format*/ : in_pix_fmt;
+        get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
 
-        // If hardware acceleration is enabled, e.g., output_codec_ctx->pix_fmt is AV_PIX_FMT_VAAPI but the format actually is AV_PIX_FMT_NV12,
-        // so we use the correct value from sw_format in the hardware frames context.
-        AVPixelFormat out_pix_fmt = (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE) ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : output_codec_ctx->pix_fmt;
         ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
         if (ret < 0)
         {
@@ -2051,12 +2028,13 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-#if LAVF_DEP_AVSTREAM_CODEC
-                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
-#else
-                AVPixelFormat pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
-#endif
-                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+                AVPixelFormat in_pix_fmt;
+                AVPixelFormat out_pix_fmt;
+
+                get_pix_formats(&in_pix_fmt, &out_pix_fmt);
+
+                /** @todo: out_pix_fmt verabeiten */
+                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;
@@ -2382,7 +2360,7 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
 }
 
 #if LAVC_NEW_PACKET_INTERFACE
-int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt)
+int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
 {
     int ret;
 
@@ -5081,19 +5059,17 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
 
         // buffer video sink: to terminate the filter chain.
 
+        pixel_fmts[0] = pix_fmt;
         if (pix_fmt == AV_PIX_FMT_NV12)
         {
-            pixel_fmts[0] = AV_PIX_FMT_NV12;
             pixel_fmts[1] = AV_PIX_FMT_YUV420P;
+            pixel_fmts[2] = AV_PIX_FMT_NONE;
         }
 
         else
         {
-            pixel_fmts[0] = pix_fmt;
             pixel_fmts[1] = AV_PIX_FMT_NONE;
         }
-
-        pixel_fmts[2] = AV_PIX_FMT_NONE;
 
         buffer_sink_params.pixel_fmts = pixel_fmts;
 
@@ -5789,3 +5765,29 @@ AVPixelFormat FFmpeg_Transcoder::find_sw_fmt_by_hw_type(AVHWDeviceType type)
 
     return fmt;
 }
+
+void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx) const
+{
+#if LAVF_DEP_AVSTREAM_CODEC
+    *in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codecpar->format);
+#else
+    *in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
+#endif
+
+    if (output_codec_ctx == nullptr)
+    {
+        output_codec_ctx = m_in.m_video.m_codec_ctx;
+    }
+
+    // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
+    AVPixelFormat pix_fmt = (output_codec_ctx != nullptr) ? output_codec_ctx->pix_fmt : AV_PIX_FMT_YUV420P;
+
+    if (*in_pix_fmt == AV_PIX_FMT_NONE)
+    {
+        // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
+        *in_pix_fmt = pix_fmt;
+    }
+
+    *out_pix_fmt = pix_fmt;
+}
+

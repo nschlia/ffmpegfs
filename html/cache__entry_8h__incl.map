@@ -1,15 +1,6 @@
 <map id="src/cache_entry.h" name="src/cache_entry.h">
-<area shape="rect" id="node1" title="Cache entry" alt="" coords="397,5,532,32"/>
-<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management." alt="" coords="377,80,449,107"/>
-<area shape="rect" id="node13" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="473,80,563,107"/>
-<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class." alt="" coords="164,155,235,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="437,304,487,331"/>
-<area shape="rect" id="node12" title=" " alt="" coords="451,155,529,181"/>
-<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class." alt="" coords="261,229,327,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="5,304,68,331"/>
-<area shape="rect" id="node10" title=" " alt="" coords="74,229,138,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="162,229,237,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="245,304,330,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="354,304,413,331"/>
-<area shape="rect" id="node9" title=" " alt="" coords="93,304,221,331"/>
+<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management. " alt="" coords="354,80,422,107"/>
+<area shape="rect" id="node13" href="$id3v1tag_8h.html" title="ID3v1 tag structure " alt="" coords="447,80,529,107"/>
+<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class. " alt="" coords="156,155,223,181"/>
+<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class. " alt="" coords="249,229,309,256"/>
 </map>

@@ -1,4 +1,3 @@
 <map id="FFmpeg_Transcoder::PRORES_BITRATE" name="FFmpeg_Transcoder::PRORES_BITRATE">
-<area shape="rect" id="node1" title="Predicted bitrates for Apple Prores, see https://www.apple.com/final&#45;cut&#45;pro/docs/Apple_ProRes_White_..." alt="" coords="23,124,183,165"/>
-<area shape="rect" id="node2" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html" title="List of ProRes frame rates." alt="" coords="5,5,200,61"/>
+<area shape="rect" id="node2" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html" title="List of ProRes frame rates. " alt="" coords="5,5,213,61"/>
 </map>

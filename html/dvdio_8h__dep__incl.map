@@ -1,5 +1,4 @@
 <map id="src/dvdio.h" name="src/dvdio.h">
-<area shape="rect" id="node1" title="DVD I/O." alt="" coords="68,5,161,32"/>
-<area shape="rect" id="node2" href="$dvdio_8cc.html" title="DvdIO class implementation." alt="" coords="5,80,104,107"/>
-<area shape="rect" id="node3" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="129,80,223,107"/>
+<area shape="rect" id="node2" href="$dvdio_8cc.html" title="DvdIO class implementation. " alt="" coords="5,80,99,107"/>
+<area shape="rect" id="node3" href="$fileio_8cc.html" title="FileIO class implementation. " alt="" coords="123,80,213,107"/>
 </map>

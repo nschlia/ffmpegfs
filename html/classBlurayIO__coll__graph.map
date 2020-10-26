@@ -1,4 +1,3 @@
 <map id="BlurayIO" name="BlurayIO">
-<area shape="rect" id="node1" title="Bluray I/O class." alt="" coords="5,80,84,107"/>
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="15,5,74,32"/>
+<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O. " alt="" coords="13,5,71,32"/>
 </map>

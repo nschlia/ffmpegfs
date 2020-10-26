@@ -63,6 +63,9 @@ struct AVAudioFifo;
  * limit, In this particular case the machine has 32 GB RAM with 13 GB free.
  * Never happens if the files are copied via Samba or directly, but only if played
  * through a web server. Probably has to do with slow connections and time outs.
+ *
+ * @bug Issue #33: H265 decoding does not work.\n
+ * Decoding H265 files fails.
  */
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
@@ -701,6 +704,13 @@ protected:
      * @return Returns 0 if OK, or negative AVERROR value.
      */
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
+    /**
+     * @brief Get correct input and output pixel format
+     * @param [in] output_codec_ctx - Output codec context.
+     * @param [out] in_pix_fmt - Input pixel format.
+     * @param [out] out_pix_fmt - Output pixel format.
+     */
+    void  get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */

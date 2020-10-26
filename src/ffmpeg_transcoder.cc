@@ -5583,16 +5583,41 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         *codec_name = "h264_" + api;
         break;
     }
+    case AV_CODEC_ID_MJPEG:
+    {
+        *codec_name = "mjpeg_" + api;
+        break;
+    }
+    case AV_CODEC_ID_MPEG2VIDEO:
+    {
+        *codec_name = "mpeg2_" + api;
+        break;
+    }
     case AV_CODEC_ID_HEVC:
     {
         *codec_name = "hevc_" + api;
         break;
     }
+        case AV_CODEC_ID_VP8:
+        {
+            *codec_name = "vp9_" + api;
+            break;
+        }
         /**
-         * todo: HWACCEL - fixit, VP9 does not work...
+         * @todo: HWACCEL - fixit, VP9 does not work...
          * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
          * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
          * 2020-08-02 13:42:32 ERROR  : [/home/norbert/test/out/Tony Braxton - Unbreak my heart (640x480).webm] Could not open video output codec
+		 
+2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
+2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252956000 to decoder (error 'Invalid data found when processing input').
+2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252989000 to decoder (error 'Invalid data found when processing input').
+2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=253022000 to decoder (error 'Invalid data found when processing input').
+2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+		 
          */
         //case AV_CODEC_ID_VP9:
         //{

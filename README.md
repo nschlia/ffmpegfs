@@ -19,7 +19,12 @@ News
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.
 * **This is completely experimental code**, so please expect that it will not work for you!
 * Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only. 
-* Hardware decoding does not work at all, yet. 
+* Hardware decoding works now, at least for me:
+  - VAAPI supported only
+  - H264, H265/HEVC, MJPEG, MPEG-2 and VC-8 are supported
+  - VC-9 does not work
+* MMAL/OMX (Raspberry) should come next.
+* Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * Once I got decoding to work I'll do some testing with MMAL (decoding)/OpenMAX (encoding) on a Raspberry.
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decided that automatically.
 * See [NEWS](NEWS) for details.

@@ -433,7 +433,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     {
         // We have a video stream
         // Now that we know the input video codec we may decide whether to use a hardware decoder
-        // Check to see if decoder hardware acceleration is both requested and supported by codec.
+
+         // Check to see if decoder hardware acceleration is both requested and supported by codec.
         std::string hw_decoder_codec_name;
         if (!get_hw_codec_name(m_in.m_video.m_codec_ctx->codec_id, params.m_hwaccel_dec_API, &hw_decoder_codec_name))
         {
@@ -5553,6 +5554,7 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
     return 0;
 }
 
+/** @todo: HWACCEL - Need 2 functions: One for decoding, one for encoding (see Raspberry, not same for en/decoding: MMAL/OMX!) */
 int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &hwaccel_API, std::string *codec_name)
 {
     std::string api(hwaccel_API);
@@ -5566,16 +5568,57 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         return AVERROR_DECODER_NOT_FOUND;
     }
 
-    // Supported formats:
-    //
-    //  h264_vaapi           H.264/AVC (VAAPI) (codec h264)
-    //  hevc_vaapi           H.265/HEVC (VAAPI) (codec hevc)
-    //  mjpeg_vaapi          MJPEG (VAAPI) (codec mjpeg)
-    //  mpeg2_vaapi          MPEG-2 (VAAPI) (codec mpeg2video)
-    //  vp8_vaapi            VP8 (VAAPI) (codec vp8)
-    //  vp9_vaapi            VP9 (VAAPI) (codec vp9)
+    /**
+     * @todo: HWACCEL - Some supported formats:
+     *
+     * *** v4l2m2m (Video2linux) decoder ***
+     *
+     * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
+     * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
+     * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
+     * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
+     * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
+     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
+     * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
+     * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
+     * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
+     *
+     * *** v4l2m2m (Video2linux) encoder ***
+     *
+     * h263_v4l2m2m         V4L2 mem2mem H.263 encoder wrapper (codec h263)
+     * h264_v4l2m2m         V4L2 mem2mem H.264 encoder wrapper (codec h264)
+     * hevc_v4l2m2m         V4L2 mem2mem HEVC encoder wrapper (codec hevc)
+     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 encoder wrapper (codec mpeg4)
+     * vp8_v4l2m2m          V4L2 mem2mem VP8 encoder wrapper (codec vp8)
+     *
+     * *** Intel VAAPI de/encoder ***
+     *
+     * h264_vaapi           H.264/AVC (VAAPI) (codec h264)
+     * hevc_vaapi           H.265/HEVC (VAAPI) (codec hevc)
+     * mjpeg_vaapi          MJPEG (VAAPI) (codec mjpeg)
+     * mpeg2_vaapi          MPEG-2 (VAAPI) (codec mpeg2video)
+     * vp8_vaapi            VP8 (VAAPI) (codec vp8)
+     * vp9_vaapi            VP9 (VAAPI) (codec vp9)
+     *
+     * NIVIDA?
+     *
+     * CUDA seems to work differently, need to buy CUDA capable hardware...
+     *
+     * Raspberry:
+     *
+     * *** Openmax decoder ***
+     *
+     * h264_mmal            h264 (mmal) (codec h264)
+     * mpeg2_mmal           mpeg2 (mmal) (codec mpeg2video)
+     * mpeg4_mmal           mpeg4 (mmal) (codec mpeg4)
+     * vc1_mmal             vc1 (mmal) (codec vc1)
+     *
+     * *** Openmax encoder ***
+     *
+     * h264_omx             OpenMAX IL H.264 video encoder (codec h264)
+     */
 
-	int ret = 0;
+    int ret = 0;
     switch (codec_id)
     {
     case AV_CODEC_ID_H264:
@@ -5598,17 +5641,17 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         *codec_name = "hevc_" + api;
         break;
     }
-        case AV_CODEC_ID_VP8:
-        {
-            *codec_name = "vp9_" + api;
-            break;
-        }
+    case AV_CODEC_ID_VP8:
+    {
+        *codec_name = "vp9_" + api;
+        break;
+    }
         /**
          * @todo: HWACCEL - fixit, VP9 does not work...
          * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
          * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
          * 2020-08-02 13:42:32 ERROR  : [/home/norbert/test/out/Tony Braxton - Unbreak my heart (640x480).webm] Could not open video output codec
-		 
+
 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252956000 to decoder (error 'Invalid data found when processing input').
@@ -5617,7 +5660,7 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=253022000 to decoder (error 'Invalid data found when processing input').
 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-		 
+
          */
         //case AV_CODEC_ID_VP9:
         //{
@@ -5626,7 +5669,7 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         //}
     default:
     {
-		ret = AVERROR_DECODER_NOT_FOUND;
+        ret = AVERROR_DECODER_NOT_FOUND;
         break;
     }
     }

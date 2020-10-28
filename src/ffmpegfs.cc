@@ -895,7 +895,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = autocopy_map.find(data);
+        AUTOCOPY_MAP::const_iterator it = autocopy_map.find(data);
 
         if (it == autocopy_map.end())
         {
@@ -937,7 +937,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = recode_map.find(data);
+        RECODESAME_MAP::const_iterator it = recode_map.find(data);
 
         if (it == recode_map.end())
         {
@@ -979,7 +979,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = profile_map.find(data);
+        PROFILE_MAP::const_iterator it = profile_map.find(data);
 
         if (it == profile_map.end())
         {
@@ -1022,7 +1022,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = level_map.find(data);
+        LEVEL_MAP::const_iterator it = level_map.find(data);
 
         if (it == level_map.end())
         {
@@ -1462,7 +1462,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "--------- HLS Options ---------");
-    Logging::trace(nullptr, "Segment Duration  : %1", format_time(params.m_segment_duration).c_str());
+    Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)).c_str());
     Logging::trace(nullptr, "---- Hardware Acceleration ----");
     Logging::trace(nullptr, "Hardware Encoder:");
     Logging::trace(nullptr, "API               : %1", params.m_hwaccel_enc_API);

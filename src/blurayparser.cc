@@ -513,7 +513,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
         virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
-        virtualfile->m_predicted_size       = size;
+        virtualfile->m_predicted_size       = static_cast<size_t>(size);
     }
 
     return true;

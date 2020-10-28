@@ -372,10 +372,10 @@ protected:
     const bool      m_to_syslog;                    /**< @brief Whether to write log output to syslog. */
 };
 
-constexpr auto ERROR    = Logging::level::ERROR;    /**< @brief Shorthand for log level ERROR */
-constexpr auto WARNING  = Logging::level::WARNING;  /**< @brief Shorthand for log level WARNING */
-constexpr auto INFO     = Logging::level::INFO;     /**< @brief Shorthand for log level INFO */
-constexpr auto DEBUG    = Logging::level::DEBUG;    /**< @brief Shorthand for log level DEBUG */
-constexpr auto TRACE    = Logging::level::TRACE;    /**< @brief Shorthand for log level TRACE */
+constexpr Logging::level ERROR    = Logging::level::ERROR;    /**< @brief Shorthand for log level ERROR */
+constexpr Logging::level WARNING  = Logging::level::WARNING;  /**< @brief Shorthand for log level WARNING */
+constexpr Logging::level INFO     = Logging::level::INFO;     /**< @brief Shorthand for log level INFO */
+constexpr Logging::level DEBUG    = Logging::level::DEBUG;    /**< @brief Shorthand for log level DEBUG */
+constexpr Logging::level TRACE    = Logging::level::TRACE;    /**< @brief Shorthand for log level TRACE */
 
 #endif

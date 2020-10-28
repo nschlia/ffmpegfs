@@ -33,6 +33,7 @@ Important changes in 2.1 (2020-10-XX)
 * Bugfix: Did not transcode some source files with invalid DTS.
 * Bugfix: Cosmetical - No need to log date/time twice in syslog.
 * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
+* Bugfix: Report correct segment duration
 * Log cache close action at trace level
 * Shorter log entry when opening cache files
 

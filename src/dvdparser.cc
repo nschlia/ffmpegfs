@@ -427,7 +427,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
 
             virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
-            virtualfile->m_predicted_size       = size;
+            virtualfile->m_predicted_size       = static_cast<size_t>(size);
         }
     }
 

@@ -1356,7 +1356,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "--------- HLS Options ---------");
-    Logging::trace(nullptr, "Segment Duration  : %1", format_time(params.m_segment_duration).c_str());
+    Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)).c_str());
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
     Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());

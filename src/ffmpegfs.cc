@@ -350,10 +350,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;         /**< @brief Map command line option to AUTOCOPY enum */
-typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;           /**< @brief Map command line option to PROFILE enum  */
-typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;         /**< @brief Map command line option to LEVEL enum  */
-typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP;     /**< @brief Map command line option to RECODESAME enum  */
+typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;     /**< @brief Map command line option to AUTOCOPY enum */
+typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map command line option to PROFILE enum */
+typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map command line option to LEVEL enum */
+typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map command line option to RECODESAME enum */
 typedef std::map<std::string, AVHWDeviceType, comp> HWACCEL_MAP;    /**< @brief Map command line option to AVHWDeviceType enum  */
 
 /**
@@ -1093,7 +1093,7 @@ static int get_hwaccel(const std::string & arg, AVHWDeviceType *hwaccel_bufferin
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = hwaccel_map.find(data);
+        HWACCEL_MAP::const_iterator it = hwaccel_map.find(data);
 
         if (it == hwaccel_map.end())
         {

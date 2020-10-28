@@ -704,7 +704,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     m_out.m_filetype    = m_current_format->filetype();
 
-    Logging::info(destname(), "Opening output file.");
+    Logging::debug(destname(), "Opening output file.");
 
     if (!is_frameset())
     {

@@ -831,7 +831,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = autocopy_map.find(data);
+        AUTOCOPY_MAP::const_iterator it = autocopy_map.find(data);
 
         if (it == autocopy_map.end())
         {
@@ -878,7 +878,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = recode_map.find(data);
+        RECODESAME_MAP::const_iterator it = recode_map.find(data);
 
         if (it == recode_map.end())
         {
@@ -925,7 +925,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = profile_map.find(data);
+        PROFILE_MAP::const_iterator it = profile_map.find(data);
 
         if (it == profile_map.end())
         {
@@ -973,7 +973,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
     {
         std::string data(arg.substr(pos + 1));
 
-        auto it = level_map.find(data);
+        LEVEL_MAP::const_iterator it = level_map.find(data);
 
         if (it == level_map.end())
         {

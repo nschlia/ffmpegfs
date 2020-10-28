@@ -1090,7 +1090,7 @@ bool init_logging(const std::string &logfile, const std::string & max_level, boo
         { "TRACE",      TRACE },
     };
 
-    auto it = level_map.find(max_level);
+    std::map<std::string, Logging::level, comp>::const_iterator it = level_map.find(max_level);
 
     if (it == level_map.end())
     {

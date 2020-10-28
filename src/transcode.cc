@@ -407,8 +407,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     }
                 }
 
-                Logging::debug(cache_entry->filename(), "Decoder thread is running.");
-
                 if (cache_entry->m_cache_info.m_error)
                 {
                     Logging::trace(cache_entry->filename(), "Decoder error!");
@@ -419,6 +417,8 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                     }
                     throw ret;
                 }
+
+                Logging::debug(cache_entry->filename(), "Decoder thread is running.");
             }
             else if (!cache_entry->m_cache_info.m_predicted_filesize)
             {

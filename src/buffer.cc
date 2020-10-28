@@ -94,11 +94,11 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
 
     if (flags & CACHE_FLAG_RW)
     {
-        Logging::info(m_ci[index].m_cachefile, "Writing cache file.");
+        Logging::debug(m_ci[index].m_cachefile, "Writing cache file.");
     }
     else
     {
-        Logging::info(m_ci[index].m_cachefile, "Reading cache file.");
+        Logging::debug(m_ci[index].m_cachefile, "Reading cache file.");
     }
 
     size_t filesize     = 0;

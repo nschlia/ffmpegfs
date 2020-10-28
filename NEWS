@@ -14,8 +14,8 @@ Important changes in 2.x (2020-10-xx)
 * Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only.
 * Hardware decoding works now, at least for me:
   - VAAPI supported only
-  - H264, H265/HEVC, MJPEG, MPEG-2 and VC-8 are supported
-  - VC-9 does not work
+  - H264, H265/HEVC, MPEG-2 and VC-8 are supported
+  - MJPEG and VC-9 do not (yet) work
 * MMAL/OMX (Raspberry) should come next.
 * Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * Once I got decoding to work I'll do some testing with MMAL (decoding)/OpenMAX (encoding) on

@@ -5626,11 +5626,37 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         *codec_name = "h264_" + api;
         break;
     }
-    case AV_CODEC_ID_MJPEG:
-    {
-        *codec_name = "mjpeg_" + api;
-        break;
-    }
+        /**
+          * @todo: fixit
+          *
+          * Program terminated with signal SIGSEGV, Segmentation fault.
+          * #0  __memmove_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:383
+          * 383     ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S: Datei oder Verzeichnis nicht gefunden.
+          * [Current thread is 1 (Thread 0x7f95a24d4700 (LWP 16179))]
+          * (gdb) bt
+          * #0  __memmove_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:383
+          * #1  0x00007f95903c4e26 in ?? () from /usr/lib/x86_64-linux-gnu/dri/iHD_drv_video.so
+          * #2  0x00007f95aaae80b8 in vaGetImage () from /lib/x86_64-linux-gnu/libva.so.2
+          * #3  0x00007f95af524bb5 in ?? () from /lib/x86_64-linux-gnu/libavutil.so.56
+          * #4  0x00007f95af5250fb in ?? () from /lib/x86_64-linux-gnu/libavutil.so.56
+          * #5  0x00007f95af51c37f in av_hwframe_transfer_data () from /lib/x86_64-linux-gnu/libavutil.so.56
+          * #6  0x00007f95af51c406 in av_hwframe_transfer_data () from /lib/x86_64-linux-gnu/libavutil.so.56
+          * #7  0x0000555da4fde146 in FFmpeg_Transcoder::decode_video_frame (this=0x7f9598002e90, pkt=0x7f95a24d2f90, decoded=0x7f95a24d2ec4) at ffmpeg_transcoder.cc:2655
+          * #8  0x0000555da4fde5cd in FFmpeg_Transcoder::decode_frame (this=0x7f9598002e90, pkt=0x7f95a24d2f90) at ffmpeg_transcoder.cc:2852
+          * #9  0x0000555da4fdea4b in FFmpeg_Transcoder::read_decode_convert_and_store (this=0x7f9598002e90, finished=0x7f95a24d3030) at ffmpeg_transcoder.cc:3189
+          * #10 0x0000555da4fdfa73 in FFmpeg_Transcoder::process_single_fr (this=this@entry=0x7f9598002e90, status=@0x7f95a24d3134: 0) at ffmpeg_transcoder.cc:3987
+          * #11 0x0000555da4f8c997 in transcoder_thread (arg=<optimized out>) at transcode.cc:874
+          * #12 0x0000555da4fc54ef in thread_pool::loop_function (this=0x7f959c002b40) at thread_pool.cc:78
+          * #13 0x00007f95aeaf4c10 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
+          * #14 0x00007f95ae9f0ea7 in start_thread (arg=<optimized out>) at pthread_create.c:477
+          * #15 0x00007f95ae920d4f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+          *
+          */
+        //case AV_CODEC_ID_MJPEG:
+	    //{
+	    //    *codec_name = "mjpeg_" + api;
+	    //    break;
+	    //}
     case AV_CODEC_ID_MPEG2VIDEO:
     {
         *codec_name = "mpeg2_" + api;

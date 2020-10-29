@@ -434,7 +434,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         // We have a video stream
         // Now that we know the input video codec we may decide whether to use a hardware decoder
 
-         // Check to see if decoder hardware acceleration is both requested and supported by codec.
+        // Check to see if decoder hardware acceleration is both requested and supported by codec.
         std::string hw_decoder_codec_name;
         if (!get_hw_decoder_name(m_in.m_video.m_codec_ctx->codec_id, &hw_decoder_codec_name))
         {
@@ -5828,16 +5828,16 @@ AVPixelFormat FFmpeg_Transcoder::find_hw_fmt_by_hw_type(AVHWDeviceType type)
         fmt = AV_PIX_FMT_VAAPI;
         break;
     }
-	    //case AV_HWDEVICE_TYPE_CUDA:
-	    //{
-	    //    fmt = AV_PIX_FMT_CUDA;
-	    //    break;
-	    //}
-	    //case AV_HWDEVICE_TYPE_VDPAU:
-	    //{
-	    //    fmt = AV_PIX_FMT_VDPAU;
-	    //    break;
-	    //}
+        //case AV_HWDEVICE_TYPE_CUDA:
+        //{
+        //    fmt = AV_PIX_FMT_CUDA;
+        //    break;
+        //}
+        //case AV_HWDEVICE_TYPE_VDPAU:
+        //{
+        //    fmt = AV_PIX_FMT_VDPAU;
+        //    break;
+        //}
         //case AV_HWDEVICE_TYPE_QSV:
         //{
         //    fmt = AV_PIX_FMT_QSV;
@@ -5905,22 +5905,22 @@ AVPixelFormat FFmpeg_Transcoder::find_sw_fmt_by_hw_type(AVHWDeviceType type)
         fmt = AV_PIX_FMT_NV12;
         break;
     }
-	    //case AV_HWDEVICE_TYPE_CUDA:
-	    //{
-	    //    fmt = AV_PIX_FMT_CUDA;      //** @todo: HWACCEL - pix_fmt untested...
-	    //    break;
-	    //}
-	    //case AV_HWDEVICE_TYPE_VDPAU:
-	    //{
-	    //    fmt = AV_PIX_FMT_YUV420P;      //** @todo: HWACCEL - pix_fmt untested...
-	    //    break;
-	    //}
+        //case AV_HWDEVICE_TYPE_CUDA:
+        //{
+        //    fmt = AV_PIX_FMT_CUDA;      //** @todo: HWACCEL - pix_fmt untested...
+        //    break;
+        //}
+        //case AV_HWDEVICE_TYPE_VDPAU:
+        //{
+        //    fmt = AV_PIX_FMT_YUV420P;      //** @todo: HWACCEL - pix_fmt untested...
+        //    break;
+        //}
         //case AV_HWDEVICE_TYPE_QSV:
         //{
         //    // AV_PIX_FMT_NV12
         //    // AV_PIX_FMT_P010
         //    // AV_PIX_FMT_QSV
-		//
+        //
         //    fmt = AV_PIX_FMT_NV12;       //** @todo: HWACCEL - pix_fmt untested...
         //    break;
         //}

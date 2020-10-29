@@ -5105,6 +5105,10 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         //filters = "kerndeint=thresh=10:map=0:order=0:sharp=1:twoway=1";
         //filters = "zoompan=z='min(max(zoom,pzoom)+0.0015,1.5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'";
 
+        // vaapi_deinterlace=rate=field
+        // format=nv12,hwupload,deinterlace_vaapi,hwdownload,format=nv12
+        // deinterlace_vaapi,scale_vaapi=w=1280:h=720,hwdownload,format=nv12
+
         ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &inputs, &outputs, nullptr);
         if (ret < 0)
         {

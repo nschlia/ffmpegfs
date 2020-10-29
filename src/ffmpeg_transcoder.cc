@@ -5978,7 +5978,19 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
     *in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
 #endif
 
-    *in_pix_fmt = m_hwaccel_enable_dec_buffering ? AV_PIX_FMT_NV12 /*reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format*/ : *in_pix_fmt;
+    if (m_hwaccel_enable_dec_buffering)
+    {
+        if (m_in.m_video.m_codec_ctx != nullptr &&
+                m_in.m_video.m_codec_ctx->hw_frames_ctx != nullptr  &&
+                m_in.m_video.m_codec_ctx->hw_frames_ctx->data != nullptr )
+        {
+            *in_pix_fmt = reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format;
+        }
+        else
+        {
+            *in_pix_fmt = find_sw_fmt_by_hw_type(params.m_hwaccel_dec_buffering);
+        }
+    }
 
     if (output_codec_ctx == nullptr)
     {
@@ -5996,5 +6008,15 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     // If hardware acceleration is enabled, e.g., output_codec_ctx->pix_fmt is AV_PIX_FMT_VAAPI but the format actually is AV_PIX_FMT_NV12,
     // so we use the correct value from sw_format in the hardware frames context.
-    *out_pix_fmt = m_hwaccel_enable_enc_buffering ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : pix_fmt;
+    if (m_hwaccel_enable_enc_buffering &&
+            output_codec_ctx != nullptr &&
+            output_codec_ctx->hw_frames_ctx != nullptr &&
+            output_codec_ctx->hw_frames_ctx->data != nullptr)
+    {
+        *out_pix_fmt = reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format;
+    }
+    else
+    {
+        *out_pix_fmt = pix_fmt;
+    }
 }

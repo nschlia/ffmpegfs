@@ -20,10 +20,11 @@ News
 * **This is completely experimental code**, so please expect that it will not work for you!
 * Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only. 
 * Hardware decoding works now, at least for me:
-  - VAAPI supported only
-  - H264, H265/HEVC, MJPEG, MPEG-2 and VC-8 are supported
-  - VC-9 does not work
-* MMAL/OMX (Raspberry) should come next.
+  - Supported hardware: VAAPI (Intel) and MMAL/OMX (Raspberry).
+  - VAAPI: H264, H265/HEVC, MPEG-2 and VC-8 decoding and H264 encoding is supported.
+  - VAAPI: MJPEG and VC-9 do not work (yet).
+  - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding is supported.
+  - OMX: H264 encoding is supported.
 * Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * Once I got decoding to work I'll do some testing with MMAL (decoding)/OpenMAX (encoding) on a Raspberry.
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decided that automatically.

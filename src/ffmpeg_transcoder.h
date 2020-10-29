@@ -790,11 +790,42 @@ protected:
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
-     * @param[in] hwaccel_API - Name of the hardware acceleration API.
+     * @param[in] hwaccel_buffering - Selected hardware acceleration API.
      * @param[out] codec_name - Name of the codec.
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    static int                  get_hw_codec_name(AVCodecID codec_id, const std::string & hwaccel_API, std::string *codec_nameX);
+    int                         get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Get the hardware codec name as string. This is required, because e.g.
+     * the name for the software codec is libx264, but for hardware it is h264_vaapi
+     * under VAAPI.
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[in] hwaccel_buffering - Selected hardware acceleration API.
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine VAAPI codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine MMAL decoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int get_hw_mmal_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine OMX encoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int get_hw_omx_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
     /**
      * @brief Get the hardware pixel format for the given hardware acceleration.
      * @param[in] type - Selected hardware acceleration.
@@ -858,10 +889,10 @@ private:
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 
     // Hardware accelerarion
-    bool						m_hwaccel_enc_buffering;    /**< @brief Enable hardware acceleration frame buffers for encoder */
-    bool                        m_hwaccel_dec_buffering;    /**< @brief Enable hardware acceleration frame buffers for decoder */
-    AVBufferRef *               m_hwaccel_enc_device_ctx;   /**< @brief Hardware acceleration device context for encoder */
-    AVBufferRef *               m_hwaccel_dec_device_ctx;   /**< @brief Hardware acceleration device context for decoder */
+    bool						m_hwaccel_enable_enc_buffering; /**< @brief Enable hardware acceleration frame buffers for encoder */
+    bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
+    AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */
+    AVBufferRef *               m_hwaccel_dec_device_ctx;       /**< @brief Hardware acceleration device context for decoder */
 };
 
 #endif // FFMPEG_TRANSCODER_H

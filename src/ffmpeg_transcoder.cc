@@ -181,8 +181,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_buffer(nullptr)
     , m_reset_pts(false)
     , m_fake_frame_no(0)
-    , m_hwaccel_enc_buffering(AV_HWDEVICE_TYPE_NONE)
-    , m_hwaccel_dec_buffering(AV_HWDEVICE_TYPE_NONE)
+    , m_hwaccel_enable_enc_buffering(false)
+    , m_hwaccel_enable_dec_buffering(false)
     , m_hwaccel_enc_device_ctx(nullptr)
     , m_hwaccel_dec_device_ctx(nullptr)
 {
@@ -436,19 +436,19 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
          // Check to see if decoder hardware acceleration is both requested and supported by codec.
         std::string hw_decoder_codec_name;
-        if (!get_hw_codec_name(m_in.m_video.m_codec_ctx->codec_id, params.m_hwaccel_dec_API, &hw_decoder_codec_name))
+        if (!get_hw_decoder_name(m_in.m_video.m_codec_ctx->codec_id, &hw_decoder_codec_name))
         {
-            m_hwaccel_dec_buffering = params.m_hwaccel_dec_buffering;
+            m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE);
         }
 
-        if (m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE)
+        if (m_hwaccel_enable_dec_buffering)
         {
             // Hardware buffers available, enabling decoder hardware accceleration.
-            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_text(params.m_hwaccel_dec_buffering));
+            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering));
             ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_buffering, params.m_hwaccel_dec_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", params.m_hwaccel_dec_buffering, ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering).c_str(), ffmpeg_geterror(ret));
                 return ret;
             }
             Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name.c_str());
@@ -464,7 +464,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
             Logging::debug(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
         }
 
-        if (m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE)
+        if (m_hwaccel_enable_dec_buffering)
         {
             ret = hwdevice_ctx_add_ref(m_in.m_video.m_codec_ctx);
             if (ret < 0)
@@ -475,27 +475,27 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
         // Check to see if encoder hardware acceleration is both requested and supported by codec.
         std::string hw_encoder_codec_name;
-        if (!get_hw_codec_name(m_current_format->video_codec_id(), params.m_hwaccel_enc_API, &hw_encoder_codec_name))
+        if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
         {
             // API supports hardware frame buffers
-            m_hwaccel_enc_buffering = params.m_hwaccel_enc_buffering;
+            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE);
         }
 
-        if (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
+        if (m_hwaccel_enable_enc_buffering)
         {
             // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_text(params.m_hwaccel_enc_buffering));
+            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering));
             ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_buffering, params.m_hwaccel_enc_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", params.m_hwaccel_enc_buffering, ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering), ffmpeg_geterror(ret));
                 return ret;
             }
             Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
         {
-            // No hardware acceleration, fallack to software,
+            // No hardware acceleration, fallback to software,
             Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_encoder_codec_name.empty())
@@ -1078,7 +1078,7 @@ int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option)
 
     for (LPCPROFILE_OPTION p = profile_option; p->m_key != nullptr; p++)
     {
-        if ((m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE && p->m_options & OPT_SW_ONLY) || (!m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE && p->m_options & OPT_HW_ONLY))
+        if ((m_hwaccel_enable_enc_buffering && p->m_options & OPT_SW_ONLY) || (!m_hwaccel_enable_enc_buffering && p->m_options & OPT_HW_ONLY))
         {
             continue;
         }
@@ -1157,7 +1157,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     std::string codec_name;
 
-    if (get_hw_codec_name(codec_id, params.m_hwaccel_enc_API, &codec_name))
+    if (get_hw_encoder_name(codec_id, &codec_name))
     {
         // find the encoder
         output_codec = avcodec_find_encoder(codec_id);
@@ -1376,7 +1376,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     {
         BITRATE orig_bit_rate;
 
-        if (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
+        if (m_hwaccel_enable_enc_buffering)
         {
             if (m_hwaccel_enc_device_ctx != nullptr)
             {
@@ -1421,9 +1421,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE) ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
 #else
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE) ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
 #endif
 
         AVRational sample_aspect_ratio                      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
@@ -1471,7 +1471,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // 	return ret;
             // }
 
-            if (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
+            if (m_hwaccel_enable_enc_buffering)
             {
                 // From libavcodec/vaapi_encode.c:
                 //
@@ -2033,7 +2033,6 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
                 get_pix_formats(&in_pix_fmt, &out_pix_fmt);
 
-                /** @todo: out_pix_fmt verabeiten */
                 ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
@@ -2636,7 +2635,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             break;
         }
 
-        if (m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE && frame != nullptr)
+        if (m_hwaccel_enable_dec_buffering && frame != nullptr)
         {
             AVFrame *sw_frame;
 
@@ -2701,7 +2700,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             {
                 AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                AVPixelFormat out_pix_fmt = (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE) ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : output_codec_ctx->pix_fmt;
+                AVPixelFormat out_pix_fmt = m_hwaccel_enable_enc_buffering ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : output_codec_ctx->pix_fmt;
                 AVFrame * tmp_frame = alloc_picture(out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                 if (tmp_frame == nullptr)
                 {
@@ -3496,7 +3495,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     int ret = 0;
 
     AVFrame *hw_frame = nullptr;
-    if (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE && frame != nullptr)
+    if (m_hwaccel_enable_enc_buffering && frame != nullptr)
     {
         // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
         ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
@@ -5349,7 +5348,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
     ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, type, !device.empty() ? device.c_str() : nullptr, nullptr, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Failed to create a %1 device (error '%2').", get_hwaccel_text(type).c_str(), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to create a %1 device (error '%2').", get_hwaccel_buffering_text(type).c_str(), ffmpeg_geterror(ret).c_str());
         return ret;
     }
     return 0;
@@ -5553,43 +5552,107 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
     return 0;
 }
 
-/** @todo: HWACCEL - Need 2 functions: One for decoding, one for encoding (see Raspberry, not same for en/decoding: MMAL/OMX!) */
-int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &hwaccel_API, std::string *codec_name)
+/**
+ * @todo: HWACCEL - Some supported formats:
+ *
+ * *** v4l2m2m (Video2linux) encoder ***
+ *
+ * h263_v4l2m2m         V4L2 mem2mem H.263 encoder wrapper (codec h263)
+ * h264_v4l2m2m         V4L2 mem2mem H.264 encoder wrapper (codec h264)
+ * hevc_v4l2m2m         V4L2 mem2mem HEVC encoder wrapper (codec hevc)
+ * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 encoder wrapper (codec mpeg4)
+ * vp8_v4l2m2m          V4L2 mem2mem VP8 encoder wrapper (codec vp8)
+ *
+ * Raspberry:
+ *
+ * *** Openmax decoder ***
+ *
+ * h264_mmal            h264 (mmal) (codec h264)
+ * mpeg2_mmal           mpeg2 (mmal) (codec mpeg2video)
+ * mpeg4_mmal           mpeg4 (mmal) (codec mpeg4)
+ * vc1_mmal             vc1 (mmal) (codec vc1)
+ *
+ * *** Openmax encoder ***
+ *
+ * h264_omx             OpenMAX IL H.264 video encoder (codec h264)
+ *
+ * *** v4l2m2m (Video2linux) decoder ***
+ *
+ * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
+ * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
+ * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
+ * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
+ * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
+ * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
+ * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
+ * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
+ * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
+ *
+ * *** CUDA ***
+ *
+ * NIVIDA?
+ *
+ * CUDA seems to work differently, need to buy CUDA capable hardware...
+ *
+ */
+int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name) const
 {
-    std::string api(hwaccel_API);
-
     codec_name->clear();
+    int ret = 0;
 
-    make_lower(&api);
-
-    if (api.empty() || api == "none")
+    switch (params.m_hwaccel_dec_API)
     {
-        return AVERROR_DECODER_NOT_FOUND;
+    case HWACCELAPI_VAAPI:
+    {
+        ret = get_hw_vaapi_codec_name(codec_id, codec_name);
+        break;
     }
+    case HWACCELAPI_MMAL:
+    {
+        ret = get_hw_mmal_decoder_name(codec_id, codec_name);
+        break;
+    }
+    case HWACCELAPI_NONE:
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+    return ret;
+}
 
+int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    codec_name->clear();
+    int ret = 0;
+
+    switch (params.m_hwaccel_enc_API)
+    {
+    case HWACCELAPI_VAAPI:
+    {
+        ret = get_hw_vaapi_codec_name(codec_id, codec_name);
+        break;
+    }
+    case HWACCELAPI_OMX:
+    {
+        ret = get_hw_omx_encoder_name(codec_id, codec_name);
+        break;
+    }
+    case HWACCELAPI_NONE:
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+    return ret;
+}
+
+int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    int ret = 0;
     /**
-     * @todo: HWACCEL - Some supported formats:
-     *
-     * *** v4l2m2m (Video2linux) decoder ***
-     *
-     * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
-     * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
-     * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
-     * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
-     * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
-     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
-     * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
-     * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
-     * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
-     *
-     * *** v4l2m2m (Video2linux) encoder ***
-     *
-     * h263_v4l2m2m         V4L2 mem2mem H.263 encoder wrapper (codec h263)
-     * h264_v4l2m2m         V4L2 mem2mem H.264 encoder wrapper (codec h264)
-     * hevc_v4l2m2m         V4L2 mem2mem HEVC encoder wrapper (codec hevc)
-     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 encoder wrapper (codec mpeg4)
-     * vp8_v4l2m2m          V4L2 mem2mem VP8 encoder wrapper (codec vp8)
-     *
      * *** Intel VAAPI de/encoder ***
      *
      * h264_vaapi           H.264/AVC (VAAPI) (codec h264)
@@ -5599,30 +5662,12 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
      * vp8_vaapi            VP8 (VAAPI) (codec vp8)
      * vp9_vaapi            VP9 (VAAPI) (codec vp9)
      *
-     * NIVIDA?
-     *
-     * CUDA seems to work differently, need to buy CUDA capable hardware...
-     *
-     * Raspberry:
-     *
-     * *** Openmax decoder ***
-     *
-     * h264_mmal            h264 (mmal) (codec h264)
-     * mpeg2_mmal           mpeg2 (mmal) (codec mpeg2video)
-     * mpeg4_mmal           mpeg4 (mmal) (codec mpeg4)
-     * vc1_mmal             vc1 (mmal) (codec vc1)
-     *
-     * *** Openmax encoder ***
-     *
-     * h264_omx             OpenMAX IL H.264 video encoder (codec h264)
      */
-
-    int ret = 0;
     switch (codec_id)
     {
     case AV_CODEC_ID_H264:
     {
-        *codec_name = "h264_" + api;
+        *codec_name = "h264_vaapi";
         break;
     }
         /**
@@ -5652,44 +5697,45 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
           *
           */
         //case AV_CODEC_ID_MJPEG:
-	    //{
-	    //    *codec_name = "mjpeg_" + api;
-	    //    break;
-	    //}
+        //{
+        //    *codec_name = "mjpeg_vaapi";
+        //    break;
+        //}
     case AV_CODEC_ID_MPEG2VIDEO:
     {
-        *codec_name = "mpeg2_" + api;
+        *codec_name = "mpeg2_vaapi";
         break;
     }
     case AV_CODEC_ID_HEVC:
     {
-        *codec_name = "hevc_" + api;
+        *codec_name = "hevc_vaapi";
         break;
     }
     case AV_CODEC_ID_VP8:
     {
-        *codec_name = "vp9_" + api;
+        *codec_name = "vp9_vaapi";
         break;
     }
         /**
          * @todo: HWACCEL - fixit, VP9 does not work...
+         *
          * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
          * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
          * 2020-08-02 13:42:32 ERROR  : [/home/norbert/test/out/Tony Braxton - Unbreak my heart (640x480).webm] Could not open video output codec
-
-2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
-2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252956000 to decoder (error 'Invalid data found when processing input').
-2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252989000 to decoder (error 'Invalid data found when processing input').
-2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=253022000 to decoder (error 'Invalid data found when processing input').
-2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-
+         *
+         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
+         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252956000 to decoder (error 'Invalid data found when processing input').
+         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252989000 to decoder (error 'Invalid data found when processing input').
+         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=253022000 to decoder (error 'Invalid data found when processing input').
+         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+         *
          */
         //case AV_CODEC_ID_VP9:
         //{
-        //    *codec_name = "vp9_" + api;
+        //    *codec_name = "vp9_vaapi";
         //    break;
         //}
     default:
@@ -5698,6 +5744,76 @@ int FFmpeg_Transcoder::get_hw_codec_name(AVCodecID codec_id, const std::string &
         break;
     }
     }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    int ret = 0;
+    /**
+     * *** MMAL decoder ***
+     *
+     * h264_mmal            h264 (mmal) (codec h264)
+     * mpeg2_mmal           mpeg2 (mmal) (codec mpeg2video)
+     * mpeg4_mmal           mpeg4 (mmal) (codec mpeg4)
+     * vc1_mmal             vc1 (mmal) (codec vc1)
+     *
+     */
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_H264:
+    {
+        *codec_name = "h264_mmal";
+        break;
+    }
+    case AV_CODEC_ID_MPEG2VIDEO:
+    {
+        *codec_name = "mpeg2_mmal";
+        break;
+    }
+    case AV_CODEC_ID_MPEG4:
+    {
+        *codec_name = "mpeg4_mmal";
+        break;
+    }
+    case AV_CODEC_ID_VC1:
+    {
+        *codec_name = "vc1_mmal";
+        break;
+    }
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::get_hw_omx_encoder_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    int ret = 0;
+    /**
+     * *** Openmax encoder ***
+     *
+     * h264_omx             OpenMAX IL H.264 video encoder (codec h264)
+     */
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_H264:
+    {
+        *codec_name = "h264_omx";
+        break;
+    }
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+
     return ret;
 }
 
@@ -5707,38 +5823,38 @@ AVPixelFormat FFmpeg_Transcoder::find_hw_fmt_by_hw_type(AVHWDeviceType type)
 
     switch (type)
     {
-    case AV_HWDEVICE_TYPE_VDPAU:
-    {
-        fmt = AV_PIX_FMT_VDPAU;
-        break;
-    }
-    case AV_HWDEVICE_TYPE_CUDA:
-    {
-        fmt = AV_PIX_FMT_CUDA;
-        break;
-    }
     case AV_HWDEVICE_TYPE_VAAPI:
     {
         fmt = AV_PIX_FMT_VAAPI;
         break;
     }
-    case AV_HWDEVICE_TYPE_QSV:
-    {
-        fmt = AV_PIX_FMT_QSV;
-        break;
-    }
-    case AV_HWDEVICE_TYPE_OPENCL:
-    {
-        fmt = AV_PIX_FMT_OPENCL;
-        break;
-    }
-#if HAVE_VULKAN_HWACCEL
-    case AV_HWDEVICE_TYPE_VULKAN:
-    {
-        fmt = AV_PIX_FMT_VULKAN;
-        break;
-    }
-#endif // HAVE_VULKAN_HWACCEL
+	    //case AV_HWDEVICE_TYPE_CUDA:
+	    //{
+	    //    fmt = AV_PIX_FMT_CUDA;
+	    //    break;
+	    //}
+	    //case AV_HWDEVICE_TYPE_VDPAU:
+	    //{
+	    //    fmt = AV_PIX_FMT_VDPAU;
+	    //    break;
+	    //}
+        //case AV_HWDEVICE_TYPE_QSV:
+        //{
+        //    fmt = AV_PIX_FMT_QSV;
+        //    break;
+        //}
+        //case AV_HWDEVICE_TYPE_OPENCL:
+        //{
+        //    fmt = AV_PIX_FMT_OPENCL;
+        //    break;
+        //}
+        //#if HAVE_VULKAN_HWACCEL
+        //    case AV_HWDEVICE_TYPE_VULKAN:
+        //    {
+        //        fmt = AV_PIX_FMT_VULKAN;
+        //        break;
+        //    }
+        //#endif // HAVE_VULKAN_HWACCEL
         // Digital Rights Management, not sure if this would work
         //case AV_HWDEVICE_TYPE_DRM:
         //{
@@ -5784,42 +5900,42 @@ AVPixelFormat FFmpeg_Transcoder::find_sw_fmt_by_hw_type(AVHWDeviceType type)
 
     switch (type)
     {
-    case AV_HWDEVICE_TYPE_VDPAU:
-    {
-        fmt = AV_PIX_FMT_YUV420P;      //** @todo: HWACCEL - pix_fmt untested...
-        break;
-    }
-    case AV_HWDEVICE_TYPE_CUDA:
-    {
-        fmt = AV_PIX_FMT_CUDA;      //** @todo: HWACCEL - pix_fmt untested...
-        break;
-    }
     case AV_HWDEVICE_TYPE_VAAPI:
     {
         fmt = AV_PIX_FMT_NV12;
         break;
     }
-    case AV_HWDEVICE_TYPE_QSV:
-    {
-        // AV_PIX_FMT_NV12
-        // AV_PIX_FMT_P010
-        // AV_PIX_FMT_QSV
-
-        fmt = AV_PIX_FMT_NV12;       //** @todo: HWACCEL - pix_fmt untested...
-        break;
-    }
-    case AV_HWDEVICE_TYPE_OPENCL:
-    {
-        fmt = AV_PIX_FMT_OPENCL;    //** @todo: HWACCEL - pix_fmt untested...
-        break;
-    }
-#if HAVE_VULKAN_HWACCEL
-    case AV_HWDEVICE_TYPE_VULKAN:
-    {
-        fmt = AV_PIX_FMT_VULKAN;    //** @todo: HWACCEL - pix_fmt untested...
-        break;
-    }
-#endif // HAVE_VULKAN_HWACCEL
+	    //case AV_HWDEVICE_TYPE_CUDA:
+	    //{
+	    //    fmt = AV_PIX_FMT_CUDA;      //** @todo: HWACCEL - pix_fmt untested...
+	    //    break;
+	    //}
+	    //case AV_HWDEVICE_TYPE_VDPAU:
+	    //{
+	    //    fmt = AV_PIX_FMT_YUV420P;      //** @todo: HWACCEL - pix_fmt untested...
+	    //    break;
+	    //}
+        //case AV_HWDEVICE_TYPE_QSV:
+        //{
+        //    // AV_PIX_FMT_NV12
+        //    // AV_PIX_FMT_P010
+        //    // AV_PIX_FMT_QSV
+		//
+        //    fmt = AV_PIX_FMT_NV12;       //** @todo: HWACCEL - pix_fmt untested...
+        //    break;
+        //}
+        //case AV_HWDEVICE_TYPE_OPENCL:
+        //{
+        //    fmt = AV_PIX_FMT_OPENCL;    //** @todo: HWACCEL - pix_fmt untested...
+        //    break;
+        //}
+        //#if HAVE_VULKAN_HWACCEL
+        //    case AV_HWDEVICE_TYPE_VULKAN:
+        //    {
+        //        fmt = AV_PIX_FMT_VULKAN;    //** @todo: HWACCEL - pix_fmt untested...
+        //        break;
+        //    }
+        //#endif // HAVE_VULKAN_HWACCEL
         // Digital Rights Management, not sure if this would work
         //case AV_HWDEVICE_TYPE_DRM:
         //{
@@ -5867,11 +5983,11 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
     *in_pix_fmt = static_cast<AVPixelFormat>(m_in.m_video.m_stream->codec->pix_fmt);
 #endif
 
-    *in_pix_fmt = (m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE) ? AV_PIX_FMT_NV12 /*reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format*/ : *in_pix_fmt;
+    *in_pix_fmt = m_hwaccel_enable_dec_buffering ? AV_PIX_FMT_NV12 /*reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format*/ : *in_pix_fmt;
 
     if (output_codec_ctx == nullptr)
     {
-        output_codec_ctx = m_in.m_video.m_codec_ctx;
+        output_codec_ctx = m_out.m_video.m_codec_ctx;
     }
 
     // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
@@ -5885,5 +6001,5 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     // If hardware acceleration is enabled, e.g., output_codec_ctx->pix_fmt is AV_PIX_FMT_VAAPI but the format actually is AV_PIX_FMT_NV12,
     // so we use the correct value from sw_format in the hardware frames context.
-    *out_pix_fmt = (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE) ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : pix_fmt;
+    *out_pix_fmt = m_hwaccel_enable_enc_buffering ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : pix_fmt;
 }

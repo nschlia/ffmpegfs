@@ -5059,16 +5059,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         // buffer video sink: to terminate the filter chain.
 
         pixel_fmts[0] = pix_fmt;
-        if (pix_fmt == AV_PIX_FMT_NV12)
-        {
-            pixel_fmts[1] = AV_PIX_FMT_YUV420P;
-            pixel_fmts[2] = AV_PIX_FMT_NONE;
-        }
-
-        else
-        {
-            pixel_fmts[1] = AV_PIX_FMT_NONE;
-        }
+        pixel_fmts[1] = AV_PIX_FMT_NONE;
 
         buffer_sink_params.pixel_fmts = pixel_fmts;
 

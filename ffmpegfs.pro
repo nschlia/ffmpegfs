@@ -71,7 +71,7 @@ LIBS+=-lfuse -pthread
 LIBS+=-lavformat -lavcodec -lavutil
 LIBS+=-lswscale
 LIBS+=-lswresample
-LIBS+=-lavresample
+#LIBS+=-lavresample
 LIBS+=-lavfilter
 LIBS+=-lpostproc
 #-lavdevice

@@ -198,7 +198,7 @@ SSL support for convenience use:
 		--enable-openssl \
 		--enable-libvpx \
 		--enable-libvorbis \
-		--enable-avresample \
+		--enable-swresample \
 		--enable-libmp3lame \
 		--enable-libtheora \
 		--enable-libxvid \

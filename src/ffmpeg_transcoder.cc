@@ -2644,8 +2644,8 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
             if (!(sw_frame = av_frame_alloc()))
             {
-                fprintf(stderr, "Can not alloc frame\n");
                 ret = AVERROR(ENOMEM);
+                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 break;
             }
 
@@ -2655,7 +2655,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             if (ret < 0)
             {
-                fprintf(stderr, "Error transferring the data to system memory\n");
+                Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret).c_str());
                 break;
             }
             frame = sw_frame;

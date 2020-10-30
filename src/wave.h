@@ -36,8 +36,9 @@
 
 #include <stdint.h>
 
-/** @brief WAVE header structure
- *  @note All numeric values are in big-endian format.
+/**
+ * @brief WAVE header structure
+ * @note All numeric values are in big-endian format.
  */
 typedef struct WAV_HEADER
 {

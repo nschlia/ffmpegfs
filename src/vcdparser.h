@@ -38,12 +38,13 @@
 
 #ifdef USE_LIBVCD
 
-/** @brief Get number of chapters on S/VCD
- *  @param[in] path - path to check
- *  @param[in, out] buf - the buffer passed to the readdir() operation.
- *  @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- *	@note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
- *  @return -errno or number of chapters on S/VCD.
+/**
+ * @brief Get number of chapters on S/VCD
+ * @param[in] path - path to check
+ * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
+ * @return -errno or number of chapters on S/VCD.
  */
 int check_vcd(const std::string & path, void *buf = nullptr, fuse_fill_dir_t filler = nullptr);
 

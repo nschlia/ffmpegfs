@@ -100,25 +100,25 @@
 typedef enum HWACCELAPI
 {
     HWACCELAPI_NONE,
-    HWACCELAPI_VAAPI            = AV_HWDEVICE_TYPE_VAAPI,               // VAAPI
-    //HWACCELAPI_CUDA             = AV_HWDEVICE_TYPE_CUDA,                // CUDA
+    HWACCELAPI_VAAPI            = AV_HWDEVICE_TYPE_VAAPI,               /**< Intel: VAAPI */
+    //HWACCELAPI_CUDA             = AV_HWDEVICE_TYPE_CUDA,              /**< Nividia: CUDA */
 	
-    //HWACCELAPI_VDPAU          = AV_HWDEVICE_TYPE_VDPAU,                not supported
-    //HWACCELAPI_DXVA2          = AV_HWDEVICE_TYPE_DXVA2,                not supported
-    //HWACCELAPI_QSV            = AV_HWDEVICE_TYPE_QSV,                  not supported
-    //HWACCELAPI_VIDEOTOOLBOX   = AV_HWDEVICE_TYPE_VIDEOTOOLBOX,         not supported
-    //HWACCELAPI_D3D11VA        = AV_HWDEVICE_TYPE_D3D11VA,              not supported
-    //HWACCELAPI_DRM            = AV_HWDEVICE_TYPE_DRM,                  not supported
-    //HWACCELAPI_OPENCL         = AV_HWDEVICE_TYPE_OPENCL,               not supported
-    //HWACCELAPI_MEDIACODEC     = AV_HWDEVICE_TYPE_MEDIACODEC,           not supported
-    //HWACCELAPI_VULKAN         = AV_HWDEVICE_TYPE_VULKAN,               not supported
+    //HWACCELAPI_VDPAU          = AV_HWDEVICE_TYPE_VDPAU,               /**< not supported */
+    //HWACCELAPI_DXVA2          = AV_HWDEVICE_TYPE_DXVA2,               /**< not supported */
+    //HWACCELAPI_QSV            = AV_HWDEVICE_TYPE_QSV,                 /**< not supported */
+    //HWACCELAPI_VIDEOTOOLBOX   = AV_HWDEVICE_TYPE_VIDEOTOOLBOX,        /**< not supported */
+    //HWACCELAPI_D3D11VA        = AV_HWDEVICE_TYPE_D3D11VA,             /**< not supported */
+    //HWACCELAPI_DRM            = AV_HWDEVICE_TYPE_DRM,                 /**< not supported */
+    //HWACCELAPI_OPENCL         = AV_HWDEVICE_TYPE_OPENCL,              /**< not supported */
+    //HWACCELAPI_MEDIACODEC     = AV_HWDEVICE_TYPE_MEDIACODEC,          /**< not supported */
+    //HWACCELAPI_VULKAN         = AV_HWDEVICE_TYPE_VULKAN,              /**< not supported */
 
     // Additional formats
 
-    //HWACCELAPI_V4L2M2M,                                                // v4l2 mem to mem (Video4linux)
+    //HWACCELAPI_V4L2M2M,                                               /**< v4l2 mem to mem (Video4linux) */
 
-    HWACCELAPI_MMAL,                                                    // Raspberry: MMAL
-    HWACCELAPI_OMX,                                                     // Raspberry: OpenMAX
+    HWACCELAPI_MMAL,                                                    /**< Raspberry: MMAL */
+    HWACCELAPI_OMX,                                                     /**< Raspberry: OpenMAX */
 } HWACCELAPI;
 
 /**
@@ -362,13 +362,13 @@ std::string get_profile_text(PROFILE profile);
 std::string get_level_text(PRORESLEVEL level);
 /**
  * @brief Get the selected hardware accelerarion as text.
- * @param[in] hwaccel - Hardware acceleration buffering API.
- * @return Hardware acceleration API.
+ * @param[in] hwaccel_buffering - Hardware acceleration buffering API.
+ * @return Hardware acceleration API as string.
  */
 std::string  get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering);
 /**
  * @brief Get the selected hardware accelerarion as text.
- * @param[in] hwaccel - Hardware acceleration API.
- * @return Hardware acceleration API.
+ * @param[in] hwaccel_API - Hardware acceleration API.
+ * @return Hardware acceleration API as string.
  */
 std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API);

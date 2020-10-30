@@ -5683,11 +5683,11 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
           * #7  0x0000555da4fde146 in FFmpeg_Transcoder::decode_video_frame (this=0x7f9598002e90, pkt=0x7f95a24d2f90, decoded=0x7f95a24d2ec4) at ffmpeg_transcoder.cc:2655
           * #8  0x0000555da4fde5cd in FFmpeg_Transcoder::decode_frame (this=0x7f9598002e90, pkt=0x7f95a24d2f90) at ffmpeg_transcoder.cc:2852
           * #9  0x0000555da4fdea4b in FFmpeg_Transcoder::read_decode_convert_and_store (this=0x7f9598002e90, finished=0x7f95a24d3030) at ffmpeg_transcoder.cc:3189
-          * #10 0x0000555da4fdfa73 in FFmpeg_Transcoder::process_single_fr (this=this@entry=0x7f9598002e90, status=@0x7f95a24d3134: 0) at ffmpeg_transcoder.cc:3987
-          * #11 0x0000555da4f8c997 in transcoder_thread (arg=<optimized out>) at transcode.cc:874
+          * #10 0x0000555da4fdfa73 in FFmpeg_Transcoder::process_single_fr (this=this\@entry=0x7f9598002e90, status=@0x7f95a24d3134: 0) at ffmpeg_transcoder.cc:3987
+          * #11 0x0000555da4f8c997 in transcoder_thread (arg=optimized out) at transcode.cc:874
           * #12 0x0000555da4fc54ef in thread_pool::loop_function (this=0x7f959c002b40) at thread_pool.cc:78
           * #13 0x00007f95aeaf4c10 in ?? () from /lib/x86_64-linux-gnu/libstdc++.so.6
-          * #14 0x00007f95ae9f0ea7 in start_thread (arg=<optimized out>) at pthread_create.c:477
+          * #14 0x00007f95ae9f0ea7 in start_thread (arg=optimized out) at pthread_create.c:477
           * #15 0x00007f95ae920d4f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
           *
           */

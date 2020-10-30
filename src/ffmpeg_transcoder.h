@@ -741,6 +741,9 @@ protected:
      * the created AVHWDeviceContext are set by this function and should not be
      * touched by the caller.
      *
+     * @param[out] hwaccel_enc_device_ctx - On success, a
+     * reference to the newly-created device context will be
+     * written here.
      * @param[in] type - The type of the device to create.
      * @param[in] device - A type-specific string identifying the device to open.
      *
@@ -771,26 +774,25 @@ protected:
     int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx) const;
     /**
      * Copy data hardware surface to software.
-     * @param[in] ctx - Codec context
+     * @param[in] encoder_ctx - Codec context
      * @param[out] sw_frame - AVFrame to copy data to
      * @param[in] hw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_from_hw(AVCodecContext *, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
+    int                         hwframe_copy_from_hw(AVCodecContext *encoder_ctx, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
     /**
      * Copy data software to a hardware surface.
-     * @param[in] ctx - Codec context
+     * @param[in] encoder_ctx - Codec context
      * @param[out] hw_frame - AVFrame to copy data to
      * @param[in] sw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    int                         hwframe_copy_to_hw(AVCodecContext *encoder_ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
     /**
      * @brief Get the hardware codec name as string. This is required, because e.g.
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
-     * @param[in] hwaccel_buffering - Selected hardware acceleration API.
      * @param[out] codec_name - Name of the codec.
      * @return 0 on success, a negative AVERROR code on failure.
      */
@@ -800,7 +802,6 @@ protected:
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
-     * @param[in] hwaccel_buffering - Selected hardware acceleration API.
      * @param[out] codec_name - Name of the codec.
      * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
      */

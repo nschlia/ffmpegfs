@@ -44,7 +44,7 @@ struct ID3v1
     char m_album[30];                   /**< @brief Album name */
     char m_year[4];                     /**< @brief Year of publishing */
     char m_comment[28];                 /**< @brief Any user comments */
-    char m_padding;                     /**< @brief Must be '\0' */
+    char m_padding;                     /**< @brief Padding byte, must be '\0' */
     char m_title_no;                    /**< @brief Title number */
     char m_genre;                       /**< @brief Type of music */
 };

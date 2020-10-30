@@ -72,9 +72,9 @@ class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 public:
 #define MAX_PRORES_FRAMERATE    2                                       /**< @brief Number of selectable fram rates */
 
-    /** @brief Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
-      *
-      */
+    /**
+     * @brief Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
+     */
     typedef struct PRORES_BITRATE                                       /**< @brief List of ProRes bit rates */
     {
         int                     m_width;                                /**< @brief Resolution: width */

@@ -67,13 +67,15 @@ public:
      */
     virtual size_t  bufsize() const;
 
-    /** @brief Open a virtual file
+    /**
+     * @brief Open a virtual file
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
     virtual int         open(LPVIRTUALFILE virtualfile);
-    /** @brief Read data from file
+    /**
+     * @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * @param[in] size - number of bytes to read
      * @return Upon successful completion, #read() returns the number of bytes read. @n
@@ -87,8 +89,8 @@ public:
      * @return errno value of last error.
      */
     virtual int     error() const;
-    /** @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
-     *
+    /**
+     * @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
      * @todo Could work for VCD, but always returns AV_NOPTS_VALUE.
      */
     virtual int64_t duration() const;
@@ -102,7 +104,8 @@ public:
      * @return Gets the current read position.
      */
     virtual size_t  tell() const;
-    /** @brief Seek to position in file
+    /**
+     * @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
      *

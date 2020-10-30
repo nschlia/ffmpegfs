@@ -316,13 +316,13 @@ protected:
 
 private:
     static const
-    TABLE_DEF               m_table_cache_entry;
+    TABLE_DEF               m_table_cache_entry;            /**< @brief Definition and indexes of table "cache_entry" */
     static const
-    TABLE_COLUMNS           m_columns_cache_entry[];
+    TABLE_COLUMNS           m_columns_cache_entry[];        /**< @brief Columns of table "cache_entry" */
     static const
-    TABLE_DEF               m_table_version;
+    TABLE_DEF               m_table_version;                /**< @brief Definition and indexes of table "version" */
     static const
-    TABLE_COLUMNS           m_columns_version[];
+    TABLE_COLUMNS           m_columns_version[];            /**< @brief Columns of table "version" */
 
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_cacheidx_file;                /**< @brief Name of SQLite cache index database */

@@ -27,7 +27,7 @@ News
   - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
 * Note: Which hardware en/decoder actually works depends on what your hardware supports. 
 * Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
-* The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decided that automatically.
+* The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decide that automatically.
 * See [NEWS](NEWS) for details.
 
 **New in 2.1:**

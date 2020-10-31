@@ -1055,10 +1055,14 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     // AV_LOG_INFO     32
     else if (level <= AV_LOG_INFO)
     {
-        ffmpegfs_level = DEBUG;
+        ffmpegfs_level = INFO;
     }
     // AV_LOG_VERBOSE  40
     // AV_LOG_DEBUG    48
+    else if (level <= AV_LOG_DEBUG)
+    {
+        ffmpegfs_level = DEBUG;
+    }
     // AV_LOG_TRACE    56
     else   // if (level <= AV_LOG_TRACE)
     {

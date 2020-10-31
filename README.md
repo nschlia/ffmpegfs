@@ -18,15 +18,15 @@ News
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.
 * **This is completely experimental code**, so please expect that it will not work for you!
-* Hardware acceleration is only partly implemented, currently VAAPI (Intel) is supported only. 
-* Hardware decoding works now, at least for me:
-  - Supported hardware: VAAPI (Intel) and MMAL/OMX (Raspberry).
-  - VAAPI: H264, H265/HEVC, MPEG-2 and VC-8 decoding and H264 encoding is supported.
+* Hardware acceleration is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only. 
+  - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
+  - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
   - VAAPI: MJPEG and VC-9 do not work (yet).
-  - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding is supported.
-  - OMX: H264 encoding is supported.
+  - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.
+  - OMX: H264 encoding.
+  - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
+* Note: Which hardware en/decoder actually works depends on what your hardware supports. 
 * Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
-* Once I got decoding to work I'll do some testing with MMAL (decoding)/OpenMAX (encoding) on a Raspberry.
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decided that automatically.
 * See [NEWS](NEWS) for details.
 

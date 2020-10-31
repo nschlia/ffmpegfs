@@ -5548,46 +5548,14 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
 }
 
 /**
- * @todo: HWACCEL - Some supported formats:
+ * @todo: HWACCEL - Supported formats
  *
- * *** v4l2m2m (Video2linux) encoder ***
+ * Tested and working: VA-API, MMAL and OMX.
  *
- * h263_v4l2m2m         V4L2 mem2mem H.263 encoder wrapper (codec h263)
- * h264_v4l2m2m         V4L2 mem2mem H.264 encoder wrapper (codec h264)
- * hevc_v4l2m2m         V4L2 mem2mem HEVC encoder wrapper (codec hevc)
- * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 encoder wrapper (codec mpeg4)
- * vp8_v4l2m2m          V4L2 mem2mem VP8 encoder wrapper (codec vp8)
+ * Some VA-API formats do not yet work, see "fixit"
  *
- * Raspberry:
- *
- * *** Openmax decoder ***
- *
- * h264_mmal            h264 (mmal) (codec h264)
- * mpeg2_mmal           mpeg2 (mmal) (codec mpeg2video)
- * mpeg4_mmal           mpeg4 (mmal) (codec mpeg4)
- * vc1_mmal             vc1 (mmal) (codec vc1)
- *
- * *** Openmax encoder ***
- *
- * h264_omx             OpenMAX IL H.264 video encoder (codec h264)
- *
- * *** v4l2m2m (Video2linux) decoder ***
- *
- * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
- * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
- * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
- * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
- * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
- * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
- * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
- * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
- * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
- *
- * *** CUDA ***
- *
- * NIVIDA?
- *
- * CUDA seems to work differently, need to buy CUDA capable hardware...
+ * V4LM2M: implemented, but untested
+ * NIVIDA/CUDA: implemented, but untested
  *
  */
 int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name) const
@@ -5605,6 +5573,11 @@ int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *code
     case HWACCELAPI_MMAL:
     {
         ret = get_hw_mmal_decoder_name(codec_id, codec_name);
+        break;
+    }
+    case HWACCELAPI_V4L2M2M:
+    {
+        ret = get_hw_v4l2m2m_decoder_name(codec_id, codec_name);
         break;
     }
     case HWACCELAPI_NONE:
@@ -5632,6 +5605,11 @@ int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *code
     case HWACCELAPI_OMX:
     {
         ret = get_hw_omx_encoder_name(codec_id, codec_name);
+        break;
+    }
+    case HWACCELAPI_V4L2M2M:
+    {
+        ret = get_hw_v4l2m2m_encoder_name(codec_id, codec_name);
         break;
     }
     case HWACCELAPI_NONE:
@@ -5666,7 +5644,7 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         break;
     }
         /**
-          * @todo: fixit
+          * @todo: fixit, MPEG-1 decoding does not work...
           *
           * Program terminated with signal SIGSEGV, Segmentation fault.
           * #0  __memmove_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:383
@@ -5712,7 +5690,7 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         break;
     }
         /**
-         * @todo: HWACCEL - fixit, VP9 does not work...
+         * @todo: HWACCEL - fixit, VP9 decoding does not work...
          *
          * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
          * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
@@ -5787,6 +5765,79 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
     return ret;
 }
 
+int FFmpeg_Transcoder::get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    int ret = 0;
+    /**
+     * *** v4l2m2m (Video2linux) decoder ***
+     *
+     * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
+     * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
+     * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
+     * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
+     * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
+     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
+     * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
+     * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
+     * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
+     */
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_H263:
+    {
+        *codec_name = "h263_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_H264:
+    {
+        *codec_name = "h264_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_H265:
+    {
+        *codec_name = "hevc_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_MPEG1VIDEO:
+    {
+        *codec_name = "mpeg1_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_MPEG2VIDEO:
+    {
+        *codec_name = "mpeg2_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_MPEG4:
+    {
+        *codec_name = "mpeg4_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_VC1:
+    {
+        *codec_name = "vc1_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_VP8:
+    {
+        *codec_name = "vp8_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_VP9:
+    {
+        *codec_name = "vp9_v4l2m2m";
+        break;
+    }
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+
+    return ret;
+}
+
 int FFmpeg_Transcoder::get_hw_omx_encoder_name(AVCodecID codec_id, std::string *codec_name) const
 {
     int ret = 0;
@@ -5800,6 +5851,55 @@ int FFmpeg_Transcoder::get_hw_omx_encoder_name(AVCodecID codec_id, std::string *
     case AV_CODEC_ID_H264:
     {
         *codec_name = "h264_omx";
+        break;
+    }
+    default:
+    {
+        ret = AVERROR_DECODER_NOT_FOUND;
+        break;
+    }
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::get_hw_v4l2m2m_encoder_name(AVCodecID codec_id, std::string *codec_name) const
+{
+    int ret = 0;
+    /**
+     *  * *** v4l2m2m (Video2linux) encoder ***
+     *
+     * h263_v4l2m2m         V4L2 mem2mem H.263 encoder wrapper (codec h263)
+     * h264_v4l2m2m         V4L2 mem2mem H.264 encoder wrapper (codec h264)
+     * hevc_v4l2m2m         V4L2 mem2mem HEVC encoder wrapper (codec hevc)
+     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 encoder wrapper (codec mpeg4)
+     * vp8_v4l2m2m          V4L2 mem2mem VP8 encoder wrapper (codec vp8)
+     */
+    switch (codec_id)
+    {
+    case AV_CODEC_ID_H263:
+    {
+        *codec_name = "h263_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_H264:
+    {
+        *codec_name = "h264_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_H265:
+    {
+        *codec_name = "hevc_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_MPEG4:
+    {
+        *codec_name = "mpeg4_v4l2m2m";
+        break;
+    }
+    case AV_CODEC_ID_VP8:
+    {
+        *codec_name = "vp8_v4l2m2m";
         break;
     }
     default:

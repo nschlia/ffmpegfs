@@ -445,7 +445,7 @@ static const HWACCEL_MAP hwaccel_map =
 
     // Not hardware frame buffered
 	
-    //{ "V4L2M2M",        { HWACCELAPI_V4L2M2M, AV_HWDEVICE_TYPE_NONE } },        // v4l2 mem to mem (Video4linux)
+    { "V4L2M2M",        { HWACCELAPI_V4L2M2M, AV_HWDEVICE_TYPE_NONE } },        // v4l2 mem to mem (Video4linux)
 
     // RaspberryPi
     { "MMAL",           { HWACCELAPI_MMAL, AV_HWDEVICE_TYPE_NONE } },           // Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the Raspberry Pi.

@@ -29,7 +29,7 @@ Important changes in 2.x (2020-10-xx)
   via command line, FFmpegfs must decide that automatically.
 * Bugfix:
 
-Important changes in 2.1 (2020-10-XX)
+Important changes in 2.1 (2020-11-XX)
   
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
 * Bugfix: Did not transcode some source files with invalid DTS.

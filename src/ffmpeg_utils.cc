@@ -1066,6 +1066,15 @@ int print_stream_info(const AVStream* stream)
     return ret;
 }
 
+std::string fourcc_make_string(std::string * buf, uint32_t fourcc)
+{
+    std::string fourcc2str(AV_FOURCC_MAX_STRING_SIZE, '\0');
+    av_fourcc_make_string(&fourcc2str[0], fourcc);
+    fourcc2str.resize(std::strlen(fourcc2str.c_str()));
+    *buf = fourcc2str;
+    return *buf;
+}
+
 void exepath(std::string * path)
 {
     char result[PATH_MAX + 1] = "";

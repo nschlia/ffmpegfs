@@ -586,6 +586,15 @@ FILETYPE            get_filetype_from_list(const std::string & desttypelist);
  */
 int                 print_stream_info(const AVStream* stream);
 /**
+ * Fill the provided buffer with a string containing a FourCC (four-character
+ * code) representation.
+ *
+ * @param buf - Upon return, filled in with the FourCC representation.
+ * @param fourcc - The fourcc to represent
+ * @return The buffer in input.
+ */
+std::string         fourcc_make_string(std::string * buf, uint32_t fourcc);
+/**
  * @brief Compare value with pattern.
  * @param[in] value - Value to check.
  * @param[in] pattern - Regexp pattern to match.

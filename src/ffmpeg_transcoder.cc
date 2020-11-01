@@ -439,6 +439,27 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (!get_hw_decoder_name(m_in.m_video.m_codec_ctx->codec_id, &hw_decoder_codec_name))
         {
             m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE);
+            /**
+              * @todo: HACK! This is probably a stupid way to handle the problem:
+              * On my systems, H264 files with "acv1" flavour (Advanced Video Coding)
+              * won't decode in hardware. Thus, if a file contains that mark, we have
+              * to fall back to software.
+              * I suppose that we'd better check back into the capabilities of the
+              * underlying hardware and use this information instead, as different
+              * hardware may have different capabilities and fail on formats that my
+              * system happily decodes...
+              */
+            if (m_hwaccel_enable_dec_buffering)
+            {
+                std::string fourcc2str;
+                fourcc_make_string(&fourcc2str, m_in.m_video.m_codec_ctx->codec_tag);
+                if (!fourcc2str.compare("avc1"))
+                {
+                    Logging::info(filename(), "Unable to decode '%1' in hardware. Falling back to software.", fourcc2str);
+
+                    m_hwaccel_enable_dec_buffering = false;
+                }
+            }
         }
 
         if (m_hwaccel_enable_dec_buffering)

@@ -1487,19 +1487,18 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 // * If a bitrate is set, try AVBR, then VBR, then CBR.
                 // * If no bitrate is set, try ICQ, then CQP.
 
-
-                //                ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
-                //                if (ret < 0)
-                //                {
-                //                    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
-                //                    return ret;
-                //                }
-                //                ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
-                //                if (ret < 0)
-                //                {
-                //                    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
-                //                    return ret;
-                //                }
+                //ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
+                //if (ret < 0)
+                //{
+                //    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    return ret;
+                //}
+                //ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
+                //if (ret < 0)
+                //{
+                //    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    return ret;
+                //}
                 output_codec_ctx->global_quality = 34;
             }
 

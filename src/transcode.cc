@@ -109,7 +109,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end));
+                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
                     reported = true;
                 }
                 sleep(0);
@@ -117,7 +117,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end));
+                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -164,9 +164,9 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transco
     if (!transcoder->is_multiformat())
     {
         Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
-                       format_size_ex(cache_entry->m_cache_info.m_predicted_filesize),
-                       format_size_ex(cache_entry->m_cache_info.m_encoded_filesize),
-                       format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize),
+                       format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
+                       format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
+                       format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
                        static_cast<double>((cache_entry->m_cache_info.m_encoded_filesize * 1000 / (cache_entry->m_cache_info.m_predicted_filesize + 1)) + 5) / 10);
     }
 
@@ -291,17 +291,17 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec_id(), audio_bit_rate, duration, channels, sample_rate))
     {
-        Logging::warning(cache_entry->filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype());
+        Logging::warning(cache_entry->filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec_id(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype());
+        Logging::warning(cache_entry->filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
 
-    Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
+    Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
     return true;
 }
@@ -325,7 +325,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
         transcoder->close();
 
-        Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize));
+        Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         success = true;
     }
@@ -771,7 +771,7 @@ static void transcoder_thread(void *arg)
             throw (static_cast<int>(ENOMEM));
         }
 
-        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype());
+        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
 
         if (!cache_entry->open())
         {
@@ -993,7 +993,7 @@ static void transcoder_thread(void *arg)
             }
             if (cache_entry->m_cache_info.m_averror)
             {
-                Logging::error(cache_entry->destname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror));
+                Logging::error(cache_entry->destname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
             }
         }
     }
@@ -1096,7 +1096,7 @@ bool init_logging(const std::string &logfile, const std::string & max_level, boo
 
     std::map<std::string, Logging::level, comp>::const_iterator it = level_map.find(max_level);
 
-    if (it == level_map.cend())
+    if (it == level_map.end())
     {
         std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
         return false;

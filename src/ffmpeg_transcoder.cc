@@ -2603,9 +2603,9 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
             if (m_sws_ctx != nullptr)
             {
-                AVCodecContext *codec_ctx = m_out.m_video.m_codec_ctx;
+                AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                AVFrame * tmp_frame = alloc_picture(codec_ctx->pix_fmt, codec_ctx->width, codec_ctx->height);
+                AVFrame * tmp_frame = alloc_picture(output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                 if (tmp_frame == nullptr)
                 {
                     return AVERROR(ENOMEM);

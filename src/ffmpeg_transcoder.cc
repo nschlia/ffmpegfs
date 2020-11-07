@@ -1595,13 +1595,13 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 //ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
                 //    return ret;
                 //}
                 //ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
                 //    return ret;
                 //}
                 output_codec_ctx->global_quality = 34;
@@ -2748,7 +2748,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             if (!(sw_frame = av_frame_alloc()))
             {
                 ret = AVERROR(ENOMEM);
-                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret));
                 break;
             }
 
@@ -2758,7 +2758,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             if (ret < 0)
             {
-                Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret).c_str());
+                Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret));
                 break;
             }
             frame = sw_frame;

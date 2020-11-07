@@ -436,7 +436,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         std::string hw_decoder_codec_name;
         if (!get_hw_decoder_name(m_in.m_video.m_codec_ctx->codec_id, &hw_decoder_codec_name))
         {
-            m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE);
+            m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE);
             /**
               * @todo: HACK! This is probably a stupid way to handle the problem:
               * On my systems, H264 files with "acv1" flavour (Advanced Video Coding)
@@ -463,19 +463,19 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_dec_buffering)
         {
             // Hardware buffers available, enabling decoder hardware accceleration.
-            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering));
-            ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_buffering, params.m_hwaccel_dec_device);
+            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type));
+            ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering), ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type), ffmpeg_geterror(ret));
                 return ret;
             }
             Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name);
         }
-        else if (params.m_hwaccel_dec_buffering != AV_HWDEVICE_TYPE_NONE)
+        else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_decoder_codec_name.empty())
         {
@@ -497,25 +497,25 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
         {
             // API supports hardware frame buffers
-            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE);
+            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
         }
 
         if (m_hwaccel_enable_enc_buffering)
         {
             // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering));
-            ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_buffering, params.m_hwaccel_enc_device);
+            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type));
+            ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering), ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type), ffmpeg_geterror(ret));
                 return ret;
             }
             Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name);
         }
-        else if (params.m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
+        else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_encoder_codec_name.empty())
         {
@@ -1485,7 +1485,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             if (m_hwaccel_enc_device_ctx != nullptr)
             {
-                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering));
+                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type));
                 if ((ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx)) < 0)
                 {
                     return ret;
@@ -1526,9 +1526,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type) : AV_PIX_FMT_NONE);
 #else
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type) : AV_PIX_FMT_NONE);
 #endif
 
         AVRational sample_aspect_ratio                      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
@@ -2498,7 +2498,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret));
     }
 
-    //if (m_hwaccel_enc_buffering != AV_HWDEVICE_TYPE_NONE)
+    //if (m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
     //{
     //    if (!m_encoder_initialised && pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
     //    {
@@ -5410,7 +5410,7 @@ bool FFmpeg_Transcoder::have_seeked() const
 
 enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
 {
-    if (params.m_hwaccel_dec_buffering == AV_HWDEVICE_TYPE_NONE)
+    if (params.m_hwaccel_dec_device_type == AV_HWDEVICE_TYPE_NONE)
     {
         // We should never happen to end up here...
         Logging::error(nullptr, "Unable to decode this file using VA-API: Internal error! No hardware device tyoe set.");
@@ -5418,7 +5418,7 @@ enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((u
     }
 
     const AVPixelFormat *p;
-    AVPixelFormat pix_fmt_expected = find_hw_fmt_by_hw_type(params.m_hwaccel_dec_buffering);
+    AVPixelFormat pix_fmt_expected = find_hw_fmt_by_hw_type(params.m_hwaccel_dec_device_type);
 
     for (p = pix_fmts; *p != AV_PIX_FMT_NONE; p++)
     {
@@ -5490,8 +5490,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     }
 
     frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
-    frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering);
-    frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_buffering);
+    frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
+    frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
     frames_ctx->width     = decoder_ctx->width;
     frames_ctx->height    = decoder_ctx->height;
 
@@ -5550,8 +5550,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //            return ret;
 //        }
 //        frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
-//        frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_buffering);
-//        frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_buffering);
+//        frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
+//        frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
 //        frames_ctx->width     = decoder_ctx->width;
 //        frames_ctx->height    = decoder_ctx->height;
 
@@ -6191,7 +6191,7 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
         }
         else
         {
-            *in_pix_fmt = find_sw_fmt_by_hw_type(params.m_hwaccel_dec_buffering);
+            *in_pix_fmt = find_sw_fmt_by_hw_type(params.m_hwaccel_dec_device_type);
         }
     }
 

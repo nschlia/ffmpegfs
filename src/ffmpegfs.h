@@ -175,10 +175,10 @@ extern struct FFMPEGFS_PARAMS
     int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
     // Hardware acceleration
     HWACCELAPI          m_hwaccel_enc_API;          /**< @brief Encoder API */
-    AVHWDeviceType      m_hwaccel_enc_buffering;    /**< @brief Enable hardware acceleration buffering for encoder */
+    AVHWDeviceType      m_hwaccel_enc_device_type;  /**< @brief Enable hardware acceleration buffering for encoder */
     std::string         m_hwaccel_enc_device;       /**< @brief Encoder device. May be AUTO to auto detect or empty */
     HWACCELAPI          m_hwaccel_dec_API;          /**< @brief Decoder API */
-    AVHWDeviceType      m_hwaccel_dec_buffering;    /**< @brief Enable hardware acceleration buffering for decoder */
+    AVHWDeviceType      m_hwaccel_dec_device_type;  /**< @brief Enable hardware acceleration buffering for decoder */
     std::string         m_hwaccel_dec_device;       /**< @brief Decoder device. May be AUTO to auto detect or empty */
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */

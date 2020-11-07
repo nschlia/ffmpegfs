@@ -96,9 +96,9 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
     // Hardware acceleration
     , m_hwaccel_enc_API(HWACCELAPI_NONE)                // Default: Use software encoder
-    , m_hwaccel_enc_buffering(AV_HWDEVICE_TYPE_NONE)    // Default: Use software encoder
+    , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software encoder
     , m_hwaccel_dec_API(HWACCELAPI_NONE)                // Default: Use software encoder
-    , m_hwaccel_dec_buffering(AV_HWDEVICE_TYPE_NONE)    // Default: Use software decoder
+    , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software decoder
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -358,8 +358,8 @@ typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map 
 
 typedef struct HWACCEL                                          /**< @brief Hardware acceleration device and type */
 {
-    HWACCELAPI      m_hwaccel_API;                              /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
-    AVHWDeviceType  m_hwaccel_buffering;                        /**< @brief Device type, may be NONE for some formats like MMAL or OMX */
+    HWACCELAPI          m_hwaccel_API;                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
+    AVHWDeviceType      m_hwaccel_device_type;                      /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
 
 typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;       /**< @brief Map command line option to HWACCEL struct */
@@ -476,7 +476,7 @@ static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
-static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_buffering);
+static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
 static int          get_value(const std::string & arg, double *value);
@@ -1091,7 +1091,7 @@ static int get_segment_duration(const std::string & arg, int64_t *value)
  * @return Returns 0 if found; if not found returns -1. Currently always returns 0.
  */
 
-static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_buffering)
+static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type)
 {
     size_t pos = arg.find('=');
 
@@ -1107,8 +1107,8 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
             return -1;
         }
 
-        *hwaccel_API        = it->second.m_hwaccel_API;
-        *hwaccel_buffering  = it->second.m_hwaccel_buffering;
+        *hwaccel_API            = it->second.m_hwaccel_API;
+        *hwaccel_device_type    = it->second.m_hwaccel_device_type;
 
         return 0;
     }
@@ -1123,7 +1123,7 @@ std::string get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering)
     HWACCEL_MAP::const_iterator it = hwaccel_map.begin();
     while (it != hwaccel_map.end())
     {
-        if (it->second.m_hwaccel_buffering == hwaccel_buffering)
+        if (it->second.m_hwaccel_device_type == hwaccel_buffering)
         {
             return it->first;
         }
@@ -1371,7 +1371,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_HWACCEL_ENCODER_API:
     {
-        return get_hwaccel(arg, &params.m_hwaccel_enc_API, &params.m_hwaccel_enc_buffering);
+        return get_hwaccel(arg, &params.m_hwaccel_enc_API, &params.m_hwaccel_enc_device_type);
     }
     case KEY_HWACCEL_ENCODER_DEVICE:
     {
@@ -1379,7 +1379,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_HWACCEL_DECODER_API:
     {
-        return get_hwaccel(arg, &params.m_hwaccel_dec_API, &params.m_hwaccel_dec_buffering);
+        return get_hwaccel(arg, &params.m_hwaccel_dec_API, &params.m_hwaccel_dec_device_type);
     }
     case KEY_HWACCEL_DECODER_DEVICE:
     {
@@ -1492,11 +1492,11 @@ static void print_params(void)
     Logging::trace(nullptr, "---- Hardware Acceleration ----");
     Logging::trace(nullptr, "Hardware Decoder:");
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API));
-    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering));
+    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type));
     Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_dec_device);
     Logging::trace(nullptr, "Hardware Encoder:");
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API));
-    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering));
+    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type));
     Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device);
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");

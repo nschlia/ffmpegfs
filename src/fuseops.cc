@@ -386,7 +386,7 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
     {
         std::string ext;
 
-        if (!find_ext(&ext, *filepath) || !std::binary_search(passthrough_map.begin(), passthrough_map.end(), ext, nocasecompare))
+        if (!find_ext(&ext, *filepath) || !std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
         {
             FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
 
@@ -420,12 +420,12 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
  * @brief Find mapped file by prefix. Normally used to find a path.
  * @param[in] map - File map with virtual files.
  * @param[in] search_for - Prefix (path) to search for.
- * @return If found, returns const_iterator to map entry. Returns map.end() if not found.
+ * @return If found, returns const_iterator to map entry. Returns map.cend() if not found.
  */
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for)
 {
     filenamemap::const_iterator it = map.lower_bound(search_for);
-    if (it != map.end())
+    if (it != map.cend())
     {
         const std::string & key = it->first;
         if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
@@ -433,7 +433,7 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
             return it;
         }
     }
-    return map.end();
+    return map.cend();
 }
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat * stbuf, int flags)
@@ -447,7 +447,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
 
     filenamemap::iterator it    = filenames.find(sanitised_filepath);
 
-    if (it != filenames.end())
+    if (it != filenames.cend())
     {
         VIRTUALFILE & virtualfile = it->second;
 
@@ -493,7 +493,7 @@ bool check_path(const std::string & path)
 {
     filenamemap::const_iterator it = find_prefix(filenames, path);
 
-    return (it != filenames.end());
+    return (it != filenames.cend());
 }
 
 int load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
@@ -501,7 +501,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
     int title_count = 0;
 
     filenamemap::const_iterator it = filenames.lower_bound(path);
-    while (it != filenames.end())
+    while (it != filenames.cend())
     {
         std::string key = it->first;
         remove_filename(&key);

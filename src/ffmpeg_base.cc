@@ -197,7 +197,7 @@ int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;
@@ -209,7 +209,7 @@ int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
     }
 
     return ret;

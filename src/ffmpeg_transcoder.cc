@@ -652,7 +652,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder_context(AVCodecContext **avctx, in
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            Logging::error(filename(), "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret));
+            Logging::error(filename(), "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
         }
         return ret;
     }
@@ -717,7 +717,7 @@ int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_i
 
     if (ret < 0)
     {
-        Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret));
+        Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -1381,7 +1381,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // output_codec_ctx->rc_min_rate = output_codec_ctx->bit_rate * 75 / 100;
-        // output_codec_ctx->rc_max_rate =  output_codec_ctx->bit_rate * 125 / 100;
+        // output_codec_ctx->rc_max_rate = output_codec_ctx->bit_rate * 125 / 100;
 
         // output_codec_ctx->qmin = 1;
         // output_codec_ctx->qmax = 31;
@@ -1444,12 +1444,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
             // Set constant rate factor to avoid getting huge result files
             // The default is 23, but values between 30..40 create properly sized results. Possible values are 0 (lossless) to 51 (very small but ugly results).
-            // ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
-            // if (ret < 0)
-            // {
-            // 	Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+            //ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
+            //if (ret < 0)
+            //{
+            //    Logging::error(destname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
             // 	return ret;
-            // }
+            //}
 
             // Avoid mismatches for H264 and profile
             uint8_t   *out_val;
@@ -1573,10 +1573,10 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 return ret;
             }
 
-            //        0=‘proxy’,
-            //        1=‘lt’,
-            //        2=‘standard’,
-            //        3=‘hq’
+            // 0 = ‘proxy’,
+            // 1 = ‘lt’,
+            // 2 = ‘standard’,
+            // 3 = ‘hq’
             output_codec_ctx->profile = params.m_level;
             break;
         }

@@ -1096,7 +1096,7 @@ bool init_logging(const std::string &logfile, const std::string & max_level, boo
 
     std::map<std::string, Logging::level, comp>::const_iterator it = level_map.find(max_level);
 
-    if (it == level_map.end())
+    if (it == level_map.cend())
     {
         std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
         return false;

@@ -434,13 +434,13 @@ static void usage()
  * @brief Iterate through all elements in map and search for the passed element.
  * @param[in] mapOfWords - map to search.
  * @param[in] value - Search value
- * @return If found, retuns const_iterator to element. Returns mapOfWords.end() if not.
+ * @return If found, retuns const_iterator to element. Returns mapOfWords.cend() if not.
  */
 template <typename T>
 static typename std::map<std::string, T, comp>::const_iterator search_by_value(const std::map<std::string, T, comp> & mapOfWords, T value)
 {
-    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.begin();
-    while (it != mapOfWords.end())
+    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.cbegin();
+    while (it != mapOfWords.cend())
     {
         if (it->second == value)
         {
@@ -448,7 +448,7 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
         }
         it++;
     }
-    return mapOfWords.end();
+    return mapOfWords.cend();
 }
 
 /**
@@ -833,7 +833,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 
         AUTOCOPY_MAP::const_iterator it = autocopy_map.find(data);
 
-        if (it == autocopy_map.end())
+        if (it == autocopy_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid autocopy option: %s\n", data.c_str());
             return -1;
@@ -857,7 +857,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 static std::string get_autocopy_text(AUTOCOPY autocopy)
 {
     AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
-    if (it != autocopy_map.end())
+    if (it != autocopy_map.cend())
     {
         return it->first;
     }
@@ -880,7 +880,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
 
         RECODESAME_MAP::const_iterator it = recode_map.find(data);
 
-        if (it == recode_map.end())
+        if (it == recode_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid recode option: %s\n", data.c_str());
             return -1;
@@ -904,7 +904,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
 static std::string get_recodesame_text(RECODESAME recode)
 {
     RECODESAME_MAP::const_iterator it = search_by_value(recode_map, recode);
-    if (it != recode_map.end())
+    if (it != recode_map.cend())
     {
         return it->first;
     }
@@ -927,7 +927,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
 
         PROFILE_MAP::const_iterator it = profile_map.find(data);
 
-        if (it == profile_map.end())
+        if (it == profile_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid profile: %s\n", data.c_str());
             return -1;
@@ -951,7 +951,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
 static std::string get_profile_text(PROFILE profile)
 {
     PROFILE_MAP::const_iterator it = search_by_value(profile_map, profile);
-    if (it != profile_map.end())
+    if (it != profile_map.cend())
     {
         return it->first;
     }
@@ -975,7 +975,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 
         LEVEL_MAP::const_iterator it = level_map.find(data);
 
-        if (it == level_map.end())
+        if (it == level_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid level: %s\n", data.c_str());
             return -1;
@@ -1000,7 +1000,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 static std::string get_level_text(PRORESLEVEL level)
 {
     LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
-    if (it != level_map.end())
+    if (it != level_map.cend())
     {
         return it->first;
     }

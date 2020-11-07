@@ -986,8 +986,8 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
 Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = nullptr;
-    cache_t::iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->desttype()));
-    if (p == m_cache.end())
+    cache_t::const_iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->desttype()));
+    if (p == m_cache.cend())
     {
         // Logging::trace(sanitised_name, "Created new transcoder.");
         Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
@@ -1062,7 +1062,7 @@ bool Cache::prune_expired()
 
     if (ret == SQLITE_DONE)
     {
-        for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+        for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); it++)
         {
             const cache_key_t & key = *it;
             Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.first.c_str(), key.second.c_str());
@@ -1131,7 +1131,7 @@ bool Cache::prune_cache_size()
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+            for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); it++)
             {
                 const cache_key_t & key = *it;
 
@@ -1220,7 +1220,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+            for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); it++)
             {
                 const cache_key_t & key = *it;
 
@@ -1300,7 +1300,7 @@ bool Cache::clear()
 
     if (ret == SQLITE_DONE)
     {
-        for (std::vector<cache_key_t>::const_iterator it = keys.begin(); it != keys.end(); it++)
+        for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); it++)
         {
             const cache_key_t & key = *it;
 

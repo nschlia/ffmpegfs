@@ -96,7 +96,7 @@ static bool start_timer(time_t interval)
 
     freq_nanosecs = interval * 1000000000LL;
 
-    Logging::trace(nullptr, "Starting maintenance timer with %1period.", format_time(interval));
+    Logging::trace(nullptr, "Starting maintenance timer with %1period.", format_time(interval).c_str());
 
     // Establish maintenance_handler for timer signal
     sa.sa_flags = SA_SIGINFO;

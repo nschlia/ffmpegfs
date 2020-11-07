@@ -418,7 +418,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                 video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
             }
 
-            Logging::trace(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate), video_settings.m_width, video_settings.m_height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size), format_duration(duration));
+            Logging::trace(virtualfile->m_origfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate).c_str(), video_settings.m_width, video_settings.m_height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
             if (audio_stream > -1)
             {
                 Logging::trace(virtualfile->m_origfile, "Audio %1 Channels %2", audio_settings.m_channels, audio_settings.m_sample_rate);

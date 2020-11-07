@@ -3595,22 +3595,22 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     }
 
     AVPacket pkt;
+	AVFrame *hw_frame = nullptr;
     int ret = 0;
-
-    AVFrame *hw_frame = nullptr;
-    if (m_hwaccel_enable_enc_buffering && frame != nullptr)
-    {
-        // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
-        ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
-        if (ret < 0)
-        {
-            throw ret;
-        }
-        frame = hw_frame;
-    }
 
     try
     {
+	    if (m_hwaccel_enable_enc_buffering && frame != nullptr)
+	    {
+	        // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
+	        ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
+	        if (ret < 0)
+	        {
+	            throw ret;
+	        }
+	        frame = hw_frame;
+	    }
+
         init_packet(&pkt);
 
         // Encode the video frame and store it in the temporary packet.

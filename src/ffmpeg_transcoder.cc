@@ -1508,15 +1508,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     {
         BITRATE orig_bit_rate;
 
-        if (m_hwaccel_enable_enc_buffering)
+        if (m_hwaccel_enable_enc_buffering && m_hwaccel_enc_device_ctx != nullptr)
         {
-            if (m_hwaccel_enc_device_ctx != nullptr)
+            Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+            if ((ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx)) < 0)
             {
-                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
-                if ((ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx)) < 0)
-                {
-                    return ret;
-                }
+                return ret;
             }
         }
 

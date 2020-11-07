@@ -1293,17 +1293,24 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     {
         // find the encoder
         output_codec = avcodec_find_encoder(codec_id);
+
+        if (output_codec == nullptr)
+        {
+            Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
+            return AVERROR(EINVAL);
+        }
     }
     else
     {
-        Logging::debug(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", codec_name.c_str());
         output_codec = avcodec_find_encoder_by_name(codec_name.c_str());
-    }
 
-    if (output_codec == nullptr)
-    {
-        Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
-        return AVERROR(EINVAL);
+        if (output_codec == nullptr)
+        {
+            Logging::error(destname(), "Could not find encoder '%1'.", codec_name.c_str());
+            return AVERROR(EINVAL);
+        }
+
+        Logging::info(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", output_codec->name);
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);

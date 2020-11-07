@@ -233,6 +233,7 @@ bool FFmpeg_Transcoder::is_open() const
     return (m_in.m_format_ctx != nullptr);
 }
 
+
 int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 {
     AVDictionary * opt = nullptr;
@@ -413,79 +414,20 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 #endif // USE_LIBBLURAY
 
-    // Open best match video codec
-    ret = open_bestmatch_decoder_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
-    {
-        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
-    if (m_in.m_video.m_stream_idx >= 0)
+    // Open best match video codec
+    ret = open_bestmatch_video_codec();
+    if (ret < 0)
     {
-        // We have a video stream
-        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
-
-#ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
-#endif // USE_LIBBLURAY
-
-        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
-
-        m_is_video = is_video();
-
-#ifdef AV_CODEC_CAP_TRUNCATED
-        if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
-        {
-            m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
-        }
-#else
-#warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
-#endif
+        return ret;     // Error already reported
     }
 
     // Open best match audio codec
-    ret = open_bestmatch_decoder_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
+    ret = open_bestmatch_audio_codec();
+    if (ret < 0)
     {
-        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
-    if (m_in.m_audio.m_stream_idx >= 0)
-    {
-        // We have an audio stream
-        m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
-
-#ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
-            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-        }
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
-            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-        }
-#endif // USE_LIBBLURAY
-
-        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
+        return ret;     // Error already reported
     }
 
     if (m_in.m_audio.m_stream_idx == -1 && m_in.m_video.m_stream_idx == -1)
@@ -724,6 +666,91 @@ int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_i
     Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
 
     *avctx = dec_ctx;
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_bestmatch_video_codec()
+{
+    int ret;
+
+    ret = open_bestmatch_decoder_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
+    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
+    {
+        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    if (m_in.m_video.m_stream_idx >= 0)
+    {
+        // We have a video stream
+        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
+
+#ifdef USE_LIBDVD
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+        }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from Bluray
+            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+        }
+#endif // USE_LIBBLURAY
+
+        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
+
+        m_is_video = is_video();
+
+#ifdef AV_CODEC_CAP_TRUNCATED
+        if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+        {
+            m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
+        }
+#else
+#warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
+#endif
+    }
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_bestmatch_audio_codec()
+{
+    int ret;
+
+    ret = open_bestmatch_decoder_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
+    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
+    {
+        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    if (m_in.m_audio.m_stream_idx >= 0)
+    {
+        // We have an audio stream
+        m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
+
+#ifdef USE_LIBDVD
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+        }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
+            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+        }
+#endif // USE_LIBBLURAY
+
+        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
+    }
 
     return 0;
 }
@@ -5193,7 +5220,7 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     if (output_codec_ctx == nullptr)
     {
-        output_codec_ctx = m_in.m_video.m_codec_ctx;
+        output_codec_ctx = m_out.m_video.m_codec_ctx;
     }
 
     // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
@@ -5207,4 +5234,3 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     *out_pix_fmt = pix_fmt;
 }
-

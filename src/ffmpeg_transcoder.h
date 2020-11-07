@@ -308,7 +308,7 @@ public:
      * @brief Flush FFmpeg's input buffers
      */
     void                        flush_buffers();
-
+        
 protected:
     /**
      * @brief Find best match stream and open codec context for it.
@@ -318,6 +318,16 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_bestmatch_decoder_context(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const;
+    /**
+     * @brief Open the best matching video codec if input has a video stream.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_bestmatch_video_codec();
+    /**
+     * @brief Open the best matching audio codec if input has an audio stream.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_bestmatch_audio_codec();
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context

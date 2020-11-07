@@ -1135,8 +1135,8 @@ std::string get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering)
 
 std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
 {
-    HWACCEL_MAP::const_iterator it = hwaccel_map.begin();
-    while (it != hwaccel_map.end())
+    HWACCEL_MAP::const_iterator it = hwaccel_map.cbegin();
+    while (it != hwaccel_map.cend())
     {
         if (it->second.m_hwaccel_API == hwaccel_API)
         {

@@ -311,6 +311,22 @@ public:
 
 protected:
     /**
+     * @brief Find best match stream and open codec context for it.
+     * @param[out] avctx - Newly created codec context
+     * @param[in] stream_idx - Stream index of new stream.
+     * @param[in] type - Type of media: audio or video.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_bestmatch_decoder_context(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const;
+    /**
+     * @brief Open codec context for stream_idx.
+     * @param[out] avctx - Newly created codec context
+     * @param[in] stream_idx - Stream index of new stream.
+     * @param[in] type - Type of media: audio or video.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         open_decoder_context(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const;
+    /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @return On success returns 0; on error negative AVERROR.
      */

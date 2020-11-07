@@ -414,7 +414,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #endif // USE_LIBBLURAY
 
     // Open best match video codec
-    ret = open_bestmatch_codec_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
+    ret = open_bestmatch_decoder_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
         Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret));
@@ -458,7 +458,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
     // Open best match audio codec
-    ret = open_bestmatch_codec_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_AUDIO, filename());
+    ret = open_bestmatch_decoder_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
     {
         Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret));
@@ -550,7 +550,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 STREAMREF streamref;
                 AVCodecContext * input_codec_ctx;
 
-                ret = open_codec_context(&input_codec_ctx, stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
+                ret = open_decoder_context(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
                 {
                     Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret));
@@ -640,6 +640,92 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
         // Open frame set buffer
         return open_output_frame_set(buffer);
     }
+}
+
+int FFmpeg_Transcoder::open_bestmatch_decoder_context(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const
+{
+    AVCodec *decoder = NULL;
+    int ret;
+
+    ret = av_find_best_stream(m_in.m_format_ctx, type, INVALID_STREAM, INVALID_STREAM, &decoder, 0);
+    if (ret < 0)
+    {
+        if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
+        {
+            Logging::error(filename(), "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret));
+        }
+        return ret;
+    }
+
+    *stream_idx = ret;
+
+    return open_decoder_context(avctx, *stream_idx, decoder, type);
+}
+
+int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const
+{
+    AVCodecContext *dec_ctx = nullptr;
+    AVDictionary *opts = nullptr;
+    AVStream *input_stream;
+    AVCodecID codec_id = AV_CODEC_ID_NONE;
+    int ret;
+
+    input_stream = m_in.m_format_ctx->streams[stream_idx];
+
+    // Init the decoders, with or without reference counting
+    // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
+
+#if LAVF_DEP_AVSTREAM_CODEC
+    // allocate a new decoding context
+    dec_ctx = avcodec_alloc_context3(nullptr);
+    if (dec_ctx == nullptr)
+    {
+        Logging::error(filename(), "Could not allocate a decoding context.");
+        return AVERROR(ENOMEM);
+    }
+
+    // initialise the stream parameters with demuxer information
+    ret = avcodec_parameters_to_context(dec_ctx, input_stream->codecpar);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    codec_id = input_stream->codecpar->codec_id;
+#else
+    dec_ctx = input_stream->codec;
+
+    codec_id = dec_ctx->codec_id;
+#endif
+
+    if (decoder == nullptr)
+    {
+        // Find a decoder for the stream.
+        decoder = avcodec_find_decoder(codec_id);
+        if (decoder == nullptr)
+        {
+            Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
+            return AVERROR(EINVAL);
+        }
+    }
+
+    dec_ctx->codec_id = decoder->id;
+
+    ret = avcodec_open2(dec_ctx, decoder, &opts);
+
+    av_dict_free(&opts);
+
+    if (ret < 0)
+    {
+        Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret));
+        return ret;
+    }
+
+    Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
+
+    *avctx = dec_ctx;
+
+    return 0;
 }
 
 int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)

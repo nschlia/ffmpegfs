@@ -68,89 +68,6 @@ FFmpeg_Base::~FFmpeg_Base()
 {
 }
 
-int FFmpeg_Base::open_bestmatch_codec_context(AVCodecContext **avctx, int *stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
-{
-    int ret;
-
-    ret = av_find_best_stream(fmt_ctx, type, INVALID_STREAM, INVALID_STREAM, nullptr, 0);
-    if (ret < 0)
-    {
-        if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
-        {
-            Logging::error(filename, "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
-        }
-        return ret;
-    }
-
-    *stream_idx = ret;
-
-    return open_codec_context(avctx, *stream_idx, fmt_ctx, type, filename);
-}
-
-int FFmpeg_Base::open_codec_context(AVCodecContext **avctx, int stream_idx, AVFormatContext *fmt_ctx, AVMediaType type, const char *filename) const
-{
-    AVCodecContext *dec_ctx = nullptr;
-    AVCodec *dec = nullptr;
-    AVDictionary *opts = nullptr;
-    AVStream *input_stream;
-    AVCodecID codec_id = AV_CODEC_ID_NONE;
-    int ret;
-
-    input_stream = fmt_ctx->streams[stream_idx];
-
-    // Init the decoders, with or without reference counting
-    // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
-
-#if LAVF_DEP_AVSTREAM_CODEC
-    // allocate a new decoding context
-    dec_ctx = avcodec_alloc_context3(nullptr);
-    if (dec_ctx == nullptr)
-    {
-        Logging::error(filename, "Could not allocate a decoding context.");
-        return AVERROR(ENOMEM);
-    }
-
-    // initialise the stream parameters with demuxer information
-    ret = avcodec_parameters_to_context(dec_ctx, input_stream->codecpar);
-    if (ret < 0)
-    {
-        return ret;
-    }
-
-    codec_id = input_stream->codecpar->codec_id;
-#else
-    dec_ctx = input_stream->codec;
-
-    codec_id = dec_ctx->codec_id;
-#endif
-
-    // Find a decoder for the stream.
-    dec = avcodec_find_decoder(codec_id);
-    if (dec == nullptr)
-    {
-        Logging::error(filename, "Failed to find %1 input codec.", get_media_type_string(type));
-        return AVERROR(EINVAL);
-    }
-
-    dec_ctx->codec_id = dec->id;
-
-    ret = avcodec_open2(dec_ctx, dec, &opts);
-
-    av_dict_free(&opts);
-
-    if (ret < 0)
-    {
-        Logging::error(filename, "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
-    Logging::debug(filename, "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
-
-    *avctx = dec_ctx;
-
-    return 0;
-}
-
 void FFmpeg_Base::init_packet(AVPacket *pkt) const
 {
     av_init_packet(pkt);
@@ -280,7 +197,7 @@ int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
     }
 
     return ret;
@@ -292,7 +209,7 @@ int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *v
 
     if (ret < 0)
     {
-        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret));
     }
 
     return ret;

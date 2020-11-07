@@ -463,11 +463,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_dec_buffering)
         {
             // Hardware buffers available, enabling decoder hardware accceleration.
-            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str());
+            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str(), ffmpeg_geterror(ret).c_str());
+                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
             Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name.c_str());
@@ -475,7 +475,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_decoder_codec_name.empty())
         {
@@ -503,11 +503,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_enc_buffering)
         {
             // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str());
+            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str(), ffmpeg_geterror(ret).c_str());
+                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
             Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
@@ -515,7 +515,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_encoder_codec_name.empty())
         {
@@ -1485,7 +1485,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             if (m_hwaccel_enc_device_ctx != nullptr)
             {
-                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str());
+                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
                 if ((ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx)) < 0)
                 {
                     return ret;
@@ -5446,7 +5446,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
     ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, type, !device.empty() ? device.c_str() : nullptr, nullptr, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Failed to create a %1 device (error '%2').", get_hwaccel_buffering_text(type).c_str(), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to create a %1 device (error '%2').", av_hwdevice_get_type_name(type), ffmpeg_geterror(ret).c_str());
         return ret;
     }
     return 0;

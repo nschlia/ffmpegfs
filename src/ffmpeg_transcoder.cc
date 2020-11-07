@@ -256,30 +256,30 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return 0;
     }
 
-    //    This allows selecting if the demuxer should consider all streams to be
-    //    found after the first PMT and add further streams during decoding or if it rather
-    //    should scan all that are within the analyze-duration and other limits
-
+    // This allows selecting if the demuxer should consider all streams to be
+    // found after the first PMT and add further streams during decoding or if it rather
+    // should scan all that are within the analyze-duration and other limits
     ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;
     }
 
-    //    ret = av_dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
-    //    if (ret < 0)
-    //    {
-    //        return ret;
-    //    }
+    // avioflags direct: Reduce buffering.
+    //ret = av_dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
+    //if (ret < 0)
+    //{
+    //    return ret;
+    //}
 
-    // defaults to 5,000,000 microseconds = 5 seconds.
-    //    ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
-    //    if (ret < 0)
-    //    {
-    //        return ret;
-    //    }
+    // analyzeduration: Defaults to 5,000,000 microseconds = 5 seconds.
+    //ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
+    //if (ret < 0)
+    //{
+    //    return ret;
+    //}
 
-    //  5000000 by default.
+    // probesize: 5000000 by default.
     ret = av_dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
     if (ret < 0)
     {
@@ -338,8 +338,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 nullptr,    // input_write
                 seek);      // input_seek
     m_in.m_format_ctx->pb = pb;
-
-    //    m_in.m_format_ctx->probesize = 15000000;
 
     AVInputFormat * infmt = nullptr;
 
@@ -417,7 +415,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     // Open best match video codec
     ret = open_bestmatch_codec_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, m_in.m_format_ctx, AVMEDIA_TYPE_VIDEO, filename());
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
+    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
         Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret));
         return ret;
@@ -510,29 +508,29 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
     // Unfortunately it is too late to do this here, the filename has already been selected and cannot be changed.
-    //    if (!params.smart_transcode())
+    //if (!params.smart_transcode())
+    //{
+    //    // Not smart encoding: use first format (video file)
+    //    m_virtualfile->m_format_idx = 0;
+    //}
+    //else
+    //{
+    //    // Smart transcoding
+    //    if (m_is_video)
     //    {
-    //        // Not smart encoding: use first format (video file)
+    //        // Is a video: use first format (video file)
     //        m_virtualfile->m_format_idx = 0;
+
+    //        Logging::debug(filename(), "Smart transcode: using video format.");
     //    }
     //    else
     //    {
-    //        // Smart transcoding
-    //        if (m_is_video)
-    //        {
-    //            // Is a video: use first format (video file)
-    //            m_virtualfile->m_format_idx = 0;
+    //        // For audio only, use second format (audio only file)
+    //        m_virtualfile->m_format_idx = 1;
 
-    //            Logging::debug(filename(), "Smart transcode: using video format.");
-    //        }
-    //        else
-    //        {
-    //            // For audio only, use second format (audio only file)
-    //            m_virtualfile->m_format_idx = 1;
-
-    //            Logging::debug(filename(), "Smart transcode: using audio format.");
-    //        }
+    //        Logging::debug(filename(), "Smart transcode: using audio format.");
     //    }
+    //}
 
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr &&
@@ -1596,7 +1594,6 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
     AVStream *      output_stream       = nullptr;
     int ret;
 
-
     output_stream = avformat_new_stream(m_out.m_format_ctx, nullptr);
     if (output_stream == nullptr)
     {
@@ -1735,17 +1732,17 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     // This is required for some reason (let encoder decide?)
     // If not set, write header will fail!
-    //    output_codec_ctx->codec_tag = 0; //av_codec_get_tag(of->codec_tag, codec->codec_id);
+    //output_codec_ctx->codec_tag = 0; //av_codec_get_tag(of->codec_tag, codec->codec_id);
 
-    //    output_stream->codec->framerate = { 1, 0 };
+    //output_stream->codec->framerate = { 1, 0 };
 
     /** @todo: Support album arts */
     // mp4 album arts do not work with ipod profile. Set mp4.
-    //    if (m_out.m_format_ctx->oformat->mime_type != nullptr && (!strcmp(m_out.m_format_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_format_ctx->oformat->mime_type, "video/mp4")))
-    //    {
-    //        m_out.m_format_ctx->oformat->name = "mp4";
-    //        m_out.m_format_ctx->oformat->mime_type = "application/mp4";
-    //    }
+    //if (m_out.m_format_ctx->oformat->mime_type != nullptr && (!strcmp(m_out.m_format_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_format_ctx->oformat->mime_type, "video/mp4")))
+    //{
+    //    m_out.m_format_ctx->oformat->name = "mp4";
+    //    m_out.m_format_ctx->oformat->mime_type = "application/mp4";
+    //}
 
     // copy disposition
     // output_stream->disposition = input_stream->disposition;

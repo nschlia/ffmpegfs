@@ -5458,20 +5458,20 @@ enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((u
     return AV_PIX_FMT_NONE;
 }
 
-int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx, AVHWDeviceType type, const std::string & _device) const
+int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx, AVHWDeviceType dev_type, const std::string & device) const
 {
-    std::string device(_device);
+    std::string active_device(device);
     int ret;
 
-    if (device == "AUTO" && type == AV_HWDEVICE_TYPE_VAAPI)
+    if (active_device == "AUTO" && dev_type == AV_HWDEVICE_TYPE_VAAPI)
     {
-        device = "/dev/dri/renderD128";	//** @todo: HWACCEL - Try to autodetect rendering device
+        active_device = "/dev/dri/renderD128";	//** @todo: HWACCEL - Try to autodetect rendering device
     }
 
-    ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, type, !device.empty() ? device.c_str() : nullptr, nullptr, 0);
+    ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, dev_type, !active_device.empty() ? active_device.c_str() : nullptr, nullptr, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Failed to create a %1 device (error '%2').", av_hwdevice_get_type_name(type), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to create a %1 device (error '%2').", av_hwdevice_get_type_name(dev_type), ffmpeg_geterror(ret).c_str());
         return ret;
     }
     return 0;

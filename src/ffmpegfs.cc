@@ -166,7 +166,6 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
     return 0;
 }
 
-
 FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 {
     LPCVIRTUALFILE virtualfile = find_file(filepath);
@@ -505,13 +504,13 @@ static void usage()
  * @brief Iterate through all elements in map and search for the passed element.
  * @param[in] mapOfWords - map to search.
  * @param[in] value - Search value
- * @return If found, retuns const_iterator to element. Returns mapOfWords.end() if not.
+ * @return If found, retuns const_iterator to element. Returns mapOfWords.cend() if not.
  */
 template <typename T>
 static typename std::map<std::string, T, comp>::const_iterator search_by_value(const std::map<std::string, T, comp> & mapOfWords, T value)
 {
-    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.begin();
-    while (it != mapOfWords.end())
+    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.cbegin();
+    while (it != mapOfWords.cend())
     {
         if (it->second == value)
         {
@@ -519,7 +518,7 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
         }
         it++;
     }
-    return mapOfWords.end();
+    return mapOfWords.cend();
 }
 
 /**
@@ -904,7 +903,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 
         AUTOCOPY_MAP::const_iterator it = autocopy_map.find(data);
 
-        if (it == autocopy_map.end())
+        if (it == autocopy_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid autocopy option: %s\n", data.c_str());
             return -1;
@@ -923,7 +922,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 std::string get_autocopy_text(AUTOCOPY autocopy)
 {
     AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
-    if (it != autocopy_map.end())
+    if (it != autocopy_map.cend())
     {
         return it->first;
     }
@@ -946,7 +945,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
 
         RECODESAME_MAP::const_iterator it = recode_map.find(data);
 
-        if (it == recode_map.end())
+        if (it == recode_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid recode option: %s\n", data.c_str());
             return -1;
@@ -965,7 +964,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
 std::string get_recodesame_text(RECODESAME recode)
 {
     RECODESAME_MAP::const_iterator it = search_by_value(recode_map, recode);
-    if (it != recode_map.end())
+    if (it != recode_map.cend())
     {
         return it->first;
     }
@@ -988,7 +987,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
 
         PROFILE_MAP::const_iterator it = profile_map.find(data);
 
-        if (it == profile_map.end())
+        if (it == profile_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid profile: %s\n", data.c_str());
             return -1;
@@ -1007,7 +1006,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
 std::string get_profile_text(PROFILE profile)
 {
     PROFILE_MAP::const_iterator it = search_by_value(profile_map, profile);
-    if (it != profile_map.end())
+    if (it != profile_map.cend())
     {
         return it->first;
     }
@@ -1031,7 +1030,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 
         LEVEL_MAP::const_iterator it = level_map.find(data);
 
-        if (it == level_map.end())
+        if (it == level_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid level: %s\n", data.c_str());
             return -1;
@@ -1051,7 +1050,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 std::string get_level_text(PRORESLEVEL level)
 {
     LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
-    if (it != level_map.end())
+    if (it != level_map.cend())
     {
         return it->first;
     }
@@ -1469,61 +1468,61 @@ static void print_params(void)
     transcoder_cache_path(cachepath);
 
     Logging::trace(nullptr, "********* " PACKAGE_NAME " Options *********");
-    Logging::trace(nullptr, "Base Path         : %1", params.m_basepath.c_str());
-    Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath.c_str());
+    Logging::trace(nullptr, "Base Path         : %1", params.m_basepath);
+    Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath);
     Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
-    Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
-    Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
-    Logging::trace(nullptr, "Audio File Type   : %1", params.m_format[1].desttype().c_str());
-    Logging::trace(nullptr, "Video File Type   : %1", params.m_format[0].desttype().c_str());
-    Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
-    Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
+    Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy));
+    Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame));
+    Logging::trace(nullptr, "Audio File Type   : %1", params.m_format[1].desttype());
+    Logging::trace(nullptr, "Video File Type   : %1", params.m_format[0].desttype());
+    Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile));
+    Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level));
     Logging::trace(nullptr, "--------- Audio ---------");
     Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(params.m_format[0].audio_codec_id(), true), get_codec_name(params.m_format[1].audio_codec_id(), true));
-    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
-    Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate).c_str());
+    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate));
+    Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate));
     Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
     Logging::trace(nullptr, "--------- Video ---------");
-    Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
+    Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth), format_number(params.m_videoheight));
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
-    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
+    Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate));
     Logging::trace(nullptr, "--------- HLS Options ---------");
-    Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)).c_str());
+    Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)));
     Logging::trace(nullptr, "---- Hardware Acceleration ----");
     Logging::trace(nullptr, "Hardware Decoder:");
-    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
-    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering).c_str());
-    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_dec_device.c_str());
+    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API));
+    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_dec_buffering));
+    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_dec_device);
     Logging::trace(nullptr, "Hardware Encoder:");
-    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
-    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering).c_str());
-    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device.c_str());
+    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API));
+    Logging::trace(nullptr, "Frame Buffering   : %1", get_hwaccel_buffering_text(params.m_hwaccel_enc_buffering));
+    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device);
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
-    Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());
-    Logging::trace(nullptr, "Input file        : %1", params.m_scriptsource.c_str());
+    Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile);
+    Logging::trace(nullptr, "Input file        : %1", params.m_scriptsource);
     Logging::trace(nullptr, "--------- Logging ---------");
-    Logging::trace(nullptr, "Max. Log Level    : %1", params.m_log_maxlevel.c_str());
+    Logging::trace(nullptr, "Max. Log Level    : %1", params.m_log_maxlevel);
     Logging::trace(nullptr, "Log to stderr     : %1", params.m_log_stderr ? "yes" : "no");
     Logging::trace(nullptr, "Log to syslog     : %1", params.m_log_syslog ? "yes" : "no");
-    Logging::trace(nullptr, "Logfile           : %1", !params.m_logfile.empty() ? params.m_logfile.c_str() : "none");
+    Logging::trace(nullptr, "Logfile           : %1", !params.m_logfile.empty() ? params.m_logfile : "none");
     Logging::trace(nullptr, "--------- Cache Settings ---------");
-    Logging::trace(nullptr, "Expiry Time       : %1", format_time(params.m_expiry_time).c_str());
-    Logging::trace(nullptr, "Inactivity Suspend: %1", format_time(params.m_max_inactive_suspend).c_str());
-    Logging::trace(nullptr, "Inactivity Abort  : %1", format_time(params.m_max_inactive_abort).c_str());
-    Logging::trace(nullptr, "Pre-buffer size   : %1", format_size(params.m_prebuffer_size).c_str());
-    Logging::trace(nullptr, "Max. Cache Size   : %1", format_size(params.m_max_cache_size).c_str());
-    Logging::trace(nullptr, "Min. Disk Space   : %1", format_size(params.m_min_diskspace).c_str());
-    Logging::trace(nullptr, "Cache Path        : %1", cachepath.c_str());
+    Logging::trace(nullptr, "Expiry Time       : %1", format_time(params.m_expiry_time));
+    Logging::trace(nullptr, "Inactivity Suspend: %1", format_time(params.m_max_inactive_suspend));
+    Logging::trace(nullptr, "Inactivity Abort  : %1", format_time(params.m_max_inactive_abort));
+    Logging::trace(nullptr, "Pre-buffer size   : %1", format_size(params.m_prebuffer_size));
+    Logging::trace(nullptr, "Max. Cache Size   : %1", format_size(params.m_max_cache_size));
+    Logging::trace(nullptr, "Min. Disk Space   : %1", format_size(params.m_min_diskspace));
+    Logging::trace(nullptr, "Cache Path        : %1", cachepath);
     Logging::trace(nullptr, "Disable Cache     : %1", params.m_disable_cache ? "yes" : "no");
-    Logging::trace(nullptr, "Maintenance Timer : %1", params.m_cache_maintenance ? format_time(params.m_cache_maintenance).c_str() : "inactive");
+    Logging::trace(nullptr, "Maintenance Timer : %1", params.m_cache_maintenance ? format_time(params.m_cache_maintenance) : "inactive");
     Logging::trace(nullptr, "Clear Cache       : %1", params.m_clear_cache ? "yes" : "no");
     Logging::trace(nullptr, "--------- Various Options ---------");
     Logging::trace(nullptr, "Remove Album Arts : %1", params.m_noalbumarts ? "yes" : "no");
-    Logging::trace(nullptr, "Max. Threads      : %1", format_number(params.m_max_threads).c_str());
+    Logging::trace(nullptr, "Max. Threads      : %1", format_number(params.m_max_threads));
     Logging::trace(nullptr, "Decoding Errors   : %1", params.m_decoding_errors ? "break transcode" : "ignore");
-    Logging::trace(nullptr, "Min. DVD Chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());
+    Logging::trace(nullptr, "Min. DVD Chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE));
     Logging::trace(nullptr, "Old Name Scheme   : %1", params.m_oldnamescheme ? "yes" : "no");
     Logging::trace(nullptr, "--------- Experimental Options ---------");
     Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");

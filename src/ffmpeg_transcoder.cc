@@ -2769,7 +2769,8 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
             //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx, &sw_frame, frame);
 
-            if (!(sw_frame = av_frame_alloc()))
+			sw_frame = av_frame_alloc();
+            if (sw_frame == nullptr)
             {
                 ret = AVERROR(ENOMEM);
                 Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -5480,7 +5481,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) con
 {
     assert(m_hwaccel_dec_device_ctx != nullptr);
     input_codec_ctx->hw_device_ctx = av_buffer_ref(m_hwaccel_dec_device_ctx);
-    if (!input_codec_ctx->hw_device_ctx)
+    if (input_codec_ctx->hw_device_ctx == nullptr)
     {
         int ret = AVERROR(ENOMEM);
         Logging::error(destname(), "A hardware device reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -5506,7 +5507,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     AVHWFramesContext *frames_ctx = nullptr;
     int ret = 0;
 
-    if (!(hw_new_frames_ref = av_hwframe_ctx_alloc(hw_device_ctx)))
+    hw_new_frames_ref = av_hwframe_ctx_alloc(hw_device_ctx);
+    if (hw_new_frames_ref == nullptr)
     {
         ret = AVERROR(ENOMEM);
         Logging::error(destname(), "hwframe_ctx_set(): Failed to create hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -5520,7 +5522,9 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     frames_ctx->height    = decoder_ctx->height;
 
     frames_ctx->initial_pool_size = 20;	// Driver default seems to be 17
-    if ((ret = av_hwframe_ctx_init(hw_new_frames_ref)) < 0)
+
+    ret = av_hwframe_ctx_init(hw_new_frames_ref);
+    if (ret < 0)
     {
         Logging::error(destname(), "hwframe_ctx_set(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         av_buffer_unref(&hw_new_frames_ref);

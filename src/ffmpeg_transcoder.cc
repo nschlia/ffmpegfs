@@ -453,7 +453,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 fourcc_make_string(&fourcc2str, m_in.m_video.m_codec_ctx->codec_tag);
                 if (!fourcc2str.compare("avc1"))
                 {
-                    Logging::info(filename(), "Unable to decode '%1' in hardware. Falling back to software.", fourcc2str);
+                    Logging::info(filename(), "Unable to decode '%1' in hardware. Falling back to software.", fourcc2str.c_str());
 
                     m_hwaccel_enable_dec_buffering = false;
                 }
@@ -463,24 +463,24 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_dec_buffering)
         {
             // Hardware buffers available, enabling decoder hardware accceleration.
-            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type));
+            Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type), ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str(), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
-            Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name);
+            Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", hw_decoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_buffering_text(params.m_hwaccel_dec_device_type).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_decoder_codec_name.empty())
         {
             // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-            Logging::debug(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name);
+            Logging::debug(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
         }
 
         if (m_hwaccel_enable_dec_buffering)
@@ -503,24 +503,24 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_enc_buffering)
         {
             // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type));
+            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type), ffmpeg_geterror(ret));
+                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str(), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
-            Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name);
+            Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_encoder_codec_name.empty())
         {
             // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-            Logging::debug(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name);
+            Logging::debug(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
 
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
@@ -1269,7 +1269,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     }
     else
     {
-        Logging::debug(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", codec_name);
+        Logging::debug(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", codec_name.c_str());
         output_codec = avcodec_find_encoder_by_name(codec_name.c_str());
     }
 
@@ -1485,7 +1485,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             if (m_hwaccel_enc_device_ctx != nullptr)
             {
-                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type));
+                Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_buffering_text(params.m_hwaccel_enc_device_type).c_str());
                 if ((ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx)) < 0)
                 {
                     return ret;
@@ -1595,13 +1595,13 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 //ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+                //    Logging::error(destname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 //    return ret;
                 //}
                 //ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret));
+                //    Logging::error(destname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 //    return ret;
                 //}
                 output_codec_ctx->global_quality = 34;
@@ -2748,7 +2748,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             if (!(sw_frame = av_frame_alloc()))
             {
                 ret = AVERROR(ENOMEM);
-                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 break;
             }
 
@@ -2758,7 +2758,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             av_frame_free(&frame);
             if (ret < 0)
             {
-                Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret));
+                Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret).c_str());
                 break;
             }
             frame = sw_frame;
@@ -5428,7 +5428,7 @@ enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((u
         }
     }
 
-    Logging::error(nullptr, "Unable to decode this file using VA-API. Expected format '%1' not supported.", get_pix_fmt_name(pix_fmt_expected));
+    Logging::error(nullptr, "Unable to decode this file using VA-API. Expected format '%1' not supported.", get_pix_fmt_name(pix_fmt_expected).c_str());
 
     return AV_PIX_FMT_NONE;
 }
@@ -5446,7 +5446,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
     ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, type, !device.empty() ? device.c_str() : nullptr, nullptr, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Failed to create a %1 device (error '%2').", get_hwaccel_buffering_text(type), ffmpeg_geterror(ret));
+        Logging::error(destname(), "Failed to create a %1 device (error '%2').", get_hwaccel_buffering_text(type).c_str(), ffmpeg_geterror(ret).c_str());
         return ret;
     }
     return 0;
@@ -5459,7 +5459,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) con
     if (!input_codec_ctx->hw_device_ctx)
     {
         int ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "A hardware device reference create failed (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "A hardware device reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
     input_codec_ctx->get_format    = &FFmpeg_Transcoder::hwdevice_get_vaapi_format;
@@ -5485,7 +5485,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     if (!(hw_new_frames_ref = av_hwframe_ctx_alloc(hw_device_ctx)))
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_ctx_set(): Failed to create hwframe context (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_ctx_set(): Failed to create hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -5498,7 +5498,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     frames_ctx->initial_pool_size = 20;	// Driver default seems to be 17
     if ((ret = av_hwframe_ctx_init(hw_new_frames_ref)) < 0)
     {
-        Logging::error(destname(), "hwframe_ctx_set(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_ctx_set(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         av_buffer_unref(&hw_new_frames_ref);
         return ret;
     }
@@ -5506,7 +5506,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     encoder_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
     if (!encoder_ctx->hw_frames_ctx)
     {
-        Logging::error(destname(), "hwframe_ctx_set(): A hardware frame reference create failed (error '%1').", ffmpeg_geterror(AVERROR(ENOMEM)));
+        Logging::error(destname(), "hwframe_ctx_set(): A hardware frame reference create failed (error '%1').", ffmpeg_geterror(AVERROR(ENOMEM)).c_str());
         ret = AVERROR(ENOMEM);
     }
 
@@ -5530,7 +5530,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //        if (!encoder_ctx->hw_frames_ctx)
 //        {
 //            int ret = AVERROR(ENOMEM);
-//            Logging::error(destname(), "A hardware frame reference create failed (error '%1').", ffmpeg_geterror(ret));
+//            Logging::error(destname(), "A hardware frame reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
 //            return ret;
 //        }
 
@@ -5546,7 +5546,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //        if (!(hw_new_frames_ref = av_hwframe_ctx_alloc(hw_device_ctx)))
 //        {
 //            ret = AVERROR(ENOMEM);
-//            Logging::error(destname(), "Failed to create hwframe context (error '%1').", ffmpeg_geterror(ret));
+//            Logging::error(destname(), "Failed to create hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
 //            return ret;
 //        }
 //        frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
@@ -5558,7 +5558,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //        frames_ctx->initial_pool_size = 20;	// Driver default: 17
 //        if ((ret = av_hwframe_ctx_init(hw_new_frames_ref)) < 0)
 //        {
-//            Logging::error(destname(), "Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret));
+//            Logging::error(destname(), "Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
 //            av_buffer_unref(&hw_new_frames_ref);
 //            return ret;
 //        }
@@ -5586,21 +5586,21 @@ int FFmpeg_Transcoder::hwframe_copy_from_hw(AVCodecContext * /*ctx*/, AVFrame **
     if (*sw_frame != nullptr)
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_frame_copy_props(*sw_frame, hw_frame);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_transfer_data(*sw_frame, hw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_from_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_from_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -5615,35 +5615,35 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
     if (*hw_frame == nullptr)
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_frame_copy_props(*hw_frame, sw_frame);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_get_buffer(ctx->hw_frames_ctx, *hw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     if ((*hw_frame)->hw_frames_ctx == nullptr)
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_transfer_data(*hw_frame, sw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret));
+        Logging::error(destname(), "hwframe_copy_to_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 

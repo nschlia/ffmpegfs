@@ -632,7 +632,7 @@ size_t Buffer::write(const uint8_t* data, size_t length)
     }
 
     uint8_t* write_ptr = write_prepare(length);
-    if (!write_ptr)
+    if (write_ptr == nullptr)
     {
         length = 0;
     }

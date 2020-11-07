@@ -453,14 +453,14 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     Logging::debug(path, "Parsing DVD.");
 
     dvd = DVDOpen(path.c_str());
-    if (!dvd)
+    if (dvd == nullptr)
     {
         Logging::error(path, "Couldn't open DVD.");
         return ENOENT;
     }
 
     ifo_file = ifoOpen(dvd, 0);
-    if (!ifo_file)
+    if (ifo_file == nullptr)
     {
         Logging::error(path, "Can't open VMG info for DVD.");
         DVDClose(dvd);
@@ -484,7 +484,7 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
         Logging::trace(path, "DVD title has %1 chapters and %2 angles.", chapters, angles);
 
         vts_file = ifoOpen(dvd, vtsnum);
-        if (!vts_file)
+        if (vts_file == nullptr)
         {
             Logging::error(path, "Can't open info file for title %1.", vtsnum);
             DVDClose(dvd);

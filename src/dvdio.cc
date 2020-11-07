@@ -115,7 +115,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     // Open the disc.
     m_dvd = DVDOpen(path().c_str());
-    if (!m_dvd)
+    if (m_dvd == nullptr)
     {
         Logging::error(path(), "Couldn't open DVD.");
         return EINVAL;
@@ -123,7 +123,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     // Load the video manager to find out the information about the titles on this disc.
     m_vmg_file = ifoOpen(m_dvd, 0);
-    if (!m_vmg_file)
+    if (m_vmg_file == nullptr)
     {
         Logging::error(path(), "Can't open VMG info.");
         DVDClose(m_dvd);
@@ -166,7 +166,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     // Load the VTS information for the title set our title is in.
     m_vts_file = ifoOpen(m_dvd, tt_srpt->title[m_title_idx].title_set_nr);
-    if (!m_vts_file)
+    if (m_vts_file == nullptr)
     {
         Logging::error(path(), "Can't open the title %1 info file.", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vmg_file);
@@ -193,7 +193,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     // We've got enough info, time to open the title set data.
     m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_idx].title_set_nr, DVD_READ_TITLE_VOBS);
-    if (!m_dvd_title)
+    if (m_dvd_title == nullptr)
     {
         Logging::error(path(), "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vts_file);

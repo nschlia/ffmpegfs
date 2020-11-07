@@ -1101,7 +1101,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
         HWACCEL_MAP::const_iterator it = hwaccel_map.find(data);
 
-        if (it == hwaccel_map.end())
+        if (it == hwaccel_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER: Invalid hwaccel encoder API: %s\n", data.c_str());
             return -1;
@@ -1121,7 +1121,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 std::string get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering)
 {
     HWACCEL_MAP::const_iterator it = hwaccel_map.begin();
-    while (it != hwaccel_map.end())
+    while (it != hwaccel_map.cend())
     {
         if (it->second.m_hwaccel_device_type == hwaccel_buffering)
         {

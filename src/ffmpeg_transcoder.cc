@@ -5515,7 +5515,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
         return ret;
     }
 
-    frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
+    frames_ctx = reinterpret_cast<AVHWFramesContext *>(hw_new_frames_ref->data);
     frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
     frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
     frames_ctx->width     = decoder_ctx->width;

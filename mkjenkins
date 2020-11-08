@@ -19,7 +19,12 @@ fi
 
 if [ ${TOOLKIT} != "native" ];
 then
-	FFMPEG_BUILD="$HOME/dev/builds/$TOOLKIT-$FFMPEGVER"
+	FFMPEG_BUILD="${HOME}/dev/builds/${TOOLKIT}"
+
+	if [ ! -z "$FFMPEGVER" ]
+	then
+		FFMPEG_BUILD="${FFMPEG_BUILD}-${FFMPEGVER}"
+	fi
 
 	if [ ! -d ${FFMPEG_BUILD} ];
 	then

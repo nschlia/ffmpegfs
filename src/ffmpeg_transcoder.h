@@ -322,12 +322,12 @@ protected:
      * @brief Open the best matching video codec if input has a video stream.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_bestmatch_video_codec();
+    int                         open_bestmatch_video_decoder();
     /**
      * @brief Open the best matching audio codec if input has an audio stream.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_bestmatch_audio_codec();
+    int                         open_bestmatch_audio_decoder();
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context

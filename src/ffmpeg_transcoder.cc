@@ -421,14 +421,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
     // Open best match video codec
-    ret = open_bestmatch_video_codec();
+    ret = open_bestmatch_video_decoder();
     if (ret < 0)
     {
         return ret;     // Error already reported
     }
 
     // Open best match audio codec
-    ret = open_bestmatch_audio_codec();
+    ret = open_bestmatch_audio_decoder();
     if (ret < 0)
     {
         return ret;     // Error already reported
@@ -674,7 +674,7 @@ int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_i
     return 0;
 }
 
-int FFmpeg_Transcoder::open_bestmatch_video_codec()
+int FFmpeg_Transcoder::open_bestmatch_video_decoder()
 {
     int ret;
 
@@ -815,7 +815,7 @@ int FFmpeg_Transcoder::open_bestmatch_video_codec()
     return 0;
 }
 
-int FFmpeg_Transcoder::open_bestmatch_audio_codec()
+int FFmpeg_Transcoder::open_bestmatch_audio_decoder()
 {
     int ret;
 

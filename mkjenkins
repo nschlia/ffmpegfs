@@ -10,6 +10,16 @@ TOOLKIT=$2
 FFMPEGVER=$3
 CONFIGUREOPT=$4
 
+if [ -z "${COMPILER}" ] || [ -z "${TOOLKIT}" ]
+then
+	echo "Usage: mkjenkins COMPILER TOOLKIT [FFMPEGVER] [CONFIGIVERSION]"
+	echo
+	echo "Set toolkit to 'native' to install to system"
+	echo
+	echo "Example: mkjenkins gcc native"
+	exit 0
+fi
+
 if [ -z ${CONFIGUREOPT} ];
 then
     	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER}"

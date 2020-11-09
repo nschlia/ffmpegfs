@@ -421,17 +421,108 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
     // Open best match video codec
-    ret = open_bestmatch_video_decoder();
-    if (ret < 0)
+    ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
+    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
-        return ret;     // Error already reported
+        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    if (m_in.m_video.m_stream_idx >= 0)
+    {
+        // We have a video stream
+		//*** @todo: machen wird das woanders? */
+        // Check to see if encoder hardware acceleration is both requested and supported by codec.
+        std::string hw_encoder_codec_name;
+        if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
+        {
+            // API supports hardware frame buffers
+            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
+        }
+
+        if (m_hwaccel_enable_enc_buffering)
+        {
+            // Hardware buffers available, enabling encoder hardware accceleration.
+            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+            ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
+            if (ret < 0)
+            {
+                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+            Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
+        }
+        else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
+        {
+            // No hardware acceleration, fallback to software,
+            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+        }
+        else if (!hw_encoder_codec_name.empty())
+        {
+            // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
+            Logging::debug(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
+        }
+
+        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
+
+#ifdef USE_LIBDVD
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+        }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from Bluray
+            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+        }
+#endif // USE_LIBBLURAY
+
+        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
+
+        m_is_video = is_video();
+
+#ifdef AV_CODEC_CAP_TRUNCATED
+        if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+        {
+            m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
+        }
+#else
+#warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
+#endif
     }
 
     // Open best match audio codec
-    ret = open_bestmatch_audio_decoder();
-    if (ret < 0)
+    ret = open_bestmatch_decoder(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
+    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
-        return ret;     // Error already reported
+        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    if (m_in.m_audio.m_stream_idx >= 0)
+    {
+        // We have an audio stream
+        m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
+
+#ifdef USE_LIBDVD
+        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+        }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        {
+            // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
+            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+        }
+#endif // USE_LIBBLURAY
+
+        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
     }
 
     if (m_in.m_audio.m_stream_idx == -1 && m_in.m_video.m_stream_idx == -1)
@@ -496,7 +587,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 STREAMREF streamref;
                 AVCodecContext * input_codec_ctx;
 
-                ret = open_decoder_context(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
+                ret = open_decoder(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
                 {
                     Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -588,7 +679,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
 }
 
-int FFmpeg_Transcoder::open_bestmatch_decoder_context(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const
+int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type)
 {
     AVCodec *decoder = NULL;
     int ret;
@@ -605,10 +696,10 @@ int FFmpeg_Transcoder::open_bestmatch_decoder_context(AVCodecContext **avctx, in
 
     *stream_idx = ret;
 
-    return open_decoder_context(avctx, *stream_idx, decoder, type);
+    return open_decoder(avctx, *stream_idx, decoder, type);
 }
 
-int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const
+int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type)
 {
     AVCodecContext *dec_ctx = nullptr;
     AVDictionary *opts = nullptr;
@@ -644,55 +735,15 @@ int FFmpeg_Transcoder::open_decoder_context(AVCodecContext **avctx, int stream_i
     codec_id = dec_ctx->codec_id;
 #endif
 
-    if (decoder == nullptr)
+    if (type == AVMEDIA_TYPE_VIDEO)
     {
-        // Find a decoder for the stream.
-        decoder = avcodec_find_decoder(codec_id);
-        if (decoder == nullptr)
-        {
-            Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
-            return AVERROR(EINVAL);
-        }
-    }
 
-    dec_ctx->codec_id = decoder->id;
-
-    ret = avcodec_open2(dec_ctx, decoder, &opts);
-
-    av_dict_free(&opts);
-
-    if (ret < 0)
-    {
-        Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
-    Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
-
-    *avctx = dec_ctx;
-
-    return 0;
-}
-
-int FFmpeg_Transcoder::open_bestmatch_video_decoder()
-{
-    int ret;
-
-    ret = open_bestmatch_decoder_context(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
-    {
-        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
-    if (m_in.m_video.m_stream_idx >= 0)
-    {
         // We have a video stream
         // Now that we know the input video codec we may decide whether to use a hardware decoder
 
         // Check to see if decoder hardware acceleration is both requested and supported by codec.
         std::string hw_decoder_codec_name;
-        if (!get_hw_decoder_name(m_in.m_video.m_codec_ctx->codec_id, &hw_decoder_codec_name))
+        if (!get_hw_decoder_name(dec_ctx->codec_id, &hw_decoder_codec_name))
         {
             m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE);
             /**
@@ -708,7 +759,7 @@ int FFmpeg_Transcoder::open_bestmatch_video_decoder()
             if (m_hwaccel_enable_dec_buffering)
             {
                 std::string fourcc2str;
-                fourcc_make_string(&fourcc2str, m_in.m_video.m_codec_ctx->codec_tag);
+                fourcc_make_string(&fourcc2str, dec_ctx->codec_tag);
                 if (!fourcc2str.compare("avc1"))
                 {
                     Logging::info(filename(), "Unable to decode '%1' in hardware. Falling back to software.", fourcc2str.c_str());
@@ -733,7 +784,7 @@ int FFmpeg_Transcoder::open_bestmatch_video_decoder()
         else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(filename(), "Hardware decoder frame buffering %1 not suported by codec '%2'. Falling back to software decoder.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(dec_ctx->codec_id, true));
         }
         else if (!hw_decoder_codec_name.empty())
         {
@@ -743,111 +794,62 @@ int FFmpeg_Transcoder::open_bestmatch_video_decoder()
 
         if (m_hwaccel_enable_dec_buffering)
         {
-            ret = hwdevice_ctx_add_ref(m_in.m_video.m_codec_ctx);
+            ret = hwdevice_ctx_add_ref(dec_ctx);
             if (ret < 0)
             {
                 return ret;
             }
         }
 
-        // Check to see if encoder hardware acceleration is both requested and supported by codec.
-        std::string hw_encoder_codec_name;
-        if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
-        {
-            // API supports hardware frame buffers
-            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
-        }
-
-        if (m_hwaccel_enable_enc_buffering)
-        {
-            // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
-            ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
-            if (ret < 0)
-            {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
-            Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
-        }
-        else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
-        {
-            // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
-        }
-        else if (!hw_encoder_codec_name.empty())
-        {
-            // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-            Logging::debug(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
-        }
-
-        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
-
-#ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
-#endif // USE_LIBBLURAY
-
-        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
-
-        m_is_video = is_video();
-
-#ifdef AV_CODEC_CAP_TRUNCATED
-        if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
-        {
-            m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
-        }
-#else
-#warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
-#endif
     }
 
-    return 0;
-}
 
-int FFmpeg_Transcoder::open_bestmatch_audio_decoder()
-{
-    int ret;
-
-    ret = open_bestmatch_decoder_context(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
+    if (decoder == nullptr)
     {
-        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        // Find a decoder for the stream.
+        //std::string codec_name;
+        //if (get_hw_decoder_name(codec_id, &codec_name))
+        //{
+        // find the encoder
+        decoder = avcodec_find_decoder(codec_id);
+
+        if (decoder == nullptr)
+        {
+            Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
+            return AVERROR(EINVAL);
+        }
+        //}
+        //else
+        //{
+        //    decoder = avcodec_find_decoder_by_name(codec_name.c_str());
+
+        //    if (decoder == nullptr)
+        //    {
+        //        Logging::error(filename(), "Could not find decoder '%1'.", codec_name);
+        //        return AVERROR(EINVAL);
+        //    }
+
+        //    Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", decoder->name);
+        //}
+    }
+
+    dec_ctx->codec_id = decoder->id;
+
+    //dec_ctx->time_base = input_stream->time_base;
+
+    ret = avcodec_open2(dec_ctx, decoder, &opts);
+
+    av_dict_free(&opts);
+
+    if (ret < 0)
+    {
+        Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
-    if (m_in.m_audio.m_stream_idx >= 0)
-    {
-        // We have an audio stream
-        m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
+    Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
 
-#ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
-            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-        }
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
-            m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-        }
-#endif // USE_LIBBLURAY
-
-        audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
-    }
+    *avctx = dec_ctx;
 
     return 0;
 }
@@ -2776,7 +2778,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
             //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx, &sw_frame, frame);
 
-			sw_frame = av_frame_alloc();
+            sw_frame = av_frame_alloc();
             if (sw_frame == nullptr)
             {
                 ret = AVERROR(ENOMEM);
@@ -3627,21 +3629,21 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     }
 
     AVPacket pkt;
-	AVFrame *hw_frame = nullptr;
+    AVFrame *hw_frame = nullptr;
     int ret = 0;
 
     try
     {
-	    if (m_hwaccel_enable_enc_buffering && frame != nullptr)
-	    {
-	        // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
-	        ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
-	        if (ret < 0)
-	        {
-	            throw ret;
-	        }
-	        frame = hw_frame;
-	    }
+        if (m_hwaccel_enable_enc_buffering && frame != nullptr)
+        {
+            // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
+            ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
+            if (ret < 0)
+            {
+                throw ret;
+            }
+            frame = hw_frame;
+        }
 
         init_packet(&pkt);
 

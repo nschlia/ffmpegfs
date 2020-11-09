@@ -317,17 +317,7 @@ protected:
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_bestmatch_decoder_context(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const;
-    /**
-     * @brief Open the best matching video codec if input has a video stream.
-     * @return On success returns 0; on error negative AVERROR.
-     */
-    int                         open_bestmatch_video_decoder();
-    /**
-     * @brief Open the best matching audio codec if input has an audio stream.
-     * @return On success returns 0; on error negative AVERROR.
-     */
-    int                         open_bestmatch_audio_decoder();
+    int                         open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const;
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context
@@ -335,7 +325,7 @@ protected:
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_decoder_context(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const;
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const;
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @return On success returns 0; on error negative AVERROR.

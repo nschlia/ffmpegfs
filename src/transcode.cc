@@ -522,7 +522,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                         check_ignore(cache_entry->size(), offset) &&
                         ((offset + len) > (cache_entry->size())))
                 {
-                    Logging::warning(cache_entry->destname(), "EXPERIMENTAL FEATURE: Ignoring Windows' groundless access at last 8K boundary of file.");
+                    Logging::warning(cache_entry->destname(), "Ignoring Windows' groundless access to last 8K boundary of file.");
 
                     errno = 0;
                     *bytes_read = 0;  // We've read nothing

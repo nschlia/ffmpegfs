@@ -645,10 +645,10 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
 int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const
 {
-    AVCodec *decoder = NULL;
+    AVCodec *input_codec = NULL;
     int ret;
 
-    ret = av_find_best_stream(m_in.m_format_ctx, type, INVALID_STREAM, INVALID_STREAM, &decoder, 0);
+    ret = av_find_best_stream(m_in.m_format_ctx, type, INVALID_STREAM, INVALID_STREAM, &input_codec, 0);
     if (ret < 0)
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
@@ -660,33 +660,33 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
 
     *stream_idx = ret;
 
-    return open_decoder(avctx, *stream_idx, decoder, type);
+    return open_decoder(avctx, *stream_idx, input_codec, type);
 }
 
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const
+int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type) const
 {
-    AVCodecContext *dec_ctx = nullptr;
-    AVDictionary *opts = nullptr;
-    AVStream *input_stream;
-    AVCodecID codec_id = AV_CODEC_ID_NONE;
+    AVCodecContext *input_codec_ctx     = nullptr;
+    AVStream * input_stream             = nullptr;
+    AVDictionary *  opt                 = nullptr;
+    AVCodecID codec_id                  = AV_CODEC_ID_NONE;
     int ret;
 
     input_stream = m_in.m_format_ctx->streams[stream_idx];
 
     // Init the decoders, with or without reference counting
-    // av_dict_set_with_check(&opts, "refcounted_frames", refcount ? "1" : "0", 0);
+    // av_dict_set_with_check(&opt, "refcounted_frames", refcount ? "1" : "0", 0);
 
 #if LAVF_DEP_AVSTREAM_CODEC
     // allocate a new decoding context
-    dec_ctx = avcodec_alloc_context3(nullptr);
-    if (dec_ctx == nullptr)
+    input_codec_ctx = avcodec_alloc_context3(nullptr);
+    if (input_codec_ctx == nullptr)
     {
         Logging::error(filename(), "Could not allocate a decoding context.");
         return AVERROR(ENOMEM);
     }
 
     // initialise the stream parameters with demuxer information
-    ret = avcodec_parameters_to_context(dec_ctx, input_stream->codecpar);
+    ret = avcodec_parameters_to_context(input_codec_ctx, input_stream->codecpar);
     if (ret < 0)
     {
         return ret;
@@ -694,27 +694,27 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
     codec_id = input_stream->codecpar->codec_id;
 #else
-    dec_ctx = input_stream->codec;
+    input_codec_ctx = input_stream->codec;
 
-    codec_id = dec_ctx->codec_id;
+    codec_id = input_codec_ctx->codec_id;
 #endif
 
-    if (decoder == nullptr)
+    if (input_codec == nullptr)
     {
         // Find a decoder for the stream.
-        decoder = avcodec_find_decoder(codec_id);
-        if (decoder == nullptr)
+        input_codec = avcodec_find_decoder(codec_id);
+        if (input_codec == nullptr)
         {
             Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
             return AVERROR(EINVAL);
         }
     }
 
-    dec_ctx->codec_id = decoder->id;
+    input_codec_ctx->codec_id = input_codec->id;
 
-    ret = avcodec_open2(dec_ctx, decoder, &opts);
+    ret = avcodec_open2(input_codec_ctx, input_codec, &opt);
 
-    av_dict_free(&opts);
+    av_dict_free(&opt);
 
     if (ret < 0)
     {
@@ -724,15 +724,15 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
     Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
 
-    *avctx = dec_ctx;
+    *avctx = input_codec_ctx;
 
     return 0;
 }
 
 int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 {
-    AVCodec* codec = nullptr;
-    AVCodecContext* output_codec_ctx = nullptr;
+    AVCodec *       output_codec        = nullptr;
+    AVCodecContext *output_codec_ctx    = nullptr;
     int ret = 0;
 
     m_buffer            = buffer;
@@ -745,14 +745,14 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
     m_have_seeked       = false;
 
-    codec = avcodec_find_encoder(m_current_format->video_codec_id());
-    if (codec == nullptr)
+    output_codec = avcodec_find_encoder(m_current_format->video_codec_id());
+    if (output_codec == nullptr)
     {
         Logging::error(destname(), "Codec not found");
         return AVERROR(EINVAL);
     }
 
-    output_codec_ctx = avcodec_alloc_context3(codec);
+    output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
         Logging::error(destname(), "Could not allocate video codec context");
@@ -767,7 +767,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
     int loss = 0;
 
-    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA, &loss);
+    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA, &loss);
 
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
     {
@@ -805,7 +805,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
     //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
-    ret = avcodec_open2(output_codec_ctx, codec, nullptr);
+    ret = avcodec_open2(output_codec_ctx, output_codec, nullptr);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not open image codec.");

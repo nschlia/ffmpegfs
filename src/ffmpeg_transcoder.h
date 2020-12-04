@@ -322,10 +322,11 @@ protected:
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
+     * @param[in] input_codec - Decoder codec to open, may be nullptr. Will open a matching codec automatically.
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *decoder, AVMediaType type) const;
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type) const;
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @return On success returns 0; on error negative AVERROR.

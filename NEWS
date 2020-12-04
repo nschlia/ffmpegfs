@@ -6,7 +6,7 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
   
-Important changes in 2.5 (2020-11-xx)
+Important changes in 2.5 (2020-12-xx)
 
 * Feature: Issue #63 - Hardware accelerated decoding/encoding has been added. See HWACCEL
   for details how it works.
@@ -29,9 +29,14 @@ Important changes in 2.5 (2020-11-xx)
   via command line, FFmpegfs must decide that automatically.
 * Bugfix:
 
-Important changes in 2.1 (2020-11-XX)
+Important changes in 2.1 (2020-12-XX)
   
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
+* Feature: Implemented in 1.7, removed experimental state now:
+           Windows seems to access the files on Samba drives starting at the last 64K segment
+           simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
+           file up to this point).
+* Bugfix: Fixed grammatical error in text: It's "access to", not "access at".
 * Bugfix: Did not transcode some source files with invalid DTS.
 * Bugfix: Cosmetical - No need to log date/time twice in syslog.
 * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.

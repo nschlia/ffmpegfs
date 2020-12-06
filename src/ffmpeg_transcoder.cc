@@ -5813,11 +5813,13 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
           * #15 0x00007f95ae920d4f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
           *
           */
-        //case AV_CODEC_ID_MJPEG:
-        //{
-        //    *codec_name = "mjpeg_vaapi";
-        //    break;
-        //}
+/*		  
+    case AV_CODEC_ID_MJPEG:
+    {
+        *codec_name = "mjpeg_vaapi";
+        break;
+    }
+*/
     case AV_CODEC_ID_MPEG2VIDEO:
     {
         *codec_name = "mpeg2_vaapi";
@@ -5850,11 +5852,13 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
          * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
          *
          */
-        //case AV_CODEC_ID_VP9:
-        //{
-        //    *codec_name = "vp9_vaapi";
-        //    break;
-        //}
+/*
+    case AV_CODEC_ID_VP9:
+    {
+        *codec_name = "vp9_vaapi";
+        break;
+    }
+*/
     default:
     {
         ret = AVERROR_DECODER_NOT_FOUND;

@@ -2837,7 +2837,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             {
                 AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                AVPixelFormat out_pix_fmt = m_hwaccel_enable_enc_buffering ? reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format : output_codec_ctx->pix_fmt;
+                AVPixelFormat in_pix_fmt;
+                AVPixelFormat out_pix_fmt;
+
+                get_pix_formats(&in_pix_fmt, &out_pix_fmt);
+
                 AVFrame * tmp_frame = alloc_picture(out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                 if (tmp_frame == nullptr)
                 {

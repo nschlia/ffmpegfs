@@ -1086,8 +1086,8 @@ static int get_segment_duration(const std::string & arg, int64_t *value)
  * @brief Get type of hardware acceleration.
  * To keep it simple, currently all values are accepted.
  * @param[in] arg - One of the hardware acceleration types, e.g. VAAPI.
- * @param[out] hwaccel_buffering - Upon return contains the hardware acceleration buffering type.
- * @param[out] hwaccel_API - Upon return contains the hardware acceleration API name.
+ * @param[out] hwaccel_API - Upon return contains the hardware acceleration API.
+ * @param[out] hwaccel_device_type - Upon return contains the hardware acceleration device type.
  * @return Returns 0 if found; if not found returns -1. Currently always returns 0.
  */
 

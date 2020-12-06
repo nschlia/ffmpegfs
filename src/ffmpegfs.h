@@ -361,14 +361,14 @@ std::string get_profile_text(PROFILE profile);
  */
 std::string get_level_text(PRORESLEVEL level);
 /**
- * @brief Get the selected hardware acceleration as text.
+ * @brief Get the selected hardware buffering API as text.
  * @param[in] hwaccel_buffering - Hardware acceleration buffering API.
  * @return Hardware acceleration API as string.
  */
 std::string  get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering);
 /**
  * @brief Get the selected hardware accelerarion as text.
- * @param[in] hwaccel_API - Hardware acceleration API.
+ * @param[in] hwaccel_API - Hardware acceleration buffering API.
  * @return Hardware acceleration API as string.
  */
 std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API);

@@ -81,7 +81,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_mountpath("")                           // required parameter
 
     , m_autocopy(AUTOCOPY_OFF)                  // default: off
-    , m_profile(PROFILE_DEFAULT)                   // default: no profile
+    , m_profile(PROFILE_DEFAULT)                // default: no profile
     , m_level(PRORESLEVEL_NONE)                 // default: no level
 
     // Format
@@ -127,7 +127,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                      // default: ignore errors
     , m_min_dvd_chapter_duration(1)             // default: 1 second
     , m_oldnamescheme(0)                        // default: new scheme
-    , m_win_smb_fix(0)                          // default: no fix
+    , m_win_smb_fix(1)                          // default: fix enabled
 {
 }
 

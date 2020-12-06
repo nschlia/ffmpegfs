@@ -34,15 +34,17 @@ Important changes in 2.1 (2020-12-XX)
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
 * Feature: Implemented in 1.7, removed experimental state now:
            Windows seems to access the files on Samba drives starting at the last 64K segment
-           simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the
-           file up to this point).
+           simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts 
+           (not decode the file up to this point).
 * Bugfix: Fixed grammatical error in text: It's "access to", not "access at".
 * Bugfix: Did not transcode some source files with invalid DTS.
 * Bugfix: Cosmetical - No need to log date/time twice in syslog.
 * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
 * Bugfix: Report correct segment duration
-* Log cache close action at trace level
-* Shorter log entry when opening cache files
+* Bugfix: Avoid crash if opening next HLS segment failed. Should not ignore this, but report
+          it and stop transcoding. 
+* Cosmetical: Log cache close action at trace level
+* Cosmetical: Shorter log entry when opening cache files
 
 Important changes in 2.0 (2020-09-13)
 
@@ -150,10 +152,11 @@ Important changes in 1.95 (2019-05-23)
 
 This is a pre-release towards the new version 2.0 coming up soon.
 
-* Feature: Added transcode videos to frame images option. Video files can be mounted to folders with jpg/png/bmp files for
-           each video frame.
-* Feature: Reencode to same file format as source file. Normally files that already have the selected output format will not
-           be recoded. Added --recodesame option to allow transcoding to the same format.
+* Feature: Added transcode videos to frame images option. Video files can be mounted to folders
+           with jpg/png/bmp files for each video frame.
+* Feature: Reencode to same file format as source file. Normally files that already have the selected
+           output format will not be recoded. Added --recodesame option to allow transcoding to the
+           same format.
 
 Important changes in 1.12 (2020-04-XX)
 

@@ -4379,7 +4379,11 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         close_output_file();
 
-                        open_output(m_buffer);
+                        ret = open_output(m_buffer);
+                        if (ret < 0)
+                        {
+                            throw ret;
+                        }
 
                         next_segment = segment_no;
 

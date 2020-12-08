@@ -100,8 +100,8 @@ class Cache_Entry;
  */
 class Cache
 {
-    typedef std::pair<std::string, std::string> cache_key_t;
-    typedef std::map<cache_key_t, Cache_Entry *> cache_t;
+    typedef std::pair<std::string, std::string> cache_key_t;    ///< Filenames and destination types
+    typedef std::map<cache_key_t, Cache_Entry *> cache_t;       ///< Map of cache entries
 public:
     /**
       * @brief Definition of sql table

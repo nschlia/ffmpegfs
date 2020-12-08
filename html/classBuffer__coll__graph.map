@@ -1,3 +1,9 @@
 <map id="Buffer" name="Buffer">
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O. " alt="" coords="5,5,63,32"/>
+<area shape="rect" id="node1" title="The Buffer class." alt="" coords="359,288,420,315"/>
+<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="289,199,348,225"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="267,109,371,136"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="5,13,213,39"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks." alt="" coords="237,5,400,47"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="425,13,634,39"/>
+<area shape="rect" id="node7" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="373,199,547,225"/>
 </map>

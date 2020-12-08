@@ -1,3 +1,8 @@
 <map id="VcdIO" name="VcdIO">
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O. " alt="" coords="6,5,63,32"/>
+<area shape="rect" id="node1" title="Video CD and Super Video CD I/O class." alt="" coords="289,275,349,301"/>
+<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="289,199,348,225"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="267,109,371,136"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="5,13,213,39"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks." alt="" coords="237,5,400,47"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="425,13,634,39"/>
 </map>

@@ -1,3 +1,4 @@
 <map id="FFmpeg_Transcoder::INPUTFILE" name="FFmpeg_Transcoder::INPUTFILE">
-<area shape="rect" id="node2" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition. " alt="" coords="5,95,156,136"/>
+<area shape="rect" id="node1" title="Input file definition." alt="" coords="5,5,165,47"/>
+<area shape="rect" id="node2" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition." alt="" coords="5,95,165,136"/>
 </map>

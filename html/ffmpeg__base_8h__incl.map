@@ -1,4 +1,10 @@
 <map id="src/ffmpeg_base.h" name="src/ffmpeg_base.h">
-<area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions. " alt="" coords="249,80,353,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility. " alt="" coords="5,155,128,181"/>
+<area shape="rect" id="node1" title="FFmpeg transcoder base." alt="" coords="252,5,393,32"/>
+<area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="265,80,380,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,141,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="165,155,224,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="249,155,311,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="336,155,395,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="419,155,525,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="550,155,725,181"/>
 </map>

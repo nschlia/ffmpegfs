@@ -1,10 +1,21 @@
 <map id="FFmpeg_Transcoder" name="FFmpeg_Transcoder">
-<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class. " alt="" coords="722,97,829,124"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition. " alt="" coords="428,93,535,120"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs. " alt="" coords="5,5,221,32"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks. " alt="" coords="29,57,198,98"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs. " alt="" coords="5,123,221,149"/>
-<area shape="rect" id="node7" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class. " alt="" coords="715,148,836,175"/>
-<area shape="rect" id="node8" href="$structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles. " alt="" coords="371,148,592,175"/>
-<area shape="rect" id="node9" href="$structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options. " alt="" coords="20,174,207,215"/>
+<area shape="rect" id="node1" title="The FFmpeg_Transcoder class." alt="" coords="1400,228,1552,255"/>
+<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class." alt="" coords="932,20,1047,47"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="372,64,476,91"/>
+<area shape="rect" id="node10" href="$classFileIO.html" title="Base class for I/O." alt="" coords="765,115,824,141"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,32"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray Disks." alt="" coords="29,57,191,98"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,215,149"/>
+<area shape="rect" id="node7" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class." alt="" coords="1085,203,1216,229"/>
+<area shape="rect" id="node8" href="$structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles." alt="" coords="681,203,908,229"/>
+<area shape="rect" id="node9" href="$structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options." alt="" coords="328,195,520,237"/>
+<area shape="rect" id="node18" href="$classBuffer.html" title="The Buffer class." alt="" coords="1120,89,1181,116"/>
+<area shape="rect" id="node11" href="$classFFmpegfs__Format.html" title="The FFmpegfs_Format class." alt="" coords="1081,253,1221,280"/>
+<area shape="rect" id="node12" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="715,353,875,394"/>
+<area shape="rect" id="node16" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition." alt="" coords="1071,305,1231,346"/>
+<area shape="rect" id="node13" href="$structFFmpeg__Transcoder_1_1STREAMREF.html" title="In/output stream reference data." alt="" coords="344,353,504,394"/>
+<area shape="rect" id="node14" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE.html" title="Predicted bitrates for Apple Prores, see https://www.apple.com/final&#45;cut&#45;pro/docs/Apple_ProRes_White_..." alt="" coords="1071,434,1231,475"/>
+<area shape="rect" id="node15" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html" title="List of ProRes frame rates." alt="" coords="697,427,892,483"/>
+<area shape="rect" id="node17" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="765,295,825,321"/>
+<area shape="rect" id="node19" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="707,64,882,91"/>
 </map>

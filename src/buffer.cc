@@ -148,9 +148,10 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
     Logging::trace(m_ci[index].m_cachefile, "Closing cache file.");
 
-    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark, &m_ci[index].m_buffer_pos);
+    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark);
 
-    m_ci[index].m_buffer_size = 0;
+    m_ci[index].m_buffer_pos    = 0;
+    m_ci[index].m_buffer_size   = 0;
 
     if (success && m_cur_open > 0)
     {
@@ -405,7 +406,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     return success;
 }
 
-bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t * filesize, size_t *buffer_pos /*= nullptr*/) const
+bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t * filesize) const
 {
     bool success = true;
 
@@ -418,10 +419,6 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
     // Clear all variables
     p           = nullptr;
     *filesize   = 0;
-    if (buffer_pos != nullptr)
-    {
-        *buffer_pos = 0;
-    }
     *fd         = -1;
 
     if (__p != nullptr)

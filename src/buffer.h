@@ -424,7 +424,7 @@ private:
      * @param[in] filesize - Actual size of the cache file.
      * @return Returns true on success; false on error.
      */
-    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, size_t *buffer_pos = nullptr) const;
+    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize) const;
 
     /**
      * @brief cacheinfo

@@ -1307,15 +1307,15 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
             output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
 
-            for (int n = 0; output_codec->sample_fmts[n] != -1; n++)
+            for (const AVSampleFormat *sample_fmt = output_codec->sample_fmts; *sample_fmt != -1; sample_fmt++)
             {
-                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(output_codec->sample_fmts[n]);
+                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(*sample_fmt);
 
-                if (output_codec->sample_fmts[n] == m_in.m_audio.m_codec_ctx->sample_fmt ||
+                if (*sample_fmt == m_in.m_audio.m_codec_ctx->sample_fmt ||
                         (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
                          input_fmt_planar == output_fmt_planar))
                 {
-                    output_codec_ctx->sample_fmt    = output_codec->sample_fmts[n];
+                    output_codec_ctx->sample_fmt    = *sample_fmt;
                     break;
                 }
             }

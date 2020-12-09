@@ -5488,7 +5488,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
     ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, dev_type, !active_device.empty() ? active_device.c_str() : nullptr, nullptr, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "Failed to create a %1 device (error '%2').", av_hwdevice_get_type_name(dev_type), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to create a %1 device (error '%2').", hwdevice_get_type_name(dev_type), ffmpeg_geterror(ret).c_str());
         return ret;
     }
     return 0;

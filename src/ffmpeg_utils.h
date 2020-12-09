@@ -721,4 +721,12 @@ std::string         make_filename(uint32_t file_no, const std::string &fileext);
  */
 bool                file_exists(const std::string & filename);
 
+/** Save version of hwdevice_get_type_name:
+ * Get the string name of an AVHWDeviceType.
+ *
+ * @param type Type from enum AVHWDeviceType.
+ * @return Pointer to a static string containing the name, or "unknown" if the type
+ *         is not valid.
+ */
+const char *        hwdevice_get_type_name(AVHWDeviceType dev_type);
 #endif

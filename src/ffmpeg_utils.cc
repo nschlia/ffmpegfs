@@ -1343,3 +1343,10 @@ void make_lower(std::string * input)
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     });
 }
+
+const char * hwdevice_get_type_name(AVHWDeviceType dev_type)
+{
+    const char *type_name = av_hwdevice_get_type_name(dev_type);
+    return (type_name != nullptr ? type_name : "unknown");
+}
+

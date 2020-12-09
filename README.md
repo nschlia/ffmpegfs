@@ -331,9 +331,9 @@ file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should
 access the same file they will share the same transcoded data, saving
-CPU time. If all processes close the file before its end, transconding will
+CPU time. If all processes close the file before its end, transcoding will
 continue for some time. If the file is accessed again before timeout,
-transcoding will go on, if not it stops and the chunk created so far
+transcoding will continue, if not it stops and the chunk created so far
 discarded to save disk space.
 
 Seeking within a file will cause the file to be transcoded up to the

@@ -744,7 +744,22 @@ protected:
      * - encoding: unused
      * - decoding: Set by user, if not set the native format will be chosen.
      */
-    static enum AVPixelFormat   hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
+    static enum AVPixelFormat   get_format_static(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
+    /**
+     * Callback to negotiate the pixelFormat
+     * @param[in] ctx - Codec context
+     * @param[in] pix_fmts is the list of formats which are supported by the codec,
+     * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
+     * The first is always the native one.
+     * @note The callback may be called again immediately if initialization for
+     * the selected (hardware-accelerated) pixel format failed.
+     * @warning Behavior is undefined if the callback returns a value not
+     * in the fmt list of formats.
+     * @return the chosen format
+     * - encoding: unused
+     * - decoding: Set by user, if not set the native format will be chosen.
+     */
+    enum AVPixelFormat          get_format(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
     /**
      * Open a device of the specified type and create an AVHWDeviceContext for it.
      *
@@ -772,7 +787,7 @@ protected:
      * @param[in] input_codec_ctx - Input codec context
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) const;
+    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx);
     /**
      * @brief Free (remove reference) to hardware device context
      * @param[inout] hwaccel_device_ctx - Hardware device context to free

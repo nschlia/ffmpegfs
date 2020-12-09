@@ -5452,12 +5452,18 @@ bool FFmpeg_Transcoder::have_seeked() const
     return m_have_seeked;
 }
 
-enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
+enum AVPixelFormat FFmpeg_Transcoder::get_format_static(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
+{
+    FFmpeg_Transcoder * pThis = static_cast<FFmpeg_Transcoder *>(ctx->opaque);
+    return pThis->get_format(ctx, pix_fmts);
+}
+
+enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
 {
     if (params.m_hwaccel_dec_device_type == AV_HWDEVICE_TYPE_NONE)
     {
         // We should never happen to end up here...
-        Logging::error(nullptr, "Unable to decode this file using VA-API: Internal error! No hardware device tyoe set.");
+        Logging::error(filename(), "Unable to decode this file using hardware acceleration: Internal error! No hardware device tyoe set.");
         return AV_PIX_FMT_NONE;
     }
 
@@ -5472,7 +5478,7 @@ enum AVPixelFormat FFmpeg_Transcoder::hwdevice_get_vaapi_format(__attribute__((u
         }
     }
 
-    Logging::error(nullptr, "Unable to decode this file using VA-API. Expected format '%1' not supported.", get_pix_fmt_name(pix_fmt_expected).c_str());
+    Logging::error(filename(), "Unable to decode this file using hardware acceleration. Expected format '%1' not supported.", get_pix_fmt_name(pix_fmt_expected).c_str());
 
     return AV_PIX_FMT_NONE;
 }
@@ -5496,7 +5502,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
     return 0;
 }
 
-int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) const
+int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx)
 {
     assert(m_hwaccel_dec_device_ctx != nullptr);
     input_codec_ctx->hw_device_ctx = av_buffer_ref(m_hwaccel_dec_device_ctx);
@@ -5506,7 +5512,9 @@ int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx) con
         Logging::error(destname(), "A hardware device reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
-    input_codec_ctx->get_format    = &FFmpeg_Transcoder::hwdevice_get_vaapi_format;
+
+    input_codec_ctx->opaque     = static_cast<void*>(this);
+    input_codec_ctx->get_format = &FFmpeg_Transcoder::get_format_static;
 
     return 0;
 }

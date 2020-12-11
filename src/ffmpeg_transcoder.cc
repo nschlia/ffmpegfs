@@ -431,7 +431,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (m_in.m_video.m_stream_idx >= 0)
     {
         // We have a video stream
-		//*** @todo: machen wird das woanders? */
+        //*** @todo: Do this somewhere else? */
         // Check to see if encoder hardware acceleration is both requested and supported by codec.
         std::string hw_encoder_codec_name;
         if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
@@ -702,9 +702,9 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
 int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type)
 {
     AVCodecContext *input_codec_ctx     = nullptr;
-    AVStream * input_stream             = nullptr;
+    AVStream *      input_stream        = nullptr;
     AVDictionary *  opt                 = nullptr;
-    AVCodecID codec_id                  = AV_CODEC_ID_NONE;
+    AVCodecID       codec_id            = AV_CODEC_ID_NONE;
     int ret;
 
     input_stream = m_in.m_format_ctx->streams[stream_idx];
@@ -800,9 +800,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                 return ret;
             }
         }
-
     }
-
 
     if (input_codec == nullptr)
     {
@@ -813,7 +811,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         // find the encoder
         input_codec = avcodec_find_decoder(codec_id);
 
-    	if (input_codec == nullptr)
+        if (input_codec == nullptr)
         {
             Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
             return AVERROR(EINVAL);
@@ -2533,22 +2531,12 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
-    //if (m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
-    //{
-    //    if (!m_encoder_initialised && pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
-    //    {
-    //        //** Only after the first hardware decoded video packet arrived we have a
-    //        // hardware frame context.
-    //        // We should create the stream now, open a codec etc. and call hwframe_ctx_set.
-
-    //        m_encoder_initialised = true;
-
-    //        Logging::info(filename(), "Encoder init: START\n");
-
-
-    //        Logging::info(filename(), "Encoder init: DONE\n");
-    //    }
-    //}
+    /**
+      * @note Only after the first hardware decoded video packet arrived we have a
+      * @note hardware frame context.
+      * @note We should create the output stream now, open a codec etc. and call
+      * @note hwframe_ctx_set.
+      */
 
     *got_frame = (ret >= 0) ? 1 : 0;
 
@@ -5452,13 +5440,13 @@ bool FFmpeg_Transcoder::have_seeked() const
     return m_have_seeked;
 }
 
-enum AVPixelFormat FFmpeg_Transcoder::get_format_static(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
+enum AVPixelFormat FFmpeg_Transcoder::get_format_static(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts)
 {
-    FFmpeg_Transcoder * pThis = static_cast<FFmpeg_Transcoder *>(ctx->opaque);
-    return pThis->get_format(ctx, pix_fmts);
+    FFmpeg_Transcoder * pThis = static_cast<FFmpeg_Transcoder *>(input_codec_ctx->opaque);
+    return pThis->get_format(input_codec_ctx, pix_fmts);
 }
 
-enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts)
+enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts)
 {
     if (params.m_hwaccel_dec_device_type == AV_HWDEVICE_TYPE_NONE)
     {
@@ -5528,7 +5516,7 @@ void FFmpeg_Transcoder::hwdevice_ctx_free(AVBufferRef **hwaccel_device_ctx)
     }
 }
 
-int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx) const
+int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodecContext *input_codec_ctx, AVBufferRef *hw_device_ctx) const
 {
     AVBufferRef *hw_new_frames_ref;
     AVHWFramesContext *frames_ctx = nullptr;
@@ -5545,8 +5533,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     frames_ctx = reinterpret_cast<AVHWFramesContext *>(hw_new_frames_ref->data);
     frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
     frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
-    frames_ctx->width     = decoder_ctx->width;
-    frames_ctx->height    = decoder_ctx->height;
+    frames_ctx->width     = input_codec_ctx->width;
+    frames_ctx->height    = input_codec_ctx->height;
 
     frames_ctx->initial_pool_size = 20;	// Driver default seems to be 17
 
@@ -5558,8 +5546,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
         return ret;
     }
 
-    encoder_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
-    if (!encoder_ctx->hw_frames_ctx)
+    output_codec_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
+    if (!output_codec_ctx->hw_frames_ctx)
     {
         Logging::error(destname(), "hwframe_ctx_set(): A hardware frame reference create failed (error '%1').", ffmpeg_geterror(AVERROR(ENOMEM)).c_str());
         ret = AVERROR(ENOMEM);
@@ -5570,19 +5558,19 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
     return 0;
 }
 
-//int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx)
+//int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodecContext *input_codec_ctx, AVBufferRef *hw_device_ctx)
 //{
 //    // If the decoder runs in hardware, we should use the decoder's frames context. This will save us from
 //    // having to transfer frames from hardware to software and vice versa.
 //    // If the decoder runs in software, create a new frames context.
-//    if (decoder_ctx->hw_frames_ctx != nullptr)
+//    if (input_codec_ctx->hw_frames_ctx != nullptr)
 //    {
 //        Logging::debug(destname(), "Hardware encoder init: Hardware decoder active, using decoder hw_frames_ctx for encoder.");
 
 //        /* we need to ref hw_frames_ctx of decoder to initialize encoder's codec.
 //       Only after we get a decoded frame, can we obtain its hw_frames_ctx */
-//        encoder_ctx->hw_frames_ctx = av_buffer_ref(decoder_ctx->hw_frames_ctx);
-//        if (!encoder_ctx->hw_frames_ctx)
+//        output_codec_ctx->hw_frames_ctx = av_buffer_ref(input_codec_ctx->hw_frames_ctx);
+//        if (!output_codec_ctx->hw_frames_ctx)
 //        {
 //            int ret = AVERROR(ENOMEM);
 //            Logging::error(destname(), "A hardware frame reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -5607,8 +5595,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //        frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
 //        frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
 //        frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
-//        frames_ctx->width     = decoder_ctx->width;
-//        frames_ctx->height    = decoder_ctx->height;
+//        frames_ctx->width     = input_codec_ctx->width;
+//        frames_ctx->height    = input_codec_ctx->height;
 
 //        frames_ctx->initial_pool_size = 20;	// Driver default: 17
 //        if ((ret = av_hwframe_ctx_init(hw_new_frames_ref)) < 0)
@@ -5618,8 +5606,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecConte
 //            return ret;
 //        }
 
-//        encoder_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
-//        if (!encoder_ctx->hw_frames_ctx)
+//        output_codec_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
+//        if (!output_codec_ctx->hw_frames_ctx)
 //        {
 //            Logging::error(destname(), "A hardware frame reference create failed (error '%1').", ffmpeg_geterror(AVERROR(ENOMEM)));
 //            ret = AVERROR(ENOMEM);

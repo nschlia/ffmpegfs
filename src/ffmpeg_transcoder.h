@@ -115,7 +115,8 @@ public:
         INPUTFILE() :
             m_filetype(FILETYPE_UNKNOWN),
             m_filename("unset"),
-            m_format_ctx(nullptr)
+            m_format_ctx(nullptr),
+            m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;             /**< @brief File type, MP3, MP4, OPUS etc. */
@@ -125,6 +126,7 @@ public:
 
         STREAMREF               m_audio;                /**< @brief Audio stream information */
         STREAMREF               m_video;                /**< @brief Video stream information */
+        AVPixelFormat           m_pix_fmt;              /**< @brief Video stream pixel format */
 
         std::vector<STREAMREF>  m_album_art;            /**< @brief Album art stream */
     };
@@ -320,6 +322,14 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type);
+    /**
+     * @brief Determine the hardware pixel format for the codec, if applicable.
+     * @param codec - Input codec used
+     * @param dev_type - Hardware device type
+     * @param use_frames_ctx - If true checks for pix format if using a hardware frames context, for a pix format using a hardware device context otherwise.
+     * @return Returns hardware pixel format, or AV_PIX_FMT_NONE if not applicable.
+     */
+    AVPixelFormat               get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_frames_ctx) const;
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context
@@ -876,12 +886,6 @@ protected:
      */
     int                         get_hw_v4l2m2m_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
     /**
-     * @brief Get the hardware pixel format for the given hardware acceleration.
-     * @param[in] type - Selected hardware acceleration.
-     * @return 0 on success, a negative AVERROR code on failure.
-     */
-    static AVPixelFormat        find_hw_fmt_by_hw_type(AVHWDeviceType type);
-    /**
      * @brief Get the software pixel format for the given hardware acceleration.
      * @param[in] type - Selected hardware acceleration.
      * @return 0 on success, a negative AVERROR code on failure.
@@ -943,6 +947,8 @@ private:
     bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
     AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */
     AVBufferRef *               m_hwaccel_dec_device_ctx;       /**< @brief Hardware acceleration device context for decoder */
+    AVPixelFormat               m_enc_hw_pix_fmt;               /**< @brief Requested encoder hardware pixel format */
+    AVPixelFormat               m_dec_hw_pix_fmt;               /**< @brief Requested decoder hardware pixel format */
 };
 
 #endif // FFMPEG_TRANSCODER_H

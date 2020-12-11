@@ -358,6 +358,7 @@ typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map 
 
 typedef struct HWACCEL                                          /**< @brief Hardware acceleration device and type */
 {
+    bool                m_supported;                            /**< @brief true if API supported, false if not */
     HWACCELAPI          m_hwaccel_API;                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
     AVHWDeviceType      m_hwaccel_device_type;                  /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
@@ -421,49 +422,52 @@ static const RECODESAME_MAP recode_map =
 /**
   * List if hardware acceleration options.
   * See https://trac.ffmpeg.org/wiki/HWAccelIntro
+  *
+  * AV_HWDEVICE_TYPE_NONE will be set to the appropriate device type
+  * in build_device_type_list() by asking the FFmpeg API for the proper
+  * type.
   */
-static const HWACCEL_MAP hwaccel_map =
+static HWACCEL_MAP hwaccel_map =
 {
+    { "NONE",           { true,     HWACCELAPI_NONE,            AV_HWDEVICE_TYPE_NONE } },
+
     // **** Supported by Linux ****
 
-    // Hardware frame buffered
-
-    { "NONE",           { HWACCELAPI_NONE, AV_HWDEVICE_TYPE_NONE } },
-    { "VAAPI",          { HWACCELAPI_VAAPI, AV_HWDEVICE_TYPE_VAAPI } },         // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
-	
-	// not (yet) supported
-
-    //{ "CUDA",           { HWACCELAPI_CUDA, AV_HWDEVICE_TYPE_CUDA } },           // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
-	
-    //{ "VDPAU",          { HWACCELAPI_VDPAU, AV_HWDEVICE_TYPE_VDPAU } },         // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
-    //{ "QSV",            { HWACCELAPI_QSV, AV_HWDEVICE_TYPE_QSV } },             // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
-    //{ "OPENCL",         { HWACCELAPI_OPENCL, AV_HWDEVICE_TYPE_OPENCL } },       // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
-    //#if HAVE_VULKAN_HWACCEL
-    //{ "VULKAN",         { HWACCELAPI_VULKAN, AV_HWDEVICE_TYPE_VULKAN } },       // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
-    //#endif // HAVE_VULKAN_HWACCEL
-
-    // Not hardware frame buffered
-	
-    { "V4L2M2M",        { HWACCELAPI_V4L2M2M, AV_HWDEVICE_TYPE_NONE } },        // v4l2 mem to mem (Video4linux)
+    { "VAAPI",          { true,     HWACCELAPI_VAAPI,           AV_HWDEVICE_TYPE_NONE } },  // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
+    { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
 
     // RaspberryPi
-    { "MMAL",           { HWACCELAPI_MMAL, AV_HWDEVICE_TYPE_NONE } },           // Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the Raspberry Pi.
-    { "OMX",            { HWACCELAPI_OMX, AV_HWDEVICE_TYPE_NONE } },            // OpenMAX (Open Media Acceleration)
+
+    { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the Raspberry Pi.
+    { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration)
+
+    // Not hardware frame buffered
+
+    { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
+
+    // Additional formats
+
+    { "VDPAU",          { false,    HWACCELAPI_VDPAU,           AV_HWDEVICE_TYPE_NONE } },  // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
+    { "QSV",            { false,    HWACCELAPI_QSV,             AV_HWDEVICE_TYPE_NONE } },  // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+    { "OPENCL",         { false,    HWACCELAPI_OPENCL,          AV_HWDEVICE_TYPE_NONE } },  // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
+    #if HAVE_VULKAN_HWACCEL
+    { "VULKAN",         { false,    HWACCELAPI_VULKAN,          AV_HWDEVICE_TYPE_NONE } },  // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
+    #endif // HAVE_VULKAN_HWACCEL
 
     // **** Not supported ****
 
     // Digital Rights Management, not sure if this would work
-    //{ "DRM",            { AV_HWDEVICE_TYPE_DRM, AV_HWDEVICE_TYPE_NONE } },
+    { "DRM",            { false,    HWACCELAPI_DRM,             AV_HWDEVICE_TYPE_NONE } },
 
     // Windows only, not supported
-    //{ "DXVA2",          { AV_HWDEVICE_TYPE_DXVA2, AV_HWDEVICE_TYPE_NONE } },          // Direct3D 9 / DXVA2
-    //{ "D3D11VA",        { AV_HWDEVICE_TYPE_D3D11VA, AV_HWDEVICE_TYPE_NONE } },        // Direct3D 11
+    { "DXVA2",          { false,    HWACCELAPI_DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
+    { "D3D11VA",        { false,    HWACCELAPI_D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
 
     // MacOS, not supported
-    //{ "VIDEOTOOLBOX",   { AV_HWDEVICE_TYPE_VIDEOTOOLBOX, AV_HWDEVICE_TYPE_NONE } },   // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+    { "VIDEOTOOLBOX",   { false,    HWACCELAPI_VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
 
     // Android
-    //{ "MEDIACODEC",     { AV_HWDEVICE_TYPE_MEDIACODEC, AV_HWDEVICE_TYPE_NONE } },     // See https://developer.android.com/reference/android/media/MediaCodec
+    { "MEDIACODEC",     { false,    HWACCELAPI_MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
@@ -483,6 +487,7 @@ static int          get_value(const std::string & arg, double *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults(void);
+static void         build_device_type_list(void);
 static void         print_params(void);
 static void         usage();
 
@@ -1107,30 +1112,22 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
             return -1;
         }
 
-        *hwaccel_API            = it->second.m_hwaccel_API;
-        *hwaccel_device_type    = it->second.m_hwaccel_device_type;
+        const HWACCEL & hwaccel = it->second;
 
+        if (!hwaccel.m_supported)
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Unsupported hardware acceleration encoder API: %s\n", data.c_str());
+            return -1;
+        }
+
+        *hwaccel_API            = hwaccel.m_hwaccel_API;
+        *hwaccel_device_type    = hwaccel.m_hwaccel_device_type;
         return 0;
     }
 
     std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration encoder API string\n");
 
     return -1;
-}
-
-std::string get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering)
-{
-    HWACCEL_MAP::const_iterator it = hwaccel_map.begin();
-    while (it != hwaccel_map.cend())
-    {
-        if (it->second.m_hwaccel_device_type == hwaccel_buffering)
-        {
-            return it->first;
-        }
-        it++;
-    }
-
-    return "INVALID";
 }
 
 std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
@@ -1459,6 +1456,28 @@ static bool set_defaults(void)
 }
 
 /**
+ * @brief Build list of available device types.
+ * Builds a list of device types supported by the current
+ * FFmpeg libary.
+ */
+static void build_device_type_list(void)
+{
+    //device_type = av_hwdevice_find_type_by_name("vaapi");
+    for (AVHWDeviceType device_type = AV_HWDEVICE_TYPE_NONE; (device_type = av_hwdevice_iterate_types(device_type)) != AV_HWDEVICE_TYPE_NONE;)
+    {
+        HWACCEL_MAP::iterator it = hwaccel_map.find(av_hwdevice_get_type_name(device_type));
+
+        if (it == hwaccel_map.end())
+        {
+            std::fprintf(stderr, "INTERNAL WARNING: Unknown hardware acceleration encoder API: %s\n", av_hwdevice_get_type_name(device_type));
+            continue;
+        }
+
+        it->second.m_hwaccel_device_type = device_type;
+    }
+}
+
+/**
  * @brief Print currently selected parameters.
  */
 static void print_params(void)
@@ -1568,6 +1587,9 @@ int main(int argc, char *argv[])
 
     // Set default
     params.m_max_threads = static_cast<unsigned int>(get_nprocs() * 16);
+
+    // Build list of supported device types
+    build_device_type_list();
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {

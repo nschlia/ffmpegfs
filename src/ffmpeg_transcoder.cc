@@ -203,6 +203,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_hwaccel_enable_dec_buffering(false)
     , m_hwaccel_enc_device_ctx(nullptr)
     , m_hwaccel_dec_device_ctx(nullptr)
+    , m_enc_hw_pix_fmt(AV_PIX_FMT_NONE)
+    , m_dec_hw_pix_fmt(AV_PIX_FMT_NONE)
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -717,6 +719,34 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
     return open_decoder(avctx, *stream_idx, input_codec, type);
 }
 
+AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_frames_ctx) const
+{
+    AVPixelFormat hw_pix_fmt = AV_PIX_FMT_NONE;
+    int method = use_frames_ctx ? AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX : AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX;
+
+    if (codec != nullptr)
+    {
+        for (int i = 0;; i++)
+        {
+            const AVCodecHWConfig *config = avcodec_get_hw_config(codec, i);
+            if (!config)
+            {
+                Logging::error(filename(), "%1 '%2' does not support device type %3.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, hwdevice_get_type_name(dev_type));
+                break;
+            }
+
+            if ((config->methods & method) && (config->device_type == dev_type))
+            {
+                hw_pix_fmt = config->pix_fmt;
+                Logging::info(filename(), "%1 '%2' requests %3 for device type %4.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, av_get_pix_fmt_name(hw_pix_fmt), hwdevice_get_type_name(dev_type));
+                break;
+            }
+        }
+    }
+
+    return hw_pix_fmt;
+}
+
 int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type)
 {
     AVCodecContext *input_codec_ctx     = nullptr;
@@ -755,9 +785,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
     if (type == AVMEDIA_TYPE_VIDEO)
     {
-
-        // We have a video stream
-        // Now that we know the input video codec we may decide whether to use a hardware decoder
+        // Decide whether to use a hardware decoder
 
         // Check to see if decoder hardware acceleration is both requested and supported by codec.
         std::string hw_decoder_codec_name;
@@ -789,7 +817,9 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         if (m_hwaccel_enable_dec_buffering)
         {
-            // Hardware buffers available, enabling decoder hardware accceleration.
+            m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, false);
+
+            // Hardware buffers available, enabling decoder hardware acceleration.
             Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
             if (ret < 0)
@@ -954,12 +984,9 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
     // Initialise pixel format conversion and rescaling if necessary
-    AVPixelFormat in_pix_fmt;
-    AVPixelFormat out_pix_fmt;
+    get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
 
-    get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
-
-    ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    ret = init_rescaler(m_in.m_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
     if (ret < 0)
     {
         return ret;
@@ -967,7 +994,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     if (params.m_deinterlace)
     {
-        ret = init_deinterlace_filters(output_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+        ret = init_deinterlace_filters(output_codec_ctx, m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
         if (ret < 0)
         {
             return ret;
@@ -1537,6 +1564,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
 
+            m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, true);
+
             ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx);
             if (ret < 0)
             {
@@ -1577,9 +1606,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
 #else
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, m_hwaccel_enable_enc_buffering ? find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type) : AV_PIX_FMT_NONE);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->codec->framerate, m_enc_hw_pix_fmt);
 #endif
 
         AVRational sample_aspect_ratio                      = CODECPAR(m_in.m_video.m_stream)->sample_aspect_ratio;
@@ -1804,12 +1833,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Initialise pixel format conversion and rescaling if necessary
-        AVPixelFormat in_pix_fmt;
-        AVPixelFormat out_pix_fmt;
+        get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
 
-        get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
-
-        ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+        ret = init_rescaler(m_in.m_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
         if (ret < 0)
         {
             return ret;
@@ -2182,12 +2208,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-                AVPixelFormat in_pix_fmt;
-                AVPixelFormat out_pix_fmt;
-
-                get_pix_formats(&in_pix_fmt, &out_pix_fmt);
-
-                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;
@@ -2845,12 +2866,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             {
                 AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                AVPixelFormat in_pix_fmt;
-                AVPixelFormat out_pix_fmt;
-
-                get_pix_formats(&in_pix_fmt, &out_pix_fmt);
-
-                AVFrame * tmp_frame = alloc_picture(out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+                AVFrame * tmp_frame = alloc_picture(m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                 if (tmp_frame == nullptr)
                 {
                     return AVERROR(ENOMEM);
@@ -5473,14 +5489,13 @@ enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodec
         return AV_PIX_FMT_NONE;
     }
 
-    const AVPixelFormat *p;
-    AVPixelFormat pix_fmt_expected = find_hw_fmt_by_hw_type(params.m_hwaccel_dec_device_type);
+    AVPixelFormat pix_fmt_expected = m_dec_hw_pix_fmt;
 
-    for (p = pix_fmts; *p != AV_PIX_FMT_NONE; p++)
+    for (const AVPixelFormat *p = pix_fmts; *p != AV_PIX_FMT_NONE; p++)
     {
         if (*p == pix_fmt_expected)
         {
-            return *p;
+            return pix_fmt_expected;
         }
     }
 
@@ -5549,8 +5564,8 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodec
     }
 
     frames_ctx = reinterpret_cast<AVHWFramesContext *>(hw_new_frames_ref->data);
-    frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
-    frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
+    frames_ctx->format    = m_enc_hw_pix_fmt;
+    frames_ctx->sw_format = /*input_codec_ctx->sw_pix_fmt; */find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
     frames_ctx->width     = input_codec_ctx->width;
     frames_ctx->height    = input_codec_ctx->height;
 
@@ -5611,7 +5626,7 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodec
 //            return ret;
 //        }
 //        frames_ctx = (AVHWFramesContext *)(hw_new_frames_ref->data);
-//        frames_ctx->format    = find_hw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
+//        frames_ctx->format    = m_hw_pix_fmt;
 //        frames_ctx->sw_format = find_sw_fmt_by_hw_type(params.m_hwaccel_enc_device_type);
 //        frames_ctx->width     = input_codec_ctx->width;
 //        frames_ctx->height    = input_codec_ctx->height;
@@ -6078,83 +6093,6 @@ int FFmpeg_Transcoder::get_hw_v4l2m2m_encoder_name(AVCodecID codec_id, std::stri
     }
 
     return ret;
-}
-
-AVPixelFormat FFmpeg_Transcoder::find_hw_fmt_by_hw_type(AVHWDeviceType type)
-{
-    enum AVPixelFormat fmt;
-
-    switch (type)
-    {
-    case AV_HWDEVICE_TYPE_VAAPI:
-    {
-        fmt = AV_PIX_FMT_VAAPI;
-        break;
-    }
-        //case AV_HWDEVICE_TYPE_CUDA:
-        //{
-        //    fmt = AV_PIX_FMT_CUDA;
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_VDPAU:
-        //{
-        //    fmt = AV_PIX_FMT_VDPAU;
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_QSV:
-        //{
-        //    fmt = AV_PIX_FMT_QSV;
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_OPENCL:
-        //{
-        //    fmt = AV_PIX_FMT_OPENCL;
-        //    break;
-        //}
-        //#if HAVE_VULKAN_HWACCEL
-        //    case AV_HWDEVICE_TYPE_VULKAN:
-        //    {
-        //        fmt = AV_PIX_FMT_VULKAN;
-        //        break;
-        //    }
-        //#endif // HAVE_VULKAN_HWACCEL
-        // Digital Rights Management, not sure if this would work
-        //case AV_HWDEVICE_TYPE_DRM:
-        //{
-        //    fmt = AV_PIX_FMT_DRM_PRIME;
-        //    break;
-        //}
-        // Windows only, not supported
-        //case AV_HWDEVICE_TYPE_DXVA2:
-        //{
-        //    fmt = AV_PIX_FMT_DXVA2_VLD;
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_D3D11VA:
-        //{
-        //    fmt = AV_PIX_FMT_D3D11VA_VLD;
-        //    break;
-        //}
-        // MacOS, not supported
-        //case AV_HWDEVICE_TYPE_VIDEOTOOLBOX:
-        //{
-        //    fmt = AV_PIX_FMT_VIDEOTOOLBOX;
-        //    break;
-        //}
-        // Android
-        //case AV_HWDEVICE_TYPE_MEDIACODEC:
-        //{
-        //    fmt = AV_PIX_FMT_MEDIACODEC;
-        //    break;
-        //}
-    default:
-    {
-        fmt = AV_PIX_FMT_NONE;
-        break;
-    }
-    }
-
-    return fmt;
 }
 
 AVPixelFormat FFmpeg_Transcoder::find_sw_fmt_by_hw_type(AVHWDeviceType type)

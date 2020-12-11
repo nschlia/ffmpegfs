@@ -367,7 +367,7 @@ std::string get_level_text(PRORESLEVEL level);
  */
 std::string  get_hwaccel_buffering_text(AVHWDeviceType hwaccel_buffering);
 /**
- * @brief Get the selected hardware accelerarion as text.
+ * @brief Get the selected hardware acceleration as text.
  * @param[in] hwaccel_API - Hardware acceleration buffering API.
  * @return Hardware acceleration API as string.
  */

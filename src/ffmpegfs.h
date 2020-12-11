@@ -103,6 +103,10 @@ typedef enum HWACCELAPI
     HWACCELAPI_VAAPI            = AV_HWDEVICE_TYPE_VAAPI,               /**< Intel: VAAPI */
     //HWACCELAPI_CUDA             = AV_HWDEVICE_TYPE_CUDA,              /**< Nividia: CUDA */
 
+    HWACCELAPI_MMAL,                                                    /**< Raspberry: MMAL */
+    HWACCELAPI_OMX,                                                     /**< Raspberry: OpenMAX */
+    HWACCELAPI_V4L2M2M,                                                 /**< v4l2 mem to mem (Video4linux) */
+
     // Additional formats
 
     //HWACCELAPI_VDPAU          = AV_HWDEVICE_TYPE_VDPAU,               /**< not supported */
@@ -113,11 +117,9 @@ typedef enum HWACCELAPI
     //HWACCELAPI_DRM            = AV_HWDEVICE_TYPE_DRM,                 /**< not supported */
     //HWACCELAPI_OPENCL         = AV_HWDEVICE_TYPE_OPENCL,              /**< not supported */
     //HWACCELAPI_MEDIACODEC     = AV_HWDEVICE_TYPE_MEDIACODEC,          /**< not supported */
+    //#if HAVE_VULKAN_HWACCEL
     //HWACCELAPI_VULKAN         = AV_HWDEVICE_TYPE_VULKAN,              /**< not supported */
-
-    HWACCELAPI_MMAL,                                                    /**< Raspberry: MMAL */
-    HWACCELAPI_OMX,                                                     /**< Raspberry: OpenMAX */
-    HWACCELAPI_V4L2M2M,                                                 /**< v4l2 mem to mem (Video4linux) */
+    //#endif // HAVE_VULKAN_HWACCEL
 
 } HWACCELAPI;
 

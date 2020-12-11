@@ -359,7 +359,7 @@ typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map 
 typedef struct HWACCEL                                          /**< @brief Hardware acceleration device and type */
 {
     HWACCELAPI          m_hwaccel_API;                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
-    AVHWDeviceType      m_hwaccel_device_type;                      /**< @brief Hardware buffering type, NONE if not used */
+    AVHWDeviceType      m_hwaccel_device_type;                  /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
 
 typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;       /**< @brief Map command line option to HWACCEL struct */

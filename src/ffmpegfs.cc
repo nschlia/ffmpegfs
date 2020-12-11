@@ -1103,7 +1103,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
         if (it == hwaccel_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid hwaccel encoder API: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid hardware acceleration encoder API: %s\n", data.c_str());
             return -1;
         }
 
@@ -1113,7 +1113,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing hwaccel encoder string\n");
+    std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration encoder API string\n");
 
     return -1;
 }

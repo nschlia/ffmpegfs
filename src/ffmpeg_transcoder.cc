@@ -154,6 +154,24 @@ const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
     {   0,     0,     {                               },	{	0 }	},
 };
 
+const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
+{
+    { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },
+    { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - pix_fmt untested. AV_PIX_FMT_P010 or AV_PIX_FMT_QSV
+    { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_OPENCL },
+    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_NV12 },
+    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - pix_fmt untested.
+    #if HAVE_VULKAN_HWACCEL
+    { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - pix_fmt untested.
+    #endif // HAVE_VULKAN_HWACCEL
+    { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC }     ///< @todo HWACCEL - pix_fmt untested.
+};
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFmpeg_Transcoder::FFmpeg_Transcoder()
@@ -6141,83 +6159,14 @@ AVPixelFormat FFmpeg_Transcoder::find_hw_fmt_by_hw_type(AVHWDeviceType type)
 
 AVPixelFormat FFmpeg_Transcoder::find_sw_fmt_by_hw_type(AVHWDeviceType type)
 {
-    enum AVPixelFormat fmt;
+    DEVICETYPE_MAP::const_iterator it = m_devicetype_map.find(type);
 
-    switch (type)
+    if (it == m_devicetype_map.cend())
     {
-    case AV_HWDEVICE_TYPE_VAAPI:
-    {
-        fmt = AV_PIX_FMT_NV12;
-        break;
-    }
-        //case AV_HWDEVICE_TYPE_CUDA:
-        //{
-        //    fmt = AV_PIX_FMT_CUDA;      //** @todo: HWACCEL - pix_fmt untested...
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_VDPAU:
-        //{
-        //    fmt = AV_PIX_FMT_YUV420P;      //** @todo: HWACCEL - pix_fmt untested...
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_QSV:
-        //{
-        //    // AV_PIX_FMT_NV12
-        //    // AV_PIX_FMT_P010
-        //    // AV_PIX_FMT_QSV
-        //
-        //    fmt = AV_PIX_FMT_NV12;       //** @todo: HWACCEL - pix_fmt untested...
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_OPENCL:
-        //{
-        //    fmt = AV_PIX_FMT_OPENCL;    //** @todo: HWACCEL - pix_fmt untested...
-        //    break;
-        //}
-        //#if HAVE_VULKAN_HWACCEL
-        //    case AV_HWDEVICE_TYPE_VULKAN:
-        //    {
-        //        fmt = AV_PIX_FMT_VULKAN;    //** @todo: HWACCEL - pix_fmt untested...
-        //        break;
-        //    }
-        //#endif // HAVE_VULKAN_HWACCEL
-        // Digital Rights Management, not sure if this would work
-        //case AV_HWDEVICE_TYPE_DRM:
-        //{
-        //    fmt = AV_PIX_FMT_DRM_PRIME;
-        //    break;
-        //}
-        // Windows only, not supported
-        //case AV_HWDEVICE_TYPE_DXVA2:
-        //{
-        //    fmt = AV_PIX_FMT_DXVA2_VLD;
-        //    break;
-        //}
-        //case AV_HWDEVICE_TYPE_D3D11VA:
-        //{
-        //    fmt = AV_PIX_FMT_D3D11VA_VLD;
-        //    break;
-        //}
-        // MacOS, not supported
-        //case AV_HWDEVICE_TYPE_VIDEOTOOLBOX:
-        //{
-        //    fmt = AV_PIX_FMT_VIDEOTOOLBOX;
-        //    break;
-        //}
-        // Android
-        //case AV_HWDEVICE_TYPE_MEDIACODEC:
-        //{
-        //    fmt = AV_PIX_FMT_MEDIACODEC;
-        //    break;
-        //}
-    default:
-    {
-        fmt = AV_PIX_FMT_NONE;
-        break;
-    }
+        return AV_PIX_FMT_NONE;
     }
 
-    return fmt;
+    return it->second;
 }
 
 void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx) const
@@ -6230,16 +6179,7 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     if (m_hwaccel_enable_dec_buffering)
     {
-        if (m_in.m_video.m_codec_ctx != nullptr &&
-                m_in.m_video.m_codec_ctx->hw_frames_ctx != nullptr  &&
-                m_in.m_video.m_codec_ctx->hw_frames_ctx->data != nullptr )
-        {
-            *in_pix_fmt = reinterpret_cast<AVHWFramesContext*>(m_in.m_video.m_codec_ctx->hw_frames_ctx->data)->sw_format;
-        }
-        else
-        {
-            *in_pix_fmt = find_sw_fmt_by_hw_type(params.m_hwaccel_dec_device_type);
-        }
+        *in_pix_fmt = find_sw_fmt_by_hw_type(params.m_hwaccel_dec_device_type);
     }
 
     if (output_codec_ctx == nullptr)
@@ -6248,25 +6188,22 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
     }
 
     // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
-    AVPixelFormat pix_fmt = (output_codec_ctx != nullptr) ? output_codec_ctx->pix_fmt : AV_PIX_FMT_YUV420P;
+    *out_pix_fmt = (output_codec_ctx != nullptr) ? output_codec_ctx->pix_fmt : AV_PIX_FMT_YUV420P;
 
     if (*in_pix_fmt == AV_PIX_FMT_NONE)
     {
         // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-        *in_pix_fmt = pix_fmt;
+        *in_pix_fmt = *out_pix_fmt;
     }
 
-    // If hardware acceleration is enabled, e.g., output_codec_ctx->pix_fmt is AV_PIX_FMT_VAAPI but the format actually is AV_PIX_FMT_NV12,
-    // so we use the correct value from sw_format in the hardware frames context.
+    // If hardware acceleration is enabled, e.g., output_codec_ctx->pix_fmt is AV_PIX_FMT_VAAPI
+    // but the format actually is AV_PIX_FMT_NV12 so we use the correct value from sw_format in
+    // the hardware frames context.
     if (m_hwaccel_enable_enc_buffering &&
             output_codec_ctx != nullptr &&
             output_codec_ctx->hw_frames_ctx != nullptr &&
             output_codec_ctx->hw_frames_ctx->data != nullptr)
     {
         *out_pix_fmt = reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format;
-    }
-    else
-    {
-        *out_pix_fmt = pix_fmt;
     }
 }

@@ -145,6 +145,8 @@ public:
         ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */
     };
 
+    typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP;     /**< @brief Map device types to pixel formats */
+
 public:
     /**
      * Construct FFmpeg_Transcoder object
@@ -308,7 +310,7 @@ public:
      * @brief Flush FFmpeg's input buffers
      */
     void                        flush_buffers();
-        
+
 protected:
     /**
      * @brief Find best match stream and open codec context for it.
@@ -505,7 +507,7 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         flush_frames_all(bool use_flush_packet);
-     /**
+    /**
      * @brief Flush the remaining frames
      * @param[in] stream_index - Stream index to flush.
      * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
@@ -727,12 +729,12 @@ protected:
      * @param [out] in_pix_fmt - Input pixel format.
      * @param [out] out_pix_fmt - Output pixel format.
      */
-    void  get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
+    void                        get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
 
     // Hardware de/encoding
     /**
      * Callback to negotiate the pixelFormat
-     * @param[in] ctx - Codec context
+     * @param[in] input_codec_ctx - Input codec context
      * @param[in] pix_fmts is the list of formats which are supported by the codec,
      * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
      * The first is always the native one.
@@ -744,10 +746,10 @@ protected:
      * - encoding: unused
      * - decoding: Set by user, if not set the native format will be chosen.
      */
-    static enum AVPixelFormat   get_format_static(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
+    static enum AVPixelFormat   get_format_static(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts);
     /**
      * Callback to negotiate the pixelFormat
-     * @param[in] ctx - Codec context
+     * @param[in] input_codec_ctx - Input codec context
      * @param[in] pix_fmts is the list of formats which are supported by the codec,
      * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
      * The first is always the native one.
@@ -759,7 +761,7 @@ protected:
      * - encoding: unused
      * - decoding: Set by user, if not set the native format will be chosen.
      */
-    enum AVPixelFormat          get_format(AVCodecContext *ctx, const enum AVPixelFormat *pix_fmts);
+    enum AVPixelFormat          get_format(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts);
     /**
      * Open a device of the specified type and create an AVHWDeviceContext for it.
      *
@@ -798,28 +800,28 @@ protected:
      * @brief Adds a reference to an existing decoder hardware frame context or
      * allocates a new AVHWFramesContext tied to the given hardware device context
      * if if the decoder runs in software.
-     * @param[in] encoder_ctx - Encoder codexc context
-     * @param[in] decoder_ctx - Decoder codexc context
+     * @param[in] output_codec_ctx - Encoder codexc context
+     * @param[in] input_codec_ctx - Decoder codexc context
      * @param[in] hw_device_ctx - Existing hardware device context
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_ctx_set(AVCodecContext *encoder_ctx, AVCodecContext *decoder_ctx, AVBufferRef *hw_device_ctx) const;
+    int                         hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodecContext *input_codec_ctx, AVBufferRef *hw_device_ctx) const;
     /**
      * Copy data hardware surface to software.
-     * @param[in] encoder_ctx - Codec context
+     * @param[in] output_codec_ctx - Codec context
      * @param[out] sw_frame - AVFrame to copy data to
      * @param[in] hw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_from_hw(AVCodecContext *encoder_ctx, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
+    int                         hwframe_copy_from_hw(AVCodecContext *output_codec_ctx, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
     /**
      * Copy data software to a hardware surface.
-     * @param[in] encoder_ctx - Codec context
+     * @param[in] output_codec_ctx - Codec context
      * @param[out] hw_frame - AVFrame to copy data to
      * @param[in] sw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_to_hw(AVCodecContext *encoder_ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    int                         hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
     /**
      * @brief Get the hardware codec name as string. This is required, because e.g.
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
@@ -935,7 +937,8 @@ private:
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
 
-    // Hardware accelerarion
+    // Hardware acceleration
+    static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */
     bool						m_hwaccel_enable_enc_buffering; /**< @brief Enable hardware acceleration frame buffers for encoder */
     bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
     AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */

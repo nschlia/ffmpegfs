@@ -761,8 +761,8 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
                 "#EXT-X-MEDIA-SEQUENCE:1\n";
 
         int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
-        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count(); // @todo: Feature #2506 - calculate correct file size
-        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count(); // @todo: Feature #2506 - calculate correct file size
+        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count(); // @todo Feature #2506 - calculate correct file size
+        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count(); // @todo Feature #2506 - calculate correct file size
 
         for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
         {
@@ -1236,7 +1236,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                         if (parent_file != nullptr && (parent_file->m_flags & VIRTUALFLAG_DIRECTORY) && (parent_file->m_flags & VIRTUALFLAG_FILESET))
                         {
-                            if (!parent_file->m_video_frame_count)  //***< @todo: was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?
+                            if (!parent_file->m_video_frame_count)  //***< @todo was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?
                             {
                                 int res = get_source_properties(origpath, parent_file);
                                 if (res < 0)

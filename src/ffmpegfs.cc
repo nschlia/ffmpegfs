@@ -858,7 +858,7 @@ static int get_size(const std::string & arg, size_t *size)
  */
 static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 {
-    /** @todo: evaluate this function */
+    /** @todo evaluate this function */
     size_t pos = arg.find('=');
 
     if (pos != std::string::npos)

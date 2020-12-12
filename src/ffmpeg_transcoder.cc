@@ -930,7 +930,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
-    output_codec_ctx->bit_rate             = 400000;   /**  @todo: Make frame image compression rate command line settable */
+    output_codec_ctx->bit_rate             = 400000;   /**  @todo Make frame image compression rate command line settable */
     output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
     output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
     output_codec_ctx->time_base            = {1, 25};
@@ -1622,7 +1622,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
-            /** @todo: FFmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
+            /** @todo FFmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
 
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
@@ -2055,7 +2055,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     //output_stream->codec->framerate = { 1, 0 };
 
-    /** @todo: Support album arts */
+    /** @todo Support album arts */
     // mp4 album arts do not work with ipod profile. Set mp4.
     //if (m_out.m_format_ctx->oformat->mime_type != nullptr && (!strcmp(m_out.m_format_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_format_ctx->oformat->mime_type, "video/mp4")))
     //{
@@ -3424,7 +3424,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 
             if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
             {
-                /** @todo: Is this a FFmpeg bug or am I too stupid?
+                /** @todo Is this a FFmpeg bug or am I too stupid?
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
                  * at 48 K sampling rate.
                  * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value.
@@ -3988,7 +3988,7 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 {
     m_have_seeked           = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
-    //m_skip_next_frame = true; /**< @todo: Take deinterlace into account */
+    //m_skip_next_frame = true; /**< @todo Take deinterlace into account */
 
     if (m_skip_next_frame)
     {
@@ -4095,7 +4095,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     if (seek_frame_no > PRESCAN_FRAMES)
                     {
                         seek_frame_no -= PRESCAN_FRAMES;
-                        //m_skip_next_frame = true; /**< @todo: Take deinterlace into account */
+                        //m_skip_next_frame = true; /**< @todo Take deinterlace into account */
                     }
                     else
                     {
@@ -4723,7 +4723,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
                 Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
             }
         }
-        // else      /** @todo: Feature #2260: Add picture size */
+        // else      /** @todo Feature #2260: Add picture size */
         // {
         // }
     }

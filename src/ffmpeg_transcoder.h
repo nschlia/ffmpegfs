@@ -326,10 +326,10 @@ protected:
      * @brief Determine the hardware pixel format for the codec, if applicable.
      * @param codec - Input codec used
      * @param dev_type - Hardware device type
-     * @param use_frames_ctx - If true checks for pix format if using a hardware frames context, for a pix format using a hardware device context otherwise.
+     * @param use_device_ctx - If true checks for pix format if using a hardware device context, for a pix format using a hardware frames context otherwise.
      * @return Returns hardware pixel format, or AV_PIX_FMT_NONE if not applicable.
      */
-    AVPixelFormat               get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_frames_ctx) const;
+    AVPixelFormat               get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const;
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context

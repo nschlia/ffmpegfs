@@ -719,10 +719,10 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
     return open_decoder(avctx, *stream_idx, input_codec, type);
 }
 
-AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_frames_ctx) const
+AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const
 {
     AVPixelFormat hw_pix_fmt = AV_PIX_FMT_NONE;
-    int method = use_frames_ctx ? AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX : AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX;
+    int method = use_device_ctx ? AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX : AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX;
 
     if (codec != nullptr)
     {
@@ -791,7 +791,9 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         std::string hw_decoder_codec_name;
         if (!get_hw_decoder_name(input_codec_ctx->codec_id, &hw_decoder_codec_name))
         {
-            m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE);
+            m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, true);
+
+            m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE && m_dec_hw_pix_fmt != AV_PIX_FMT_NONE);
             /**
               * @todo HACK! This is probably a stupid way to handle the problem:
               * On my systems, H264 files with "acv1" flavour (Advanced Video Coding)
@@ -817,8 +819,6 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         if (m_hwaccel_enable_dec_buffering)
         {
-            m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, false);
-
             // Hardware buffers available, enabling decoder hardware acceleration.
             Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
@@ -1564,7 +1564,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
 
-            m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, true);
+            m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, false);
 
             ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx);
             if (ret < 0)

@@ -722,10 +722,11 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
 AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const
 {
     AVPixelFormat hw_pix_fmt = AV_PIX_FMT_NONE;
-    int method = use_device_ctx ? AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX : AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX;
 
-    if (codec != nullptr)
+    if (codec != nullptr && dev_type != AV_HWDEVICE_TYPE_NONE)
     {
+        int method = use_device_ctx ? AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX : AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX;
+
         for (int i = 0;; i++)
         {
             const AVCodecHWConfig *config = avcodec_get_hw_config(codec, i);

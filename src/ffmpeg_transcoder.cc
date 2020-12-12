@@ -839,7 +839,16 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
             // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
             Logging::info(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
 
-            ///< @todo Open hw_decoder_codec_name codec here
+            // Open hw_decoder_codec_name codec here
+            input_codec = avcodec_find_decoder_by_name(hw_decoder_codec_name.c_str());
+
+            if (input_codec == nullptr)
+            {
+                Logging::error(filename(), "Could not find decoder '%1'.", hw_decoder_codec_name.c_str());
+                return AVERROR(EINVAL);
+            }
+
+            Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
         }
 
         if (m_hwaccel_enable_dec_buffering)
@@ -855,10 +864,6 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
     if (input_codec == nullptr)
     {
         // Find a decoder for the stream.
-        //std::string codec_name;
-        //if (get_hw_decoder_name(codec_id, &codec_name))
-        //{
-        // find the encoder
         input_codec = avcodec_find_decoder(codec_id);
 
         if (input_codec == nullptr)
@@ -866,19 +871,6 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
             Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
             return AVERROR(EINVAL);
         }
-        //}
-        //else
-        //{
-        //    input_codec = avcodec_find_decoder_by_name(codec_name.c_str());
-
-        //    if (input_codec == nullptr)
-        //    {
-        //        Logging::error(filename(), "Could not find decoder '%1'.", codec_name);
-        //        return AVERROR(EINVAL);
-        //    }
-
-        //    Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
-        //}
     }
 
     input_codec_ctx->codec_id = input_codec->id;

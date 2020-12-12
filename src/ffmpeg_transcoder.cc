@@ -5837,6 +5837,7 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
      * hevc_vaapi           H.265/HEVC (VAAPI) (codec hevc)
      * mjpeg_vaapi          MJPEG (VAAPI) (codec mjpeg)
      * mpeg2_vaapi          MPEG-2 (VAAPI) (codec mpeg2video)
+     * vp1_vaapi            VC1 (VAAPI) (codec vc1) seems to be possible on my hardware
      * vp8_vaapi            VP8 (VAAPI) (codec vp8)
      * vp9_vaapi            VP9 (VAAPI) (codec vp9)
      *
@@ -5874,13 +5875,11 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
           * #15 0x00007f95ae920d4f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95
           *
           */
-/*		  
-    case AV_CODEC_ID_MJPEG:
-    {
-        *codec_name = "mjpeg_vaapi";
-        break;
-    }
-*/
+        //case AV_CODEC_ID_MJPEG:
+        //{
+        //    *codec_name = "mjpeg_vaapi";
+        //    break;
+        //}
     case AV_CODEC_ID_MPEG2VIDEO:
     {
         *codec_name = "mpeg2_vaapi";
@@ -5891,6 +5890,19 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         *codec_name = "hevc_vaapi";
         break;
     }
+        /**
+         * @todo HWACCEL - fixit, VC1 decoding does not work...
+         *
+         * ERROR  : [vc1 @ 0x7f49cc00d580] No support for codec vc1 profile 3.
+         * ERROR  : [vc1 @ 0x7f49cc00d580] Failed setup for format vaapi_vld: hwaccel initialisation returned error.
+         *
+         * GPF and core dump next!
+         */
+    case AV_CODEC_ID_VC1:
+    {
+        *codec_name = "vc1_vaapi";
+        break;
+    }
     case AV_CODEC_ID_VP8:
     {
         *codec_name = "vp9_vaapi";
@@ -5899,27 +5911,20 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         /**
          * @todo HWACCEL - fixit, VP9 decoding does not work...
          *
-         * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
-         * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
-         * 2020-08-02 13:42:32 ERROR  : [/home/norbert/test/out/Tony Braxton - Unbreak my heart (640x480).webm] Could not open video output codec
+         * WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
+         * ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).
+         * ERROR  : [/home/norbert/test/out/Tony Braxton - Unbreak my heart (640x480).webm] Could not open video output codec
          *
-         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
-         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252956000 to decoder (error 'Invalid data found when processing input').
-         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252989000 to decoder (error 'Invalid data found when processing input').
-         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
-         * 2020-10-25 22:58:47 ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=253022000 to decoder (error 'Invalid data found when processing input').
-         * 2020-10-25 22:58:47 ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
+         * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video)-VP9.webm] Could not send video packet at PTS=252922000 to decoder (error 'Invalid data found when processing input').
+         * ERROR  : [vp9 @ 0x7f494c012f00] Not all references are available
          *
+         * GPF and core dump next!
          */
-/*
-    case AV_CODEC_ID_VP9:
-    {
-        *codec_name = "vp9_vaapi";
-        break;
-    }
-*/
+        //case AV_CODEC_ID_VP9:
+        //{
+        //    *codec_name = "vp9_vaapi";
+        //    break;
+        //}
     default:
     {
         ret = AVERROR_DECODER_NOT_FOUND;

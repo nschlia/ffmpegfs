@@ -5948,6 +5948,23 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
         *codec_name = "h264_mmal";
         break;
     }
+        /**
+          * @todo mmal MPEG1 hardware acceleration not working. Probably because I have not bought a key... @n
+          * @n
+          * INFO   : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Transcoding to ts. @n
+          * INFO   : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Hardware decoder acceleration active using codec 'mpeg2_mmal'. @n
+          * INFO   : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Hardware decoder acceleration enabled. Codec 'mpeg2_mmal'. @n
+          * mmal: mmal_vc_port_info_set: failed to set port info (2:0): EINVAL @n
+          * mmal: mmal_vc_port_set_format: mmal_vc_port_info_set failed 0x6b985440 (EINVAL) @n
+          * mmal: mmal_port_disable: port vc.ril.video_decode:in:0(MP2V)(0x6b985440) is not enabled @n
+          * mmal: mmal_port_disable: port vc.ril.video_decode:out:0(0x6b985890) is not enabled @n
+          * mmal: mmal_port_disable: port vc.ril.video_decode:ctr:0(0x6b94db90) is not enabled @n
+          * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Failed to open video input codec for stream #video (error '0'). @n
+          * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Failed to open video codec (error 'Unknown error occurred'). @n
+          * ERROR  : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] Transcoding exited with error. @n
+          * ERROR  : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] System error: (5) Input/output error @n
+          * ERROR  : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] FFMpeg error: (-1313558101) Unknown error occurred
+          */
     case AV_CODEC_ID_MPEG2VIDEO:
     {
         *codec_name = "mpeg2_mmal";
@@ -5958,6 +5975,19 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
         *codec_name = "mpeg4_mmal";
         break;
     }
+        /**
+            * @todo mmal VC1 hardware acceleration not working. Probably because I have not bought a key... @n
+            * @n
+            * INFO   : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Hardware decoder acceleration active using codec 'vc1_mmal'. @n
+            * INFO   : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Hardware decoder acceleration enabled. Codec 'vc1_mmal'. @n
+            * mmal: mmal_vc_port_info_set: failed to set port info (2:0): EINVAL @n
+            * mmal: mmal_vc_port_set_format: mmal_vc_port_info_set failed 0x6e54c560 (EINVAL) @n
+            * mmal: mmal_port_disable: port vc.ril.video_decode:in:0(WVC1)(0x6e54c560) is not enabled @n
+            * mmal: mmal_port_disable: port vc.ril.video_decode:out:0(0x6e546660) is not enabled @n
+            * mmal: mmal_port_disable: port vc.ril.video_decode:ctr:0(0x6e54c240) is not enabled @n
+            * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video input codec for stream #video (error '0'). @n
+            * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video codec (error 'Unknown error occurred').
+            */
     case AV_CODEC_ID_VC1:
     {
         *codec_name = "vc1_mmal";

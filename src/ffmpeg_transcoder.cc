@@ -451,7 +451,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (m_in.m_video.m_stream_idx >= 0)
     {
         // We have a video stream
-        //*** @todo: Do this somewhere else? */
+        //*** @todo Do this somewhere else? */
         // Check to see if encoder hardware acceleration is both requested and supported by codec.
         std::string hw_encoder_codec_name;
         if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
@@ -793,7 +793,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         {
             m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE);
             /**
-              * @todo: HACK! This is probably a stupid way to handle the problem:
+              * @todo HACK! This is probably a stupid way to handle the problem:
               * On my systems, H264 files with "acv1" flavour (Advanced Video Coding)
               * won't decode in hardware. Thus, if a file contains that mark, we have
               * to fall back to software.
@@ -5511,7 +5511,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
 
     if (active_device == "AUTO" && dev_type == AV_HWDEVICE_TYPE_VAAPI)
     {
-        active_device = "/dev/dri/renderD128";	//** @todo: HWACCEL - Try to autodetect rendering device
+        active_device = "/dev/dri/renderD128";	//** @todo HWACCEL - Try to autodetect rendering device
     }
 
     ret = av_hwdevice_ctx_create(hwaccel_enc_device_ctx, dev_type, !active_device.empty() ? active_device.c_str() : nullptr, nullptr, 0);
@@ -5727,7 +5727,7 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
 }
 
 /**
- * @todo: HWACCEL - Supported formats
+ * @todo HWACCEL - Supported formats
  *
  * Tested and working: VA-API, MMAL and OMX.
  *
@@ -5823,7 +5823,7 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         break;
     }
         /**
-          * @todo: fixit, MPEG-1 decoding does not work...
+          * @todo fixit, MPEG-1 decoding does not work...
           *
           * Program terminated with signal SIGSEGV, Segmentation fault.
           * #0  __memmove_avx_unaligned_erms () at ../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:383
@@ -5871,7 +5871,7 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         break;
     }
         /**
-         * @todo: HWACCEL - fixit, VP9 decoding does not work...
+         * @todo HWACCEL - fixit, VP9 decoding does not work...
          *
          * 2020-08-02 13:42:32 WARNING: [rv30 @ 0x7f9140008640] Changing dimensions to 320x480
          * 2020-08-02 13:42:32 ERROR  : [vp9_vaapi @ 0x7f91400cc980] No usable encoding entrypoint found for profile VAProfileVP9Profile0 (19).

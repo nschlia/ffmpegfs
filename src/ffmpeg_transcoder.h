@@ -837,19 +837,19 @@ protected:
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
-     * @param[out] codec_name - Name of the codec.
+     * @param[out] codec_name - Returns the name of the codec, may be nullptr if not requitred.
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    int                         get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name = nullptr) const;
     /**
      * @brief Get the hardware codec name as string. This is required, because e.g.
      * the name for the software codec is libx264, but for hardware it is h264_vaapi
      * under VAAPI.
      * @param[in] codec_id - Id of encoder/decoder codec
-     * @param[out] codec_name - Name of the codec.
+     * @param[out] codec_name - Returns the name of the codec, may be nullptr if not requitred.
      * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
      */
-    int                         get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    int                         get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name = nullptr) const;
     /**
      * @brief Determine VAAPI codec name
      * @param[in] codec_id - Id of encoder/decoder codec

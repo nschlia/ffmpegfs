@@ -5739,24 +5739,24 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
  */
 int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name) const
 {
-    codec_name->clear();
+    std::string codec_name_buf;
     int ret = 0;
 
     switch (params.m_hwaccel_dec_API)
     {
     case HWACCELAPI_VAAPI:
     {
-        ret = get_hw_vaapi_codec_name(codec_id, codec_name);
+        ret = get_hw_vaapi_codec_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_MMAL:
     {
-        ret = get_hw_mmal_decoder_name(codec_id, codec_name);
+        ret = get_hw_mmal_decoder_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_V4L2M2M:
     {
-        ret = get_hw_v4l2m2m_decoder_name(codec_id, codec_name);
+        ret = get_hw_v4l2m2m_decoder_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_NONE:
@@ -5766,29 +5766,42 @@ int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *code
         break;
     }
     }
+
+    if (codec_name != nullptr)
+    {
+        if (!ret)
+        {
+            *codec_name = codec_name_buf;
+        }
+        else
+        {
+            codec_name->clear();
+        }
+    }
+
     return ret;
 }
 
 int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name) const
 {
-    codec_name->clear();
+    std::string codec_name_buf;
     int ret = 0;
 
     switch (params.m_hwaccel_enc_API)
     {
     case HWACCELAPI_VAAPI:
     {
-        ret = get_hw_vaapi_codec_name(codec_id, codec_name);
+        ret = get_hw_vaapi_codec_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_OMX:
     {
-        ret = get_hw_omx_encoder_name(codec_id, codec_name);
+        ret = get_hw_omx_encoder_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_V4L2M2M:
     {
-        ret = get_hw_v4l2m2m_encoder_name(codec_id, codec_name);
+        ret = get_hw_v4l2m2m_encoder_name(codec_id, &codec_name_buf);
         break;
     }
     case HWACCELAPI_NONE:
@@ -5798,6 +5811,19 @@ int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *code
         break;
     }
     }
+
+    if (codec_name != nullptr)
+    {
+        if (!ret)
+        {
+            *codec_name = codec_name_buf;
+        }
+        else
+        {
+            codec_name->clear();
+        }
+    }
+
     return ret;
 }
 

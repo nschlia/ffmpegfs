@@ -3,16 +3,13 @@ FFmpegfs
 
 | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- |
-| gcc 8.2.0 | FFmpeg 4.1.4| ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| clang 7.0.1 | FFmpeg 4.1.4 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| gcc 8.2.0 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| clang 7.0.1 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
 
 News
 ----
 
 **Planned features**
-
-* [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.
-* Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
 **New in 2.x:**
 
@@ -33,20 +30,26 @@ News
 **New in 2.1:**
 
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
+* Feature: Implemented in 1.7, removed experimental state for --win_smb_fix now.
+           Windows seems to access the files on Samba drives starting at the last 64K segment
+           simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts
+           (not decode the file up to this point).
+* Feature: --win_smb_fix now defaults to 1 (fix on by default). Has no effect
+           if the drive is accessed directly or via Samba from Linux.
+* Bugfix: Fixed grammatical error in text: It's "access to", not "access at".
 * Bugfix: Did not transcode some source files with invalid DTS.
 * Bugfix: Cosmetical - No need to log date/time twice in syslog.
 * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
-* Log cache close action at trace level
-* Shorter log entry when opening cache files
+* Bugfix: Report correct segment duration
+* Bugfix: Avoid crash if opening next HLS segment failed. Should not ignore this, but report
+          it instead and stop transcoding.
+* Cosmetical: Log cache close action at trace level
+* Cosmetical: Shorter log entry when opening cache files
 
-**Version 2.0 released**
+**Planned features**
 
-Finally. we are at 2.0!
-
-**New in 2.0:**
-
-* Feature: No new features, new release 2.0 after feature freeze.
-* Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
+* [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.
+* Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
 
 About
 -----

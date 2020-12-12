@@ -44,7 +44,7 @@ Important changes in 2.1 (2020-12-XX)
 * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
 * Bugfix: Report correct segment duration
 * Bugfix: Avoid crash if opening next HLS segment failed. Should not ignore this, but report
-          it and stop transcoding.
+          it instead and stop transcoding.
 * Cosmetical: Log cache close action at trace level
 * Cosmetical: Shorter log entry when opening cache files
 

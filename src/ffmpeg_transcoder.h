@@ -149,6 +149,14 @@ public:
 
     typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP;     /**< @brief Map device types to pixel formats */
 
+    typedef enum HWACCELMODE                            /**< @brief Currently active hardware acceleration mode */
+    {
+        HWACCELMODE_NONE,                               /**< @brief Hardware acceleration not active */
+        HWACCELMODE_ENABLED,                            /**< @brief Hardware acceleration is active */
+        HWACCELMODE_FALLBACK                            /**< @brief Hardware acceleration selected, but fell back to software */
+
+    } HWACCELMODE;
+
 public:
     /**
      * Construct FFmpeg_Transcoder object
@@ -943,6 +951,7 @@ private:
 
     // Hardware acceleration
     static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */
+    HWACCELMODE                 m_hwaccel_mode;                 /**< @brief Current hardware acceleration mode */
     bool						m_hwaccel_enable_enc_buffering; /**< @brief Enable hardware acceleration frame buffers for encoder */
     bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
     AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */

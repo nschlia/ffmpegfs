@@ -3,10 +3,10 @@ FFmpegfs
 
 | Branch | State | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| master | testing | gcc 8.2.0 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| master | testing | clang 7.0.1 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
-| FB | experimental | gcc 8.2.0 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)) |
-| FB | experimental | clang 7.0.1 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | testing | gcc 8.2.0 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | testing | clang 7.0.1 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| [FB](https://github.com/nschlia/ffmpegfs/tree/FB) | experimental | gcc 8.2.0 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)) |
+| [FB](https://github.com/nschlia/ffmpegfs/tree/FB) | experimental | clang 7.0.1 | FFmpeg 4.1.6-1~deb10u1 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)) |
 
 News
 ----

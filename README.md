@@ -11,8 +11,6 @@ FFmpegfs
 News
 ----
 
-**Planned features**
-
 **New in 2.1:**
 
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)

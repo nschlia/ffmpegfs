@@ -27,6 +27,8 @@ News
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, FFmpegfs must decide that automatically.
 * See [NEWS](NEWS) for details.
 
+**Version 2.1 released**
+
 **New in 2.1:**
 
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)

@@ -276,6 +276,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
 
+    get_destname(&m_out.m_filename, m_in.m_filename);
+
     if (is_open())
     {
         Logging::warning(filename(), "File is already open.");
@@ -463,24 +465,24 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         if (m_hwaccel_enable_enc_buffering)
         {
             // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(filename(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+            Logging::info(destname(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
             ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
             if (ret < 0)
             {
-                Logging::error(filename(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
+                Logging::error(destname(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
-            Logging::debug(filename(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
+            Logging::debug(destname(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
         else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
         {
             // No hardware acceleration, fallback to software,
-            Logging::debug(filename(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            Logging::debug(destname(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
         }
         else if (!hw_encoder_codec_name.empty())
         {
             // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-            Logging::debug(filename(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
+            Logging::debug(destname(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
         }
 
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
@@ -679,7 +681,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
     assert(buffer != nullptr);
 
-    get_destname(&m_out.m_filename, m_in.m_filename);
+    //get_destname(&m_out.m_filename, m_in.m_filename);
 
     m_out.m_filetype    = m_current_format->filetype();
 
@@ -732,14 +734,14 @@ AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType d
             const AVCodecHWConfig *config = avcodec_get_hw_config(codec, i);
             if (!config)
             {
-                Logging::error(filename(), "%1 '%2' does not support device type %3.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, hwdevice_get_type_name(dev_type));
+                Logging::error(av_codec_is_decoder(codec) ? filename() : destname(), "%1 '%2' does not support device type %3.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, hwdevice_get_type_name(dev_type));
                 break;
             }
 
             if ((config->methods & method) && (config->device_type == dev_type))
             {
                 hw_pix_fmt = config->pix_fmt;
-                Logging::info(filename(), "%1 '%2' requests %3 for device type %4.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, av_get_pix_fmt_name(hw_pix_fmt), hwdevice_get_type_name(dev_type));
+                Logging::info(av_codec_is_decoder(codec) ? filename() : destname(), "%1 '%2' requests %3 for device type %4.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, av_get_pix_fmt_name(hw_pix_fmt), hwdevice_get_type_name(dev_type));
                 break;
             }
         }
@@ -795,9 +797,12 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
             {
                 m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, true);
 
-                fprintf(stderr, "m_dec_hw_pix_fmt %i hw_decoder_codec_name %s\n", m_dec_hw_pix_fmt, hw_decoder_codec_name.c_str());
-
                 m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE && m_dec_hw_pix_fmt != AV_PIX_FMT_NONE);
+                //{
+                //    std::string fourcc2str;
+                //    fourcc_make_string(&fourcc2str, input_codec_ctx->codec_tag);
+                //    fprintf(stderr, "fourcc2str %s\n", fourcc2str.c_str());
+                //}
             }
 
             if (m_hwaccel_enable_dec_buffering)

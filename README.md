@@ -11,8 +11,6 @@ FFmpegfs
 News
 ----
 
-**Planned features**
-
 **New in 2.x:**
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding. This will be added in the FB branch. Sounds like a very good idea as whenever more than two or three transcoder threads start it easily saturates all CPUs. Using hardware acceleration will speed that up a lot and reduce CPU load.

@@ -27,9 +27,15 @@ Important changes in 2.5 (2020-12-xx)
   the source file, thus the file needs to be checked first and then decided if hardware
   acceleration can be used or fallback to software is required. FFmpeg requires that to be set
   via command line, FFmpegfs must decide that automatically.
-* Bugfix:
 
-Important changes in 2.1 (2020-12-XX)
+Preparing release 2.2
+
+Important changes in 2.2 (2020-12-XX)
+
+* Bugfix:
+* Feature: 
+
+Important changes in 2.1 (2020-12-14)
   
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
 * Feature: Implemented in 1.7, removed experimental state for --win_smb_fix now.

@@ -326,8 +326,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("--oldnamescheme=%u",              m_oldnamescheme, 0),
     FFMPEGFS_OPT("oldnamescheme=%u",                m_oldnamescheme, 0),
     // Experimental
-    FFMPEGFS_OPT("--win_smb_fix=%u",                m_win_smb_fix, 0),
-    FFMPEGFS_OPT("win_smb_fix=%u",                  m_win_smb_fix, 0),
+    FFMPEGFS_OPT("--win_smb_fix=%u",                m_win_smb_fix, 1),
+    FFMPEGFS_OPT("win_smb_fix=%u",                  m_win_smb_fix, 1),
     // FFmpegfs options
     FFMPEGFS_OPT("-d",                              m_debug, 1),
     FFMPEGFS_OPT("debug",                           m_debug, 1),
@@ -1544,7 +1544,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Min. DVD Chapter  : %1", format_duration(params.m_min_dvd_chapter_duration * AV_TIME_BASE).c_str());
     Logging::trace(nullptr, "Old Name Scheme   : %1", params.m_oldnamescheme ? "yes" : "no");
     Logging::trace(nullptr, "--------- Experimental Options ---------");
-    Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "inactive" : "SMB Lockup Fix Active");
+    Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "SMB Lockup Fix Active" : "inactive");
 }
 
 /**

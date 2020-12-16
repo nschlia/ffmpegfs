@@ -1022,7 +1022,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
         int _errno = errno;
-        Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        Logging::error(destname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
         return AVERROR(_errno);
     }
 
@@ -1079,7 +1079,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
         int _errno = errno;
-        Logging::error(filename(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
+        Logging::error(destname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
         return AVERROR(_errno);
     }
 
@@ -2218,7 +2218,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
         else
         {
-            Logging::info(filename(), "Copying video stream.");
+            Logging::info(destname(), "Copying video stream.");
 
             ret = add_stream_copy(m_current_format->video_codec_id(), AVMEDIA_TYPE_VIDEO);
             if (ret < 0)
@@ -2240,7 +2240,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
         else
         {
-            Logging::info(filename(), "Copying audio stream.");
+            Logging::info(destname(), "Copying audio stream.");
 
             ret = add_stream_copy(m_current_format->audio_codec_id(), AVMEDIA_TYPE_AUDIO);
             if (ret < 0)
@@ -2267,7 +2267,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer== nullptr)
     {
-        Logging::error(filename(), "Out of memory opening output file: Unable to allocate I/O buffer.");
+        Logging::error(destname(), "Out of memory opening output file: Unable to allocate I/O buffer.");
         return AVERROR(ENOMEM);
     }
 

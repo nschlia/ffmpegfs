@@ -5,7 +5,14 @@ FFmpegfs NEWS
 
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
-  
+
+Preparing release 2.2
+
+Important changes in 2.2 (2020-12-XX)
+
+* Feature:
+* Bugfix:
+
 Important changes in 2.1 (2020-12-14)
   
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)

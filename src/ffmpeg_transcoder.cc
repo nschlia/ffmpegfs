@@ -4066,7 +4066,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (next_segment > m_virtualfile->get_segment_count())
             {
-                Logging::error(destname(), "Reached targetted EOF at %1 (avoid creating too short last segment).", format_duration(pos).c_str());
+                Logging::error(destname(), "Reached targeted EOF at %1 (avoid creating too short last segment).", format_duration(pos).c_str());
                 throw AVERROR_EOF;
             }
             else if (next_segment == m_current_segment + 1)

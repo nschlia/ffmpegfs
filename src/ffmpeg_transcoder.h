@@ -115,7 +115,8 @@ public:
         INPUTFILE() :
             m_filetype(FILETYPE_UNKNOWN),
             m_filename("unset"),
-            m_format_ctx(nullptr)
+            m_format_ctx(nullptr),
+            m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;             /**< @brief File type, MP3, MP4, OPUS etc. */
@@ -125,6 +126,7 @@ public:
 
         STREAMREF               m_audio;                /**< @brief Audio stream information */
         STREAMREF               m_video;                /**< @brief Video stream information */
+        AVPixelFormat           m_pix_fmt;              /**< @brief Video stream pixel format */
 
         std::vector<STREAMREF>  m_album_art;            /**< @brief Album art stream */
     };

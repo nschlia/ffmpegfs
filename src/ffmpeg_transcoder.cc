@@ -833,12 +833,9 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
     // Initialise pixel format conversion and rescaling if necessary
-    AVPixelFormat in_pix_fmt;
-    AVPixelFormat out_pix_fmt;
+    get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
 
-    get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
-
-    ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    ret = init_rescaler(m_in.m_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
     if (ret < 0)
     {
         return ret;
@@ -846,7 +843,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     if (params.m_deinterlace)
     {
-        ret = init_deinterlace_filters(output_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+        ret = init_deinterlace_filters(output_codec_ctx, m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
         if (ret < 0)
         {
             return ret;
@@ -1618,12 +1615,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // Initialise pixel format conversion and rescaling if necessary
-        AVPixelFormat in_pix_fmt;
-        AVPixelFormat out_pix_fmt;
+        get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
 
-        get_pix_formats(&in_pix_fmt, &out_pix_fmt, output_codec_ctx);
-
-        ret = init_rescaler(in_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, out_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+        ret = init_rescaler(m_in.m_pix_fmt, CODECPAR(m_in.m_video.m_stream)->width, CODECPAR(m_in.m_video.m_stream)->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
         if (ret < 0)
         {
             return ret;
@@ -1996,13 +1990,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-                AVPixelFormat in_pix_fmt;
-                AVPixelFormat out_pix_fmt;
-
-                get_pix_formats(&in_pix_fmt, &out_pix_fmt);
-
-                /** @todo out_pix_fmt verabeiten */
-                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, in_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;

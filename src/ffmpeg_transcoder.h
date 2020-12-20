@@ -308,7 +308,7 @@ public:
      * @brief Flush FFmpeg's input buffers
      */
     void                        flush_buffers();
-        
+
 protected:
     /**
      * @brief Find best match stream and open codec context for it.
@@ -505,7 +505,7 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         flush_frames_all(bool use_flush_packet);
-     /**
+    /**
      * @brief Flush the remaining frames
      * @param[in] stream_index - Stream index to flush.
      * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.

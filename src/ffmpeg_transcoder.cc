@@ -391,6 +391,26 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 #endif // USE_LIBBLURAY
 
+    /** @todo Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2() av_reallocp - free missing...
+      * 102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249
+      *   in FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368
+      *   1: realloc in ./coregrind/m_replacemalloc/vg_replace_malloc.c:834
+      *   2: av_realloc_f in /usr/lib/x86_64-linux-gnu/libavutil.so.56.51.100
+      *   3: /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
+      *   4: av_probe_input_buffer2 in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
+      *   5: avformat_open_input in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
+      *   6: FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368
+      *   7: transcoder_predict_filesize(VIRTUALFILE*, Cache_Entry*) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:320
+      *   8: transcoder_new(VIRTUALFILE*, bool) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:425
+      *   9: ffmpegfs_getattr(char const*, stat*) in /home/norbert/dev/prj/ffmpegfs/src/fuseops.cc:1323
+      *   10: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
+      *   11: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
+      *   12: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
+      *   13: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
+      *   14: start_thread in ./nptl/pthread_create.c:477
+      *   15: clone in ./misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+      */
+
     // Open the input file to read from it.
     ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
     if (ret < 0)
@@ -1896,7 +1916,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not open %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -4350,7 +4370,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (next_segment > m_virtualfile->get_segment_count())
             {
-                Logging::error(destname(), "Reached targetted EOF at %1 (avoid creating too short last segment).", format_duration(pos).c_str());
+                Logging::error(destname(), "Reached targeted EOF at %1 (avoid creating too short last segment).", format_duration(pos).c_str());
                 throw AVERROR_EOF;
             }
             else if (next_segment == m_current_segment + 1)

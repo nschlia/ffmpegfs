@@ -1678,7 +1678,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not open %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 

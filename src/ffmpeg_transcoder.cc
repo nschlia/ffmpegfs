@@ -905,8 +905,8 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
                 // Free hardware device contexts if open
                 hwdevice_ctx_free(&m_hwaccel_dec_device_ctx);
-                hwdevice_ctx_free(&m_hwaccel_enc_device_ctx);
 
+                avcodec_close(m_in.m_video.m_codec_ctx);
                 avcodec_free_context(&m_in.m_video.m_codec_ctx);
                 m_in.m_video.m_codec_ctx = nullptr;
 

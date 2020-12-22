@@ -184,9 +184,9 @@ To use the new HLS feature invoke ffmpegfs with:
 
      ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 
-Please note that this will only work over http, so you need to publish the directory
-on a web server. Simply navigate to the directory and open test.html.
-Security restrictions prevent direct playback from disk.
+Please note that this will only work over http, because browsers refuse to load multimedia files
+from the local file system, so you need to publish the directory on a web server. Security
+restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.
 
 TODO:
 
@@ -461,7 +461,7 @@ with:
 
     git clone https://github.com/nschlia/ffmpegfs.git
 
-FFmpegfs is written in a mixture of C and C++ and uses the following libraries:
+FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:
 
 * [FUSE](http://fuse.sourceforge.net/)
 

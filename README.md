@@ -188,6 +188,102 @@ scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
 Enable deinterlacing to enhance image quality.
 
+Hardware Acceleration
+=====================
+The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different harware supporting the same API may act different. Sometimes the format range is not the same,
+sometimes subfeatures are missing and so on.
+
+How It Works
+------------
+Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs. As of today even cheapy on board chips can do hardware acceleration.
+
+Here is an incomplete list.
+
+Hardware acceleration using hardware buffered frames:
+
+* VAAPI: Intel, AMD (Decoders: H.264, MPEG-2, MPEG-4 part 2, VC-1. H.265, H.265 10-bit on recent devices. Encoder: H.264, H.265, MPJEPG, MPEG-2, VP8/9, MPEG-4 part 2 can probably be enabled.)
+* VDPAU: Nividia, AMD (H.264, MPEG-1/2/4 and VC-1)
+* CUDA: Compute Unified Device Architecture (Decoders: VP9, H.264, MPEG-2, MPEG-4. Encoding: H.264, H.265), see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
+* QSV: QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+* OPENCL: Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
+* VULKAN: Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
+
+These use software frames:
+
+* v4l2m2m: Intel (Encoders: H.263, H.264, H.265, MPEG-4, VP8). Decoders: H.263, H.264, H.265, MPEG-1, MPEG-2, MPEG-4, VC-1, VP8, VP9.)
+* OpenMAX: Encoding on Raspberry (H.264, MPEG-4. Requires key to unlock.)
+* MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)
+
+More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
+
+Current Implementation
+======================
+
+Tested On
+---------
+
+Debian 10 [Intel Core i5-6500 CPU @ 3.20GHz]: VAAPI
+Debian 11 [Intel Core i5-8250U CPU @ 1.60GHz]: VAAPI
+Raspbian 10/Raspberry Pi 3 Model B Plus Rev 1.3 [ARMv7 Processor rev 4 (v7l)]: OpenMAX/MMAL
+
+Hardware Encoding
+-----------------
+
+This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
+
+To enable hardware support, use these parameters respectively (of course not both at the same time):
+
+-hwaccel_enc=VAAPI
+-hwaccel_enc=OMX
+
+If your system supports VAAPI:
+
+* It could be possible that the rendering device on you system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set.
+* Depending on what your renderer supports, setting a bitrate will fail. On my test system, for example, CQG (Constant Quantisation parameter) is the only valid rendering control mode. The driver ignores bitrate settings and accepts the qp option only.
+
+As found in libavcodec/vaapi_encode.c:
+
+ Rate control mode selection:
+ * If the user has set a mode explicitly with the rc_mode option,
+   use it and fail if it is not available.
+ * If an explicit QP option has been set, use CQP.
+ * If the codec is CQ-only, use CQP.
+ * If the QSCALE avcodec option is set, use CQP.
+ * If bitrate and quality are both set, try QVBR.
+ * If quality is set, try ICQ, then CQP.
+ * If bitrate and maxrate are set and have the same value, try CBR.
+ * If a bitrate is set, try AVBR, then VBR, then CBR.
+ * If no bitrate is set, try ICQ, then CQP.
+
+This currently hardwired in my code. None of these values can currently be controlled by command line. This is planned of course, but not implemented in the current version yet.
+
+Hardware Decoding
+-----------------
+
+This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
+
+To enable hardware support, use these parameters respectively (of course not both at the same time):
+
+-hwaccel_dec=VAAPI
+-hwaccel_dec=MMAL
+
+If your system supports VAAPI:
+
+* It could be possible that the rendering device on you system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set.
+
+On slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load. On faster machines this impact may be smaller, yet noticable. 
+
+TODOs
+-----
+
+Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory unneccessary.
+
+Alhough, it is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (e.g., rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
+
+Selecting a target bitrate turns out to be a bit tricky, see above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).
+
+On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, whiping the sweat off my chin :)
+
 HTTP Live Streaming
 -------------------
 

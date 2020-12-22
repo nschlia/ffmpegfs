@@ -5,7 +5,9 @@ FFmpegfs NEWS
 
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
-  
+
+Preparing release 2.5
+
 Important changes in 2.5 (2020-12-xx)
 
 * Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 

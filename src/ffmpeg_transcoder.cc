@@ -199,7 +199,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_buffer(nullptr)
     , m_reset_pts(false)
     , m_fake_frame_no(0)
-    , m_hwaccel_mode(HWACCELMODE_NONE)
+    , m_hwaccel_enc_mode(HWACCELMODE_NONE)
+    , m_hwaccel_dec_mode(HWACCELMODE_NONE)
     , m_hwaccel_enable_enc_buffering(false)
     , m_hwaccel_enable_dec_buffering(false)
     , m_hwaccel_enc_device_ctx(nullptr)
@@ -808,7 +809,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         codec_id = input_codec_ctx->codec_id;
 #endif
 
-        if (type == AVMEDIA_TYPE_VIDEO && m_hwaccel_mode != HWACCELMODE_FALLBACK)
+        if (type == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
         {
             // Decide whether to use a hardware decoder
             // Check to see if decoder hardware acceleration is both requested and supported by codec.
@@ -837,7 +838,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                 }
                 Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", input_codec->name);
 
-                m_hwaccel_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
             }
             else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
             {
@@ -860,7 +861,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
                 Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
 
-                m_hwaccel_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
             }
 
             if (m_hwaccel_enable_dec_buffering)
@@ -895,11 +896,11 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         if (ret < 0)
         {
-            if (m_hwaccel_mode == HWACCELMODE_ENABLED)
+            if (m_hwaccel_dec_mode == HWACCELMODE_ENABLED)
             {
                 Logging::info(filename(), "Unable to use %1 input codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(type), avcodec_get_name(codec_id));
 
-                m_hwaccel_mode                  = HWACCELMODE_FALLBACK;
+                m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_dec_buffering  = false;
                 m_dec_hw_pix_fmt                = AV_PIX_FMT_NONE;
 
@@ -1066,11 +1067,34 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
     }
 
-    // Open the output file for writing. If buffer == nullptr continue using existing buffer.
-    ret = open_output_filestreams(buffer);
-    if (ret)
+    while (true)
     {
-        return ret;
+        // Open the output file for writing. If buffer == nullptr continue using existing buffer.
+        Logging::info(filename(), "1");
+        ret = open_output_filestreams(buffer);
+        Logging::info(filename(), "2 %1", ffmpeg_geterror(ret).c_str());
+        if (ret)
+        {
+            if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)
+            {
+                //Logging::info(filename(), "Unable to use %1 output codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(output_codec->type), avcodec_get_name(codec_id));
+                Logging::info(filename(), "FALLBACK");
+
+                m_hwaccel_enc_mode              = HWACCELMODE_FALLBACK;
+                m_hwaccel_enable_enc_buffering  = false;
+                m_enc_hw_pix_fmt                = AV_PIX_FMT_NONE;
+
+                // Free hardware device contexts if open
+                hwdevice_ctx_free(&m_hwaccel_enc_device_ctx);
+
+                close_output_file();
+
+                // Try again with a software decoder
+                continue;
+            }
+            return ret;
+        }
+        break;
     }
 
     if (m_out.m_audio.m_stream_idx > -1)
@@ -1360,7 +1384,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     std::string codec_name;
 
-    if (get_hw_encoder_name(codec_id, &codec_name))
+    if (get_hw_encoder_name(codec_id, &codec_name) || m_hwaccel_enc_mode == HWACCELMODE_FALLBACK)
     {
         // find the encoder
         output_codec = avcodec_find_encoder(codec_id);
@@ -1382,6 +1406,8 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         Logging::info(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", output_codec->name);
+
+        m_hwaccel_enc_mode = HWACCELMODE_ENABLED;
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);

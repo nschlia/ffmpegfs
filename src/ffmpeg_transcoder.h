@@ -951,7 +951,8 @@ private:
 
     // Hardware acceleration
     static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */
-    HWACCELMODE                 m_hwaccel_mode;                 /**< @brief Current hardware acceleration mode */
+    HWACCELMODE                 m_hwaccel_enc_mode;             /**< @brief Current hardware acceleration mode for encoder */
+    HWACCELMODE                 m_hwaccel_dec_mode;             /**< @brief Current hardware acceleration mode for decoder */
     bool						m_hwaccel_enable_enc_buffering; /**< @brief Enable hardware acceleration frame buffers for encoder */
     bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
     AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */

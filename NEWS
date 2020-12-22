@@ -8,10 +8,8 @@ FFmpegfs NEWS
   
 Important changes in 2.5 (2020-12-xx)
 
-* Feature: Issue #63 - Hardware accelerated decoding/encoding has been added. See HWACCEL
-  for details how it works.
-* **This is completely experimental code**, so please expect that it will not work for you!
-* Hardware acceleration is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
+* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 
+  implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
   - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
   - VAAPI: MJPEG and VC-9 do not work (yet).

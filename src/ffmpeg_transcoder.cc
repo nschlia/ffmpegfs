@@ -897,7 +897,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         {
             if (m_hwaccel_mode == HWACCELMODE_ENABLED)
             {
-                Logging::info(filename(), "Unable to use %1 input codec '%2' for hardware acceleration. Falling back to software.", get_media_type_string(type), avcodec_get_name(codec_id));
+                Logging::info(filename(), "Unable to use %1 input codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(type), avcodec_get_name(codec_id));
 
                 m_hwaccel_mode                  = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_dec_buffering  = false;

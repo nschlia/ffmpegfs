@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.1</span>
+   &#160;<span id="projectnumber">2.2</span>
    </div>
   </td>
  </tr>
@@ -737,8 +737,8 @@ $(function() {
 <div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;                <span class="stringliteral">&quot;#EXT-X-MEDIA-SEQUENCE:1\n&quot;</span>;</div>
 <div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160; </div>
 <div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;        int64_t remaining_duration  = virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> % <a class="code" href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a>.<a class="code" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">m_segment_duration</a>;</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        <span class="keywordtype">size_t</span>  segment_size        = virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a> / virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">get_segment_count</a>(); <span class="comment">// @todo: Feature #2506 - calculate correct file size</span></div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        <span class="keywordtype">size_t</span>  remaining_size      = virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a> % virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">get_segment_count</a>(); <span class="comment">// @todo: Feature #2506 - calculate correct file size</span></div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        <span class="keywordtype">size_t</span>  segment_size        = virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a> / virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">get_segment_count</a>(); <span class="comment">// @todo Feature #2506 - calculate correct file size</span></div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        <span class="keywordtype">size_t</span>  remaining_size      = virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a> % virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">get_segment_count</a>(); <span class="comment">// @todo Feature #2506 - calculate correct file size</span></div>
 <div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160; </div>
 <div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;        <span class="keywordflow">for</span> (uint32_t file_no = 1; file_no &lt;= virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">get_segment_count</a>(); file_no++)</div>
 <div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;        {</div>
@@ -1198,7 +1198,7 @@ $(function() {
 <div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160; </div>
 <div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;                        <span class="keywordflow">if</span> (parent_file != <span class="keyword">nullptr</span> &amp;&amp; (parent_file-&gt;<a class="code" href="structVIRTUALFILE.html#a374d9f510dc631fa5f1209b612549112">m_flags</a> &amp; <a class="code" href="fileio_8h.html#ab098de5210efdaca9088d1bb13b272f0">VIRTUALFLAG_DIRECTORY</a>) &amp;&amp; (parent_file-&gt;<a class="code" href="structVIRTUALFILE.html#a374d9f510dc631fa5f1209b612549112">m_flags</a> &amp; <a class="code" href="fileio_8h.html#a9f831d0e93ca388ff62190b7bd73495c">VIRTUALFLAG_FILESET</a>))</div>
 <div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;                        {</div>
-<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;                            <span class="keywordflow">if</span> (!parent_file-&gt;<a class="code" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">m_video_frame_count</a>)  <span class="comment">//***&lt; @todo: was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?</span></div>
+<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;                            <span class="keywordflow">if</span> (!parent_file-&gt;<a class="code" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">m_video_frame_count</a>)  <span class="comment">//***&lt; @todo was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?</span></div>
 <div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;                            {</div>
 <div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;                                <span class="keywordtype">int</span> res = <a class="code" href="fuseops_8cc.html#a9676a5e6a30d145619a678d896b6a3d8">get_source_properties</a>(origpath, parent_file);</div>
 <div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160;                                <span class="keywordflow">if</span> (res &lt; 0)</div>

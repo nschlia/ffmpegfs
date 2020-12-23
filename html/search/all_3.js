@@ -18,7 +18,7 @@ var searchData=
   ['cache_5fmaintenance_2eh_62',['cache_maintenance.h',['../cache__maintenance_8h.html',1,'']]],
   ['cache_5ft_63',['cache_t',['../classCache.html#a4f3c9b84bf787abaeb94bd753d938566',1,'Cache']]],
   ['cachefile_64',['cachefile',['../classBuffer.html#a88d7838706b8e4fa9f9c8f63812b6602',1,'Buffer']]],
-  ['cacheinfo_65',['cacheinfo',['../classBuffer.html#a2eee1fab320110be86686ff522d2c433',1,'Buffer::cacheinfo(uint32_t segment_no)'],['../classBuffer.html#aadb6390b55aac6776448a8adc81696ed',1,'Buffer::CACHEINFO()']]],
+  ['cacheinfo_65',['CACHEINFO',['../classBuffer.html#aadb6390b55aac6776448a8adc81696ed',1,'Buffer::CACHEINFO()'],['../classBuffer.html#a2eee1fab320110be86686ff522d2c433',1,'Buffer::cacheinfo(uint32_t segment_no)']]],
   ['calculate_5fpredicted_5ffilesize_66',['calculate_predicted_filesize',['../classFFmpeg__Transcoder.html#a854e9576e697fb877c2e344c5c203947',1,'FFmpeg_Transcoder']]],
   ['can_5fcopy_5fstream_67',['can_copy_stream',['../classFFmpeg__Transcoder.html#a1f1608f6c5c6d8efe099b8e9869cd259',1,'FFmpeg_Transcoder']]],
   ['check_5fbluray_68',['check_bluray',['../blurayparser_8cc.html#a164ba768b4e817e3b246ab0c915b9798',1,'check_bluray(const std::string &amp;_path, void *buf, fuse_fill_dir_t filler):&#160;blurayparser.cc'],['../blurayparser_8h.html#a34bc32ca6bc8e2596113564abe40953f',1,'check_bluray(const std::string &amp;path, void *buf=nullptr, fuse_fill_dir_t filler=nullptr):&#160;blurayparser.cc']]],

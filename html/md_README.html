@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.1</span>
+   &#160;<span id="projectnumber">2.2</span>
    </div>
   </td>
  </tr>
@@ -68,34 +68,37 @@ $(function() {
 <div class="contents">
 <div class="textblock"><table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Compiler  </th><th class="markdownTableHeadNone">Library  </th><th class="markdownTableHeadNone">Build State   </th></tr>
+<th class="markdownTableHeadNone">Branch  </th><th class="markdownTableHeadNone">State  </th><th class="markdownTableHeadNone">Compiler  </th><th class="markdownTableHeadNone">Library  </th><th class="markdownTableHeadNone">Build State   </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">gcc 8.2.0  </td><td class="markdownTableBodyNone">FFmpeg 4.1.4  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>   </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>  </td><td class="markdownTableBodyNone">testing  </td><td class="markdownTableBodyNone">gcc 8.2.0  </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>   </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">clang 7.0.1  </td><td class="markdownTableBodyNone">FFmpeg 4.1.4  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>  </td><td class="markdownTableBodyNone">testing  </td><td class="markdownTableBodyNone">clang 7.0.1  </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>  </td><td class="markdownTableBodyNone">experimental  </td><td class="markdownTableBodyNone">gcc 8.2.0  </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)" alt="Build Status" class="inline"/>   </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>  </td><td class="markdownTableBodyNone">experimental  </td><td class="markdownTableBodyNone">clang 7.0.1  </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1  </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
 </table>
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
+<p><b>Version 2.1 released</b></p>
+<p><b>New in 2.1:</b></p>
+<ul>
+<li>Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)</li>
+<li>Feature: Implemented in 1.7, removed experimental state for &ndash;win_smb_fix now. Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting &ndash;win_smb_fix=1 will ignore these attempts (not decode the file up to this point).</li>
+<li>Feature: &ndash;win_smb_fix now defaults to 1 (fix on by default). Has no effect if the drive is accessed directly or via Samba from Linux.</li>
+<li>Bugfix: Fixed grammatical error in text: It's "access to", not "access at".</li>
+<li>Bugfix: Did not transcode some source files with invalid DTS.</li>
+<li>Bugfix: Cosmetical - No need to log date/time twice in syslog.</li>
+<li>Bugfix: Cosmetical - Fix man page/online help for &ndash;recodesame parameter.</li>
+<li>Bugfix: Report correct segment duration</li>
+<li>Bugfix: Avoid crash if opening next HLS segment failed. Should not ignore this, but report it instead and stop transcoding.</li>
+<li>Cosmetical: Log cache close action at trace level</li>
+<li>Cosmetical: Shorter log entry when opening cache files</li>
+</ul>
 <p><b>Planned features</b></p>
 <ul>
 <li><a href="https://github.com/nschlia/ffmpegfs/issues/63">Issue #63</a>: Interesting feature request - hardware support for encoding and decoding. Experimental hardware acceleration support has been added. If you feel lucky do "git checkout FB" and try it out.</li>
 <li>Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.</li>
-</ul>
-<p><b>New in 2.1:</b></p>
-<ul>
-<li>Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)</li>
-<li>Bugfix: Did not transcode some source files with invalid DTS.</li>
-<li>Bugfix: Cosmetical - No need to log date/time twice in syslog.</li>
-<li>Bugfix: Cosmetical - Fix man page/online help for &ndash;recodesame parameter.</li>
-<li>Log cache close action at trace level</li>
-<li>Shorter log entry when opening cache files</li>
-</ul>
-<p><b>Version 2.0 released</b></p>
-<p>Finally. we are at 2.0!</p>
-<p><b>New in 2.0:</b></p>
-<ul>
-<li>Feature: No new features, new release 2.0 after feature freeze.</li>
-<li>Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md3"></a>
 About</h1>
@@ -173,7 +176,7 @@ Usage</h1>
 HTTP Live Streaming</h1>
 <p>ffmpegfs now supports HLS (HTTP Live Streaming). ffmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also create a virtual test.html file that can playback the segments using the hls.js library (see <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a>).</p>
 <p>To use the new HLS feature invoke ffmpegfs with: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
-</pre><p>Please note that this will only work over http, so you need to publish the directory on a web server. Simply navigate to the directory and open test.html. Security restrictions prevent direct playback from disk.</p>
+</pre><p>Please note that this will only work over http, because browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.</p>
 <p>TODO:</p>
 <ul>
 <li>Currently the segments are not properly created. Each segment may contain video or audio frames that actually belong to the previous or next segment. This will be fixed in future versions. hls.js does not seem to care about improperly cut segments, though, and playback appears fine. Playing a single segment separately may not work properly.</li>
@@ -260,7 +263,7 @@ MP4 FORMAT PROFILE</h1>
 HOW IT WORKS</h1>
 <p>When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3 output files, but only fair to good for MP4.</p>
 <p>As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded in memory. Once decoded the file is kept in a disk buffer and can be accessed very fast.</p>
-<p>Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transconding will continue for some time. If the file is accessed again before timeout, transcoding will go on, if not it stops and the chunk created so far discarded to save disk space.</p>
+<p>Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before timeout, transcoding will continue, if not it stops and the chunk created so far discarded to save disk space.</p>
 <p>Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams).</p>
 <p>MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file respectively.</p>
 <p>MP4: Same applies to meta atoms in MP4 containers.</p>
@@ -304,7 +307,7 @@ aio read size = 1
 <h1><a class="anchor" id="autotoc_md16"></a>
 DEVELOPMENT</h1>
 <p>FFmpegfs uses Git for revision control. You can obtain the full repository with: </p><pre class="fragment">git clone https://github.com/nschlia/ffmpegfs.git
-</pre><p>FFmpegfs is written in a mixture of C and C++ and uses the following libraries:</p>
+</pre><p>FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:</p>
 <ul>
 <li><a href="http://fuse.sourceforge.net/">FUSE</a></li>
 </ul>

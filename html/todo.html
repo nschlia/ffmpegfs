@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.1</span>
+   &#160;<span id="projectnumber">2.2</span>
    </div>
   </td>
  </tr>
@@ -68,10 +68,10 @@ $(function() {
 <div class="contents">
 <div class="textblock"><dl class="reflist">
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
-<dd><a class="anchor" id="_todo000011"></a>: Is this a FFmpeg bug or am I too stupid? OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
+<dd><a class="anchor" id="_todo000011"></a>Is this a FFmpeg bug or am I too stupid? OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
 <dt>Member <a class="el" href="classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0">VcdIO::duration</a>  () const</dt>
 <dd><p class="startdd"><a class="anchor" id="_todo000020"></a>Could work for VCD, but always returns AV_NOPTS_VALUE. </p>
-<p class="enddd"><a class="anchor" id="_todo000019"></a>: implement me  </p>
+<p class="enddd"><a class="anchor" id="_todo000019"></a>implement me  </p>
 </dd>
 <dt>Member <a class="el" href="transcode_8cc.html#a2353c561b16312d0ea329f5900415add">MIN_SEGMENT</a>  </dt>
 <dd><a class="anchor" id="_todo000018"></a>Should count in seconds, not segments...  </dd>
@@ -84,19 +84,19 @@ $(function() {
 <dt>Member <a class="el" href="fuseops_8cc.html#a7ad0a9782c3231049be5c9c9b22542a7">find_original</a>  (std::string *filepath)</dt>
 <dd><a class="anchor" id="_todo000014"></a>Feature #2447 / Issue #25: add command line option  </dd>
 <dt>Member <a class="el" href="ffmpegfs_8cc.html#a47cdec71e4661ee317ac825d0cf4afe2">get_desttype</a>  (const std::string &amp;arg, <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class.">FFmpegfs_Format</a> format[2])</dt>
-<dd><a class="anchor" id="_todo000013"></a>: evaluate this function  </dd>
+<dd><a class="anchor" id="_todo000013"></a>evaluate this function  </dd>
 <dt>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
 <dd><a class="anchor" id="_todo000012"></a>Currently always returns 0. Must implement real check.  </dd>
 <dt>Member <a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a>  ()</dt>
 <dd><a class="anchor" id="_todo000001"></a>is 0 really OK or shall we better parse?  </dd>
-<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a97298697701d9e28f8c29580a6951237">FFmpeg_Transcoder::open_output_filestreams</a>  (<a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> *buffer)</dt>
-<dd><a class="anchor" id="_todo000010"></a>: out_pix_fmt verabeiten  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a7f6903a86d5ed1ebee3258b981536f74">FFmpeg_Transcoder::add_albumart_stream</a>  (const AVCodecContext *input_codec_ctx)</dt>
-<dd><a class="anchor" id="_todo000009"></a>: Support album arts  </dd>
+<dd><a class="anchor" id="_todo000010"></a>Support album arts  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#afe22b3a4c7ad7fa2ca8219f5b76f2542">FFmpeg_Transcoder::add_stream</a>  (AVCodecID codec_id)</dt>
-<dd><a class="anchor" id="_todo000008"></a>: FFmpeg actually <em>can</em> transcode while presevering the SAR. Need to find out what I am doing wrong here...  </dd>
+<dd><a class="anchor" id="_todo000009"></a>FFmpeg actually <em>can</em> transcode while presevering the SAR. Need to find out what I am doing wrong here...  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#aac45e5ea83a42253119635023ce8d8e6">FFmpeg_Transcoder::open_output_frame_set</a>  (<a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> *buffer)</dt>
-<dd><a class="anchor" id="_todo000007"></a>: Make frame image compression rate command line settable  </dd>
+<dd><a class="anchor" id="_todo000008"></a>Make frame image compression rate command line settable  </dd>
+<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a556a0c7071ee2e8e249ef35eb7c64ec7">FFmpeg_Transcoder::open_input_file</a>  (LPVIRTUALFILE virtualfile, <a class="el" href="classFileIO.html" title="Base class for I/O.">FileIO</a> *fio=nullptr)</dt>
+<dd><a class="anchor" id="_todo000007"></a>Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2() av_reallocp - free missing... 102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249 in FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 1: realloc in ./coregrind/m_replacemalloc/vg_replace_malloc.c:834 2: av_realloc_f in /usr/lib/x86_64-linux-gnu/libavutil.so.56.51.100 3: /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 4: av_probe_input_buffer2 in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 5: avformat_open_input in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 6: FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 7: transcoder_predict_filesize(VIRTUALFILE*, Cache_Entry*) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:320 8: transcoder_new(VIRTUALFILE*, bool) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:425 9: <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770" title="Get file attributes.">ffmpegfs_getattr(char const*, stat*)</a> in /home/norbert/dev/prj/ffmpegfs/src/fuseops.cc:1323 10: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 11: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 12: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 13: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 14: start_thread in ./nptl/pthread_create.c:477 15: clone in ./misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:95  </dd>
 <dt>Member <a class="el" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>  (const ifo_handle_t *vts_file, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const <a class="el" href="structAUDIO__SETTINGS.html" title="Audio stream settings.">AUDIO_SETTINGS</a> &amp;audio_settings, const <a class="el" href="structVIDEO__SETTINGS.html" title="Video stream settings.">VIDEO_SETTINGS</a> &amp;video_settings)</dt>
 <dd><a class="anchor" id="_todo000006"></a>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
 <dt>Member <a class="el" href="classCache__Entry.html#a6b32137876a33aba00724cd594dd1fad">Cache_Entry::destroy</a>  ()</dt>

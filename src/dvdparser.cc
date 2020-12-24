@@ -413,8 +413,11 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             BITRATE video_bit_rate = 8*1024*1024;   // In case the real bitrate cannot be calculated later, assume 8 Mbit video bitrate
             if (duration)
             {
-                /** @todo We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should
-                 * be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. */
+                /**
+                 * @todo We actually calculate the overall DVD bitrate here, including all audio
+                 * streams, not just the video bitrate. This should be the video bitrate alone. We
+                 * should also calculate the audio bitrate for the selected stream.
+                */
                 video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
             }
 

@@ -392,24 +392,26 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 #endif // USE_LIBBLURAY
 
-    /** @todo Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2() av_reallocp - free missing...
-      * 102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249
-      *   in FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368
-      *   1: realloc in ./coregrind/m_replacemalloc/vg_replace_malloc.c:834
-      *   2: av_realloc_f in /usr/lib/x86_64-linux-gnu/libavutil.so.56.51.100
-      *   3: /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
-      *   4: av_probe_input_buffer2 in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
-      *   5: avformat_open_input in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100
-      *   6: FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368
-      *   7: transcoder_predict_filesize(VIRTUALFILE*, Cache_Entry*) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:320
-      *   8: transcoder_new(VIRTUALFILE*, bool) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:425
-      *   9: ffmpegfs_getattr(char const*, stat*) in /home/norbert/dev/prj/ffmpegfs/src/fuseops.cc:1323
-      *   10: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
-      *   11: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
-      *   12: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
-      *   13: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9
-      *   14: start_thread in ./nptl/pthread_create.c:477
-      *   15: clone in ./misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:95
+    /** @bug Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2(), the av_reallocp
+      * is missing a matching free() call... @n
+      * @n
+      * 102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249 @n
+      *   in FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 @n
+      *   1: realloc in ./coregrind/m_replacemalloc/vg_replace_malloc.c:834 @n
+      *   2: av_realloc_f in /usr/lib/x86_64-linux-gnu/libavutil.so.56.51.100 @n
+      *   3: /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 @n
+      *   4: av_probe_input_buffer2 in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 @n
+      *   5: avformat_open_input in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 @n
+      *   6: FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 @n
+      *   7: transcoder_predict_filesize(VIRTUALFILE*, Cache_Entry*) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:320 @n
+      *   8: transcoder_new(VIRTUALFILE*, bool) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:425 @n
+      *   9: ffmpegfs_getattr(char const*, stat*) in /home/norbert/dev/prj/ffmpegfs/src/fuseops.cc:1323 @n
+      *   10: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 @n
+      *   11: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 @n
+      *   12: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 @n
+      *   13: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 @n
+      *   14: start_thread in ./nptl/pthread_create.c:477 @n
+      *   15: clone in ./misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:95 @n
       */
 
     // Open the input file to read from it.
@@ -1674,7 +1676,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
-            /** @todo FFmpeg actually *can* transcode while presevering the SAR. Need to find out what I am doing wrong here... */
+            /**
+             * @todo FFmpeg actually *can* transcode while presevering the SAR.
+             * FFmpegfs rescales to fix that problem.
+             * Need to find out what I am doing wrong here...
+             */
 
             output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
             CODECPAR(output_stream)->sample_aspect_ratio    = { 1, 1 };
@@ -2107,7 +2113,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     //output_stream->codec->framerate = { 1, 0 };
 
-    /** @todo Support album arts */
+    /** @todo Add support for album arts */
     // mp4 album arts do not work with ipod profile. Set mp4.
     //if (m_out.m_format_ctx->oformat->mime_type != nullptr && (!strcmp(m_out.m_format_ctx->oformat->mime_type, "application/mp4") || !strcmp(m_out.m_format_ctx->oformat->mime_type, "video/mp4")))
     //{
@@ -3476,9 +3482,9 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 
             if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
             {
-                /** @todo Is this a FFmpeg bug or am I too stupid?
+                /** @todo Is this a FFmpeg bug or am I too stupid? @n
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
-                 * at 48 K sampling rate.
+                 * at 48 K sampling rate. @n
                  * For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value.
                  * Same applies to mpegts, so let's rescale.
                  */
@@ -4040,7 +4046,7 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
 {
     m_have_seeked           = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
-    //m_skip_next_frame = true; /**< @todo Take deinterlace into account */
+    //m_skip_next_frame = true; /**< @todo Take deinterlace into account. If deinterlace is on the frame number is decreased by one. */
 
     if (m_skip_next_frame)
     {

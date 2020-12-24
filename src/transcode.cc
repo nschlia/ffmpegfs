@@ -447,7 +447,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     return cache_entry;
 }
 
-#define MIN_SEGMENT 3   /**< @brief Seek segment if more distant than this range @todo Should count in seconds, not segments... */
+#define MIN_SEGMENT 3   /**< @brief Seek new segment if more distant than this range @todo Seek new segment if more distance should better count in seconds, not segments... */
 bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int * bytes_read, uint32_t segment_no)
 {
     bool success = true;

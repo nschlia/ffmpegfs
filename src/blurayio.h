@@ -42,11 +42,8 @@
 
 typedef struct bluray BLURAY;               /**< @brief Forward declaration of libbluray handle */
 
-/** @brief Bluray I/O class
- *
- * @bug Issue #27: Bluray chapters stop prematurely.\n
- * Some chapters stop playing after 30 seconds, sometimes a few seconds early.
- * Problem exists at least for half a year... There seems to be a problem extracting Bluray data.
+/**
+ * @brief Bluray I/O class
  */
 class BlurayIO : public FileIO
 {

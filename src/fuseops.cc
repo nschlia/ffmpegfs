@@ -628,13 +628,13 @@ LPVIRTUALFILE find_original(std::string * filepath)
                 }
                 else
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, tmppath, &stbuf, VIRTUALFLAG_PASSTHROUGH); /**< @todo Feature #2447 / Issue #25: add command line option */
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, tmppath, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                 }
                 return virtualfile;
             }
             else
             {
-                // File does not exist; not an error
+                // File does not exist; this is a virtual file, not an error
                 errno = 0;
             }
         }
@@ -761,15 +761,14 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
                 "#EXT-X-MEDIA-SEQUENCE:1\n";
 
         int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
-        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count(); // @todo Feature #2506 - calculate correct file size
-        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count(); // @todo Feature #2506 - calculate correct file size
+        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count();
+        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count();
 
         for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
         {
             std::string buffer;
             std::string segment_name = make_filename(file_no, params.current_format(virtualfile)->fileext());
 
-            //**< @todo; Rework this test code
             struct stat stbuf;
             std::string cachefile;
             std::string _origpath(origpath);
@@ -1028,7 +1027,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
             for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
             {
-                make_file(buf, filler, virtualfile->m_type, origpath, make_filename(frame_no, params.current_format(virtualfile)->fileext()), virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image */
+                make_file(buf, filler, virtualfile->m_type, origpath, make_filename(frame_no, params.current_format(virtualfile)->fileext()), virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
             }
         }
         else if (ffmpegfs_format->is_hls())
@@ -1076,7 +1075,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             if (!current_format->is_multiformat())
             {
                 // Pass-through for regular files
-                /**< @todo Feature #2447 / Issue #25:  Reencode to same file format as source file */
                 Logging::trace(origpath, "getattr: Not transcoding existing file.");
                 errno = 0;
                 return 0;
@@ -1212,7 +1210,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                             for (uint32_t frame_no = 1; frame_no <= parent_file->m_video_frame_count; frame_no++)
                             {
-                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image */
+                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
                             }
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
@@ -1236,7 +1234,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                         if (parent_file != nullptr && (parent_file->m_flags & VIRTUALFLAG_DIRECTORY) && (parent_file->m_flags & VIRTUALFLAG_FILESET))
                         {
-                            if (!parent_file->m_video_frame_count)  //***< @todo was ist mit audio only? Werden die dann nicht immer wieder gecheckt?!?
+                            if (!parent_file->m_video_frame_count)  //***< @todo HLS format: Do audio files source properties get checked over and over?
                             {
                                 int res = get_source_properties(origpath, parent_file);
                                 if (res < 0)

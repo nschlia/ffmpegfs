@@ -91,7 +91,8 @@ public:
     virtual int     error() const;
     /**
      * @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
-     * @todo Could work for VCD, but always returns AV_NOPTS_VALUE.
+     * @return Could work for VCD, but always returns AV_NOPTS_VALUE.
+     * @todo Implement duration of video CD chapters
      */
     virtual int64_t duration() const;
     /**

@@ -329,7 +329,10 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
 
 /**
  * @brief Find best match audio stream.
- * @todo is 0 really OK or shall we better parse?
+ * @todo Returning 0 is not necessarily the best match. Probably better to parse.
+ * For "The life of Brian", e.g., this is the Hungarian audio track. No big deal,
+ * though, I can recite mostly all dialogs in English and German (and Latin :),
+ * but should be fixed anyway.
  * @return Returns index of best match stream.
  */
 static int parse_find_best_audio_stream()
@@ -339,7 +342,8 @@ static int parse_find_best_audio_stream()
 
 /**
  * @brief Find best match video stream.
- * @todo is 0 really OK or shall we better parse?
+ * @todo Returning 0 is not necessarily the best match. Probably better to parse.
+ * Most DVDs contain only one video track anyway, so this does not hurt at the moment.
  * @return Returns index of best match stream.
  */
 static int parse_find_best_video_stream()
@@ -489,8 +493,11 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration)
         {
-            /** @todo We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should
-             * be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. */
+            /**
+             * @todo We actually calculate the overall Bluray bitrate here, including all audio
+             * streams, not just the video bitrate. This should be the video bitrate alone. We
+             * should also calculate the audio bitrate for the selected stream.
+            */
             video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
         }
 

@@ -124,7 +124,7 @@ int VcdIO::error() const
 
 int64_t VcdIO::duration() const
 {
-    return AV_NOPTS_VALUE;  /** @todo implement me */
+    return AV_NOPTS_VALUE;
 }
 
 size_t VcdIO::size() const

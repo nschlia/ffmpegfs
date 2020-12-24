@@ -67,15 +67,27 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt>Class <a class="el" href="classBlurayIO.html">BlurayIO</a>  </dt>
-<dd><a class="anchor" id="_bug000001"></a>Issue #27: Bluray chapters stop prematurely.<br  />
-Some chapters stop playing after 30 seconds, sometimes a few seconds early. Problem exists at least for half a year... There seems to be a problem extracting Bluray data.  </dd>
-<dt>Class <a class="el" href="classFFmpeg__Transcoder.html">FFmpeg_Transcoder</a>  </dt>
-<dd><p class="startdd"><a class="anchor" id="_bug000002"></a>Issue #32: After transcoding several files VMEM usage sometimes goes off the edge.<br  />
-After playing files for a while, sometimes the VME usage goes up to the machine limit, In this particular case the machine has 32 GB RAM with 13 GB free. Never happens if the files are copied via Samba or directly, but only if played through a web server. Probably has to do with slow connections and time outs.</p>
-<p class="enddd"><a class="anchor" id="_bug000003"></a>Issue #33: H265 decoding does not work.<br  />
-Decoding H265 files fails. </p>
-</dd>
+<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a556a0c7071ee2e8e249ef35eb7c64ec7">FFmpeg_Transcoder::open_input_file</a>  (LPVIRTUALFILE virtualfile, <a class="el" href="classFileIO.html" title="Base class for I/O.">FileIO</a> *fio=nullptr)</dt>
+<dd><a class="anchor" id="_bug000001"></a>Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2(), the av_reallocp is missing a matching free() call... <br  />
+<br  />
+102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249 <br  />
+ in FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 <br  />
+ 1: realloc in ./coregrind/m_replacemalloc/vg_replace_malloc.c:834 <br  />
+ 2: av_realloc_f in /usr/lib/x86_64-linux-gnu/libavutil.so.56.51.100 <br  />
+ 3: /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 <br  />
+ 4: av_probe_input_buffer2 in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 <br  />
+ 5: avformat_open_input in /usr/lib/x86_64-linux-gnu/libavformat.so.58.45.100 <br  />
+ 6: FFmpeg_Transcoder::open_input_file(VIRTUALFILE*, FileIO*) in /home/norbert/dev/prj/ffmpegfs/src/ffmpeg_transcoder.cc:368 <br  />
+ 7: transcoder_predict_filesize(VIRTUALFILE*, Cache_Entry*) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:320 <br  />
+ 8: transcoder_new(VIRTUALFILE*, bool) in /home/norbert/dev/prj/ffmpegfs/src/transcode.cc:425 <br  />
+ 9: <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770" title="Get file attributes.">ffmpegfs_getattr(char const*, stat*)</a> in /home/norbert/dev/prj/ffmpegfs/src/fuseops.cc:1323 <br  />
+ 10: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 <br  />
+ 11: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 <br  />
+ 12: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 <br  />
+ 13: /usr/lib/x86_64-linux-gnu/libfuse.so.2.9.9 <br  />
+ 14: start_thread in ./nptl/pthread_create.c:477 <br  />
+ 15: clone in ./misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:95 <br  />
+ </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

@@ -156,20 +156,22 @@ const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
 
 const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
 {
-    { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },
-    { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - pix_fmt untested.
-    { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - pix_fmt untested. AV_PIX_FMT_P010 or AV_PIX_FMT_QSV
-    { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_OPENCL },
-    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_NV12 },
-    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },          ///< VAAPI uses the NV12 pix format
+    { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - Cuda pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - VDPAU pix_fmt untested.
+    { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_QSV },           ///< @todo HWACCEL - QSV pix_fmt untested. Seems to be AV_PIX_FMT_P010 or AV_PIX_FMT_QSV.
+    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - OpenCL pix_fmt untested. Seems to be AV_PIX_FMT_OPENCL or AV_PIX_FMT_NV12.
     #if HAVE_VULKAN_HWACCEL
-    { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt untested.
     #endif // HAVE_VULKAN_HWACCEL
-    { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< @todo HWACCEL - pix_fmt untested.
-    { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< @todo HWACCEL - pix_fmt untested.
-    { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< @todo HWACCEL - pix_fmt untested.
-    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - pix_fmt untested.
-    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC }     ///< @todo HWACCEL - pix_fmt untested.
+    #if _WIN32
+    // Windows acceleration APIs not supported
+    { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< @todo HWACCEL - DRM prime pix_fmt untested.
+    { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< @todo HWACCEL - DXVA2 pix_fmt untested.
+    { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< @todo HWACCEL - D3D11VA pix_fmt untested.
+    #endif
+    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - Videotoolbox pix_fmt untested.
+    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC }     ///< @todo HWACCEL - Mediacodec pix_fmt untested.
 };
 
 #pragma GCC diagnostic push

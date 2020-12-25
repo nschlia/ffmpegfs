@@ -11,6 +11,12 @@ FFmpegfs
 News
 ----
 
+**Version 2.2 under development**
+
+**New in 2.2:**
+
+* **Note**: This is planned as a maintenance version, no new features but bugixes only. 
+
 **Version 2.1 released**
 
 **New in 2.1:**

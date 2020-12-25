@@ -171,8 +171,7 @@ Enable deinterlacing for enhanced image quality.
 
 Hardware Acceleration
 =====================
-The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different harware supporting the same API may act different. Sometimes the format range is not the same,
-sometimes subfeatures are missing and so on.
+The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.
 
 How It Works
 ------------
@@ -203,9 +202,9 @@ Current Implementation
 Tested On
 ---------
 
-Debian 10 [Intel Core i5-6500 CPU @ 3.20GHz]: VAAPI
-Debian 11 [Intel Core i5-8250U CPU @ 1.60GHz]: VAAPI
-Raspbian 10/Raspberry Pi 3 Model B Plus Rev 1.3 [ARMv7 Processor rev 4 (v7l)]: OpenMAX/MMAL
+- Debian 10 [Intel Core i5-6500 CPU @ 3.20GHz]: VAAPI
+- Debian 11 [Intel Core i5-8250U CPU @ 1.60GHz]: VAAPI
+- Raspbian 10/Raspberry Pi 3 Model B Plus Rev 1.3 [ARMv7 Processor rev 4 (v7l)]: OpenMAX/MMAL
 
 Hardware Encoding
 -----------------
@@ -214,8 +213,10 @@ This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may
 
 To enable hardware support, use these parameters respectively (of course not both at the same time):
 
+```
 -hwaccel_enc=VAAPI
 -hwaccel_enc=OMX
+```
 
 If your system supports VAAPI:
 
@@ -245,25 +246,27 @@ This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be
 
 To enable hardware support, use these parameters respectively (of course not both at the same time):
 
+```
 -hwaccel_dec=VAAPI
 -hwaccel_dec=MMAL
+```
 
 If your system supports VAAPI:
 
 * It could be possible that the rendering device on you system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set.
 
-On slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load. On faster machines this impact may be smaller, yet noticable. 
+On slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load. On faster machines this impact may be smaller, yet noticeable. 
 
 TODOs
 -----
 
-Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory unneccessary.
+Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory uneccessary.
 
-Alhough, it is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (e.g., rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
+Although, it is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
 
 Selecting a target bitrate turns out to be a bit tricky, see above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).
 
-On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, whiping the sweat off my chin :)
+On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, wiping the sweat off my chin :)
 
 HTTP Live Streaming
 -------------------

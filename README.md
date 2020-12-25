@@ -31,13 +31,13 @@ News
   via command line, FFmpegfs must decide that automatically.
 * See [NEWS](NEWS) for details.
 
-**Version 2.2 under development**
+### **Version 2.2 under development**
 
 **New in 2.2:**
 
 * **Note**: This is planned as a maintenance version, no new features but bugixes only. 
 
-**Version 2.1 released**
+### **Version 2.1 released**
 
 **New in 2.1:**
 
@@ -58,7 +58,7 @@ News
 * **Cosmetical**: Log cache close action at trace level
 * **Cosmetical**: Shorter log entry when opening cache files
 
-**Planned features**
+### **Planned features**
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.

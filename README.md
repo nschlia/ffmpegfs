@@ -10,7 +10,7 @@ FFmpegfs
 
 News
 ----
-**Version 2.5 under development**
+### **Version 2.5 under development**
 
 **New in 2.5:**
 

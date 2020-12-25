@@ -1074,9 +1074,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     while (true)
     {
         // Open the output file for writing. If buffer == nullptr continue using existing buffer.
-        Logging::info(filename(), "1");
         ret = open_output_filestreams(buffer);
-        Logging::info(filename(), "2 %1", ffmpeg_geterror(ret).c_str());
         if (ret)
         {
             if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)

@@ -10,10 +10,11 @@ FFmpegfs
 
 News
 ----
+**Version 2.5 under development**
 
 **New in 2.5:**
 
-* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 
+* **Feature**: Issue #63 - Hardware acceleration for encoding/decoding is partly 
   implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
   - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
@@ -21,7 +22,7 @@ News
   - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.
   - OMX: H264 encoding.
   - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
-* Note: Which hardware en/decoder actually works depends on what your hardware supports.
+* **Note**: Which hardware en/decoder actually works depends on what your hardware supports.
 * Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * The decoding part is a more tricky, if encoding is set set to hardware, this hardware is
   there and capable of encoding, it will work. If decoding in hardware is possible depends on
@@ -29,6 +30,12 @@ News
   acceleration can be used or fallback to software is required. FFmpeg requires that to be set
   via command line, FFmpegfs must decide that automatically.
 * See [NEWS](NEWS) for details.
+
+**Version 2.2 under development**
+
+**New in 2.2:**
+
+* **Note**: This is planned as a maintenance version, no new features but bugixes only. 
 
 **Version 2.1 released**
 

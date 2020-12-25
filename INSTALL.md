@@ -13,7 +13,7 @@ sid (which is not recommended and therefore not described here).
 To enable Buster Backports:
 
      echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
-
+    
      sudo apt-get update
 
 Then install FFmpegfs:
@@ -23,7 +23,7 @@ Then install FFmpegfs:
 Debian Bullseye
 ---------------
 
-FFmpegfs 1.98 has been added to Debian 11 Bullseye so it is available as
+FFmpegfs 2.0 has been added to Debian 11 Bullseye so it is available as
 binary distribution.
 
 On Debian 11 Bullseye you can simply do
@@ -47,8 +47,7 @@ Building FFmpegfs yourself
 Prerequisites
 -------------
 
-FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following
-libraries:
+FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following libraries:
 
 * gcc and g++ compilers
 
@@ -61,8 +60,7 @@ libraries:
 * libavfilter    (>= 5.40.0)
 * libswscale     (>= 3.0.0)
 
-One of these is required, preferably libswresample as libavresample is deprecated.
-It will be removed some day from FFmpeg API.
+One of these is required, preferably libswresample as libavresample is deprecated. It will be removed some day from FFmpeg API.
 
 * libswresample  (>= 1.0.0)
 * libavresample  (>= 2.1.0)
@@ -84,7 +82,7 @@ for details.
 **On Debian:**
 
     apt-get install gcc g++ make pkg-config asciidoc-base w3m
-
+    
     apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
 
 To get DVD support:
@@ -106,7 +104,7 @@ To "make check" (run test suite):
 **On Suse** (please read notes before continuing):
 
     zypper install gcc gcc-c++
-
+    
     zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
 
 To get DVD support:
@@ -117,15 +115,12 @@ To get Bluray support:
 
     zypper install libbluray-devel
 
-Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264
-are *not* available which renders this library next to usesless. But FFmpeg can
-be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check
-"FFmpeg compile notes" below.
+Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 are *not* available which renders this library next to usesless. But FFmpeg can be built from source, see https://trac.ffmpeg.org/wiki/CompilationGuide and check "FFmpeg compile notes" below.
 
 **On Red Hat:**
 
     yum install gcc g++
-
+    
     yum install fuse-devel sqlite-devel
 
 To get DVD support:
@@ -136,11 +131,9 @@ To get Bluray support:
 
     yum install libbluray-devel
 
-Red Hat does not provide FFmpeg from its repositories. It must be built
-from source code, see this guide: https://trac.ffmpeg.org/wiki/CompilationGuide/Centos
+Red Hat does not provide FFmpeg from its repositories. It must be built from source code, see this guide: https://trac.ffmpeg.org/wiki/CompilationGuide/Centos
 
-If you want to build the documentation you will find "asciidoc" missing from
-the Red Hat repositories. To get it use a beta repository:
+If you want to build the documentation you will find "asciidoc" missing from the Red Hat repositories. To get it use a beta repository:
 
     yum --enablerepo=rhel-7-server-optional-beta-rpms install asciidoc
 
@@ -153,7 +146,7 @@ To get fuse suppprt and chromaprint (for make check):
 
 To get FFmpeg with H264 etc. support, specify some "USE flags" when doing emerge:
 
-Create file /etc/portage/package.use, e.g. "vi vi /etc/portage/package.use" and add this line:
+Create file /etc/portage/package.use, for example "vi vi /etc/portage/package.use" and add this line:
 
     media-video/ffmpeg mp3 x264 opus vorbis vpx
 
@@ -161,7 +154,7 @@ This will enable H264, mp3, Opus and WebM support. Next...
 
     emerge media-libs/openh264
     emerge media-sound/twolame
-
+    
     emerge media-video/ffmpeg
 
 to build ffmpeg.
@@ -169,20 +162,13 @@ to build ffmpeg.
 Build FFmpeg with optimisations
 -------------------------------
 
-The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built
-with common options so that it can run on many processors. To leverage the
-full potential it may be useful to build it with optimisation options for the
-target CPU. The resulting binaries may not run on other computers.
+The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built with common options so that it can run on many processors. To leverage the full potential it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.
 
-FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support.
-Other libraries, e.g. ogg, Windows Media or FLAC must be added when these
-formats should be used as source.
+FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. Other libraries, for example ogg, Windows Media or FLAC must be added when these formats should be used as source.
 
-**Attention!** Remember to do "apt remove ffmpeg" before proceeding with the next
-steps to avoid malefic blends of custom and official distribution binaries.
+**Attention!** Remember to do "apt remove ffmpeg" before proceeding with the next steps to avoid maleficent blends of custom and official distribution binaries.
 
-For a minimum build that contains all the libraries required by FFmpegfs and
-SSL support for convenience use:
+For a minimum build that contains all the libraries required by FFmpegfs and SSL support for convenience use:
 
 	configure \
 		--extra-cflags='-march=native' \
@@ -203,26 +189,23 @@ SSL support for convenience use:
 		--enable-libtheora \
 		--enable-libxvid \
 		--enable-libx264
-		
-Fix the complaints by configure, i.e. install the required 
-development packages, then
+
+Fix the complaints by configure, i.e. install the required development packages, then
 
 	make install
 
 This works for me. Decoding runs much faster with these settings.
 
-**NOTE:** Depending on the source formats you have it may be required
-to add additional libraries.
+**NOTE:** Depending on the source formats you have it may be required to add additional libraries.
 
 Building source code
 --------------------
 
 Download a release archive:
 
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v1.98/ffmpegfs-1.98.tar.gz
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.1/ffmpegfs-2.1.tar.gz
 
-You may check https://github.com/nschlia/ffmpegfs/releases to see if there are
-newer releases available.
+You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
 
 Then unpack and cd to the source directory. To build and install, run:
 
@@ -236,14 +219,12 @@ To build and run the check suite, do:
 
 This will test audio conversion, tagging and size prediction.
 
-NOTE: Image embedding is not yet implemented. The test has been
-disabled at the moment.
+NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.
 
 Building from GIT
 -----------------
 
-If you want to build FFmpegfs yourself, e.g. check out the latest version
-from GIT and be at the bleeding edge:
+If you want to build FFmpegfs yourself, for example check out the latest version from GIT and be at the bleeding edge:
 
 **If building from git, you'll need these additional prerequisites:**
 
@@ -260,8 +241,7 @@ FFmpegfs uses the GNU build system, so you'll need to run first:
 
     ./autogen.sh
 
-If you are downloading a release, this has already been done for you. To
-build and install, run:
+If you are downloading a release, this has already been done for you. To build and install, run:
 
     ./configure
     make
@@ -286,14 +266,15 @@ Trouble Shooting
 
 **Mounting via /etc/fstab fails:**
 
-An fstab line with fuse.ffmpegfs file system fails with a strange message when
-attempted to mount with "mount -av". No log entries, no other hints...
+An fstab line with fuse.ffmpegfs file system fails with a strange message when attempted to mount with "mount -av". No log entries, no other hints...
 
+```
    mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1,
           missing codepage or helper program, or other error
 
-          In some cases useful info is found in syslog - try
-          dmesg | tail or so.
+​      In some cases useful info is found in syslog - try
+​      dmesg | tail or so.
+```
 
 Fuse is missing! Do...
 
@@ -313,8 +294,7 @@ Fuse is missing! Do...
 
 **"ERROR: libmp3lame >= 3.98.3 not found":**
 
-If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built
-and installed libmp3lame you may find a solution here:
+If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built and installed libmp3lame you may find a solution here:
 https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
 **autogen.sh displays "possibly undefined macro":**
@@ -325,21 +305,17 @@ https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
       See the Autoconf documentation.
     autoreconf: /usr/bin/autoconf failed with exit status: 1
 
-You are probably missing out on pkg-config, either it is not installed or
-not in path. "apt-get install pkg-config" (on Debian or equivalent on other
-Linux distributions) should help.
+You are probably missing out on pkg-config, either it is not installed or not in path. "apt-get install pkg-config" (on Debian or equivalent on other Linux distributions) should help.
 
 **If the videotag.php script does not work under PHP7**
 
-The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7)
-it suddenly stops showing the list of files.
+The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7) it suddenly stops showing the list of files.
 
 Check the Apache2 error.log, you might see this:
 
 "PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"
 
-This is because for some reason utf8_encode() has been moved to the XML
-library. Just do (or similar):
+This is because for some reason utf8_encode() has been moved to the XML library. Just do (or similar):
 
     apt-get install php7.0-xml
     systemctl restart apache2
@@ -348,8 +324,7 @@ And your troubles should be gone.
 
 **"make check": all audio checks fail**
 
-Logfiles contain "bc: command not found", so the command line communicator is
-missing.
+Logfiles contain "bc: command not found", so the command line communicator is missing.
 
 Fix by installing it (or similar):
 
@@ -359,18 +334,13 @@ Fix by installing it (or similar):
 
 If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.
 
-Happens when the files are transcoded on the fly, but never when file comes from
-cache. This is because the result is never exactly what was predicted.
+Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.
 
-SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the
-file ist larger than predicted.
+SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file ist larger than predicted.
 
-NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA.
-This can be repeated as many times as one wants to - once the file is OK, once
-not.
+NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.
 
-As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured
-to cope with that, but how to is unknown to me.
+As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.
 
 **Make reports "/bin/sh: a2x: command not found"**
 
@@ -387,39 +357,35 @@ When you see this message accessing blurays:
     bdj.c:340: libbluray-j2se-0.9.3.jar not found.
     bdj.c:466: BD-J check: Failed to load libbluray.jar
 
-To get rid of this message simply install "libbluray-bdj", this will make it go away.
-Though not necessary, as to read the bluray tracks java support is not required, so
-this is simply cosmetical.
+To get rid of this message simply install "libbluray-bdj", this will make it go away. Though not necessary, as to read the bluray tracks java support is not required, so this is simply cosmetical.
 
 **Switching between repository version and source builds**
 
-It is easy to switch between both worlds. You can do that as many
-times as you want to, alas the cache directory will be cleared
-every time. But it will be rebuild in the background so this will
-almost go unnoticed.
+It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuild in the background so this will almost go unnoticed.
 
 To switch from repository to a source build do
 
-   apt-get remove ffmpegfs
+```
+apt-get remove ffmpegfs
+```
 
-Then follow the steps under "Building FFmpegfs yourself". If you do
-not remove the repository version, you self-build could be unadvertedly
-up- or downgraded when a new version becomes available from the repository.
+Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be inadvertently up- or downgraded when a new version becomes available from the repository.
 
 To switch from a source build to a repository installation change to
 the build directory and do
 
-   make uninstall
+```
+make uninstall
+```
 
 Then follow the steps under "Installation from repository".
 
 COPYRIGHT
 ---------
 
-Copyright (C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de)
-This file was originally copyright (C) 2013-2014 K. Henriksson.
+This fork with FFmpeg support copyright \(C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de).
 
-This documentation may be distributed under the GNU Free Documentation License
-(GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU
-General Public License (GPL) version 3 or later.
+Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
+
+This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later.
 

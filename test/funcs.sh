@@ -1,6 +1,13 @@
 PATH=$PWD/../src:$PATH
 export LC_ALL=C
 
+if [ ! -s "$2" ]
+then
+    EXITCODE="$2"
+else
+    EXITCODE=99
+fi
+
 cleanup () {
     EXIT=$?
     echo "Return code: ${EXIT}"
@@ -17,8 +24,8 @@ cleanup () {
 
 ffmpegfserr () {
     echo "***TEST FAILED***"
-    echo "Return code: 99"
-    exit 99
+    echo "Return code: ${EXITCODE}"
+    exit ${EXITCODE}
 }
 
 check_filesize() {
@@ -76,7 +83,7 @@ DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
 
 #--disable_cache
-( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=$0_${DESTTYPE}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} > /dev/null || kill -USR1 $$ ) &
+( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=$0_${DESTTYPE}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null || kill -USR1 $$ ) &
 while ! mount | grep -q "${DIRNAME}" ; do
     sleep 0.1
 done

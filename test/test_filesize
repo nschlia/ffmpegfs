@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ADDOPT=""
+
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 # Ensure log contains file sizes, predicted and actual
@@ -29,7 +31,7 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e" 429358 489814
+    check_filesize "raven_e" 429358 489821
     check_filesize "raven_d" 262919 353367
 elif [ "${DESTTYPE}" == "opus" ];
 then

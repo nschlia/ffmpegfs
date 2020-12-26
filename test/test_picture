@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ADDOPT=""
+
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 hash_image() {

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ADDOPT=""
+
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 check_filesize() {
@@ -42,7 +44,7 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard" 4376074 4433924
+    check_filesize "snowboard" 4376074 4443428
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
@@ -54,7 +56,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "snowboard" 4208192 4324940
+    check_filesize "snowboard" 4207816 4324940
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

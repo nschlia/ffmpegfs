@@ -2925,7 +2925,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 {
                     AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                    AVFrame * tmp_frame = alloc_picture(output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+                    AVFrame * tmp_frame = alloc_picture(m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                     if (tmp_frame == nullptr)
                     {
                         av_frame_free(&frame);

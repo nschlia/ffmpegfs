@@ -2863,11 +2863,9 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
             //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx, &sw_frame, frame);
 
-            sw_frame = av_frame_alloc();
-            if (sw_frame == nullptr)
+            ret = init_frame(&sw_frame, destname());
+            if (ret < 0)
             {
-                ret = AVERROR(ENOMEM);
-                Logging::error(filename(), "Can not alloc frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 // unused frame
                 av_frame_free(&frame);
                 break;
@@ -5728,11 +5726,9 @@ int FFmpeg_Transcoder::hwframe_copy_from_hw(AVCodecContext * /*ctx*/, AVFrame **
 {
     int ret;
 
-    *sw_frame = av_frame_alloc();
-    if (*sw_frame != nullptr)
+    ret = init_frame(sw_frame, destname());
+    if (ret < 0)
     {
-        ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -5757,11 +5753,9 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
 {
     int ret;
 
-    *hw_frame = av_frame_alloc();
-    if (*hw_frame == nullptr)
+    ret = init_frame(hw_frame, destname());
+    if (ret < 0)
     {
-        ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to initialise hwframe context (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 

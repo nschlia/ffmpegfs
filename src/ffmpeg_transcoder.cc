@@ -323,7 +323,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(ENOMEM);
     }
 
-    unsigned char *iobuffer = static_cast<unsigned char *>(::av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
+    unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer == nullptr)
     {
         Logging::error(filename(), "Out of memory opening file: Unable to allocate I/O buffer.");
@@ -1001,7 +1001,7 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
 {
     // Try to determine display aspect ratio
     AVRational dar;
-    ::av_reduce(&dar.num, &dar.den,
+    av_reduce(&dar.num, &dar.den,
                 width  * sar.num,
                 height * sar.den,
                 1024 * 1024);
@@ -1032,7 +1032,7 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
         return false;
     }
 
-    ::av_reduce(&ar->num, &ar->den,
+    av_reduce(&ar->num, &ar->den,
                 ar->num,
                 ar->den,
                 1024 * 1024);
@@ -5054,13 +5054,13 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             //pFrame->pts = av_frame_get_best_effort_timestamp(pFrame);
             // push the decoded frame into the filtergraph
 
-            if ((ret = ::av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
+            if ((ret = av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
             {
                 Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
-            filterframe = ::av_frame_alloc();
+            filterframe = av_frame_alloc();
             if (filterframe == nullptr)
             {
                 ret = AVERROR(ENOMEM);
@@ -5069,17 +5069,17 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             }
 
             // pull filtered frames from the filtergraph
-            ret = ::av_buffersink_get_frame(m_buffer_sink_context, filterframe);
+            ret = av_buffersink_get_frame(m_buffer_sink_context, filterframe);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 // Not an error, go on
-                ::av_frame_free(&filterframe);
+                av_frame_free(&filterframe);
                 ret = 0;
             }
             else if (ret < 0)
             {
                 Logging::error(destname(), "Error while getting frame from filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
-                ::av_frame_free(&filterframe);
+                av_frame_free(&filterframe);
                 throw ret;
             }
             else
@@ -5093,7 +5093,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 #else
                 tgtframe->best_effort_timestamp = av_frame_get_best_effort_timestamp(srcframe);
 #endif
-                ::av_frame_free(&srcframe);
+                av_frame_free(&srcframe);
             }
         }
         catch (int _ret)
@@ -5111,19 +5111,19 @@ void FFmpeg_Transcoder::free_filters()
 {
     if (m_buffer_sink_context != nullptr)
     {
-        ::avfilter_free(m_buffer_sink_context);
+        avfilter_free(m_buffer_sink_context);
         m_buffer_sink_context = nullptr;
     }
 
     if (m_buffer_source_context != nullptr)
     {
-        ::avfilter_free(m_buffer_source_context);
+        avfilter_free(m_buffer_source_context);
         m_buffer_source_context = nullptr;
     }
 
     if (m_filter_graph != nullptr)
     {
-        ::avfilter_graph_free(&m_filter_graph);
+        avfilter_graph_free(&m_filter_graph);
         m_filter_graph = nullptr;
     }
 }

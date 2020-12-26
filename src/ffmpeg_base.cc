@@ -78,7 +78,7 @@ void FFmpeg_Base::init_packet(AVPacket *pkt) const
 
 int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 {
-    *frame = ::av_frame_alloc();
+    *frame = av_frame_alloc();
     if (*frame == nullptr)
     {
         Logging::error(filename, "Could not allocate frame.");
@@ -251,7 +251,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)
 {
-    const char *fmt_name = ::av_get_pix_fmt_name(pix_fmt);
+    const char *fmt_name = av_get_pix_fmt_name(pix_fmt);
     return (fmt_name != nullptr ? fmt_name : "none");
 }
 

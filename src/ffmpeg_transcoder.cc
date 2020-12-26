@@ -2608,79 +2608,84 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             m_pos = pkt->pos;
         }
 
-        if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
+        if (frame != nullptr)
         {
-            frame = send_filters(frame, ret);
-            if (ret)
+            if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
             {
-                return ret;
-            }
-
-            if (m_sws_ctx != nullptr)
-            {
-                AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
-
-                AVFrame * tmp_frame = alloc_picture(output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
-                if (tmp_frame == nullptr)
+                frame = send_filters(frame, ret);
+                if (ret)
                 {
-                    return AVERROR(ENOMEM);
+                    av_frame_free(&frame);
+                    return ret;
                 }
 
-                sws_scale(m_sws_ctx,
-                          static_cast<const uint8_t * const *>(frame->data), frame->linesize,
-                          0, frame->height,
-                          tmp_frame->data, tmp_frame->linesize);
+                if (m_sws_ctx != nullptr)
+                {
+                    AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                tmp_frame->pts = frame->pts;
-                tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
+                    AVFrame * tmp_frame = alloc_picture(output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+                    if (tmp_frame == nullptr)
+                    {
+                        av_frame_free(&frame);
+                        return AVERROR(ENOMEM);
+                    }
 
-                av_frame_free(&frame);
+                    sws_scale(m_sws_ctx,
+                              static_cast<const uint8_t * const *>(frame->data), frame->linesize,
+                              0, frame->height,
+                              tmp_frame->data, tmp_frame->linesize);
 
-                frame = tmp_frame;
-            }
+                    tmp_frame->pts = frame->pts;
+                    tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
+
+                    av_frame_free(&frame);
+
+                    frame = tmp_frame;
+                }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-            int64_t best_effort_timestamp = frame->best_effort_timestamp;
+                int64_t best_effort_timestamp = frame->best_effort_timestamp;
 #else
-            int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
+                int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
 #endif
 
-            if (best_effort_timestamp != AV_NOPTS_VALUE)
-            {
-                frame->pts = best_effort_timestamp;
-            }
-
-            if (frame->pts == AV_NOPTS_VALUE)
-            {
-                frame->pts = m_pts;
-            }
-
-            if (m_out.m_video.m_stream != nullptr)
-            {
-                // Rescale to our time base, but only if nessessary
-                if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                if (best_effort_timestamp != AV_NOPTS_VALUE)
                 {
-                    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    frame->pts = best_effort_timestamp;
                 }
 
-                frame->quality = m_out.m_video.m_codec_ctx->global_quality;
-            }
+                if (frame->pts == AV_NOPTS_VALUE)
+                {
+                    frame->pts = m_pts;
+                }
 
-            if (m_out.m_video.m_stream != nullptr)
+                if (m_out.m_video.m_stream != nullptr)
+                {
+                    // Rescale to our time base, but only if nessessary
+                    if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                    {
+                        frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    }
+
+                    frame->quality = m_out.m_video.m_codec_ctx->global_quality;
+                }
+
+                if (m_out.m_video.m_stream != nullptr)
+                {
+                    // Fix for issue #46: bitrate too high.
+                    // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
+                    // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
+                    frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                }
+
+                frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+                m_video_fifo.push(frame);
+            }
+            else
             {
-                // Fix for issue #46: bitrate too high.
-                // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
-                // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
-                frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                // unused frame
+                av_frame_free(&frame);
             }
-
-            frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-            m_video_fifo.push(frame);
-        }
-        else
-        {
-            // unused frame
-            av_frame_free(&frame);
         }
     }
 

@@ -14,8 +14,7 @@ News
 
 **New in 2.5:**
 
-* **Feature**: Issue #63 - Hardware acceleration for encoding/decoding is partly 
-  implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
+* **Feature**: Issue #63 - Hardware acceleration for encoding/decoding is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
   - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
   - VAAPI: MJPEG and VC-9 do not work (yet).
@@ -23,12 +22,7 @@ News
   - OMX: H264 encoding.
   - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
 * **Note**: Which hardware en/decoder actually works depends on what your hardware supports.
-* Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
-* The decoding part is a more tricky, if encoding is set set to hardware, this hardware is
-  there and capable of encoding, it will work. If decoding in hardware is possible depends on
-  the source file, thus the file needs to be checked first and then decided if hardware
-  acceleration can be used or fallback to software is required. FFmpeg requires that to be set
-  via command line, FFmpegfs must decide that automatically.
+* **Call for testers**: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * See [NEWS](NEWS) for details.
 
 ### **Version 2.2 under development**
@@ -174,13 +168,13 @@ Enable deinterlacing for enhanced image quality.
 
 Hardware Acceleration
 =====================
-The new hardware acceleration feature is a bit tricky. It depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.
+The new hardware acceleration feature depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.
 
 How It Works
 ------------
 Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs. As of today even cheapy on board chips can do hardware acceleration.
 
-Here is an incomplete list.
+Here an incomplete list.
 
 Hardware acceleration using hardware buffered frames:
 
@@ -260,6 +254,8 @@ If your system supports VAAPI:
 
 On slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load. On faster machines this impact may be smaller, yet noticeable. 
 
+The decoding part is a bit tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, but FFmpegfs must be able to decide that automatically.
+
 TODOs
 -----
 
@@ -324,8 +320,6 @@ $ find /mnt/ffmpegfs
   /mnt/ffmpegfs/video1.mov/00001.png
   /mnt/ffmpegfs/video1.mov/00002.png
 ```
-
-
 
 A FEW WORDS ON PRORES
 ---------------------

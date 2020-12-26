@@ -5214,13 +5214,11 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
     }
 
     // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
-    AVPixelFormat pix_fmt = (output_codec_ctx != nullptr) ? output_codec_ctx->pix_fmt : AV_PIX_FMT_YUV420P;
+    *out_pix_fmt = (output_codec_ctx != nullptr) ? output_codec_ctx->pix_fmt : AV_PIX_FMT_YUV420P;
 
     if (*in_pix_fmt == AV_PIX_FMT_NONE)
     {
         // If input's stream pixel format is unknown, use same as output (may not work but at least will not crash FFmpeg)
-        *in_pix_fmt = pix_fmt;
+        *in_pix_fmt = *out_pix_fmt;
     }
-
-    *out_pix_fmt = pix_fmt;
 }

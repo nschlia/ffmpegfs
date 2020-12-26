@@ -85,7 +85,7 @@ protected:
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                 av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr) const;
+    int                 dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
      * @brief Call av_opt_set and check result code. Displays an error message if appropriate.
      * @param[in] obj - A struct whose first element is a pointer to an AVClass.
@@ -95,7 +95,7 @@ protected:
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                 av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
+    int                 opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
      * @brief Print info of video stream to log.
      * @param[in] out_file - true if file is output.

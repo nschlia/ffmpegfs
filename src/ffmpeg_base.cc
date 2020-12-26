@@ -191,7 +191,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 
-int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_dict_set(pm, key, value, flags);
 
@@ -203,7 +203,7 @@ int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
     return ret;
 }
 
-int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_opt_set(obj, key, value, flags);
 

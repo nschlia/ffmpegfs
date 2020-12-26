@@ -260,7 +260,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     // This allows selecting if the demuxer should consider all streams to be
     // found after the first PMT and add further streams during decoding or if it rather
     // should scan all that are within the analyze-duration and other limits
-    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+    ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;
@@ -281,7 +281,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //}
 
     // probesize: 5000000 by default.
-    ret = av_dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
+    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
     if (ret < 0)
     {
         return ret;
@@ -396,7 +396,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_in.m_filetype = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
 
-    ret = av_dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
+    ret = dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
     if (ret < 0)
     {
         return ret;
@@ -1108,7 +1108,7 @@ int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option)
     {
         Logging::trace(destname(), "Profile codec option -%1%2%3.", p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
+        ret = opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -1358,7 +1358,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         //#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
-        av_dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(&opt, "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -1671,7 +1671,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     if (!av_dict_get(opt, "threads", nullptr, 0))
     {
         Logging::trace(destname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id, false));
-        av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
+        dict_set_with_check(&opt, "threads", "auto", 0, destname());
     }
 
     // Open the encoder for the stream to use it later.
@@ -2217,7 +2217,7 @@ int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION opti
 
         Logging::trace(destname(), "Profile format option -%1%2%3.",  p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
+        ret = dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -2242,8 +2242,8 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
     if (filetype == FILETYPE_MP4 || filetype == FILETYPE_PRORES || filetype == FILETYPE_TS || filetype == FILETYPE_HLS)
     {
         // All
-        av_dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
-        av_dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
+        dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
+        dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
     }
 
     return ret;
@@ -3616,7 +3616,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
 
     while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)))
     {
-        av_dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
+        dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
 
         if (m_out.m_filetype == FILETYPE_MP3)
         {

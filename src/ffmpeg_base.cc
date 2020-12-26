@@ -78,7 +78,7 @@ void FFmpeg_Base::init_packet(AVPacket *pkt) const
 
 int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 {
-    *frame = ::av_frame_alloc();
+    *frame = av_frame_alloc();
     if (*frame == nullptr)
     {
         Logging::error(filename, "Could not allocate frame.");
@@ -194,7 +194,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 
-int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_dict_set(pm, key, value, flags);
 
@@ -206,7 +206,7 @@ int FFmpeg_Base::av_dict_set_with_check(AVDictionary **pm, const char *key, cons
     return ret;
 }
 
-int FFmpeg_Base::av_opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
+int FFmpeg_Base::opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_opt_set(obj, key, value, flags);
 
@@ -254,7 +254,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)
 {
-    const char *fmt_name = ::av_get_pix_fmt_name(pix_fmt);
+    const char *fmt_name = av_get_pix_fmt_name(pix_fmt);
     return (fmt_name != nullptr ? fmt_name : "none");
 }
 

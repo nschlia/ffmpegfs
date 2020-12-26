@@ -290,7 +290,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     // This allows selecting if the demuxer should consider all streams to be
     // found after the first PMT and add further streams during decoding or if it rather
     // should scan all that are within the analyze-duration and other limits
-    ret = av_dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+    ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;
@@ -311,7 +311,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //}
 
     // probesize: 5000000 by default.
-    ret = av_dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
+    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
     if (ret < 0)
     {
         return ret;
@@ -351,7 +351,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(ENOMEM);
     }
 
-    unsigned char *iobuffer = static_cast<unsigned char *>(::av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
+    unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer == nullptr)
     {
         Logging::error(filename(), "Out of memory opening file: Unable to allocate I/O buffer.");
@@ -426,7 +426,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_in.m_filetype = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
 
-    ret = av_dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
+    ret = dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
     if (ret < 0)
     {
         return ret;
@@ -705,8 +705,6 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
     assert(buffer != nullptr);
-
-    //get_destname(&m_out.m_filename, m_in.m_filename);
 
     m_out.m_filetype    = m_current_format->filetype();
 
@@ -1202,7 +1200,7 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
 {
     // Try to determine display aspect ratio
     AVRational dar;
-    ::av_reduce(&dar.num, &dar.den,
+    av_reduce(&dar.num, &dar.den,
                 width  * sar.num,
                 height * sar.den,
                 1024 * 1024);
@@ -1233,7 +1231,7 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
         return false;
     }
 
-    ::av_reduce(&ar->num, &ar->den,
+    av_reduce(&ar->num, &ar->den,
                 ar->num,
                 ar->den,
                 1024 * 1024);
@@ -1314,7 +1312,7 @@ int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option)
 
         Logging::trace(destname(), "Profile codec option -%1%2%3.", p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
+        ret = opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -1584,7 +1582,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         //#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
-        av_dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(&opt, "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -1941,7 +1939,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     if (!av_dict_get(opt, "threads", nullptr, 0))
     {
         Logging::trace(destname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id, false));
-        av_dict_set_with_check(&opt, "threads", "auto", 0, destname());
+        dict_set_with_check(&opt, "threads", "auto", 0, destname());
     }
 
     // Open the encoder for the stream to use it later.
@@ -2487,7 +2485,7 @@ int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION opti
 
         Logging::trace(destname(), "Profile format option -%1%2%3.",  p->m_key, *p->m_value ? " " : "", p->m_value);
 
-        ret = av_dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
+        ret = dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, destname());
         if (ret < 0)
         {
             break;
@@ -2512,8 +2510,8 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
     if (filetype == FILETYPE_MP4 || filetype == FILETYPE_PRORES || filetype == FILETYPE_TS || filetype == FILETYPE_HLS)
     {
         // All
-        av_dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
-        av_dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
+        dict_set_with_check(dict, "flags:a", "+global_header", 0, destname());
+        dict_set_with_check(dict, "flags:v", "+global_header", 0, destname());
     }
 
     return ret;
@@ -2569,8 +2567,8 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
     AVFrame *picture;
     int ret;
 
-    picture = av_frame_alloc();
-    if (picture == nullptr)
+    ret = init_frame(&picture, filename());
+    if (ret < 0)
     {
         return nullptr;
     }
@@ -2583,7 +2581,7 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
     ret = av_frame_get_buffer(picture, 32);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not allocate frame data.");
+        Logging::error(destname(), "Could not allocate frame data (error '%1').", ffmpeg_geterror(ret).c_str());
         av_frame_free(&picture);
         return nullptr;
     }
@@ -2912,79 +2910,84 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             m_pos = pkt->pos;
         }
 
-        if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
+        if (frame != nullptr)
         {
-            frame = send_filters(frame, ret);
-            if (ret)
+            if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
             {
-                return ret;
-            }
-
-            if (m_sws_ctx != nullptr)
-            {
-                AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
-
-                AVFrame * tmp_frame = alloc_picture(m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
-                if (tmp_frame == nullptr)
+                frame = send_filters(frame, ret);
+                if (ret)
                 {
-                    return AVERROR(ENOMEM);
+                    av_frame_free(&frame);
+                    return ret;
                 }
 
-                sws_scale(m_sws_ctx,
-                          static_cast<const uint8_t * const *>(frame->data), frame->linesize,
-                          0, frame->height,
-                          tmp_frame->data, tmp_frame->linesize);
+                if (m_sws_ctx != nullptr)
+                {
+                    AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                tmp_frame->pts = frame->pts;
-                tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
+                    AVFrame * tmp_frame = alloc_picture(output_codec_ctx->pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+                    if (tmp_frame == nullptr)
+                    {
+                        av_frame_free(&frame);
+                        return AVERROR(ENOMEM);
+                    }
 
-                av_frame_free(&frame);
+                    sws_scale(m_sws_ctx,
+                              static_cast<const uint8_t * const *>(frame->data), frame->linesize,
+                              0, frame->height,
+                              tmp_frame->data, tmp_frame->linesize);
 
-                frame = tmp_frame;
-            }
+                    tmp_frame->pts = frame->pts;
+                    tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
+
+                    av_frame_free(&frame);
+
+                    frame = tmp_frame;
+                }
 
 #if LAVF_DEP_AVSTREAM_CODEC
-            int64_t best_effort_timestamp = frame->best_effort_timestamp;
+                int64_t best_effort_timestamp = frame->best_effort_timestamp;
 #else
-            int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
+                int64_t best_effort_timestamp = av_frame_get_best_effort_timestamp(frame);
 #endif
 
-            if (best_effort_timestamp != AV_NOPTS_VALUE)
-            {
-                frame->pts = best_effort_timestamp;
-            }
-
-            if (frame->pts == AV_NOPTS_VALUE)
-            {
-                frame->pts = m_pts;
-            }
-
-            if (m_out.m_video.m_stream != nullptr)
-            {
-                // Rescale to our time base, but only if nessessary
-                if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                if (best_effort_timestamp != AV_NOPTS_VALUE)
                 {
-                    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    frame->pts = best_effort_timestamp;
                 }
 
-                frame->quality = m_out.m_video.m_codec_ctx->global_quality;
-            }
+                if (frame->pts == AV_NOPTS_VALUE)
+                {
+                    frame->pts = m_pts;
+                }
 
-            if (m_out.m_video.m_stream != nullptr)
+                if (m_out.m_video.m_stream != nullptr)
+                {
+                    // Rescale to our time base, but only if nessessary
+                    if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                    {
+                        frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    }
+
+                    frame->quality = m_out.m_video.m_codec_ctx->global_quality;
+                }
+
+                if (m_out.m_video.m_stream != nullptr)
+                {
+                    // Fix for issue #46: bitrate too high.
+                    // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
+                    // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
+                    frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                }
+
+                frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+                m_video_fifo.push(frame);
+            }
+            else
             {
-                // Fix for issue #46: bitrate too high.
-                // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
-                // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
-                frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                // unused frame
+                av_frame_free(&frame);
             }
-
-            frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-            m_video_fifo.push(frame);
-        }
-        else
-        {
-            // unused frame
-            av_frame_free(&frame);
         }
     }
 
@@ -3063,8 +3066,16 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         if (!m_copy_video)
         {
             int decoded = 0;
-            // Mit Fix: DVD OK, einige Blurays (Phil Collins) nicht
-            // Ohne Fix: alle DVDs kacka, Blurays dafür OK
+            /**
+              * @todo Calling decode_video_frame until all data has been used, but for
+              * DVDs only. Can someone tell me why this seems required??? If this is not
+              * done some videos become garbled. But only for DVDs... @n
+              * @n
+              * With fix: all DVDs OK, some Blurays (e.g. Phil Collins) not... @n
+              * With fix: all DVDs shitty, but Blurays OK. @n
+              * @n
+              * Applying fix for DVDs only.
+              */
 #ifndef USE_LIBDVD
             ret = decode_video_frame(pkt, &decoded);
 #else //USE_LIBDVD
@@ -3077,7 +3088,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #if LAVC_NEW_PACKET_INTERFACE
                 int lastret = 0;
 #endif
-                // Can someone tell me why this seems required??? If this is not done some videos become garbled.
                 do
                 {
                     // Decode one frame.
@@ -3437,10 +3447,9 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     int ret;
 
     // Create a new frame to store the audio samples.
-    *frame = av_frame_alloc();
-    if (*frame == nullptr)
+    ret = init_frame(frame, destname());
+    if (ret < 0)
     {
-        Logging::error(destname(), "Could not allocate output frame.");
         return AVERROR_EXIT;
     }
 
@@ -3938,7 +3947,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
 
     while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)))
     {
-        av_dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
+        dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
 
         if (m_out.m_filetype == FILETYPE_MP3)
         {
@@ -5384,32 +5393,31 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             //pFrame->pts = av_frame_get_best_effort_timestamp(pFrame);
             // push the decoded frame into the filtergraph
 
-            if ((ret = ::av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
+            if ((ret = av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
             {
                 Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
-            filterframe = ::av_frame_alloc();
-            if (filterframe == nullptr)
+            ret = init_frame(&filterframe, destname());
+            if (ret < 0)
             {
-                ret = AVERROR(ENOMEM);
                 Logging::error(destname(), "Unable to allocate filter frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
             // pull filtered frames from the filtergraph
-            ret = ::av_buffersink_get_frame(m_buffer_sink_context, filterframe);
+            ret = av_buffersink_get_frame(m_buffer_sink_context, filterframe);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 // Not an error, go on
-                ::av_frame_free(&filterframe);
+                av_frame_free(&filterframe);
                 ret = 0;
             }
             else if (ret < 0)
             {
                 Logging::error(destname(), "Error while getting frame from filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
-                ::av_frame_free(&filterframe);
+                av_frame_free(&filterframe);
                 throw ret;
             }
             else
@@ -5423,7 +5431,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
 #else
                 tgtframe->best_effort_timestamp = av_frame_get_best_effort_timestamp(srcframe);
 #endif
-                ::av_frame_free(&srcframe);
+                av_frame_free(&srcframe);
             }
         }
         catch (int _ret)
@@ -5441,19 +5449,19 @@ void FFmpeg_Transcoder::free_filters()
 {
     if (m_buffer_sink_context != nullptr)
     {
-        ::avfilter_free(m_buffer_sink_context);
+        avfilter_free(m_buffer_sink_context);
         m_buffer_sink_context = nullptr;
     }
 
     if (m_buffer_source_context != nullptr)
     {
-        ::avfilter_free(m_buffer_source_context);
+        avfilter_free(m_buffer_source_context);
         m_buffer_source_context = nullptr;
     }
 
     if (m_filter_graph != nullptr)
     {
-        ::avfilter_graph_free(&m_filter_graph);
+        avfilter_graph_free(&m_filter_graph);
         m_filter_graph = nullptr;
     }
 }

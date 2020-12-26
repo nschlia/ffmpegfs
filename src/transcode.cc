@@ -65,7 +65,7 @@ static volatile bool thread_exit;               /**< @brief Used for shutdown: i
 
 static void transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
-static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder);
+static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
 /**
  * @brief Transcode the buffer until the buffer has enough or until an error occurs.
@@ -136,34 +136,34 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
  * @param[in] transcoder - Current FFmpeg_Transcoder object.
  * @return On success returns 0; on error negative AVERROR.
  */
-static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder *transcoder)
+static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transcoder)
 {
-    int res = transcoder->encode_finish();
+    int res = transcoder.encode_finish();
     if (res < 0)
     {
         return res;
     }
 
     // Check encoded buffer size. Does not affect HLS segments.
-    cache_entry->m_cache_info.m_duration            = transcoder->duration();
+    cache_entry->m_cache_info.m_duration            = transcoder.duration();
     cache_entry->m_cache_info.m_encoded_filesize    = cache_entry->m_buffer->buffer_watermark();
-    cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
-    cache_entry->m_cache_info.m_segment_count       = transcoder->segment_count();
+    cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
+    cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
     cache_entry->m_cache_info.m_finished            = RESULTCODE_FINISHED;
     cache_entry->m_is_decoding                      = false;
     cache_entry->m_cache_info.m_errno               = 0;
     cache_entry->m_cache_info.m_averror             = 0;
 
-    Logging::debug(transcoder->destname(), "Finishing file.");
+    Logging::debug(transcoder.destname(), "Finishing file.");
 
     if (!cache_entry->m_buffer->reserve(cache_entry->m_cache_info.m_encoded_filesize))
     {
-        Logging::debug(transcoder->destname(), "Unable to truncate buffer.");
+        Logging::debug(transcoder.destname(), "Unable to truncate buffer.");
     }
 
-    if (!transcoder->is_multiformat())
+    if (!transcoder.is_multiformat())
     {
-        Logging::debug(transcoder->destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
+        Logging::debug(transcoder.destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
                        format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
                        format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
                        format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
@@ -308,29 +308,21 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
 bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
 {
-    FFmpeg_Transcoder *transcoder = new(std::nothrow) FFmpeg_Transcoder;
+    FFmpeg_Transcoder transcoder;
     bool success = false;
 
-    if (transcoder == nullptr)
+    if (transcoder.open_input_file(virtualfile) >= 0)
     {
-        Logging::error(cache_entry->filename(), "Out of memory getting file size.");
-        return false;
-    }
+        cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
+        cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
+        cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
 
-    if (transcoder->open_input_file(virtualfile) >= 0)
-    {
-        cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
-        cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
-        cache_entry->m_cache_info.m_segment_count       = transcoder->segment_count();
-
-        transcoder->close();
+        transcoder.close();
 
         Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         success = true;
     }
-
-    delete transcoder;
 
     return success;
 }
@@ -755,7 +747,7 @@ static void transcoder_thread(void *arg)
 {
     THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
-    FFmpeg_Transcoder *transcoder = new(std::nothrow) FFmpeg_Transcoder;
+    FFmpeg_Transcoder transcoder;
     int averror = 0;
     int syserror = 0;
     bool timeout = false;
@@ -765,12 +757,6 @@ static void transcoder_thread(void *arg)
 
     try
     {
-        if (transcoder == nullptr)
-        {
-            Logging::error(cache_entry->filename(), "Internal error: Trancoder object should not be NULL.");
-            throw (static_cast<int>(ENOMEM));
-        }
-
         Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
 
         if (!cache_entry->open())
@@ -778,7 +764,7 @@ static void transcoder_thread(void *arg)
             throw (static_cast<int>(errno));
         }
 
-        averror = transcoder->open_input_file(cache_entry->virtualfile());
+        averror = transcoder.open_input_file(cache_entry->virtualfile());
         if (averror < 0)
         {
             throw (static_cast<int>(errno));
@@ -786,41 +772,41 @@ static void transcoder_thread(void *arg)
 
         if (!cache_entry->m_cache_info.m_duration)
         {
-            cache_entry->m_cache_info.m_duration = transcoder->duration();
+            cache_entry->m_cache_info.m_duration = transcoder.duration();
         }
 
         if (!cache_entry->m_cache_info.m_predicted_filesize)
         {
-            cache_entry->m_cache_info.m_predicted_filesize  = transcoder->predicted_filesize();
+            cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
         }
 
         if (!cache_entry->m_cache_info.m_video_frame_count)
         {
-            cache_entry->m_cache_info.m_video_frame_count   = transcoder->video_frame_count();
+            cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
         }
 
         if (!cache_entry->m_cache_info.m_segment_count)
         {
-            cache_entry->m_cache_info.m_segment_count   = transcoder->segment_count();
+            cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
         }
 
-        if (!cache->maintenance(transcoder->predicted_filesize()))
+        if (!cache->maintenance(transcoder.predicted_filesize()))
         {
             throw (static_cast<int>(errno));
         }
 
-        averror = transcoder->open_output_file(cache_entry->m_buffer);
+        averror = transcoder.open_output_file(cache_entry->m_buffer);
         if (averror < 0)
         {
             throw (static_cast<int>(errno));
         }
 
-        memcpy(&cache_entry->m_id3v1, transcoder->id3v1tag(), sizeof(ID3v1));
+        memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
 
         thread_data->m_initialised = true;
 
         bool unlocked = false;
-        if (!params.m_prebuffer_size || transcoder->is_frameset())
+        if (!params.m_prebuffer_size || transcoder.is_frameset())
         {
             // Unlock frame set from beginning
             unlocked = true;
@@ -842,28 +828,28 @@ static void transcoder_thread(void *arg)
                 cache_entry->update_access(false);
             }
 
-            if (transcoder->is_frameset())
+            if (transcoder.is_frameset())
             {
                 uint32_t frame_no = cache_entry->m_seek_to_no;
                 if (frame_no)
                 {
                     cache_entry->m_seek_to_no = 0;
 
-                    averror = transcoder->stack_seek_frame(frame_no);
+                    averror = transcoder.stack_seek_frame(frame_no);
                     if (averror < 0)
                     {
                         throw (static_cast<int>(errno));
                     }
                 }
             }
-            else if (transcoder->is_hls())
+            else if (transcoder.is_hls())
             {
                 uint32_t segment_no = cache_entry->m_seek_to_no;
                 if (segment_no)
                 {
                     cache_entry->m_seek_to_no = 0;
 
-                    averror = transcoder->stack_seek_segment(segment_no);
+                    averror = transcoder.stack_seek_segment(segment_no);
                     if (averror < 0)
                     {
                         throw (static_cast<int>(errno));
@@ -871,7 +857,7 @@ static void transcoder_thread(void *arg)
                 }
             }
 
-            averror = transcoder->process_single_fr(status);
+            averror = transcoder.process_single_fr(status);
             if (status < 0)
             {
                 syserror = EIO;
@@ -940,15 +926,13 @@ static void transcoder_thread(void *arg)
         thread_data->m_cond.notify_all();           // unlock main thread
     }
 
-    transcoder->close();
+    transcoder.close();
 
-    delete transcoder;
-
-    if (timeout || thread_exit || transcoder->have_seeked())
+    if (timeout || thread_exit || transcoder.have_seeked())
     {
-        cache_entry->m_is_decoding              = false;
+        cache_entry->m_is_decoding                  = false;
 
-        if (!transcoder->have_seeked())
+        if (!transcoder.have_seeked())
         {
             cache_entry->m_cache_info.m_finished    = RESULTCODE_ERROR;
             cache_entry->m_cache_info.m_error       = true;

@@ -251,6 +251,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
 
+    get_destname(&m_out.m_filename, m_in.m_filename);
+
     if (is_open())
     {
         Logging::warning(filename(), "File is already open.");
@@ -644,8 +646,6 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
     assert(buffer != nullptr);
-
-    get_destname(&m_out.m_filename, m_in.m_filename);
 
     m_out.m_filetype    = m_current_format->filetype();
 

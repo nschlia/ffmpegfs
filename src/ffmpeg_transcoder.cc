@@ -665,7 +665,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
 }
 
-int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type) const
+int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type)
 {
     AVCodec *input_codec = NULL;
     int ret;
@@ -685,7 +685,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
     return open_decoder(avctx, *stream_idx, input_codec, type);
 }
 
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type) const
+int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type)
 {
     AVCodecContext *input_codec_ctx     = nullptr;
     AVStream * input_stream             = nullptr;

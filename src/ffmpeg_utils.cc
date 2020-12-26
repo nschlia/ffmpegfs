@@ -678,7 +678,7 @@ int mktree(const std::string & path, mode_t mode)
         return ENOMEM;
     }
 
-    char dir[PATH_MAX] = "\0";
+    std::string dir;
     char *p = strtok (buffer, "/");
     int status = 0;
 
@@ -686,12 +686,12 @@ int mktree(const std::string & path, mode_t mode)
     {
         int newstat;
 
-        strcat(dir, "/");
-        strcat(dir, p);
+        dir += "/";
+        dir += p;
 
         errno = 0;
 
-        newstat = mkdir(dir, mode);
+        newstat = mkdir(dir.c_str(), mode);
 
         if (!status && newstat && errno != EEXIST)
         {

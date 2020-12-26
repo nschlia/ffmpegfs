@@ -41,11 +41,19 @@ test_tags_wav \
 test_tags_webm \
 test_frameset_png \
 test_frameset_bmp \
-test_frameset_jpg
+test_frameset_jpg \
+test_video_hw_dec_vaapi \
+test_video_hw_enc_vaapi \
+test_video_hw_dec_mmal \
+test_video_hw_enc_omx \
+test_video_hw_enc_cuda \
+test_video_hw_dec_cuda \
+test_video_hw_dec_v4l2m2m \
+test_video_hw_enc_v4l2m2m
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 
-EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize test_filesize_video
+EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize test_filesize_video test_video_hw
 EXTRA_DIST += $(wildcard tags/*)
 # NOT IN RELEASE 1.0! Add later: test_picture
 

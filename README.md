@@ -35,7 +35,8 @@ News
 
 **New in 2.2:**
 
-* **Note**: This is planned as a maintenance version, no new features but bugixes only. 
+* **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
+* **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
 
 ### **Version 2.1 released**
 

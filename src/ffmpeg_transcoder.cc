@@ -2313,7 +2313,7 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
     ret = av_frame_get_buffer(picture, 32);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not allocate frame data.");
+        Logging::error(destname(), "Could not allocate frame data (error '%1').", ffmpeg_geterror(ret).c_str());
         av_frame_free(&picture);
         return nullptr;
     }

@@ -2764,8 +2764,16 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         if (!m_copy_video)
         {
             int decoded = 0;
-            // Mit Fix: DVD OK, einige Blurays (Phil Collins) nicht
-            // Ohne Fix: alle DVDs kacka, Blurays dafür OK
+            /**
+              * @todo Calling decode_video_frame until all data has been used, but for
+              * DVDs only. Can someone tell me why this seems required??? If this is not
+              * done some videos become garbled. But only for DVDs... @n
+              * @n
+              * With fix: all DVDs OK, some Blurays (e.g. Phil Collins) not... @n
+              * With fix: all DVDs shitty, but Blurays OK. @n
+              * @n
+              * Applying fix for DVDs only.
+              */
 #ifndef USE_LIBDVD
             ret = decode_video_frame(pkt, &decoded);
 #else //USE_LIBDVD
@@ -2778,7 +2786,6 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #if LAVC_NEW_PACKET_INTERFACE
                 int lastret = 0;
 #endif
-                // Can someone tell me why this seems required??? If this is not done some videos become garbled.
                 do
                 {
                     // Decode one frame.

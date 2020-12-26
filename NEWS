@@ -11,7 +11,8 @@ Preparing release 2.2
 Important changes in 2.2 (2020-12-XX)
 
 * Feature:
-* Bugfix:
+* Bugfix: Possible crash in transcoder_thread: Decoder object could have been used
+          after being freed.
 
 Important changes in 2.1 (2020-12-14)
   

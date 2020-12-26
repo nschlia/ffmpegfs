@@ -2299,8 +2299,8 @@ AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int 
     AVFrame *picture;
     int ret;
 
-    picture = av_frame_alloc();
-    if (picture == nullptr)
+    ret = init_frame(&picture, filename());
+    if (ret < 0)
     {
         return nullptr;
     }
@@ -3133,10 +3133,9 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     int ret;
 
     // Create a new frame to store the audio samples.
-    *frame = av_frame_alloc();
-    if (*frame == nullptr)
+    ret = init_frame(frame, destname());
+    if (ret < 0)
     {
-        Logging::error(destname(), "Could not allocate output frame.");
         return AVERROR_EXIT;
     }
 
@@ -5060,10 +5059,9 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
                 throw ret;
             }
 
-            filterframe = av_frame_alloc();
-            if (filterframe == nullptr)
+            ret = init_frame(&filterframe, destname());
+            if (ret < 0)
             {
-                ret = AVERROR(ENOMEM);
                 Logging::error(destname(), "Unable to allocate filter frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }

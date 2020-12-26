@@ -453,21 +453,25 @@ static HWACCEL_MAP hwaccel_map =
     #if HAVE_VULKAN_HWACCEL
     { "VULKAN",         { false,    HWACCELAPI_VULKAN,          AV_HWDEVICE_TYPE_NONE } },  // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
     #endif // HAVE_VULKAN_HWACCEL
-
+    #if __APPLE__
+    // MacOS, not supported
+    { "VIDEOTOOLBOX",   { false,    HWACCELAPI_VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+    #endif
+    #if __ANDROID__
+    // Android
+    { "MEDIACODEC",     { false,    HWACCELAPI_MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
+    #endif
+    #if _WIN32
     // **** Not supported ****
 
-    // Digital Rights Management, not sure if this would work
+    // Digital Rights Management
     { "DRM",            { false,    HWACCELAPI_DRM,             AV_HWDEVICE_TYPE_NONE } },
 
     // Windows only, not supported
     { "DXVA2",          { false,    HWACCELAPI_DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
     { "D3D11VA",        { false,    HWACCELAPI_D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
+    #endif
 
-    // MacOS, not supported
-    { "VIDEOTOOLBOX",   { false,    HWACCELAPI_VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
-
-    // Android
-    { "MEDIACODEC",     { false,    HWACCELAPI_MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);

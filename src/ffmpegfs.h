@@ -110,17 +110,25 @@ typedef enum HWACCELAPI
     // Additional formats
 
     HWACCELAPI_VDPAU,               /**< VDPAU            not supported */
-    HWACCELAPI_DXVA2,               /**< DXVA2            not supported */
     HWACCELAPI_QSV,                 /**< QSV              not supported */
-    HWACCELAPI_VIDEOTOOLBOX,        /**< VIDEOTOOLBOX     not supported */
-    HWACCELAPI_D3D11VA,             /**< D3D11VA          not supported */
-    HWACCELAPI_DRM,                 /**< DRM              not supported */
     HWACCELAPI_OPENCL,              /**< OPENCL           not supported */
-    HWACCELAPI_MEDIACODEC,          /**< MEDIACODEC       not supported */
 #if HAVE_VULKAN_HWACCEL
     HWACCELAPI_VULKAN,              /**< VULKAN           not supported */
 #endif // HAVE_VULKAN_HWACCEL
-
+#if __APPLE__
+    // MacOS acceleration APIs not supported
+    HWACCELAPI_VIDEOTOOLBOX,        /**< VIDEOTOOLBOX     not supported */
+#endif
+#if __ANDROID__
+    // Android acceleration APIs not supported
+    HWACCELAPI_MEDIACODEC,          /**< MEDIACODEC       not supported */
+#endif
+#if _WIN32
+// Windows acceleration APIs not supported
+    HWACCELAPI_DRM,                 /**< DRM              not supported */
+    HWACCELAPI_DXVA2,               /**< DXVA2            not supported */
+    HWACCELAPI_D3D11VA,             /**< D3D11VA          not supported */
+#endif
 } HWACCELAPI;
 
 /**

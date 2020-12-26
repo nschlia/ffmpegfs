@@ -164,14 +164,20 @@ const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
     #if HAVE_VULKAN_HWACCEL
     { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt untested.
     #endif // HAVE_VULKAN_HWACCEL
+    #if __APPLE__
+    // MacOS acceleration APIs not supported
+    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - Videotoolbox pix_fmt untested.
+    #endif
+    #if __ANDROID__
+    // Android acceleration APIs not supported
+    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC },    ///< @todo HWACCEL - Mediacodec pix_fmt untested.
+    #endif
     #if _WIN32
     // Windows acceleration APIs not supported
     { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< @todo HWACCEL - DRM prime pix_fmt untested.
     { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< @todo HWACCEL - DXVA2 pix_fmt untested.
     { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< @todo HWACCEL - D3D11VA pix_fmt untested.
     #endif
-    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - Videotoolbox pix_fmt untested.
-    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC }     ///< @todo HWACCEL - Mediacodec pix_fmt untested.
 };
 
 #pragma GCC diagnostic push

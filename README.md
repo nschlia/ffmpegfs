@@ -66,9 +66,9 @@ Currently supported output formats:
 | ------------- | ------------- | ------------- | ------------- |
 | MP4 | MPEG-4 | H264 | AAC |
 | WebM|| VP9 | Opus |
-| OGG||| Theora | Vorbis |
+| OGG|| Theora | Vorbis |
 | MOV | QuickTime File Format | H264 | AAC |
-| Prores || Prores | AAC | PCM 16 bit LE |
+| Prores | Prores | AAC | PCM 16 bit LE |
 | Opus ||| Opus |
 | MP3 | MPEG-2 Audio Layer III || MP3 |
 | WAV | Waveform Audio File Format || PCM 16 bit LE |

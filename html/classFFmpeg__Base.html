@@ -121,12 +121,12 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a07c41e35cb9411b15db72a733930dc2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a07c41e35cb9411b15db72a733930dc2c">video_stream_setup</a> (AVCodecContext *output_codec_ctx, AVStream *output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const</td></tr>
 <tr class="memdesc:a07c41e35cb9411b15db72a733930dc2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up video stream.  <a href="classFFmpeg__Base.html#a07c41e35cb9411b15db72a733930dc2c">More...</a><br /></td></tr>
 <tr class="separator:a07c41e35cb9411b15db72a733930dc2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afec6bb914228e9716350b02c6fd7874e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#afec6bb914228e9716350b02c6fd7874e">av_dict_set_with_check</a> (AVDictionary **pm, const char *key, const char *value, int flags, const char *<a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename</a>=nullptr) const</td></tr>
-<tr class="memdesc:afec6bb914228e9716350b02c6fd7874e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call av_dict_set and check result code. Displays an error message if appropriate.  <a href="classFFmpeg__Base.html#afec6bb914228e9716350b02c6fd7874e">More...</a><br /></td></tr>
-<tr class="separator:afec6bb914228e9716350b02c6fd7874e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a231653f44a892d80b5da688abc1a5927"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a231653f44a892d80b5da688abc1a5927">av_opt_set_with_check</a> (void *obj, const char *key, const char *value, int flags, const char *<a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename</a>=nullptr) const</td></tr>
-<tr class="memdesc:a231653f44a892d80b5da688abc1a5927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call av_opt_set and check result code. Displays an error message if appropriate.  <a href="classFFmpeg__Base.html#a231653f44a892d80b5da688abc1a5927">More...</a><br /></td></tr>
-<tr class="separator:a231653f44a892d80b5da688abc1a5927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8f10b8e25a0a28b09e80fd329ad7290"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#ae8f10b8e25a0a28b09e80fd329ad7290">dict_set_with_check</a> (AVDictionary **pm, const char *key, const char *value, int flags, const char *<a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename</a>=nullptr) const</td></tr>
+<tr class="memdesc:ae8f10b8e25a0a28b09e80fd329ad7290"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call av_dict_set and check result code. Displays an error message if appropriate.  <a href="classFFmpeg__Base.html#ae8f10b8e25a0a28b09e80fd329ad7290">More...</a><br /></td></tr>
+<tr class="separator:ae8f10b8e25a0a28b09e80fd329ad7290"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c79e72e6c778bfc7ce3bc92d6c33cef"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a3c79e72e6c778bfc7ce3bc92d6c33cef">opt_set_with_check</a> (void *obj, const char *key, const char *value, int flags, const char *<a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename</a>=nullptr) const</td></tr>
+<tr class="memdesc:a3c79e72e6c778bfc7ce3bc92d6c33cef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call av_opt_set and check result code. Displays an error message if appropriate.  <a href="classFFmpeg__Base.html#a3c79e72e6c778bfc7ce3bc92d6c33cef">More...</a><br /></td></tr>
+<tr class="separator:a3c79e72e6c778bfc7ce3bc92d6c33cef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a555cacce9857bf9348b07ad8205e17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a6a555cacce9857bf9348b07ad8205e17">video_info</a> (bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const</td></tr>
 <tr class="memdesc:a6a555cacce9857bf9348b07ad8205e17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print info of video stream to log.  <a href="classFFmpeg__Base.html#a6a555cacce9857bf9348b07ad8205e17">More...</a><br /></td></tr>
 <tr class="separator:a6a555cacce9857bf9348b07ad8205e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,8 +228,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="afec6bb914228e9716350b02c6fd7874e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afec6bb914228e9716350b02c6fd7874e">&#9670;&nbsp;</a></span>av_dict_set_with_check()</h2>
+<a id="a9f4f1cccd0202b75972f925cc63913bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f4f1cccd0202b75972f925cc63913bf">&#9670;&nbsp;</a></span>destname()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,7 +238,39 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int FFmpeg_Base::av_dict_set_with_check </td>
+          <td class="memname">virtual const char* FFmpeg_Base::destname </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return destination filename. Must be implemented in child class. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns filename. </dd></dl>
+
+<p>Implemented in <a class="el" href="classFFmpeg__Transcoder.html#af7b3727646f64c05617759abd08a7075">FFmpeg_Transcoder</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00234">audio_info()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00218">video_info()</a>.</p>
+
+</div>
+</div>
+<a id="ae8f10b8e25a0a28b09e80fd329ad7290"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8f10b8e25a0a28b09e80fd329ad7290">&#9670;&nbsp;</a></span>dict_set_with_check()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int FFmpeg_Base::dict_set_with_check </td>
           <td>(</td>
           <td class="paramtype">AVDictionary **&#160;</td>
           <td class="paramname"><em>pm</em>, </td>
@@ -297,112 +329,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00439">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01173">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03615">FFmpeg_Transcoder::copy_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00237">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02195">FFmpeg_Transcoder::update_format()</a>.</p>
-
-</div>
-</div>
-<a id="a231653f44a892d80b5da688abc1a5927"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a231653f44a892d80b5da688abc1a5927">&#9670;&nbsp;</a></span>av_opt_set_with_check()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int FFmpeg_Base::av_opt_set_with_check </td>
-          <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>key</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>value</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>flags</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filename</em> = <code>nullptr</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Call av_opt_set and check result code. Displays an error message if appropriate. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>- A struct whose first element is a pointer to an AVClass. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>- the name of the field to set </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- The value to set. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- flags passed to av_opt_find2. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Filename this frame is created for. Used for logging only, may be nullptr. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>On success returns 0; on error negative AVERROR. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00206">206</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00439">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01098">FFmpeg_Transcoder::update_codec()</a>.</p>
-
-</div>
-</div>
-<a id="a9f4f1cccd0202b75972f925cc63913bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f4f1cccd0202b75972f925cc63913bf">&#9670;&nbsp;</a></span>destname()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual const char* FFmpeg_Base::destname </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Return destination filename. Must be implemented in child class. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns filename. </dd></dl>
-
-<p>Implemented in <a class="el" href="classFFmpeg__Transcoder.html#af7b3727646f64c05617759abd08a7075">FFmpeg_Transcoder</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00234">audio_info()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00218">video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01173">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03626">FFmpeg_Transcoder::copy_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00237">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02195">FFmpeg_Transcoder::update_format()</a>.</p>
 
 </div>
 </div>
@@ -434,7 +361,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Implemented in <a class="el" href="classFFmpeg__Transcoder.html#a7f26856440e06fbcec3bd208b8067bfc">FFmpeg_Transcoder</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00234">audio_info()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00194">av_dict_set_with_check()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00206">av_opt_set_with_check()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00079">init_frame()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00218">video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__base_8cc_source.html#l00234">audio_info()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00194">dict_set_with_check()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00079">init_frame()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00206">opt_set_with_check()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00218">video_info()</a>.</p>
 
 </div>
 </div>
@@ -484,7 +411,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00281">281</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03279">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03290">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
 
 </div>
 </div>
@@ -664,7 +591,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02367">FFmpeg_Transcoder::decode_audio_frame()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02504">FFmpeg_Transcoder::decode_video_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02297">FFmpeg_Transcoder::alloc_picture()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02367">FFmpeg_Transcoder::decode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02504">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03143">FFmpeg_Transcoder::init_audio_output_frame()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05055">FFmpeg_Transcoder::send_filters()</a>.</p>
 
 </div>
 </div>
@@ -702,7 +629,80 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00071">71</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03205">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03279">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03389">FFmpeg_Transcoder::encode_video_frame()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03022">FFmpeg_Transcoder::flush_frames_single()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03216">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03290">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03400">FFmpeg_Transcoder::encode_video_frame()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03034">FFmpeg_Transcoder::flush_frames_single()</a>.</p>
+
+</div>
+</div>
+<a id="a3c79e72e6c778bfc7ce3bc92d6c33cef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c79e72e6c778bfc7ce3bc92d6c33cef">&#9670;&nbsp;</a></span>opt_set_with_check()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int FFmpeg_Base::opt_set_with_check </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>obj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>filename</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Call av_opt_set and check result code. Displays an error message if appropriate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>- A struct whose first element is a pointer to an AVClass. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>- the name of the field to set </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- The value to set. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>- flags passed to av_opt_find2. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Filename this frame is created for. Used for logging only, may be nullptr. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success returns 0; on error negative AVERROR. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00206">206</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00439">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01098">FFmpeg_Transcoder::update_codec()</a>.</p>
 
 </div>
 </div>
@@ -752,7 +752,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00270">270</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03279">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03290">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
 
 </div>
 </div>

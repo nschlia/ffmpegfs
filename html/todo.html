@@ -85,20 +85,27 @@ $(function() {
 <dd><a class="anchor" id="_todo000008"></a>FFmpeg actually <em>can</em> transcode while presevering the SAR. FFmpegfs rescales to fix that problem. Need to find out what I am doing wrong here...  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a7f6903a86d5ed1ebee3258b981536f74">FFmpeg_Transcoder::add_albumart_stream</a>  (const AVCodecContext *input_codec_ctx)</dt>
 <dd><a class="anchor" id="_todo000009"></a>Add support for album arts  </dd>
+<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a96c31a851e95a6fb714b2908c83ec696">FFmpeg_Transcoder::decode_frame</a>  (AVPacket *pkt)</dt>
+<dd><a class="anchor" id="_todo000010"></a>Calling decode_video_frame until all data has been used, but for DVDs only. Can someone tell me why this seems required??? If this is not done some videos become garbled. But only for DVDs... <br  />
+<br  />
+With fix: all DVDs OK, some Blurays (e.g. Phil Collins) not... <br  />
+With fix: all DVDs shitty, but Blurays OK. <br  />
+<br  />
+Applying fix for DVDs only.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
-<dd><a class="anchor" id="_todo000010"></a>Is this a FFmpeg bug or am I too stupid? <br  />
+<dd><a class="anchor" id="_todo000011"></a>Is this a FFmpeg bug or am I too stupid? <br  />
 OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. <br  />
 For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
 <dt>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
-<dd><a class="anchor" id="_todo000011"></a>Currently always returns 0. Must implement real check.  </dd>
+<dd><a class="anchor" id="_todo000012"></a>Currently always returns 0. Must implement real check.  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a6c0c07bc6805650f5da69fc23258cc51">ffmpegfs_readdir</a>  (const char *path, void *buf, fuse_fill_dir_t filler, off_t, struct fuse_file_info *)</dt>
-<dd><a class="anchor" id="_todo000012"></a>Calculate correct file size for frame image in set  </dd>
-<dt>Member <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770">ffmpegfs_getattr</a>  (const char *path, struct stat *stbuf)</dt>
 <dd><a class="anchor" id="_todo000013"></a>Calculate correct file size for frame image in set  </dd>
+<dt>Member <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770">ffmpegfs_getattr</a>  (const char *path, struct stat *stbuf)</dt>
+<dd><a class="anchor" id="_todo000014"></a>Calculate correct file size for frame image in set  </dd>
 <dt>Member <a class="el" href="transcode_8cc.html#a2353c561b16312d0ea329f5900415add">MIN_SEGMENT</a>  </dt>
-<dd><a class="anchor" id="_todo000014"></a>Seek new segment if more distance should better count in seconds, not segments...  </dd>
+<dd><a class="anchor" id="_todo000015"></a>Seek new segment if more distance should better count in seconds, not segments...  </dd>
 <dt>Member <a class="el" href="classVcdIO.html#a58f89b3f36fa9cf2e80a5cfeece32ea0">VcdIO::duration</a>  () const</dt>
-<dd><a class="anchor" id="_todo000015"></a>Implement duration of video CD chapters </dd>
+<dd><a class="anchor" id="_todo000016"></a>Implement duration of video CD chapters </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

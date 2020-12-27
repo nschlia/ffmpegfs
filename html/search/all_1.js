@@ -24,8 +24,6 @@ var searchData=
   ['autocopy_5fstrictlimit_23',['AUTOCOPY_STRICTLIMIT',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9',1,'ffmpeg_utils.h']]],
   ['av_5fcodec_5fcap_5fvariable_5fframe_5fsize_24',['AV_CODEC_CAP_VARIABLE_FRAME_SIZE',['../ffmpeg__utils_8h.html#a38b16ee9a8fd4c57ffd4fef0db3481c6',1,'ffmpeg_utils.h']]],
   ['av_5fcodec_5fflag_5fglobal_5fheader_25',['AV_CODEC_FLAG_GLOBAL_HEADER',['../ffmpeg__utils_8h.html#a9ed82634c59b339786575827c47a8f68',1,'ffmpeg_utils.h']]],
-  ['av_5fdict_5fset_5fwith_5fcheck_26',['av_dict_set_with_check',['../classFFmpeg__Base.html#afec6bb914228e9716350b02c6fd7874e',1,'FFmpeg_Base']]],
-  ['av_5ferror_5fmax_5fstring_5fsize_27',['AV_ERROR_MAX_STRING_SIZE',['../ffmpeg__utils_8cc.html#a326c3f741a7adb148cdeaad68eea713d',1,'ffmpeg_utils.cc']]],
-  ['av_5fopt_5fset_5fwith_5fcheck_28',['av_opt_set_with_check',['../classFFmpeg__Base.html#a231653f44a892d80b5da688abc1a5927',1,'FFmpeg_Base']]],
-  ['av_5fround_5fpass_5fminmax_29',['AV_ROUND_PASS_MINMAX',['../ffmpeg__utils_8h.html#a2258fb212749011c956fde432d2dbc99',1,'ffmpeg_utils.h']]]
+  ['av_5ferror_5fmax_5fstring_5fsize_26',['AV_ERROR_MAX_STRING_SIZE',['../ffmpeg__utils_8cc.html#a326c3f741a7adb148cdeaad68eea713d',1,'ffmpeg_utils.cc']]],
+  ['av_5fround_5fpass_5fminmax_27',['AV_ROUND_PASS_MINMAX',['../ffmpeg__utils_8h.html#a2258fb212749011c956fde432d2dbc99',1,'ffmpeg_utils.h']]]
 ];

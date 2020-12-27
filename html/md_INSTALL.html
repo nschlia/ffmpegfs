@@ -66,26 +66,26 @@ $(function() {
 <div class="title">Installation Instructions for FFmpegfs </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md23"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md26"></a>
 Installation from repository</h1>
-<h2><a class="anchor" id="autotoc_md24"></a>
+<h2><a class="anchor" id="autotoc_md27"></a>
 Debian Buster</h2>
 <p>FFmpegfs 1.98 can be installed on Debian 10 Buster from Buster Backports and sid (which is not recommended and therefore not described here).</p>
 <p>To enable Buster Backports: </p><pre class="fragment"> echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
 
  sudo apt-get update
 </pre><p>Then install FFmpegfs: </p><pre class="fragment"> sudo apt-get -t buster-backports install ffmpegfs
-</pre><h2><a class="anchor" id="autotoc_md25"></a>
+</pre><h2><a class="anchor" id="autotoc_md28"></a>
 Debian Bullseye</h2>
-<p>FFmpegfs 1.98 has been added to Debian 11 Bullseye so it is available as binary distribution.</p>
+<p>FFmpegfs 2.0 has been added to Debian 11 Bullseye so it is available as binary distribution.</p>
 <p>On Debian 11 Bullseye you can simply do </p><pre class="fragment">apt-get install ffmpegfs
 </pre><p>For Ubuntu 20.04 and Linux distributions based on it this is </p><pre class="fragment">apt install ffmpegfs
-</pre><h2><a class="anchor" id="autotoc_md26"></a>
+</pre><h2><a class="anchor" id="autotoc_md29"></a>
 Other Distributions</h2>
 <p>For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR). It is available as either the latest stable version or the latest code from GIT.</p>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 Building FFmpegfs yourself</h1>
-<h2><a class="anchor" id="autotoc_md28"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
 Prerequisites</h2>
 <p>FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following libraries:</p>
 <ul>
@@ -138,17 +138,17 @@ yum install fuse-devel sqlite-devel
 <p>To get fuse suppprt and chromaprint (for make check): </p><pre class="fragment">emerge sys-fs/fuse
 emerge media-libs/chromaprint
 </pre><p>To get FFmpeg with H264 etc. support, specify some "USE flags" when doing emerge:</p>
-<p>Create file /etc/portage/package.use, e.g. "vi vi /etc/portage/package.use" and add this line: </p><pre class="fragment">media-video/ffmpeg mp3 x264 opus vorbis vpx
+<p>Create file /etc/portage/package.use, for example "vi vi /etc/portage/package.use" and add this line: </p><pre class="fragment">media-video/ffmpeg mp3 x264 opus vorbis vpx
 </pre><p>This will enable H264, mp3, Opus and WebM support. Next... </p><pre class="fragment">emerge media-libs/openh264
 emerge media-sound/twolame
 
 emerge media-video/ffmpeg
 </pre><p>to build ffmpeg.</p>
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md32"></a>
 Build FFmpeg with optimisations</h2>
 <p>The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built with common options so that it can run on many processors. To leverage the full potential it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.</p>
-<p>FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. Other libraries, e.g. ogg, Windows Media or FLAC must be added when these formats should be used as source.</p>
-<p><b>Attention!</b> Remember to do "apt remove ffmpeg" before proceeding with the next steps to avoid malefic blends of custom and official distribution binaries.</p>
+<p>FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. Other libraries, for example ogg, Windows Media or FLAC must be added when these formats should be used as source.</p>
+<p><b>Attention!</b> Remember to do "apt remove ffmpeg" before proceeding with the next steps to avoid maleficent blends of custom and official distribution binaries.</p>
 <p>For a minimum build that contains all the libraries required by FFmpegfs and SSL support for convenience use: </p><pre class="fragment">configure \
     --extra-cflags='-march=native' \
     --extra-cflags=-Ofast \
@@ -171,9 +171,9 @@ Build FFmpeg with optimisations</h2>
 </pre><p>Fix the complaints by configure, i.e. install the required development packages, then </p><pre class="fragment">make install
 </pre><p>This works for me. Decoding runs much faster with these settings.</p>
 <p><b>NOTE:</b> Depending on the source formats you have it may be required to add additional libraries.</p>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<h2><a class="anchor" id="autotoc_md33"></a>
 Building source code</h2>
-<p>Download a release archive: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v1.98/ffmpegfs-1.98.tar.gz
+<p>Download a release archive: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.1/ffmpegfs-2.1.tar.gz
 </pre><p>You may check <a href="https://github.com/nschlia/ffmpegfs/releases">https://github.com/nschlia/ffmpegfs/releases</a> to see if there are newer releases available.</p>
 <p>Then unpack and cd to the source directory. To build and install, run: </p><pre class="fragment">./configure
 make
@@ -181,9 +181,9 @@ make install
 </pre><p>To build and run the check suite, do: </p><pre class="fragment">make checks
 </pre><p>This will test audio conversion, tagging and size prediction.</p>
 <p>NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.</p>
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 Building from GIT</h2>
-<p>If you want to build FFmpegfs yourself, e.g. check out the latest version from GIT and be at the bleeding edge:</p>
+<p>If you want to build FFmpegfs yourself, for example check out the latest version from GIT and be at the bleeding edge:</p>
 <p><b>If building from git, you'll need these additional prerequisites:</b></p>
 <ul>
 <li>autoconf</li>
@@ -197,18 +197,21 @@ Building from GIT</h2>
 make
 make install
 </pre><p>To build and run the check suite, do: </p><pre class="fragment">make checks
-</pre><h2><a class="anchor" id="autotoc_md32"></a>
+</pre><h2><a class="anchor" id="autotoc_md35"></a>
 Documentation</h2>
 <p>The help can be created in doc or html format by running </p><pre class="fragment">make help-pdf
 make help-html
 </pre><p>respectively.</p>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md36"></a>
 Trouble Shooting</h2>
 <p><b>Mounting via /etc/fstab fails:</b></p>
 <p>An fstab line with fuse.ffmpegfs file system fails with a strange message when attempted to mount with "mount -av". No log entries, no other hints...</p>
-<p>mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1, missing codepage or helper program, or other error</p>
-<p>In some cases useful info is found in syslog - try dmesg | tail or so.</p>
-<p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
+<div class="fragment"><div class="line">   mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1,</div>
+<div class="line">          missing codepage or helper program, or other error</div>
+<div class="line"> </div>
+<div class="line">​      In some cases useful info is found in syslog - try</div>
+<div class="line">​      dmesg | tail or so.</div>
+</div><!-- fragment --><p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
 </pre><p><b>fuse: failed to exec fusermount: No such file or directory:</b></p>
 <p>Trying to mount as other than root, the message </p><pre class="fragment">fuse: failed to exec fusermount: No such file or directory
 </pre><p>is printed.</p>
@@ -234,7 +237,7 @@ systemctl restart apache2
 </pre><p><b>Songs get cut short</b></p>
 <p>If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.</p>
 <p>Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.</p>
-<p>SAMBA fills files with zeroes if the result is smaller, or cuts off the rest if the file ist larger than predicted.</p>
+<p>SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file ist larger than predicted.</p>
 <p>NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.</p>
 <p>As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.</p>
 <p><b>Make reports "/bin/sh: a2x: command not found"</b></p>
@@ -247,15 +250,16 @@ bdj.c:466: BD-J check: Failed to load libbluray.jar
 <p><b>Switching between repository version and source builds</b></p>
 <p>It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuild in the background so this will almost go unnoticed.</p>
 <p>To switch from repository to a source build do</p>
-<p>apt-get remove ffmpegfs</p>
-<p>Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be unadvertedly up- or downgraded when a new version becomes available from the repository.</p>
+<div class="fragment"><div class="line">apt-get remove ffmpegfs</div>
+</div><!-- fragment --><p>Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be inadvertently up- or downgraded when a new version becomes available from the repository.</p>
 <p>To switch from a source build to a repository installation change to the build directory and do</p>
-<p>make uninstall</p>
-<p>Then follow the steps under "Installation from repository".</p>
-<h2><a class="anchor" id="autotoc_md34"></a>
+<div class="fragment"><div class="line">make uninstall</div>
+</div><!-- fragment --><p>Then follow the steps under "Installation from repository".</p>
+<h2><a class="anchor" id="autotoc_md37"></a>
 COPYRIGHT</h2>
-<p>Copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) This file was originally copyright (C) 2013-2014 K. Henriksson.</p>
-<p>This documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. </p>
+<p>This fork with FFmpeg support copyright (C) 2017-2020 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
+<p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>
+<p>This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

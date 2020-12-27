@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ "$1" == "ENC" ]
+then
+	ADDOPT="--hwaccel_enc=$2"
+elif [ "$1" == "DEC" ]
+then
+	ADDOPT="--hwaccel_dec=$2"
+else
+	echo "Parameter missing"
+	echo
+	echo "Usage: $0 ENC api"
+        echo "Usage: $0 DEC api"
+	echo
+        echo "Example: $0 ENC VAAPI"
+	exit 1
+fi
+
+. "${BASH_SOURCE%/*}/funcs.sh" ts 77
+
+cp -v "${DIRNAME}/snowboard.${FILEEXT}" /dev/null || exit 77 # Make test suite report "SKIP"

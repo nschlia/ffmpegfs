@@ -69,7 +69,7 @@ Currently supported output formats:
 | WebM|| VP9 | Opus |
 | OGG|| Theora | Vorbis |
 | MOV | QuickTime File Format | H264 | AAC |
-| Prores | Prores | AAC | PCM 16 bit LE |
+| ProRes | Apple ProRes | ProRes | PCM 16 bit LE |
 | Opus ||| Opus |
 | MP3 | MPEG-2 Audio Layer III || MP3 |
 | WAV | Waveform Audio File Format || PCM 16 bit LE |
@@ -322,10 +322,10 @@ $ find /mnt/ffmpegfs
   /mnt/ffmpegfs/video1.mov/00002.png
 ```
 
-A FEW WORDS ON PRORES
+A FEW WORDS ON ProRes
 ---------------------
 
-Apple's Prores is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that Prores encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.
+Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that ProRes encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.
 
 It is not for target audience use, and certainly not suitable for internet streaming.
 

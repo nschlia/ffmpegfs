@@ -18,6 +18,8 @@ Important changes in 2.5 (2020-12-xx)
   - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.
   - OMX: H264 encoding.
   - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
+* Feature: Added unit tests for hardware acceleration. Failing tests will
+           report as SKIPPED and not fail the whole test.
 * Note: Which hardware en/decoder actually works depends on what your hardware
         supports.
 * Request for testers: Have a CUDA capable graphics adapter and interested in

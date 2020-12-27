@@ -60,10 +60,10 @@ Currently supported output formats:
 | WAV | Waveform Audio File Format || PCM 16 bit LE |
 | AIFF | Audio Interchange File Format || PCM 16 bit BE |
 | ALAC | Apple Lossless Audio Codec || ALAC |
-| JPG | Video to frameset || JPEG |
-| PNG | Video to frameset || PNG |
-| BMP | Video to frameset || BMP |
-| TS | MPEG transport stream | H264 | AAC |
+| JPG | Video to frameset |JPEG|  |
+| PNG | Video to frameset |PNG|  |
+| BMP | Video to frameset |BMP|  |
+| TS | MPEG Transport Stream | H264 | AAC |
 | HLS | HTTP Live Streaming | H264 | AAC |
 
 This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.

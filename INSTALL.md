@@ -7,8 +7,7 @@ Installation from repository
 Debian Buster
 -------------
 
-FFmpegfs 1.98 can be installed on Debian 10 Buster from Buster Backports and
-sid (which is not recommended and therefore not described here).
+FFmpegfs can be installed on Debian 10 Buster from Buster Backports and sid (which is not recommended and therefore not described here).
 
 To enable Buster Backports:
 
@@ -23,8 +22,7 @@ Then install FFmpegfs:
 Debian Bullseye
 ---------------
 
-FFmpegfs 2.0 has been added to Debian 11 Bullseye so it is available as
-binary distribution.
+FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
 
 On Debian 11 Bullseye you can simply do
 
@@ -37,9 +35,7 @@ For Ubuntu 20.04 and Linux distributions based on it this is
 Other Distributions
 -------------------
 
-For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR).
-It is available as either the latest stable version or the latest code
-from GIT.
+For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR). It is available as either the latest stable version or the latest code from GIT.
 
 Building FFmpegfs yourself
 ==========================
@@ -348,7 +344,23 @@ You are missing out on asciidoc, to install do (or similar):
 
      apt-get install asciidoc
 
-That should fix it. You may just install asciidoc-base to safe disk space.
+That should fix it. You may just install asciidoc-base to safe disk space
+
+**"make help-pdf" reports "non-zero exit status 127"**
+
+Running "make help-pdf" fails like this: 
+
+    $ make -s help-pdf
+      GEN      ffmpegfs.1.pdf
+    a2x: ERROR: "fop"   -fo "ffmpegfs.1.fo" -pdf "ffmpegfs.1.pdf" returned non-zero exit status 127
+    
+    make: *** [Makefile:918: ffmpegfs.1.pdf] Error 1
+
+This happens when "fop" is missing, a command line wrapper for the java version of fop.
+
+     apt-get install fop
+
+That should do it. 
 
 **libbluray fails to load libbluray.jar**
 

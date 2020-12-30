@@ -47,19 +47,17 @@
 #include <map>
 
 // Disable annoying warnings outside our code
+#ifdef __cplusplus
+extern "C" {
+#endif
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern "C" {
 #include <libavutil/avutil.h>
-}
+#pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
 #endif
-#pragma GCC diagnostic pop
 
 #pragma pack(push, 1)
 

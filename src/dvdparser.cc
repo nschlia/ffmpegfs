@@ -43,7 +43,6 @@
 extern "C" {
 #include <libavutil/rational.h>
 }
-//#pragma GCC diagnostic pop
 
 typedef struct AUDIO_SETTINGS                       /** @brief Audio stream settings */
 {

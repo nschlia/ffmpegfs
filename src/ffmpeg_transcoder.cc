@@ -38,24 +38,13 @@
 #include <assert.h>
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#ifdef __GNUC__
-#  include <features.h>
-#  if __GNUC_PREREQ(5,0) || defined(__clang__)
-// GCC >= 5.0
-#     pragma GCC diagnostic ignored "-Wfloat-conversion"
-#  elif __GNUC_PREREQ(4,8)
-// GCC >= 4.8
-#  else
-#     error("GCC < 4.8 not supported");
-#  endif
-#endif
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <libswscale/swscale.h>
 #if LAVR_DEPRECATE
 #include <libswresample/swresample.h>
@@ -69,10 +58,10 @@ extern "C" {
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
 #include <libavcodec/avcodec.h>
+#pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
 #endif
-#pragma GCC diagnostic pop
 
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
@@ -4611,7 +4600,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
         break;
     }
     case AV_CODEC_ID_MP3:
@@ -4637,21 +4626,21 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
         break;
     }
     case AV_CODEC_ID_VORBIS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
         break;
     }
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% for overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
         break;
     }
     case AV_CODEC_ID_ALAC:
@@ -4667,7 +4656,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% for overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -4695,19 +4684,19 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_H264:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add 10.0% for overhead
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add 10.0% overhead
         break;
     }
     case AV_CODEC_ID_THEORA:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% for overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
         break;
     }
     case AV_CODEC_ID_VP9:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% for overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
         break;
     }
     case AV_CODEC_ID_PRORES:

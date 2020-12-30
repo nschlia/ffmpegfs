@@ -32,6 +32,8 @@ Important changes in 2.2 (2020-12-XX)
 * Feature:
 * Bugfix: Possible crash in transcoder_thread: Decoder object could have been used
           after being freed.
+* Bugfix: Stupid blooper. WAV and AIFF size was always calculated for a mono file,
+          thus for stereo files only half the correct size.
 
 Important changes in 2.1 (2020-12-14)
   

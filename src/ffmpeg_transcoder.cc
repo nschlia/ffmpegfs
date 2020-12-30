@@ -4298,7 +4298,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
         break;
     }
     case AV_CODEC_ID_VORBIS:

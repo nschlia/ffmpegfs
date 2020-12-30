@@ -66,29 +66,18 @@
 #include <linux/limits.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#ifdef __GNUC__
-#  include <features.h>
-#  if __GNUC_PREREQ(5,0) || defined(__clang__)
-// GCC >= 5.0
-#     pragma GCC diagnostic ignored "-Wfloat-conversion"
-#  elif __GNUC_PREREQ(4,8)
-// GCC >= 4.8
-#  else
-#     error("GCC < 4.8 not supported");
-#  endif
-#endif
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <libavformat/avformat.h>
+#pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
 #endif
-#pragma GCC diagnostic pop
 
 #ifndef LIBAVUTIL_VERSION_MICRO
 #error "LIBAVUTIL_VERSION_MICRO not defined. Missing include header?"

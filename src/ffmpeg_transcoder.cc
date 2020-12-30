@@ -991,9 +991,9 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
     // Try to determine display aspect ratio
     AVRational dar;
     av_reduce(&dar.num, &dar.den,
-                width  * sar.num,
-                height * sar.den,
-                1024 * 1024);
+              width  * sar.num,
+              height * sar.den,
+              1024 * 1024);
 
     ar->num = ar->den = 0;
 
@@ -1022,9 +1022,9 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
     }
 
     av_reduce(&ar->num, &ar->den,
-                ar->num,
-                ar->den,
-                1024 * 1024);
+              ar->num,
+              ar->den,
+              1024 * 1024);
 
     return true;
 }

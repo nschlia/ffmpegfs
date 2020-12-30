@@ -33,6 +33,8 @@
 #else
 #error "Must have either libavresample or libswresample!"
 #endif
+// For LIBAVFILTER_VERSION_INT
+#include <libavfilter/avfilter.h>
 
 #include <chromaprint.h>
 
@@ -386,7 +388,10 @@ int main(int argc, char **argv)
         return 2;
     }
 
-#if !(LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 9, 0))
+#ifndef LIBAVFILTER_VERSION_INT
+#error "LIBAVFILTER_VERSION_INT not defined! Did you forget to include libavfilter/avfilter.h?"
+#endif
+#if (LIBAVFILTER_VERSION_INT < AV_VERSION_INT(7, 14, 0))
     av_register_all();
 #endif
     av_log_set_level(AV_LOG_ERROR);

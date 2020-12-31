@@ -656,7 +656,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
 int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type)
 {
-    AVCodec *input_codec = NULL;
+    AVCodec *input_codec = nullptr;
     int ret;
 
     ret = av_find_best_stream(m_in.m_format_ctx, type, INVALID_STREAM, INVALID_STREAM, &input_codec, 0);

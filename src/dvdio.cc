@@ -72,6 +72,7 @@ DvdIO::DvdIO()
 
 DvdIO::~DvdIO()
 {
+    _close();
 }
 
 VIRTUALTYPE DvdIO::type() const
@@ -793,27 +794,35 @@ bool DvdIO::eof() const
 
 void DvdIO::close()
 {
-    if (m_vts_file != nullptr)
-    {
-        ifoClose(m_vts_file);
-        m_vts_file = nullptr;
-    }
-    if (m_vmg_file != nullptr)
-    {
-        ifoClose(m_vmg_file);
-        m_vmg_file = nullptr;
-    }
-    if (m_dvd_title != nullptr)
-    {
-        DVDCloseFile(m_dvd_title);
-        m_dvd_title = nullptr;
-    }
-    if (m_dvd != nullptr)
-    {
-        DVDClose(m_dvd);
-        m_dvd = nullptr;
-    }
+    _close();
+}
 
+void DvdIO::_close()
+{
+    ifo_handle_t *  vts_file = m_vts_file;
+    if (vts_file != nullptr)
+    {
+        m_vts_file = nullptr;
+        ifoClose(vts_file);
+    }
+    ifo_handle_t *  vmg_file  = m_vmg_file;
+    if (vmg_file != nullptr)
+    {
+        m_vmg_file = nullptr;
+        ifoClose(vmg_file);
+    }
+    dvd_file_t *    dvd_title = m_dvd_title;
+    if (dvd_title != nullptr)
+    {
+        m_dvd_title = nullptr;
+        DVDCloseFile(dvd_title);
+    }
+    dvd_reader_t *  dvd = m_dvd;
+    if (dvd != nullptr)
+    {
+        m_dvd = nullptr;
+        DVDClose(dvd);
+    }
 }
 
 // Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)

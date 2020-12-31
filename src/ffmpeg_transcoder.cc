@@ -4600,7 +4600,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_MP3:
@@ -4633,14 +4633,14 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_ALAC:
@@ -4656,7 +4656,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -4684,19 +4684,19 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_H264:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add 10.0% overhead
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_THEORA:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add 2.5% overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_VP9:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add 15% overhead
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_PRORES:

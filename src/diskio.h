@@ -23,8 +23,6 @@
  * @file
  * @brief Direct disk I/O
  *
- * This is only available if built with -DUSE_LIBDVD parameter.
- *
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)

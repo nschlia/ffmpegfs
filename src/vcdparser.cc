@@ -195,7 +195,7 @@ int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
     {
         if (!check_path(path))
         {
-            Logging::trace(path, "VCD detected.");
+            Logging::trace(path, "SVCD detected.");
             res = parse_vcd(path, &stbuf, buf, filler);
             Logging::trace(nullptr, "Found %1 titles.", res);
         }

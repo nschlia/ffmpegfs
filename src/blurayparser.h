@@ -21,7 +21,7 @@
 
 /**
  * @file
- * @brief Bluray disk parser
+ * @brief Bluray parser
  *
  * This is only available if built with -DUSE_LIBBLURAY parameter.
  *

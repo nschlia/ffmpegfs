@@ -322,11 +322,13 @@ protected:
     int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type);
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @param buffer[in] - Stream buffer to operate on
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_frame_set(Buffer *buffer);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
+     * @param buffer[in] - Stream buffer to operate on
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output(Buffer *buffer);
@@ -386,16 +388,18 @@ protected:
      * @brief Open an output file and the required encoder.
      * Also set some basic encoder parameters.
      * Some of these parameters are based on the input file's parameters.
+     * @param buffer[in] - Stream buffer to operate on
+     * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_filestreams(Buffer *buffer);
     /**
-     * @brief copy_metadataBluray I/O class
-     *
-     * Process the metadata in the FFmpeg file. This should be called at the
-     * beginning, before reading audio data. The set_text_tag() and
-     * set_picture_tag() methods of the given Encoder will be used to set the
-     * metadata, with results going into the given Buffer. This function will also
-     * read the actual PCM stream parameters.
+     * @brief Process the metadata in the FFmpeg file.
+     * This should be called at the beginning, before reading audio data.
+     * The set_text_tag() and set_picture_tag() methods of the given Encoder will
+     * be used to set the metadata, with results going into the given Buffer.
+     * This function will also read the actual PCM stream parameters.
+     * @param metadata_out[in] - Dictionary of output file. Metadata will be copied into it.
+     * @param metadata_in[in] - Dictionary of input file. Metadata will be copied out of it.
      */
     void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
     /**

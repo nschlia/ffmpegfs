@@ -52,7 +52,7 @@ VcdIO::VcdIO()
 
 VcdIO::~VcdIO()
 {
-    close();
+    _close();
 }
 
 VIRTUALTYPE VcdIO::type() const
@@ -197,6 +197,11 @@ bool VcdIO::eof() const
 }
 
 void VcdIO::close()
+{
+    _close();
+}
+
+void VcdIO::_close()
 {
     FILE *fpi = m_fpi;
     if (fpi != nullptr)

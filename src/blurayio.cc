@@ -59,7 +59,7 @@ BlurayIO::BlurayIO()
 
 BlurayIO::~BlurayIO()
 {
-
+    _close();
 }
 
 VIRTUALTYPE BlurayIO::type() const
@@ -302,7 +302,17 @@ bool BlurayIO::eof() const
 
 void BlurayIO::close()
 {
-    bd_close(m_bd);
+    _close();
+}
+
+void BlurayIO::_close()
+{
+    BLURAY * bd = m_bd;
+    if (bd != nullptr)
+    {
+        m_bd = nullptr;
+        bd_close(bd);
+    }
 }
 
 #endif // USE_LIBBLURAY

@@ -130,6 +130,13 @@ public:
      */
     virtual void    close();
 
+private:
+    /**
+     * @brief Close virtual file.
+     * Non-virtual version to be safely called from constructor/destructor
+     */
+    void            _close();
+
 protected:
     BLURAY *        m_bd;                                       /**< @brief Bluray disk handle */
 

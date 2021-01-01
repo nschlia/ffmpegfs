@@ -11,14 +11,14 @@ FFmpegfs
 News
 ----
 
-### **Version 2.2 under development**
+### Version 2.2 under development
 
 **New in 2.2:**
 
 * **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
 * **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
 
-### **Version 2.1 released**
+### Version 2.1 released
 
 **New in 2.1:**
 
@@ -34,7 +34,7 @@ News
 * **Cosmetical**: Log cache close action at trace level
 * **Cosmetical**: Shorter log entry when opening cache files
 
-### **Planned features**
+### Planned features
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
@@ -76,12 +76,12 @@ Selecting *HLS* creates a directory with TS segments together with a M3U playlis
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See **FIXING PROBLEMS** for details.
 
-Installation Instructions
+Installation instructions
 -------------------------
 
 * Please read the [INSTALL](INSTALL.md) file.
 
-Supported Linux Distributions
+Supported Linux distributions
 -----------------------------
 
 Tested with:
@@ -152,7 +152,7 @@ Same as above, but also limit video with to 640 pixels. Larger videos will be sc
 
 Enable deinterlacing for enhanced image quality.
 
-HTTP Live Streaming
+HTTP live streaming
 -------------------
 
 FFmpegfs now supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also offer a virtual test.html file that can playback the segments using the hls.js library (see https://github.com/video-dev/hls.js/).
@@ -163,7 +163,7 @@ To use the new HLS feature invoke FFmpegfs with:
 
 Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.
 
-AUTO COPY
+Auto copy
 ---------
 
 "Auto copy" performs intelligent stream copy, for example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it is possible to simply repackage it to a mp4 container without recoding.
@@ -180,14 +180,14 @@ There are three options:
 |LIMIT|only auto copy if target file will not become significantly larger|
 |ALWAY|auto copy whenever possible even if the target file becomes larger|
 
-SMART TRANSCODING
+Smart transcoding
 -----------------
 
 Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense as MP4 or WebM work perfectly with audio only content.
 
 To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.
 
-TRANSCODE TO FRAME IMAGES
+Transcode to frame images
 -------------------------
 
 To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with images for each frame.
@@ -206,7 +206,7 @@ $ find /mnt/ffmpegfs
   /mnt/ffmpegfs/video1.mov/00002.png
 ```
 
-A FEW WORDS ON ProRes
+A few words on ProRes
 ---------------------
 
 Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that ProRes encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.
@@ -215,7 +215,7 @@ It is not for target audience use, and certainly not suitable for internet strea
 
 Also please keep in mind that when using lossy source formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.
 
-MP4 FORMAT PROFILE
+MP4 format profiles
 ------------------
 
 The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different as for Firefox, unfortunately.
@@ -247,7 +247,7 @@ In most cases files will not play if not properly optimised.
 
 See [TODO](TODO) for details.
 
-HOW IT WORKS
+How it works
 ------------
 
 When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.
@@ -266,7 +266,7 @@ MP3 target only: A special optimisation is made so that applications which scan 
 
 WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.
 
-ABOUT OUTPUT FORMATS
+About output formats
 --------------------
 
 A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
@@ -289,14 +289,14 @@ As a draw back not all players support the format, or play it with strange side 
 
 But that's the price of starting playback fast.
 
-FIXING PROBLEMS
+Fixing problems
 ---------------
 
-**Transcoding too slow**
+### Transcoding too slow
 
-See [Build FFmpeg with optimisations](https://github.com/nschlia/ffmpegfs/blob/master/INSTALL.md#build-ffmpeg-with-optimisations)
+See [Building FFmpeg with optimisations](https://github.com/nschlia/ffmpegfs/blob/master/INSTALL.md#building-ffmpeg-with-optimisations)
 
-**Lock ups when accessed through Samba**
+### Lock ups when accessed through Samba
 
 When accessed one a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data was returned.
 
@@ -314,7 +314,7 @@ The "aio read size" parameter may be moved to the share config:
 
  	aio read size = 1
 
-**rsync, Beyond Compare and other tools**
+### rsync, Beyond Compare and other tools
 
 Some copy tools do not go along very well with dynamically generated files as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).
 
@@ -324,7 +324,7 @@ Under Linux  it is best to use (optionally with -r parameter)
 
 This will copy all missing/changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only copy the predicted size first and not respond to size changes.
 
-**Play HLS output by opening hls.html from disk**
+### Play HLS output by opening hls.html from disk
 
 Most browser prevent playback of files from disk. You may put them into a website directory, but sometimes even https must be used or playback will be blocked.
 
@@ -333,7 +333,19 @@ To enable disk playback in Firefox:
 * Open about:config
 * Set security.fileuri.strict_origin_policy to false
 
-DEVELOPMENT
+### Songs get cut short
+
+If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.
+
+Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.
+
+SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file ist larger than predicted.
+
+NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.
+
+As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.
+
+Development
 -----------
 
 FFmpegfs uses Git for revision control. You can obtain the full repository with:
@@ -352,18 +364,18 @@ Please note that FFmpegfs is in active development, so the main branch may be un
 
 Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!
 
-Future Plans
+Future plans
 ------------
 
 * Create a windows version
 * and more, see [TODO](TODO)
 
-DEMO CODE
+Demo code
 ---------
 
 HLS player and demo code see: https://github.com/video-dev/hls.js/
 
-AUTHORS
+Authors
 -------
 
 This fork with FFmpeg support is maintained by Norbert Schlia (nschlia@oblivion-software.de) since 2017 to date.
@@ -372,21 +384,21 @@ Based on work by K. Henriksson (from 2008 to 2017) and the original author David
 
 Much thanks to them for the original work and giving me a good head start!
 
-LICENSE
+License
 -------
 
 This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found [online](http://www.gnu.org/licenses/gpl-3.0.html) or in the COPYING file.
 
 This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found [online](http://www.gnu.org/licenses/fdl-1.3.html) or in the COPYING.DOC file.
 
-FFMPEG LICENSE
+FFmpeg license
 --------------
 
 FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.
 
 See https://www.ffmpeg.org/legal.html for details.
 
-COPYRIGHT
+Copyright
 ---------
 
 This fork with FFmpeg support copyright \(C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de).

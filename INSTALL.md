@@ -1,5 +1,3 @@
-[TOC]
-
 Installation Instructions for FFmpegfs
 ======================================
 

@@ -1,11 +1,12 @@
+[TOC]
+
 Installation Instructions for FFmpegfs
 ======================================
 
 Installation from repository
-============================
+----------------------------
 
-Debian Buster
--------------
+### Debian Buster
 
 FFmpegfs can be installed on Debian 10 Buster from Buster Backports and sid (which is not recommended and therefore not described here).
 
@@ -19,8 +20,7 @@ Then install FFmpegfs:
 
      sudo apt-get -t buster-backports install ffmpegfs
 
-Debian Bullseye
----------------
+### Debian Bullseye
 
 FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
 
@@ -32,16 +32,14 @@ For Ubuntu 20.04 and Linux distributions based on it this is
 
     apt install ffmpegfs
 
-Other Distributions
--------------------
+### Other Distributions
 
 For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR). It is available as either the latest stable version or the latest code from GIT.
 
 Building FFmpegfs yourself
-==========================
+--------------------------
 
-Prerequisites
--------------
+### Prerequisites
 
 FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following libraries:
 
@@ -150,12 +148,96 @@ This will enable H264, mp3, Opus and WebM support. Next...
 
     emerge media-libs/openh264
     emerge media-sound/twolame
-    
     emerge media-video/ffmpeg
 
-to build ffmpeg.
+to build FFmpeg.
 
-Build FFmpeg with optimisations
+Building FFmpegfs from source code
+--------------------
+
+### Building from tar ball
+
+Download a release archive:
+
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.1/ffmpegfs-2.1.tar.gz
+
+You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
+
+Then unpack and cd to the source directory. To build and install, run:
+
+    ./configure
+    make
+    make install
+
+To build and run the check suite, do:
+
+    make checks
+
+This will test audio conversion, tagging and size prediction.
+
+NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.
+
+### Building from GIT
+
+If you want to build FFmpegfs yourself, for example check out the latest version from GIT and be at the bleeding edge:
+
+**If building from git, you'll need these additional prerequisites:**
+
+* autoconf
+* automake
+* asciidoc (or at least asciidoc-base to save disk space)
+* w3m
+
+For those who are lazy like me, simply copy and issue this command to get all prerequisites:
+
+    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+
+FFmpegfs uses the GNU build system, so you'll need to run first:
+
+    ./autogen.sh
+
+If you are downloading a release, this has already been done for you. To build and install, run:
+
+    ./configure
+    make
+    make install
+
+To build and run the check suite, do:
+
+    make checks
+
+## Switching between repository version and source builds
+
+It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuild in the background so this will almost go unnoticed.
+
+To switch from repository to a source build do
+
+```
+apt-get remove ffmpegfs
+```
+
+Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be inadvertently up- or downgraded when a new version becomes available from the repository.
+
+To switch from a source build to a repository installation change to
+the build directory and do
+
+```
+make uninstall
+```
+
+Then follow the steps under "Installation from repository".
+
+Building Documentation
+-------------
+
+The help can be created in doc or html format by running
+
+    make help-pdf
+    make help-html
+
+respectively.
+
+Building FFmpeg with optimisations
 -------------------------------
 
 The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built with common options so that it can run on many processors. To leverage the full potential it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.
@@ -194,73 +276,10 @@ This works for me. Decoding runs much faster with these settings.
 
 **NOTE:** Depending on the source formats you have it may be required to add additional libraries.
 
-Building source code
---------------------
-
-Download a release archive:
-
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.1/ffmpegfs-2.1.tar.gz
-
-You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
-
-Then unpack and cd to the source directory. To build and install, run:
-
-    ./configure
-    make
-    make install
-
-To build and run the check suite, do:
-
-    make checks
-
-This will test audio conversion, tagging and size prediction.
-
-NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.
-
-Building from GIT
------------------
-
-If you want to build FFmpegfs yourself, for example check out the latest version from GIT and be at the bleeding edge:
-
-**If building from git, you'll need these additional prerequisites:**
-
-* autoconf
-* automake
-* asciidoc (or at least asciidoc-base to save disk space)
-* w3m
-
-For those who are lazy like me, simply copy and issue this command to get all prerequisites:
-
-    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
-
-FFmpegfs uses the GNU build system, so you'll need to run first:
-
-    ./autogen.sh
-
-If you are downloading a release, this has already been done for you. To build and install, run:
-
-    ./configure
-    make
-    make install
-
-To build and run the check suite, do:
-
-    make checks
-
-Documentation
--------------
-
-The help can be created in doc or html format by running
-
-    make help-pdf
-    make help-html
-
-respectively.
-
 Trouble Shooting
 ----------------
 
-**Mounting via /etc/fstab fails:**
+### Mounting via /etc/fstab fails
 
 An fstab line with fuse.ffmpegfs file system fails with a strange message when attempted to mount with "mount -av". No log entries, no other hints...
 
@@ -276,7 +295,7 @@ Fuse is missing! Do...
 
     apt-get install fuse
 
-**fuse: failed to exec fusermount: No such file or directory:**
+### fuse: failed to exec fusermount: No such file or directory
 
 Trying to mount as other than root, the message
 
@@ -288,12 +307,12 @@ Fuse is missing! Do...
 
     apt-get install fuse
 
-**"ERROR: libmp3lame >= 3.98.3 not found":**
+### "ERROR: libmp3lame >= 3.98.3 not found"
 
 If you run into this "ERROR: libmp3lame >= 3.98.3 not found" although you have built and installed libmp3lame you may find a solution here:
 https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
-**autogen.sh displays "possibly undefined macro":**
+### autogen.sh displays "possibly undefined macro"
 
     Running autoreconf --install
     configure.ac:46: error: possibly undefined macro: AC_DEFINE
@@ -303,7 +322,7 @@ https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found
 
 You are probably missing out on pkg-config, either it is not installed or not in path. "apt-get install pkg-config" (on Debian or equivalent on other Linux distributions) should help.
 
-**If the videotag.php script does not work under PHP7**
+### If the videotag.php script does not work under PHP7
 
 The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7) it suddenly stops showing the list of files.
 
@@ -318,7 +337,7 @@ This is because for some reason utf8_encode() has been moved to the XML library.
 
 And your troubles should be gone.
 
-**"make check": all audio checks fail**
+### "make check": all audio checks fail
 
 Logfiles contain "bc: command not found", so the command line communicator is missing.
 
@@ -326,7 +345,7 @@ Fix by installing it (or similar):
 
      apt-get install bc
 
-**Songs get cut short**
+### Songs get cut short
 
 If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.
 
@@ -338,7 +357,7 @@ NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA.
 
 As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.
 
-**Make reports "/bin/sh: a2x: command not found"**
+### Make reports "/bin/sh: a2x: command not found"
 
 You are missing out on asciidoc, to install do (or similar):
 
@@ -346,7 +365,7 @@ You are missing out on asciidoc, to install do (or similar):
 
 That should fix it. You may just install asciidoc-base to safe disk space
 
-**"make help-pdf" reports "non-zero exit status 127"**
+### "make help-pdf" reports "non-zero exit status 127"
 
 Running "make help-pdf" fails like this: 
 
@@ -362,7 +381,7 @@ This happens when "fop" is missing, a command line wrapper for the java version 
 
 That should do it. 
 
-**libbluray fails to load libbluray.jar**
+### libbluray fails to load libbluray.jar
 
 When you see this message accessing blurays:
 
@@ -370,27 +389,6 @@ When you see this message accessing blurays:
     bdj.c:466: BD-J check: Failed to load libbluray.jar
 
 To get rid of this message simply install "libbluray-bdj", this will make it go away. Though not necessary, as to read the bluray tracks java support is not required, so this is simply cosmetical.
-
-**Switching between repository version and source builds**
-
-It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuild in the background so this will almost go unnoticed.
-
-To switch from repository to a source build do
-
-```
-apt-get remove ffmpegfs
-```
-
-Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be inadvertently up- or downgraded when a new version becomes available from the repository.
-
-To switch from a source build to a repository installation change to
-the build directory and do
-
-```
-make uninstall
-```
-
-Then follow the steps under "Installation from repository".
 
 COPYRIGHT
 ---------
@@ -400,4 +398,3 @@ This fork with FFmpeg support copyright \(C) 2017-2020 Norbert Schlia (nschlia@o
 Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
 
 This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later.
-

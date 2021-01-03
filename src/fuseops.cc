@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2012 K. Henriksson
- * Copyright (C) 2017-2020 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  * @author Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2006-2008 David Collett @n
  * Copyright (C) 2008-2013 K. Henriksson @n
- * Copyright (C) 2017-2020 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "transcode.h"
@@ -476,6 +476,36 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
     return &it->second;
 }
 
+LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, const struct stat * stbuf, int flags)
+{
+    struct stat stbufdir;
+
+    flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+
+    std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
+
+    // Change file to directory for the frame set
+    // Change file to virtual directory for the frame set. Keep permissions.
+    stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+    stbufdir.st_mode  |= S_IFDIR;
+    stbufdir.st_nlink = 2;
+    stbufdir.st_size  = stbufdir.st_blksize;
+
+    std::string path(virtdirpath);
+    append_sep(&path);
+
+    if (params.m_format[0].is_frameset())
+    {
+        flags |= VIRTUALFLAG_FRAME;
+    }
+    else if (params.m_format[0].is_hls())
+    {
+        flags |= VIRTUALFLAG_HLS;
+    }
+
+    return insert_file(type, path, &stbufdir, flags);
+}
+
 LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
     filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));
@@ -711,7 +741,7 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
 
 /**
  * @brief Build a virtual HLS file set
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] origpath - The original file
  * @param[in] virtualfile - LPCVIRTUALFILE of file to create file set for

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2017-2020 Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "ffmpegfs.h"
@@ -228,7 +228,7 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
  * @param[in] vts_file - Structure defines an IFO file
  * @param[in] path - Path to DVD files.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
  * @param[in] title_idx - Index of DVD title.
@@ -302,7 +302,6 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     for (int angle_idx = 0; angle_idx < angles; angle_idx++)
     {
         char title_buf[PATH_MAX + 1];
-        struct stat stbuf;
         int angle_no        = angle_idx + 1;
 
         // can safely assume this a video
@@ -349,52 +348,26 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
         std::string filename(title_buf);
 
-        memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-        stbuf.st_size   = static_cast<__off_t>(size);
-#else
-        stbuf.st_size   = static_cast<__off64_t>(size);
-#endif
-        stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
-
-        //init_stat(&stbuf, size, false);
-
-        if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
-        {
-            // break;
-        }
-
         LPVIRTUALFILE virtualfile = nullptr;
         if (!params.m_format[0].is_multiformat())
         {
-            virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, &stbuf);
+            virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, statbuf);
         }
         else
         {
-            std::string origpath(path + filename);
+            virtualfile = insert_dir(VIRTUALTYPE_DVD, path + filename, statbuf);
+        }
 
-            int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+        if (virtualfile == nullptr)
+        {
+            Logging::error(path, "Failed to create virtual path: %1", (path + filename).c_str());
+            errno = EIO;
+            return false;
+        }
 
-            // Change file to directory for the frame set
-            // Change file to virtual directory for the frame set. Keep permissions.
-            stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-            stbuf.st_mode  |= S_IFDIR;
-            stbuf.st_nlink = 2;
-            stbuf.st_size  = stbuf.st_blksize;
-
-            append_sep(&origpath);
-
-            if (params.m_format[0].is_frameset())
-            {
-                flags |= VIRTUALFLAG_FRAME;
-            }
-            else if (params.m_format[0].is_hls())
-            {
-                flags |= VIRTUALFLAG_HLS;
-            }
-
-            virtualfile = insert_file(VIRTUALTYPE_DVD, origpath, &stbuf, flags);
+        if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+        {
+            // break;
         }
 
         // DVD is video format anyway
@@ -405,7 +378,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         virtualfile->m_dvd.m_chapter_no = chapter_no;
         virtualfile->m_dvd.m_angle_no   = angle_no;
 
-        if (!transcoder_cached_filesize(virtualfile, &stbuf))
+        if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
         {
             virtualfile->m_duration = duration;
 
@@ -438,9 +411,9 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
 /**
  * @brief Parse DVD directory and get all DVD titles and chapters as virtual files.
- * @param[in] path - path to check.
+ * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @return On success, returns number of chapters found. On error, returns -errno.
  */

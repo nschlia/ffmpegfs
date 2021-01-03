@@ -21,8 +21,8 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2013-2020 Norbert Schlia (nschlia@oblivion-software.de) @n
- * From BullysPLayer Copyright (C) 1984-2020 by Oblivion Software/Norbert Schlia
+ * @copyright Copyright (C) 2013-2021 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2021 by Oblivion Software/Norbert Schlia
  */
 
 #ifndef VCDENTRIES_H

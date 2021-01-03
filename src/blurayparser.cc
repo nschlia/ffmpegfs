@@ -371,7 +371,6 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     BLURAY_CLIP_INFO     *clip = &ti->clips[0];
     BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
     char title_buf[PATH_MAX + 1];
-    struct stat stbuf;
     int64_t duration;
 
     if (full_title)
@@ -411,50 +410,26 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
     std::string filename(title_buf);
 
-    memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-    stbuf.st_size   = 0; //static_cast<__off_t>(size);
-#else
-    stbuf.st_size   = 0; //static_cast<__off64_t>(size);
-#endif
-    stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
-
-    if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
-    {
-        // break;
-    }
-
     LPVIRTUALFILE virtualfile = nullptr;
     if (!params.m_format[0].is_multiformat())
     {
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, &stbuf);
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, statbuf);
     }
     else
     {
-        std::string origpath(path + filename);
+        virtualfile = insert_dir(VIRTUALTYPE_BLURAY, path + filename, statbuf);
+    }
 
-        int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+    if (virtualfile == nullptr)
+    {
+        Logging::error(path, "Failed to create virtual path: %1", (path + filename).c_str());
+        errno = EIO;
+        return false;
+    }
 
-        // Change file to directory for the frame set
-        // Change file to virtual directory for the frame set. Keep permissions.
-        stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-        stbuf.st_mode  |= S_IFDIR;
-        stbuf.st_nlink = 2;
-        stbuf.st_size  = stbuf.st_blksize;
-
-        append_sep(&origpath);
-
-        if (params.m_format[0].is_frameset())
-        {
-            flags |= VIRTUALFLAG_FRAME;
-        }
-        else if (params.m_format[0].is_hls())
-        {
-            flags |= VIRTUALFLAG_HLS;
-        }
-
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, origpath, &stbuf, flags);
+    if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+    {
+        // break;
     }
 
     // Bluray is video format anyway
@@ -466,7 +441,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
     virtualfile->m_bluray.m_chapter_no  = chapter_idx + 1;
     virtualfile->m_bluray.m_angle_no    = 1;
 
-    if (!transcoder_cached_filesize(virtualfile, &stbuf))
+    if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
     {
         BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
         BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate

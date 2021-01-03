@@ -476,6 +476,36 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
     return &it->second;
 }
 
+LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, const struct stat * stbuf, int flags)
+{
+    struct stat stbufdir;
+
+    flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+
+    std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
+
+    // Change file to directory for the frame set
+    // Change file to virtual directory for the frame set. Keep permissions.
+    stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+    stbufdir.st_mode  |= S_IFDIR;
+    stbufdir.st_nlink = 2;
+    stbufdir.st_size  = stbufdir.st_blksize;
+
+    std::string path(virtdirpath);
+    append_sep(&path);
+
+    if (params.m_format[0].is_frameset())
+    {
+        flags |= VIRTUALFLAG_FRAME;
+    }
+    else if (params.m_format[0].is_hls())
+    {
+        flags |= VIRTUALFLAG_HLS;
+    }
+
+    return insert_file(type, path, &stbufdir, flags);
+}
+
 LPVIRTUALFILE find_file(const std::string & virtfilepath)
 {
     filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));

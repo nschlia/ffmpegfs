@@ -262,6 +262,15 @@ LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, 
  */
 LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
+ * @brief Add new virtual directory to internal list. If the file already exists, it will be updated.
+ * @param[in] type - Type of virtual file.
+ * @param[in] virtfilepath - Name of virtual file.
+ * @param[in] stbuf - stat buffer with file size, time etc.
+ * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
+ * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
+ */
+LPVIRTUALFILE   insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, const struct stat * stbuf, int flags = VIRTUALFLAG_NONE);
+/**
  * @brief Find file in cache.
  * @param[in] virtfilepath - Virtual filename and path of file to find.
  * @return If found, returns VIRTUALFILE object, if not found returns nullptr.

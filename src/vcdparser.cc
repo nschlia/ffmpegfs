@@ -60,7 +60,6 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 {
     const VcdChapter * chapter1 = vcd.get_chapter(chapter_no);
     char title_buf[PATH_MAX + 1];
-    struct stat stbuf;
     size_t size;
     int64_t duration;
 
@@ -79,48 +78,26 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
 
     std::string filename(title_buf);
 
-    memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-    stbuf.st_size = static_cast<__off_t>(size);
-    stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
-
-    //init_stat(&stbuf, size, false);
-
-    if (buf != nullptr && filler(buf, title_buf, &stbuf, 0))
-    {
-        // break;
-    }
-
     LPVIRTUALFILE virtualfile = nullptr;
     if (!params.m_format[0].is_multiformat())
     {
-        virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, &stbuf);
+        virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, statbuf);
     }
     else
     {
-        std::string origpath(vcd.get_disk_path() + filename);
+        virtualfile = insert_dir(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, statbuf);
+    }
 
-        int flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+    if (virtualfile == nullptr)
+    {
+        Logging::error(vcd.get_disk_path(), "Failed to create virtual path: %1", (vcd.get_disk_path() + filename).c_str());
+        errno = EIO;
+        return false;
+    }
 
-        // Change file to directory for the frame set
-        // Change file to virtual directory for the frame set. Keep permissions.
-        stbuf.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-        stbuf.st_mode  |= S_IFDIR;
-        stbuf.st_nlink = 2;
-        stbuf.st_size  = stbuf.st_blksize;
-
-        append_sep(&origpath);
-
-        if (params.m_format[0].is_frameset())
-        {
-            flags |= VIRTUALFLAG_FRAME;
-        }
-        else if (params.m_format[0].is_hls())
-        {
-            flags |= VIRTUALFLAG_HLS;
-        }
-
-        virtualfile = insert_file(VIRTUALTYPE_VCD, origpath, &stbuf, flags);
+    if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+    {
+        // break;
     }
 
     // Video CD is video format anyway

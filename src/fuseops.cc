@@ -711,7 +711,7 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
 
 /**
  * @brief Build a virtual HLS file set
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] origpath - The original file
  * @param[in] virtualfile - LPCVIRTUALFILE of file to create file set for

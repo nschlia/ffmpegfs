@@ -355,9 +355,9 @@ static int parse_find_best_video_stream()
  * @brief Create a virtual file entry of a bluray chapter or title.
  * @param[in] bd - Bluray disk clip info.
  * @param[in] ti - Bluray disk title info.
- * @param[in] path - path to check.
+ * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] is_main_title - true if title_idx is the main title
  * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
@@ -528,9 +528,9 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
 /**
  * @brief Parse Bluray directory and get all Bluray titles and chapters as virtual files.
- * @param[in] path - path to check.
+ * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @return On success, returns number of chapters found. On error, returns -errno.
  */

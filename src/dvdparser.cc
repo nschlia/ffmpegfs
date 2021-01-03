@@ -228,7 +228,7 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
  * @param[in] vts_file - Structure defines an IFO file
  * @param[in] path - Path to DVD files.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
  * @param[in] title_idx - Index of DVD title.
@@ -438,9 +438,9 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
 
 /**
  * @brief Parse DVD directory and get all DVD titles and chapters as virtual files.
- * @param[in] path - path to check.
+ * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @return On success, returns number of chapters found. On error, returns -errno.
  */

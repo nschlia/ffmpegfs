@@ -21,8 +21,8 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2013-2020 Norbert Schlia (nschlia@oblivion-software.de) @n
- * From BullysPLayer Copyright (C) 1984-2020 by Oblivion Software/Norbert Schlia
+ * @copyright Copyright (C) 2013-2021 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2021 by Oblivion Software/Norbert Schlia
  */
 
 #ifndef VCDUTILS_H
@@ -124,7 +124,7 @@ namespace VCDUTILS
 std::string convert_txt2string(const char * txt, int size, bool trimmed = true);
 /**
  * @brief Check if path is a S/VCD
- * @param[in] path - path to check
+ * @param[in] path - Path to check
  * @param[in] filename - file name to check, can per ENTRIES or INFO (extension .SVD or .VCD will be added automatically).
  * @param[out] fullname - path and filename or ENTRIES.SVC/VCD or INFO.SVC/VCD if found
  * @param[out] is_vcd - true if directory contains a Super Video CD, false if it's a Video CD

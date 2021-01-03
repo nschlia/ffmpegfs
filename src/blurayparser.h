@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2018-2021 by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2018-2020 Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2018-2021 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #ifndef BLURAYPARSER_H
@@ -42,8 +42,8 @@
 
 /**
  * @brief Get number of titles on Bluray
- * @param[in] path - path to check
- * @param[in, out] buf - the buffer passed to the readdir() operation.
+ * @param[in] path - Path to check
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return -errno or number or titles on Bluray

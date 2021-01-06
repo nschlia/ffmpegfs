@@ -480,7 +480,7 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, cons
 {
     struct stat stbufdir;
 
-    flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+    flags |= VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
     std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
 

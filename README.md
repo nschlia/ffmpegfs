@@ -17,6 +17,7 @@ News
 
 * **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
 * **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
+* **Bugfix:** Stupid blooper. WAV and AIFF size was always calculated for a mono file, thus for stereo files only half the correct size.
 
 ### Version 2.1 released
 

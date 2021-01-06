@@ -480,7 +480,7 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, cons
 {
     struct stat stbufdir;
 
-    flags = VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+    flags |= VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
     std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
 
@@ -1192,33 +1192,32 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 int res = 0;
 
-                std::string _origpath(origpath);
-
-                remove_filename(&_origpath);
-
                 virtualfile = find_original(&origpath);
 
                 if (virtualfile == nullptr)
                 {
+                    std::string pathonly(origpath);
+                    remove_filename(&pathonly);
+
 #ifdef USE_LIBVCD
                     if (res <= 0)
                     {
                         // Returns -errno or number or titles on VCD
-                        res = check_vcd(_origpath);
+                        res = check_vcd(pathonly);
                     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
                     if (res <= 0)
                     {
                         // Returns -errno or number or titles on DVD
-                        res = check_dvd(_origpath);
+                        res = check_dvd(pathonly);
                     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
                     if (res <= 0)
                     {
                         // Returns -errno or number or titles on Bluray
-                        res = check_bluray(_origpath);
+                        res = check_bluray(pathonly);
                     }
 #endif // USE_LIBBLURAY
 

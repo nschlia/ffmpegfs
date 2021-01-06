@@ -4464,6 +4464,40 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
         // }
     }
 
+    /*
+    // Support #2654: Test Code
+    // add total overhead
+    switch (m_current_format->filetype())
+    {
+    case FILETYPE_MP3:
+    case FILETYPE_MP4:
+    case FILETYPE_WAV:
+    case FILETYPE_OGG:
+    case FILETYPE_WEBM:
+    case FILETYPE_MOV:
+    case FILETYPE_AIFF:
+    case FILETYPE_OPUS:
+    case FILETYPE_PRORES:
+    case FILETYPE_ALAC:
+    case FILETYPE_PNG:
+    case FILETYPE_JPG:
+    case FILETYPE_BMP:
+    {
+        break;
+    }
+    case FILETYPE_TS:
+    case FILETYPE_HLS:
+    {
+        filesize = static_cast<size_t>(1280 * (filesize) / 1000);
+        break;
+    }
+    case FILETYPE_UNKNOWN:
+    {
+        break;
+    }
+    }
+*/
+
     return filesize;
 }
 

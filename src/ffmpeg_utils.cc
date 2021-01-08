@@ -1323,3 +1323,15 @@ void make_lower(std::string * input)
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     });
 }
+
+std::string local_to_utf8(const std::string & local)
+{
+    std::string out;
+    out.reserve(local.length());
+    std::transform(local.cbegin(), local.cend(), std::back_inserter(out),
+                   [](const unsigned char c) { return ((c < 128) ? c : 'X'); });
+    //std::transform(title.cbegin(), title.cend(), std::back_inserter(out),
+    //           [](const unsigned char c) { return ((c < 128) ? c :  (0xc2 + (c > 0xbf)) + (((c & 0x3f) + 0x80) >> 8)); });
+
+    return out;
+}

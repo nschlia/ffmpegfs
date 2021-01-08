@@ -75,7 +75,7 @@ for details.
 
     apt-get install gcc g++ make pkg-config asciidoc-base w3m
     
-    apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev
+    apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev
 
 To get DVD support:
 
@@ -97,7 +97,7 @@ To "make check" (run test suite):
 
     zypper install gcc gcc-c++
     
-    zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel
+    zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel
 
 To get DVD support:
 
@@ -113,7 +113,7 @@ Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
 
     yum install gcc g++
     
-    yum install fuse-devel sqlite-devel
+    yum install fuse-devel sqlite-devel libcue-devel
 
 To get DVD support:
 

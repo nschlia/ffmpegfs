@@ -109,6 +109,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 #define VIRTUALFLAG_FILESET         0x00000004                      /**< @brief File is file set (images, HLS) */
 #define VIRTUALFLAG_FRAME           0x00000008                      /**< @brief File is part of a set of frames */
 #define VIRTUALFLAG_HLS             0x00000010                      /**< @brief File is part of a set of HLS transport stream (ts) files */
+#define VIRTUALFLAG_CUESHEET        0x00000020                      /**< @brief File is part of a set of cue sheet tracks or the directory */
 
 /** @brief Virtual file definition
  */
@@ -194,6 +195,15 @@ typedef struct VIRTUALFILE
         unsigned    m_angle_no;                                     /**< @brief Selected angle number (1...n) */
     }               m_bluray;                                       /**< @brief Bluray title/chapter info */
 #endif // USE_LIBBLURAY
+    struct CUESHEET_TRACK
+    {
+        CUESHEET_TRACK()
+        {}
+
+        std::string m_sourcefile;                                   /**< @brief Source file name, PROBABLY REDUNDANT */
+        int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
+        int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    }               m_cuesheet;
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

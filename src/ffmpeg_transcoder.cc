@@ -580,6 +580,17 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         }
     }
 
+    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+		// Position to start of cue sheet track
+        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
+        if (ret < 0)
+        {
+            Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+    }
+
     return 0;
 }
 
@@ -3096,6 +3107,23 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             {
                 Logging::error(destname(), "Could not read frame (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
+            }
+        }
+
+        if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        {
+			// Check for end of cue sheet track
+            ///<* @todo Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.
+            if (pkt.stream_index == m_in.m_audio.m_stream_idx)
+            {
+                int64_t pts = av_rescale_q(pkt.pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
+                if (pts > m_virtualfile->m_cuesheet.m_start + m_virtualfile->m_cuesheet.m_duration)
+                {
+                    Logging::trace(destname(), "Read to end of track.");
+                    Logging::error(destname(), "Read to end of track.");
+                    *finished = 1;
+                    ret = AVERROR_EOF;
+                }
             }
         }
 

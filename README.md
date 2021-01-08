@@ -11,6 +11,14 @@ FFmpegfs
 News
 ----
 
+### Version 2.3 under development
+
+**New in 2.3:**
+
+Important changes in 2.3 (2021-01-XX)
+
+* **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory.
+
 ### Version 2.2 under development
 
 **New in 2.2:**
@@ -163,6 +171,35 @@ To use the new HLS feature invoke FFmpegfs with:
      ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 
 Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.
+
+Cue sheets
+----------
+
+Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically they are used to define a CD/DVD track layout. Today they are supported by a wide range of optical disc authoring applications, and moreover, media players.
+
+When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.
+
+Example:
+
+     myfile.mp4
+     myfile.ogv
+     myfile.cue
+
+If destination type is TS, the following files and directories will appear:
+
+     myfile.mp4
+     myfile.mp4.ts
+     myfile.ogv
+     myfile.ogv.ts
+     myfile.cue
+     myfile.mp4.tracks/
+     myfile.ogv.tracks/
+
+Tracks defined in the cue sheet will show up in the *.tracks sub directories.
+
+*Note*
+
+Cue sheets can be embedded into media files. This is not yet supported, embedded cue sheets will be ignored. They have to be supplied as separate files.
 
 Auto copy
 ---------

@@ -357,10 +357,16 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
             cache_entry->clear();
         }
 
-        if (cache_entry->m_cache_info.m_predicted_filesize)
+        if (cache_entry->m_cache_info.m_duration)
         {
             virtualfile->m_duration             = cache_entry->m_cache_info.m_duration;
+        }
+        if (cache_entry->m_cache_info.m_predicted_filesize)
+        {
             virtualfile->m_predicted_size       = cache_entry->m_cache_info.m_predicted_filesize;
+        }
+        if (cache_entry->m_cache_info.m_video_frame_count)
+        {
             virtualfile->m_video_frame_count    = cache_entry->m_cache_info.m_video_frame_count;
         }
 

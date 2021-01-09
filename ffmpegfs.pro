@@ -10,6 +10,7 @@ SOURCES += \
     src/cache.cc \
     src/cache_entry.cc \
     src/cache_maintenance.cc \
+    src/cuesheetparser.cc \
     src/diskio.cc \
     src/dvdio.cc \
     src/dvdparser.cc \
@@ -38,6 +39,7 @@ HEADERS += \
     src/cache.h \
     src/cache_maintenance.h \
     src/config.h \
+    src/cuesheetparser.h \
     src/diskio.h \
     src/dvdio.h \
     src/dvdparser.h \
@@ -79,6 +81,7 @@ LIBS+=-lsqlite3
 LIBS+=-lrt
 LIBS+=-ldvdnav -ldvdread
 LIBS+=-lbluray
+LIBS+=-lcue
 
 # -Uno-old-style-cast
 QMAKE_CFLAGS += -std=c99  -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -Wall

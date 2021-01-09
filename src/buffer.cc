@@ -172,37 +172,43 @@ bool Buffer::init(bool erase_cache)
 
     bool success = true;
 
-    if ((virtualfile()->m_flags & VIRTUALFLAG_HLS))
-    {
-        // HLS format: create several segments
-
-        assert(virtualfile()->get_segment_count()); // Should be at least 1 segment
-
-        m_ci.resize(virtualfile()->get_segment_count());
-
-        for (uint32_t segment_no = 1; segment_no <= virtualfile()->get_segment_count(); segment_no++)
-        {
-            make_cachefile_name(m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
-        }
-    }
-    else
-    {
-        // All other formats: create just a single segment.
-        m_ci.resize(1);
-
-        make_cachefile_name(m_ci[0].m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
-        if ((virtualfile()->m_flags & VIRTUALFLAG_FRAME))
-        {
-            // Create extra index cash for frame sets only
-            make_cachefile_name(m_ci[0].m_cachefile_idx, filename(), params.current_format(virtualfile())->fileext(), true);
-        }
-    }
-
-    // Set current segment
-    m_cur_ci = &m_ci[0];
-
     try
     {
+        if ((virtualfile()->m_flags & VIRTUALFLAG_HLS))
+        {
+            // HLS format: create several segments
+            if (virtualfile()->get_segment_count())
+            {
+                m_ci.resize(virtualfile()->get_segment_count());
+
+                for (uint32_t segment_no = 1; segment_no <= virtualfile()->get_segment_count(); segment_no++)
+                {
+                    make_cachefile_name(m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
+                }
+            }
+            else
+            {
+                Logging::error(filename(), "INTERNAL ERROR: Segment count is 0!");
+                errno = EINVAL;
+                throw false;
+            }
+        }
+        else
+        {
+            // All other formats: create just a single segment.
+            m_ci.resize(1);
+
+            make_cachefile_name(m_ci[0].m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
+            if ((virtualfile()->m_flags & VIRTUALFLAG_FRAME))
+            {
+                // Create extra index cash for frame sets only
+                make_cachefile_name(m_ci[0].m_cachefile_idx, filename(), params.current_format(virtualfile())->fileext(), true);
+            }
+        }
+
+        // Set current segment
+        m_cur_ci = &m_ci[0];
+
         // Create the path to the cache file. All paths are the same, so this is required only once.
         char *cachefile = new_strdup(m_ci[0].m_cachefile);
 

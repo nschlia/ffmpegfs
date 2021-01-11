@@ -20,6 +20,8 @@ This is a maintenance release, bugfixes only.
           after being freed.
 * Bugfix: Stupid blooper. WAV and AIFF size was always calculated for a mono file,
           thus for stereo files only half the correct size.
+* Bugfix: Corrected documentation, "make checks" should read "make check", funny this
+          went unnoticed for over 3 years...
 
 Important changes in 2.1 (2020-12-14)
   
@@ -512,7 +514,7 @@ Changes in this release:
   fixes will go into the code.
 * Implemented automatic cache maintenance (ensure cache size, disk space, delete
   outdated entries).
-* Fixed checks ("make checks" works now. Known problem: mp4 sizes seem to differ
+* Fixed checks ("make check" works now. Known problem: mp4 sizes seem to differ
   when using different FFmpeg releases. Will be addressed soon.).
 * Fixed mp3 format (The mp3s were completely braindead.).
 * Fixed suspend timeout coming although file currently accessed.

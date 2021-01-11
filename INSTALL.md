@@ -168,7 +168,7 @@ Then unpack and cd to the source directory. To build and install, run:
 
 To build and run the check suite, do:
 
-    make checks
+    make check
 
 This will test audio conversion, tagging and size prediction.
 
@@ -201,7 +201,7 @@ If you are downloading a release, this has already been done for you. To build a
 
 To build and run the check suite, do:
 
-    make checks
+    make check
 
 ### Switching between repository version and source builds
 

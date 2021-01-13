@@ -121,6 +121,11 @@ Logging::Logger::~Logger()
             filename = COLOUR_LIGHT_PURPLE + filename + COLOUR_RESET;
         }
 
+        if (m_loglevel <= ERROR)
+        {
+            msg = COLOUR_LIGHT_RED + msg + COLOUR_RESET;
+        }
+
         std::clog << COLOUR_DARK_GRAY << time_string << " " << loglevel << COLOUR_RESET << " " << filename << msg << std::endl;
     }
 }

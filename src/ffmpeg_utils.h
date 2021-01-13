@@ -693,4 +693,12 @@ std::string         make_filename(uint32_t file_no, const std::string &fileext);
  */
 bool                file_exists(const std::string & filename);
 
+/**
+ * @brief Convert local char set to UTF-8
+ * @param local - Text in local char set
+ * @return Text converted to UTF-8.
+ * @todo Currently only replaces special characters with an 'X'. Should do anything useful and actually convert (e.g. using iconv?).
+ */
+std::string         local_to_utf8(const std::string & local);
+
 #endif

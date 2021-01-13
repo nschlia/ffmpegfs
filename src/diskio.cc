@@ -62,7 +62,17 @@ int DiskIO::open(LPVIRTUALFILE virtualfile)
 
     Logging::debug(virtualfile->m_origfile, "Opening input file.");
 
-    m_fpi = fopen(virtualfile->m_origfile.c_str(), "rb");
+	///< @todo Source file name should come from m_origfile, m_cuesheet.m_sourcefile is probably redundant.
+    if (virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        printf("OPEN %s\n", virtualfile->m_cuesheet.m_sourcefile.c_str());
+
+        m_fpi = fopen(virtualfile->m_cuesheet.m_sourcefile.c_str(), "rb");
+    }
+    else
+    {
+        m_fpi = fopen(virtualfile->m_origfile.c_str(), "rb");
+    }
 
     if (m_fpi != nullptr)
     {

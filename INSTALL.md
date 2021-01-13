@@ -233,8 +233,10 @@ The help can be created in doc or html format by running
 
 respectively.
 
-Building FFmpeg with optimisations
+Building FFmpeg 
 -------------------------------
+
+### Building FFmpeg with optimisations
 
 The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built with common options so that it can run on many processors. To leverage the full potential it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.
 
@@ -264,7 +266,7 @@ For a minimum build that contains all the libraries required by FFmpegfs and SSL
 		--enable-libxvid \
 		--enable-libx264
 
-Fix the complaints by configure, i.e. install the required development packages, then
+Fix the complaints by configure, i.e., install the required development packages, then
 
 	make install
 

@@ -56,7 +56,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "snowboard" 4207816 4324940
+    check_filesize "snowboard" 4203680 4324940
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

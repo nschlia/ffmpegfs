@@ -11,8 +11,8 @@ cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e" 490440 494236
-    check_filesize "raven_d" 354319 355298
+    check_filesize "raven_e" 489113 494236
+    check_filesize "raven_d" 351126 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
@@ -21,23 +21,23 @@ then
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
-    check_filesize "raven_e" 5137772
-    check_filesize "raven_d" 4316536
+    check_filesize "raven_e" 5137707 5137772
+    check_filesize "raven_d" 4316344 4316536
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "raven_e" 356669 356771
+    check_filesize "raven_e" 356669 489113
     check_filesize "raven_d" 264179
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e" 429358 489821
-    check_filesize "raven_d" 262919 353367
+    check_filesize "raven_e" 429358 548761
+    check_filesize "raven_d" 262919 393946
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "raven_e" 421675 482727 
-    check_filesize "raven_d" 255780 347272 
+    check_filesize "raven_e" 421675 548761
+    check_filesize "raven_d" 255780 393946 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
@@ -51,18 +51,18 @@ then
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "raven_e" 5140125 5140129
-    check_filesize "raven_d" 4318641 4318666
+    check_filesize "raven_e" 5137707 5140129
+    check_filesize "raven_d" 4316344 4318666
 elif [ "${DESTTYPE}" == "alac" ];
 then
     # alac
-    check_filesize "raven_e" 3986423 3986427
-    check_filesize "raven_d" 3277326 3277330
+    check_filesize "raven_e" 3952038 3986427
+    check_filesize "raven_d" 3277326 3320221
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "raven_e" 725868 811220 
-    check_filesize "raven_d" 479964 545388 
+    check_filesize "raven_e" 489113 811220
+    check_filesize "raven_d" 351126 545388 
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

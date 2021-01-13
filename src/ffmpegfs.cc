@@ -1461,7 +1461,6 @@ static void build_device_type_list(void)
 
         if (it == hwaccel_map.end())
         {
-            std::fprintf(stderr, "INTERNAL WARNING: Unknown hardware acceleration encoder API: %s\n", av_hwdevice_get_type_name(device_type));
             continue;
         }
 

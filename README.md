@@ -196,11 +196,28 @@ More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 
 ### Current Implementation
 
+#### Hardware Acceleration APIs
+
+| API         | Decode | Encode | Tested | Notes                             |
+| ----------- | ------ | ------ | ------ | --------------------------------- |
+| **VAAPI**   | x      | x      | yes    |                                   |
+| **MMAL**    |        | x      | yes    |                                   |
+| **OMX**     | x      |        | yes    |                                   |
+| **CUDA**    |        |        |        | FFmpeg must be manually compiled. |
+| **OPENCL**  |        |        |        |                                   |
+| **VDPAU**   |        |        |        |                                   |
+| **QSV**     |        |        |        |                                   |
+| **V4L2M2M** |        |        |        |                                   |
+| **VULKAN**  |        |        |        |                                   |
+
 #### Tested On
 
-- Debian 10 [Intel Core i5-6500 CPU @ 3.20GHz]: VAAPI
-- Debian 11 [Intel Core i5-8250U CPU @ 1.60GHz]: VAAPI
-- Raspbian 10/Raspberry Pi 3 Model B Plus Rev 1.3 [ARMv7 Processor rev 4 (v7l)]: OpenMAX/MMAL
+| System                                               | CPU                                       | GPU                              | APIs         |
+| ---------------------------------------------------- | ----------------------------------------- | -------------------------------- | ------------ |
+| Debian 10                                            | Intel Core i5-6500 CPU @ 3.20GHz          | Intel HD Graphics 530 (rev 06)   | VAAPI        |
+| Debian 11                                            | Intel Core i5-8250U CPU @ 1.60GHz         | Intel UHD Graphics 620 (rev 07)  | VAAPI        |
+| Debian 11                                            | Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz | NVIDIA GP108M<br />GeForce MX330 | VAAPI        |
+| Raspbian 10<br />Raspberry Pi 3 Model B Plus Rev 1.3 | ARMv7 Processor rev 4 (v7l)]              |                                  | OpenMAX/MMAL |
 
 ### Hardware Encoding
 

@@ -245,37 +245,37 @@ bool            transcoder_cache_clear(void);
  * For Bluray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
  *
  * @param[in] type - Type of virtual file.
- * @param[in] virtfilepath - Name of virtual file.
+ * @param[in] virtfile - Name of virtual file.
  * @param[in] stbuf - stat buffer with file size, time etc.
  * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Add new virtual file to internal list. If the file already exists, it will be updated.
  * @param[in] type - Type of virtual file.
- * @param[in] virtfilepath - Name of virtual file.
+ * @param[in] virtfile - Name of virtual file.
  * @param[in] origfile - Original file name.
  * @param[in] stbuf - stat buffer with file size, time etc.
  * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfilepath, const std::string & origfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
+LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfile, const std::string & origfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Add new virtual directory to internal list. If the file already exists, it will be updated.
  * @param[in] type - Type of virtual file.
- * @param[in] virtfilepath - Name of virtual file.
+ * @param[in] virtdir - Name of virtual directory.
  * @param[in] stbuf - stat buffer with file size, time etc.
  * @param[in] flags - One of the VIRTUALFLAG_* flags to control the detailed behaviour.
  * @return Returns constant pointer to VIRTUALFILE object of file, nullptr if not found
  */
-LPVIRTUALFILE   insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, const struct stat * stbuf, int flags = VIRTUALFLAG_NONE);
+LPVIRTUALFILE   insert_dir(VIRTUALTYPE type, const std::string & virtdir, const struct stat * stbuf, int flags = VIRTUALFLAG_NONE);
 /**
  * @brief Find file in cache.
- * @param[in] virtfilepath - Virtual filename and path of file to find.
+ * @param[in] virtfile - Virtual filename and path of file to find.
  * @return If found, returns VIRTUALFILE object, if not found returns nullptr.
  */
-LPVIRTUALFILE   find_file(const std::string &virtfilepath);
+LPVIRTUALFILE   find_file(const std::string &virtfile);
 /**
  * @brief Check if path has already been parsed.
  * Only useful if for DVD, Bluray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.

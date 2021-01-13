@@ -436,16 +436,17 @@ static filenamemap::const_iterator find_prefix(const filenamemap & map, const st
     return map.cend();
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const struct stat * stbuf, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat * stbuf, int flags)
 {
-    return insert_file(type, virtfilepath, virtfilepath, stbuf, flags);
+    return insert_file(type, virtfile, virtfile, stbuf, flags);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, const std::string & origfile, const struct stat * stbuf, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const std::string & _origfile, const struct stat * stbuf, int flags)
 {
-    std::string sanitised_filepath = sanitise_filepath(virtfilepath);
+    std::string virtfile(sanitise_filepath(_virtfile));
+    std::string origfile(sanitise_filepath(_origfile));
 
-    filenamemap::iterator it    = filenames.find(sanitised_filepath);
+    filenamemap::iterator it    = filenames.find(virtfile);
 
     if (it != filenames.cend())
     {
@@ -456,7 +457,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-        virtualfile.m_origfile      = sanitise_filepath(origfile);
+        virtualfile.m_origfile      = origfile;
     }
     else
     {
@@ -467,16 +468,16 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfilepath, co
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-        virtualfile.m_origfile      = sanitise_filepath(origfile);
+        virtualfile.m_origfile      = origfile;
 
-        filenames.insert(make_pair(sanitised_filepath, virtualfile));
-        it    = filenames.find(sanitised_filepath);
+        filenames.insert(make_pair(virtfile, virtualfile));
+        it    = filenames.find(virtfile);
     }
 
     return &it->second;
 }
 
-LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, const struct stat * stbuf, int flags)
+LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const struct stat * stbuf, int flags)
 {
     struct stat stbufdir;
 
@@ -491,7 +492,7 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, cons
     stbufdir.st_nlink = 2;
     stbufdir.st_size  = stbufdir.st_blksize;
 
-    std::string path(virtdirpath);
+    std::string path(virtdir);
     append_sep(&path);
 
     if (params.m_format[0].is_frameset())
@@ -506,9 +507,9 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdirpath, cons
     return insert_file(type, path, &stbufdir, flags);
 }
 
-LPVIRTUALFILE find_file(const std::string & virtfilepath)
+LPVIRTUALFILE find_file(const std::string & virtfile)
 {
-    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfilepath));
+    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfile));
 
     errno = 0;
 
@@ -609,14 +610,14 @@ LPVIRTUALFILE find_original(std::string * filepath)
         {
             std::string dir(*filepath);
             std::string filename(*filepath);
-            std::string tmppath;
+            std::string origfile;
             struct dirent **namelist;
             struct stat stbuf;
             int count;
             int found = 0;
 
             remove_filename(&dir);
-            tmppath = dir;
+            origfile = dir;
 
             count = scandir(dir.c_str(), &namelist, selector, nullptr);
             if (count == -1)
@@ -637,28 +638,28 @@ LPVIRTUALFILE find_original(std::string * filepath)
             {
                 if (!found && !reg_compare(namelist[n]->d_name, filename, std::regex::icase))
                 {
-                    append_filename(&tmppath, namelist[n]->d_name);
+                    append_filename(&origfile, namelist[n]->d_name);
                     found = 1;
                 }
                 free(namelist[n]);
             }
             free(namelist);
 
-            sanitise_filepath(&tmppath);
+            sanitise_filepath(&origfile);
 
-            if (found && lstat(tmppath.c_str(), &stbuf) == 0)
+            if (found && lstat(origfile.c_str(), &stbuf) == 0)
             {
                 // File exists with this extension
                 LPVIRTUALFILE virtualfile;
 
-                if (*filepath != tmppath)
+                if (*filepath != origfile)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, tmppath, &stbuf);
-                    *filepath = tmppath;
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf);
+                    *filepath = origfile;
                 }
                 else
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, tmppath, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                 }
                 return virtualfile;
             }

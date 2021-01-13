@@ -266,7 +266,7 @@ For a minimum build that contains all the libraries required by FFmpegfs and SSL
 		--enable-libxvid \
 		--enable-libx264
 
-Fix the complaints by configure, i.e. install the required development packages, then
+Fix the complaints by configure, i.e., install the required development packages, then
 
 	make install
 

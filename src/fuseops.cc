@@ -540,8 +540,8 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
     for (filenamemap::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); it++)
     {
-        std::string key = it->first;
-        LPCVIRTUALFILE virtualfile = &it->second;
+        std::string virtfilepath    = it->first;
+        LPCVIRTUALFILE virtualfile  = &it->second;
 
         if (
         #ifdef USE_LIBVCD
@@ -559,8 +559,8 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
             continue;
         }
 
-        remove_filename(&key);
-        if (key == path) // Really a prefix?
+        remove_filename(&virtfilepath);
+        if (virtfilepath == path) // Really a prefix?
         {
             struct stat stbuf;
             std::string destfile;

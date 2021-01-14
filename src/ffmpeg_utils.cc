@@ -415,16 +415,6 @@ char * new_strdup(const std::string & str)
     return p;
 }
 
-const std::string & get_destname(std::string *destfilepath, const std::string & filepath)
-{
-    *destfilepath = filepath;
-    remove_path(destfilepath);
-    replace_ext(destfilepath, params.current_format(filepath)->fileext());
-    *destfilepath = params.m_mountpath + *destfilepath;
-
-    return *destfilepath;
-}
-
 std::string ffmpeg_geterror(int errnum)
 {
     if (errnum < 0)

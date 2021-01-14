@@ -133,6 +133,7 @@ typedef struct VIRTUALFILE
     int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */
 
     int                 m_format_idx;                               /**< @brief Index into params.format[] array */
+    std::string         m_destfile;                                 /**< @brief Name of virtual file */
     std::string         m_origfile;                                 /**< @brief Sanitised original file name */
     struct stat         m_st;                                       /**< @brief stat structure with size etc. */
 

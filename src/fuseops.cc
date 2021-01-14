@@ -458,6 +458,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_destfile      = virtfile;
         virtualfile.m_origfile      = origfile;
     }
     else
@@ -469,10 +470,11 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_destfile      = virtfile;
         virtualfile.m_origfile      = origfile;
 
         filenames.insert(make_pair(virtfile, virtualfile));
-        it    = filenames.find(virtfile);
+        it = filenames.find(virtfile);
     }
 
     return &it->second;
@@ -568,12 +570,12 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
             if (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY)
             {
                 // Is a directory, no need to translate the file name
-                destfile = virtualfile->m_origfile;
+                destfile = virtualfile->m_destfile;
                 remove_sep(&destfile);
             }
             else
             {
-                get_destname(&destfile, virtualfile->m_origfile);
+                destfile = virtualfile->m_destfile;
             }
             remove_path(&destfile);
 
@@ -692,7 +694,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
                 if (*filepath != origfile)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf);
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
                     *filepath = origfile;
                 }
                 else
@@ -1047,11 +1049,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf);
+                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf);
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                                 }
                             }
                             else
@@ -1306,7 +1308,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                             for (uint32_t frame_no = 1; frame_no <= parent_file->m_video_frame_count; frame_no++)
                             {
-                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
+                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_destfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
                             }
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
@@ -1339,7 +1341,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            make_hls_fileset(nullptr, nullptr, parent_file->m_origfile + "/", parent_file); // TEST
+                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file); // TEST
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
                             if (virtualfile2 == nullptr)

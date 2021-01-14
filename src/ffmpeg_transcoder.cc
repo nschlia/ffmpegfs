@@ -234,13 +234,12 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
-    m_virtualfile = virtualfile;
+    m_virtualfile       = virtualfile;
 
     m_in.m_filename     = m_virtualfile->m_origfile;
+    m_out.m_filename    = m_virtualfile->m_destfile;
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
-
-    get_destname(&m_out.m_filename, m_in.m_filename);
 
     if (is_open())
     {
@@ -4593,7 +4592,7 @@ int FFmpeg_Transcoder::encode_finish()
         m_buffer->finished_segment();
 
         // Get segment VIRTUALFILE object
-        std::string filename(m_buffer->virtualfile()->m_origfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
+        std::string filename(m_buffer->virtualfile()->m_destfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
         LPVIRTUALFILE virtualfile = find_file(filename.c_str());
 
         if (virtualfile != nullptr)

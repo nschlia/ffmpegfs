@@ -243,6 +243,9 @@ bool            transcoder_cache_clear(void);
  * @brief Add new virtual file to internal list.
  *
  * For Bluray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
+ * The input file is handled by the BlurayIO or VcdIO classes.
+ * For cue sheets, the original (huge) input file is used. Start positions are sought, end positions
+ * reported as EOF.
  *
  * @param[in] type - Type of virtual file.
  * @param[in] virtfile - Name of virtual file.

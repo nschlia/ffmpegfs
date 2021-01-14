@@ -389,13 +389,6 @@ const std::string & append_ext(std::string * filepath, const std::string & ext);
  */
 char *              new_strdup(const std::string & str);
 /**
- * @brief Get destination filename. Replaces extension and path.
- * @param[in] destfilepath - Destination name and path.
- * @param[in] filepath - Source filename and path.
- * @return Returns constant reference to destfilepath.
- */
-const std::string & get_destname(std::string *destfilepath, const std::string & filepath);
-/**
  * @brief Get FFmpeg error string for errnum. Internally calls av_strerror().
  * @param[in] errnum - FFmpeg error code.
  * @return Returns std::string with the error defined by errnum.
@@ -697,7 +690,7 @@ bool                file_exists(const std::string & filename);
  * @brief Convert local char set to UTF-8
  * @param local - Text in local char set
  * @return Text converted to UTF-8.
- * @todo Currently only replaces special characters with an 'X'. Should do anything useful and actually convert (e.g. using iconv?).
+ * @todo Currently only replaces special characters with an 'X'. Should do anything useful and actually convert (e.g. using iconv?) from ISO-8859-1 or so to UTF-8.
  */
 std::string         local_to_utf8(const std::string & local);
 

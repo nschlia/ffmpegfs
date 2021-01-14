@@ -529,6 +529,11 @@ bool check_path(const std::string & path)
 
 int load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
+    if (buf == nullptr)
+    {
+        // We can't add anything here if buf == nullptr
+        return 0;
+    }
     int title_count = 0;
 
     filenamemap::const_iterator it = filenames.lower_bound(path);

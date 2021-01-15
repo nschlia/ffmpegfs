@@ -1263,15 +1263,15 @@ bool is_album_art(AVCodecID codec_id, const AVRational * frame_rate)
     {
         double dbFrameRate = static_cast<double>(frame_rate->num) / frame_rate->den;
 
-        // If frame rate is < 100 fps this most likely is a video
-        if (dbFrameRate >= 100)
+        // If frame rate is < 300 fps this most likely is a video
+        if (dbFrameRate < 300)
         {
-            // Not a video
+            // This is a video
             return false;
         }
     }
 
-    return false;
+    return true;
 }
 
 bool nocasecompare(const std::string & lhs, const std::string &rhs)

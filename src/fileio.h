@@ -201,7 +201,6 @@ typedef struct VIRTUALFILE
         CUESHEET_TRACK()
         {}
 
-        std::string m_sourcefile;                                   /**< @brief Source file name, PROBABLY REDUNDANT */
         int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
         int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     }               m_cuesheet;

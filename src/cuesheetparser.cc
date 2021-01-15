@@ -253,8 +253,6 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 
         //virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
         //virtualfile->m_predicted_size       = static_cast<size_t>(size);
-
-        virtualfile->m_cuesheet.m_sourcefile    = filename;
     }
 
     return true;

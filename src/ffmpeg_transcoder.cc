@@ -226,26 +226,7 @@ bool FFmpeg_Transcoder::is_video() const
 
     if (m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
-        if (is_album_art(m_in.m_video.m_codec_ctx->codec_id))
-        {
-            is_video = false;
-
-            if (m_in.m_video.m_stream->r_frame_rate.den)
-            {
-                double dbFrameRate = static_cast<double>(m_in.m_video.m_stream->r_frame_rate.num) / m_in.m_video.m_stream->r_frame_rate.den;
-
-                // If frame rate is < 100 fps this should be a video
-                if (dbFrameRate < 100)
-                {
-                    is_video = true;
-                }
-            }
-        }
-        else
-        {
-            // If the source codec is not PNG or JPG we can safely assume it's a video stream
-            is_video = true;
-        }
+        is_video = !is_album_art(m_in.m_video.m_codec_ctx->codec_id, &m_in.m_video.m_stream->r_frame_rate);	
     }
 
     return is_video;
@@ -612,22 +593,20 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //}
 
     // Open album art streams if present and supported by both source and target
-    if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr &&
-            supports_albumart(m_in.m_filetype) && supports_albumart(get_filetype(m_current_format->desttype())))
+    if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr && supports_albumart(get_filetype(m_current_format->desttype())))
     {
         Logging::trace(filename(), "Processing album arts.");
 
         for (int stream_idx = 0; stream_idx < static_cast<int>(m_in.m_format_ctx->nb_streams); stream_idx++)
         {
             AVStream *input_stream = m_in.m_format_ctx->streams[stream_idx];
-            AVCodecID codec_id;
 
-            codec_id = CODECPAR(input_stream)->codec_id;
-
-            if (is_album_art(codec_id))
+            if (is_album_art(CODECPAR(input_stream)->codec_id, &input_stream->r_frame_rate))
             {
                 STREAMREF streamref;
                 AVCodecContext * input_codec_ctx;
+
+            	Logging::trace(filename(), "Processing album art");
 
                 ret = open_decoder(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)

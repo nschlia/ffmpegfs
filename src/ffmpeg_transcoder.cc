@@ -593,10 +593,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //}
 
     // Open album art streams if present and supported by both source and target
-    if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr && supports_albumart(get_filetype(m_current_format->desttype())))
+    if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr)
     {
-        Logging::trace(filename(), "Processing album arts.");
-
         for (int stream_idx = 0; stream_idx < static_cast<int>(m_in.m_format_ctx->nb_streams); stream_idx++)
         {
             AVStream *input_stream = m_in.m_format_ctx->streams[stream_idx];
@@ -606,7 +604,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 STREAMREF streamref;
                 AVCodecContext * input_codec_ctx;
 
-            	Logging::trace(filename(), "Processing album art");
+                Logging::trace(filename(), "Found album art");
 
                 ret = open_decoder(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)

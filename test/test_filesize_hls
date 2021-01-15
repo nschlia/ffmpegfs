@@ -7,6 +7,9 @@ ADDOPT=""
 DIRNAME="${DIRNAME}"/snowboard.mp4
 
 cat "${DIRNAME}"/*.ts > /dev/null
+cp -v "${DIRNAME}/000001.ts" /dev/null
+cp -v "${DIRNAME}/000002.ts" /dev/null
+cp -v "${DIRNAME}/000003.ts" /dev/null
 
 echo "File sizes"
 check_filesize "000001.ts" 1535020 1599880

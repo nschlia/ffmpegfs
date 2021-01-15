@@ -633,10 +633,14 @@ std::string         sanitise_filepath(std::string * filepath);
 
 /**
  * @brief Minimal check if codec is an album art.
+ * Requires frame_rate to decide whether this is a video stream if codec_id is
+ * not BMP or PNG (which means its undoubtedly an album art). For MJPEG this may
+ * also be a video stream if the frame rate is high enough.
  * @param[in] codec_id - ID of codec.
+ * @param[in] frame_rate - Video frame rate, if known.
  * @return Returns true if codec is for an image; false if not.
  */
-bool                is_album_art(AVCodecID codec_id);
+bool                is_album_art(AVCodecID codec_id, const AVRational *frame_rate = nullptr);
 
 /**
  * @brief nocasecompare to make std::string find operations case insensitive

@@ -1255,9 +1255,33 @@ std::string sanitise_filepath(const std::string & filepath)
     return sanitise_filepath(&buffer);
 }
 
-bool is_album_art(AVCodecID codec_id)
+bool is_album_art(AVCodecID codec_id, const AVRational * frame_rate)
 {
-    return (codec_id == AV_CODEC_ID_MJPEG || codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP);
+    if (codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP)
+    {
+        // PNG or BMP: must be an album art stream
+        return true;
+    }
+
+    if (codec_id != AV_CODEC_ID_MJPEG)
+    {
+        // Anything else than MJPEG is never an album art stream
+        return false;
+    }
+
+    if (frame_rate != nullptr && frame_rate->den)
+    {
+        double dbFrameRate = static_cast<double>(frame_rate->num) / frame_rate->den;
+
+        // If frame rate is < 100 fps this most likely is a video
+        if (dbFrameRate >= 100)
+        {
+            // Not a video
+            return false;
+        }
+    }
+
+    return false;
 }
 
 bool nocasecompare(const std::string & lhs, const std::string &rhs)

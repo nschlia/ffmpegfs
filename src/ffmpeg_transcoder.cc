@@ -945,7 +945,7 @@ bool FFmpeg_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sa
 
 bool FFmpeg_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate /*= nullptr*/)
 {
-    if (input_bit_rate > max_bit_rate)
+    if (!input_bit_rate || input_bit_rate > max_bit_rate)
     {
         if (output_bit_rate != nullptr)
         {

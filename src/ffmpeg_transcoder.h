@@ -401,7 +401,7 @@ protected:
      * @param metadata_out[in] - Dictionary of output file. Metadata will be copied into it.
      * @param metadata_in[in] - Dictionary of input file. Metadata will be copied out of it.
      */
-    void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream = true);
+    void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
     /**
      * @brief Copy metadata from source to target
      * @return On success returns 0; on error negative AVERROR.

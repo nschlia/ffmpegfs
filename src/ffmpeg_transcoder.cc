@@ -4579,6 +4579,11 @@ int FFmpeg_Transcoder::encode_finish()
             stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
         }
     }
+    else //if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        // Save actual result size of the file
+        stat_set_size(&m_virtualfile->m_st, m_buffer->buffer_watermark());
+    }
 
     return ret;
 }

@@ -298,7 +298,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
         Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
     }
 
-    cache_entry->m_cache_info.m_predicted_filesize = filesize;
+    cache_entry->m_cache_info.m_predicted_filesize = virtualfile->m_predicted_size = filesize;
 
     Logging::trace(cache_entry->destname(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 

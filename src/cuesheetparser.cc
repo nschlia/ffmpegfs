@@ -205,54 +205,26 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 
     if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
     {
-        //BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
-        //BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate
+        BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
+        BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate
 
-        //int channels            = 0;
-        //int sample_rate         = 0;
+        int channels            = 0;
+        int sample_rate         = 0;
         //int audio               = 0;
 
-        //int width               = 0;
-        //int height              = 0;
-        //AVRational framerate    = { 0, 0 };
-        //int interleaved         = 0;
-
-        //uint64_t size           = bd_get_title_size(bd);
+        int width               = 0;
+        int height              = 0;
+        AVRational framerate    = { 0, 0 };
+        int interleaved         = 0;
 
         virtualfile->m_duration             = duration;
         virtualfile->m_cuesheet.m_duration  = duration;
         virtualfile->m_cuesheet.m_start     = start;
 
-        //if (duration)
-        //{
-        //    /**
-        //     * @todo We actually calculate the overall Bluray bitrate here, including all audio
-        //     * streams, not just the video bitrate. This should be the video bitrate alone. We
-        //     * should also calculate the audio bitrate for the selected stream.
-        //    */
-        //    video_bit_rate      = static_cast<BITRATE>(size * 8LL * AV_TIME_BASE / static_cast<uint64_t>(duration));   // calculate bitrate in bps
-        //}
 
-        //// Get details
-        //if (clip->audio_stream_count)
-        //{
-        //    stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
-        //}
-        //if (clip->video_stream_count)
-        //{
-        //    stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
-        //}
+        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
-        //Logging::trace(virtualfile->m_destfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
-        //if (audio > -1)
-        //{
-        //    Logging::trace(virtualfile->m_destfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
-        //}
-
-        //transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
-
-        //virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
-        //virtualfile->m_predicted_size       = static_cast<size_t>(size);
+		stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
     }
 
     return true;

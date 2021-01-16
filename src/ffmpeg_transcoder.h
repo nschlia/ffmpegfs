@@ -393,6 +393,16 @@ protected:
      */
     int                         open_output_filestreams(Buffer *buffer);
     /**
+     * @brief Safely copy a tag to a target buffer. If the input buffer size
+     * is larger than output the data will be truncated to avoid overruns.
+     * The function never appends a /0 terminator.
+     * @param out[out] - Target buffer
+     * @param in[in] - Input buffer
+     * @return Constant pointer to target buffer.
+     */
+    template <size_t size>
+    const char * tagcpy(char (&out) [ size ], const std::string & in) const;
+    /**
      * @brief Process the metadata in the FFmpeg file.
      * This should be called at the beginning, before reading audio data.
      * The set_text_tag() and set_picture_tag() methods of the given Encoder will
@@ -400,8 +410,9 @@ protected:
      * This function will also read the actual PCM stream parameters.
      * @param metadata_out[in] - Dictionary of output file. Metadata will be copied into it.
      * @param metadata_in[in] - Dictionary of input file. Metadata will be copied out of it.
+     * @param contentstream[in] - True if this is a content stream, i.e, audio or video. False for album arts or sub titles.
      */
-    void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in);
+    void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream = true);
     /**
      * @brief Copy metadata from source to target
      * @return On success returns 0; on error negative AVERROR.

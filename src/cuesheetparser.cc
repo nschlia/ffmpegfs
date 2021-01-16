@@ -124,7 +124,7 @@
 //    copy_metadata(&output_stream->metadata, input_stream->metadata);
 //}
 
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string &filename, const std::string & path, const struct stat * statbuf);
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string &filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album);
 //static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
@@ -135,12 +135,14 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
  * @param[in] filename - Source filename.
  * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
+ * @param[in] trackcount - Number of tracks in cue sheet.
+ * @param[in] album - Name of album.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf)
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album)
 {
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
@@ -205,8 +207,8 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 
     if (!transcoder_cached_filesize(virtualfile, &virtualfile->m_st))
     {
-        BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
-        BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate
+        BITRATE video_bit_rate  = 0;	///< @todo probe original file for info
+        BITRATE audio_bit_rate  = 0;
 
         int channels            = 0;
         int sample_rate         = 0;
@@ -217,10 +219,14 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         AVRational framerate    = { 0, 0 };
         int interleaved         = 0;
 
-        virtualfile->m_duration             = duration;
-        virtualfile->m_cuesheet.m_duration  = duration;
-        virtualfile->m_cuesheet.m_start     = start;
-
+        virtualfile->m_duration                 = duration;
+        virtualfile->m_cuesheet.m_duration      = duration;
+        virtualfile->m_cuesheet.m_start         = start;
+        virtualfile->m_cuesheet.m_tracktotal    = trackcount;
+        virtualfile->m_cuesheet.m_trackno       = trackno;
+        virtualfile->m_cuesheet.m_artist        = performer;
+        virtualfile->m_cuesheet.m_title         = title;
+        virtualfile->m_cuesheet.m_album         = album;
 
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
@@ -329,11 +335,11 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
         ///<* @todo Probe source file here? -> sample rate, channels etc.
 
         std::string performer  = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cdtext)));
-        std::string title      = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cdtext)));
+        std::string album      = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cdtext)));
         std::string genre      = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_GENRE, cdtext)));
         std::string date       = local_to_utf8(VAL_OR_EMPTY(rem_get(REM_DATE, rem)));
 
-        long trackcount = cd_get_ntrack(cd);
+        int trackcount = static_cast<int>(cd_get_ntrack(cd));
         if (trackcount)
         {
             LPVIRTUALFILE virtualfile = nullptr;
@@ -374,7 +380,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
                     throw -errno;
                 }
 
-                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf))
+                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album))
                 {
                     //Logging::error(filename, "Failed to create virtual path: %1", subbdir.c_str());
                     throw -errno;
@@ -382,7 +388,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
             }
         }
 
-        res = static_cast<int>(trackcount);
+        res = trackcount;
     }
     catch (int _res)
     {

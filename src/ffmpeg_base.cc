@@ -192,6 +192,18 @@ int FFmpeg_Base::dict_set_with_check(AVDictionary **pm, const char *key, const c
     return ret;
 }
 
+int FFmpeg_Base::dict_set_with_check(AVDictionary **pm, const char *key, int64_t value, int flags, const char * filename) const
+{
+    int ret = av_dict_set_int(pm, key, value, flags);
+
+    if (ret < 0)
+    {
+        Logging::error(filename, "Error setting dictionary option key(%1)='%2' (error '%3').", key, value, ffmpeg_geterror(ret).c_str());
+    }
+
+    return ret;
+}
+
 int FFmpeg_Base::opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char * filename) const
 {
     int ret = av_opt_set(obj, key, value, flags);

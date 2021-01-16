@@ -199,7 +199,17 @@ typedef struct VIRTUALFILE
     struct CUESHEET_TRACK
     {
         CUESHEET_TRACK()
+            : m_tracktotal(0)
+            , m_trackno(0)
+            , m_start(0)
+            , m_duration(0)
         {}
+
+        int         m_tracktotal;                                   /**< @brief Total number of tracks in cue sheet */
+        int         m_trackno;                                      /**< @brief Track number */
+        std::string m_artist;                                       /**< @brief Track artist */
+        std::string m_title;                                        /**< @brief Track title */
+        std::string m_album;                                        /**< @brief Album title */
 
         int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
         int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */

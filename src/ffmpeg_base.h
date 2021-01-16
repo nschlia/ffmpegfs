@@ -87,6 +87,16 @@ protected:
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
+     * @brief Call av_dict_set and check result code. Displays an error message if appropriate.
+     * @param[in] pm - pointer to a pointer to a dictionary struct.
+     * @param[in] key - entry key to add to *pm.
+     * @param[in] value - entry value to add to *pm.
+     * @param[in] flags - AV_DICT_* flags.
+     * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                 dict_set_with_check(AVDictionary **pm, const char *key, int64_t value, int flags, const char *filename = nullptr) const;
+    /**
      * @brief Call av_opt_set and check result code. Displays an error message if appropriate.
      * @param[in] obj - A struct whose first element is a pointer to an AVClass.
      * @param[in] key - the name of the field to set

@@ -3610,44 +3610,69 @@ time_t FFmpeg_Transcoder::mtime() const
     return m_mtime;
 }
 
-#define tagcpy(dst, src)    \
-    for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
-    *p1 = *p2      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
+template <size_t size>
+const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string & in) const
+{
+    memset(out, ' ', size);
+    memcpy(out, in.c_str(), std::min(size, in.size()));
+    return out;
+}
 
-void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in)
+void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream)
 {
     AVDictionaryEntry *tag = nullptr;
 
     while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)))
     {
-        dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
+        std::string value(tag->value);
 
-        if (m_out.m_filetype == FILETYPE_MP3)
+        if (contentstream && m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        {
+            // Replace tags with cue sheet values
+            if (!strcasecmp(tag->key, "ARTIST"))
+            {
+                value = m_virtualfile->m_cuesheet.m_artist;
+            }
+            else if (!strcasecmp(tag->key, "TITLE"))
+            {
+                value = m_virtualfile->m_cuesheet.m_title;
+            }
+            else if (!strcasecmp(tag->key, "TRACK"))
+            {
+                char buf[20];
+                sprintf(buf, "%i", m_virtualfile->m_cuesheet.m_trackno);
+                value = buf;
+            }
+        }
+
+        dict_set_with_check(metadata_out, tag->key, value.c_str(), 0, destname());
+
+        if (contentstream && m_out.m_filetype == FILETYPE_MP3)
         {
             // For MP3 fill in ID3v1 structure
             if (!strcasecmp(tag->key, "ARTIST"))
             {
-                tagcpy(m_out.m_id3v1.m_artist, tag->value);
+                tagcpy(m_out.m_id3v1.m_artist, value);
             }
             else if (!strcasecmp(tag->key, "TITLE"))
             {
-                tagcpy(m_out.m_id3v1.m_title, tag->value);
+                tagcpy(m_out.m_id3v1.m_title, value);
             }
             else if (!strcasecmp(tag->key, "ALBUM"))
             {
-                tagcpy(m_out.m_id3v1.m_album, tag->value);
+                tagcpy(m_out.m_id3v1.m_album, value);
             }
             else if (!strcasecmp(tag->key, "COMMENT"))
             {
-                tagcpy(m_out.m_id3v1.m_comment, tag->value);
+                tagcpy(m_out.m_id3v1.m_comment, value);
             }
             else if (!strcasecmp(tag->key, "YEAR") || !strcasecmp(tag->key, "DATE"))
             {
-                tagcpy(m_out.m_id3v1.m_year, tag->value);
+                tagcpy(m_out.m_id3v1.m_year, value);
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                m_out.m_id3v1.m_title_no = static_cast<char>(atoi(tag->value));
+                m_out.m_id3v1.m_title_no = static_cast<char>(atoi(value.c_str()));
             }
         }
     }
@@ -3683,7 +3708,16 @@ int FFmpeg_Transcoder::process_metadata()
         AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
         AVStream *output_stream = m_out.m_album_art.at(n).m_stream;
 
-        copy_metadata(&output_stream->metadata, input_stream->metadata);
+        copy_metadata(&output_stream->metadata, input_stream->metadata, input_stream->index == m_in.m_audio.m_stream_idx || input_stream->index == m_in.m_video.m_stream_idx);
+    }
+
+    if (m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet.m_trackno, 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet.m_title.c_str(), 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet.m_album.c_str(), 0, destname());
     }
 
     return 0;

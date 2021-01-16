@@ -653,7 +653,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
                 if (*filepath != origfile)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf);
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
                     *filepath = origfile;
                 }
                 else

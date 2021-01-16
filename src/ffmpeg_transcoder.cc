@@ -192,7 +192,7 @@ bool FFmpeg_Transcoder::is_video() const
 
     if (m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
-        is_video = !is_album_art(m_in.m_video.m_codec_ctx->codec_id, &m_in.m_video.m_stream->r_frame_rate);	
+        is_video = !is_album_art(m_in.m_video.m_codec_ctx->codec_id, &m_in.m_video.m_stream->r_frame_rate);
     }
 
     return is_video;
@@ -215,7 +215,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
-    m_virtualfile = virtualfile;
+    m_virtualfile       = virtualfile;
 
     m_in.m_filename     = m_virtualfile->m_origfile;
     m_mtime             = m_virtualfile->m_st.st_mtime;

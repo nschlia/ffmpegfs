@@ -192,7 +192,7 @@ bool FFmpeg_Transcoder::is_video() const
 
     if (m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
-        is_video = !is_album_art(m_in.m_video.m_codec_ctx->codec_id, &m_in.m_video.m_stream->r_frame_rate);	
+        is_video = !is_album_art(m_in.m_video.m_codec_ctx->codec_id, &m_in.m_video.m_stream->r_frame_rate);
     }
 
     return is_video;
@@ -955,7 +955,7 @@ bool FFmpeg_Transcoder::get_output_sample_rate(int input_sample_rate, int max_sa
 
 bool FFmpeg_Transcoder::get_output_bit_rate(BITRATE input_bit_rate, BITRATE max_bit_rate, BITRATE * output_bit_rate /*= nullptr*/)
 {
-    if (input_bit_rate > max_bit_rate)
+    if (!input_bit_rate || input_bit_rate > max_bit_rate)
     {
         if (output_bit_rate != nullptr)
         {
@@ -4575,12 +4575,8 @@ int FFmpeg_Transcoder::encode_finish()
         if (virtualfile != nullptr)
         {
             virtualfile->m_predicted_size   = m_buffer->buffer_watermark(m_current_segment);
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-            virtualfile->m_st.st_size       = static_cast<__off_t>(virtualfile->m_predicted_size);
-#else
-            virtualfile->m_st.st_size       = static_cast<__off64_t>(virtualfile->m_predicted_size);
-#endif
-            virtualfile->m_st.st_blocks     = (virtualfile->m_st.st_size + 512 - 1) / 512;
+
+            stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
         }
     }
 

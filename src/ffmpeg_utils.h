@@ -698,4 +698,10 @@ bool                file_exists(const std::string & filename);
  */
 std::string         local_to_utf8(const std::string & local);
 
+/**
+ * @brief Properly fill in all size related members in stat struct
+ * @param st[inout] stat structure to update
+ * @param size[in] size value to copy
+ */
+void                stat_set_size(struct stat *st, size_t size);
 #endif

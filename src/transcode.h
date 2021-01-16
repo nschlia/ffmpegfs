@@ -69,7 +69,7 @@ bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t durat
  * @param[in] cache_entry - corresponding cache entry
  * @return On error, returns false (size could not be predicted) or true on success
  */
-bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry);
+bool            transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry = nullptr);
 
 // Functions for doing transcoding, called by main program body
 /**

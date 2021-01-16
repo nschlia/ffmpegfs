@@ -994,7 +994,7 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
     }
     else
     {
-        // Logging::trace(sanitised_name, "Reusing cached transcoder.");
+        Logging::trace(virtualfile->m_destfile, "Reusing cached transcoder.");
         cache_entry = p->second;
     }
 

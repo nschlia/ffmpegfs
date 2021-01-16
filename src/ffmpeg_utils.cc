@@ -1347,3 +1347,14 @@ void make_lower(std::string * input)
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     });
 }
+
+void stat_set_size(struct stat *st, size_t size)
+{
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+    st->st_size       = static_cast<__off_t>(size);
+#else
+    st->st_size       = static_cast<__off64_t>(size);
+#endif
+    st->st_blocks     = (st->st_size + 512 - 1) / 512;
+}
+

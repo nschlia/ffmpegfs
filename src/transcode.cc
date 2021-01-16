@@ -261,8 +261,7 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 
     if (encoded_filesize)
     {
-        stbuf->st_size = static_cast<off_t>(encoded_filesize);
-        stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+        stat_set_size(stbuf, encoded_filesize);
         return true;
     }
     else
@@ -683,8 +682,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 memcpy(buff, data.data() + offset, len);
             }
 
-            virtualfile->m_st.st_size   = static_cast<off_t>(data.size());
-            virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
+            stat_set_size(&virtualfile->m_st, data.size());
 
             *bytes_read = static_cast<int>(len);
         }

@@ -473,7 +473,6 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         // No seek if not HLS (segment_no) and not required if < MIN_SEGMENT
         if (segment_no > MIN_SEGMENT && !cache_entry->m_buffer->segment_exists(segment_no))
         {
-            //Logging::error(nullptr, "**************************** NOT FOUND: %1", segment_no);
             cache_entry->m_seek_to_no = segment_no;
         }
 

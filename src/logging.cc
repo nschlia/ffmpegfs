@@ -179,7 +179,7 @@ bool Logging::init_logging(const std::string & logfile, Logging::level max_level
 
 void Logging::log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message)
 {
-     Log(loglevel, filename) << message;
+    Log(loglevel, filename) << message;
 }
 
 std::string Logging::format_helper(const std::string &string_to_update,

@@ -989,13 +989,12 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
     cache_t::const_iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->desttype()));
     if (p == m_cache.cend())
     {
-        // Logging::trace(sanitised_name, "Created new transcoder.");
         Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
         cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->desttype());
     }
     else
     {
-        // Logging::trace(sanitised_name, "Reusing cached transcoder.");
+        Logging::trace(virtualfile->m_origfile, "Reusing cached transcoder.");
         cache_entry = p->second;
     }
 

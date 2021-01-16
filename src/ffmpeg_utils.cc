@@ -1363,3 +1363,13 @@ const char * hwdevice_get_type_name(AVHWDeviceType dev_type)
     return (type_name != nullptr ? type_name : "unknown");
 }
 
+void stat_set_size(struct stat *st, size_t size)
+{
+#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
+    st->st_size       = static_cast<__off_t>(size);
+#else
+    st->st_size       = static_cast<__off64_t>(size);
+#endif
+    st->st_blocks     = (st->st_size + 512 - 1) / 512;
+}
+

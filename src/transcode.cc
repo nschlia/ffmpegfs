@@ -261,8 +261,7 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 
     if (encoded_filesize)
     {
-        stbuf->st_size = static_cast<off_t>(encoded_filesize);
-        stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+        stat_set_size(stbuf, encoded_filesize);
         return true;
     }
     else
@@ -313,13 +312,16 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
     if (transcoder.open_input_file(virtualfile) >= 0)
     {
-        cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
-        cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
-        cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
+        if (cache_entry != nullptr)
+        {
+            cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
+            cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
+            cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
+        }
+
+        Logging::trace(transcoder.filename(), "Predicted transcoded size of %1.", format_size_ex(transcoder.predicted_filesize()).c_str());
 
         transcoder.close();
-
-        Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
         success = true;
     }
@@ -398,7 +400,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                     tp->schedule_thread(&transcoder_thread, thread_data);
 
-					// Let decoder get into gear before returning from open
+                    // Let decoder get into gear before returning from open
                     while (!thread_data->m_lock_guard)
                     {
                         thread_data->m_cond.wait(lock);
@@ -471,10 +473,9 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         // No seek if not HLS (segment_no) and not required if < MIN_SEGMENT
         if (segment_no > MIN_SEGMENT && !cache_entry->m_buffer->segment_exists(segment_no))
         {
-            //Logging::error(nullptr, "**************************** NOT FOUND: %1", segment_no);
             cache_entry->m_seek_to_no = segment_no;
         }
-		
+
         // Open for reading if necessary
         if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
         {
@@ -683,8 +684,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 memcpy(buff, data.data() + offset, len);
             }
 
-            virtualfile->m_st.st_size   = static_cast<off_t>(data.size());
-            virtualfile->m_st.st_blocks = (virtualfile->m_st.st_size + 512 - 1) / 512;
+            stat_set_size(&virtualfile->m_st, data.size());
 
             *bytes_read = static_cast<int>(len);
         }

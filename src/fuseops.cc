@@ -270,12 +270,7 @@ static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool dire
         stbuf->st_nlink = 1;
     }
 
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-    stbuf->st_size = static_cast<__off_t>(fsize);
-#else
-    stbuf->st_size = static_cast<__off64_t>(fsize);
-#endif
-    stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+    stat_set_size(stbuf, fsize);
 
     // Set current user as owner
     stbuf->st_uid = getuid();
@@ -554,8 +549,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
             memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-            stbuf.st_size   = virtualfile->m_st.st_size;
-            stbuf.st_blocks = (stbuf.st_size + 512 - 1) / 512;
+            stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
 
             if (buf != nullptr && filler(buf, destfile.c_str(), &stbuf, 0))
             {
@@ -659,7 +653,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
                 if (*filepath != origfile)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf);
+                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
                     *filepath = origfile;
                 }
                 else
@@ -1359,12 +1353,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         return -errno;
                     }
 
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-                    stbuf->st_size = static_cast<__off_t>(transcoder_get_size(cache_entry));
-#else
-                    stbuf->st_size = static_cast<__off64_t>(transcoder_get_size(cache_entry));
-#endif
-                    stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+                    stat_set_size(stbuf, transcoder_get_size(cache_entry));
 
                     transcoder_delete(cache_entry);
                 }
@@ -1474,12 +1463,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
                 uint32_t segment_no = 0;
 
-#if defined __x86_64__ || !defined __USE_FILE_OFFSET64
-                stbuf->st_size = static_cast<__off_t>(transcoder_buffer_watermark(cache_entry, segment_no));
-#else
-                stbuf->st_size = static_cast<__off64_t>(transcoder_buffer_watermark(cache_entry, segment_no));
-#endif
-                stbuf->st_blocks = (stbuf->st_size + 512 - 1) / 512;
+                stat_set_size(stbuf, transcoder_buffer_watermark(cache_entry, segment_no));
             }
         }
 

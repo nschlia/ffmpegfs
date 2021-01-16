@@ -722,4 +722,11 @@ bool                file_exists(const std::string & filename);
  *         is not valid.
  */
 const char *        hwdevice_get_type_name(AVHWDeviceType dev_type);
+
+/**
+ * @brief Properly fill in all size related members in stat struct
+ * @param st[inout] stat structure to update
+ * @param size[in] size value to copy
+ */
+void                stat_set_size(struct stat *st, size_t size);
 #endif

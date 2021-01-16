@@ -400,7 +400,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                     tp->schedule_thread(&transcoder_thread, thread_data);
 
-					// Let decoder get into gear before returning from open
+                    // Let decoder get into gear before returning from open
                     while (!thread_data->m_lock_guard)
                     {
                         thread_data->m_cond.wait(lock);
@@ -476,7 +476,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             //Logging::error(nullptr, "**************************** NOT FOUND: %1", segment_no);
             cache_entry->m_seek_to_no = segment_no;
         }
-		
+
         // Open for reading if necessary
         if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
         {

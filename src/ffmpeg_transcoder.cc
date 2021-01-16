@@ -558,7 +558,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
     {
-		// Position to start of cue sheet track
+        // Position to start of cue sheet track
         ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
         if (ret < 0)
         {
@@ -3088,7 +3088,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
 
         if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
         {
-			// Check for end of cue sheet track
+            // Check for end of cue sheet track
             ///<* @todo Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.
             if (pkt.stream_index == m_in.m_audio.m_stream_idx)
             {

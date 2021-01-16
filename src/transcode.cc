@@ -275,14 +275,14 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
-        Logging::error(cache_entry->filename(), "Out of memory getting file size.");
+        Logging::error(cache_entry->destname(), "Out of memory getting file size.");
         return false;
     }
 
     FFmpegfs_Format *current_format = params.current_format(virtualfile);
     if (current_format == nullptr)
     {
-        Logging::error(cache_entry->filename(), "Internal error getting file size.");
+        Logging::error(cache_entry->destname(), "Internal error getting file size.");
         return false;
     }
 
@@ -290,17 +290,17 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec_id(), audio_bit_rate, duration, channels, sample_rate))
     {
-        Logging::warning(cache_entry->filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->destname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec_id(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = filesize;
 
-    Logging::trace(cache_entry->filename(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
+    Logging::trace(cache_entry->destname(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
     return true;
 }

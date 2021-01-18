@@ -365,7 +365,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             return false;
         }
 
-        if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+        if (add_fuse_entry(buf, filler, title_buf, &virtualfile->m_st, 0))
         {
             // break;
         }

@@ -427,7 +427,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         return false;
     }
 
-    if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+    if (add_fuse_entry(buf, filler, title_buf, &virtualfile->m_st, 0))
     {
         // break;
     }

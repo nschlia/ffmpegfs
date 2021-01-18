@@ -298,9 +298,9 @@ static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE ty
 
     init_stat(&stbuf, fsize, ftime, false);
 
-    if (buf != nullptr && filler != nullptr)
+    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
     {
-        filler(buf, filename.c_str(), &stbuf, 0);
+        return nullptr;
     }
 
     return insert_file(type, origpath + filename, &stbuf, flags);
@@ -551,7 +551,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
             stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
 
-            if (buf != nullptr && filler(buf, destfile.c_str(), &stbuf, 0))
+            if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))
             {
                 // break;
             }
@@ -1021,7 +1021,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         }
                     }
 
-                    if (filler(buf, filename.c_str(), &stbuf, 0))
+                    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
                     {
                         break;
                     }
@@ -1946,5 +1946,15 @@ static std::string get_number(const char *path, uint32_t *value)
     *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
 
     return filename;
+}
+
+int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, struct stat *stbuf, off_t off)
+{
+    Logging::error(nullptr, "\n\n**************** ADD ****************\n\n");
+    if (buf == nullptr || filler == nullptr)
+    {
+        return 0;
+    }
+    return filler(buf, name, stbuf, off);
 }
 

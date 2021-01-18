@@ -3102,7 +3102,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
                 if (pts > m_virtualfile->m_cuesheet.m_start + m_virtualfile->m_cuesheet.m_duration)
                 {
                     Logging::trace(destname(), "Read to end of track.");
-                    Logging::error(destname(), "Read to end of track.");
                     *finished = 1;
                     ret = AVERROR_EOF;
                 }

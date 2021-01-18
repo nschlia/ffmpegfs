@@ -280,11 +280,7 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
  */
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
-#define trace error // TEST
-
     // Check for cue sheet
-    Logging::trace(filename, "Parsing cue sheet.");
-
     FILE *fpi = fopen(cuesheet.c_str(), "rt");
     if (fpi == nullptr)
     {

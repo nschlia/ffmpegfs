@@ -40,6 +40,8 @@
 #define FPS (75)                                            ///<* On sector contains 75 frames per CD specs
 #define VAL_OR_EMPTY(val)   ((val) != nullptr ? (val) : "") ///<* Return string or empty string if val is nullptr
 
+#define TRACKDIR            "tracks"                        ///<* Extension of virtual tracks directory
+
 /**
   * @typedef Cuesheet structure
   * Structure see https://en.wikipedia.org/wiki/Cue_sheet_(computing) @n
@@ -345,7 +347,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
             LPVIRTUALFILE virtualfile = nullptr;
             std::string subbdir(filename);
 
-            append_ext(&subbdir, "tracks");
+            append_ext(&subbdir, TRACKDIR);
 
             std::string dirname(subbdir);
 
@@ -409,28 +411,53 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
     struct stat stbuf;
     int res = 0;
 
-    std::string path(filename);
-    remove_filename(&path);
+    std::string path1(filename);
+    remove_filename(&path1);
+
+    std::string path2(filename);
 
     std::string cuesheet(filename);
     std::string ext;
-    if (find_ext(&ext, filename) && ext == "tracks")
+    if (find_ext(&ext, filename) && ext == TRACKDIR)
     {
-        remove_ext(&cuesheet);
+        remove_ext(&cuesheet);  // remove TRACKDIR extension from virtual directory
         remove_ext(&_filename);
+    }
+    else
+    {
+        append_ext(&path2, TRACKDIR);
+        append_sep(&path2);
     }
     replace_ext(&cuesheet, "cue");
 
     if (lstat(cuesheet.c_str(), &stbuf) != -1)
     {
-        if (!check_path(path))
+        if (!check_path(path2))
         {
             res = parse_cuesheet(_filename, cuesheet, &stbuf, buf, filler);
-            Logging::trace(path, "Found %1 titles.", res);
+            Logging::trace(cuesheet, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &stbuf, buf, filler);
+            std::string dirname(path2);
+
+            remove_path(&dirname);
+
+            LPVIRTUALFILE virtualfile = find_file(path2);
+
+            if (virtualfile == nullptr)
+            {
+                Logging::error(filename, "Failed to find virtual path: %1", path2.c_str());
+                errno = EIO;
+                return -errno;
+            }
+
+            if (buf != nullptr && filler(buf, dirname.c_str(), &virtualfile->m_st, 0))
+            {
+                // break;
+            }
+
+            res = 0;
         }
     }
     return res;

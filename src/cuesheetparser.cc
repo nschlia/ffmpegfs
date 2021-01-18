@@ -124,7 +124,7 @@
 //    copy_metadata(&output_stream->metadata, input_stream->metadata);
 //}
 
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string &filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album);
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string &filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string &genre, const std::string &date);
 //static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
@@ -137,12 +137,14 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
  * @param[in] statbuf - File status structure of original file.
  * @param[in] trackcount - Number of tracks in cue sheet.
  * @param[in] album - Name of album.
+ * @param[in] genre - Album genre.
+ * @param[in] date - Publishing date.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album)
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date)
 {
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
@@ -227,10 +229,12 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         virtualfile->m_cuesheet.m_artist        = performer;
         virtualfile->m_cuesheet.m_title         = title;
         virtualfile->m_cuesheet.m_album         = album;
+        virtualfile->m_cuesheet.m_genre         = genre;
+        virtualfile->m_cuesheet.m_date          = date;
 
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
-		stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
+        stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
     }
 
     return true;
@@ -380,7 +384,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
                     throw -errno;
                 }
 
-                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album))
+                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date))
                 {
                     //Logging::error(filename, "Failed to create virtual path: %1", subbdir.c_str());
                     throw -errno;

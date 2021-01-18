@@ -210,6 +210,8 @@ typedef struct VIRTUALFILE
         std::string m_artist;                                       /**< @brief Track artist */
         std::string m_title;                                        /**< @brief Track title */
         std::string m_album;                                        /**< @brief Album title */
+        std::string m_genre;                                        /**< @brief Album genre */
+        std::string m_date;                                         /**< @brief Publishing date */
 
         int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
         int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */

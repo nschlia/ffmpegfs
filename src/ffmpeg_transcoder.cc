@@ -1635,8 +1635,14 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     // Although docs state this is "Demuxing only", this is actually used by encoders like Matroska/WebM, so we need to set this here.
     m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
-
-    av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
+    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_virtualfile->m_cuesheet.m_duration, AV_DICT_IGNORE_SUFFIX);
+    }
+    else
+    {
+        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
+    }
 
     // Some formats want stream headers to be separate.
     if (m_out.m_format_ctx->oformat->flags & AVFMT_GLOBALHEADER)
@@ -3713,12 +3719,13 @@ int FFmpeg_Transcoder::process_metadata()
 
     if (m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
     {
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACKTOTAL", m_virtualfile->m_cuesheet.m_tracktotal, 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet.m_trackno, 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet.m_title.c_str(), 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet.m_album.c_str(), 0, destname());
-    }
+     }
 
     return 0;
 }

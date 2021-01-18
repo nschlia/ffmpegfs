@@ -560,17 +560,12 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
         if (virtfilepath == path) // Really a prefix?
         {
             struct stat stbuf;
-            std::string destfile;
+            std::string destfile(virtualfile->m_destfile);
 
             if (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY)
             {
-                // Is a directory, no need to translate the file name
-                destfile = virtualfile->m_destfile;
+                // Is a directory, no need to translate the file name, just drop terminating separator
                 remove_sep(&destfile);
-            }
-            else
-            {
-                destfile = virtualfile->m_destfile;
             }
             remove_path(&destfile);
 

@@ -95,7 +95,7 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
         return false;
     }
 
-    if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+    if (add_fuse_entry(buf, filler, title_buf, &virtualfile->m_st, 0))
     {
         // break;
     }
@@ -180,6 +180,8 @@ int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
         {
             res = load_path(path, &stbuf, buf, filler);
         }
+
+        add_dotdot(buf, filler, &stbuf, 0);
     }
     else if (stat((path + "VCD/INFO.VCD").c_str(), &stbuf) == 0)
     {
@@ -193,6 +195,8 @@ int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
         {
             res = load_path(path, &stbuf, buf, filler);
         }
+
+        add_dotdot(buf, filler, &stbuf, 0);
     }
     return res;
 }

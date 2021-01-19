@@ -360,28 +360,49 @@ LPVIRTUALFILE   find_parent(const std::string & origpath);
  * @param[in] autocopy - AUTOCOPY enum value to convert.
  * @return AUTOCOPY enum as text or "INVALID" if not known.
  */
-std::string get_autocopy_text(AUTOCOPY autocopy);
+std::string 		get_autocopy_text(AUTOCOPY autocopy);
 /**
  * @brief Convert RECODESAME enum to human readable text.
  * @param[in] recode - RECODESAME enum value to convert.
  * @return RECODESAME enum as text or "INVALID" if not known.
  */
-std::string get_recodesame_text(RECODESAME recode);
+std::string 		get_recodesame_text(RECODESAME recode);
 /**
  * @brief Convert PROFILE enum to human readable text.
  * @param[in] profile - PROFILE enum value to convert.
  * @return PROFILE enum as text or "INVALID" if not known.
  */
-std::string get_profile_text(PROFILE profile);
+std::string 		get_profile_text(PROFILE profile);
 /**
  * @brief Convert PRORESLEVEL enum to human readable text.
  * @param[in] level - PRORESLEVEL enum value to convert.
  * @return PRORESLEVEL enum as text or "INVALID" if not known.
  */
-std::string get_level_text(PRORESLEVEL level);
+std::string 		get_level_text(PRORESLEVEL level);
 /**
  * @brief Get the selected hardware acceleration as text.
  * @param[in] hwaccel_API - Hardware acceleration buffering API.
  * @return Hardware acceleration API as string.
  */
-std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API);
+std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
+
+/**
+ * @brief Wrapper to the Fuse filler function.
+ * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
+ * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
+ * @param name[in] - The file name of the directory entry. Do not include the path!
+ * @param stat[in] - File attributes, can be nullptr.
+ * @param off[in] - Offset of the next entry or zero.
+ * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
+ */
+int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off);
+
+/**
+ * @brief Create the ./.. entries for a virtual directory
+ * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
+ * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
+ * @param stat[in] - File attributes, can be nullptr.
+ * @param off[in] - Offset of the next entry or zero.
+ * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
+ */
+int             add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off);

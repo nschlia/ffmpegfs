@@ -313,3 +313,24 @@ LPVIRTUALFILE   find_original(std::string *filepath);
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_parent(const std::string & origpath);
+
+/**
+ * @brief Wrapper to the Fuse filler function.
+ * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
+ * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
+ * @param name[in] - The file name of the directory entry. Do not include the path!
+ * @param stat[in] - File attributes, can be nullptr.
+ * @param off[in] - Offset of the next entry or zero.
+ * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
+ */
+int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off);
+
+/**
+ * @brief Create the ./.. entries for a virtual directory
+ * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
+ * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
+ * @param stat[in] - File attributes, can be nullptr.
+ * @param off[in] - Offset of the next entry or zero.
+ * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
+ */
+int             add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off);

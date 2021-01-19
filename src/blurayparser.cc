@@ -427,7 +427,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         return false;
     }
 
-    if (buf != nullptr && filler(buf, title_buf, &virtualfile->m_st, 0))
+    if (add_fuse_entry(buf, filler, title_buf, &virtualfile->m_st, 0))
     {
         // break;
     }
@@ -584,6 +584,8 @@ int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
         {
             res = load_path(path, &stbuf, buf, filler);
         }
+
+        add_dotdot(buf, filler, &stbuf, 0);
     }
     return res;
 }

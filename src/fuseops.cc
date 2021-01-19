@@ -1039,6 +1039,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     else
     {
+        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
+        {
+            add_dotdot(buf, filler, &virtualfile->m_st, 0);
+        }
+
         FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
 
         if (ffmpegfs_format->is_frameset())
@@ -1948,13 +1953,29 @@ static std::string get_number(const char *path, uint32_t *value)
     return filename;
 }
 
-int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, struct stat *stbuf, off_t off)
+int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off)
 {
-    Logging::error(nullptr, "\n\n**************** ADD ****************\n\n");
     if (buf == nullptr || filler == nullptr)
     {
         return 0;
     }
+
     return filler(buf, name, stbuf, off);
 }
 
+int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)
+{
+    struct stat *stbuf2 = nullptr;
+    struct stat stbuf3;
+
+    if (stbuf != nullptr)
+    {
+        stbuf2 = &stbuf3;
+        init_stat(stbuf2, 0, stbuf->st_ctime, true);
+    }
+
+    add_fuse_entry(buf, filler, ".", stbuf2, off);
+    add_fuse_entry(buf, filler, "..", stbuf2, off);
+
+    return 0;
+}

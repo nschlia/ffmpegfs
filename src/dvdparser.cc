@@ -562,6 +562,8 @@ int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
         {
             res = load_path(path, &stbuf, buf, filler);
         }
+
+        add_dotdot(buf, filler, &stbuf, 0);
     }
     return res;
 }

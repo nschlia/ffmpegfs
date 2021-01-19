@@ -1049,8 +1049,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         {
             if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)
             {
-                //Logging::info(filename(), "Unable to use %1 output codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(output_codec->type), avcodec_get_name(codec_id));
-                Logging::info(filename(), "FALLBACK");
+                Logging::info(filename(), "Unable to use ouput codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec_id()));
 
                 m_hwaccel_enc_mode              = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_enc_buffering  = false;

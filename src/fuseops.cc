@@ -91,6 +91,8 @@ static std::vector<char>    script_file;        /**< @brief Buffer for the virtu
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
 
+bool                        docker_client;      /**< @brief True if running inside a Docker container */
+
 fuse_operations             ffmpegfs_ops;       /**< @brief FUSE file system operations */
 
 thread_pool*                tp;                 /**< @brief Thread pool object */
@@ -1927,6 +1929,10 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
+    if (!docker_client)
+    {
+        Logging::info(nullptr, "Running inside Docker.");
+    }
 
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));

@@ -180,16 +180,18 @@ extern struct FFMPEGFS_PARAMS
 
 class Cache_Entry;
 
+extern bool             docker_client;              /**< @brief True if running inside a Docker container */
+
 /**
  * @brief Fuse operations struct
  */
-extern fuse_operations ffmpegfs_ops;
+extern fuse_operations  ffmpegfs_ops;
 
 class thread_pool;
 /**
  * @brief Thread pool object
  */
-extern thread_pool*         tp;
+extern thread_pool*     tp;
 
 /**
  * @brief Initialise FUSE operation structure.

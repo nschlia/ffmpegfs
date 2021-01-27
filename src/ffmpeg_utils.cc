@@ -1359,3 +1359,21 @@ void stat_set_size(struct stat *st, size_t size)
 #endif
     st->st_blocks     = (st->st_size + 512 - 1) / 512;
 }
+
+bool detect_docker(void)
+{
+    FILE *fp = fopen("/proc/self/cgroup", "r");
+
+    if (fp == nullptr)
+    {
+        return false;
+    }
+    char line[4096];
+    fgets(line, sizeof line, fp);
+
+    const char *p = strstr(line, "/docker/");
+
+    fclose(fp);
+
+    return (p != nullptr);
+}

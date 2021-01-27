@@ -1120,19 +1120,21 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
             expand_path(&params.m_mountpath, arg);
             sanitise_filepath(&params.m_mountpath);
             append_sep(&params.m_mountpath);
-
-            switch (is_mount(params.m_mountpath))
+            if (!docker_client)
             {
-            case 1:
-            {
-                std::fprintf(stderr, "%-25s: already mounted\n", params.m_mountpath.c_str());
-                exit(1);
-            }
-                //case -1:
-                //{
-                //  // Error already reported
-                //  exit(1);
-                //}
+                switch (is_mount(params.m_mountpath))
+                {
+                case 1:
+                {
+                    std::fprintf(stderr, "%-25s: already mounted\n", params.m_mountpath.c_str());
+                    exit(1);
+                }
+                    //case -1:
+                    //{
+                    //  // Error already reported
+                    //  exit(1);
+                    //}
+                }
             }
 
             n++;
@@ -1396,6 +1398,9 @@ int main(int argc, char *argv[])
                     "Copyright (C) 2008-2012 K. Henriksson\n"
                     "Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
     }
+
+    // Check if run under Docker
+    docker_client = detect_docker();
 
     init_fuse_ops();
 

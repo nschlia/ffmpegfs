@@ -704,4 +704,9 @@ std::string         local_to_utf8(const std::string & local);
  * @param size[in] size value to copy
  */
 void                stat_set_size(struct stat *st, size_t size);
+/**
+ * @brief Detect if we are running under Docker.
+ * @return Returns true, if running under Docker, or false if not.
+ */
+bool                detect_docker(void);
 #endif

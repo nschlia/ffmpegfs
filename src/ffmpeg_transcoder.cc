@@ -3721,7 +3721,10 @@ int FFmpeg_Transcoder::process_metadata()
         dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACKTOTAL", m_virtualfile->m_cuesheet.m_tracktotal, 0, destname());
         dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet.m_trackno, 0, destname(), true);
         dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+        if (av_dict_get(m_out.m_format_ctx->metadata, "ALBUM_ARTIST", nullptr, 0) == nullptr)
+        {
+            dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+        }
         dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet.m_title.c_str(), 0, destname(), true);
         dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet.m_album.c_str(), 0, destname(), true);
         dict_set_with_check(&m_out.m_format_ctx->metadata, "GENRE", m_virtualfile->m_cuesheet.m_genre.c_str(), 0, destname(), true);

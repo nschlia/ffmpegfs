@@ -11,6 +11,7 @@ Preparing release 2.3
 Important changes in 2.3 (2021-01-XX)
 
 * Feature: Added cue sheet support. If a file with cue extension is found with the same name as a media file, tracks defined in it will show up in a virtual directory.
+* Feature: Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty
 * Bugfix:
 
 Preparing release 2.2

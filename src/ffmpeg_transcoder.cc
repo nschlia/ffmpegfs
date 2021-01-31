@@ -3365,6 +3365,11 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
 int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_present)
 {
+    if (m_out.m_video.m_stream == nullptr)
+    {
+        return 0; // ignore, avoid crash
+    }
+
     // Packet used for temporary storage.
     if (frame != nullptr)
     {

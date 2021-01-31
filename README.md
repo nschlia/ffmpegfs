@@ -209,6 +209,27 @@ Tracks defined in the cue sheet will show up in the *.tracks sub directories.
 
 Cue sheets can be embedded into media files. This is not yet supported, embedded cue sheets will be ignored. They have to be supplied as separate files.
 
+Build A Docker Container
+----------
+
+FFmpegfs can run under Docker. To build a container for FFmpegfs, run
+
+     docker build --build-arg BRANCH=VERSION_2.3 -t nschlia/ffmpegfs .
+
+This will take quite a while. After the command completed, start the container with
+
+     docker run --rm \
+          --name=ffmpegfs \
+          --device /dev/fuse \
+          --cap-add SYS_ADMIN \
+          --security-opt apparmor:unconfined \
+          -v /path/to/source:/src:ro \
+          -v /path/to/output:/dst:rshared \
+          nschlia/ffmpegfs \
+          -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
+
+Of course, change */path/to/source* to your directory with multi media files and */path/to/output* to where the converted files will be visible. desttype may be changed to mp4 or whatever. 
+
 Auto copy
 ---------
 

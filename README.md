@@ -19,7 +19,7 @@ Important changes in 2.3 (2021-01-XX)
 
 * **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory.
 * **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
-* **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](https://github.com/nschlia/ffmpegfs#build-a-docker-container) how to use it.
+* **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](https://github.com/nschlia/ffmpegfs/tree/VERSION_2.3#build-a-docker-container) how to use it.
 
 ### Version 2.2 under development
 

@@ -418,7 +418,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
-    if (m_in.m_video.m_stream_idx >= 0)
+    if (m_in.m_video.m_stream_idx != INVALID_STREAM)
     {
         // We have a video stream
         m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
@@ -460,7 +460,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
-    if (m_in.m_audio.m_stream_idx >= 0)
+    if (m_in.m_audio.m_stream_idx != INVALID_STREAM)
     {
         // We have an audio stream
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
@@ -483,7 +483,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
     }
 
-    if (m_in.m_audio.m_stream_idx == -1 && m_in.m_video.m_stream_idx == -1)
+    if (m_in.m_audio.m_stream_idx == INVALID_STREAM && m_in.m_video.m_stream_idx == INVALID_STREAM)
     {
         Logging::error(filename(), "File contains neither a video nor an audio stream.");
         return AVERROR(EINVAL);
@@ -819,12 +819,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
     m_out.m_video.m_codec_ctx               = output_codec_ctx;
-    m_out.m_video.m_stream_idx              = -1;
+    m_out.m_video.m_stream_idx              = INVALID_STREAM;
     m_out.m_video.m_stream                  = nullptr;
 
     // No audio
     m_out.m_audio.m_codec_ctx               = nullptr;
-    m_out.m_audio.m_stream_idx              = -1;
+    m_out.m_audio.m_stream_idx              = INVALID_STREAM;
     m_out.m_audio.m_stream                  = nullptr;
 
     // Open for read/write
@@ -864,7 +864,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         return ret;
     }
 
-    if (m_out.m_audio.m_stream_idx > -1)
+    if (m_out.m_audio.m_stream_idx != INVALID_STREAM)
     {
         audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_stream);
 
@@ -879,7 +879,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         }
     }
 
-    if (m_out.m_video.m_stream_idx > -1)
+    if (m_out.m_video.m_stream_idx != INVALID_STREAM)
     {
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
     }
@@ -2301,11 +2301,11 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
+            if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM)
             {
                 Logging::error(filename(), "Could not send audio packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
             }
-            else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+            else if (pkt->stream_index == m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx != INVALID_STREAM)
             {
                 Logging::error(filename(), "Could not send video packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
             }
@@ -2674,8 +2674,8 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 {
     int ret = 0;
 
-    if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx > -1)
-    {
+    if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM)
+    {        
         if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
             int64_t pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
@@ -2713,7 +2713,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             ret = store_packet(pkt, "audio");
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
+    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx != INVALID_STREAM || is_frameset()))
     {
         if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
         {
@@ -3009,7 +3009,7 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_audio_frame;
         }
-        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx > -1 || is_frameset()))
+        else if (!m_copy_video && stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx != INVALID_STREAM || is_frameset()))
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_video_frame;
         }
@@ -3839,7 +3839,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
         }
 
-        if (!m_copy_audio && m_out.m_audio.m_stream_idx > -1)
+        if (!m_copy_audio && m_out.m_audio.m_stream_idx != INVALID_STREAM)
         {
             int output_frame_size;
 
@@ -3999,7 +3999,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     {
                         if (!is_frameset())
                         {
-                            // Encode regluar frame
+                            // Encode regular frame
                             ret = encode_video_frame(nullptr, &data_written);
                         }
                         else
@@ -4084,7 +4084,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         int64_t pos = (segment_no - 1) * params.m_segment_duration;
 
-                        if (m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx > -1)
+                        if (m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx != INVALID_STREAM)
                         {
                             int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
 
@@ -4095,7 +4095,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                             ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
                         }
-                        else // if (m_out.m_audio.m_stream_idx > -1)
+                        else // if (m_out.m_audio.m_stream_idx != INVALID_STREAM)
                         {
                             int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
 
@@ -4271,8 +4271,8 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_PCM_S16LE:
     case AV_CODEC_ID_PCM_S16BE:
     {
-        //        bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
-        //        bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
+        // bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
+        // bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
 
         int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
 
@@ -4403,13 +4403,13 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
         duration = m_fileio->duration();
     }
 
-    if (m_in.m_audio.m_stream_idx > -1)
+    if (m_in.m_audio.m_stream_idx != INVALID_STREAM)
     {
         input_sample_rate = CODECPAR(m_in.m_audio.m_stream)->sample_rate;
         input_audio_bit_rate = (CODECPAR(m_in.m_audio.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_audio.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
     }
 
-    if (m_in.m_video.m_stream_idx > -1)
+    if (m_in.m_video.m_stream_idx != INVALID_STREAM)
     {
         input_video_bit_rate = (CODECPAR(m_in.m_video.m_stream)->bit_rate != 0) ? CODECPAR(m_in.m_video.m_stream)->bit_rate : m_in.m_format_ctx->bit_rate;
     }
@@ -4732,28 +4732,28 @@ bool FFmpeg_Transcoder::close_output_file()
 
     // Close output file
 #if !LAVF_DEP_AVSTREAM_CODEC
-    if (m_out.m_audio.m_codec_ctx)
+    if (m_out.m_audio.m_codec_ctx != nullptr)
     {
         avcodec_close(m_out.m_audio.m_codec_ctx);
         m_out.m_audio.m_codec_ctx = nullptr;
         closed = true;
     }
 
-    if (m_out.m_video.m_codec_ctx)
+    if (m_out.m_video.m_codec_ctx != nullptr)
     {
         avcodec_close(m_out.m_video.m_codec_ctx);
         m_out.m_video.m_codec_ctx = nullptr;
         closed = true;
     }
 #else
-    if (m_out.m_audio.m_codec_ctx)
+    if (m_out.m_audio.m_codec_ctx != nullptr)
     {
         avcodec_free_context(&m_out.m_audio.m_codec_ctx);
         m_out.m_audio.m_codec_ctx = nullptr;
         closed = true;
     }
 
-    if (m_out.m_video.m_codec_ctx)
+    if (m_out.m_video.m_codec_ctx != nullptr)
     {
         avcodec_free_context(&m_out.m_video.m_codec_ctx);
         m_out.m_video.m_codec_ctx = nullptr;
@@ -4805,28 +4805,28 @@ bool FFmpeg_Transcoder::close_input_file()
     bool closed = false;
 
 #if !LAVF_DEP_AVSTREAM_CODEC
-    if (m_in.m_audio.m_codec_ctx)
+    if (m_in.m_audio.m_codec_ctx != nullptr)
     {
         avcodec_close(m_in.m_audio.m_codec_ctx);
         m_in.m_audio.m_codec_ctx = nullptr;
         closed = true;
     }
 
-    if (m_in.m_video.m_codec_ctx)
+    if (m_in.m_video.m_codec_ctx != nullptr)
     {
         avcodec_close(m_in.m_video.m_codec_ctx);
         m_in.m_video.m_codec_ctx = nullptr;
         closed = true;
     }
 #else
-    if (m_in.m_audio.m_codec_ctx)
+    if (m_in.m_audio.m_codec_ctx != nullptr)
     {
         avcodec_free_context(&m_in.m_audio.m_codec_ctx);
         m_in.m_audio.m_codec_ctx = nullptr;
         closed = true;
     }
 
-    if (m_in.m_video.m_codec_ctx)
+    if (m_in.m_video.m_codec_ctx != nullptr)
     {
         avcodec_free_context(&m_in.m_video.m_codec_ctx);
         m_in.m_video.m_codec_ctx = nullptr;

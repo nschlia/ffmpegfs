@@ -18,21 +18,22 @@ News
 Important changes in 2.3 (2021-01-XX)
 
 * **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory.
-* **Feature:** Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty.
+* **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
+* **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](https://github.com/nschlia/ffmpegfs#build-a-docker-container) how to use it.
 
 ### Version 2.2 under development
 
 **New in 2.2:**
 
 * **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
-* **Bugfix:** Issue #75: Fix crash when opening mp3 output with dolphin.
+* **Bugfix:** [Issue #75](https://github.com/nschlia/ffmpegfs/issues/75): Fix crash when opening mp3 output with dolphin.
 * **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
 * **Bugfix:** Stupid blooper. WAV and AIFF size was always calculated for a mono file, thus for stereo files only half the correct size.
-* **Bugfix:** Issue #70: Possible crash in Buffer::init: Should not assert if duration is 0 (and thus segment count 0). Report internal error and go on.
-* **Bugfix:** Issue #70: Do not set duration to 0 from cache but leave unchanged. Caused HLS transcoding to fail if more than one transcoder was concurrently started.
+* **Bugfix:** [Issue #70](https://github.com/nschlia/ffmpegfs/issues/70): Possible crash in Buffer::init: Should not assert if duration is 0 (and thus segment count 0). Report internal error and go on.
+* **Bugfix:** [Issue #70](https://github.com/nschlia/ffmpegfs/issues/70): Do not set duration to 0 from cache but leave unchanged. Caused HLS transcoding to fail if more than one transcoder was concurrently started.
 * **Bugfix:** Corrected documentation, "make checks" should read "make check", funny this went unnoticed for over 3 years...
-* **Bugfix:** Issue #74: Album arts were only copied from MP3/4 sources. Removed restriction, if the input file contains an album art it will be copied to the target (if supported, of course, e.g., to mp3 or mp4. Ogg is not yet supported because embedding album arts in Ogg can only be done by an inofficial workaround).
-* **Bugfix:** Issue #71:: Virtual directories were missing dot and dot-dot nodes.
+* **Bugfix:** [Issue #74](https://github.com/nschlia/ffmpegfs/issues/74): Album arts were only copied from MP3/4 sources. Removed restriction, if the input file contains an album art it will be copied to the target (if supported, of course, e.g., to mp3 or mp4. Ogg is not yet supported because embedding album arts in Ogg can only be done by an inofficial workaround).
+* **Bugfix:** [Issue #71](https://github.com/nschlia/ffmpegfs/issues/71): Virtual directories were missing dot and dot-dot nodes.
 
 ### Version 2.1 released
 

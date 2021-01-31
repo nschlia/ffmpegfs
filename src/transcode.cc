@@ -493,10 +493,14 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                 // This optimises the case where applications read the end of the file
                 // first to read the ID3v1 tag.
                 if ((offset > cache_entry->m_buffer->tell(segment_no)) &&
-                        ((offset + len) > (cache_entry->size() - ID3V1_TAG_LENGTH)))
+                        (offset + len >= (cache_entry->size() - ID3V1_TAG_LENGTH)))
                 {
-
-                    memcpy(buff, &cache_entry->m_id3v1, ID3V1_TAG_LENGTH);
+                    // Stuff buffer with garbage, apps won't try to play that chunk anyway.
+                    memset(buff, 0xFF, len);
+                    if (cache_entry->size() - offset == ID3V1_TAG_LENGTH)
+                    {
+                        memcpy(buff, &cache_entry->m_id3v1, std::min(len, ID3V1_TAG_LENGTH));
+                    }
 
                     errno = 0;
 

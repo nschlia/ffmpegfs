@@ -8,7 +8,7 @@ FFmpegfs NEWS
 
 Preparing release 2.5
 
-Important changes in 2.5 (2021-01-xx)
+Important changes in 2.5 (2021-02-xx)
 
 * Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 
   implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.

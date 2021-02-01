@@ -22,7 +22,7 @@ Important changes in 2.5 (2021-02-xx)
            report as SKIPPED and not fail the whole test.
 * Note: Which hardware en/decoder actually works depends on what your hardware
         supports.
-* Request for testers: Have a CUDA capable graphics adapter and interested in
+* Call for testers: Have a CUDA capable graphics adapter and interested in
   testing? Please write me an E-Mail.
 
 Preparing release 2.2

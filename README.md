@@ -11,12 +11,12 @@ FFmpegfs
 News
 ----
 
-### Version 2.2 under development
+### Version 2.2 released
 
 **New in 2.2:**
 
 * **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
-* **Bugfix:** [Issue #75](https://github.com/nschlia/ffmpegfs/issues/75): Fix crash when opening mp3 output with dolphin.
+* **Bugfix:** [Issue #75](https://github.com/nschlia/ffmpegfs/issues/75): Fix crash when opening mp3 output with Dolphin.
 * **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
 * **Bugfix:** Stupid blooper. WAV and AIFF size was always calculated for a mono file, thus for stereo files only half the correct size.
 * **Bugfix:** [Issue #70](https://github.com/nschlia/ffmpegfs/issues/70): Possible crash in Buffer::init: Should not assert if duration is 0 (and thus segment count 0). Report internal error and go on.

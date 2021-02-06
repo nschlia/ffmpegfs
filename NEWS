@@ -8,11 +8,11 @@ FFmpegfs NEWS
 
 Preparing release 2.2
 
-Important changes in 2.2 (2021-02-XX)
+Important changes in 2.2 (2021-02-06)
 
 This is a maintenance release, bugfixes only.
 
-* Bugfix: Issue #75: Fix crash when opening mp3 output with dolphin.
+* Bugfix: Issue #75: Fix crash when opening mp3 output with Dolphin.
 * Bugfix: Issue #70: Possible crash in Buffer::init: Should not assert if duration is 0
           (and thus segment count 0). Report internal error and go on.
 * Bugfix: Issue #70: Do not set duration to 0 from cache but leave unchanged. Caused HLS
@@ -20,7 +20,7 @@ This is a maintenance release, bugfixes only.
 * Bugfix: Possible crash in transcoder_thread: Decoder object could have been used
           after being freed.
 * Bugfix: Stupid blooper. WAV and AIFF size was always calculated for a mono file,
-          thus for stereo files only half the correct size.
+          thus for stereo files resulting in only half the correct size.
 * Bugfix: Corrected documentation, "make checks" should read "make check", funny this
           went unnoticed for over 3 years...
 * Bugfix: Issue #74: Album arts were only copied from MP3/4 sources. Removed restriction,

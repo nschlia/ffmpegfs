@@ -1929,7 +1929,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
-    if (!docker_client)
+    if (docker_client)
     {
         Logging::info(nullptr, "Running inside Docker.");
     }

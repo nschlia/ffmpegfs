@@ -205,7 +205,7 @@ To build and run the check suite, do:
 
 ### Switching between repository version and source builds
 
-It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuild in the background so this will almost go unnoticed.
+It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuilt in the background so this will almost go unnoticed.
 
 To switch from repository to a source build do
 

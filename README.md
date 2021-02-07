@@ -215,7 +215,7 @@ Build A Docker Container
 
 FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the docker directory and run
 
-     docker build --build-arg BRANCH=VERSION_2.3 -t nschlia/ffmpegfs .
+     docker build --build-arg -t nschlia/ffmpegfs .
 
 Depending on the machine speed, this will take quite a while. After the command completed, the container can be started with
 

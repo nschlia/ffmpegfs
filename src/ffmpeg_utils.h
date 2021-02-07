@@ -690,13 +690,45 @@ std::string         make_filename(uint32_t file_no, const std::string &fileext);
  */
 bool                file_exists(const std::string & filename);
 
+typedef enum ENCODING
+{
+    ENCODING_ASCII          = -1,
+    ENCODING_UTF8_BOM       = -2,
+    ENCODING_UTF16LE_BOM    = -3,
+    ENCODING_UTF16BE_BOM    = -4,
+    ENCODING_UTF32LE_BOM    = -5,
+    ENCODING_UTF32BE_BOM    = -6,
+} ENCODING;
+
 /**
- * @brief Convert local char set to UTF-8
- * @param local - Text in local char set
- * @return Text converted to UTF-8.
- * @todo Currently only replaces special characters with an 'X'. Should do anything useful and actually convert (e.g. using iconv?) from ISO-8859-1 or so to UTF-8.
+ * @brief Convert almost any encoding to UTF-8.
+ * To get a list of all possible encodings run "iconv --list".
+ * @param text[i] - Text to be converted
+ * @param encoding[in] - Encoding of input text.
+ * @return Returns 0 if successful and the converted text,
+ * or errno value on error and text is unchanged.
  */
-std::string         local_to_utf8(const std::string & local);
+int                 to_utf8(std::string & text, const std::string & encoding);
+/**
+ * @brief Try to detect the encoding of str. This is relatively realiable,
+ * but may be wrong.
+ * @param str[in] - Text string to be checked.
+ * @param encoding[out] - Detected encoding.
+ * @return Returns 0 if successful, or CHARDET_OUT_OF_MEMORY/CHARDET_MEM_ALLOCATED_FAIL
+ * on error.
+ */
+int                 get_encoding (const char * str, std::string & encoding);
+/**
+ * @brief Read text file and return in UTF-8 format, no matter in which
+ * encoding the input file is. UTF-8/16/32 with BOM will always return a
+ * correct result. For all other encodings the function tries to detect it,
+ * that may fail.
+ * @param path[in] - Path and filename of input file
+ * @param result[out] - File contents as UTF-8
+ * @return Returns one of the ENCODING enum values on success,
+ * or errno on error. Basically a return code > 0 means there is an error.
+ */
+int                 read_file(const std::string & path, std::string & result);
 
 /**
  * @brief Properly fill in all size related members in stat struct

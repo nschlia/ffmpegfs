@@ -156,8 +156,8 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         return false;
     }
 
-    std::string performer   = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cuesheetcdtext)));
-    std::string title       = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cuesheetcdtext)));
+    std::string performer   = VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cuesheetcdtext));
+    std::string title       = VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cuesheetcdtext));
 
     int64_t start           = AV_TIME_BASE * static_cast<int64_t>(track_get_start(track)) / FPS;
     int64_t duration        = AV_TIME_BASE * static_cast<int64_t>(track_get_length(track)) / FPS;
@@ -283,18 +283,17 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
     // Check for cue sheet
-    FILE *fpi = fopen(cuesheet.c_str(), "rt");
-    if (fpi == nullptr)
+    std::string text;
+    int res = read_file(cuesheet, text);
+    if (res >= 0)
     {
-        return -errno;
+        return -res;
     }
 
     // Found cue sheet
     Logging::trace(cuesheet, "Found cue sheet.");
 
-    int res = parse_cuesheet(filename, cue_parse_file(fpi), statbuf, buf, filler);
-
-    fclose(fpi);
+    res = parse_cuesheet(filename, cue_parse_string(text.c_str()), statbuf, buf, filler);
 
     return res;
 }
@@ -336,10 +335,10 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
 
         ///<* @todo Probe source file here? -> sample rate, channels etc.
 
-        std::string performer  = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cdtext)));
-        std::string album      = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cdtext)));
-        std::string genre      = local_to_utf8(VAL_OR_EMPTY(cdtext_get(PTI_GENRE, cdtext)));
-        std::string date       = local_to_utf8(VAL_OR_EMPTY(rem_get(REM_DATE, rem)));
+        std::string performer  = VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cdtext));
+        std::string album      = VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cdtext));
+        std::string genre      = VAL_OR_EMPTY(cdtext_get(PTI_GENRE, cdtext));
+        std::string date       = VAL_OR_EMPTY(rem_get(REM_DATE, rem));
 
         int trackcount = static_cast<int>(cd_get_ntrack(cd));
         if (trackcount)

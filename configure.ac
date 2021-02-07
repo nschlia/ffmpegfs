@@ -71,6 +71,7 @@ AS_IF([test "$ac_cv_sizeof_pthread_t" = "$ac_cv_sizeof_long"],
 # Checks for packages which use pkg-config.
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 PKG_CHECK_MODULES([libcue], [libcue >= 2.2.1])
+PKG_CHECK_MODULES([chardet], [chardet >= 1.0.4])
 
 # Large file support
 AC_SYS_LARGEFILE

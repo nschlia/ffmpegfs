@@ -10,9 +10,12 @@ Preparing release 2.3
 
 Important changes in 2.3 (2021-02-XX)
 
-* Feature: Added cue sheet support. If a file with cue extension is found with the same
-  name as a media file, tracks defined in it will show up in a virtual directory.
+* Feature: Added cue sheet support. If a file with cue extension is found with
+  the same name as a media file, tracks defined in it will show up in a virtual
+  directory.
 * Feature: Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty
+* Feature: Issue #83: Character conversion for cue sheet files. Automatically
+  detects the character encoding of the cue sheet. and converts as necessary.
 * Feature: Issue #79: Added Docker support.
 * Bugfix:
 

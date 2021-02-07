@@ -45,7 +45,7 @@ This is a maintenance release, bugfixes only.
 * Bugfix: Issue #74: Album arts were only copied from MP3/4 sources. Removed restriction,
           if the input file contains an album art it will be copied to the target (if
           supported, of course, e.g., to mp3 or mp4. Ogg is not yet supported because
-          embedding album arts in Ogg can only be done by an inofficial workaround).
+          embedding album arts in Ogg can only be done by an unofficial workaround).
 * Bugfix: Issue #71:: Virtual directories were missing dot and dot-dot nodes.
 
 Important changes in 2.1 (2020-12-14)

@@ -43,7 +43,7 @@
 #define TRACKDIR            "tracks"                        ///<* Extension of virtual tracks directory
 
 /**
-  * @typedef Cuesheet structure
+  * @brief Cuesheet structure
   * Structure see https://en.wikipedia.org/wiki/Cue_sheet_(computing) @n
   * @n
   * Real life example: @n
@@ -64,12 +64,12 @@
   *     TITLE "Schneekönigin" @n
   *     INDEX 01 00:55:30 @n
   *   TRACK 03 AUDIO @n
-  *     PERFORMER "Subway to Sally" @ntrackno
+  *     PERFORMER "Subway to Sally" @n
   *     TITLE "Feuerland" @n
   *     INDEX 01 06:41:38 @n
   *   TRACK 04 AUDIO @n
   *     PERFORMER "Subway to Sally" @n
-  *     TITLE "Sieben" @nparse_cuesheet
+  *     TITLE "Sieben" @n
   *     INDEX 01 10:48:42 @n
   *   TRACK 05 AUDIO @n
   *     PERFORMER "Subway to Sally" @n
@@ -134,16 +134,15 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
 /**
  * @brief Create a virtual file entry of a cue sheet title.
  * @param[in] track - libcue2 track handle
+ * @param[in] titleno - Title number.
  * @param[in] filename - Source filename.
  * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
  * @param[in] trackcount - Number of tracks in cue sheet.
+ * @param[in] trackno - Track number.
  * @param[in] album - Name of album.
  * @param[in] genre - Album genre.
  * @param[in] date - Publishing date.
- * @param[in, out] buf - The buffer passed to the readdir() operation.
- * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return On error, returns false. On success, returns true.
  */
 static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date)
@@ -242,6 +241,7 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
     return true;
 }
 
+#if 0
 /**
  * @brief parse_cuesheet
  * @param[in] filename
@@ -251,25 +251,26 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @return On success, returns number of titles in cue sheet. On error, returns -errno.
  */
-//static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
-//{
-//    AVDictionaryEntry *tag = nullptr;
+static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
+{
+    AVDictionaryEntry *tag = nullptr;
 
-//    // Check for embedded cue sheet
-//    Logging::trace(filename, "Checking for embedded cue sheet.");
+    // Check for embedded cue sheet
+    Logging::trace(filename, "Checking for embedded cue sheet.");
 
-//    tag = av_dict_get(metadata, "CUESHEET", tag, AV_DICT_IGNORE_SUFFIX);
-//    if (tag == nullptr || tag->value == nullptr)
-//    {
-//        // No embedded cue sheet
-//        return 0;
-//    }
+    tag = av_dict_get(metadata, "CUESHEET", tag, AV_DICT_IGNORE_SUFFIX);
+    if (tag == nullptr || tag->value == nullptr)
+    {
+        // No embedded cue sheet
+        return 0;
+    }
 
-//    // Found embedded cue sheet
-//    Logging::trace(filename, "Found embedded cue sheet.");
+    // Found embedded cue sheet
+    Logging::trace(filename, "Found embedded cue sheet.");
 
-//    return parse_cuesheet(filename, cue_parse_string(tag->value), statbuf, buf, filler);
-//}
+    return parse_cuesheet(filename, cue_parse_string(tag->value), statbuf, buf, filler);
+}
+#endif
 
 /**
  * @brief parse_cuesheet

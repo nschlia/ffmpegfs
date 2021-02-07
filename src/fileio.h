@@ -179,7 +179,7 @@ typedef struct VIRTUALFILE
     }               m_dvd;                                          /**< @brief DVD title/chapter info */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    /** @brief Extra value structure for Bluray Disks
+    /** @brief Extra value structure for Bluray disks
      *  @note Only available if compiled with -DUSE_LIBBLURAY
      */
     struct BLURAY_CHAPTER
@@ -196,6 +196,8 @@ typedef struct VIRTUALFILE
         unsigned    m_angle_no;                                     /**< @brief Selected angle number (1...n) */
     }               m_bluray;                                       /**< @brief Bluray title/chapter info */
 #endif // USE_LIBBLURAY
+    /** @brief Extra value structure for cue sheets
+     */
     struct CUESHEET_TRACK
     {
         CUESHEET_TRACK()
@@ -215,7 +217,7 @@ typedef struct VIRTUALFILE
 
         int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
         int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
-    }               m_cuesheet;
+    }               m_cuesheet;                                     /**< @brief Cue sheet data for track */
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

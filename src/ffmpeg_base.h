@@ -83,6 +83,7 @@ protected:
      * @param[in] value - entry value to add to *pm.
      * @param[in] flags - AV_DICT_* flags.
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
+     * @param[in] nodelete - If true, does not delete tag if value is 0.
      * @return On success returns 0; on error negative AVERROR.
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr, bool nodelete = false) const;
@@ -104,7 +105,6 @@ protected:
      * @param[in] value - The value to set.
      * @param[in] flags - flags passed to av_opt_find2.
      * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @param[in] nodelete - If true, does not delete tag if value is empty.
      * @return On success returns 0; on error negative AVERROR.
      */
     int                 opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;

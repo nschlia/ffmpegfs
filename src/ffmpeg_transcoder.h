@@ -322,13 +322,13 @@ protected:
     int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type);
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
-     * @param buffer[in] - Stream buffer to operate on
+     * @param[in] buffer - Stream buffer to operate on
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_frame_set(Buffer *buffer);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
-     * @param buffer[in] - Stream buffer to operate on
+     * @param[in] buffer - Stream buffer to operate on
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output(Buffer *buffer);
@@ -388,7 +388,7 @@ protected:
      * @brief Open an output file and the required encoder.
      * Also set some basic encoder parameters.
      * Some of these parameters are based on the input file's parameters.
-     * @param buffer[in] - Stream buffer to operate on
+     * @param[in] buffer - Stream buffer to operate on
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         open_output_filestreams(Buffer *buffer);
@@ -396,8 +396,8 @@ protected:
      * @brief Safely copy a tag to a target buffer. If the input buffer size
      * is larger than output the data will be truncated to avoid overruns.
      * The function never appends a /0 terminator.
-     * @param out[out] - Target buffer
-     * @param in[in] - Input buffer
+     * @param[out] out - Target buffer
+     * @param[in] in - Input buffer
      * @return Constant pointer to target buffer.
      */
     template <size_t size>
@@ -408,9 +408,9 @@ protected:
      * The set_text_tag() and set_picture_tag() methods of the given Encoder will
      * be used to set the metadata, with results going into the given Buffer.
      * This function will also read the actual PCM stream parameters.
-     * @param metadata_out[in] - Dictionary of output file. Metadata will be copied into it.
-     * @param metadata_in[in] - Dictionary of input file. Metadata will be copied out of it.
-     * @param contentstream[in] - True if this is a content stream, i.e, audio or video. False for album arts or sub titles.
+     * @param[in] metadata_out - Dictionary of output file. Metadata will be copied into it.
+     * @param[in] metadata_in - Dictionary of input file. Metadata will be copied out of it.
+     * @param[in] contentstream - True if this is a content stream, i.e, audio or video. False for album arts or sub titles.
      */
     void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream = true);
     /**

@@ -15,7 +15,7 @@ News
 
 **New in 2.3:**
 
-Important changes in 2.3 (2021-01-XX)
+Important changes in 2.3 (2021-02-XX)
 
 * **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory. Embedded cue sheets are planned, see [Issue #82](https://github.com/nschlia/ffmpegfs/issues/82).
 * **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.

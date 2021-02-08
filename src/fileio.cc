@@ -138,6 +138,6 @@ const std::string & FileIO::filename() const
         return empty;
     }
 
-    return m_virtualfile->m_origfile;
+    return m_virtualfile->m_destfile;
 }
 

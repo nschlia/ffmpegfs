@@ -397,13 +397,6 @@ const std::string & append_ext(std::string * filepath, const std::string & ext);
  */
 char *              new_strdup(const std::string & str);
 /**
- * @brief Get destination filename. Replaces extension and path.
- * @param[in] destfilepath - Destination name and path.
- * @param[in] filepath - Source filename and path.
- * @return Returns constant reference to destfilepath.
- */
-const std::string & get_destname(std::string *destfilepath, const std::string & filepath);
-/**
  * @brief Get FFmpeg error string for errnum. Internally calls av_strerror().
  * @param[in] errnum - FFmpeg error code.
  * @return Returns std::string with the error defined by errnum.
@@ -724,9 +717,58 @@ bool                file_exists(const std::string & filename);
 const char *        hwdevice_get_type_name(AVHWDeviceType dev_type);
 
 /**
+  * Detected encoding types
+  */
+typedef enum ENCODING
+{
+    ENCODING_ASCII          = -1,       /**< @brief Some sort of ASCII encoding. */
+    ENCODING_UTF8_BOM       = -2,       /**< @brief UTF-8 with bottom mark. */
+    ENCODING_UTF16LE_BOM    = -3,       /**< @brief UTF-16 little-endian with bottom mark. */
+    ENCODING_UTF16BE_BOM    = -4,       /**< @brief UTF-16 big-endian with bottom mark. */
+    ENCODING_UTF32LE_BOM    = -5,       /**< @brief UTF-16 little-endian with bottom mark. */
+    ENCODING_UTF32BE_BOM    = -6,       /**< @brief UTF-16 big-endian with bottom mark. */
+} ENCODING;
+
+/**
+ * @brief Convert almost any encoding to UTF-8.
+ * To get a list of all possible encodings run "iconv --list".
+ * @param[in] text - Text to be converted
+ * @param[in] encoding - Encoding of input text.
+ * @return Returns 0 if successful and the converted text,
+ * or errno value on error and text is unchanged.
+ */
+int                 to_utf8(std::string & text, const std::string & encoding);
+/**
+ * @brief Try to detect the encoding of str. This is relatively realiable,
+ * but may be wrong.
+ * @param[in] str - Text string to be checked.
+ * @param[out] encoding - Detected encoding.
+ * @return Returns 0 if successful, or CHARDET_OUT_OF_MEMORY/CHARDET_MEM_ALLOCATED_FAIL
+ * on error.
+ */
+int                 get_encoding (const char * str, std::string & encoding);
+/**
+ * @brief Read text file and return in UTF-8 format, no matter in which
+ * encoding the input file is. UTF-8/16/32 with BOM will always return a
+ * correct result. For all other encodings the function tries to detect it,
+ * that may fail.
+ * @param[in] path - Path and filename of input file
+ * @param[out] result - File contents as UTF-8
+ * @return Returns one of the ENCODING enum values on success,
+ * or errno on error. Basically a return code > 0 means there is an error.
+ */
+int                 read_file(const std::string & path, std::string & result);
+
+/**
  * @brief Properly fill in all size related members in stat struct
- * @param st[inout] stat structure to update
- * @param size[in] size value to copy
+ * @param[inout] st stat structure to update
+ * @param[in] size size value to copy
  */
 void                stat_set_size(struct stat *st, size_t size);
+
+/**
+ * @brief Detect if we are running under Docker.
+ * @return Returns true, if running under Docker, or false if not.
+ */
+bool                detect_docker(void);
 #endif

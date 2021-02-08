@@ -731,7 +731,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     {
         assert(sqlite3_bind_parameter_count(m_cacheidx_select_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info->m_origfile.c_str(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info->m_destfile.c_str(), -1, nullptr)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
@@ -828,7 +828,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
 
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 22);
 
-        SQLBINDTXT(1, cache_info->m_origfile.c_str());
+        SQLBINDTXT(1, cache_info->m_destfile.c_str());
         SQLBINDTXT(2, cache_info->m_desttype);
         //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info->m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
@@ -954,7 +954,7 @@ Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & 
         return nullptr;
     }
 
-    m_cache.insert(make_pair(make_pair(virtualfile->m_origfile, desttype), cache_entry));
+    m_cache.insert(make_pair(make_pair(virtualfile->m_destfile, desttype), cache_entry));
 
     return cache_entry;
 }
@@ -973,7 +973,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
         // If CACHE_CLOSE_FREE is set, also free memory
         if (CACHE_CHECK_BIT(CACHE_CLOSE_FREE, flags))
         {
-            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_origfile, (*cache_entry)->m_cache_info.m_desttype));
+            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_destfile, (*cache_entry)->m_cache_info.m_desttype));
 
             deleted = (*cache_entry)->destroy();
             *cache_entry = nullptr;
@@ -986,15 +986,15 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
 Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = nullptr;
-    cache_t::const_iterator p = m_cache.find(make_pair(virtualfile->m_origfile, params.current_format(virtualfile)->desttype()));
+    cache_t::const_iterator p = m_cache.find(make_pair(virtualfile->m_destfile, params.current_format(virtualfile)->desttype()));
     if (p == m_cache.cend())
     {
-        Logging::trace(virtualfile->m_origfile, "Created new transcoder.");
+        Logging::trace(virtualfile->m_destfile, "Created new transcoder.");
         cache_entry = create_entry(virtualfile, params.current_format(virtualfile)->desttype());
     }
     else
     {
-        Logging::trace(virtualfile->m_origfile, "Reusing cached transcoder.");
+        Logging::trace(virtualfile->m_destfile, "Reusing cached transcoder.");
         cache_entry = p->second;
     }
 

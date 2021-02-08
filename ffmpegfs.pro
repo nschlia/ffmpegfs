@@ -10,6 +10,7 @@ SOURCES += \
     src/cache.cc \
     src/cache_entry.cc \
     src/cache_maintenance.cc \
+    src/cuesheetparser.cc \
     src/diskio.cc \
     src/dvdio.cc \
     src/dvdparser.cc \
@@ -38,6 +39,7 @@ HEADERS += \
     src/cache.h \
     src/cache_maintenance.h \
     src/config.h \
+    src/cuesheetparser.h \
     src/diskio.h \
     src/dvdio.h \
     src/dvdparser.h \
@@ -66,9 +68,9 @@ DEFINES+=USE_LIBSWRESAMPLE
 DEFINES+=USE_LIBDVD
 DEFINES+=USE_LIBVCD
 DEFINES+=USE_LIBBLURAY
-INCLUDEPATH+=$$PWD/src /usr/include/fuse $$PWD/lib
+INCLUDEPATH+=$$PWD/src /usr/include/fuse /usr/include/chardet $$PWD/lib
 LIBS+=-lfuse -pthread
-LIBS+=-lavformat -lavcodec -lavutil
+LIBS+=-lavformat -lavcodec -lavutil -lchardet
 LIBS+=-lswscale
 LIBS+=-lswresample
 #LIBS+=-lavresample
@@ -79,6 +81,7 @@ LIBS+=-lsqlite3
 LIBS+=-lrt
 LIBS+=-ldvdnav -ldvdread
 LIBS+=-lbluray
+LIBS+=-lcue
 
 # -Uno-old-style-cast
 QMAKE_CFLAGS += -std=c99  -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -Wall

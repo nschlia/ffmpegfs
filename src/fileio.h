@@ -109,6 +109,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 #define VIRTUALFLAG_FILESET         0x00000004                      /**< @brief File is file set (images, HLS) */
 #define VIRTUALFLAG_FRAME           0x00000008                      /**< @brief File is part of a set of frames */
 #define VIRTUALFLAG_HLS             0x00000010                      /**< @brief File is part of a set of HLS transport stream (ts) files */
+#define VIRTUALFLAG_CUESHEET        0x00000020                      /**< @brief File is part of a set of cue sheet tracks or the directory */
 
 /** @brief Virtual file definition
  */
@@ -132,6 +133,7 @@ typedef struct VIRTUALFILE
     int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */
 
     int                 m_format_idx;                               /**< @brief Index into params.format[] array */
+    std::string         m_destfile;                                 /**< @brief Name of virtual file */
     std::string         m_origfile;                                 /**< @brief Sanitised original file name */
     struct stat         m_st;                                       /**< @brief stat structure with size etc. */
 
@@ -177,7 +179,7 @@ typedef struct VIRTUALFILE
     }               m_dvd;                                          /**< @brief DVD title/chapter info */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    /** @brief Extra value structure for Bluray Disks
+    /** @brief Extra value structure for Bluray disks
      *  @note Only available if compiled with -DUSE_LIBBLURAY
      */
     struct BLURAY_CHAPTER
@@ -194,6 +196,28 @@ typedef struct VIRTUALFILE
         unsigned    m_angle_no;                                     /**< @brief Selected angle number (1...n) */
     }               m_bluray;                                       /**< @brief Bluray title/chapter info */
 #endif // USE_LIBBLURAY
+    /** @brief Extra value structure for cue sheets
+     */
+    struct CUESHEET_TRACK
+    {
+        CUESHEET_TRACK()
+            : m_tracktotal(0)
+            , m_trackno(0)
+            , m_start(0)
+            , m_duration(0)
+        {}
+
+        int         m_tracktotal;                                   /**< @brief Total number of tracks in cue sheet */
+        int         m_trackno;                                      /**< @brief Track number */
+        std::string m_artist;                                       /**< @brief Track artist */
+        std::string m_title;                                        /**< @brief Track title */
+        std::string m_album;                                        /**< @brief Album title */
+        std::string m_genre;                                        /**< @brief Album genre */
+        std::string m_date;                                         /**< @brief Publishing date */
+
+        int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
+        int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    }               m_cuesheet;                                     /**< @brief Cue sheet data for track */
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

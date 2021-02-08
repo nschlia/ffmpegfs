@@ -46,6 +46,7 @@
 #ifdef USE_LIBBLURAY
 #include "blurayparser.h"
 #endif // USE_LIBBLURAY
+#include "cuesheetparser.h"
 #include "thread_pool.h"
 #include "buffer.h"
 #include "cache_entry.h"
@@ -89,6 +90,8 @@ static filenamemap          filenames;          /**< @brief Map files to virtual
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
+
+bool                        docker_client;      /**< @brief True if running inside a Docker container */
 
 fuse_operations             ffmpegfs_ops;       /**< @brief FUSE file system operations */
 
@@ -452,6 +455,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_destfile      = virtfile;
         virtualfile.m_origfile      = origfile;
     }
     else
@@ -463,6 +467,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
         virtualfile.m_format_idx    = params.guess_format_idx(origfile);
+        virtualfile.m_destfile      = virtfile;
         virtualfile.m_origfile      = origfile;
 
         filenames.insert(make_pair(virtfile, virtualfile));
@@ -529,34 +534,61 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
         // We can't add anything here if buf == nullptr
         return 0;
     }
+
     int title_count = 0;
 
-    filenamemap::const_iterator it = filenames.lower_bound(path);
-    while (it != filenames.cend())
+    for (filenamemap::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); it++)
     {
-        std::string virtfilepath = it->first;
+        std::string virtfilepath    = it->first;
+        LPCVIRTUALFILE virtualfile  = &it->second;
+
+        if (
+        #ifdef USE_LIBVCD
+                (virtualfile->m_type != VIRTUALTYPE_VCD) &&
+        #endif // USE_LIBVCD
+        #ifdef USE_LIBDVD
+                (virtualfile->m_type != VIRTUALTYPE_DVD) &&
+        #endif // USE_LIBDVD
+        #ifdef USE_LIBBLURAY
+                (virtualfile->m_type != VIRTUALTYPE_BLURAY) &&
+        #endif // USE_LIBBLURAY
+                !(virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+                )
+        {
+            continue;
+        }
+
         remove_filename(&virtfilepath);
         if (virtfilepath == path) // Really a prefix?
         {
-            LPCVIRTUALFILE virtualfile = &it->second;
             struct stat stbuf;
-            std::string destfile;
+            std::string destfile(virtualfile->m_destfile);
 
-            get_destname(&destfile, virtualfile->m_origfile);
+            if (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY)
+            {
+                // Is a directory, no need to translate the file name, just drop terminating separator
+                remove_sep(&destfile);
+            }
             remove_path(&destfile);
 
             title_count++;
 
-            memcpy(&stbuf, statbuf, sizeof(struct stat));
+            if (statbuf == nullptr)
+            {
+                memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+            }
+            else
+            {
+                memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-            stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+	            stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+            }
 
             if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))
             {
                 // break;
             }
         }
-        it++;
     }
 
     return title_count;
@@ -906,7 +938,6 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
     std::string origpath;
-    struct dirent *de;
 #if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
     int res;
 #endif
@@ -960,28 +991,48 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         {
             try
             {
-                while ((de = readdir(dp)) != nullptr)
+                std::map<std::string, struct stat> files;
+
+                // Read directory contents
+                for (struct dirent *de = readdir(dp); de != nullptr; de = readdir(dp))
                 {
-                    std::string origname(de->d_name);
-                    std::string origfile;
-                    std::string filename(de->d_name);
                     struct stat stbuf;
+
+                    if (lstat((origpath + de->d_name).c_str(), &stbuf) == -1)
+                    {
+                        // Should actually not happen, file listed by readdir, so it should exist
+                        throw false;
+                    }
+
+                    files.insert({ de->d_name, stbuf });
+                }
+
+                // Process files
+                for (std::map<std::string, struct stat>::iterator it = files.begin(); it != files.end(); it++)
+                {
+                    std::string origname(it->first);
+                    std::string origfile;
+                    std::string filename(it->first);
+                    struct stat & stbuf = it->second;
 
                     origfile = origpath + origname;
 
-                    if (lstat(origfile.c_str(), &stbuf) == -1)
-                    {
-                        throw false;
-                    }
+                    std::string origext;
+                    find_ext(&origext, filename);
 
                     if (S_ISREG(stbuf.st_mode) || S_ISLNK(stbuf.st_mode))
                     {
                         FFmpegfs_Format *current_format = nullptr;
-                        std::string origext;
-                        find_ext(&origext, filename);
-
+                        // Check if file can be transcoded
                         if (transcoded_name(&filename, &current_format))
                         {
+                            // Check if we have a cue sheet
+                            int res = check_cuesheet(origfile, buf, filler);
+                            if (res < 0)
+                            {
+                                return res;
+                            }
+
                             std::string newext;
                             find_ext(&newext, filename);
 
@@ -989,11 +1040,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf);
+                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf);
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                                 }
                             }
                             else
@@ -1072,6 +1123,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             {
                 return res;
             }
+        }
+        else if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        {
+            // Fill in list for cue sheet
+            load_path(origpath, nullptr, buf, filler);
         }
 
         errno = 0;  // Just to make sure - reset any error
@@ -1180,7 +1236,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     }
     case VIRTUALTYPE_DISK:
     {
-        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY)))
+        if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_CUESHEET)))
         {
             mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
 
@@ -1192,9 +1248,8 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         {
             if (!no_check && lstat(origpath.c_str(), stbuf) == -1)
             {
-                // If file does not exist here we can assume it's some sort of virtual file: Regular, DVD, S/VCD
+                // If file does not exist here we can assume it's some sort of virtual file: Regular, DVD, S/VCD, cue sheet track
                 int error = -errno;
-#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
                 int res = 0;
 
                 virtualfile = find_original(&origpath);
@@ -1225,6 +1280,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         res = check_bluray(pathonly);
                     }
 #endif // USE_LIBBLURAY
+                    if (res <= 0)
+                    {
+                        // Returns -errno or number or titles in cue sheet
+                        res = check_cuesheet(origpath);
+                    }
 
                     if (params.m_format[0].is_frameset())
                     {
@@ -1244,7 +1304,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                             for (uint32_t frame_no = 1; frame_no <= parent_file->m_video_frame_count; frame_no++)
                             {
-                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_origfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
+                                make_file(nullptr, nullptr, parent_file->m_type, parent_file->m_destfile + "/", make_filename(frame_no, params.current_format(parent_file)->fileext()), parent_file->m_predicted_size, parent_file->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
                             }
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
@@ -1277,7 +1337,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            make_hls_fileset(nullptr, nullptr, parent_file->m_origfile + "/", parent_file); // TEST
+                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file); // TEST
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
                             if (virtualfile2 == nullptr)
@@ -1306,14 +1366,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 if (virtualfile == nullptr)
                 {
-                    // Not a DVD/VCD/Bluray file
+                    // Not a DVD/VCD/Bluray file or cue sheet track
                     return -ENOENT;
                 }
 
                 mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-#else
-                return error;
-#endif
             }
 
             if (flags & VIRTUALFLAG_FILESET)
@@ -1872,6 +1929,10 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
+    if (docker_client)
+    {
+        Logging::info(nullptr, "Running inside Docker.");
+    }
 
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));

@@ -225,16 +225,18 @@ extern struct FFMPEGFS_PARAMS
 
 class Cache_Entry;
 
+extern bool             docker_client;              /**< @brief True if running inside a Docker container */
+
 /**
  * @brief Fuse operations struct
  */
-extern fuse_operations ffmpegfs_ops;
+extern fuse_operations  ffmpegfs_ops;
 
 class thread_pool;
 /**
  * @brief Thread pool object
  */
-extern thread_pool*         tp;
+extern thread_pool*     tp;
 
 /**
  * @brief Initialise FUSE operation structure.
@@ -288,6 +290,9 @@ bool            transcoder_cache_clear(void);
  * @brief Add new virtual file to internal list.
  *
  * For Bluray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
+ * The input file is handled by the BlurayIO or VcdIO classes.
+ * For cue sheets, the original (huge) input file is used. Start positions are sought, end positions
+ * reported as EOF.
  *
  * @param[in] type - Type of virtual file.
  * @param[in] virtfile - Name of virtual file.
@@ -388,21 +393,21 @@ std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
 
 /**
  * @brief Wrapper to the Fuse filler function.
- * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
- * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
- * @param name[in] - The file name of the directory entry. Do not include the path!
- * @param stat[in] - File attributes, can be nullptr.
- * @param off[in] - Offset of the next entry or zero.
+ * @param[inout] buf - The buffer passed to the readdir() operation. May be nullptr.
+ * @param[in] filler - Function pointer to the Fuse update function.  May be nullptr.
+ * @param[in] name - The file name of the directory entry. Do not include the path!
+ * @param[in] stbuf - File attributes, can be nullptr.
+ * @param[in] off - Offset of the next entry or zero.
  * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
  */
 int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off);
 
 /**
  * @brief Create the ./.. entries for a virtual directory
- * @param buf[inout] - The buffer passed to the readdir() operation. May be nullptr.
- * @param filler[in] - Function pointer to the Fuse update function.  May be nullptr.
- * @param stat[in] - File attributes, can be nullptr.
- * @param off[in] - Offset of the next entry or zero.
+ * @param[inout] buf - The buffer passed to the readdir() operation. May be nullptr.
+ * @param[in] filler - Function pointer to the Fuse update function.  May be nullptr.
+ * @param[in] stbuf - File attributes, can be nullptr.
+ * @param[in] off - Offset of the next entry or zero.
  * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
  */
 int             add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off);

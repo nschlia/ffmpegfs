@@ -39,6 +39,22 @@
 #include <algorithm>
 #include <wordexp.h>
 #include <memory>
+#include <fstream>
+#include <sstream>
+#include <locale>
+#include <codecvt>
+#include <vector>
+
+#include <iconv.h>
+#ifdef HAVE_CONFIG_H
+// This causes problems because it includes defines that collide
+// with out config.h.
+#undef HAVE_CONFIG_H
+#endif // HAVE_CONFIG_H
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#include <chardet.h>
+#pragma GCC diagnostic pop
 
 #ifdef __cplusplus
 extern "C" {
@@ -413,16 +429,6 @@ char * new_strdup(const std::string & str)
 
     strncpy(p, str.c_str(), n);
     return p;
-}
-
-const std::string & get_destname(std::string *destfilepath, const std::string & filepath)
-{
-    *destfilepath = filepath;
-    remove_path(destfilepath);
-    replace_ext(destfilepath, params.current_format(filepath)->fileext());
-    *destfilepath = params.m_mountpath + *destfilepath;
-
-    return *destfilepath;
 }
 
 std::string ffmpeg_geterror(int errnum)
@@ -1363,6 +1369,290 @@ const char * hwdevice_get_type_name(AVHWDeviceType dev_type)
     return (type_name != nullptr ? type_name : "unknown");
 }
 
+int to_utf8(std::string & text, const std::string & encoding)
+{
+    iconv_t conv = iconv_open("UTF-8", encoding.c_str());
+    if (conv == (iconv_t) -1)
+    {
+        // Error in iconv_open, errno in return code.
+        return errno;
+    }
+
+    std::vector<char> src;
+    std::vector<char> dst;
+    size_t srclen = text.size();
+    size_t dstlen = 2 * srclen;
+
+    src.reserve(srclen + 1);
+    dst.reserve(dstlen + 2);
+
+    char * pIn = src.data();
+    char * pOut = dst.data();
+
+    strncpy(pIn, text.c_str(), srclen);
+
+    size_t len = iconv(conv, &pIn, &srclen, &pOut, &dstlen);
+    if (len != (size_t) -1)
+    {
+        *pOut = '\0';
+
+        iconv_close(conv);
+
+        text = dst.data();
+
+        return 0;   // Conversion OK
+    }
+    else
+    {
+        int _errno = errno;
+
+        iconv_close(conv);
+
+        // Error in iconv, errno in return code.
+        return _errno;
+    }
+}
+
+int get_encoding (const char * str, std::string & encoding)
+{
+    DetectObj *obj;
+
+    if ( (obj = detect_obj_init ()) == NULL )
+    {
+        // Memory Allocation failed
+        return CHARDET_MEM_ALLOCATED_FAIL;
+    }
+
+#ifndef CHARDET_BINARY_SAFE
+    // before 1.0.5. This API is deprecated on 1.0.5
+    switch (detect (str, &obj))
+#else
+    // from 1.0.5
+    switch (detect_r (str, strlen (str), &obj))
+#endif
+    {
+    case CHARDET_OUT_OF_MEMORY :
+        // Out of memory on handle processing
+        detect_obj_free (&obj);
+        return CHARDET_OUT_OF_MEMORY;
+    case CHARDET_NULL_OBJECT :
+        // 1st argument of chardet() must be allocated with detect_obj_init API
+        return CHARDET_NULL_OBJECT;
+    }
+
+    //#ifndef CHARDET_BOM_CHECK
+    //    printf ("encoding: %s, confidence: %f\n", obj->encoding, obj->confidence);
+    //#else
+    //    // from 1.0.6 support return whether exists BOM
+    //    printf (
+    //                "encoding: %s, confidence: %f, exist BOM: %d\n",
+    //                obj->encoding, obj->confidence, obj->bom
+    //                );
+    //#endif
+    encoding = obj->encoding;
+    detect_obj_free (&obj);
+
+    return 0;
+}
+
+int read_file(const std::string & path, std::string & result)
+{
+    const char UTF_8_BOM[3]     = { '\xEF', '\xBB', '\xBF' };
+    const char UTF_16_BE_BOM[2] = { '\xFE', '\xFF' };
+    const char UTF_16_LE_BOM[2] = { '\xFF', '\xFE' };
+    const char UTF_32_BE_BOM[4] = { '\x00', '\x00', '\xFE', '\xFF' };
+    const char UTF_32_LE_BOM[4] = { '\xFF', '\xFE', '\x00', '\x00' };
+
+    std::ifstream ifs;
+    ENCODING encoding = ENCODING_ASCII;
+    int res = 0;
+
+    try
+    {
+        ifs.open(path, std::ios::binary);
+
+        if (!ifs.is_open())
+        {
+            // Unable to read file
+            result.clear();
+            throw errno;
+        }
+
+        if (ifs.eof())
+        {
+            // Empty file
+            result.clear();
+            throw ENCODING_ASCII;
+        }
+
+        // Read the bottom mark
+        char BOM[4];
+        ifs.read((char*)&BOM, sizeof(BOM));
+
+        // If you feel tempted to reorder these checks please note
+        // that UTF_32_LE_BOM must be done before UTF_16_LE_BOM to
+        // avoid misdetection :)
+        if (!memcmp(BOM, UTF_32_LE_BOM, sizeof(UTF_32_LE_BOM)))
+        {
+            // The file contains UTF-32LE BOM
+            encoding = ENCODING_UTF32LE_BOM;
+            ifs.seekg(sizeof(UTF_32_LE_BOM));
+        }
+        else if (!memcmp(BOM, UTF_32_BE_BOM, sizeof(UTF_32_BE_BOM)))
+        {
+            // The file contains UTF-32BE BOM
+            encoding = ENCODING_UTF32BE_BOM;
+            ifs.seekg(sizeof(UTF_32_BE_BOM));
+        }
+        else if (!memcmp(BOM, UTF_16_LE_BOM, sizeof(UTF_16_LE_BOM)))
+        {
+            // The file contains UTF-16LE BOM
+            encoding = ENCODING_UTF16LE_BOM;
+            ifs.seekg(sizeof(UTF_16_LE_BOM));
+        }
+        else if (!memcmp(BOM, UTF_16_BE_BOM, sizeof(UTF_16_BE_BOM)))
+        {
+            // The file contains UTF-16BE BOM
+            encoding = ENCODING_UTF16BE_BOM;
+            ifs.seekg(sizeof(UTF_16_BE_BOM));
+        }
+        else if (!memcmp(BOM, UTF_8_BOM, sizeof(UTF_8_BOM)))
+        {
+            // The file contains UTF-8 BOM
+            encoding = ENCODING_UTF8_BOM;
+            ifs.seekg(sizeof(UTF_8_BOM));
+        }
+        else
+        {
+            // The file does not have BOM
+            encoding = ENCODING_ASCII;
+            ifs.seekg(0);
+        }
+
+        switch (encoding)
+        {
+        case ENCODING_UTF16LE_BOM:
+        {
+            std::u16string in;
+            // For Windows, wchar_t is uint16_t, but for Linux and others
+            // it's uint32_t, so we need to convert in a portable way
+            for (char16_t ch; ifs.read((char*)&ch, sizeof(ch));)
+            {
+#if __BYTE_ORDER == __BIG_ENDIAN
+                in.push_back((char16_t)__builtin_bswap16(ch));
+#else
+                in.push_back(ch);
+#endif
+            }
+            // As of c++11 UTF-16 to UTF-8 conversion nicely comes out-of-the-box
+            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utfconv;
+            result = utfconv.to_bytes(in);
+            break;
+        }
+        case ENCODING_UTF16BE_BOM:
+        {
+            std::u16string in;
+            // For Windows, wchar_t is uint16_t, but for Linux and others
+            // it's uint32_t, so we need to convert in a portable way
+            for (char16_t ch; ifs.read((char*)&ch, sizeof(ch));)
+            {
+#if __BYTE_ORDER == __BIG_ENDIAN
+                in.push_back(ch);
+#else
+                in.push_back((char16_t)__builtin_bswap16(ch));
+#endif
+            }
+            // As of c++11 UTF-16 to UTF-8 conversion nicely comes out-of-the-box
+            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utfconv;
+            result = utfconv.to_bytes(in);
+            break;
+        }
+        case ENCODING_UTF32LE_BOM:
+        {
+            std::u32string in;
+            // For Windows, wchar_t is uint16_t, but for Linux and others
+            // it's uint32_t, so we need to convert in a portable way.
+            // Read characters 32 bitwise:
+            for (char32_t ch; ifs.read((char*)&ch, sizeof(ch));)
+            {
+#if __BYTE_ORDER == __BIG_ENDIAN
+                in.push_back((char32_t)__builtin_bswap32(ch));
+#else
+                in.push_back(ch);
+#endif
+            }
+            // As of c++11 UTF-32 to UTF-8 conversion nicely comes out-of-the-box
+            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utfconv;
+            result = utfconv.to_bytes(in);
+            break;
+        }
+        case ENCODING_UTF32BE_BOM:
+        {
+            std::u32string in;
+            // For Windows, wchar_t is uint16_t, but for Linux and others
+            // it's uint32_t, so we need to convert in a portable way
+            // Read characters 32 bitwise:
+            for (char32_t ch; ifs.read((char*)&ch, sizeof(ch));)
+            {
+#if __BYTE_ORDER == __BIG_ENDIAN
+                in.push_back(ch);
+#else
+                in.push_back((char32_t)__builtin_bswap32(ch));
+#endif
+            }
+            // As of c++11 UTF-32 to UTF-8 conversion nicely comes out-of-the-box
+            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utfconv;
+            result = utfconv.to_bytes(in);
+            break;
+        }
+        case ENCODING_UTF8_BOM:
+        {
+            // Already UTF-8, nothing to do
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str();
+            break;
+        }
+        default:    // ENCODING_ASCII
+        {
+            // This is a bit tricky, we have to try to determine the actual encoding.
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str();
+
+            // Using libchardet to guess the encoding
+            std::string encoding;
+            res = get_encoding(result.c_str(), encoding);
+            if (res)
+            {
+                throw res;
+            }
+
+            if (encoding != "UTF-8")
+            {
+                // If not UTF-8, do the actual conversion
+                res = to_utf8(result, encoding);
+                if (res)
+                {
+                    throw res;
+                }
+            }
+            break;
+        }
+        }
+        res = encoding;
+    }
+    catch (std::system_error& e)
+    {
+        res = errno;
+    }
+    catch (int _res)
+    {
+        res = _res;
+    }
+    return res;
+}
+
 void stat_set_size(struct stat *st, size_t size)
 {
 #if defined __x86_64__ || !defined __USE_FILE_OFFSET64
@@ -1373,3 +1663,20 @@ void stat_set_size(struct stat *st, size_t size)
     st->st_blocks     = (st->st_size + 512 - 1) / 512;
 }
 
+bool detect_docker(void)
+{
+    FILE *fp = fopen("/proc/self/cgroup", "r");
+
+    if (fp == nullptr)
+    {
+        return false;
+    }
+    char line[4096];
+    fgets(line, sizeof line, fp);
+
+    const char *p = strstr(line, "/docker/");
+
+    fclose(fp);
+
+    return (p != nullptr);
+}

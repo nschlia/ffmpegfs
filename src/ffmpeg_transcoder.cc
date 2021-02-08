@@ -252,10 +252,9 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_virtualfile       = virtualfile;
 
     m_in.m_filename     = m_virtualfile->m_origfile;
+    m_out.m_filename    = m_virtualfile->m_destfile;
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
-
-    get_destname(&m_out.m_filename, m_in.m_filename);
 
     if (is_open())
     {
@@ -619,6 +618,17 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
                 m_in.m_album_art.push_back(streamref);
             }
+        }
+    }
+
+    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        // Position to start of cue sheet track
+        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
+        if (ret < 0)
+        {
+            Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
         }
     }
 
@@ -1898,8 +1908,14 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     // Although docs state this is "Demuxing only", this is actually used by encoders like Matroska/WebM, so we need to set this here.
     m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
-
-    av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
+    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_virtualfile->m_cuesheet.m_duration, AV_DICT_IGNORE_SUFFIX);
+    }
+    else
+    {
+        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
+    }
 
     // Some formats want stream headers to be separate.
     if (m_out.m_format_ctx->oformat->flags & AVFMT_GLOBALHEADER)
@@ -3385,6 +3401,22 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             }
         }
 
+        if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        {
+            // Check for end of cue sheet track
+            ///<* @todo Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.
+            if (pkt.stream_index == m_in.m_audio.m_stream_idx)
+            {
+                int64_t pts = av_rescale_q(pkt.pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
+                if (pts > m_virtualfile->m_cuesheet.m_start + m_virtualfile->m_cuesheet.m_duration)
+                {
+                    Logging::trace(destname(), "Read to end of track.");
+                    *finished = 1;
+                    ret = AVERROR_EOF;
+                }
+            }
+        }
+
         if (!*finished)
         {
             // Decode one packet, at least with the old API (!LAV_NEW_PACKET_INTERFACE)
@@ -3915,44 +3947,69 @@ time_t FFmpeg_Transcoder::mtime() const
     return m_mtime;
 }
 
-#define tagcpy(dst, src)    \
-    for (char *p1 = (dst), *pend = p1 + sizeof(dst), *p2 = (src); *p2 && p1 < pend; p1++, p2++) \
-    *p1 = *p2      /**< @brief Save copy from FFmpeg tag dictionary to IDv3 tag */
+template <size_t size>
+const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string & in) const
+{
+    memset(out, ' ', size);
+    memcpy(out, in.c_str(), std::min(size, in.size()));
+    return out;
+}
 
-void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in)
+void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream)
 {
     AVDictionaryEntry *tag = nullptr;
 
     while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)))
     {
-        dict_set_with_check(metadata_out, tag->key, tag->value, 0, destname());
+        std::string value(tag->value);
 
-        if (m_out.m_filetype == FILETYPE_MP3)
+        if (contentstream && m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        {
+            // Replace tags with cue sheet values
+            if (!strcasecmp(tag->key, "ARTIST"))
+            {
+                value = m_virtualfile->m_cuesheet.m_artist;
+            }
+            else if (!strcasecmp(tag->key, "TITLE"))
+            {
+                value = m_virtualfile->m_cuesheet.m_title;
+            }
+            else if (!strcasecmp(tag->key, "TRACK"))
+            {
+                char buf[20];
+                sprintf(buf, "%i", m_virtualfile->m_cuesheet.m_trackno);
+                value = buf;
+            }
+        }
+
+        dict_set_with_check(metadata_out, tag->key, value.c_str(), 0, destname());
+
+        if (contentstream && m_out.m_filetype == FILETYPE_MP3)
         {
             // For MP3 fill in ID3v1 structure
             if (!strcasecmp(tag->key, "ARTIST"))
             {
-                tagcpy(m_out.m_id3v1.m_artist, tag->value);
+                tagcpy(m_out.m_id3v1.m_artist, value);
             }
             else if (!strcasecmp(tag->key, "TITLE"))
             {
-                tagcpy(m_out.m_id3v1.m_title, tag->value);
+                tagcpy(m_out.m_id3v1.m_title, value);
             }
             else if (!strcasecmp(tag->key, "ALBUM"))
             {
-                tagcpy(m_out.m_id3v1.m_album, tag->value);
+                tagcpy(m_out.m_id3v1.m_album, value);
             }
             else if (!strcasecmp(tag->key, "COMMENT"))
             {
-                tagcpy(m_out.m_id3v1.m_comment, tag->value);
+                tagcpy(m_out.m_id3v1.m_comment, value);
             }
             else if (!strcasecmp(tag->key, "YEAR") || !strcasecmp(tag->key, "DATE"))
             {
-                tagcpy(m_out.m_id3v1.m_year, tag->value);
+                tagcpy(m_out.m_id3v1.m_year, value);
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                m_out.m_id3v1.m_title_no = static_cast<char>(atoi(tag->value));
+                m_out.m_id3v1.m_title_no = static_cast<char>(atoi(value.c_str()));
             }
         }
     }
@@ -3988,8 +4045,24 @@ int FFmpeg_Transcoder::process_metadata()
         AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
         AVStream *output_stream = m_out.m_album_art.at(n).m_stream;
 
-        copy_metadata(&output_stream->metadata, input_stream->metadata);
+        copy_metadata(&output_stream->metadata, input_stream->metadata, input_stream->index == m_in.m_audio.m_stream_idx || input_stream->index == m_in.m_video.m_stream_idx);
     }
+
+    if (m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACKTOTAL", m_virtualfile->m_cuesheet.m_tracktotal, 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet.m_trackno, 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+        if (av_dict_get(m_out.m_format_ctx->metadata, "ALBUM_ARTIST", nullptr, 0) == nullptr)
+        {
+            // Issue #78: duplicate ARTIST tag to ALBUM_ARTIST, if target is empty.
+            dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+        }
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet.m_title.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet.m_album.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "GENRE", m_virtualfile->m_cuesheet.m_genre.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "DATE", m_virtualfile->m_cuesheet.m_date.c_str(), 0, destname(), true);
+     }
 
     return 0;
 }
@@ -4874,7 +4947,7 @@ int FFmpeg_Transcoder::encode_finish()
         m_buffer->finished_segment();
 
         // Get segment VIRTUALFILE object
-        std::string filename(m_buffer->virtualfile()->m_origfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
+        std::string filename(m_buffer->virtualfile()->m_destfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
         LPVIRTUALFILE virtualfile = find_file(filename.c_str());
 
         if (virtualfile != nullptr)
@@ -4883,6 +4956,11 @@ int FFmpeg_Transcoder::encode_finish()
 
             stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
         }
+    }
+    else //if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        // Save actual result size of the file
+        stat_set_size(&m_virtualfile->m_st, m_buffer->buffer_watermark());
     }
 
     return ret;

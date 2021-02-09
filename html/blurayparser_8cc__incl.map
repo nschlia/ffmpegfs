@@ -2,7 +2,7 @@
 <area shape="rect" id="node1" title="Bluray disk parser implementation." alt="" coords="731,5,875,32"/>
 <area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="641,155,733,181"/>
 <area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="383,229,497,256"/>
-<area shape="rect" id="node16" href="$blurayparser_8h.html" title="Bluray disk parser." alt="" coords="484,155,599,181"/>
+<area shape="rect" id="node16" href="$blurayparser_8h.html" title="Bluray parser." alt="" coords="484,155,599,181"/>
 <area shape="rect" id="node17" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="711,80,809,107"/>
 <area shape="rect" id="node18" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="995,229,1077,256"/>
 <area shape="rect" id="node21" title=" " alt="" coords="885,80,1019,107"/>

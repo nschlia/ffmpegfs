@@ -460,7 +460,7 @@ mailto:nschlia@oblivion-software.de[Norbert Schlia] since 2017.
 Based on work by K. Henriksson (from 2008 to 2017) and the original author
 David Collett (from 2006 to 2008).
 
-Much thanks to them for the original work!
+Many thanks to them for the original work!
 
 == LICENSE ==
 This program can be distributed under the terms of the GNU GPL version 3

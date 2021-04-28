@@ -328,7 +328,11 @@ protected:
      * @param use_device_ctx - If true checks for pix format if using a hardware device context, for a pix format using a hardware frames context otherwise.
      * @return Returns hardware pixel format, or AV_PIX_FMT_NONE if not applicable.
      */
+#if IF_DECLARED_CONST
+    AVPixelFormat               get_hw_pix_fmt(const AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const;
+#else // !IF_DECLARED_CONST
     AVPixelFormat               get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const;
+#endif // !IF_DECLARED_CONST
     /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context
@@ -337,7 +341,11 @@ protected:
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
+#if IF_DECLARED_CONST
     int                         open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType type);
+#else // !IF_DECLARED_CONST
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type);
+#endif // !IF_DECLARED_CONST
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Stream buffer to operate on

@@ -81,7 +81,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
 	# ts
-	check_audio "raven_e" "flac" 0.039
+	check_audio "raven_e" "flac" 0.039136
 	check_audio "raven_d" "ogg" 0.050
 else
         echo "Internal error, unknown type ${DESTTYPE}. Fix script!"

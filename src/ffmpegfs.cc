@@ -1456,7 +1456,6 @@ static bool set_defaults(void)
  */
 static void build_device_type_list(void)
 {
-    //device_type = av_hwdevice_find_type_by_name("vaapi");
     for (AVHWDeviceType device_type = AV_HWDEVICE_TYPE_NONE; (device_type = av_hwdevice_iterate_types(device_type)) != AV_HWDEVICE_TYPE_NONE;)
     {
         HWACCEL_MAP::iterator it = hwaccel_map.find(av_hwdevice_get_type_name(device_type));

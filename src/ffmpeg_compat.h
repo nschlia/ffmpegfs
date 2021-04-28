@@ -35,6 +35,13 @@
 #define FFMPEG_COMPAT_H
 
 /**
+ * FFmpeg compatibility layer: Keep support for older versions, but remove deprecated
+ * functions when necessary.
+ *
+ * see doc/APIchanges
+ */
+
+/**
  * 2018-01-xx - xxxxxxx - lavf 58.7.100 - avformat.h @n
  *   Deprecate AVFormatContext filename field which had limited length, use the
  *   new dynamically allocated url field instead.
@@ -87,6 +94,63 @@
  *   av_get_codec_tag_string() from lavc.
  */
 #define LAVU_DEP_AV_GET_CODEC_TAG           (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 52, 0))
+/**
+ * 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
+ *   Deprecated av_init_packet(). Once removed, sizeof(AVPacket) will
+ *   no longer be a part of the public ABI.
+ *   Deprecated AVPacketList.
+ *
+ * Note from libacodec/packet.h:
+ *
+ * sizeof(AVPacket) being a part of the public ABI is deprecated. once
+ * av_init_packet() is removed, new packets will only be able to be allocated
+ * with av_packet_alloc(), and new fields may be added to the end of the struct
+ * with a minor bump.
+ *
+ *
+ * see av_packet_alloc
+ * see av_packet_ref
+ * see av_packet_unref
+ */
+#define LAVC_DEP_AV_INIT_PACKET             (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 133, 0))
+/**
+ * This is big fun... Of course making these const is a good idea, but nevertheless
+ * a PITA to keep the code working with newer AND older versions...
+ *
+ * 2021-04-27 - cb3ac722f4 - lavc 59.0.100 - avcodec.h
+ *   Constified AVCodecParserContext.parser.
+ *
+ * 2021-04-27 - 8b3e6ce5f4 - lavd 59.0.100 - avdevice.h
+ *   The av_*_device_next API functions now accept and return
+ *   pointers to const AVInputFormat resp. AVOutputFormat.
+
+ * 2021-04-27 - d7e0d428fa - lavd 59.0.100 - avdevice.h
+ *   avdevice_list_input_sources and avdevice_list_output_sinks now accept
+ *   pointers to const AVInputFormat resp. const AVOutputFormat.
+ *
+ * 2021-04-27 - 46dac8cf3d - lavf 59.0.100 - avformat.h
+ *   av_find_best_stream now uses a const AVCodec ** parameter
+ *   for the returned decoder.
+ *
+ * 2021-04-27 - 626535f6a1 - lavc 59.0.100 - codec.h
+ *   avcodec_find_encoder_by_name(), avcodec_find_encoder(),
+ *   avcodec_find_decoder_by_name() and avcodec_find_decoder()
+ *   now return a pointer to const AVCodec.
+ *
+ * 2021-04-27 - 14fa0a4efb - lavf 59.0.100 - avformat.h
+ *   Constified AVFormatContext.*_codec.
+ *
+ * 2021-04-27 - 56450a0ee4 - lavf 59.0.100 - avformat.h
+ *   Constified the pointers to AVInputFormats and AVOutputFormats
+ *   in AVFormatContext, avformat_alloc_output_context2(),
+ *   av_find_input_format(), av_probe_input_format(),
+ *   av_probe_input_format2(), av_probe_input_format3(),
+ *   av_probe_input_buffer2(), av_probe_input_buffer(),
+ *   avformat_open_input(), av_guess_format() and av_guess_codec().
+ *   Furthermore, constified the AVProbeData in av_probe_input_format(),
+ *   av_probe_input_format2() and av_probe_input_format3().
+*/
+#define IF_DECLARED_CONST                   (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 0, 0))
 
 /**
  * Check for FFMPEG version 3+

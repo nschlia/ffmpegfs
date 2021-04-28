@@ -127,7 +127,7 @@ bool FFMPEGFS_PARAMS::smart_transcode(void) const
 
 int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
 {
-    AVOutputFormat* oformat = av_guess_format(nullptr, filepath.c_str(), nullptr);
+    const AVOutputFormat* oformat = av_guess_format(nullptr, filepath.c_str(), nullptr);
 
     if (oformat != nullptr)
     {

@@ -57,6 +57,7 @@ FFmpeg_Base::~FFmpeg_Base()
 {
 }
 
+#if !LAVC_DEP_AV_INIT_PACKET
 void FFmpeg_Base::init_packet(AVPacket *pkt) const
 {
     av_init_packet(pkt);
@@ -64,6 +65,7 @@ void FFmpeg_Base::init_packet(AVPacket *pkt) const
     pkt->data = nullptr;
     pkt->size = 0;
 }
+#endif // !LAVC_DEP_AV_INIT_PACKET
 
 int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
 {

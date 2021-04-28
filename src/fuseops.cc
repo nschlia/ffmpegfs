@@ -378,7 +378,7 @@ static void translate_path(std::string *origpath, const char* path)
  */
 static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
 {
-    AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
+    const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
 
     if (format != nullptr)
     {
@@ -581,7 +581,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
             {
                 memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-	            stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+                stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
             }
 
             if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))

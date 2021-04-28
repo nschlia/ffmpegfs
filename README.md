@@ -20,7 +20,7 @@ Important changes in 2.3 (2021-02-XX)
 * **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory. Embedded cue sheets are planned, see [Issue #82](https://github.com/nschlia/ffmpegfs/issues/82).
 * **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
 * **Feature:** [Issue #83](https://github.com/nschlia/ffmpegfs/issues/83): Character conversion for cue sheet files. Automatically detects the character encoding of the cue sheet. and converts as necessary.
-* **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](https://github.com/nschlia/ffmpegfs#build-a-docker-container) how to use it.
+* **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](README.md#build-a-docker-container) how to use it.
 
 ### Version 2.2 released
 
@@ -92,7 +92,7 @@ When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source
 
 Selecting *HLS* creates a directory with TS segments together with a M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.
 
-Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See **FIXING PROBLEMS** for details.
+Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
 
 Installation instructions
 -------------------------
@@ -362,7 +362,7 @@ Fixing problems
 
 ### Transcoding too slow
 
-See [Building FFmpeg with optimisations](https://github.com/nschlia/ffmpegfs/blob/master/INSTALL.md#building-ffmpeg-with-optimisations)
+See [Building FFmpeg with optimisations](INSTALL.md#building-ffmpeg-with-optimisations)
 
 ### Lock ups when accessed through Samba
 

@@ -8,7 +8,7 @@ FFmpegfs NEWS
 
 Preparing release 2.3
 
-Important changes in 2.3 (2021-02-XX)
+Important changes in 2.3 (2021-04-XX)
 
 * Feature: Added cue sheet support. If a file with cue extension is found with
   the same name as a media file, tracks defined in it will show up in a virtual
@@ -17,6 +17,10 @@ Important changes in 2.3 (2021-02-XX)
 * Feature: Issue #83: Character conversion for cue sheet files. Automatically
   detects the character encoding of the cue sheet. and converts as necessary.
 * Feature: Issue #79: Added Docker support.
+* Fixed deprecation: 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
+  Deprecated av_init_packet()
+* Fixed API compatitbility: Many pointers made const as of 2021-04-27. Although
+  reasonable, this breaks API compatibility with versions older than 59.0.100,
 * Bugfix:
 
 Preparing release 2.2

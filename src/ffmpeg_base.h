@@ -56,11 +56,13 @@ public:
     virtual ~FFmpeg_Base();
 
 protected:
+#if !LAVC_DEP_AV_INIT_PACKET
     /**
      * @brief Initialise one data packet for reading or writing.
      * @param[in] pkt - Packet to be initialised
      */
     void                init_packet(AVPacket *pkt) const;
+#endif // !LAVC_DEP_AV_INIT_PACKET
     /**
      * @brief Initialise one frame for reading from the input file
      * @param[out] frame - Newly allocated frame.

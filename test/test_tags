@@ -17,7 +17,7 @@ get_metadata() {
         local -n outvar=$2    # -n makes it a nameref.
         echo Checking $1
         cat "$1" > /dev/null
-        outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I'`
+        outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I' | sed -r '/^vendor_id=.*$/Id'`
 }
 
 # Detect FFmpeg or Libav version

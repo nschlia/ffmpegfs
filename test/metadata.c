@@ -36,12 +36,15 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    if (!strcmp(argv[1], "-v")) {
+    if (!strcmp(argv[1], "-v"))
+	{
         printf("FFmpeg " FFMPEG_VERSION "\n");
         return 0;
     }
 
-	av_register_all();
+#if (LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(58, 9, 0))
+    av_register_all();
+#endif
 
     const char *filename = argv[1];
     AVFormatContext *fmt_ctx = NULL;
@@ -54,18 +57,30 @@ int main (int argc, char **argv)
         return ret;
     }
 
+    ret = avformat_find_stream_info(fmt_ctx, NULL);
+    if (ret < 0)
+    {
+        av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
+        return ret;
+    }
+
     for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
     {
-        for (AVDictionaryEntry *tag = NULL; (tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL;)
+        AVDictionaryEntry *tag = NULL;
+
+        while ((tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
         {
             printf("%s=%s\n", tag->key, tag->value);
         }
     }
 
-
-    for (AVDictionaryEntry *tag = NULL; (tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL;)
     {
-        printf("%s=%s\n", tag->key, tag->value);
+        AVDictionaryEntry *tag = NULL;
+
+        while ((tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
+        {
+            printf("%s=%s\n", tag->key, tag->value);
+        }
     }
 
     avformat_close_input(&fmt_ctx);

@@ -4023,7 +4023,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
 {
     AVDictionaryEntry *tag = nullptr;
 
-    while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)))
+    while ((tag = av_dict_get(metadata_in, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
     {
         std::string value(tag->value);
 

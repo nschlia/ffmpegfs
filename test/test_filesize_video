@@ -44,15 +44,15 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard" 4376074 4443428
+    check_filesize "snowboard" 4376074 4449403
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "snowboard" 3906379 3912277
+    check_filesize "snowboard" 3906379 3912285
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "snowboard" 158322626 158322729
+    check_filesize "snowboard" 158322626 160676826
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts

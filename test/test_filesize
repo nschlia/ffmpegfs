@@ -11,7 +11,7 @@ cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e" 489113 494236
+    check_filesize "raven_e" 489113 494238
     check_filesize "raven_d" 351126 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
@@ -61,7 +61,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "raven_e" 489113 811220
+    check_filesize "raven_e" 489113 811408
     check_filesize "raven_d" 351126 545388 
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"

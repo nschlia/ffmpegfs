@@ -44,7 +44,7 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard" 4376074 4449403
+    check_filesize "snowboard" 4376074 4443499
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov

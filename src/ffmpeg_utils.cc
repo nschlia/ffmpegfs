@@ -1415,12 +1415,12 @@ int to_utf8(std::string & text, const std::string & encoding)
 
 int get_encoding (const char * str, std::string & encoding)
 {
-    DetectObj *obj;
+    DetectObj *obj = detect_obj_init();
 
-    if ( (obj = detect_obj_init ()) == NULL )
+    if (obj == nullptr)
     {
         // Memory Allocation failed
-        return CHARDET_MEM_ALLOCATED_FAIL;
+        return ENOMEM; // CHARDET_MEM_ALLOCATED_FAIL;
     }
 
 #ifndef CHARDET_BINARY_SAFE
@@ -1434,10 +1434,10 @@ int get_encoding (const char * str, std::string & encoding)
     case CHARDET_OUT_OF_MEMORY :
         // Out of memory on handle processing
         detect_obj_free (&obj);
-        return CHARDET_OUT_OF_MEMORY;
+        return ENOMEM; // CHARDET_OUT_OF_MEMORY;
     case CHARDET_NULL_OBJECT :
         // 1st argument of chardet() must be allocated with detect_obj_init API
-        return CHARDET_NULL_OBJECT;
+        return EINVAL; // CHARDET_NULL_OBJECT;
     }
 
     //#ifndef CHARDET_BOM_CHECK

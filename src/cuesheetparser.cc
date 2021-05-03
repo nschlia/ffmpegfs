@@ -130,6 +130,7 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 //static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler);
 
 /**
  * @brief Create a virtual file entry of a cue sheet title.
@@ -273,9 +274,9 @@ static int parse_cuesheet(const std::string & filename, const AVDictionary *meta
 #endif
 
 /**
- * @brief parse_cuesheet
- * @param[in] filename
- * @param[in] cuesheet
+ * @brief Parse a cue sheet and build virtual set of files
+ * @param[in] filename - Name of media file
+ * @param[in] cuesheet - Name of cue sheet file
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
@@ -294,9 +295,7 @@ static int parse_cuesheet(const std::string & filename, const std::string & cues
     // Found cue sheet
     Logging::trace(cuesheet, "Found cue sheet.");
 
-    res = parse_cuesheet(filename, cue_parse_string(text.c_str()), statbuf, buf, filler);
-
-    return res;
+    return parse_cuesheet(filename, cue_parse_string(text.c_str()), statbuf, buf, filler);
 }
 
 /**
@@ -306,7 +305,7 @@ static int parse_cuesheet(const std::string & filename, const std::string & cues
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @return On success, returns number of titles in cue sheet. On error, returns -errno.
+ * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
  */
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
 {
@@ -405,49 +404,129 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
     return res;
 }
 
-int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler)
+/**
+ * @brief Parse embedded cue sheet, if present
+ * @param[in] filename - Name of media file
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
+ */
+static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler)
 {
-    std::string _filename(filename);
+    AVFormatContext *fmt_ctx = nullptr;
     struct stat stbuf;
     int res = 0;
 
-    std::string path1(filename);
-    remove_filename(&path1);
+    try
+    {
+        if (lstat(filename.c_str(), &stbuf) != 0)
+        {
+            // Can be silently ignored
+            throw 0;
+        }
 
-    std::string path2(filename);
+        res = avformat_open_input(&fmt_ctx, filename.c_str(), nullptr, nullptr);
+        if (res)
+        {
+            // @todo: should probably be ignored or at least just reported as debug
+            Logging::warning(filename, "Unable to scan file for embedded queue sheet: %1", ffmpeg_geterror(res).c_str());
+            throw -ENOENT;
+        }
 
-    std::string cuesheet(filename);
+        res = avformat_find_stream_info(fmt_ctx, nullptr);
+        if (res < 0)
+        {
+            // @todo: should probably be ignored or at least just reported as debug
+            Logging::warning(filename, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
+            throw -EINVAL;
+        }
+
+        AVDictionaryEntry *tag = av_dict_get(fmt_ctx->metadata, "CUESHEET", nullptr, AV_DICT_IGNORE_SUFFIX);
+        if (tag != nullptr)
+        {
+            // Found cue sheet
+            Logging::trace(filename, "Found embedded cue sheet.");
+
+            std::string result(tag->value);
+            // Using libchardet to guess the encoding
+            std::string encoding;
+            res = get_encoding(result.c_str(), encoding);
+            if (res)
+            {
+                Logging::error(filename, "Unable to get encoding: %1", ffmpeg_geterror(AVERROR(res)).c_str());
+                throw res;
+            }
+
+            if (encoding != "UTF-8")
+            {
+                // If not UTF-8, do the actual conversion
+                res = to_utf8(result, encoding);
+                if (res)
+                {
+                    Logging::error(filename, "Unable to convert to UTF-8: %1", ffmpeg_geterror(AVERROR(res)).c_str());
+                    throw res;
+                }
+            }
+
+            result += "\r\n";   // cue_parse_string() reports syntax error if string does not end with newline
+            result = replace_all(result, "\r\n", "\n"); // Convert all to unix
+
+            res = parse_cuesheet(filename, cue_parse_string(result.c_str()), &stbuf, buf, filler);
+        }
+    }
+    catch (int _res)
+    {
+        res = _res;
+    }
+
+    if (fmt_ctx != nullptr)
+    {
+        avformat_close_input(&fmt_ctx);
+    }
+    return res;
+}
+
+int check_cuesheet(const std::string & _filename, void *buf, fuse_fill_dir_t filler)
+{
+    std::string filename(_filename);
+    std::string trackdir(_filename);
+    std::string cuesheet(_filename);
+    struct stat stbuf;
+    int res = 0;
+
     std::string ext;
     if (find_ext(&ext, filename) && ext == TRACKDIR)
     {
         remove_ext(&cuesheet);  // remove TRACKDIR extension from virtual directory
-        remove_ext(&_filename);
+        remove_ext(&filename);
     }
     else
     {
-        append_ext(&path2, TRACKDIR);
-        append_sep(&path2);
+        append_ext(&trackdir, TRACKDIR);
+        append_sep(&trackdir);
     }
     replace_ext(&cuesheet, "cue");
 
     if (lstat(cuesheet.c_str(), &stbuf) != -1)
     {
-        if (!check_path(path2))
+        if (!check_path(trackdir))
         {
-            res = parse_cuesheet(_filename, cuesheet, &stbuf, buf, filler);
+            // Not a virtual directory
+            res = parse_cuesheet(filename, cuesheet, &stbuf, buf, filler);
             Logging::trace(cuesheet, "Found %1 titles.", res);
         }
         else
         {
-            std::string dirname(path2);
+            // Obviously a virtual directory
+            std::string dirname(trackdir);
 
             remove_path(&dirname);
 
-            LPVIRTUALFILE virtualfile = find_file(path2);
+            LPVIRTUALFILE virtualfile = find_file(trackdir);
 
             if (virtualfile == nullptr)
             {
-                Logging::error(filename, "Failed to find virtual path: %1", path2.c_str());
+                Logging::error(filename, "Failed to find virtual path: %1", trackdir.c_str());
                 errno = EIO;
                 return -errno;
             }
@@ -460,5 +539,11 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
             res = 0;
         }
     }
+    else
+    {
+        // No cue sheet file, check if one is embedded in media file
+        res = parse_embedded_cuesheet(filename, buf, filler);
+    }
+
     return res;
 }

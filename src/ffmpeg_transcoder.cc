@@ -203,7 +203,6 @@ bool FFmpeg_Transcoder::is_open() const
     return (m_in.m_format_ctx != nullptr);
 }
 
-
 int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 {
     AVDictionary * opt = nullptr;

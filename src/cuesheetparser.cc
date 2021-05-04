@@ -448,25 +448,6 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
             Logging::trace(filename, "Found embedded cue sheet.");
 
             std::string result(tag->value);
-            // Using libchardet to guess the encoding
-            std::string encoding;
-            res = get_encoding(result.c_str(), encoding);
-            if (res)
-            {
-                Logging::error(filename, "Unable to get encoding: %1", ffmpeg_geterror(AVERROR(res)).c_str());
-                throw res;
-            }
-
-            if (encoding != "UTF-8")
-            {
-                // If not UTF-8, do the actual conversion
-                res = to_utf8(result, encoding);
-                if (res)
-                {
-                    Logging::error(filename, "Unable to convert to UTF-8: %1", ffmpeg_geterror(AVERROR(res)).c_str());
-                    throw res;
-                }
-            }
 
             result += "\r\n";   // cue_parse_string() reports syntax error if string does not end with newline
             result = replace_all(result, "\r\n", "\n"); // Convert all to unix

@@ -52,8 +52,8 @@
 #include <vector>
 #include <regex>
 
-// Support for libavresample has finally been removed as of 14.04.2021, see
-// this commit:
+// Support for libavresample has finally been removed from FFmpeg API
+// as of 14.04.2021, see this commit:
 //
 // commit 420cedd49745b284c35d97b936b71ff79b43bdf7
 // Author: Andreas Rheinhardt <andreas.rheinhardt@outlook.com>

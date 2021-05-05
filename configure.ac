@@ -235,9 +235,19 @@ if test -z "$GRAPHVIZ";
    then AC_MSG_WARN([dot not found - continuing without graphviz support. If you intend to use "make doxy" you should install it.])
 fi
 
+AC_ARG_ENABLE([debug],
+AS_HELP_STRING([--enable-debug],
+               [Enable debugging, default=no]),
+[case "${enableval}" in
+             yes) debug=true ;;
+             no)  debug=false ;;
+             *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+esac],[debug=false])
+AM_CONDITIONAL([DEBUG], [test x"$debug" = x"true"])
+
 AC_ARG_ENABLE([changelog],
-[AS_HELP_STRING([--enable-changelog],
-    [Turn on changelog])],
+AS_HELP_STRING([--enable-changelog],
+    [Turn on changelog, default=no]),
 [case "${enableval}" in
   yes) changelog=yes ;;
   no)  changelog=no ;;

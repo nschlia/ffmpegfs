@@ -1,5 +1,10 @@
 # Definitions for sub-makes
-export OPTIMISATION = -Ofast -g
+if DEBUG 
+export OPTIMISATION = -DDEBUG -ggdb
+else
+export OPTIMISATION = -DNDEBUG -Ofast -g
+endif
+
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
 export AM_CFLAGS = -std=c11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 export AM_CXXFLAGS = -std=c++11 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE

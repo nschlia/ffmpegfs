@@ -27,14 +27,20 @@ Important changes in 2.5 (2021-04-xx)
 
 Preparing release 2.3
 
-Important changes in 2.3 (2021-04-XX)
+Important changes in 2.3 (2021-05-XX)
 
-* Feature: Added cue sheet support. If a file with cue extension is found with
-  the same name as a media file, tracks defined in it will show up in a virtual
-  directory.
-* Feature: Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty
+* Added "configure --enable-debug" to create binaries with debug symbols.
+  Defaults to the optimised version.
+* Feature: Issue #73: Cue sheet tracks now play "gapless" if played in order.
+  Whenever a track is started, the next track will automatically be transcoded
+  as well.
+* Feature: Issue #66 and issue #82: Added cue sheet support. If a file with cue
+  extension is found with the same name as a media file or if a cue sheet is
+  embedded into it (a tag named CUESHEET), tracks defined in it will show up in a
+  virtual directory.
 * Feature: Issue #83: Character conversion for cue sheet files. Automatically
   detects the character encoding of the cue sheet. and converts as necessary.
+* Feature: Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty
 * Feature: Issue #79: Added Docker support.
 * Fixed deprecation: 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
   Deprecated av_init_packet()

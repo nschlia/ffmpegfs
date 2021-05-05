@@ -77,11 +77,11 @@ public:
      */
     enum class level
     {
-        ERROR = 1,      /**< @brief Error level */
-        WARNING = 2,    /**< @brief Warning level */
-        INFO = 3,       /**< @brief Info level */
-        DEBUG = 4,      /**< @brief Debug level */
-        TRACE = 5       /**< @brief Error level */
+        LOGERROR = 1,      /**< @brief Error level */
+        LOGWARN = 2,    /**< @brief Warning level */
+        LOGINFO = 3,       /**< @brief Info level */
+        LOGDEBUG = 4,      /**< @brief Debug level */
+        LOGTRACE = 5       /**< @brief Error level */
     };
 
     /**
@@ -123,7 +123,7 @@ private:
          * @brief Construct Logger object
          */
         explicit Logger() :
-            m_loglevel(level::DEBUG) {}
+            m_loglevel(level::LOGDEBUG) {}
         /**
          * @brief Destroy Logger object
          */
@@ -161,7 +161,7 @@ public:
     template <typename... Args>
     static void trace(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::TRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGTRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write trace level log entry
@@ -172,7 +172,7 @@ public:
     template <typename... Args>
     static void trace(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::TRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -184,7 +184,7 @@ public:
     template <typename... Args>
     static void debug(const char * filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::DEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGDEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write debug level log entry
@@ -195,7 +195,7 @@ public:
     template <typename... Args>
     static void debug(const std::string & filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::DEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -207,7 +207,7 @@ public:
     template <typename... Args>
     static void info(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::INFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGINFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write info level log entry
@@ -218,7 +218,7 @@ public:
     template <typename... Args>
     static void info(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::INFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -230,7 +230,7 @@ public:
     template <typename... Args>
     static void warning(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::WARNING, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGWARN, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write warning level log entry
@@ -241,7 +241,7 @@ public:
     template <typename... Args>
     static void warning(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::WARNING, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -253,7 +253,7 @@ public:
     template <typename... Args>
     static void error(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::ERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write error level log entry
@@ -264,7 +264,7 @@ public:
     template <typename... Args>
     static void error(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::ERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::level::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -372,10 +372,10 @@ protected:
     const bool      m_to_syslog;                    /**< @brief Whether to write log output to syslog. */
 };
 
-constexpr Logging::level ERROR    = Logging::level::ERROR;    /**< @brief Shorthand for log level ERROR */
-constexpr Logging::level WARNING  = Logging::level::WARNING;  /**< @brief Shorthand for log level WARNING */
-constexpr Logging::level INFO     = Logging::level::INFO;     /**< @brief Shorthand for log level INFO */
-constexpr Logging::level DEBUG    = Logging::level::DEBUG;    /**< @brief Shorthand for log level DEBUG */
-constexpr Logging::level TRACE    = Logging::level::TRACE;    /**< @brief Shorthand for log level TRACE */
+constexpr Logging::level LOGERROR    = Logging::level::LOGERROR;    /**< @brief Shorthand for log level ERROR */
+constexpr Logging::level LOGWARN  = Logging::level::LOGWARN;  /**< @brief Shorthand for log level WARNING */
+constexpr Logging::level LOGINFO     = Logging::level::LOGINFO;     /**< @brief Shorthand for log level INFO */
+constexpr Logging::level LOGDEBUG    = Logging::level::LOGDEBUG;    /**< @brief Shorthand for log level DEBUG */
+constexpr Logging::level LOGTRACE    = Logging::level::LOGTRACE;    /**< @brief Shorthand for log level TRACE */
 
 #endif

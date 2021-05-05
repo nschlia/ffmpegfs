@@ -72,6 +72,7 @@ static bool             transcoded_name(std::string *filepath, FFmpegfs_Format *
 static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
 static int              get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int              make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int              kick_next(LPVIRTUALFILE virtualfile);
 
 static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -1551,6 +1552,46 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 }
 
 /**
+ * @brief Give next song in cuesheet list a kick start
+ * Starts transcoding of the next song on the cuesheet list
+ * to ensure a somewhat gapless start when the current song
+ * finishes. Next song can be played from cache and start
+ * faster then.
+ * @todo Will work only if transcoding finishes within timeout.
+ * Probably remove or raise timeout here.
+ * @param virtualfile - VIRTUALFILE object of current song
+ * @return On success, returns 0. On error, returns -errno.
+ */
+static int kick_next(LPVIRTUALFILE virtualfile)
+{
+    if (virtualfile == nullptr)
+    {
+        // Not OK, should not happen
+        return -EINVAL;
+    }
+
+    if (virtualfile->m_cuesheet.m_nextfile == nullptr)
+    {
+        // No next file
+        return 0;
+    }
+
+    LPVIRTUALFILE nextvirtualfile = virtualfile->m_cuesheet.m_nextfile;
+
+    Logging::debug(virtualfile->m_destfile, "Preparing next file: %1", nextvirtualfile->m_destfile.c_str());
+
+    Cache_Entry* cache_entry = transcoder_new(nextvirtualfile, true); // TODO: DISABLE TIMEOUT
+    if (cache_entry == nullptr)
+    {
+        return -errno;
+    }
+
+    transcoder_delete(cache_entry);
+
+    return 0;
+}
+
+/**
  * @brief File open operation
  * @param[in] path
  * @param[in] fi
@@ -1564,6 +1605,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     Logging::trace(path, "open");
 
     translate_path(&origpath, path);
+
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     if (virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH))
@@ -1587,11 +1629,16 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
             errno = 0;
             return 0;
         }
+
+        // We should never end here...
+        return -EINVAL;
     }
 
     // This is a virtual file
 
     assert(virtualfile != nullptr);
+
+    kick_next(virtualfile);
 
     switch (virtualfile->m_type)
     {

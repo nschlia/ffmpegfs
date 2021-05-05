@@ -129,20 +129,20 @@ typedef struct VIRTUALFILE
 
     uint32_t get_segment_count() const;                             /**< @brief Number of HLS segments in set */
 
-    VIRTUALTYPE         m_type;                                     /**< @brief Type of this virtual file */
-    int                 m_flags;                                    /**< @brief One of the VIRTUALFLAG_* flags */
+    VIRTUALTYPE             m_type;                                 /**< @brief Type of this virtual file */
+    int                     m_flags;                                /**< @brief One of the VIRTUALFLAG_* flags */
 
-    int                 m_format_idx;                               /**< @brief Index into params.format[] array */
-    std::string         m_destfile;                                 /**< @brief Name of virtual file */
-    std::string         m_origfile;                                 /**< @brief Sanitised original file name */
-    struct stat         m_st;                                       /**< @brief stat structure with size etc. */
+    int                     m_format_idx;                           /**< @brief Index into params.format[] array */
+    std::string             m_destfile;                             /**< @brief Name of virtual file */
+    std::string             m_origfile;                             /**< @brief Sanitised original file name */
+    struct stat             m_st;                                   /**< @brief stat structure with size etc. */
 
-    bool                m_full_title;                               /**< @brief If true, ignore m_chapter_no and provide full track */
-    int64_t             m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
-    size_t              m_predicted_size;                           /**< @brief Use this as the size instead of computing it over and over. */
-    uint32_t            m_video_frame_count;                        /**< @brief Number of frames in video or 0 if not a video */
+    bool                    m_full_title;                           /**< @brief If true, ignore m_chapter_no and provide full track */
+    int64_t                 m_duration;                             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    size_t                  m_predicted_size;                       /**< @brief Use this as the size instead of computing it over and over. */
+    uint32_t                m_video_frame_count;                    /**< @brief Number of frames in video or 0 if not a video */
 
-    std::vector<char>   m_file_contents;                            /**< @brief Buffer for virtual files */
+    std::vector<char>       m_file_contents;                        /**< @brief Buffer for virtual files */
 
 #ifdef USE_LIBVCD
     /** @brief Extra value structure for Video CDs
@@ -156,11 +156,11 @@ typedef struct VIRTUALFILE
             , m_start_pos(0)
             , m_end_pos(0)
         {}
-        int         m_track_no;                                     /**< @brief Track number (1..) */
-        int         m_chapter_no;                                   /**< @brief Chapter number (1..) */
-        uint64_t    m_start_pos;                                    /**< @brief Start offset in bytes */
-        uint64_t    m_end_pos;                                      /**< @brief End offset in bytes (not including this byte) */
-    }               m_vcd;                                          /**< @brief S/VCD track/chapter info */
+        int                 m_track_no;                             /**< @brief Track number (1..) */
+        int                 m_chapter_no;                           /**< @brief Chapter number (1..) */
+        uint64_t            m_start_pos;                            /**< @brief Start offset in bytes */
+        uint64_t            m_end_pos;                              /**< @brief End offset in bytes (not including this byte) */
+    }                       m_vcd;                                  /**< @brief S/VCD track/chapter info */
 #endif //USE_LIBVCD
 #ifdef USE_LIBDVD
     /** @brief Extra value structure for DVDs
@@ -173,10 +173,10 @@ typedef struct VIRTUALFILE
             , m_chapter_no(0)
             , m_angle_no(0)
         {}
-        int         m_title_no;                                     /**< @brief Track number (1...n) */
-        int         m_chapter_no;                                   /**< @brief Chapter number (1...n) */
-        int         m_angle_no;                                     /**< @brief Selected angle number (1...n) */
-    }               m_dvd;                                          /**< @brief DVD title/chapter info */
+        int                 m_title_no;                             /**< @brief Track number (1...n) */
+        int                 m_chapter_no;                           /**< @brief Chapter number (1...n) */
+        int                 m_angle_no;                             /**< @brief Selected angle number (1...n) */
+    }                       m_dvd;                                  /**< @brief DVD title/chapter info */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     /** @brief Extra value structure for Bluray disks
@@ -190,11 +190,11 @@ typedef struct VIRTUALFILE
             , m_chapter_no(0)
             , m_angle_no(0)
         {}
-        uint32_t    m_title_no;                                     /**< @brief Track number (1...n) */
-        uint32_t    m_playlist_no;                                  /**< @brief Playlist number (1...n) */
-        unsigned    m_chapter_no;                                   /**< @brief Chapter number (1...n) */
-        unsigned    m_angle_no;                                     /**< @brief Selected angle number (1...n) */
-    }               m_bluray;                                       /**< @brief Bluray title/chapter info */
+        uint32_t            m_title_no;                             /**< @brief Track number (1...n) */
+        uint32_t            m_playlist_no;                          /**< @brief Playlist number (1...n) */
+        unsigned            m_chapter_no;                           /**< @brief Chapter number (1...n) */
+        unsigned            m_angle_no;                             /**< @brief Selected angle number (1...n) */
+    }                       m_bluray;                               /**< @brief Bluray title/chapter info */
 #endif // USE_LIBBLURAY
     /** @brief Extra value structure for cue sheets
      */
@@ -205,19 +205,22 @@ typedef struct VIRTUALFILE
             , m_trackno(0)
             , m_start(0)
             , m_duration(0)
+            , m_nextfile(nullptr)
         {}
 
-        int         m_tracktotal;                                   /**< @brief Total number of tracks in cue sheet */
-        int         m_trackno;                                      /**< @brief Track number */
-        std::string m_artist;                                       /**< @brief Track artist */
-        std::string m_title;                                        /**< @brief Track title */
-        std::string m_album;                                        /**< @brief Album title */
-        std::string m_genre;                                        /**< @brief Album genre */
-        std::string m_date;                                         /**< @brief Publishing date */
+        int                 m_tracktotal;                           /**< @brief Total number of tracks in cue sheet */
+        int                 m_trackno;                              /**< @brief Track number */
+        std::string         m_artist;                               /**< @brief Track artist */
+        std::string         m_title;                                /**< @brief Track title */
+        std::string         m_album;                                /**< @brief Album title */
+        std::string         m_genre;                                /**< @brief Album genre */
+        std::string         m_date;                                 /**< @brief Publishing date */
 
-        int64_t     m_start;                                        /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
-        int64_t     m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
-    }               m_cuesheet;                                     /**< @brief Cue sheet data for track */
+        int64_t             m_start;                                /**< @brief Track start time, in AV_TIME_BASE fractional seconds. */
+        int64_t             m_duration;                             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+
+        VIRTUALFILE*        m_nextfile;                             /**< @brief Next (probable) file to be played. Used for cuesheet lists. */
+    }                       m_cuesheet;                             /**< @brief Cue sheet data for track */
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

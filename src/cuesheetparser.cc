@@ -126,7 +126,7 @@
 //    copy_metadata(&output_stream->metadata, input_stream->metadata);
 //}
 
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string &filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string &genre, const std::string &date);
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, LPVIRTUALFILE *lastfile);
 //static int parse_cuesheet(const std::string & filename, const AVDictionary *metadata, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
@@ -144,9 +144,10 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
  * @param[in] album - Name of album.
  * @param[in] genre - Album genre.
  * @param[in] date - Publishing date.
+ * @param[in] lastfile - Pointer to last virtual file. May be nullptr if none exists.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date)
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, LPVIRTUALFILE *lastfile)
 {
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
@@ -161,20 +162,6 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
 
     int64_t start           = AV_TIME_BASE * static_cast<int64_t>(track_get_start(track)) / FPS;
     int64_t duration        = AV_TIME_BASE * static_cast<int64_t>(track_get_length(track)) / FPS;
-
-    //for (int trackindexno = 1;; trackindexno++)
-    //{
-    //    long index = track_get_index(track, trackindexno);
-
-    //    if (index == -1)
-    //    {
-    //        break;
-    //    }
-
-    //    int64_t trackindex = AV_TIME_BASE * static_cast<int64_t>(index) / FPS;
-
-    ///<* @todo Evaluate track index here???
-    //}
 
     char title_buf[PATH_MAX + 1];
 
@@ -233,6 +220,11 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         virtualfile->m_cuesheet.m_album         = album;
         virtualfile->m_cuesheet.m_genre         = genre;
         virtualfile->m_cuesheet.m_date          = date;
+        if (*lastfile != nullptr)
+        {
+            (*lastfile)->m_cuesheet.m_nextfile  = virtualfile;
+        }
+        *lastfile                               = virtualfile;
 
         transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
 
@@ -371,6 +363,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
 
             remove_filename(&path);
 
+            LPVIRTUALFILE lastfile = nullptr;
             for (int trackno = 1; trackno < trackcount; trackno++)
             {
                 Track *track = cd_get_track(cd, trackno);
@@ -381,9 +374,8 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
                     throw -errno;
                 }
 
-                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date))
+                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date, &lastfile))
                 {
-                    //Logging::error(filename, "Failed to create virtual path: %1", subbdir.c_str());
                     throw -errno;
                 }
             }

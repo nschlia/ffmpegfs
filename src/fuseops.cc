@@ -598,7 +598,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 /**
  * @brief Filter function used for scandir.
  *
- * Selects files that can be processed with FFmpeg API.
+ * Selects files only that can be processed with FFmpeg API.
  *
  * @param[in] de - dirent to check
  * @return Returns nonzero if dirent matches, 0 if not.
@@ -613,6 +613,38 @@ static int selector(const struct dirent * de)
     {
         return 0;
     }
+}
+
+/**
+ * @brief Scans the directory dirp
+ * Works exactly like the scandir(3) function, the only
+ * difference is that it returns the result in a std:vector.
+ * @param[in] dirp - Directory to be searched.
+ * @param[out] _namelist - Returns the list of files found
+ * @param[in] selector - Entries for which selector() returns nonzero are stored in _namelist
+ * @param[in] cmp - Entries are sorted using qsort(3) with the comparison function cmp(). May be nullptr for no sort.
+ * @return Returns the number of directory entries selected.
+ * On error, -1 is returned, with errno set to indicate
+ * the error.
+ */
+static int scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **))
+{
+    struct dirent **namelist;
+    int count = scandir(dirp, &namelist, selector, cmp);
+
+    _namelist->clear();
+
+    if (count != -1)
+    {
+        for (int n = 0; n < count; n++)
+        {
+            _namelist->push_back(*namelist[n]);
+            free(namelist[n]);
+        }
+        free(namelist);
+    }
+
+    return  count;
 }
 
 LPVIRTUALFILE find_original(const std::string & origpath)
@@ -641,9 +673,9 @@ LPVIRTUALFILE find_original(std::string * filepath)
         if (!params.m_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].fileext()) == 0)))
         {
             std::string dir(*filepath);
-            std::string filename(*filepath);
+            std::string searchexp(*filepath);
             std::string origfile;
-            struct dirent **namelist;
+            std::vector<struct dirent> namelist;
             struct stat stbuf;
             int count;
             int found = 0;
@@ -661,27 +693,23 @@ LPVIRTUALFILE find_original(std::string * filepath)
                 return nullptr;
             }
 
-            remove_path(&filename);
-            std::regex specialChars { R"([-[\]{}()*+?.,\^$|#\s])" };
-            filename = std::regex_replace(filename, specialChars, R"(\$&)");
-            replace_ext(&filename, "*");
+            remove_path(&searchexp);
+            remove_ext(&searchexp);
 
-            for (int n = 0; n < count; n++)
+            for (size_t n = 0; n < static_cast<size_t>(count); n++)
             {
-                if (!found && !reg_compare(namelist[n]->d_name, filename, std::regex::icase))
+                if (!strcmp(namelist[n].d_name, searchexp.c_str()))
                 {
-                    append_filename(&origfile, namelist[n]->d_name);
+                    append_filename(&origfile, namelist[n].d_name);
+                    sanitise_filepath(&origfile);
                     found = 1;
+                    break;
                 }
-                free(namelist[n]);
             }
-            free(namelist);
-
-            sanitise_filepath(&origfile);
 
             if (found && lstat(origfile.c_str(), &stbuf) == 0)
             {
-                // File exists with this extension
+                // The original file exists
                 LPVIRTUALFILE virtualfile;
 
                 if (*filepath != origfile)

@@ -70,22 +70,25 @@ fi
 
 if [ "${VIDEO}" == "1" ];
 then
-	FILELIST="raven_e raven_d snowboard"
+	FILELIST="raven_e.flac raven_d.ogg snowboard.mp4"
 else
-        FILELIST="raven_e raven_d"
+    FILELIST="raven_e.flac raven_d.ogg"
 fi
 
 for FILE in ${FILELIST}
 do
-	TAGFILE=tags/${LIBRARY}${VERSION}/${FILE}.${DESTTYPE}.tag
+	TAGFILENAME=${FILE%.*}.${DESTTYPE}.tag
+	TAGFILEPATH=tags/${LIBRARY}${VERSION}/${TAGFILENAME}
+
+	TAGFILEPATH=tags/${LIBRARY}${VERSION}/${TAGFILENAME}
 	get_metadata "${DIRNAME}/${FILE}.${FILEEXT}" TAGS
-	echo "${TAGS}" > "${FILE}.${DESTTYPE}.tag"
-	echo "Compare file: ${TAGFILE}" 
+	echo "${TAGS}" > "${TAGFILENAME}"
+	echo "Compare file: ${TAGFILEPATH}" 
 	echo "Tags found:"
 	echo "${TAGS}"
-	cmp -c ${TAGFILE} "${FILE}.${DESTTYPE}.tag"
+	cmp -c ${TAGFILEPATH} "${TAGFILENAME}"
 	printf "*** PASS ***\n\n"
-	rm -f "${FILE}.${DESTTYPE}.tag"
+	rm -f "${TAGFILENAME}"
 done 
 
 echo "OK"

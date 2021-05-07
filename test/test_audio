@@ -5,7 +5,12 @@ ADDOPT=""
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 check_audio() {
-    TGTFILE="$1.${FILEEXT}"
+    if [ "$2" != "${FILEEXT}" ]
+    then
+        TGTFILE="$1.$2.${FILEEXT}"
+    else
+        TGTFILE="$1.${FILEEXT}"
+    fi
     SRCFILE="$1.$2"
     EXPECTED="$3"
 

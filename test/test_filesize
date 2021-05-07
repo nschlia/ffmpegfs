@@ -5,64 +5,64 @@ ADDOPT=""
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 # Ensure log contains file sizes, predicted and actual
-cat "${DIRNAME}/raven_e.${FILEEXT}" > /dev/null
-cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven_e.flac.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e" 489113 494238
-    check_filesize "raven_d" 351126 355298
+    check_filesize "raven_e.flac" 489113 494238
+    check_filesize "raven_d.ogg" 351126 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "raven_e" 466981 490440
-    check_filesize "raven_d" 343527
+    check_filesize "raven_e.flac" 466981 490440
+    check_filesize "raven_d.ogg" 343527
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
-    check_filesize "raven_e" 5137707 5137772
-    check_filesize "raven_d" 4316344 4316536
+    check_filesize "raven_e.flac" 5137707 5137772
+    check_filesize "raven_d.ogg" 4316344 4316536
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "raven_e" 356669 489113
+    check_filesize "raven_e.flac" 356669 489113
     check_filesize "raven_d" 264179
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e" 429358 548761
-    check_filesize "raven_d" 262919 393946
+    check_filesize "raven_e.flac" 429358 548761
+    check_filesize "raven_d.ogg" 262919 393946
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "raven_e" 421675 548761
-    check_filesize "raven_d" 255780 393946 
+    check_filesize "raven_e.flac" 421675 548761
+    check_filesize "raven_d.ogg" 255780 393946 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "raven_e" 491651 495447
-    check_filesize "raven_d" 355300 356142
+    check_filesize "raven_e.flac" 491651 495447
+    check_filesize "raven_d.ogg" 355300 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "raven_e" 5137724 5140125
-    check_filesize "raven_d" 4316488
+    check_filesize "raven_e.flac" 5137724 5140125
+    check_filesize "raven_d.ogg" 4316488
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "raven_e" 5137707 5140129
-    check_filesize "raven_d" 4316344 4318666
+    check_filesize "raven_e.flac" 5137707 5140129
+    check_filesize "raven_d.ogg" 4316344 4318666
 elif [ "${DESTTYPE}" == "alac" ];
 then
     # alac
-    check_filesize "raven_e" 3952038 3986427
-    check_filesize "raven_d" 3277326 3320221
+    check_filesize "raven_e.flac" 3952038 3986427
+    check_filesize "raven_d.ogg" 3277326 3320221
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "raven_e" 489113 811408
-    check_filesize "raven_d" 351126 545388 
+    check_filesize "raven_e.flac" 489113 811408
+    check_filesize "raven_d.ogg" 351126 545388 
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

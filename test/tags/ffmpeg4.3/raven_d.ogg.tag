@@ -1,2 +1,3 @@
 ARTIST=Edgar Allan Poe
+DURATION=24468753
 TITLE=The Raven

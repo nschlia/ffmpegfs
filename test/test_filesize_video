@@ -33,9 +33,9 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-#cat "${DIRNAME}/raven_e.${FILEEXT}" > /dev/null
-#cat "${DIRNAME}/raven_d.${FILEEXT}" > /dev/null
-cat "${DIRNAME}/snowboard.${FILEEXT}" > /dev/null
+#cat "${DIRNAME}/raven_e.flac.${FILEEXT}" > /dev/null
+#cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
+cat "${DIRNAME}/snowboard.mp4.${FILEEXT}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then
@@ -44,19 +44,19 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard" 4376074 4443499
+    check_filesize "snowboard.mp4" 4376074 4443499
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "snowboard" 3906379 3912285
+    check_filesize "snowboard.mp4" 3906379 3912285
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores
-    check_filesize "snowboard" 158322626 160676826
+    check_filesize "snowboard.mp4" 158322626 160676826
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
-    check_filesize "snowboard" 4203680 4324940
+    check_filesize "snowboard.mp4" 4203680 4324940
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

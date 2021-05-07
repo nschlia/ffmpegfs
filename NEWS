@@ -46,7 +46,8 @@ Important changes in 2.3 (2021-05-XX)
   Deprecated av_init_packet()
 * Fixed API compatitbility: Many pointers made const as of 2021-04-27. Although
   reasonable, this breaks API compatibility with versions older than 59.0.100,
-* Bugfix:
+* Bugfix: find_original "fallback" method did not correctly handle the new filename
+  format (extension added, not the original one replaced).
 
 Preparing release 2.2
 

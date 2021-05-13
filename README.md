@@ -26,20 +26,40 @@ News
 * **Call for testers**: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * See [NEWS](NEWS) for details.
 
+* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
+  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
+
+* Cool, there's an online review on Linux Uprising, you can read it here:
+  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+
 ### Version 2.3 under development
 
 **New in 2.3:**
 
-Important changes in 2.3 (2021-02-XX)
+Important changes in 2.3 (2021-05-XX)
 
-* **Feature:** Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory. Embedded cue sheets are planned, see [Issue #82](https://github.com/nschlia/ffmpegfs/issues/82).
-* **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
+* **Added** "configure --enable-debug" to create binaries with debug symbols.
+  Defaults to the optimised version.
+* **Feature:** [Issue #73](https://github.com/nschlia/ffmpegfs/issues/73) Cue sheet tracks now play "gapless" if played in order.
+  Whenever a track is started, the next track will automatically be transcoded
+  as well.
+* **Feature:** [Issue #66](https://github.com/nschlia/ffmpegfs/issues/66) and [issue #82](https://github.com/nschlia/ffmpegfs/issues/82): Added cue sheet support. If a file with cue
+  extension is found with the same name as a media file or if a cue sheet is
+  embedded into it (a tag named CUESHEET), tracks defined in it will show up in a
+  virtual directory.
 * **Feature:** [Issue #83](https://github.com/nschlia/ffmpegfs/issues/83): Character conversion for cue sheet files. Automatically detects the character encoding of the cue sheet. and converts as necessary.
+* **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
 * **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](README.md#build-a-docker-container) how to use it.
+* **Fixed deprecation:** 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
+  Deprecated av_init_packet()
+* **Fixed API compatitbility:** Many pointers made const as of 2021-04-27. Although
+  reasonable, this breaks API compatibility with versions older than 59.0.100,
+* **Bugfix:** find_original "fallback" method did not correctly handle the new filename
+  format (extension added, not the original one replaced).
 
 ### Version 2.2 released
 
-**New in 2.2:**
+**New in 2.2 (2021-02-06):**
 
 * **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
 * **Bugfix:** [Issue #75](https://github.com/nschlia/ffmpegfs/issues/75): Fix crash when opening mp3 output with Dolphin.
@@ -53,7 +73,7 @@ Important changes in 2.3 (2021-02-XX)
 
 ### Version 2.1 released
 
-**New in 2.1:**
+**New in 2.1 (2020-12-14):**
 
 * **Feature**: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
 * **Feature**: Implemented in 1.7, removed experimental state for --win_smb_fix now.  Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
@@ -70,7 +90,7 @@ Important changes in 2.3 (2021-02-XX)
 ### Planned features
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding has been added. If you feel lucky do "git checkout FB" and try it out.
-* Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.
+* Currently I am preparing a Windows version, but this is going to take some time.
 
 About
 -----

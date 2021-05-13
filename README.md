@@ -10,11 +10,18 @@ FFmpegfs
 
 News
 ----
+
+* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
+  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
+
+* Cool, there's an online review on Linux Uprising, you can read it here:
+  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+
 ### Version 2.5 under development
 
-**New in 2.5:**
+**New in 2.5 (2021-05-xx):**
 
-* **Feature**: Issue #63 - Hardware acceleration for encoding/decoding is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
+* **Feature**: [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63) - Hardware acceleration for encoding/decoding is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
   - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
   - VAAPI: MJPEG and VC-9 do not work (yet).
@@ -26,11 +33,6 @@ News
 * **Call for testers**: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * See [NEWS](NEWS) for details.
 
-* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
-  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
-
-* Cool, there's an online review on Linux Uprising, you can read it here:
-  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
 ### Version 2.3 under development
 

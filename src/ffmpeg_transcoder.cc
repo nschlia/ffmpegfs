@@ -504,31 +504,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     // Make sure this is set, although should already have happened
     m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
-    // Unfortunately it is too late to do this here, the filename has already been selected and cannot be changed.
-    //if (!params.smart_transcode())
-    //{
-    //    // Not smart encoding: use first format (video file)
-    //    m_virtualfile->m_format_idx = 0;
-    //}
-    //else
-    //{
-    //    // Smart transcoding
-    //    if (m_is_video)
-    //    {
-    //        // Is a video: use first format (video file)
-    //        m_virtualfile->m_format_idx = 0;
-
-    //        Logging::debug(filename(), "Smart transcode: using video format.");
-    //    }
-    //    else
-    //    {
-    //        // For audio only, use second format (audio only file)
-    //        m_virtualfile->m_format_idx = 1;
-
-    //        Logging::debug(filename(), "Smart transcode: using audio format.");
-    //    }
-    //}
-
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr)
     {

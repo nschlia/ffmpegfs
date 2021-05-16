@@ -10,6 +10,8 @@ Preparing release 2.3
 
 Important changes in 2.3 (2021-05-XX)
 
+* Enhancement: Issue #80: Open input video codec, but only if target supports
+  video. Saves resources: no need to decode video frames if not used.
 * Enhancement: Issue #81: If source format has no audio, and the target supports
   no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not
   be visible when doing ls. When trying to open them "File not found" will be

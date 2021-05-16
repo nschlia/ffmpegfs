@@ -11,8 +11,8 @@ FFmpegfs
 News
 ----
 
-* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
-  Ubuntu 20.04. See [INSTALL](INSTALL.md) "Installation from repository" for details.
+* FFmpegfs has been added to Debian 11 Bullseye and
+  Ubuntu 20.04, also to Debian 10 Buster Backports. See [INSTALL](INSTALL.md) "Installation from repository" for details.
 
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
@@ -40,25 +40,18 @@ News
 
 Important changes in 2.3 (2021-05-XX)
 
+* **Enhancement:** [Issue #80](https://github.com/nschlia/ffmpegfs/issues/80): Open input video codec only if target supports video. Saves resources: no need to decode video frames if not used.
 * **Enhancement:**  [Issue #81](https://github.com/nschlia/ffmpegfs/issues/81): If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.
-* **Added** "configure --enable-debug" to create binaries with debug symbols.
-  Defaults to the optimised version.
-* **Feature:** [Issue #73](https://github.com/nschlia/ffmpegfs/issues/73) Cue sheet tracks now play "gapless" if played in order.
-  Whenever a track is started, the next track will automatically be transcoded
-  as well.
-* **Feature:** [Issue #66](https://github.com/nschlia/ffmpegfs/issues/66) and [issue #82](https://github.com/nschlia/ffmpegfs/issues/82): Added cue sheet support. If a file with cue
-  extension is found with the same name as a media file or if a cue sheet is
-  embedded into it (a tag named CUESHEET), tracks defined in it will show up in a
-  virtual directory.
+* **Added** "configure --enable-debug" to create binaries with debug symbols. Defaults to the optimised version.
+* **Feature:** [Issue #73](https://github.com/nschlia/ffmpegfs/issues/73) Cue sheet tracks now play "gapless" if played in order. Whenever a track is started, the next track will automatically be transcoded as well.
+* **Feature:** [Issue #66](https://github.com/nschlia/ffmpegfs/issues/66) and [issue #82](https://github.com/nschlia/ffmpegfs/issues/82): Added cue sheet support. If a file with cue extension is found with the same name as a media file or if a cue sheet is embedded into it (a tag named CUESHEET), tracks defined in it will show up in a virtual directory.
 * **Feature:** [Issue #83](https://github.com/nschlia/ffmpegfs/issues/83): Character conversion for cue sheet files. Automatically detects the character encoding of the cue sheet. and converts as necessary.
 * **Feature:** [Issue #78](https://github.com/nschlia/ffmpegfs/issues/78): Duplicate ARTIST to ALBUMARTIST tag if empty.
 * **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](README.md#build-a-docker-container) how to use it.
 * **Fixed deprecation:** 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
   Deprecated av_init_packet()
-* **Fixed API compatitbility:** Many pointers made const as of 2021-04-27. Although
-  reasonable, this breaks API compatibility with versions older than 59.0.100,
-* **Bugfix:** find_original "fallback" method did not correctly handle the new filename
-  format (extension added, not the original one replaced).
+* **Fixed API compatitbility:** Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,
+* **Bugfix:** find_original "fallback" method did not correctly handle the new filename format (extension added, not the original one replaced).
 
 ### Version 2.2 released
 
@@ -90,7 +83,7 @@ Important changes in 2.3 (2021-05-XX)
 * **Cosmetical**: Log cache close action at trace level
 * **Cosmetical**: Shorter log entry when opening cache files
 
-### Planned features
+### Planned Features
 
 * [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63): Interesting feature request - hardware support for encoding and decoding has been added. If you feel lucky do "git checkout FB" and try it out.
 * Currently I am preparing a Windows version, but this is going to take some time.
@@ -132,12 +125,12 @@ Selecting *HLS* creates a directory with TS segments together with a M3U playlis
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
 
-Installation instructions
+Installation Instructions
 -------------------------
 
 * Please read the [INSTALL](INSTALL.md) file.
 
-Supported Linux distributions
+Supported Linux Distributions
 -----------------------------
 
 Tested with:
@@ -331,12 +324,14 @@ To use the new HLS feature invoke FFmpegfs with:
 
 Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.
 
-Cue sheets
+Cue Sheets
 ----------
 
 Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically they are used to define a CD/DVD track layout. Today they are supported by a wide range of optical disc authoring applications, and moreover, media players.
 
-When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.
+When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. It can also be embedded into the media file.
+
+The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.
 
 Example:
 
@@ -356,11 +351,7 @@ If destination type is TS, the following files and directories will appear:
 
 Tracks defined in the cue sheet will show up in the *.tracks sub directories.
 
-*Note*
-
-Cue sheets can be embedded into media files. This is not yet supported, embedded cue sheets will be ignored. They have to be supplied as separate files. Embedded cue sheets are planned, see [Issue #82](https://github.com/nschlia/ffmpegfs/issues/82).
-
-Build A Docker Container
+Building A Docker Container
 ----------
 
 FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the docker directory and run
@@ -379,9 +370,9 @@ Depending on the machine speed, this will take quite a while. After the command 
           nschlia/ffmpegfs \
           -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 
-Of course,  */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to mp4 or whatever desired. 
+Of course,  */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to MP4 or whatever desired. 
 
-Auto copy
+Auto Copy
 ---------
 
 "Auto copy" performs intelligent stream copy, for example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it is possible to simply repackage it to a mp4 container without recoding.
@@ -398,14 +389,20 @@ There are three options:
 |LIMIT|only auto copy if target file will not become significantly larger|
 |ALWAY|auto copy whenever possible even if the target file becomes larger|
 
-Smart transcoding
+Smart Transcoding
 -----------------
 
 Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense as MP4 or WebM work perfectly with audio only content.
 
 To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.
 
-Transcode to frame images
+*Note*
+
+Smart transcoding currently simply determines the output format by  taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video  stream.
+
+The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See  [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
+
+Transcode To Frame Images
 -------------------------
 
 To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with images for each frame.
@@ -424,16 +421,16 @@ $ find /mnt/ffmpegfs
   /mnt/ffmpegfs/video1.mov/00002.png
 ```
 
-A few words on ProRes
+A Few Words On ProRes
 ---------------------
 
 Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that ProRes encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.
 
 It is not for target audience use, and certainly not suitable for internet streaming.
 
-Also please keep in mind that when using lossy source formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.
+Also please keep in mind that when using lossy source input formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.
 
-MP4 format profiles
+MP4 Format Profiles
 ------------------
 
 The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different as for Firefox, unfortunately.
@@ -465,7 +462,7 @@ In most cases files will not play if not properly optimised.
 
 See [TODO](TODO) for details.
 
-How it works
+How It Works
 ------------
 
 When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.
@@ -474,7 +471,7 @@ As the file is read, it is transcoded into an internal per-file buffer. This buf
 
 Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before timeout, transcoding will continue, if not it stops and the chunk created so far discarded to save disk space.
 
-Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams).
+Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams). This already works when HLS streaming is selected. FFmpegfs simply skips to the requested segment.
 
 MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file respectively.
 
@@ -484,7 +481,7 @@ MP3 target only: A special optimisation is made so that applications which scan 
 
 WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.
 
-About output formats
+About Output Formats
 --------------------
 
 A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
@@ -507,7 +504,7 @@ As a draw back not all players support the format, or play it with strange side 
 
 But that's the price of starting playback fast.
 
-Fixing problems
+Fixing Problems
 ---------------
 
 ### Transcoding too slow
@@ -546,7 +543,7 @@ This will copy all missing/changed files without missing parts. On the Windows s
 
 Most browser prevent playback of files from disk. You may put them into a website directory, but sometimes even https must be used or playback will be blocked.
 
-To enable disk playback in Firefox:
+**To enable disk playback in Firefox:**
 
 * Open about:config
 * Set security.fileuri.strict_origin_policy to false
@@ -582,13 +579,13 @@ Please note that FFmpegfs is in active development, so the main branch may be un
 
 Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!
 
-Future plans
+Future Plans
 ------------
 
 * Create a windows version
 * and more, see [TODO](TODO)
 
-Demo code
+Demo Code
 ---------
 
 HLS player and demo code see: https://github.com/video-dev/hls.js/
@@ -609,7 +606,7 @@ This program can be distributed under the terms of the GNU GPL version 3 or late
 
 This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found [online](http://www.gnu.org/licenses/fdl-1.3.html) or in the COPYING.DOC file.
 
-FFmpeg license
+FFmpeg License
 --------------
 
 FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.

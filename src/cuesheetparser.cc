@@ -420,12 +420,11 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
 
         if (fmt_ctx == nullptr)
         {
-            // If no format context was passed, create a new one
+            // If no format context was passed, we'll have to create a new one
             Logging::info(filename, "Created new format context and check for cue sheet");
             res = avformat_open_input(&_fmt_ctx, filename.c_str(), nullptr, nullptr);
             if (res)
             {
-                // @todo: should probably be ignored or at least just reported as debug
                 Logging::warning(filename, "Unable to scan file for embedded queue sheet: %1", ffmpeg_geterror(res).c_str());
                 throw -ENOENT;
             }
@@ -433,7 +432,6 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
             res = avformat_find_stream_info(_fmt_ctx, nullptr);
             if (res < 0)
             {
-                // @todo: should probably be ignored or at least just reported as debug
                 Logging::warning(filename, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
                 throw -EINVAL;
             }
@@ -462,6 +460,7 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
 
     if (_fmt_ctx != nullptr)
     {
+        // If we created a format context we also have to close it.
         avformat_close_input(&_fmt_ctx);
     }
     return res;

@@ -1100,7 +1100,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                     if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec_id() == AV_CODEC_ID_NONE)
                                     {
-                                        Logging::info(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
+                                        Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
                                         flags |= VIRTUALFLAG_HIDDEN;
                                     }
                                 }

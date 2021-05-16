@@ -418,7 +418,6 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
             throw 0;
         }
 
-        fprintf(stderr, "fmt_ctx %p\n", fmt_ctx);
         if (fmt_ctx == nullptr)
         {
             // If no format context was passed, create a new one

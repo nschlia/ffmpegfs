@@ -110,6 +110,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 #define VIRTUALFLAG_FRAME           0x00000008                      /**< @brief File is part of a set of frames */
 #define VIRTUALFLAG_HLS             0x00000010                      /**< @brief File is part of a set of HLS transport stream (ts) files */
 #define VIRTUALFLAG_CUESHEET        0x00000020                      /**< @brief File is part of a set of cue sheet tracks or the directory */
+#define VIRTUALFLAG_HIDDEN          0x00000040                      /**< @brief File is not transcodable or should otherwise show in listings */
 
 /** @brief Virtual file definition
  */

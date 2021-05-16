@@ -446,77 +446,82 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
-    // Open best match video codec
-    ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
-    if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
+    // Issue #80: Open input video codec, but only if target supports video.
+    // Saves resources: no need to decode video frames if not used.
+    if (m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
     {
-        Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
-        return ret;
-    }
-
-    if (m_in.m_video.m_stream_idx != INVALID_STREAM)
-    {
-        // We have a video stream
-        // Check to see if encoder hardware acceleration is both requested and supported by codec.
-        std::string hw_encoder_codec_name;
-        if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
+        // Open best match video codec
+        ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
+        if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
         {
-            // API supports hardware frame buffers
-            m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
+            Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
         }
 
-        if (m_hwaccel_enable_enc_buffering)
+        if (m_in.m_video.m_stream_idx != INVALID_STREAM)
         {
-            // Hardware buffers available, enabling encoder hardware accceleration.
-            Logging::info(destname(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
-            ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
-            if (ret < 0)
+            // We have a video stream
+            // Check to see if encoder hardware acceleration is both requested and supported by codec.
+            std::string hw_encoder_codec_name;
+            if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
             {
-                Logging::error(destname(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
-                return ret;
+                // API supports hardware frame buffers
+                m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
             }
-            Logging::debug(destname(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
-        }
-        else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
-        {
-            // No hardware acceleration, fallback to software,
-            Logging::debug(destname(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
-        }
-        else if (!hw_encoder_codec_name.empty())
-        {
-            // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-            Logging::debug(destname(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
-        }
 
-        m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
+            if (m_hwaccel_enable_enc_buffering)
+            {
+                // Hardware buffers available, enabling encoder hardware accceleration.
+                Logging::info(destname(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+                ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
+                if (ret < 0)
+                {
+                    Logging::error(destname(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+                Logging::debug(destname(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
+            }
+            else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
+            {
+                // No hardware acceleration, fallback to software,
+                Logging::debug(destname(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+            }
+            else if (!hw_encoder_codec_name.empty())
+            {
+                // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
+                Logging::debug(destname(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
+            }
+
+            m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
+            if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+            {
+                // FFmpeg API calculcates a wrong duration, so use value from IFO
+                m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+            }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
-        {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray
-            m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-        }
+            if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+            {
+                // FFmpeg API calculcates a wrong duration, so use value from Bluray
+                m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+            }
 #endif // USE_LIBBLURAY
 
-        video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
+            video_info(false, m_in.m_format_ctx, m_in.m_video.m_stream);
 
-        m_is_video = is_video();
+            m_is_video = is_video();
 
 #ifdef AV_CODEC_CAP_TRUNCATED
-        if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
-        {
-            m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
-        }
+            if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+            {
+                m_in.m_video.m_codec_ctx->flags|= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
+            }
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
+        }
     }
 
     // Open best match audio codec
@@ -568,31 +573,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     // Make sure this is set, although should already have happened
     m_virtualfile->m_format_idx = params.guess_format_idx(filename());
-
-    // Unfortunately it is too late to do this here, the filename has already been selected and cannot be changed.
-    //if (!params.smart_transcode())
-    //{
-    //    // Not smart encoding: use first format (video file)
-    //    m_virtualfile->m_format_idx = 0;
-    //}
-    //else
-    //{
-    //    // Smart transcoding
-    //    if (m_is_video)
-    //    {
-    //        // Is a video: use first format (video file)
-    //        m_virtualfile->m_format_idx = 0;
-
-    //        Logging::debug(filename(), "Smart transcode: using video format.");
-    //    }
-    //    else
-    //    {
-    //        // For audio only, use second format (audio only file)
-    //        m_virtualfile->m_format_idx = 1;
-
-    //        Logging::debug(filename(), "Smart transcode: using audio format.");
-    //    }
-    //}
 
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr)

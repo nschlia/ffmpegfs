@@ -695,6 +695,13 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::debug(destname(), "Opening output file.");
 
+    if (m_in.m_audio.m_stream_idx == INVALID_STREAM && m_current_format->video_codec_id() == AV_CODEC_ID_NONE)
+    {
+        Logging::error(destname(), "Unable to transcode, source contains no audio stream, but target just supports audio.");
+        m_virtualfile->m_flags |= VIRTUALFLAG_HIDDEN;   // Hide file from now on
+        return AVERROR(ENOENT);                         // Report file not found
+    }
+
     if (!is_frameset())
     {
         // Not a frame set, open regular buffer

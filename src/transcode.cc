@@ -927,6 +927,13 @@ static void transcoder_thread(void *arg)
         success = false;
         syserror = _syserror;
 
+        if (!syserror && averror > -512)
+        {
+            // If no system error reported explicitly, and averror is a POSIX error
+            // (we simply assume that if averror < 512, I think averrors are all higher values)
+            syserror = AVUNERROR(averror);
+        }
+
         cache_entry->m_is_decoding              = false;
         cache_entry->m_cache_info.m_error       = !success;
         cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno

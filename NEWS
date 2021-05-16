@@ -29,6 +29,10 @@ Preparing release 2.3
 
 Important changes in 2.3 (2021-05-XX)
 
+* Enhancement: Issue #81: If source format has no audio, and the target supports
+  no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not
+  be visible when doing ls. When trying to open them "File not found" will be
+  returned.
 * Added "configure --enable-debug" to create binaries with debug symbols.
   Defaults to the optimised version.
 * Feature: Issue #73: Cue sheet tracks now play "gapless" if played in order.

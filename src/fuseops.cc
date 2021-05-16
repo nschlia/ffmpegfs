@@ -1043,6 +1043,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     std::string origfile;
                     std::string filename(it->first);
                     struct stat & stbuf = it->second;
+                    int flags = 0;
 
                     origfile = origpath + origname;
 
@@ -1055,11 +1056,73 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         // Check if file can be transcoded
                         if (transcoded_name(&filename, &current_format))
                         {
-                            // Check if we have a cue sheet
-                            int res = check_cuesheet(origfile, buf, filler);
-                            if (res < 0)
+                            int res = 0;
+
+                            if (current_format->video_codec_id() != AV_CODEC_ID_NONE)
                             {
-                                return res;
+                                // Check if we have a cue sheet
+                                res = check_cuesheet(origfile, buf, filler);
+                                if (res < 0)
+                                {
+                                    return res;
+                                }
+                            }
+                            else
+                            {
+                                // If target supports no video, we need to do some extra work and check
+                                // the input file to actually have an audio stream. If not, hide the file,
+                                // makes no sense to transcode anyway.
+                                AVFormatContext *fmt_ctx = nullptr;
+                                int res = 0;
+
+                                try
+                                {
+                                    res = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
+                                    if (res)
+                                    {
+                                        Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res).c_str());
+                                        throw res;
+                                    }
+
+                                    res = avformat_find_stream_info(fmt_ctx, nullptr);
+                                    if (res < 0)
+                                    {
+                                        Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
+                                        throw res;
+                                    }
+
+                                    res = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+                                    if (res < 0 && res != AVERROR_STREAM_NOT_FOUND)
+                                    {
+                                        Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res).c_str());
+                                        throw res;
+                                    }
+
+                                    if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec_id() == AV_CODEC_ID_NONE)
+                                    {
+                                        Logging::info(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
+                                        flags |= VIRTUALFLAG_HIDDEN;
+                                    }
+                                }
+                                catch (int _res)
+                                {
+                                    res = _res;
+                                }
+
+                                if (!(flags & VIRTUALFLAG_HIDDEN))
+                                {
+                                    // Check if we have a cue sheet
+                                    res = check_cuesheet(origfile, buf, filler, fmt_ctx);
+                                    if (res < 0)
+                                    {
+                                        return res;
+                                    }
+                                }
+
+                                if (fmt_ctx != nullptr)
+                                {
+                                    avformat_close_input(&fmt_ctx);
+                                }
                             }
 
                             std::string newext;
@@ -1069,16 +1132,16 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             {
                                 if (origext != newext || params.m_recodesame == RECODESAME_YES)
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf);
+                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, flags);
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, flags | VIRTUALFLAG_PASSTHROUGH);
                                 }
                             }
                             else
                             {
-                                int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
+                                flags |= VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
                                 // Change file to directory for the frame set
                                 stbuf.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
@@ -1101,9 +1164,12 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         }
                     }
 
-                    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
+                    if (!(flags & VIRTUALFLAG_HIDDEN))
                     {
-                        break;
+                        if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -1179,10 +1245,17 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     Logging::trace(path, "getattr");
 
     translate_path(&origpath, path);
+
     LPVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
 
     flags = (virtualfile != nullptr) ? virtualfile->m_flags : VIRTUALFLAG_NONE;
+
+    if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_HIDDEN)
+    {
+        errno = ENOENT;
+        return -errno;
+    }
 
     if (virtualfile == nullptr && lstat(origpath.c_str(), stbuf) == 0)
     {
@@ -1488,7 +1561,14 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     errno = 0;
 
     translate_path(&origpath, path);
+
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
+
+    if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_HIDDEN)
+    {
+        errno = ENOENT;
+        return -errno;
+    }
 
     if ((virtualfile == nullptr || virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
     {
@@ -1758,6 +1838,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     Logging::trace(path, "read: Reading %1 bytes from %2.", size, offset);
 
     translate_path(&origpath, path);
+
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
     if (virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH))

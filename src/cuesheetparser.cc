@@ -421,7 +421,7 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
         if (fmt_ctx == nullptr)
         {
             // If no format context was passed, we'll have to create a new one
-            Logging::info(filename, "Created new format context and check for cue sheet");
+            Logging::debug(filename, "Created new format context and check for cue sheet");
             res = avformat_open_input(&_fmt_ctx, filename.c_str(), nullptr, nullptr);
             if (res)
             {

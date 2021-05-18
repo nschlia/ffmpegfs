@@ -3,7 +3,7 @@
 .directory
 core
 doxyfile.inc
-doxygen.log
+/*.log
 doxygen/
 /ffmpegfs.1
 /ffmpegfs.1.hhc
@@ -11,14 +11,12 @@ doxygen/
 /ffmpegfs.1.htmlhelp/
 /ffmpegfs.1.pdf
 /ffmpegfs.1.text
-gh-pages/
 Makefile
 Makefile.in
 .deps/
 /aclocal.m4
 /autom4te.cache
 /config
-/config.log
 /config.status
 /configure
 /src/.deps/
@@ -35,5 +33,9 @@ Makefile.in
 /test/*.trs
 /test/.deps/
 /test/fpcompare
+*.autosave
+*.in~
+/.project
+*.gcda
+gh-pages/
 mkdoxy
-

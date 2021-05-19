@@ -223,8 +223,8 @@ Default: *NONE* (no acceleration)
 *API*:: can be defined as...
  * *NONE*: use software encoder
  * *VAAPI*: Video Acceleration API (VA-API)
- * *CUDA*: Compute Unified Device Architecture *(untested)*
  * *OMX*: OpenMAX (Open Media Acceleration)
+ * *CUDA*: Compute Unified Device Architecture *(untested)*
  * *VDPAU*: Video Decode and Presentation API for Unix *(untested)*
  * *QSV*: QuickSync *(untested)*
  * *V4L2M2M*: v4l2 mem to mem (Video4linux)  *(untested)*

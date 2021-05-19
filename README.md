@@ -208,7 +208,7 @@ The new hardware acceleration feature depends heavily on the hardware used. As t
 ### How It Works
 Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs. As of today even cheapy on board chips can do hardware acceleration.
 
-Here an incomplete list.
+Here is an incomplete list.
 
 Hardware acceleration using hardware buffered frames:
 
@@ -229,19 +229,24 @@ More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 
 ### Current Implementation
 
-#### Hardware Acceleration APIs
+#### Supported Hardware Acceleration APIs
 
 | API         | Decode | Encode | Tested | Notes                             |
 | ----------- | ------ | ------ | ------ | --------------------------------- |
 | **VAAPI**   | x      | x      | yes    |                                   |
 | **MMAL**    |        | x      | yes    |                                   |
 | **OMX**     | x      |        | yes    |                                   |
-| **CUDA**    |        |        |        | FFmpeg must be manually compiled. |
-| **OPENCL**  |        |        |        |                                   |
-| **VDPAU**   |        |        |        |                                   |
-| **QSV**     |        |        |        |                                   |
-| **V4L2M2M** |        |        |        |                                   |
-| **VULKAN**  |        |        |        |                                   |
+
+#### Planned Hardware Acceleration APIs
+
+| API         | Decode | Encode | Tested | Notes                             |
+| ----------- | ------ | ------ | ------ | --------------------------------- |
+| **CUDA**    |        |        | no     | FFmpeg must be manually compiled. |
+| **OPENCL**  |        |        | no     |                                   |
+| **VDPAU**   |        |        | no     |                                   |
+| **QSV**     |        |        | no     |                                   |
+| **V4L2M2M** |        |        | no     |                                   |
+| **VULKAN**  |        |        | no     |                                   |
 
 #### Tested On
 
@@ -250,13 +255,13 @@ More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 | Debian 10                                            | Intel Core i5-6500 CPU @ 3.20GHz          | Intel HD Graphics 530 (rev 06)   | VAAPI        |
 | Debian 11                                            | Intel Core i5-8250U CPU @ 1.60GHz         | Intel UHD Graphics 620 (rev 07)  | VAAPI        |
 | Debian 11                                            | Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz | NVIDIA GP108M<br />GeForce MX330 | VAAPI        |
-| Raspbian 10<br />Raspberry Pi 3 Model B Plus Rev 1.3 | ARMv7 Processor rev 4 (v7l)]              |                                  | OpenMAX/MMAL |
+| Raspbian 10<br />Raspberry Pi 3 Model B Plus Rev 1.3 | ARMv7 Processor rev 4 (v7l)               |                                  | OpenMAX/MMAL |
 
 ### Hardware Encoding
 
 This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
 
-To enable hardware support, use these parameters respectively (of course not both at the same time):
+To enable hardware support, use these parameters respectively (of course use only one):
 
 ```
 -hwaccel_enc=VAAPI
@@ -271,8 +276,7 @@ If your system supports VAAPI:
 As found in libavcodec/vaapi_encode.c:
 
  Rate control mode selection:
- * If the user has set a mode explicitly with the rc_mode option,
-   use it and fail if it is not available.
+ * If the user has set a mode explicitly with the rc_mode option, use it and fail if it is not available.
  * If an explicit QP option has been set, use CQP.
  * If the codec is CQ-only, use CQP.
  * If the QSCALE avcodec option is set, use CQP.
@@ -282,13 +286,13 @@ As found in libavcodec/vaapi_encode.c:
  * If a bitrate is set, try AVBR, then VBR, then CBR.
  * If no bitrate is set, try ICQ, then CQP.
 
-This currently hardwired in my code. None of these values can currently be controlled by command line. This is planned of course, but not implemented in the current version yet.
+At the moment this is hardwired in code. None of these values can be controlled now by command line. This is planned of course, but not implemented in the current version yet.
 
 ### Hardware Decoding
 
 This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
 
-To enable hardware support, use these parameters respectively (of course not both at the same time):
+To enable hardware support, use these parameters respectively (of course use only one):
 
 ```
 -hwaccel_dec=VAAPI
@@ -305,18 +309,18 @@ The decoding part is a bit tricky, if encoding is set set to hardware, this hard
 
 ### TODOs
 
-Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory uneccessary.
+Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory unneccessary.
 
-Although, it is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
+It is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
 
 Selecting a target bitrate turns out to be a bit tricky, see above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).
 
 On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, wiping the sweat off my chin :)
 
-HTTP live streaming
+HTTP Live Streaming
 -------------------
 
-FFmpegfs now supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also offer a virtual test.html file that can playback the segments using the hls.js library (see https://github.com/video-dev/hls.js/).
+FFmpegfs supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also offer a virtual test.html file that can playback the segments using the hls.js library (see https://github.com/video-dev/hls.js/).
 
 To use the new HLS feature invoke FFmpegfs with:
 

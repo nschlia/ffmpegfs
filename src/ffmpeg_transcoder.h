@@ -892,7 +892,7 @@ protected:
      * @param[out] codec_name - Name of the codec.
      * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
      */
-    int                         get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    //int                         get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
     /**
      * @brief Determine OMX encoder codec name
      * @param[in] codec_id - Id of encoder/decoder codec

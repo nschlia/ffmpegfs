@@ -231,31 +231,35 @@ More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
 
 #### Supported Hardware Acceleration APIs
 
-| API         | Decode | Encode | Tested | Notes                             |
-| ----------- | ------ | ------ | ------ | --------------------------------- |
-| **VAAPI**   | x      | x      | yes    |                                   |
-| **MMAL**    |        | x      | yes    |                                   |
-| **OMX**     | x      |        | yes    |                                   |
+These APIs are implemented and tested. VAAPI mostly targets at Intel Hardware, but there are other hardware vendors that offer support now. MMAL and OpenMAX is supported by Raspberry PI boards.
 
-#### Planned Hardware Acceleration APIs
-
-| API         | Decode | Encode | Tested | Notes                             |
-| ----------- | ------ | ------ | ------ | --------------------------------- |
-| **CUDA**    |        |        | no     | FFmpeg must be manually compiled. |
-| **OPENCL**  |        |        | no     |                                   |
-| **VDPAU**   |        |        | no     |                                   |
-| **QSV**     |        |        | no     |                                   |
-| **V4L2M2M** |        |        | no     |                                   |
-| **VULKAN**  |        |        | no     |                                   |
+| API       | Decode | Encode | Description                                     | Details see                                                  |
+| --------- | ------ | ------ | ----------------------------------------------- | ------------------------------------------------------------ |
+| **VAAPI** | x      | x      | Video Acceleration API (VA-API), formerly Intel | https://en.wikipedia.org/wiki/Video_Acceleration_API<br />https://trac.ffmpeg.org/wiki/Hardware/VAAPI |
+| **MMAL**  |        | x      | Multimedia Abstraction Layer by Broadcom        | https://github.com/techyian/MMALSharp/wiki/What-is-MMAL%3F<br />http://www.jvcref.com/files/PI/documentation/html/ |
+| **OMX**   | x      |        | OpenMAX (Open Media Acceleration)               | https://en.wikipedia.org/wiki/OpenMAX                        |
 
 #### Tested On
 
-| System                                               | CPU                                       | GPU                              | APIs         |
-| ---------------------------------------------------- | ----------------------------------------- | -------------------------------- | ------------ |
-| Debian 10                                            | Intel Core i5-6500 CPU @ 3.20GHz          | Intel HD Graphics 530 (rev 06)   | VAAPI        |
-| Debian 11                                            | Intel Core i5-8250U CPU @ 1.60GHz         | Intel UHD Graphics 620 (rev 07)  | VAAPI        |
-| Debian 11                                            | Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz | NVIDIA GP108M<br />GeForce MX330 | VAAPI        |
-| Raspbian 10<br />Raspberry Pi 3 Model B Plus Rev 1.3 | ARMv7 Processor rev 4 (v7l)               |                                  | OpenMAX/MMAL |
+| System                                                       | CPU                                                          | GPU                             | APIs         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------- | ------------ |
+| Debian 10                                                    | Intel Core i5-6500 CPU @ 3.20GHz                             | Intel HD Graphics 530 (rev 06)  | VAAPI        |
+| Debian 11                                                    | Intel Core i5-8250U CPU @ 1.60GHz                            | Intel UHD Graphics 620 (rev 07) | VAAPI        |
+| Debian 11                                                    | Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz                    | NVIDIA GP108M, GeForce MX330    | VAAPI        |
+| Raspbian 10<br />Raspberry Pi 2 Model B Rev 1.1<br />Raspberry Pi 3 Model B Plus Rev 1.3 | <br />ARMv7 Processor rev 5 (v7l)<br />ARMv7 Processor rev 4 (v7l) |                                 | OpenMAX/MMAL |
+
+### Planned Hardware Acceleration APIs
+
+There are several more APIs that could be added. Currently this is not possible due to lack of hardware.
+
+| API         | Decode | Encode | Notes                                                        | Details see                                                  |
+| ----------- | ------ | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **CUDA**    |        |        | Compute Unified Device Architecture                          | https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html<br />https://en.wikipedia.org/wiki/CUDA<br />https://developer.nvidia.com/ffmpeg |
+| **OPENCL**  |        |        | Open Standard for Parallel Programming of Heterogeneous Systems | https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL             |
+| **VDPAU**   |        |        | Video Decode and Presentation API for Unix                   | https://en.wikipedia.org/wiki/VDPAU                          |
+| **QSV**     |        |        | QuickSync                                                    | https://trac.ffmpeg.org/wiki/Hardware/QuickSync              |
+| **V4L2M2M** |        |        | v4l2 mem to mem (Video4linux)                                |                                                              |
+| **VULKAN**  |        |        | Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100 | https://en.wikipedia.org/wiki/Vulkan_(API)                   |
 
 ### Hardware Encoding
 

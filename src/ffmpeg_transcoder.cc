@@ -146,26 +146,25 @@ const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
 const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
 {
     { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },          ///< VAAPI uses the NV12 pix format
-    { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - Cuda pix_fmt untested.
-    { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - VDPAU pix_fmt untested.
-    { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_QSV },           ///< @todo HWACCEL - QSV pix_fmt untested. Seems to be AV_PIX_FMT_P010 or AV_PIX_FMT_QSV.
-    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - OpenCL pix_fmt untested. Seems to be AV_PIX_FMT_OPENCL or AV_PIX_FMT_NV12.
+    #if 0
+    { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - Cuda pix_fmt: to be added.
+    { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - VDPAU pix_fmt: to be added.
+    { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_QSV },           ///< @todo HWACCEL - QSV pix_fmt untested: Seems to be AV_PIX_FMT_P010 or AV_PIX_FMT_QSV. To be added.
+    { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - OpenCL pix_fmt: Seems to be AV_PIX_FMT_OPENCL or AV_PIX_FMT_NV12. To be added.
     #if HAVE_VULKAN_HWACCEL
-    { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt untested.
+    { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt: to be added.
     #endif // HAVE_VULKAN_HWACCEL
     #if __APPLE__
-    // MacOS acceleration APIs not supported
-    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< @todo HWACCEL - Videotoolbox pix_fmt untested.
-    #endif
+    { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< Videotoolbox pix_fmt: MacOS acceleration APIs not supported
+    #endif // __APPLE__
     #if __ANDROID__
-    // Android acceleration APIs not supported
-    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC },    ///< @todo HWACCEL - Mediacodec pix_fmt untested.
-    #endif
+    { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC },    ///< Mediacodec pix_fmt: Android acceleration APIs not supported
+    #endif // __ANDROID__
     #if _WIN32
-    // Windows acceleration APIs not supported
-    { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< @todo HWACCEL - DRM prime pix_fmt untested.
-    { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< @todo HWACCEL - DXVA2 pix_fmt untested.
-    { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< @todo HWACCEL - D3D11VA pix_fmt untested.
+    { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< DRM prime pix_fmt: Windows acceleration APIs not supported
+    { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< DXVA2 pix_fmt: Windows acceleration APIs not supported
+    { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< D3D11VA pix_fmt: Windows acceleration APIs not supported
+    #endif // _WIN32
     #endif
 };
 
@@ -4407,6 +4406,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 AVFrame *output_frame = m_video_fifo.front();
                 m_video_fifo.pop();
 
+                // XXX: output_frame->pts; HLS segment berechnen
+                //if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                //{
+                //    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                //}
+
                 // Encode one video frame.
                 int data_written = 0;
                 output_frame->key_frame = 0;    // Leave that decision to encoder
@@ -5952,11 +5957,11 @@ int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *code
         ret = get_hw_mmal_decoder_name(codec_id, &codec_name_buf);
         break;
     }
-    case HWACCELAPI_V4L2M2M:
-    {
-        ret = get_hw_v4l2m2m_decoder_name(codec_id, &codec_name_buf);
-        break;
-    }
+        //case HWACCELAPI_V4L2M2M:
+        //{
+        //    ret = get_hw_v4l2m2m_decoder_name(codec_id, &codec_name_buf);
+        //    break;
+        //}
     case HWACCELAPI_NONE:
     default:
     {
@@ -5997,11 +6002,11 @@ int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *code
         ret = get_hw_omx_encoder_name(codec_id, &codec_name_buf);
         break;
     }
-    case HWACCELAPI_V4L2M2M:
-    {
-        ret = get_hw_v4l2m2m_encoder_name(codec_id, &codec_name_buf);
-        break;
-    }
+        //case HWACCELAPI_V4L2M2M:
+        //{
+        //    ret = get_hw_v4l2m2m_encoder_name(codec_id, &codec_name_buf);
+        //    break;
+        //}
     case HWACCELAPI_NONE:
     default:
     {
@@ -6187,78 +6192,78 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
     return ret;
 }
 
-int FFmpeg_Transcoder::get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const
-{
-    int ret = 0;
-    /**
-     * *** v4l2m2m (Video2linux) decoder ***
-     *
-     * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
-     * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
-     * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
-     * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
-     * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
-     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
-     * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
-     * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
-     * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
-     */
-    switch (codec_id)
-    {
-    case AV_CODEC_ID_H263:
-    {
-        *codec_name = "h263_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_H264:
-    {
-        *codec_name = "h264_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_H265:
-    {
-        *codec_name = "hevc_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_MPEG1VIDEO:
-    {
-        *codec_name = "mpeg1_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_MPEG2VIDEO:
-    {
-        *codec_name = "mpeg2_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_MPEG4:
-    {
-        *codec_name = "mpeg4_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_VC1:
-    {
-        *codec_name = "vc1_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_VP8:
-    {
-        *codec_name = "vp8_v4l2m2m";
-        break;
-    }
-    case AV_CODEC_ID_VP9:
-    {
-        *codec_name = "vp9_v4l2m2m";
-        break;
-    }
-    default:
-    {
-        ret = AVERROR_DECODER_NOT_FOUND;
-        break;
-    }
-    }
+//int FFmpeg_Transcoder::get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const
+//{
+//    int ret = 0;
+//    /**
+//     * *** v4l2m2m (Video2linux) decoder ***
+//     *
+//     * h263_v4l2m2m         V4L2 mem2mem H.263 decoder wrapper (codec h263)
+//     * h264_v4l2m2m         V4L2 mem2mem H.264 decoder wrapper (codec h264)
+//     * hevc_v4l2m2m         V4L2 mem2mem HEVC decoder wrapper (codec hevc)
+//     * mpeg1_v4l2m2m        V4L2 mem2mem MPEG1 decoder wrapper (codec mpeg1video)
+//     * mpeg2_v4l2m2m        V4L2 mem2mem MPEG2 decoder wrapper (codec mpeg2video)
+//     * mpeg4_v4l2m2m        V4L2 mem2mem MPEG4 decoder wrapper (codec mpeg4)
+//     * vc1_v4l2m2m          V4L2 mem2mem VC1 decoder wrapper (codec vc1)
+//     * vp8_v4l2m2m          V4L2 mem2mem VP8 decoder wrapper (codec vp8)
+//     * vp9_v4l2m2m          V4L2 mem2mem VP9 decoder wrapper (codec vp9)
+//     */
+//    switch (codec_id)
+//    {
+//    case AV_CODEC_ID_H263:
+//    {
+//        *codec_name = "h263_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_H264:
+//    {
+//        *codec_name = "h264_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_H265:
+//    {
+//        *codec_name = "hevc_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_MPEG1VIDEO:
+//    {
+//        *codec_name = "mpeg1_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_MPEG2VIDEO:
+//    {
+//        *codec_name = "mpeg2_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_MPEG4:
+//    {
+//        *codec_name = "mpeg4_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_VC1:
+//    {
+//        *codec_name = "vc1_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_VP8:
+//    {
+//        *codec_name = "vp8_v4l2m2m";
+//        break;
+//    }
+//    case AV_CODEC_ID_VP9:
+//    {
+//        *codec_name = "vp9_v4l2m2m";
+//        break;
+//    }
+//    default:
+//    {
+//        ret = AVERROR_DECODER_NOT_FOUND;
+//        break;
+//    }
+//    }
 
-    return ret;
-}
+//    return ret;
+//}
 
 int FFmpeg_Transcoder::get_hw_omx_encoder_name(AVCodecID codec_id, std::string *codec_name) const
 {

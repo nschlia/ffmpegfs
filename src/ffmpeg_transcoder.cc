@@ -4406,12 +4406,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 AVFrame *output_frame = m_video_fifo.front();
                 m_video_fifo.pop();
 
-                // XXX: output_frame->pts; HLS segment berechnen
-                //if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
-                //{
-                //    frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
-                //}
-
                 // Encode one video frame.
                 int data_written = 0;
                 output_frame->key_frame = 0;    // Leave that decision to encoder

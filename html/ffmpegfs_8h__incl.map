@@ -1,14 +1,14 @@
 <map id="src/ffmpegfs.h" name="src/ffmpegfs.h">
-<area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="208,5,323,32"/>
+<area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="207,5,323,32"/>
 <area shape="rect" id="node2" title=" " alt="" coords="94,80,157,107"/>
 <area shape="rect" id="node3" title=" " alt="" coords="181,80,256,107"/>
-<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="543,80,657,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="542,80,658,107"/>
 <area shape="rect" id="node11" href="$fileio_8h.html" title="FileIO class." alt="" coords="280,80,347,107"/>
-<area shape="rect" id="node5" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="712,155,848,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="711,155,849,181"/>
 <area shape="rect" id="node6" title=" " alt="" coords="429,155,488,181"/>
 <area shape="rect" id="node7" title=" " alt="" coords="342,155,405,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="872,155,931,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="955,155,1061,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="873,155,932,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="956,155,1063,181"/>
 <area shape="rect" id="node10" title=" " alt="" coords="513,155,687,181"/>
 <area shape="rect" id="node12" title=" " alt="" coords="5,155,91,181"/>
 <area shape="rect" id="node13" title=" " alt="" coords="115,155,165,181"/>

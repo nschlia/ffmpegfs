@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['error_1619',['ERROR',['../logging_8h.html#a41dd6f91f2953c1b526ccd2f61c35866',1,'logging.h']]]
+  ['ffmpegfs_5fops_1642',['ffmpegfs_ops',['../ffmpegfs_8h.html#a20127960d0a961494a0a56d119d885a9',1,'ffmpegfs_ops():&#160;fuseops.cc'],['../fuseops_8cc.html#a20127960d0a961494a0a56d119d885a9',1,'ffmpegfs_ops():&#160;fuseops.cc']]],
+  ['ffmpegfs_5fopts_1643',['ffmpegfs_opts',['../ffmpegfs_8cc.html#a760f6e5e223f36094b4ace9c609859a3',1,'ffmpegfs.cc']]],
+  ['filenames_1644',['filenames',['../fuseops_8cc.html#aed1aba02bbcd7a769c3a7d886061925f',1,'fuseops.cc']]]
 ];

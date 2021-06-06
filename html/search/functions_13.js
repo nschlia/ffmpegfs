@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['vcdchapter_1583',['VcdChapter',['../classVcdChapter.html#af9372ea33d51cad2138a136e20ab5a33',1,'VcdChapter::VcdChapter(bool is_svcd)'],['../classVcdChapter.html#aeeef7eb547cfeaa423797bfdeddec4df',1,'VcdChapter::VcdChapter(const VCDCHAPTER &amp;VcdChapter, bool is_svcd)'],['../classVcdChapter.html#af2cf5a10342d9d5fcd0fc9495501a7e3',1,'VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, int64_t duration)']]],
-  ['vcdentries_1584',['VcdEntries',['../classVcdEntries.html#a0147a0a468f695a3a9a786ed8e284f5b',1,'VcdEntries']]],
-  ['vcdinfo_1585',['VcdInfo',['../classVcdInfo.html#a43b20795ddcc432d60e65608fdfbb9b0',1,'VcdInfo']]],
-  ['vcdio_1586',['VcdIO',['../classVcdIO.html#a4a1879343a44bcef4ac4caa57ad3e6f7',1,'VcdIO']]],
-  ['video_5fcodec_5fid_1587',['video_codec_id',['../classFFmpegfs__Format.html#a43fd02c85800673809b967f024bfaba9',1,'FFmpegfs_Format']]],
-  ['video_5fframe_5fcount_1588',['video_frame_count',['../classCache__Entry.html#aa6030e4ca803427229d04f14e37c2a63',1,'Cache_Entry::video_frame_count()'],['../classFFmpeg__Transcoder.html#a72f7d34c6a08488495a7a8e154e3d155',1,'FFmpeg_Transcoder::video_frame_count()']]],
-  ['video_5finfo_1589',['video_info',['../classFFmpeg__Base.html#a6a555cacce9857bf9348b07ad8205e17',1,'FFmpeg_Base']]],
-  ['video_5fsize_1590',['video_size',['../classFFmpeg__Transcoder.html#a52c544c5ae93090357de29b4f39075ae',1,'FFmpeg_Transcoder']]],
-  ['video_5fstream_5fsetup_1591',['video_stream_setup',['../classFFmpeg__Base.html#a07c41e35cb9411b15db72a733930dc2c',1,'FFmpeg_Base']]],
-  ['virtualfile_1592',['virtualfile',['../classCache__Entry.html#a64a6705c9c8a72f25d86874c76f80b1c',1,'Cache_Entry::virtualfile()'],['../classFileIO.html#a2e330b909423f2118b8482732f50986a',1,'FileIO::virtualfile()']]]
+  ['unlock_1599',['unlock',['../classCache__Entry.html#ab09cda74fd91fe7cab81e4352325a508',1,'Cache_Entry']]],
+  ['unmap_5ffile_1600',['unmap_file',['../classBuffer.html#af37d881ca60a6f5482428eb5eee591fc',1,'Buffer']]],
+  ['update_5faccess_1601',['update_access',['../classCache__Entry.html#a15e89b39f4dd87ec7eee9a9683965f76',1,'Cache_Entry']]],
+  ['update_5fcodec_1602',['update_codec',['../classFFmpeg__Transcoder.html#ab36783c960d444b735581941fe54b8d4',1,'FFmpeg_Transcoder']]],
+  ['update_5fformat_1603',['update_format',['../classFFmpeg__Transcoder.html#aa2e01b8069b6ecf5516c7b9ce2da4580',1,'FFmpeg_Transcoder']]],
+  ['update_5fread_5fcount_1604',['update_read_count',['../classCache__Entry.html#a8d0c949271485ec03d566477a0f20d5b',1,'Cache_Entry']]],
+  ['upgrade_5fdb_1605',['upgrade_db',['../classCache.html#aabed3240cc61e75ee1b651decc252145',1,'Cache']]],
+  ['usage_1606',['usage',['../ffmpegfs_8cc.html#a64a6014565bb3e03294ec4a952d5add0',1,'ffmpegfs.cc']]]
 ];

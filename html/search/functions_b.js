@@ -1,16 +1,19 @@
 var searchData=
 [
-  ['main_1428',['main',['../ffmpegfs_8cc.html#a0ddf1224851353fc92bfbff6f499fa97',1,'ffmpegfs.cc']]],
-  ['maintenance_1429',['maintenance',['../classCache.html#a4485e186305c0d1057b3f5a0351361b1',1,'Cache']]],
-  ['maintenance_5fhandler_1430',['maintenance_handler',['../cache__maintenance_8cc.html#a38ff4e8521d24425d268ff7b08f594f9',1,'cache_maintenance.cc']]],
-  ['make_5fcachefile_5fname_1431',['make_cachefile_name',['../classBuffer.html#a53adb0d9d3cd9c426d4384e46c116a08',1,'Buffer']]],
-  ['make_5ffile_1432',['make_file',['../fuseops_8cc.html#afa158bbaa07a77c484263bac4acc08f7',1,'fuseops.cc']]],
-  ['make_5ffilename_1433',['make_filename',['../ffmpeg__utils_8h.html#a8ee15d3db23a1af104b895ce899ea81b',1,'make_filename(uint32_t file_no, const std::string &amp;fileext):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#a8ee15d3db23a1af104b895ce899ea81b',1,'make_filename(uint32_t file_no, const std::string &amp;fileext):&#160;ffmpeg_utils.cc']]],
-  ['make_5fhls_5ffileset_1434',['make_hls_fileset',['../fuseops_8cc.html#a9b4cd45ac66c23edfc4e8668dd7446a2',1,'fuseops.cc']]],
-  ['make_5flower_1435',['make_lower',['../ffmpeg__utils_8cc.html#a971933f3f7ac6c3121c1d4e1c3f145bf',1,'make_lower(std::string *input):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a971933f3f7ac6c3121c1d4e1c3f145bf',1,'make_lower(std::string *input):&#160;ffmpeg_utils.cc']]],
-  ['make_5fupper_1436',['make_upper',['../ffmpeg__utils_8cc.html#a32c6b318affb651847ec6703f56dfa49',1,'make_upper(std::string *input):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a32c6b318affb651847ec6703f56dfa49',1,'make_upper(std::string *input):&#160;ffmpeg_utils.cc']]],
-  ['map_5ffile_1437',['map_file',['../classBuffer.html#a8608a76fc9d6f729bce7df3af7268356',1,'Buffer']]],
-  ['master_5fcheck_1438',['master_check',['../cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e',1,'cache_maintenance.cc']]],
-  ['mktree_1439',['mktree',['../ffmpeg__utils_8cc.html#a3165924e10da9041f11428042cbb9272',1,'mktree(const std::string &amp;path, mode_t mode):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a3165924e10da9041f11428042cbb9272',1,'mktree(const std::string &amp;path, mode_t mode):&#160;ffmpeg_utils.cc']]],
-  ['mtime_1440',['mtime',['../classFFmpeg__Transcoder.html#ac390e42bd912f1579fc27b33495f2f08',1,'FFmpeg_Transcoder']]]
+  ['last_5faccess_1430',['last_access',['../classCache__Entry.html#aa1b74c1569d09bcaa8cd88122819b55f',1,'Cache_Entry']]],
+  ['link_5fdown_1431',['link_down',['../cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301',1,'cache_maintenance.cc']]],
+  ['link_5fup_1432',['link_up',['../cache__maintenance_8cc.html#a8c6bf784b22ece87ea6d0269e89f11be',1,'cache_maintenance.cc']]],
+  ['load_5ffile_1433',['load_file',['../classVcdEntries.html#abdf8bb838c3a063aef11edaff90e23ce',1,'VcdEntries::load_file()'],['../classVcdInfo.html#a0210e4b9ab5410c6e3bd4f69025d3943',1,'VcdInfo::load_file()']]],
+  ['load_5findex_1434',['load_index',['../classCache.html#a5e16f13d67ba31c847e3bd3e3db2abf7',1,'Cache']]],
+  ['load_5fpath_1435',['load_path',['../fuseops_8cc.html#a757570119497576827529b07c0aa4147',1,'load_path(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler):&#160;fuseops.cc'],['../ffmpegfs_8h.html#a757570119497576827529b07c0aa4147',1,'load_path(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler):&#160;fuseops.cc']]],
+  ['locate_5ffile_1436',['locate_file',['../namespaceVCDUTILS.html#a0ffc63e72e8ba1280c60bdf9145df6d1',1,'VCDUTILS']]],
+  ['locate_5fvideo_1437',['locate_video',['../namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834',1,'VCDUTILS']]],
+  ['lock_1438',['lock',['../classCache__Entry.html#a51e0d898123be6fe7d8927a6db4bb74f',1,'Cache_Entry']]],
+  ['log_1439',['Log',['../logging_8cc.html#a9070a8c12d797cb7a97478f5ae6c9d94',1,'logging.cc']]],
+  ['log_5fwith_5flevel_1440',['log_with_level',['../classLogging.html#a864a1a6d24d4bcfd9d9cdb5ca8362f01',1,'Logging']]],
+  ['logger_1441',['Logger',['../classLogging_1_1Logger.html#a03f47e61879ad16aa3dfcc594b959a2e',1,'Logging::Logger::Logger()'],['../classLogging_1_1Logger.html#a97caf0d9dac7074fda27af214ef2b1e9',1,'Logging::Logger::Logger(level loglevel, const std::string &amp;filename, Logging *logging)']]],
+  ['logging_1442',['Logging',['../classLogging.html#a8395c1893046dfe114321346e026d791',1,'Logging']]],
+  ['loop_5ffunction_1443',['loop_function',['../classthread__pool.html#a8e3618dd406bf5c8b35d2b047c3e64d8',1,'thread_pool']]],
+  ['loop_5ffunction_5fstarter_1444',['loop_function_starter',['../classthread__pool.html#ab865b54c896a6e111e833f69cb4761d5',1,'thread_pool']]],
+  ['ltrim_1445',['ltrim',['../ffmpeg__utils_8cc.html#ad0cb16755c59489838f05364dd080cd1',1,'ltrim(std::string &amp;s):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#ad0cb16755c59489838f05364dd080cd1',1,'ltrim(std::string &amp;s):&#160;ffmpeg_utils.cc']]]
 ];

@@ -80,19 +80,32 @@ $(function() {
 </table>
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
+<ul>
+<li>FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04, also to Debian 10 Buster Backports. See <a class="el" href="md_INSTALL.html">INSTALL</a> "Installation from repository" for details.</li>
+<li>Cool, there's an online review on Linux Uprising, you can read it here: <a href="https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html">https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</a></li>
+</ul>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Version 2.3 under development</h2>
 <p><b>New in 2.3:</b></p>
-<p>Important changes in 2.3 (2021-02-XX)</p>
+<p>Important changes in 2.3 (2021-05-XX)</p>
 <ul>
-<li><b>Feature:</b> Added cue sheet support. If a file with cue extension is found and by the same name as a media file, tracks defined in it will show up in a virtual directory. Embedded cue sheets are planned, see <a href="https://github.com/nschlia/ffmpegfs/issues/82">Issue #82</a>.</li>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/78">Issue #78</a>: Duplicate ARTIST to ALBUMARTIST tag if empty.</li>
+<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/80">Issue #80</a>: Open input video codec only if target supports video. Saves resources: no need to decode video frames if not used.</li>
+<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/81">Issue #81</a>: If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.</li>
+<li><b>Added</b> "configure --enable-debug" to create binaries with debug symbols. Defaults to the optimised version.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/73">Issue #73</a> Cue sheet tracks now play "gapless" if played in order. Whenever a track is started, the next track will automatically be transcoded as well.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/66">Issue #66</a> and <a href="https://github.com/nschlia/ffmpegfs/issues/82">issue #82</a>: Added cue sheet support. If a file with cue extension is found with the same name as a media file or if a cue sheet is embedded into it (a tag named CUESHEET), tracks defined in it will show up in a virtual directory.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/83">Issue #83</a>: Character conversion for cue sheet files. Automatically detects the character encoding of the cue sheet. and converts as necessary.</li>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/79">Issue #79</a>: Added Docker support. See <a href="https://github.com/nschlia/ffmpegfs#build-a-docker-container">Build A Docker Container</a> how to use it.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/78">Issue #78</a>: Duplicate ARTIST to ALBUMARTIST tag if empty.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/79">Issue #79</a>: Added Docker support. See <a href="README.md#build-a-docker-container">Build A Docker Container</a> how to use it.</li>
+<li><b>Fixed deprecation:</b> 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h Deprecated av_init_packet()</li>
+<li><b>Fixed API compatitbility:</b> Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,</li>
+<li><b>Bugfix:</b> find_original "fallback" method did not correctly handle the new filename format (extension added, not the original one replaced).</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/87">Issue #87</a>: Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds).</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/88">Issue #88</a>: HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.2 released</h2>
-<p><b>New in 2.2:</b></p>
+<p><b>New in 2.2 (2021-02-06):</b></p>
 <ul>
 <li><b>Note</b>: This is planned as a maintenance version, no new features but bug fixes only.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/75">Issue #75</a>: Fix crash when opening mp3 output with Dolphin.</li>
@@ -106,7 +119,7 @@ Version 2.2 released</h2>
 </ul>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Version 2.1 released</h2>
-<p><b>New in 2.1:</b></p>
+<p><b>New in 2.1 (2020-12-14):</b></p>
 <ul>
 <li><b>Feature</b>: Add BLURAY_VIDEO_FORMAT_2160P (UHD)</li>
 <li><b>Feature</b>: Implemented in 1.7, removed experimental state for &ndash;win_smb_fix now. Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting &ndash;win_smb_fix=1 will ignore these attempts (not decode the file up to this point).</li>
@@ -121,10 +134,10 @@ Version 2.1 released</h2>
 <li><b>Cosmetical</b>: Shorter log entry when opening cache files</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md6"></a>
-Planned features</h2>
+Planned Features</h2>
 <ul>
 <li><a href="https://github.com/nschlia/ffmpegfs/issues/63">Issue #63</a>: Interesting feature request - hardware support for encoding and decoding has been added. If you feel lucky do "git checkout FB" and try it out.</li>
-<li>Currently I am preparing a Windows version, but this is going to take some time. I need to port the Fuse functionality to Windows which is quite a huge project in itself.</li>
+<li>Currently I am preparing a Windows version, but this is going to take some time.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md7"></a>
 About</h1>
@@ -169,14 +182,14 @@ About</h1>
 <p>For live streaming select <em>WebM</em> or <em>MP4</em> for best results. If video transcoding is not required <em>MP3</em> will also do, but <em>WebM</em> and <em>MP4</em> create better results. The <em>OGG</em> encoder is not fast enough for real-time recoding files.</p>
 <p>When a destination <em>JPG</em>, <em>PNG</em> or <em>BMP</em> is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.</p>
 <p>Selecting <em>HLS</em> creates a directory with TS segments together with a M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.</p>
-<p>Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See <b>FIXING PROBLEMS</b> for details.</p>
+<p>Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See <a href="README.md#fixing-problems">FIXING PROBLEMS</a> for details.</p>
 <h1><a class="anchor" id="autotoc_md8"></a>
-Installation instructions</h1>
+Installation Instructions</h1>
 <ul>
 <li>Please read the <a class="el" href="md_INSTALL.html">INSTALL</a> file.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md9"></a>
-Supported Linux distributions</h1>
+Supported Linux Distributions</h1>
 <p>Tested with:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -223,14 +236,15 @@ Usage</h1>
 </pre><p> Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 </pre><p> Enable deinterlacing for enhanced image quality.</p>
 <h1><a class="anchor" id="autotoc_md11"></a>
-HTTP live streaming</h1>
+HTTP Live Streaming</h1>
 <p>FFmpegfs now supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also offer a virtual test.html file that can playback the segments using the hls.js library (see <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a>).</p>
 <p>To use the new HLS feature invoke FFmpegfs with: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 </pre><p> Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.</p>
 <h1><a class="anchor" id="autotoc_md12"></a>
-Cue sheets</h1>
+Cue Sheets</h1>
 <p>Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically they are used to define a CD/DVD track layout. Today they are supported by a wide range of optical disc authoring applications, and moreover, media players.</p>
-<p>When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.</p>
+<p>When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. It can also be embedded into the media file.</p>
+<p>The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.</p>
 <p>Example: </p><pre class="fragment"> myfile.mp4
  myfile.ogv
  myfile.cue
@@ -242,10 +256,8 @@ Cue sheets</h1>
  myfile.mp4.tracks/
  myfile.ogv.tracks/
 </pre><p> Tracks defined in the cue sheet will show up in the *.tracks sub directories.</p>
-<p><em>Note</em></p>
-<p>Cue sheets can be embedded into media files. This is not yet supported, embedded cue sheets will be ignored. They have to be supplied as separate files. Embedded cue sheets are planned, see <a href="https://github.com/nschlia/ffmpegfs/issues/82">Issue #82</a>.</p>
 <h1><a class="anchor" id="autotoc_md13"></a>
-Build A Docker Container</h1>
+Building A Docker Container</h1>
 <p>FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the docker directory and run </p><pre class="fragment"> docker build --build-arg -t nschlia/ffmpegfs .
 </pre><p> Depending on the machine speed, this will take quite a while. After the command completed, the container can be started with </p><pre class="fragment"> docker run --rm \
       --name=ffmpegfs \
@@ -256,9 +268,9 @@ Build A Docker Container</h1>
       -v /path/to/output:/dst:rshared \
       nschlia/ffmpegfs \
       -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
-</pre><p> Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to mp4 or whatever desired.</p>
+</pre><p> Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to MP4 or whatever desired.</p>
 <h1><a class="anchor" id="autotoc_md14"></a>
-Auto copy</h1>
+Auto Copy</h1>
 <p>"Auto copy" performs intelligent stream copy, for example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it is possible to simply repackage it to a mp4 container without recoding.</p>
 <p>This is very efficient as it does not require as much computing as de- and encoding does, and it also will not degrade quality as the original file basically stays the same.</p>
 <p>The function detects if the target format supports the source codec and simply remuxes the stream even if recoding from one format (for example TS) to another (for example MOV, MP4).</p>
@@ -274,11 +286,14 @@ Auto copy</h1>
 <td class="markdownTableBodyNone">ALWAY   </td><td class="markdownTableBodyNone">auto copy whenever possible even if the target file becomes larger   </td></tr>
 </table>
 <h1><a class="anchor" id="autotoc_md15"></a>
-Smart transcoding</h1>
+Smart Transcoding</h1>
 <p>Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense as MP4 or WebM work perfectly with audio only content.</p>
 <p>To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, &ndash;desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.</p>
+<p><em>Note</em></p>
+<p>Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.</p>
+<p>The input format should be scanned for streams and the output selected appropriately: An MP4 with video should be transcoded to MOV, an MP4 with audio only to AIFF. See <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>.</p>
 <h1><a class="anchor" id="autotoc_md16"></a>
-Transcode to frame images</h1>
+Transcode To Frame Images</h1>
 <p>To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with images for each frame.</p>
 <div class="fragment"><div class="line">$ ls /storage/videos</div>
 <div class="line">  video1.mp4</div>
@@ -292,12 +307,12 @@ Transcode to frame images</h1>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00001.png</div>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00002.png</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md17"></a>
-A few words on ProRes</h1>
+A Few Words On ProRes</h1>
 <p>Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that ProRes encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.</p>
 <p>It is not for target audience use, and certainly not suitable for internet streaming.</p>
-<p>Also please keep in mind that when using lossy source formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.</p>
+<p>Also please keep in mind that when using lossy source input formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.</p>
 <h1><a class="anchor" id="autotoc_md18"></a>
-MP4 format profiles</h1>
+MP4 Format Profiles</h1>
 <p>The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different as for Firefox, unfortunately.</p>
 <p>The &ndash;profile option allows to select the format:</p>
 <table class="markdownTable">
@@ -335,17 +350,17 @@ MP4 format profiles</h1>
 <p>In most cases files will not play if not properly optimised.</p>
 <p>See [TODO](TODO) for details.</p>
 <h1><a class="anchor" id="autotoc_md19"></a>
-How it works</h1>
+How It Works</h1>
 <p>When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.</p>
 <p>As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded in memory. Once decoded the file is kept in a disk buffer and can be accessed very fast.</p>
 <p>Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before timeout, transcoding will continue, if not it stops and the chunk created so far discarded to save disk space.</p>
-<p>Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams).</p>
+<p>Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams). This already works when HLS streaming is selected. FFmpegfs simply skips to the requested segment.</p>
 <p>MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file respectively.</p>
 <p>MP4: Same applies to meta atoms in MP4 containers.</p>
 <p>MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This <em>dramatically</em> speeds up such applications.</p>
 <p>WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.</p>
 <h1><a class="anchor" id="autotoc_md20"></a>
-About output formats</h1>
+About Output Formats</h1>
 <p>A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.</p>
 <p>MP4 files are special, though, as regular MP4s are not quite suited for live streaming. Reason being that the start block of an MP4 contains a field with the size of the compressed data section. Suffice to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.</p>
 <p>For a continuous live stream, that size will never be known. For our transcoded files one would have to wait for the whole file to be recoded to get that value. If that was not enough some important pieces of information are located at the end of the file, including meta tags with artist, album, etc. Also, there is only one big data block, a fact that hampers random seek inside the contents without having the complete data section.</p>
@@ -357,10 +372,10 @@ About output formats</h1>
 <p>As a draw back not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback cannot be positioned past the current playback position, only backwards.</p>
 <p>But that's the price of starting playback fast.</p>
 <h1><a class="anchor" id="autotoc_md21"></a>
-Fixing problems</h1>
+Fixing Problems</h1>
 <h2><a class="anchor" id="autotoc_md22"></a>
 Transcoding too slow</h2>
-<p>See <a href="https://github.com/nschlia/ffmpegfs/blob/master/INSTALL.md#building-ffmpeg-with-optimisations">Building FFmpeg with optimisations</a></p>
+<p>See <a href="INSTALL.md#building-ffmpeg-with-optimisations">Building FFmpeg with optimisations</a></p>
 <h2><a class="anchor" id="autotoc_md23"></a>
 Lock ups when accessed through Samba</h2>
 <p>When accessed one a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data was returned.</p>
@@ -378,7 +393,7 @@ rsync, Beyond Compare and other tools</h2>
 <h2><a class="anchor" id="autotoc_md25"></a>
 Play HLS output by opening hls.html from disk</h2>
 <p>Most browser prevent playback of files from disk. You may put them into a website directory, but sometimes even https must be used or playback will be blocked.</p>
-<p>To enable disk playback in Firefox:</p>
+<p><b>To enable disk playback in Firefox:</b></p>
 <ul>
 <li>Open about:config</li>
 <li>Set security.fileuri.strict_origin_policy to false</li>
@@ -404,13 +419,13 @@ Development</h1>
 <p>Please note that FFmpegfs is in active development, so the main branch may be unstable (but offer nice gimmicks, though). If you need a stable version please get one (preferrably the latest) release.</p>
 <p>Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!</p>
 <h1><a class="anchor" id="autotoc_md28"></a>
-Future plans</h1>
+Future Plans</h1>
 <ul>
 <li>Create a windows version</li>
 <li>and more, see [TODO](TODO)</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md29"></a>
-Demo code</h1>
+Demo Code</h1>
 <p>HLS player and demo code see: <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a></p>
 <h1><a class="anchor" id="autotoc_md30"></a>
 Authors</h1>
@@ -422,7 +437,7 @@ License</h1>
 <p>This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found <a href="http://www.gnu.org/licenses/gpl-3.0.html">online</a> or in the COPYING file.</p>
 <p>This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
 <h1><a class="anchor" id="autotoc_md32"></a>
-FFmpeg license</h1>
+FFmpeg License</h1>
 <p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.</p>
 <p>See <a href="https://www.ffmpeg.org/legal.html">https://www.ffmpeg.org/legal.html</a> for details.</p>
 <h1><a class="anchor" id="autotoc_md33"></a>

@@ -1,7 +1,7 @@
 <map id="VIRTUALFILE" name="VIRTUALFILE">
-<area shape="rect" id="node1" title="Virtual file definition." alt="" coords="347,93,451,120"/>
-<area shape="rect" id="node2" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,32"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray disks." alt="" coords="29,57,191,98"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,215,149"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="19,174,201,215"/>
+<area shape="rect" id="node1" title="Virtual file definition." alt="" coords="329,64,435,91"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="567,57,749,98"/>
+<area shape="rect" id="node2" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,215,32"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Bluray disks." alt="" coords="29,57,192,98"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,216,149"/>
 </map>

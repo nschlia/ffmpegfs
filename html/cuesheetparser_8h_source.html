@@ -98,10 +98,12 @@ $(function() {
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">int</span> <a class="code" href="cuesheetparser_8h.html#a6780da3bb32ad0393f781e8e3a888208">check_cuesheet</a>(<span class="keyword">const</span> std::string &amp; filename, <span class="keywordtype">void</span> *buf = <span class="keyword">nullptr</span>, fuse_fill_dir_t filler = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CUESHEETPARSER_H</span></div>
-<div class="ttc" id="acuesheetparser_8h_html_a6780da3bb32ad0393f781e8e3a888208"><div class="ttname"><a href="cuesheetparser_8h.html#a6780da3bb32ad0393f781e8e3a888208">check_cuesheet</a></div><div class="ttdeci">int check_cuesheet(const std::string &amp;filename, void *buf=nullptr, fuse_fill_dir_t filler=nullptr)</div><div class="ttdoc">Get number of titles in cue sheet.</div><div class="ttdef"><b>Definition:</b> <a href="cuesheetparser_8cc_source.html#l00408">cuesheetparser.cc:408</a></div></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">struct </span>AVFormatContext;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keywordtype">int</span> <a class="code" href="cuesheetparser_8h.html#a4d2c07f66a3046e7b42048fd98919366">check_cuesheet</a>(<span class="keyword">const</span> std::string &amp; filename, <span class="keywordtype">void</span> *buf = <span class="keyword">nullptr</span>, fuse_fill_dir_t filler = <span class="keyword">nullptr</span>, AVFormatContext *fmt_ctx = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CUESHEETPARSER_H</span></div>
+<div class="ttc" id="acuesheetparser_8h_html_a4d2c07f66a3046e7b42048fd98919366"><div class="ttname"><a href="cuesheetparser_8h.html#a4d2c07f66a3046e7b42048fd98919366">check_cuesheet</a></div><div class="ttdeci">int check_cuesheet(const std::string &amp;filename, void *buf=nullptr, fuse_fill_dir_t filler=nullptr, AVFormatContext *fmt_ctx=nullptr)</div><div class="ttdoc">Get number of titles in cue sheet.</div><div class="ttdef"><b>Definition:</b> <a href="cuesheetparser_8cc_source.html#l00470">cuesheetparser.cc:470</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

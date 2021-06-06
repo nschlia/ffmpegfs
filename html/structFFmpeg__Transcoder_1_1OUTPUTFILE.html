@@ -83,8 +83,8 @@ Inheritance diagram for FFmpeg_Transcoder::OUTPUTFILE:</div>
 <div class="dyncontent">
 <div class="center"><img src="structFFmpeg__Transcoder_1_1OUTPUTFILE__inherit__graph.png" border="0" usemap="#aFFmpeg__Transcoder_1_1OUTPUTFILE_inherit__map" alt="Inheritance graph"/></div>
 <map name="aFFmpeg__Transcoder_1_1OUTPUTFILE_inherit__map" id="aFFmpeg__Transcoder_1_1OUTPUTFILE_inherit__map">
-<area shape="rect" title="Output file definition." alt="" coords="5,95,165,136"/>
-<area shape="rect" href="structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="5,5,165,47"/>
+<area shape="rect" title="Output file definition." alt="" coords="5,95,167,136"/>
+<area shape="rect" href="structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="5,5,167,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -92,22 +92,32 @@ Collaboration diagram for FFmpeg_Transcoder::OUTPUTFILE:</div>
 <div class="dyncontent">
 <div class="center"><img src="structFFmpeg__Transcoder_1_1OUTPUTFILE__coll__graph.png" border="0" usemap="#aFFmpeg__Transcoder_1_1OUTPUTFILE_coll__map" alt="Collaboration graph"/></div>
 <map name="aFFmpeg__Transcoder_1_1OUTPUTFILE_coll__map" id="aFFmpeg__Transcoder_1_1OUTPUTFILE_coll__map">
-<area shape="rect" title="Output file definition." alt="" coords="72,228,232,269"/>
-<area shape="rect" href="structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="5,124,165,165"/>
-<area shape="rect" href="structFFmpeg__Transcoder_1_1STREAMREF.html" title="In/output stream reference data." alt="" coords="5,5,165,47"/>
-<area shape="rect" href="structID3v1.html" title="ID3 version 1 tag" alt="" coords="190,131,250,158"/>
+<area shape="rect" title="Output file definition." alt="" coords="105,228,267,269"/>
+<area shape="rect" href="structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="5,124,167,165"/>
+<area shape="rect" href="structFFmpeg__Transcoder_1_1STREAMREF.html" title="In/output stream reference data." alt="" coords="5,5,167,47"/>
+<area shape="rect" href="structID3v1.html" title="ID3 version 1 tag" alt="" coords="191,131,251,158"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a999011b7a224643702b19cb307aadee3"><td class="memItemLeft" align="right" valign="top"><a id="a999011b7a224643702b19cb307aadee3"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a999011b7a224643702b19cb307aadee3">m_audio_start_time</a></td></tr>
+<tr class="memdesc:a999011b7a224643702b19cb307aadee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time of the audio stream in output audio stream time base units, may be 0. <br /></td></tr>
+<tr class="separator:a999011b7a224643702b19cb307aadee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9082195dfabab46a97850e09f9d2a04e"><td class="memItemLeft" align="right" valign="top"><a id="a9082195dfabab46a97850e09f9d2a04e"></a>
 int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a9082195dfabab46a97850e09f9d2a04e">m_audio_pts</a></td></tr>
-<tr class="memdesc:a9082195dfabab46a97850e09f9d2a04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global timestamp for the audio frames. <br /></td></tr>
+<tr class="memdesc:a9082195dfabab46a97850e09f9d2a04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global timestamp for the audio frames in output audio stream time base units <br  />
+ <br /></td></tr>
 <tr class="separator:a9082195dfabab46a97850e09f9d2a04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46ca706de000b1a9cd935e4a88e1b167"><td class="memItemLeft" align="right" valign="top"><a id="a46ca706de000b1a9cd935e4a88e1b167"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a46ca706de000b1a9cd935e4a88e1b167">m_video_start_time</a></td></tr>
+<tr class="memdesc:a46ca706de000b1a9cd935e4a88e1b167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time of the video stream in output video stream time base units, may be 0. <br /></td></tr>
+<tr class="separator:a46ca706de000b1a9cd935e4a88e1b167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19ff8c025fd24f6f0b123720b90a16e2"><td class="memItemLeft" align="right" valign="top"><a id="a19ff8c025fd24f6f0b123720b90a16e2"></a>
 int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a19ff8c025fd24f6f0b123720b90a16e2">m_video_pts</a></td></tr>
-<tr class="memdesc:a19ff8c025fd24f6f0b123720b90a16e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global timestamp for the video frames. <br /></td></tr>
+<tr class="memdesc:a19ff8c025fd24f6f0b123720b90a16e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global timestamp for the video frames in output video stream time base units <br  />
+ <br /></td></tr>
 <tr class="separator:a19ff8c025fd24f6f0b123720b90a16e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1024e8cd5a62e013eac004d2c31272e"><td class="memItemLeft" align="right" valign="top"><a id="ad1024e8cd5a62e013eac004d2c31272e"></a>
 int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#ad1024e8cd5a62e013eac004d2c31272e">m_last_mux_dts</a></td></tr>
@@ -146,12 +156,20 @@ AVPixelFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 std::vector&lt; <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html">STREAMREF</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a12935be8217de62783ef4d242d327899">m_album_art</a></td></tr>
 <tr class="memdesc:a12935be8217de62783ef4d242d327899 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="mdescLeft">&#160;</td><td class="mdescRight">Album art stream. <br /></td></tr>
 <tr class="separator:a12935be8217de62783ef4d242d327899 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a395df24612dd35b649e37a040f2df0c1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="memItemLeft" align="right" valign="top"><a id="a395df24612dd35b649e37a040f2df0c1"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a395df24612dd35b649e37a040f2df0c1">m_audio_start_time</a></td></tr>
+<tr class="memdesc:a395df24612dd35b649e37a040f2df0c1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time of the audio stream in input audio stream time base units, may be 0. <br /></td></tr>
+<tr class="separator:a395df24612dd35b649e37a040f2df0c1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00d43acf00c5ec85b8abedc28588d0e1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="memItemLeft" align="right" valign="top"><a id="a00d43acf00c5ec85b8abedc28588d0e1"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a00d43acf00c5ec85b8abedc28588d0e1">m_video_start_time</a></td></tr>
+<tr class="memdesc:a00d43acf00c5ec85b8abedc28588d0e1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time of the video stream in input video stream time base units, may be 0. <br /></td></tr>
+<tr class="separator:a00d43acf00c5ec85b8abedc28588d0e1 inherit pub_attribs_structFFmpeg__Transcoder_1_1INPUTFILE"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Output file definition. </p>
 <p>&lt; </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8h_source.html#l00126">126</a> of file <a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8h_source.html#l00131">131</a> of file <a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a></li>
 </ul>

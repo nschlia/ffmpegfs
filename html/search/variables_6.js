@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['level_5fmap_1624',['level_map',['../ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6',1,'ffmpegfs.cc']]],
-  ['logger_1625',['Logger',['../classLogging.html#a47fe95403f7197a89714548c08ca9001',1,'Logging']]]
+  ['name_1948',['name',['../structCache_1_1TABLE__DEF.html#a0fa604a82863f94a344d2582eb20c938',1,'Cache::TABLE_DEF::name()'],['../structCache_1_1TABLE__COLUMNS.html#a811ea57664e57c292de2512c508c746f',1,'Cache::TABLE_COLUMNS::name()']]]
 ];

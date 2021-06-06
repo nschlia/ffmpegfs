@@ -73,41 +73,42 @@ $(function() {
 </dd>
 <dt>Member <a class="el" href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">create_bluray_virtualfile</a>  (BLURAY *bd, const BLURAY_TITLE_INFO *ti, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx)</dt>
 <dd><a class="anchor" id="_todo000003"></a>We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
-<dt>Member <a class="el" href="cuesheetparser_8cc.html#a62b6aeddb183666e492b32fc93fd734e">create_cuesheet_virtualfile</a>  (Track *track, int titleno, const std::string &amp;filename, const std::string &amp;path, const struct stat *statbuf, int trackcount, int trackno, const std::string &amp;album, const std::string &amp;genre, const std::string &amp;date)</dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000006"></a>Evaluate track index here??? </p>
-<p class="interdd"><a class="anchor" id="_todo000007"></a>Should use the correct index (audio) here </p>
-<p class="interdd"><a class="anchor" id="_todo000008"></a>Should store the correct index (audio) in m_format_idx </p>
-<p class="enddd"><a class="anchor" id="_todo000009"></a>probe original file for info  </p>
+<dt>Member <a class="el" href="cuesheetparser_8cc.html#a1cf97a041d9387210263e35802498bc9">create_cuesheet_virtualfile</a>  (Track *track, int titleno, const std::string &amp;filename, const std::string &amp;path, const struct stat *statbuf, int trackcount, int trackno, const std::string &amp;album, const std::string &amp;genre, const std::string &amp;date, LPVIRTUALFILE *lastfile)</dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000006"></a>Should use the correct index (audio) here </p>
+<p class="interdd"><a class="anchor" id="_todo000007"></a>Should store the correct index (audio) in m_format_idx </p>
+<p class="enddd"><a class="anchor" id="_todo000008"></a>probe original file for info  </p>
 </dd>
 <dt>Member <a class="el" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>  (const ifo_handle_t *vts_file, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool full_title, int title_idx, int chapter_idx, int angles, int ttnnum, int audio_stream, const <a class="el" href="structAUDIO__SETTINGS.html" title="Audio stream settings.">AUDIO_SETTINGS</a> &amp;audio_settings, const <a class="el" href="structVIDEO__SETTINGS.html" title="Video stream settings.">VIDEO_SETTINGS</a> &amp;video_settings)</dt>
-<dd><a class="anchor" id="_todo000010"></a>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
+<dd><a class="anchor" id="_todo000009"></a>We actually calculate the overall DVD bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a7f6903a86d5ed1ebee3258b981536f74">FFmpeg_Transcoder::add_albumart_stream</a>  (const AVCodecContext *input_codec_ctx)</dt>
-<dd><a class="anchor" id="_todo000013"></a>Add support for album arts  </dd>
+<dd><a class="anchor" id="_todo000012"></a>Add support for album arts  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#afe22b3a4c7ad7fa2ca8219f5b76f2542">FFmpeg_Transcoder::add_stream</a>  (AVCodecID codec_id)</dt>
-<dd><a class="anchor" id="_todo000012"></a>FFmpeg actually <em>can</em> transcode while presevering the SAR. FFmpegfs rescales to fix that problem. Need to find out what I am doing wrong here...  </dd>
+<dd><a class="anchor" id="_todo000011"></a>FFmpeg actually <em>can</em> transcode while presevering the SAR. FFmpegfs rescales to fix that problem. Need to find out what I am doing wrong here...  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a96c31a851e95a6fb714b2908c83ec696">FFmpeg_Transcoder::decode_frame</a>  (AVPacket *pkt)</dt>
-<dd><a class="anchor" id="_todo000014"></a>Calling decode_video_frame until all data has been used, but for DVDs only. Can someone tell me why this seems required??? If this is not done some videos become garbled. But only for DVDs... <br  />
+<dd><a class="anchor" id="_todo000013"></a>Calling decode_video_frame until all data has been used, but for DVDs only. Can someone tell me why this seems required??? If this is not done some videos become garbled. But only for DVDs... <br  />
 <br  />
 With fix: all DVDs OK, some Blurays (e.g. Phil Collins) not... <br  />
 With fix: all DVDs shitty, but Blurays OK. <br  />
 <br  />
 Applying fix for DVDs only.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#aac45e5ea83a42253119635023ce8d8e6">FFmpeg_Transcoder::open_output_frame_set</a>  (<a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> *buffer)</dt>
-<dd><a class="anchor" id="_todo000011"></a>Make frame image compression rate command line settable  </dd>
+<dd><a class="anchor" id="_todo000010"></a>Make frame image compression rate command line settable  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
-<dd><a class="anchor" id="_todo000016"></a>Is this a FFmpeg bug or am I too stupid? <br  />
+<dd><a class="anchor" id="_todo000015"></a>Is this a FFmpeg bug or am I too stupid? <br  />
 OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. <br  />
 For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a6afa2189ecd068bcbaa1054835db27c4">FFmpeg_Transcoder::read_decode_convert_and_store</a>  (int *finished)</dt>
-<dd><a class="anchor" id="_todo000015"></a>Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.  </dd>
+<dd><a class="anchor" id="_todo000014"></a>Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770">ffmpegfs_getattr</a>  (const char *path, struct stat *stbuf)</dt>
-<dd><a class="anchor" id="_todo000020"></a>Calculate correct file size for frame image in set  </dd>
-<dt>Member <a class="el" href="fuseops_8cc.html#a6c0c07bc6805650f5da69fc23258cc51">ffmpegfs_readdir</a>  (const char *path, void *buf, fuse_fill_dir_t filler, off_t, struct fuse_file_info *)</dt>
 <dd><a class="anchor" id="_todo000019"></a>Calculate correct file size for frame image in set  </dd>
+<dt>Member <a class="el" href="fuseops_8cc.html#a6c0c07bc6805650f5da69fc23258cc51">ffmpegfs_readdir</a>  (const char *path, void *buf, fuse_fill_dir_t filler, off_t, struct fuse_file_info *)</dt>
+<dd><a class="anchor" id="_todo000018"></a>Calculate correct file size for frame image in set  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a7ad0a9782c3231049be5c9c9b22542a7">find_original</a>  (std::string *filepath)</dt>
-<dd><a class="anchor" id="_todo000018"></a>This probably won't work, need to redo "Fallback to old method"  </dd>
+<dd><a class="anchor" id="_todo000017"></a>This probably won't work, need to redo "Fallback to old method"  </dd>
 <dt>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
-<dd><a class="anchor" id="_todo000017"></a>Currently always returns 0. Must implement real check.  </dd>
+<dd><a class="anchor" id="_todo000016"></a>Currently always returns 0. Must implement real check.  </dd>
+<dt>Member <a class="el" href="fuseops_8cc.html#ac422769b0b726d7438d3e0f39eebf00f">kick_next</a>  (LPVIRTUALFILE virtualfile)</dt>
+<dd><a class="anchor" id="_todo000020"></a>Will work only if transcoding finishes within timeout. Probably remove or raise timeout here.  </dd>
 <dt>Member <a class="el" href="transcode_8cc.html#a2353c561b16312d0ea329f5900415add">MIN_SEGMENT</a>  </dt>
 <dd><a class="anchor" id="_todo000021"></a>Seek new segment if more distance should better count in seconds, not segments...  </dd>
 <dt>Member <a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a>  ()</dt>

@@ -48,7 +48,7 @@ then
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "snowboard.mp4" 3902759 3912285
+    check_filesize "snowboard.mp4" 3902716 3912285
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores

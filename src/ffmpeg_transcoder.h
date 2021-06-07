@@ -711,7 +711,17 @@ protected:
      */
     int 						init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int in_height, AVPixelFormat out_pix_fmt, int out_width, int out_height);
     /**
-     * @brief Purge FIFO buffers and report lost packet.
+     * @brief Purge all samples in audio FIFO
+     * @return Number of samples that have been purged. Function never fails.
+     */
+    int                         purge_audio_fifo();
+    /**
+     * @brief Purge all frames in video FIFO
+     * @return Number of frames that have been purged. Function never fails.
+     */
+    size_t                      purge_video_frame_fifo();
+    /**
+     * @brief Purge FIFO buffers and report lost packets/frames/samples.
      */
     void                        purge_fifos();
     /**

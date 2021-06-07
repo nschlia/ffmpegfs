@@ -4782,11 +4782,9 @@ bool FFmpeg_Transcoder::close_resample()
     return false;
 }
 
-void FFmpeg_Transcoder::purge_fifos()
+int FFmpeg_Transcoder::purge_audio_fifo()
 {
-    std::string outfile;
     int audio_samples_left = 0;
-    size_t video_frames_left = 0;
 
     if (m_audio_fifo != nullptr)
     {
@@ -4795,15 +4793,29 @@ void FFmpeg_Transcoder::purge_fifos()
         m_audio_fifo = nullptr;
     }
 
-    video_frames_left = m_video_fifo.size();
+    return audio_samples_left;
+}
+
+size_t FFmpeg_Transcoder::purge_video_frame_fifo()
+{
+    size_t video_frames_left = m_video_fifo.size();
 
     while (m_video_fifo.size())
     {
-        AVFrame *output_frame = m_video_fifo.front();
+        AVFrame *video_frame = m_video_fifo.front();
         m_video_fifo.pop();
 
-        av_frame_free(&output_frame);
+        av_frame_free(&video_frame);
     }
+
+    return video_frames_left;
+}
+
+void FFmpeg_Transcoder::purge_fifos()
+{
+    std::string outfile;
+    int audio_samples_left      = purge_audio_fifo();
+    size_t video_frames_left    = purge_video_frame_fifo();
 
     if (m_out.m_format_ctx != nullptr)
     {

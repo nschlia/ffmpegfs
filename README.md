@@ -52,6 +52,8 @@ Important changes in 2.3 (2021-05-XX)
   Deprecated av_init_packet()
 * **Fixed API compatitbility:** Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,
 * **Bugfix:** find_original "fallback" method did not correctly handle the new filename format (extension added, not the original one replaced).
+* **Bugfix:** [Issue #87](https://github.com/nschlia/ffmpegfs/issues/87): Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds). 
+* **Bugfix:** [Issue #88](https://github.com/nschlia/ffmpegfs/issues/88): HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations. 
 
 ### Version 2.2 released
 

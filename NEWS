@@ -35,8 +35,10 @@ Important changes in 2.3 (2021-05-XX)
   reasonable, this breaks API compatibility with versions older than 59.0.100,
 * Bugfix: find_original "fallback" method did not correctly handle the new filename
   format (extension added, not the original one replaced).
-
-Preparing release 2.2
+* Bugfix: Issue #87: Segments are now properly separated, making sure that e.g.
+  segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds).
+* Bugfix: Issue #88: HLS audio and video now stay in sync after longer playback
+  (more than 30 minutes) or after seek operations.
 
 Important changes in 2.2 (2021-02-06)
 

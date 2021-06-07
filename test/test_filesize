@@ -12,7 +12,7 @@ if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
     check_filesize "raven_e.flac" 489113 494238
-    check_filesize "raven_d.ogg" 351126 355298
+    check_filesize "raven_d.ogg" 350916 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
@@ -26,7 +26,7 @@ then
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "raven_e.flac" 356669 489113
+    check_filesize "raven_e.flac" 356664 489113
     check_filesize "raven_d" 264179
 elif [ "${DESTTYPE}" == "webm" ];
 then
@@ -57,7 +57,7 @@ elif [ "${DESTTYPE}" == "alac" ];
 then
     # alac
     check_filesize "raven_e.flac" 3952038 3986427
-    check_filesize "raven_d.ogg" 3277326 3320221
+    check_filesize "raven_d.ogg" 3276270 3320221
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts

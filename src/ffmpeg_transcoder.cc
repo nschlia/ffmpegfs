@@ -170,8 +170,10 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_copy_video(false)
     , m_current_format(nullptr)
     , m_buffer(nullptr)
-    , m_reset_pts(false)
+    , m_reset_pts(0)
     , m_fake_frame_no(0)
+    , m_active_stream_msk(0)
+    , m_inhibit_stream_msk(0)
 {
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
@@ -731,7 +733,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     m_buffer            = buffer;
     {
-        std::lock_guard<std::recursive_mutex> lck (m_mutex);
+        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
         while (m_seek_to_fifo.size())
         {
             m_seek_to_fifo.pop();
@@ -905,7 +907,53 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         return AVERROR(_errno);
     }
 
-    return process_output();
+    ret = process_output();
+    if (ret)
+    {
+        return ret;
+    }
+
+    // process_output() calls avformat_write_header which feels free to change the stream time bases sometimes.
+    // This means we have to do the following calculations here to use the correct values, otherwise this can cause
+    // a lot of havoc.
+
+    if (m_in.m_audio.m_stream != nullptr && m_out.m_audio.m_stream != nullptr && m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+    {
+        m_in.m_audio_start_time                 = m_in.m_audio.m_stream->start_time;
+        m_out.m_audio_start_time                = av_rescale_q_rnd(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        m_out.m_audio.m_stream->start_time     = m_out.m_audio_start_time;
+    }
+    else
+    {
+        m_in.m_audio_start_time                 = 0;
+        m_out.m_audio_start_time                = 0;
+        if (m_out.m_audio.m_stream)
+        {
+            m_out.m_audio.m_stream->start_time  = AV_NOPTS_VALUE;
+        }
+    }
+
+    if (m_in.m_video.m_stream != nullptr && m_out.m_video.m_stream != nullptr && m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+    {
+        m_in.m_video_start_time                 = m_in.m_video.m_stream->start_time;
+        m_out.m_video_start_time                = av_rescale_q_rnd(m_in.m_video.m_stream->start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        m_out.m_video.m_stream->start_time      = m_out.m_video_start_time;
+    }
+    else
+    {
+        m_in.m_video_start_time                 = 0;
+        m_out.m_video_start_time                = 0;
+        if (m_out.m_video.m_stream)
+        {
+            m_out.m_video.m_stream->start_time  = AV_NOPTS_VALUE;
+        }
+    }
+
+    m_out.m_audio_pts         = m_out.m_audio_start_time;
+    m_out.m_video_pts         = m_out.m_video_start_time;
+    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
+
+    return 0;
 }
 
 int FFmpeg_Transcoder::process_output()
@@ -1813,9 +1861,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 #endif
 
     // Ignore missing width/height when adding album arts
-#if IF_DECLARED_CONST
-#warning  "m_out.m_format_ctx->oformat->flags suddenly read-only, how to set this????"
-#else // !IF_DECLARED_CONST
+#if !IF_DECLARED_CONST
     m_out.m_format_ctx->oformat->flags |= AVFMT_NODIMENSIONS;
 #endif // !IF_DECLARED_CONST
     // This is required for some reason (let encoder decide?)
@@ -1918,7 +1964,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     tmp_pkt->pos = 0;
     tmp_pkt->dts = 0;
 
-    ret = store_packet(tmp_pkt, "album art");
+    ret = store_packet(tmp_pkt, AVMEDIA_TYPE_ATTACHMENT);
 
 #if LAVF_DEP_AV_COPY_PACKET
     av_packet_unref(tmp_pkt);
@@ -1936,6 +1982,10 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_out.m_filetype = m_current_format->filetype();
 
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+
+    // Reset active streams
+    m_active_stream_msk     = 0;
+    m_inhibit_stream_msk    = 0;
 
     // Check if we can copy audio or video.
     m_copy_audio = can_copy_stream(m_in.m_audio.m_stream);
@@ -1966,6 +2016,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
     {
+        m_active_stream_msk     |= FFMPEGFS_VIDEO;
+
         if (!m_copy_video)
         {
             ret = add_stream(m_current_format->video_codec_id());
@@ -1998,6 +2050,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->audio_codec_id() != AV_CODEC_ID_NONE)
     {
+        m_active_stream_msk     |= FFMPEGFS_AUDIO;
+
         if (!m_copy_audio)
         {
             ret = add_stream(m_current_format->audio_codec_id());
@@ -2049,9 +2103,11 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 output_write,   // write
                 (m_current_format->audio_codec_id() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
-    m_out.m_audio_pts         = m_in.m_audio.m_stream != nullptr ? m_in.m_audio.m_stream->start_time : 0;
-    m_out.m_video_pts         = m_in.m_video.m_stream != nullptr ? m_in.m_video.m_stream->start_time : 0;
-    m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
+    if (m_out.m_format_ctx->pb == nullptr)
+    {
+        Logging::error(destname(), "Out of memory opening output file: Unable to allocate format context.");
+        return AVERROR(ENOMEM);
+    }
 
     return 0;
 }
@@ -2640,27 +2696,23 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     frame->pts = m_pts;
                 }
 
-                if (m_out.m_video.m_stream != nullptr)
+                if (m_out.m_video.m_stream != nullptr && frame->pts != AV_NOPTS_VALUE)
                 {
-                    // Rescale to our time base, but only if nessessary
-                    if (frame->pts != AV_NOPTS_VALUE && (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num))
+                    if (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num)
                     {
                         frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
                     }
 
-                    frame->quality = m_out.m_video.m_codec_ctx->global_quality;
-                }
-
-                if (m_out.m_video.m_stream != nullptr)
-                {
                     // Fix for issue #46: bitrate too high.
                     // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
                     // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
                     frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
                 }
 
-                frame->pict_type = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
-                m_video_fifo.push(frame);
+                frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
+                frame->pict_type    = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+
+                m_video_frame_fifo.push(frame);
             }
             else
             {
@@ -2673,8 +2725,68 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     return ret;
 }
 
-int FFmpeg_Transcoder::store_packet(AVPacket *pkt, const char *type)
+int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 {
+    if (is_hls() && pkt->pts != AV_NOPTS_VALUE)
+    {
+        switch (mediatype)
+        {
+        case AVMEDIA_TYPE_AUDIO:
+        {
+            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_audio_start_time, m_out.m_audio.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            if (pos < 0)
+            {
+                pos = 0;
+            }
+            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+
+            //Logging::error(destname(), "AUDIO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+
+            if (next_segment == m_current_segment + 1)
+            {
+                if (!(m_inhibit_stream_msk & FFMPEGFS_AUDIO))
+                {
+                    m_inhibit_stream_msk |= FFMPEGFS_AUDIO;
+
+                    Logging::debug(destname(), "AUDIO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+                }
+
+                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                return 0;
+            }
+            break;
+        }
+        case AVMEDIA_TYPE_VIDEO:
+        {
+            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_video_start_time, m_out.m_video.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            if (pos < 0)
+            {
+                pos = 0;
+            }
+            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+
+            //Logging::error(destname(), "VIDEO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+
+            if (next_segment == m_current_segment + 1)
+            {
+                if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
+                {
+                    m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
+
+                    Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+				}
+	            m_hls_packet_fifo.push(av_packet_clone(pkt));
+	            return 0;
+            }
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+    }
+
 #ifdef USE_INTERLEAVED_WRITE
     int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
 #else   // !USE_INTERLEAVED_WRITE
@@ -2683,6 +2795,22 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, const char *type)
 
     if (ret < 0)
     {
+        const char *type;
+
+        if (mediatype != AVMEDIA_TYPE_ATTACHMENT)
+        {
+            type = av_get_media_type_string(mediatype);
+
+            if (type == nullptr)
+            {
+                type = "unknown";
+            }
+        }
+        else
+        {
+            type = "album art";
+        }
+
         Logging::error(destname(), "Could not write %1 frame (error '%2').", type, ffmpeg_geterror(ret).c_str());
     }
 
@@ -2693,18 +2821,17 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 {
     int ret = 0;
 
-    if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM)
+    if (m_in.m_audio.m_stream != nullptr && pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM)
     {
-        if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
+        if (m_reset_pts & FFMPEGFS_AUDIO && pkt->pts != AV_NOPTS_VALUE)
         {
+            m_reset_pts &= ~FFMPEGFS_AUDIO; // Clear reset bit
+
             int64_t pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
-            m_reset_pts = false;
 
             m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
-            if (m_out.m_video.m_stream != nullptr)
-            {
-                m_out.m_video_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_video.m_stream->time_base);
-            }
+			
+            Logging::debug(destname(), "Reset PTS from audio packet to %1", format_duration(pts).c_str());
         }
 
         if (!m_copy_audio)
@@ -2729,21 +2856,20 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             }
             pkt->pos            = -1;
 
-            ret = store_packet(pkt, "audio");
+            ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
         }
     }
-    else if (pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx != INVALID_STREAM || is_frameset()))
+    else if (m_in.m_video.m_stream != nullptr && pkt->stream_index == m_in.m_video.m_stream_idx && (m_out.m_video.m_stream_idx != INVALID_STREAM || is_frameset()))
     {
-        if (m_reset_pts && pkt->pts != AV_NOPTS_VALUE)
+        if (m_reset_pts & FFMPEGFS_VIDEO && pkt->pts != AV_NOPTS_VALUE)
         {
-            int64_t pts = av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q());
-            m_reset_pts = false;
+            m_reset_pts &= ~FFMPEGFS_VIDEO; // Clear reset bit
 
-            if (m_out.m_audio.m_stream != nullptr)
-            {
-                m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
-            }
+            int64_t pts = av_rescale_q(pkt->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q());
+
             m_out.m_video_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_video.m_stream->time_base);
+
+            Logging::debug(destname(), "Reset PTS from video packet to %1", format_duration(pts).c_str());
         }
 
         if (!m_copy_video)
@@ -2817,7 +2943,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
             pkt->pos            = -1;
 
-            ret = store_packet(pkt, "video");
+            ret = store_packet(pkt, AVMEDIA_TYPE_VIDEO);
         }
     }
     else
@@ -3168,11 +3294,13 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     (*frame)->nb_samples        = frame_size;
     (*frame)->channel_layout    = m_out.m_audio.m_codec_ctx->channel_layout;
     (*frame)->format            = m_out.m_audio.m_codec_ctx->sample_fmt;
+    (*frame)->sample_rate       = m_out.m_audio.m_codec_ctx->sample_rate;
 
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.
+    // 29.05.2021: Let API decide about alignment. Should be properly set for the current CPU.
 
-    ret = av_frame_get_buffer(*frame, 32);
+    ret = av_frame_get_buffer(*frame, 0);
     if (ret < 0)
     {
         Logging::error(destname(), "Could allocate output frame samples (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3185,9 +3313,12 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
 
 void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 {
-    //    if ((pkt->pts == 0 || pkt->pts == AV_NOPTS_VALUE) && pkt->dts == AV_NOPTS_VALUE)
+    if (pkt->pts == AV_NOPTS_VALUE && pkt->dts == AV_NOPTS_VALUE)
     {
+        // Normally we have already added the PTS to the frame when it was created. Just in case
+        // this failed, and there are no valid PTS/DTS valuesm we add it here.
         int64_t duration;
+
         // Some encoders to not produce dts/pts.
         // So we make some up.
         if (pkt->duration)
@@ -3288,7 +3419,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
 
             produce_audio_dts(pkt);
 
-            ret = store_packet(pkt, "audio");
+            ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
             if (ret < 0)
             {
                 av_packet_unref(pkt);
@@ -3569,7 +3700,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 }
 
                 // Write packet to buffer
-                ret = store_packet(pkt, "video");
+                ret = store_packet(pkt, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
                 {
                     throw ret;
@@ -3592,7 +3723,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     return ret;
 }
 
-int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
+int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 {
     // Temporary storage of the output samples of the frame written to the file.
     AVFrame *output_frame;
@@ -3603,7 +3734,6 @@ int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
     // buffer use this number. Otherwise, use the maximum possible frame size
 
     frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);
-    int data_written;
 
     // Initialise temporary storage for one output frame.
     ret = init_audio_output_frame(&output_frame, frame_size);
@@ -3631,19 +3761,36 @@ int FFmpeg_Transcoder::load_encode_and_write(int frame_size)
         return ret;
     }
 
-    // Encode one frame worth of audio samples.
-    ret = encode_audio_frame(output_frame, &data_written);
-#if !LAVC_NEW_PACKET_INTERFACE
-    if (ret < 0)
-#else
-    if (ret < 0 && ret != AVERROR(EAGAIN))
-#endif
+    // Build correct PTS
+    if (output_frame->sample_rate)
     {
-        av_frame_free(&output_frame);
-        return ret;
+        /*
+        * FFmpeg API docs say:
+        *
+        * best_effort_timestamp: frame timestamp estimated using various heuristics, in stream time base.
+        * Unused for encoding, but we set it anyways.
+        *
+        * pts: Presentation timestamp, they say in ffmpeg time_base units, but nevertheless it seems to be
+        * in stream time base. When not converted the audio comes out wobbly.
+        */
+
+#if LAVF_DEP_AVSTREAM_CODEC
+        // Not sure if this is use anywhere, but let's set it anyway.
+        output_frame->best_effort_timestamp = av_rescale_q(m_out.m_audio_pts, m_out.m_audio.m_stream->time_base, m_in.m_audio.m_stream->time_base);
+#endif
+        output_frame->pts = m_out.m_audio_pts;
+
+        // duration = `a * b / c` = AV_TIME_BASE * output_frame->nb_samples / output_frame->sample_rate;
+        int64_t duration = av_rescale(AV_TIME_BASE, output_frame->nb_samples, output_frame->sample_rate);
+
+        duration = av_rescale_q(duration, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
+
+        m_out.m_audio_pts += duration;
     }
-    av_frame_free(&output_frame);
-    return 0;
+
+    m_audio_frame_fifo.push(output_frame);
+
+    return ret;
 }
 
 int FFmpeg_Transcoder::write_output_file_trailer()
@@ -3887,6 +4034,87 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     return ret;
 }
 
+int FFmpeg_Transcoder::flush_delayed_audio()
+{
+    int ret = 0;
+
+    if (m_out.m_audio.m_codec_ctx != nullptr)
+    {
+        // Flush the encoder as it may have delayed frames.
+        int data_written = 0;
+        do
+        {
+            ret = encode_audio_frame(nullptr, &data_written);
+#if LAVC_NEW_PACKET_INTERFACE
+            if (ret == AVERROR_EOF)
+            {
+                // Not an error
+                break;
+            }
+
+            if (ret < 0 && ret != AVERROR(EAGAIN))
+            {
+                Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+#else
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+#endif
+        }
+        while (data_written);
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::flush_delayed_video()
+{
+    int ret = 0;
+
+    if (m_out.m_video.m_codec_ctx != nullptr)
+    {
+        // Flush the encoder as it may have delayed frames.
+        int data_written = 0;
+        do
+        {
+            if (!is_frameset())
+            {
+                // Encode regular frame
+                ret = encode_video_frame(nullptr, &data_written);
+            }
+            else
+            {
+                // Encode seperate image frame
+                ret = encode_image_frame(nullptr, &data_written);
+            }
+#if LAVC_NEW_PACKET_INTERFACE
+            if (ret == AVERROR_EOF)
+            {
+                // Not an error
+                break;
+            }
+            if (ret < 0 && ret != AVERROR(EAGAIN))
+            {
+                Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+#else
+            if (ret < 0)
+            {
+                throw ret;
+            }
+#endif
+        }
+        while (data_written);
+    }
+
+    return ret;
+}
+
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
@@ -3903,7 +4131,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             {
                 // No current seek frame, check if new seek frame was stacked.
                 {
-                    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+                    std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
 
                     while (!m_seek_to_fifo.empty())
                     {
@@ -4005,10 +4233,32 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (finished && av_audio_fifo_size(m_audio_fifo) > 0))
             {
                 // Take one frame worth of audio samples from the FIFO buffer,
-                // encode it and write it to the output file.
+                // create a frame and store in audio frame FIFO.
 
-                ret = load_encode_and_write(output_frame_size);
+                ret = create_audio_frame(output_frame_size);
                 if (ret < 0)
+                {
+                    throw ret;
+                }
+            }
+
+            // Read audio frame FIFO, encode and store
+            while (!m_audio_frame_fifo.empty())
+            {
+                AVFrame *audio_frame = m_audio_frame_fifo.front();
+                m_audio_frame_fifo.pop();
+
+                int data_written;
+                // Encode one frame worth of audio samples.
+                ret = encode_audio_frame(audio_frame, &data_written);
+
+                av_frame_free(&audio_frame);
+
+#if !LAVC_NEW_PACKET_INTERFACE
+                if (ret < 0)
+#else
+                if (ret < 0 && ret != AVERROR(EAGAIN))
+#endif
                 {
                     throw ret;
                 }
@@ -4019,35 +4269,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (finished)
             {
-                if (m_out.m_audio.m_codec_ctx != nullptr)
-                {
-                    // Flush the encoder as it may have delayed frames.
-                    int data_written = 0;
-                    do
-                    {
-                        ret = encode_audio_frame(nullptr, &data_written);
-#if LAVC_NEW_PACKET_INTERFACE
-                        if (ret == AVERROR_EOF)
-                        {
-                            // Not an error
-                            break;
-                        }
-
-                        if (ret < 0 && ret != AVERROR(EAGAIN))
-                        {
-                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                            throw ret;
-                        }
-#else
-                        if (ret < 0)
-                        {
-                            Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                            throw ret;
-                        }
-#endif
-                    }
-                    while (data_written);
-                }
+                flush_delayed_audio();
 
                 status = 1;
             }
@@ -4070,34 +4292,35 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
         if (!m_copy_video)
         {
-            while (!m_video_fifo.empty())
+            while (!m_video_frame_fifo.empty())
             {
-                AVFrame *output_frame = m_video_fifo.front();
-                m_video_fifo.pop();
+                AVFrame *video_frame = m_video_frame_fifo.front();
+                m_video_frame_fifo.pop();
 
                 // Encode one video frame.
                 int data_written = 0;
-                output_frame->key_frame = 0;    // Leave that decision to encoder
-                output_frame->pict_type = AV_PICTURE_TYPE_NONE;
+                video_frame->key_frame = 0;    // Leave that decision to encoder
+                video_frame->pict_type = AV_PICTURE_TYPE_NONE;
 
                 if (!is_frameset())
                 {
-                    ret = encode_video_frame(output_frame, &data_written);
+                    ret = encode_video_frame(video_frame, &data_written);
                 }
                 else
                 {
-                    ret = encode_image_frame(output_frame, &data_written);
+                    ret = encode_image_frame(video_frame, &data_written);
                 }
+
+                av_frame_free(&video_frame);
+
 #if !LAVC_NEW_PACKET_INTERFACE
                 if (ret < 0)
 #else
                 if (ret < 0 && ret != AVERROR(EAGAIN))
 #endif
                 {
-                    av_frame_free(&output_frame);
                     throw ret;
                 }
-                av_frame_free(&output_frame);
             }
 
 #if LAVC_NEW_PACKET_INTERFACE
@@ -4109,42 +4332,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (finished)
             {
-                if (m_out.m_video.m_codec_ctx != nullptr)
-                {
-                    // Flush the encoder as it may have delayed frames.
-                    int data_written = 0;
-                    do
-                    {
-                        if (!is_frameset())
-                        {
-                            // Encode regular frame
-                            ret = encode_video_frame(nullptr, &data_written);
-                        }
-                        else
-                        {
-                            // Encode seperate image frame
-                            ret = encode_image_frame(nullptr, &data_written);
-                        }
-#if LAVC_NEW_PACKET_INTERFACE
-                        if (ret == AVERROR_EOF)
-                        {
-                            // Not an error
-                            break;
-                        }
-                        if (ret < 0 && ret != AVERROR(EAGAIN))
-                        {
-                            Logging::error(destname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                            throw ret;
-                        }
-#else
-                        if (ret < 0)
-                        {
-                            throw ret;
-                        }
-#endif
-                    }
-                    while (data_written);
-                }
+                flush_delayed_video();
 
                 status = 1;
             }
@@ -4153,43 +4341,26 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         if (is_hls())
         {
             uint32_t next_segment;
-            int64_t pos = 0;
-            if (m_out.m_video_pts && m_in.m_video.m_stream != nullptr && m_out.m_video.m_stream != nullptr)
-            {
-                int64_t pts = m_out.m_video_pts;
-
-                if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
-                {
-                    pts -= m_in.m_video.m_stream->start_time;
-                }
-
-                pos = av_rescale_q(pts, m_out.m_video.m_stream->time_base, av_get_time_base_q());
-            }
-            else if (m_out.m_audio_pts && m_in.m_audio.m_stream != nullptr && m_out.m_audio.m_stream != nullptr)
-            {
-                int64_t pts = m_out.m_audio_pts;
-
-                if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
-                {
-                    pts -= m_in.m_audio.m_stream->start_time;
-                }
-                pos = av_rescale_q(pts, m_out.m_audio.m_stream->time_base, av_get_time_base_q());
-            }
-
-            next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1); // ????
-
-            if (next_segment > m_virtualfile->get_segment_count())
-            {
-                Logging::error(destname(), "Reached targeted EOF at %1 (avoid creating too short last segment).", format_duration(pos).c_str());
-                throw AVERROR_EOF;
-            }
-            else if (next_segment == m_current_segment + 1)
+            if (m_active_stream_msk == m_inhibit_stream_msk)
             {
                 bool opened = false;
 
+#ifdef USE_INTERLEAVED_WRITE
+		    // Flush interleaved frame queue into old stream
+		    ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
+
+		    if (ret < 0)
+		    {
+		        Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
+		    }
+#endif  // USE_INTERLEAVED_WRITE
+
                 encode_finish();
 
-                // Go to next requested segment
+                // Go to next requested segment...
+                next_segment = m_current_segment + 1;
+
+                // ...or process any stacked seek requests.
                 while (!m_seek_to_fifo.empty())
                 {
                     uint32_t segment_no = m_seek_to_fifo.front();
@@ -4197,8 +4368,10 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                     if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
                     {
-                        m_reset_pts    = true;      // Note that we have to reset audio/video pts to the new position
-                        m_have_seeked   = true;     // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
+                        m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position
+                        m_have_seeked   = true;                             // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
+
+                        Logging::info(destname(), "Performing seek request to HLS segment no. %1.", segment_no);
 
                         int64_t pos = (segment_no - 1) * params.m_segment_duration;
 
@@ -4231,17 +4404,11 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                             throw ret;
                         }
 
-                        if (m_in.m_audio.m_codec_ctx != nullptr)
-                        {
-                            avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
-                        }
-
-                        if (m_in.m_video.m_codec_ctx != nullptr)
-                        {
-                            avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
-                        }
+                        flush_buffers();
 
                         close_output_file();
+
+                        purge_hls_fifo();   // We do not need the packets for the next frame, we start a new one at another position!
 
                         ret = open_output(m_buffer);
                         if (ret < 0)
@@ -4255,9 +4422,14 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         break;
                     }
+
+                    Logging::info(destname(), "Discarded seek request to HLS segment no. %1.", segment_no);
                 }
 
-                m_current_segment = next_segment;
+                // Set current segment
+                m_current_segment       = next_segment;
+
+                m_inhibit_stream_msk = 0;
 
                 Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
 
@@ -4273,6 +4445,28 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     if (ret)
                     {
                         throw ret;
+                    }
+                }
+
+                if (is_hls())
+                {
+                    while (!m_hls_packet_fifo.empty())
+                    {
+                        AVPacket *pkt = m_hls_packet_fifo.front();
+                        m_hls_packet_fifo.pop();
+
+#ifdef USE_INTERLEAVED_WRITE
+                        ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
+#else   // !USE_INTERLEAVED_WRITE
+                        ret = av_write_frame(m_out.m_format_ctx, pkt);
+#endif  // !USE_INTERLEAVED_WRITE
+
+                        if (ret < 0)
+                        {
+                            Logging::error(destname(), "Could not write frame (error '%2').", ffmpeg_geterror(ret).c_str());
+                        }
+
+                        av_packet_unref(pkt);
                     }
                 }
             }
@@ -4802,14 +4996,29 @@ int FFmpeg_Transcoder::purge_audio_fifo()
     return audio_samples_left;
 }
 
+size_t FFmpeg_Transcoder::purge_audio_frame_fifo()
+{
+    size_t audio_frames_left  = m_audio_frame_fifo.size();
+
+    while (m_audio_frame_fifo.size())
+    {
+        AVFrame *audio_frame = m_audio_frame_fifo.front();
+        m_audio_frame_fifo.pop();
+
+        av_frame_free(&audio_frame);
+    }
+
+    return audio_frames_left;
+}
+
 size_t FFmpeg_Transcoder::purge_video_frame_fifo()
 {
-    size_t video_frames_left = m_video_fifo.size();
+    size_t video_frames_left = m_video_frame_fifo.size();
 
-    while (m_video_fifo.size())
+    while (m_video_frame_fifo.size())
     {
-        AVFrame *video_frame = m_video_fifo.front();
-        m_video_fifo.pop();
+        AVFrame *video_frame = m_video_frame_fifo.front();
+        m_video_frame_fifo.pop();
 
         av_frame_free(&video_frame);
     }
@@ -4817,11 +5026,28 @@ size_t FFmpeg_Transcoder::purge_video_frame_fifo()
     return video_frames_left;
 }
 
+size_t FFmpeg_Transcoder::purge_hls_fifo()
+{
+    size_t hls_packets_left = m_hls_packet_fifo.size();
+
+    while (!m_hls_packet_fifo.empty())
+    {
+        AVPacket *pkt = m_hls_packet_fifo.front();
+        m_hls_packet_fifo.pop();
+
+        av_packet_unref(pkt);
+    }
+
+    return hls_packets_left;
+}
+
 void FFmpeg_Transcoder::purge_fifos()
 {
     std::string outfile;
     int audio_samples_left      = purge_audio_fifo();
+    size_t audio_frames_left    = purge_audio_frame_fifo();
     size_t video_frames_left    = purge_video_frame_fifo();
+    size_t hls_packets_left     = purge_hls_fifo();
 
     if (m_out.m_format_ctx != nullptr)
     {
@@ -4842,9 +5068,19 @@ void FFmpeg_Transcoder::purge_fifos()
         Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", audio_samples_left);
     }
 
+    if (audio_frames_left)
+    {
+        Logging::warning(p, "%1 audio frames left in buffer and not written to target file!", audio_frames_left);
+    }
+
     if (video_frames_left)
     {
         Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
+    }
+
+    if (hls_packets_left)
+    {
+        Logging::warning(p, "%1 hls packets left in buffer and not written to target file!", hls_packets_left);
     }
 }
 
@@ -5279,7 +5515,7 @@ int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
 {
     if (frame_no > 0 && frame_no <= video_frame_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_mutex);
+        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(frame_no);  // Seek to this frame next decoding operation
         return 0;
     }
@@ -5295,7 +5531,7 @@ int FFmpeg_Transcoder::stack_seek_segment(uint32_t segment_no)
 {
     if (segment_no > 0 && segment_no <= segment_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_mutex);
+        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(segment_no);  // Seek to this segment next decoding operation
         return 0;
     }

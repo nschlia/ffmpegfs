@@ -107,7 +107,9 @@ public:
             m_filetype(FILETYPE_UNKNOWN),
             m_filename("unset"),
             m_format_ctx(nullptr),
-            m_pix_fmt(AV_PIX_FMT_NONE)
+            m_pix_fmt(AV_PIX_FMT_NONE),
+            m_audio_start_time(0),
+            m_video_start_time(0)
         {}
 
         FILETYPE                m_filetype;             /**< @brief File type, MP3, MP4, OPUS etc. */
@@ -120,19 +122,26 @@ public:
         AVPixelFormat           m_pix_fmt;              /**< @brief Video stream pixel format */
 
         std::vector<STREAMREF>  m_album_art;            /**< @brief Album art stream */
+
+        int64_t                 m_audio_start_time;     /**< @brief Start time of the audio stream in input audio stream time base units, may be 0 */
+        int64_t                 m_video_start_time;     /**< @brief Start time of the video stream in input video stream time base units, may be 0 */
     };
 
     // Output file
     struct OUTPUTFILE : public INPUTFILE                /**< @brief Output file definition */
     {
         OUTPUTFILE() :
+            m_audio_start_time(0),
             m_audio_pts(0),
+            m_video_start_time(0),
             m_video_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {}
 
-        int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames */
-        int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames */
+        int64_t                 m_audio_start_time;     /**< @brief Start time of the audio stream in output audio stream time base units, may be 0 */
+        int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames in output audio stream time base units  */
+        int64_t                 m_video_start_time;     /**< @brief Start time of the video stream in output video stream time base units, may be 0 */
+        int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames in output video stream time base units  */
         int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
 
         ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */
@@ -301,6 +310,14 @@ public:
      * @brief Flush FFmpeg's input buffers
      */
     void                        flush_buffers();
+    /**
+     * @brief Flush delayed audio packets, if there are any
+     */
+    int                         flush_delayed_audio();
+    /**
+     * @brief Flush delayed video packets, if there are any
+     */
+    int                         flush_delayed_video();
 
 protected:
     /**
@@ -460,7 +477,7 @@ protected:
      * @param[in] mediatype - Typo of packet: audio, video, image (attachment)
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         store_packet(AVPacket *pkt, const char *type);
+    int                         store_packet(AVPacket *pkt, AVMediaType mediatype);
     /**
      * @brief Decode one audio frame
      * @param[in] pkt - Packet to decode.
@@ -559,6 +576,12 @@ protected:
     int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
 #endif
     /**
+     * @brief Load one audio frame from the FIFO buffer and store in frame buffer.
+     * @param[in] frame_size - Size of frame.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
+    int                         create_audio_frame(int frame_size);
+    /**
      * @brief Create one frame worth of audio to the output file.
      * @param[in] frame - Audio frame to encode
      * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
@@ -579,12 +602,6 @@ protected:
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_image_frame(const AVFrame *frame, int *data_present);
-    /**
-     * @brief Load one audio frame from the FIFO buffer, encode and write it to the output file.
-     * @param[in] frame_size - Size of frame.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
-     */
-    int                         load_encode_and_write(int frame_size);
     /**
      * @brief Write the trailer of the output file container.
      * @return On success returns 0. On error, returns a negative AVERROR value.
@@ -716,10 +733,20 @@ protected:
      */
     int                         purge_audio_fifo();
     /**
+     * @brief Purge all frames in audio FIFO
+     * @return Number of frames that have been purged. Function never fails.
+     */
+    size_t                      purge_audio_frame_fifo();
+    /**
      * @brief Purge all frames in video FIFO
      * @return Number of frames that have been purged. Function never fails.
      */
     size_t                      purge_video_frame_fifo();
+    /**
+     * @brief Purge all packets in HLS FIFO buffer
+     * @return Number of Packets that have been purged. Function never fails.
+     */
+    size_t                      purge_hls_fifo();
     /**
      * @brief Purge FIFO buffers and report lost packets/frames/samples.
      */
@@ -751,7 +778,7 @@ private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
     time_t                      m_mtime;                    /**< @brief Modified time of input file */
-    std::recursive_mutex        m_mutex;                    /**< @brief Access mutex */
+    std::recursive_mutex        m_seek_to_fifo_mutex;       /**< @brief Access mutex for seek FIFO */
     std::queue<uint32_t>        m_seek_to_fifo;             /**< @brief Stack of seek requests. Will be processed FIFO */
     volatile uint32_t           m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
     bool                        m_have_seeked;              /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
@@ -768,13 +795,14 @@ private:
     AVAudioResampleContext *    m_audio_resample_ctx;       /**< @brief AVResample context for audio resampling */
 #endif
     AVAudioFifo *               m_audio_fifo;               /**< @brief Audio sample FIFO */
+    std::queue<AVFrame*>        m_audio_frame_fifo;         /**< @brief Audio frame FIFO */
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                  /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;      /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;    /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;             /**< @brief Video filter graph */
-    std::queue<AVFrame*>        m_video_fifo;               /**< @brief Video frame FIFO */
+    std::queue<AVFrame*>        m_video_frame_fifo;         /**< @brief Video frame FIFO */
     int64_t                     m_pts;                      /**< @brief Generated PTS */
     int64_t                     m_pos;                      /**< @brief Generated position */
 
@@ -791,10 +819,17 @@ private:
 
     Buffer *                    m_buffer;                   /**< @brief Pointer to cache buffer object */
 
-    bool                        m_reset_pts;                /**< @brief We have to reset audio/video pts to the new position */
+    uint32_t                    m_reset_pts;                /**< @brief We have to reset audio/video pts to the new position */
     uint32_t                    m_fake_frame_no;            /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
+
+#define FFMPEGFS_AUDIO      static_cast<uint32_t>(0x0001)   /**< @brief Denote an audio stream */
+#define FFMPEGFS_VIDEO      static_cast<uint32_t>(0x0002)   /**< @brief Denote a video stream */
+
+    uint32_t                    m_active_stream_msk;        /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
+    uint32_t                    m_inhibit_stream_msk;       /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
+    std::queue<AVPacket*>       m_hls_packet_fifo;          /**< @brief HLS packet FIFO */
 };
 
 #endif // FFMPEG_TRANSCODER_H

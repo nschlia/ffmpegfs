@@ -63,6 +63,8 @@ extern "C" {
 }
 #endif
 
+// #define USE_INTERLEAVED_WRITE
+
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
 const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
@@ -2673,7 +2675,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
 int FFmpeg_Transcoder::store_packet(AVPacket *pkt, const char *type)
 {
+#ifdef USE_INTERLEAVED_WRITE
     int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
+#else   // !USE_INTERLEAVED_WRITE
+    int ret = av_write_frame(m_out.m_format_ctx, pkt);
+#endif  // !USE_INTERLEAVED_WRITE
 
     if (ret < 0)
     {

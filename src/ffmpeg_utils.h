@@ -722,7 +722,7 @@ bool                file_exists(const std::string & filename);
 /** Save version of hwdevice_get_type_name:
  * Get the string name of an AVHWDeviceType.
  *
- * @param type Type from enum AVHWDeviceType.
+ * @param[in] dev_type - Type from enum AVHWDeviceType.
  * @return Pointer to a static string containing the name, or "unknown" if the type
  *         is not valid.
  */

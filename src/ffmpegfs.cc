@@ -423,19 +423,16 @@ static HWACCEL_MAP hwaccel_map =
     // **** Supported by Linux ****
 
     { "VAAPI",          { true,     HWACCELAPI_VAAPI,           AV_HWDEVICE_TYPE_NONE } },  // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
-    { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
 
     // RaspberryPi
 
-    { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the Raspberry Pi.
-    { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration)
+    { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom. Encoding only.
+    { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration). Decoding only.
 
-    // Not hardware frame buffered
-
-    { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
-
+#if 0
     // Additional formats
-
+    { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
+    { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
     { "VDPAU",          { false,    HWACCELAPI_VDPAU,           AV_HWDEVICE_TYPE_NONE } },  // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
     { "QSV",            { false,    HWACCELAPI_QSV,             AV_HWDEVICE_TYPE_NONE } },  // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
     { "OPENCL",         { false,    HWACCELAPI_OPENCL,          AV_HWDEVICE_TYPE_NONE } },  // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
@@ -460,7 +457,7 @@ static HWACCEL_MAP hwaccel_map =
     { "DXVA2",          { false,    HWACCELAPI_DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
     { "D3D11VA",        { false,    HWACCELAPI_D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
     #endif
-
+    #endif
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);

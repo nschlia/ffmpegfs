@@ -12,9 +12,9 @@ cp -v "${DIRNAME}/000002.ts" /dev/null
 cp -v "${DIRNAME}/000003.ts" /dev/null
 
 echo "File sizes"
-check_filesize "000001.ts" 1535020 1599880
-check_filesize "000002.ts" 1523928 1569612
-check_filesize "000003.ts" 1193612 1231588
+check_filesize "000001.ts" 1478620 1566416
+check_filesize "000002.ts" 1513964 1570552
+check_filesize "000003.ts" 1193612 1248132
 echo "File sizes OK"
 
 echo "OK"

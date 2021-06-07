@@ -457,7 +457,7 @@ int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)
         return 0;
     }
 
-    return av_rescale_q(ts, av_get_time_base_q(), time_base);
+    return av_rescale_q_rnd(ts, time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
 }
 
 #if !HAVE_MEDIA_TYPE_STRING

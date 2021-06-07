@@ -45,11 +45,7 @@ test_frameset_jpg \
 test_video_hw_dec_vaapi \
 test_video_hw_enc_vaapi \
 test_video_hw_dec_mmal \
-test_video_hw_enc_omx \
-test_video_hw_enc_cuda \
-test_video_hw_dec_cuda \
-test_video_hw_dec_v4l2m2m \
-test_video_hw_enc_v4l2m2m
+test_video_hw_enc_omx
 
 # NOT IN RELEASE 1.0! Add later: test_picture_*
 

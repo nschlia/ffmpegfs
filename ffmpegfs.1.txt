@@ -224,12 +224,6 @@ Default: *NONE* (no acceleration)
  * *NONE*: use software encoder
  * *VAAPI*: Video Acceleration API (VA-API)
  * *OMX*: OpenMAX (Open Media Acceleration)
- * *CUDA*: Compute Unified Device Architecture *(untested)*
- * *VDPAU*: Video Decode and Presentation API for Unix *(untested)*
- * *QSV*: QuickSync *(untested)*
- * *V4L2M2M*: v4l2 mem to mem (Video4linux)  *(untested)*
- * *OPENCL*: Open Standard for Parallel Programming of Heterogeneous Systems *(untested)*
- * *VULKAN*: Low-overhead, cross-platform 3D graphics and computing API *(untested)*
 
 *--hwaccel_enc_device*=DEVICE, -o *hwaccel_enc_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially
@@ -249,14 +243,7 @@ Default: *NONE* (no acceleration)
 *API*:: can be defined as...
  * *NONE*: use software decoder
  * *VAAPI*: Video Acceleration API (VA-API)
- * *CUDA*: Compute Unified Device Architecture *(untested)*
- * *MMAL*: Multimedia Abstraction Layer by Broadcom for use with the Videocore IV GPU on the
- * *VDPAU*: Video Decode and Presentation API for Unix *(untested)*
- * *QSV*: QuickSync *(untested)*
- * *V4L2M2M*: v4l2 mem to mem (Video4linux)  *(untested)*
- * *OPENCL*: Open Standard for Parallel Programming of Heterogeneous Systems *(untested)*
- Raspberry Pi.
- * *VULKAN*:  Low-overhead, cross-platform 3D graphics and computing API *(untested)*
+ * *MMAL*: Multimedia Abstraction Layer by Broadcom
 
 *--hwaccel_dec_device*=DEVICE, -o *hwaccel_dec_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially

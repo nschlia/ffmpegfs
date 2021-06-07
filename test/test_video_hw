@@ -18,4 +18,4 @@ fi
 
 . "${BASH_SOURCE%/*}/funcs.sh" ts 77
 
-cp -v "${DIRNAME}/snowboard.${FILEEXT}" /dev/null || exit 77 # Make test suite report "SKIP"
+cp -v "${DIRNAME}/snowboard.mp4.${FILEEXT}" /dev/null || exit 77 # Make test suite report "SKIP"

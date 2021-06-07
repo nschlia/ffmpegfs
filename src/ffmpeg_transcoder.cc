@@ -412,8 +412,8 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
-	// Issue #80: Open input video codec, but only if target supports video. 
-	// Saves resources: no need to decode video frames if not used.
+    // Issue #80: Open input video codec, but only if target supports video.
+    // Saves resources: no need to decode video frames if not used.
     if (m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
     {
         // Open best match video codec
@@ -2031,7 +2031,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     const int buf_size = 5*1024*1024;
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(buf_size + FF_INPUT_BUFFER_PADDING_SIZE));
-    if (iobuffer== nullptr)
+    if (iobuffer == nullptr)
     {
         Logging::error(destname(), "Out of memory opening output file: Unable to allocate I/O buffer.");
         return AVERROR(ENOMEM);
@@ -3159,9 +3159,9 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
     // Default channel layouts based on the number of channels
     // are assumed for simplicity.
 
-    (*frame)->nb_samples     = frame_size;
-    (*frame)->channel_layout = m_out.m_audio.m_codec_ctx->channel_layout;
-    (*frame)->format         = m_out.m_audio.m_codec_ctx->sample_fmt;
+    (*frame)->nb_samples        = frame_size;
+    (*frame)->channel_layout    = m_out.m_audio.m_codec_ctx->channel_layout;
+    (*frame)->format            = m_out.m_audio.m_codec_ctx->sample_fmt;
 
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.
@@ -4646,6 +4646,7 @@ uint32_t FFmpeg_Transcoder::segment_count() const
 int FFmpeg_Transcoder::encode_finish()
 {
     int ret = 0;
+
     if (!is_frameset())
     {
         // If not a frame set, write trailer

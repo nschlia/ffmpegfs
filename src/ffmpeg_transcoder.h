@@ -401,7 +401,7 @@ protected:
      * @return Constant pointer to target buffer.
      */
     template <size_t size>
-    const char * tagcpy(char (&out) [ size ], const std::string & in) const;
+    const char *                tagcpy(char (&out) [ size ], const std::string & in) const;
     /**
      * @brief Process the metadata in the FFmpeg file.
      * This should be called at the beginning, before reading audio data.
@@ -457,7 +457,7 @@ protected:
     /**
      * @brief Store packet in output stream.
      * @param[in] pkt - Packet to store.
-     * @param[in] type - Typo of packet: audio, video, image
+     * @param[in] mediatype - Typo of packet: audio, video, image (attachment)
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         store_packet(AVPacket *pkt, const char *type);
@@ -559,7 +559,7 @@ protected:
     int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
 #endif
     /**
-     * @brief Encode one frame worth of audio to the output file.
+     * @brief Create one frame worth of audio to the output file.
      * @param[in] frame - Audio frame to encode
      * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
      * @return On success returns 0. On error, returns a negative AVERROR value.

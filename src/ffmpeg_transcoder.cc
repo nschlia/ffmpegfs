@@ -2710,6 +2710,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 }
 
                 frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
+                frame->key_frame    = 0;                    // Leave that decision to encoder
                 frame->pict_type    = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
 
                 m_video_frame_fifo.push(frame);
@@ -4298,16 +4299,14 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 m_video_frame_fifo.pop();
 
                 // Encode one video frame.
-                int data_written = 0;
-                video_frame->key_frame = 0;    // Leave that decision to encoder
-                video_frame->pict_type = AV_PICTURE_TYPE_NONE;
-
                 if (!is_frameset())
                 {
+                    int data_written = 0;
                     ret = encode_video_frame(video_frame, &data_written);
                 }
                 else
                 {
+                    int data_written = 0;
                     ret = encode_image_frame(video_frame, &data_written);
                 }
 

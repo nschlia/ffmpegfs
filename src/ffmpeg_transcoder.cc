@@ -2774,9 +2774,9 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
 
                     Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-				}
-	            m_hls_packet_fifo.push(av_packet_clone(pkt));
-	            return 0;
+                }
+                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                return 0;
             }
             break;
         }
@@ -2830,7 +2830,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             int64_t pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
 
             m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
-			
+
             Logging::debug(destname(), "Reset PTS from audio packet to %1", format_duration(pts).c_str());
         }
 
@@ -4346,13 +4346,13 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 bool opened = false;
 
 #ifdef USE_INTERLEAVED_WRITE
-		    // Flush interleaved frame queue into old stream
-		    ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
+                // Flush interleaved frame queue into old stream
+                ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
 
-		    if (ret < 0)
-		    {
-		        Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
-		    }
+                if (ret < 0)
+                {
+                    Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
+                }
 #endif  // USE_INTERLEAVED_WRITE
 
                 encode_finish();

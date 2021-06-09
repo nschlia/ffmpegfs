@@ -19,7 +19,7 @@ News
 
 ### Version 2.5 under development
 
-**New in 2.5 (2021-05-xx):**
+**New in 2.5 (2021-06-xx):**
 
 * **Feature**: [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63) - Hardware acceleration for encoding/decoding is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).

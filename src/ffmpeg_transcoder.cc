@@ -3030,6 +3030,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 }
 
                 frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
+                frame->key_frame    = 0;                    // Leave that decision to encoder
                 frame->pict_type    = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
 
                 m_video_frame_fifo.push(frame);
@@ -3094,9 +3095,9 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
 
                     Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-				}
-	            m_hls_packet_fifo.push(av_packet_clone(pkt));
-	            return 0;
+                }
+                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                return 0;
             }
             break;
         }
@@ -3150,7 +3151,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
             int64_t pts = av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q());
 
             m_out.m_audio_pts = av_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
-			
+
             Logging::debug(destname(), "Reset PTS from audio packet to %1", format_duration(pts).c_str());
         }
 
@@ -4344,8 +4345,8 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
         {
             m_out.m_video_pts += m_in.m_video.m_stream->start_time;
         }
-        // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
-        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
+        // Seek to end of file to force AVERROR_EOF from next av_read_frame() call. Ignore errrors.
+        av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
         return 0;
     }
 
@@ -4635,16 +4636,14 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 m_video_frame_fifo.pop();
 
                 // Encode one video frame.
-                int data_written = 0;
-                video_frame->key_frame = 0;    // Leave that decision to encoder
-                video_frame->pict_type = AV_PICTURE_TYPE_NONE;
-
                 if (!is_frameset())
                 {
+                    int data_written = 0;
                     ret = encode_video_frame(video_frame, &data_written);
                 }
                 else
                 {
+                    int data_written = 0;
                     ret = encode_image_frame(video_frame, &data_written);
                 }
 
@@ -4683,13 +4682,13 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 bool opened = false;
 
 #ifdef USE_INTERLEAVED_WRITE
-		    // Flush interleaved frame queue into old stream
-		    ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
+                // Flush interleaved frame queue into old stream
+                ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
 
-		    if (ret < 0)
-		    {
-		        Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
-		    }
+                if (ret < 0)
+                {
+                    Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
+                }
 #endif  // USE_INTERLEAVED_WRITE
 
                 encode_finish();

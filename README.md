@@ -38,7 +38,7 @@ News
 
 **New in 2.3:**
 
-Important changes in 2.3 (2021-05-XX)
+Important changes in 2.3 (2021-06-XX)
 
 * **Enhancement:** [Issue #80](https://github.com/nschlia/ffmpegfs/issues/80): Open input video codec only if target supports video. Saves resources: no need to decode video frames if not used.
 * **Enhancement:**  [Issue #81](https://github.com/nschlia/ffmpegfs/issues/81): If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.
@@ -50,7 +50,7 @@ Important changes in 2.3 (2021-05-XX)
 * **Feature:** [Issue #79](https://github.com/nschlia/ffmpegfs/issues/79): Added Docker support. See [Build A Docker Container](README.md#build-a-docker-container) how to use it.
 * **Fixed deprecation:** 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
   Deprecated av_init_packet()
-* **Fixed API compatitbility:** Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,
+* **Fixed API compatitibility:** Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,
 * **Bugfix:** find_original "fallback" method did not correctly handle the new filename format (extension added, not the original one replaced).
 * **Bugfix:** [Issue #87](https://github.com/nschlia/ffmpegfs/issues/87): Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds). 
 * **Bugfix:** [Issue #88](https://github.com/nschlia/ffmpegfs/issues/88): HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations. 

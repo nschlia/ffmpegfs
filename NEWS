@@ -26,7 +26,7 @@ Important changes in 2.5 (2021-05-xx)
 
 Preparing release 2.3
 
-Important changes in 2.3 (2021-05-XX)
+Important changes in 2.3 (2021-06-XX)
 
 * Enhancement: Issue #80: Open input video codec only if target supports
   video. Saves resources: no need to decode video frames if not used.

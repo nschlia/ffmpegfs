@@ -4008,8 +4008,8 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
         {
             m_out.m_video_pts += m_in.m_video.m_stream->start_time;
         }
-        // Seek to end of file to force AVERROR_EOF from next av_read_frame() call.
-        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
+        // Seek to end of file to force AVERROR_EOF from next av_read_frame() call. Ignore errrors.
+        av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, m_out.m_video_pts, AVSEEK_FLAG_ANY);
         return 0;
     }
 

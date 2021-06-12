@@ -36,6 +36,8 @@ News
 
 ### Version 2.4 under development
 
+Version 2.4 may be a maintenance (bug fixes only) release. New features will go into version 2.5 which will be ready soon, adding hardware acceleration support.  
+
 **New in 2.3:**
 
 Important changes in 2.3 (2021-06-11)

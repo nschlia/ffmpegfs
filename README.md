@@ -16,9 +16,9 @@ News
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-### Version 2.5 under development
+### Version 2.5 released
 
-**New in 2.5 (2021-06-xx):**
+**New in 2.5 (2021-06-18):**
 
 * **Feature**: [Issue #63](https://github.com/nschlia/ffmpegfs/issues/63) - Hardware acceleration for encoding/decoding is partly implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).

@@ -11,9 +11,8 @@ FFmpegfs
 News
 ----
 
-* FFmpegfs has been added to Debian 11 Bullseye and
-  Ubuntu 20.04, also to Debian 10 Buster Backports. See [INSTALL](INSTALL.md) "Installation from repository" for details.
-
+* FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04, also to Debian 10 Buster Backports. See [INSTALL](INSTALL.md) "Installation from repository" for details.
+  
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
@@ -38,9 +37,9 @@ News
 
 Version 2.4 may be a maintenance (bug fixes only) release. New features will go into version 2.5 which will be ready soon, adding hardware acceleration support.  
 
-**New in 2.3:**
+### **Version 2.3 released**
 
-Important changes in 2.3 (2021-06-11)
+**New in 2.3 (2021-06-11):**
 
 * **Enhancement:** [Issue #80](https://github.com/nschlia/ffmpegfs/issues/80): Open input video codec only if target supports video. Saves resources: no need to decode video frames if not used.
 * **Enhancement:**  [Issue #81](https://github.com/nschlia/ffmpegfs/issues/81): If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.
@@ -144,7 +143,7 @@ Tested with:
 | `Daily build` | **N-99880-g8fbcc546b8** |  | OK |
 | `Debian 9 Stretch` | **3.2.8-1~deb9u1** |  | OK |
 | `Debian 10 Buster` | **4.1.6-1~deb10u1** |  | OK |
-| `Debian 11 Bullseye` | **4.3.1-5** |  | OK |
+| `Debian 11 Bullseye` | **4.3.2-0+deb11u1** |  | OK |
 | `Raspbian 10 Buster` | **4.1.6-1~deb10u1+rpt1** |  | OK |
 | `Ubuntu 16.04.3 LTS` | **.8.11-0ubuntu0.16.04.1** |  | OK |
 | `Ubuntu 17.10` | **3.3.4-2** |  | OK |
@@ -153,8 +152,7 @@ Tested with:
 | `Red Hat 7`| **FFmpeg must be compiled from sources** |  | OK |
 | `Funtoo 7.3.1` | **3.4.1** | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK |
 
-**Suse** does not provide proprietary formats like AAC and H264, thus the distribution FFmpeg is crippled. FFmpegfs will not be able to encode
-to H264 and AAC. End of story.
+**Suse** does not provide proprietary formats like AAC and H264, thus the distribution FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.
 
 See https://en.opensuse.org/Restricted_formats.
 
@@ -366,7 +364,7 @@ Tracks defined in the cue sheet will show up in the *.tracks sub directories.
 Building A Docker Container
 ----------
 
-FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the docker directory and run
+FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the "docker" directory and run
 
      docker build --build-arg -t nschlia/ffmpegfs .
 
@@ -399,7 +397,7 @@ There are three options:
 | ------------- | ------------- |
 |OFF|no auto copy|
 |LIMIT|only auto copy if target file will not become significantly larger|
-|ALWAY|auto copy whenever possible even if the target file becomes larger|
+|ALWAYS|auto copy whenever possible even if the target file becomes larger|
 
 Smart Transcoding
 -----------------
@@ -417,7 +415,7 @@ The input format should be scanned for streams and the output  selected appropri
 Transcode To Frame Images
 -------------------------
 
-To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with images for each frame.
+To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with one image for each frame.
 
 ```
 $ ls /storage/videos
@@ -479,7 +477,7 @@ How It Works
 
 When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.
 
-As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded in memory. Once decoded the file is kept in a disk buffer and can be accessed very fast.
+As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded. Once decoded the file is kept in a disk buffer and can be accessed very fast.
 
 Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before timeout, transcoding will continue, if not it stops and the chunk created so far discarded to save disk space.
 

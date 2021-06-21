@@ -1,8 +1,7 @@
 FFmpegfs NEWS
 
-* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and
-  Ubuntu 20.04. See INSTALL.md "Installation from repository" for details.
-
+* FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04 and Debian 10
+  Buster Backports. See INSTALL.md "Installation from repository" for details.
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
@@ -18,7 +17,7 @@ Important changes in 2.4 (2021-06-XX)
 
 Important changes in 2.3 (2021-06-11)
 
-* Enhancement: Issue #80: Open input video codec, but only if target supports
+* Enhancement: Issue #80: Open input video codec only if target supports
   video. Saves resources: no need to decode video frames if not used.
 * Enhancement: Issue #81: If source format has no audio, and the target supports
   no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not

@@ -401,7 +401,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
  * @param[in] filename - Name of media file
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @param[in] fmt_ctx - Fprmat context, if not NULL may be used to read embedded cue sheets.
+ * @param[in] fmt_ctx - Format context, if not NULL may be used to read embedded cue sheets.
  * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
  */
 static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)

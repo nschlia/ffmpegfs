@@ -16,6 +16,8 @@ News
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
+### Version 2.6 under development
+
 ### Version 2.5 released
 
 **New in 2.5 (2021-06-18):**
@@ -31,7 +33,6 @@ News
 * **Note**: Which hardware en/decoder actually works depends on what your hardware supports.
 * **Call for testers**: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * See [NEWS](NEWS) for details.
-
 
 ### Version 2.4 under development
 

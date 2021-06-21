@@ -126,7 +126,7 @@ Tested with:
 | `Daily build` | **N-99880-g8fbcc546b8** |  | OK |
 | `Debian 9 Stretch` | **3.2.8-1~deb9u1** |  | OK |
 | `Debian 10 Buster` | **4.1.6-1~deb10u1** |  | OK |
-| `Debian 11 Bullseye` | **4.3.2-0+deb11u1** |  | OK |
+| `Debian 11 Bullseye` | **4.3.2-0+deb11u2** |  | OK |
 | `Raspbian 10 Buster` | **4.1.6-1~deb10u1+rpt1** |  | OK |
 | `Ubuntu 16.04.3 LTS` | **.8.11-0ubuntu0.16.04.1** |  | OK |
 | `Ubuntu 17.10` | **3.3.4-2** |  | OK |

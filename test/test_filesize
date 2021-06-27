@@ -11,8 +11,8 @@ cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e.flac" 489113 494238
-    check_filesize "raven_d.ogg" 350916 355298
+    check_filesize "raven_e.flac" 486096 494238
+    check_filesize "raven_d.ogg" 349440 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3

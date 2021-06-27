@@ -70,6 +70,7 @@ extern "C" {
 #include <libavresample/avresample.h>
 #endif
 #include "libavutil/ffversion.h"
+#include <libavcodec/avcodec.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }

@@ -4462,7 +4462,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         if (ret < 0)
                         {
-                            Logging::error(destname(), "Could not write frame (error '%2').", ffmpeg_geterror(ret).c_str());
+                            Logging::error(destname(), "Could not write frame (error '%1').", ffmpeg_geterror(ret).c_str());
                         }
 
                         av_packet_unref(pkt);

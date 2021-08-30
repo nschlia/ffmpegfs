@@ -41,7 +41,8 @@ VcdChapter::VcdChapter(bool is_svcd) :
     m_sec(0),
     m_frame(0),
     m_duration(0),
-    m_start_pos(0)
+    m_start_pos(0),
+    m_end_pos(0)
 {
 
 }
@@ -53,7 +54,8 @@ VcdChapter::VcdChapter(const VCDCHAPTER & VcdChapter, bool is_svcd) :
     m_sec(BCD2DEC(VcdChapter.m_msf.m_sec)),
     m_frame(BCD2DEC(VcdChapter.m_msf.m_frame)),
     m_duration(0),
-    m_start_pos(0)
+    m_start_pos(0),
+    m_end_pos(0)
 {
 
 }

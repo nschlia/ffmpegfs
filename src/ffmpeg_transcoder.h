@@ -987,6 +987,7 @@ private:
     OUTPUTFILE                  m_out;                      /**< @brief Output file information */
 
     uint32_t                    m_current_segment;          /**< @brief HLS only: Segment file number currently being encoded */
+    bool                        m_insert_keyframe;          /**< @brief HLS only: Allow insertion of 1 keyframe */
 
     // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
     bool                        m_copy_audio;               /**< @brief If true, copy audio stream from source to target (just remux, no recode). */

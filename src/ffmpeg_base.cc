@@ -43,6 +43,7 @@ extern "C" {
 #include <libavutil/opt.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/pixdesc.h>
+#include <libavutil/channel_layout.h>
 #include <libavcodec/avcodec.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus

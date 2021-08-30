@@ -166,6 +166,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_pts(AV_NOPTS_VALUE)
     , m_pos(AV_NOPTS_VALUE)
     , m_current_segment(1)
+    , m_insert_keyframe(true)
     , m_copy_audio(false)
     , m_copy_video(false)
     , m_current_format(nullptr)
@@ -859,6 +860,8 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
     m_buffer            = buffer;
 
+    m_insert_keyframe = false;
+
     if (!m_out.m_video_pts && is_hls())
     {
         m_current_segment = 1;
@@ -921,7 +924,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     {
         m_in.m_audio_start_time                 = m_in.m_audio.m_stream->start_time;
         m_out.m_audio_start_time                = av_rescale_q_rnd(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-        m_out.m_audio.m_stream->start_time     = m_out.m_audio_start_time;
+        m_out.m_audio.m_stream->start_time      = m_out.m_audio_start_time;
     }
     else
     {
@@ -1960,7 +1963,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     Logging::trace(destname(), "Adding album art stream #%u.", output_stream->index);
 
     tmp_pkt->stream_index = output_stream->index;
-    tmp_pkt->flags |= AV_PKT_FLAG_KEY;
+    tmp_pkt->flags |= AV_PKT_FLAG_KEY;  // Contains a single frame, make sure it's a key frame
     tmp_pkt->pos = 0;
     tmp_pkt->dts = 0;
 
@@ -2696,22 +2699,48 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     frame->pts = m_pts;
                 }
 
+                int64_t video_start_time = m_out.m_video_start_time;
+
                 if (m_out.m_video.m_stream != nullptr && frame->pts != AV_NOPTS_VALUE)
                 {
                     if (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num)
                     {
                         frame->pts = av_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                        video_start_time = av_rescale_q_rnd(video_start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
                     }
 
                     // Fix for issue #46: bitrate too high.
                     // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
                     // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
-                    frame->pts = av_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                    frame->pts = av_rescale_q_rnd(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
+                    video_start_time = av_rescale_q_rnd(video_start_time, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base, static_cast<AVRounding>(AV_ROUND_NEAR_INF | AV_ROUND_PASS_MINMAX));
                 }
 
                 frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
                 frame->key_frame    = 0;                    // Leave that decision to encoder
                 frame->pict_type    = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
+
+                if (frame->pts != AV_NOPTS_VALUE)
+                {
+					// Issue #90: Insert key frame at start of each subsequent HLS segment
+                    int64_t pts = frame->pts - video_start_time;
+                    int64_t pos = av_rescale_q_rnd(pts, m_out.m_video.m_codec_ctx->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+                    if (pos < 0)
+                    {
+                        pos = 0;
+                    }
+
+                    uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+
+                    if (next_segment == m_current_segment + 1 && !m_insert_keyframe)
+                    {
+                        Logging::debug(destname(), "Force key frame for next segment %1 at PTS %2 %3", next_segment, pts, format_duration(pos).c_str());
+
+                        frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
+                        frame->pict_type    = AV_PICTURE_TYPE_I;
+                        m_insert_keyframe   = true;
+                    }
+                }
 
                 m_video_frame_fifo.push(frame);
             }
@@ -2773,7 +2802,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                 if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
-
+                    //Logging::error(destname(), "SKIPPING VIDEOS PACKET NOW next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
                     Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
                 }
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
@@ -3620,6 +3649,27 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 #else
         *data_present = 0;
 
+        //        {
+        //            int64_t pos = av_rescale_q_rnd(frame->pts - m_out.m_video_start_time, m_out.m_video.m_codec_ctx->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        //            if (pos < 0)
+        //            {
+        //                pos = 0;
+        //            }
+
+        //            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+
+        //            //Logging::error(destname(), "VIDEO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+
+        //            if (next_segment == m_current_segment + 1)
+        //            {
+        //                if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
+        //                {
+        //                    Logging::error(destname(), "XXX SKIPPING VIDEOS PACKET NOW next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+        //                }
+        //const_cast<AVFrame *>(frame)->pict_type = AV_PICTURE_TYPE_I;
+        //            }
+        //        }
+
         // send the frame for encoding
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
         if (ret < 0 && ret != AVERROR_EOF)
@@ -4298,6 +4348,16 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 AVFrame *video_frame = m_video_frame_fifo.front();
                 m_video_frame_fifo.pop();
 
+                //video_frame->key_frame = 1;
+                //video_frame->pict_type = AV_PICTURE_TYPE_I;
+                //AV_PICTURE_TYPE_I,     ///< Intra
+                //AV_PICTURE_TYPE_P,     ///< Predicted
+                //AV_PICTURE_TYPE_B,     ///< Bi-dir predicted
+                //AV_PICTURE_TYPE_S,     ///< S(GMC)-VOP MPEG-4
+                //AV_PICTURE_TYPE_SI,    ///< Switching Intra
+                //AV_PICTURE_TYPE_SP,    ///< Switching Predicted
+                //AV_PICTURE_TYPE_BI,    ///< BI type
+
                 // Encode one video frame.
                 if (!is_frameset())
                 {
@@ -4428,7 +4488,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 // Set current segment
                 m_current_segment       = next_segment;
 
-                m_inhibit_stream_msk = 0;
+                m_inhibit_stream_msk    = 0;
+
+                m_insert_keyframe       = false;
 
                 Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
 

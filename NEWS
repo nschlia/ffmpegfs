@@ -34,11 +34,10 @@ Version 2.4 under development
 
 Version 2.4 may be a maintenance (bug fixes only) release. New features will go into version 2.5 which will be ready soon, adding hardware acceleration support.  
 
-Important changes in 2.4 (2021-06-XX)
+Important changes in 2.4 (2021-08-XX)
 
-* Enhancement:
-* Feature: 
-* Bugfix: 
+* Bugfix: Issue #90: Make sure that one keyframe gets inserted at the start of
+          each HLS segment.
 
 Important changes in 2.3 (2021-06-11)
 

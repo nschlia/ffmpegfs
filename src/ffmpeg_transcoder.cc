@@ -375,18 +375,16 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_in.m_filetype = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
 
-    ret = dict_set_with_check(&opt, "scan_all_pmts", nullptr, AV_DICT_MATCH_CASE, filename());
-    if (ret < 0)
-    {
-        return ret;
-    }
-
-    AVDictionaryEntry * t = av_dict_get(opt, "", nullptr, AV_DICT_IGNORE_SUFFIX);
-    if (t != nullptr)
-    {
-        Logging::error(filename(), "Option %1 not found.", t->key);
-        return (EOF); // Couldn't open file
-    }
+    // The old code never worked. This would work, but as the old code never enabled "scan_all_pmts"
+    // we do not enable that now.
+    //
+    // Scan and combine all Program Map Tables (PMT). The value is an integer with value from -1 to 1
+    // (-1 means automatic setting, 1 means enabled, 0 means disabled). Default value is -1.
+    //ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_MATCH_CASE, filename());
+    //if (ret < 0)
+    //{
+    //    return ret;
+    //}
 
 #if HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA
     av_format_inject_global_side_data(m_in.m_format_ctx);

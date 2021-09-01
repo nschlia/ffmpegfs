@@ -1368,7 +1368,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
         else
         {
-            // If suppported sample formats are unknown simply take input format and cross our fingers it works...
+            // If supported sample formats are unknown simply take input format and cross our fingers it works...
             output_codec_ctx->sample_fmt        = m_in.m_audio.m_codec_ctx->sample_fmt;
         }
 
@@ -2077,7 +2077,6 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     {
         for (size_t n = 0; n < m_in.m_album_art.size(); n++)
         {
-            //ret = add_albumart_stream(codec_id, m_in.m_aAlbumArt.at(n).m_codec_ctx->pix_fmt);
             ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx);
             if (ret < 0)
             {
@@ -2768,8 +2767,6 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
             }
             uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
 
-            //Logging::error(destname(), "AUDIO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-
             if (next_segment == m_current_segment + 1)
             {
                 if (!(m_inhibit_stream_msk & FFMPEGFS_AUDIO))
@@ -2793,14 +2790,12 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
             }
             uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
 
-            //Logging::error(destname(), "VIDEO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-
             if (next_segment == m_current_segment + 1)
             {
                 if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
-                    //Logging::error(destname(), "SKIPPING VIDEOS PACKET NOW next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+
                     Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
                 }
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
@@ -3137,7 +3132,6 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
         else
         {
             Logging::error(destname(), "Could not write data to FIFO.");
-            ret = AVERROR_EXIT;
         }
         return AVERROR_EXIT;
     }
@@ -3646,27 +3640,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         {
 #else
         *data_present = 0;
-
-        //        {
-        //            int64_t pos = av_rescale_q_rnd(frame->pts - m_out.m_video_start_time, m_out.m_video.m_codec_ctx->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-        //            if (pos < 0)
-        //            {
-        //                pos = 0;
-        //            }
-
-        //            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
-
-        //            //Logging::error(destname(), "VIDEO PACKET      next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-
-        //            if (next_segment == m_current_segment + 1)
-        //            {
-        //                if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
-        //                {
-        //                    Logging::error(destname(), "XXX SKIPPING VIDEOS PACKET NOW next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
-        //                }
-        //const_cast<AVFrame *>(frame)->pict_type = AV_PICTURE_TYPE_I;
-        //            }
-        //        }
 
         // send the frame for encoding
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
@@ -4345,16 +4318,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             {
                 AVFrame *video_frame = m_video_frame_fifo.front();
                 m_video_frame_fifo.pop();
-
-                //video_frame->key_frame = 1;
-                //video_frame->pict_type = AV_PICTURE_TYPE_I;
-                //AV_PICTURE_TYPE_I,     ///< Intra
-                //AV_PICTURE_TYPE_P,     ///< Predicted
-                //AV_PICTURE_TYPE_B,     ///< Bi-dir predicted
-                //AV_PICTURE_TYPE_S,     ///< S(GMC)-VOP MPEG-4
-                //AV_PICTURE_TYPE_SI,    ///< Switching Intra
-                //AV_PICTURE_TYPE_SP,    ///< Switching Predicted
-                //AV_PICTURE_TYPE_BI,    ///< BI type
 
                 // Encode one video frame.
                 if (!is_frameset())

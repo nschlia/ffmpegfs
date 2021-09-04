@@ -147,6 +147,16 @@ public:
         ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */
     };
 
+    typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP;     /**< @brief Map device types to pixel formats */
+
+    typedef enum HWACCELMODE                            /**< @brief Currently active hardware acceleration mode */
+    {
+        HWACCELMODE_NONE,                               /**< @brief Hardware acceleration not active */
+        HWACCELMODE_ENABLED,                            /**< @brief Hardware acceleration is active */
+        HWACCELMODE_FALLBACK                            /**< @brief Hardware acceleration selected, but fell back to software */
+
+    } HWACCELMODE;
+
 public:
     /**
      * Construct FFmpeg_Transcoder object
@@ -329,6 +339,18 @@ protected:
      */
     int                         open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type);
     /**
+     * @brief Determine the hardware pixel format for the codec, if applicable.
+     * @param codec - Input codec used
+     * @param dev_type - Hardware device type
+     * @param use_device_ctx - If true checks for pix format if using a hardware device context, for a pix format using a hardware frames context otherwise.
+     * @return Returns hardware pixel format, or AV_PIX_FMT_NONE if not applicable.
+     */
+#if IF_DECLARED_CONST
+    AVPixelFormat               get_hw_pix_fmt(const AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const;
+#else // !IF_DECLARED_CONST
+    AVPixelFormat               get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType dev_type, bool use_device_ctx) const;
+#endif // !IF_DECLARED_CONST
+    /**
      * @brief Open codec context for stream_idx.
      * @param[out] avctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
@@ -336,7 +358,11 @@ protected:
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
+#if IF_DECLARED_CONST
     int                         open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType type);
+#else // !IF_DECLARED_CONST
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type);
+#endif // !IF_DECLARED_CONST
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Stream buffer to operate on
@@ -772,7 +798,158 @@ protected:
      * @param [out] in_pix_fmt - Input pixel format.
      * @param [out] out_pix_fmt - Output pixel format.
      */
-    void  get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
+    void                        get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
+
+    // Hardware de/encoding
+    /**
+     * Callback to negotiate the pixelFormat
+     * @param[in] input_codec_ctx - Input codec context
+     * @param[in] pix_fmts is the list of formats which are supported by the codec,
+     * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
+     * The first is always the native one.
+     * @note The callback may be called again immediately if initialization for
+     * the selected (hardware-accelerated) pixel format failed.
+     * @warning Behavior is undefined if the callback returns a value not
+     * in the fmt list of formats.
+     * @return the chosen format
+     * - encoding: unused
+     * - decoding: Set by user, if not set the native format will be chosen.
+     */
+    static enum AVPixelFormat   get_format_static(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts);
+    /**
+     * Callback to negotiate the pixelFormat
+     * @param[in] input_codec_ctx - Input codec context
+     * @param[in] pix_fmts is the list of formats which are supported by the codec,
+     * it is terminated by -1 as 0 is a valid format, the formats are ordered by quality.
+     * The first is always the native one.
+     * @note The callback may be called again immediately if initialization for
+     * the selected (hardware-accelerated) pixel format failed.
+     * @warning Behavior is undefined if the callback returns a value not
+     * in the fmt list of formats.
+     * @return the chosen format
+     * - encoding: unused
+     * - decoding: Set by user, if not set the native format will be chosen.
+     */
+    enum AVPixelFormat          get_format(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts);
+    /**
+     * Open a device of the specified type and create an AVHWDeviceContext for it.
+     *
+     * This is a convenience function intended to cover the simple cases. Callers
+     * who need to fine-tune device creation/management should open the device
+     * manually and then wrap it in an AVHWDeviceContext using
+     * av_hwdevice_ctx_alloc()/av_hwdevice_ctx_init().
+     *
+     * The returned context is already initialized and ready for use, the caller
+     * should not call av_hwdevice_ctx_init() on it. The user_opaque/free fields of
+     * the created AVHWDeviceContext are set by this function and should not be
+     * touched by the caller.
+     *
+     * @param[out] hwaccel_enc_device_ctx - On success, a
+     * reference to the newly-created device context will be
+     * written here.
+     * @param[in] dev_type - The type of the device to create.
+     * @param[in] device - A type-specific string identifying the device to open.
+     *
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwdevice_ctx_create(AVBufferRef **hwaccel_enc_device_ctx, AVHWDeviceType dev_type, const std::string & device) const;
+    /**
+     * @brief Add reference to hardware device context.
+     * @param[in] input_codec_ctx - Input codec context
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx);
+    /**
+     * @brief Free (remove reference) to hardware device context
+     * @param[inout] hwaccel_device_ctx - Hardware device context to free
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    void                        hwdevice_ctx_free(AVBufferRef **hwaccel_device_ctx);
+    /**
+     * @brief Adds a reference to an existing decoder hardware frame context or
+     * allocates a new AVHWFramesContext tied to the given hardware device context
+     * if if the decoder runs in software.
+     * @param[in] output_codec_ctx - Encoder codexc context
+     * @param[in] input_codec_ctx - Decoder codexc context
+     * @param[in] hw_device_ctx - Existing hardware device context
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodecContext *input_codec_ctx, AVBufferRef *hw_device_ctx) const;
+    /**
+     * Copy data hardware surface to software.
+     * @param[in] output_codec_ctx - Codec context
+     * @param[out] sw_frame - AVFrame to copy data to
+     * @param[in] hw_frame - AVFrame to copy data from
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwframe_copy_from_hw(AVCodecContext *output_codec_ctx, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
+    /**
+     * Copy data software to a hardware surface.
+     * @param[in] output_codec_ctx - Codec context
+     * @param[out] hw_frame - AVFrame to copy data to
+     * @param[in] sw_frame - AVFrame to copy data from
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    /**
+     * @brief Get the hardware codec name as string. This is required, because e.g.
+     * the name for the software codec is libx264, but for hardware it is h264_vaapi
+     * under VAAPI.
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Returns the name of the codec, may be nullptr if not requitred.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         get_hw_decoder_name(AVCodecID codec_id, std::string *codec_name = nullptr) const;
+    /**
+     * @brief Get the hardware codec name as string. This is required, because e.g.
+     * the name for the software codec is libx264, but for hardware it is h264_vaapi
+     * under VAAPI.
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Returns the name of the codec, may be nullptr if not requitred.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_encoder_name(AVCodecID codec_id, std::string *codec_name = nullptr) const;
+    /**
+     * @brief Determine VAAPI codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine MMAL decoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_mmal_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine video for linux decoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    //int                         get_hw_v4l2m2m_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine OMX encoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_omx_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Determine video for linux encoder codec name
+     * @param[in] codec_id - Id of encoder/decoder codec
+     * @param[out] codec_name - Name of the codec.
+     * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
+     */
+    int                         get_hw_v4l2m2m_encoder_name(AVCodecID codec_id, std::string *codec_name) const;
+    /**
+     * @brief Get the software pixel format for the given hardware acceleration.
+     * @param[in] type - Selected hardware acceleration.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    static AVPixelFormat        find_sw_fmt_by_hw_type(AVHWDeviceType type);
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
@@ -824,6 +1001,17 @@ private:
     uint32_t                    m_fake_frame_no;            /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
 
     static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
+
+    // Hardware acceleration
+    static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */
+    HWACCELMODE                 m_hwaccel_enc_mode;             /**< @brief Current hardware acceleration mode for encoder */
+    HWACCELMODE                 m_hwaccel_dec_mode;             /**< @brief Current hardware acceleration mode for decoder */
+    bool						m_hwaccel_enable_enc_buffering; /**< @brief Enable hardware acceleration frame buffers for encoder */
+    bool                        m_hwaccel_enable_dec_buffering; /**< @brief Enable hardware acceleration frame buffers for decoder */
+    AVBufferRef *               m_hwaccel_enc_device_ctx;       /**< @brief Hardware acceleration device context for encoder */
+    AVBufferRef *               m_hwaccel_dec_device_ctx;       /**< @brief Hardware acceleration device context for decoder */
+    AVPixelFormat               m_enc_hw_pix_fmt;               /**< @brief Requested encoder hardware pixel format */
+    AVPixelFormat               m_dec_hw_pix_fmt;               /**< @brief Requested decoder hardware pixel format */
 
 #define FFMPEGFS_AUDIO      static_cast<uint32_t>(0x0001)   /**< @brief Denote an audio stream */
 #define FFMPEGFS_VIDEO      static_cast<uint32_t>(0x0002)   /**< @brief Denote a video stream */

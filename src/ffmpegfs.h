@@ -94,6 +94,45 @@
 #include "fileio.h"
 
 /**
+  *
+  * @brief Hardware acceleration types.
+  */
+typedef enum HWACCELAPI
+{
+    HWACCELAPI_NONE,
+    HWACCELAPI_VAAPI,               /**< Intel: VAAPI */
+
+    HWACCELAPI_MMAL,                /**< Raspberry: MMAL */
+    HWACCELAPI_OMX,                 /**< Raspberry: OpenMAX */
+
+    // Additional formats
+#if 0
+    HWACCELAPI_CUDA,                /**< Nividia: CUDA    to be added */
+    HWACCELAPI_V4L2M2M,             /**< v4l2 mem to mem  to be added */
+    HWACCELAPI_VDPAU,               /**< VDPAU            to be added */
+    HWACCELAPI_QSV,                 /**< QSV              to be added */
+    HWACCELAPI_OPENCL,              /**< OPENCL           to be added */
+#if HAVE_VULKAN_HWACCEL
+    HWACCELAPI_VULKAN,              /**< VULKAN           to be added */
+#endif // HAVE_VULKAN_HWACCEL
+#if __APPLE__
+    // MacOS acceleration APIs not supported
+    HWACCELAPI_VIDEOTOOLBOX,        /**< VIDEOTOOLBOX     not supported */
+#endif
+#if __ANDROID__
+    // Android acceleration APIs not supported
+    HWACCELAPI_MEDIACODEC,          /**< MediaCodec API   not supported */
+#endif
+#if _WIN32
+// Windows acceleration APIs not supported
+    HWACCELAPI_DRM,                 /**< DRM              not supported */
+    HWACCELAPI_DXVA2,               /**< DXVA2            not supported */
+    HWACCELAPI_D3D11VA,             /**< D3D11VA          not supported */
+#endif
+#endif
+} HWACCELAPI;
+
+/**
  * @brief Global program parameters
  */
 extern struct FFMPEGFS_PARAMS
@@ -145,6 +184,13 @@ extern struct FFMPEGFS_PARAMS
     int                 m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
     // HLS Options
     int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
+    // Hardware acceleration
+    HWACCELAPI          m_hwaccel_enc_API;          /**< @brief Encoder API */
+    AVHWDeviceType      m_hwaccel_enc_device_type;  /**< @brief Enable hardware acceleration buffering for encoder */
+    std::string         m_hwaccel_enc_device;       /**< @brief Encoder device. May be AUTO to auto detect or empty */
+    HWACCELAPI          m_hwaccel_dec_API;          /**< @brief Decoder API */
+    AVHWDeviceType      m_hwaccel_dec_device_type;  /**< @brief Enable hardware acceleration buffering for decoder */
+    std::string         m_hwaccel_dec_device;       /**< @brief Decoder device. May be AUTO to auto detect or empty */
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */
     // Virtual script
@@ -315,6 +361,36 @@ LPVIRTUALFILE   find_original(std::string *filepath);
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_parent(const std::string & origpath);
+/**
+ * @brief Convert AUTOCOPY enum to human readable text.
+ * @param[in] autocopy - AUTOCOPY enum value to convert.
+ * @return AUTOCOPY enum as text or "INVALID" if not known.
+ */
+std::string 		get_autocopy_text(AUTOCOPY autocopy);
+/**
+ * @brief Convert RECODESAME enum to human readable text.
+ * @param[in] recode - RECODESAME enum value to convert.
+ * @return RECODESAME enum as text or "INVALID" if not known.
+ */
+std::string 		get_recodesame_text(RECODESAME recode);
+/**
+ * @brief Convert PROFILE enum to human readable text.
+ * @param[in] profile - PROFILE enum value to convert.
+ * @return PROFILE enum as text or "INVALID" if not known.
+ */
+std::string 		get_profile_text(PROFILE profile);
+/**
+ * @brief Convert PRORESLEVEL enum to human readable text.
+ * @param[in] level - PRORESLEVEL enum value to convert.
+ * @return PRORESLEVEL enum as text or "INVALID" if not known.
+ */
+std::string 		get_level_text(PRORESLEVEL level);
+/**
+ * @brief Get the selected hardware acceleration as text.
+ * @param[in] hwaccel_API - Hardware acceleration buffering API.
+ * @return Hardware acceleration API as string.
+ */
+std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
 
 /**
  * @brief Wrapper to the Fuse filler function.

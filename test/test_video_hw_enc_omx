@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./test_video_hw ENC omx

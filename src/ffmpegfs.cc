@@ -83,6 +83,11 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_videoheight(0)                          // default: do not change height
     , m_deinterlace(0)                          // default: do not interlace video
     , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
+    // Hardware acceleration
+    , m_hwaccel_enc_API(HWACCELAPI_NONE)                // Default: Use software encoder
+    , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software encoder
+    , m_hwaccel_dec_API(HWACCELAPI_NONE)                // Default: Use software encoder
+    , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software decoder
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -150,7 +155,6 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
     return 0;
 }
 
-
 FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 {
     LPCVIRTUALFILE virtualfile = find_file(filepath);
@@ -209,7 +213,11 @@ enum
     KEY_PROFILE,
     KEY_LEVEL,
     KEY_LOG_MAXLEVEL,
-    KEY_LOGFILE
+    KEY_LOGFILE,
+    KEY_HWACCEL_ENCODER_API,
+    KEY_HWACCEL_ENCODER_DEVICE,
+    KEY_HWACCEL_DECODER_API,
+    KEY_HWACCEL_DECODER_DEVICE
 };
 
 /**
@@ -254,6 +262,15 @@ static struct fuse_opt ffmpegfs_opts[] =
     // HLS
     FUSE_OPT_KEY("--segment_duration=%s",           KEY_SEGMENT_DURATION),
     FUSE_OPT_KEY("segment_duration=%s",             KEY_SEGMENT_DURATION),
+    // Hardware acceleration
+    FUSE_OPT_KEY("--hwaccel_enc=%s",            KEY_HWACCEL_ENCODER_API),
+    FUSE_OPT_KEY("hwaccel_enc=%s",              KEY_HWACCEL_ENCODER_API),
+    FUSE_OPT_KEY("--hwaccel_enc_device=%s",     KEY_HWACCEL_ENCODER_DEVICE),
+    FUSE_OPT_KEY("hwaccel_enc_device=%s",       KEY_HWACCEL_ENCODER_DEVICE),
+    FUSE_OPT_KEY("--hwaccel_dec=%s",            KEY_HWACCEL_DECODER_API),
+    FUSE_OPT_KEY("hwaccel_dec=%s",              KEY_HWACCEL_DECODER_API),
+    FUSE_OPT_KEY("--hwaccel_dec_device=%s",     KEY_HWACCEL_DECODER_DEVICE),
+    FUSE_OPT_KEY("hwaccel_dec_device=%s",       KEY_HWACCEL_DECODER_DEVICE),
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -328,6 +345,15 @@ typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map 
 typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map command line option to LEVEL enum */
 typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map command line option to RECODESAME enum */
 
+typedef struct HWACCEL                                          /**< @brief Hardware acceleration device and type */
+{
+    bool                m_supported;                            /**< @brief true if API supported, false if not */
+    HWACCELAPI          m_hwaccel_API;                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
+    AVHWDeviceType      m_hwaccel_device_type;                  /**< @brief Hardware buffering type, NONE if not used */
+} HWACCEL;
+
+typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;       /**< @brief Map command line option to HWACCEL struct */
+
 /**
   * List of AUTOCOPY options
   */
@@ -382,26 +408,76 @@ static const RECODESAME_MAP recode_map =
     { "YES",            RECODESAME_YES },
 };
 
+/**
+  * List if hardware acceleration options.
+  * See https://trac.ffmpeg.org/wiki/HWAccelIntro
+  *
+  * AV_HWDEVICE_TYPE_NONE will be set to the appropriate device type
+  * in build_device_type_list() by asking the FFmpeg API for the proper
+  * type.
+  */
+static HWACCEL_MAP hwaccel_map =
+{
+    { "NONE",           { true,     HWACCELAPI_NONE,            AV_HWDEVICE_TYPE_NONE } },
+
+    // **** Supported by Linux ****
+
+    { "VAAPI",          { true,     HWACCELAPI_VAAPI,           AV_HWDEVICE_TYPE_NONE } },  // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
+
+    // RaspberryPi
+
+    { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom. Encoding only.
+    { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration). Decoding only.
+
+#if 0
+    // Additional formats
+    { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
+    { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
+    { "VDPAU",          { false,    HWACCELAPI_VDPAU,           AV_HWDEVICE_TYPE_NONE } },  // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
+    { "QSV",            { false,    HWACCELAPI_QSV,             AV_HWDEVICE_TYPE_NONE } },  // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+    { "OPENCL",         { false,    HWACCELAPI_OPENCL,          AV_HWDEVICE_TYPE_NONE } },  // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
+    #if HAVE_VULKAN_HWACCEL
+    { "VULKAN",         { false,    HWACCELAPI_VULKAN,          AV_HWDEVICE_TYPE_NONE } },  // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
+    #endif // HAVE_VULKAN_HWACCEL
+    #if __APPLE__
+    // MacOS, not supported
+    { "VIDEOTOOLBOX",   { false,    HWACCELAPI_VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+    #endif
+    #if __ANDROID__
+    // Android
+    { "MEDIACODEC",     { false,    HWACCELAPI_MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
+    #endif
+    #if _WIN32
+    // **** Not supported ****
+
+    // Digital Rights Management
+    { "DRM",            { false,    HWACCELAPI_DRM,             AV_HWDEVICE_TYPE_NONE } },
+
+    // Windows only, not supported
+    { "DXVA2",          { false,    HWACCELAPI_DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
+    { "D3D11VA",        { false,    HWACCELAPI_D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
+    #endif
+    #endif
+};
+
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int          get_samplerate(const std::string & arg, int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
-static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
-static std::string  get_autocopy_text(AUTOCOPY autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
-static std::string  get_profile_text(PROFILE profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
-static std::string  get_level_text(PRORESLEVEL level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
+static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
 static int          get_value(const std::string & arg, double *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults(void);
+static void         build_device_type_list(void);
 static void         print_params(void);
 static void         usage();
 
@@ -837,12 +913,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
     return -1;
 }
 
-/**
- * @brief Convert AUTOCOPY enum to human readable text.
- * @param[in] autocopy - AUTOCOPY enum value to convert.
- * @return AUTOCOPY enum as text or "INVALID" if not known.
- */
-static std::string get_autocopy_text(AUTOCOPY autocopy)
+std::string get_autocopy_text(AUTOCOPY autocopy)
 {
     AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
     if (it != autocopy_map.cend())
@@ -884,12 +955,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
     return -1;
 }
 
-/**
- * @brief Convert RECODESAME enum to human readable text.
- * @param[in] recode - RECODESAME enum value to convert.
- * @return RECODESAME enum as text or "INVALID" if not known.
- */
-static std::string get_recodesame_text(RECODESAME recode)
+std::string get_recodesame_text(RECODESAME recode)
 {
     RECODESAME_MAP::const_iterator it = search_by_value(recode_map, recode);
     if (it != recode_map.cend())
@@ -931,12 +997,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
     return -1;
 }
 
-/**
- * @brief Convert PROFILE enum to human readable text.
- * @param[in] profile - PROFILE enum value to convert.
- * @return PROFILE enum as text or "INVALID" if not known.
- */
-static std::string get_profile_text(PROFILE profile)
+std::string get_profile_text(PROFILE profile)
 {
     PROFILE_MAP::const_iterator it = search_by_value(profile_map, profile);
     if (it != profile_map.cend())
@@ -980,12 +1041,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 }
 
 // Get level text
-/**
- * @brief Convert PRORESLEVEL enum to human readable text.
- * @param[in] level - PRORESLEVEL enum value to convert.
- * @return PRORESLEVEL enum as text or "INVALID" if not known.
- */
-static std::string get_level_text(PRORESLEVEL level)
+std::string get_level_text(PRORESLEVEL level)
 {
     LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
     if (it != level_map.cend())
@@ -1018,6 +1074,64 @@ static int get_segment_duration(const std::string & arg, int64_t *value)
     *value = static_cast<int>(duration * AV_TIME_BASE);
 
     return 0;
+}
+
+/**
+ * @brief Get type of hardware acceleration.
+ * To keep it simple, currently all values are accepted.
+ * @param[in] arg - One of the hardware acceleration types, e.g. VAAPI.
+ * @param[out] hwaccel_API - Upon return contains the hardware acceleration API.
+ * @param[out] hwaccel_device_type - Upon return contains the hardware acceleration device type.
+ * @return Returns 0 if found; if not found returns -1. Currently always returns 0.
+ */
+
+static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string data(arg.substr(pos + 1));
+
+        HWACCEL_MAP::const_iterator it = hwaccel_map.find(data);
+
+        if (it == hwaccel_map.cend())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid hardware acceleration encoder API: %s\n", data.c_str());
+            return -1;
+        }
+
+        const HWACCEL & hwaccel = it->second;
+
+        if (!hwaccel.m_supported)
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Unsupported hardware acceleration encoder API: %s\n", data.c_str());
+            return -1;
+        }
+
+        *hwaccel_API            = hwaccel.m_hwaccel_API;
+        *hwaccel_device_type    = hwaccel.m_hwaccel_device_type;
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration encoder API string\n");
+
+    return -1;
+}
+
+std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
+{
+    HWACCEL_MAP::const_iterator it = hwaccel_map.cbegin();
+    while (it != hwaccel_map.cend())
+    {
+        if (it->second.m_hwaccel_API == hwaccel_API)
+        {
+            return it->first;
+        }
+        it++;
+    }
+
+    return "INVALID";
 }
 
 /**
@@ -1243,6 +1357,22 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_segment_duration(arg, &params.m_segment_duration);
     }
+    case KEY_HWACCEL_ENCODER_API:
+    {
+        return get_hwaccel(arg, &params.m_hwaccel_enc_API, &params.m_hwaccel_enc_device_type);
+    }
+    case KEY_HWACCEL_ENCODER_DEVICE:
+    {
+        return get_value(arg, &params.m_hwaccel_enc_device);
+    }
+    case KEY_HWACCEL_DECODER_API:
+    {
+        return get_hwaccel(arg, &params.m_hwaccel_dec_API, &params.m_hwaccel_dec_device_type);
+    }
+    case KEY_HWACCEL_DECODER_DEVICE:
+    {
+        return get_value(arg, &params.m_hwaccel_dec_device);
+    }
     case KEY_EXPIRY_TIME:
     {
         return get_time(arg, &params.m_expiry_time);
@@ -1317,6 +1447,26 @@ static bool set_defaults(void)
 }
 
 /**
+ * @brief Build list of available device types.
+ * Builds a list of device types supported by the current
+ * FFmpeg libary.
+ */
+static void build_device_type_list(void)
+{
+    for (AVHWDeviceType device_type = AV_HWDEVICE_TYPE_NONE; (device_type = av_hwdevice_iterate_types(device_type)) != AV_HWDEVICE_TYPE_NONE;)
+    {
+        HWACCEL_MAP::iterator it = hwaccel_map.find(av_hwdevice_get_type_name(device_type));
+
+        if (it == hwaccel_map.end())
+        {
+            continue;
+        }
+
+        it->second.m_hwaccel_device_type = device_type;
+    }
+}
+
+/**
  * @brief Print currently selected parameters.
  */
 static void print_params(void)
@@ -1347,6 +1497,15 @@ static void print_params(void)
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "--------- HLS Options ---------");
     Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)).c_str());
+    Logging::trace(nullptr, "---- Hardware Acceleration ----");
+    Logging::trace(nullptr, "Hardware Decoder:");
+    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
+    Logging::trace(nullptr, "Frame Buffering   : %1", av_hwdevice_get_type_name(params.m_hwaccel_dec_device_type));
+    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_dec_device.c_str());
+    Logging::trace(nullptr, "Hardware Encoder:");
+    Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+    Logging::trace(nullptr, "Frame Buffering   : %1", av_hwdevice_get_type_name(params.m_hwaccel_enc_device_type));
+    Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device.c_str());
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
     Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());
@@ -1420,6 +1579,9 @@ int main(int argc, char *argv[])
 
     // Set default
     params.m_max_threads = static_cast<unsigned int>(get_nprocs() * 16);
+
+    // Build list of supported device types
+    build_device_type_list();
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {

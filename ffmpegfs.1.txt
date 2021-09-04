@@ -214,6 +214,47 @@ Should normally be left at default.
 +
 Default: *10 seconds*
 
+=== Hardware Acceleration Options ===
+*--hwaccel_enc*=API, *-o hwaccel_enc*=API::
+Select the hardware acceleration API for encoding.
++
+Default: *NONE* (no acceleration)
++
+*API*:: can be defined as...
+ * *NONE*: use software encoder
+ * *VAAPI*: Video Acceleration API (VA-API)
+ * *OMX*: OpenMAX (Open Media Acceleration)
+
+*--hwaccel_enc_device*=DEVICE, -o *hwaccel_enc_device*=DEVICE::
+Select the hardware acceleration device. May be required for VAAPI, especially
+if more the one device is available.
++
+*Note:* Applies to VAAPI hardware acceleration only, ignored for all other types.
++
+Default: *empty* (use default device)
++
+Example: */dev/dri/renderD128*
+
+*--hwaccel_dec*=API, *-o hwaccel_dec*=API::
+Select the hardware acceleration API for decoding.
++
+Default: *NONE* (no acceleration)
++
+*API*:: can be defined as...
+ * *NONE*: use software decoder
+ * *VAAPI*: Video Acceleration API (VA-API)
+ * *MMAL*: Multimedia Abstraction Layer by Broadcom
+
+*--hwaccel_dec_device*=DEVICE, -o *hwaccel_dec_device*=DEVICE::
+Select the hardware acceleration device. May be required for VAAPI, especially
+if more the one device is available.
++
+*Note:* Applies to VAAPI hardware acceleration only, ignored for all other types.
++
+Default: *empty* (use default device)
++
+Example: */dev/dri/renderD128*
+
 === Album Arts ===
 --*noalbumarts*, -o *noalbumarts*::
 Do not copy album arts into output file.

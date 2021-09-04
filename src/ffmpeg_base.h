@@ -76,8 +76,9 @@ protected:
      * @param[in] output_stream - Output stream object.
      * @param[in] input_codec_ctx - Input codec context.
      * @param[in] framerate - Frame rate of input stream.
+     * @param[in] enc_hw_pix_fmt - Forcibly set destination pixel format. Set to AV_PIX_FMT_NONE for automatic selection.
      */
-    void                video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const;
+    void                video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat enc_hw_pix_fmt) const;
     /**
      * @brief Call av_dict_set and check result code. Displays an error message if appropriate.
      * @param[in] pm - pointer to a pointer to a dictionary struct.

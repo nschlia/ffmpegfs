@@ -103,12 +103,12 @@ extern "C" {
 /**
  * Add av_get_media_type_string function if missing
  */
-#define HAVE_MEDIA_TYPE_STRING              (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 34, 101))
+#define HAVE_MEDIA_TYPE_STRING                  (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 34, 101))
 #if HAVE_MEDIA_TYPE_STRING
 /**
  *  Map to av_get_media_type_string function.
  */
-#define get_media_type_string               av_get_media_type_string
+#define get_media_type_string                   av_get_media_type_string
 #else
 /**
  * @brief av_get_media_type_string is missing, so we provide our own.
@@ -117,6 +117,14 @@ extern "C" {
  */
 const char *get_media_type_string(enum AVMediaType media_type);
 #endif
+
+/**
+ * Min. FFmpeg version for VULKAN hardware acceleration support
+ * 2020-02-04 - xxxxxxxxxx - lavu 56.39.100 - hwcontext.h
+ *   Add AV_PIX_FMT_VULKAN
+ *   Add AV_HWDEVICE_TYPE_VULKAN and implementation.
+ */
+#define HAVE_VULKAN_HWACCEL                     (LIBAVUTIL_VERSION_MICRO >= 100 && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(56, 39, 100))
 
 #ifndef AV_ROUND_PASS_MINMAX
 /**
@@ -127,27 +135,27 @@ const char *get_media_type_string(enum AVMediaType media_type);
 
 // These once had a different name
 #if !defined(AV_CODEC_CAP_DELAY) && defined(CODEC_CAP_DELAY)
-#define AV_CODEC_CAP_DELAY              	CODEC_CAP_DELAY                         /**< @brief AV_CODEC_CAP_DELAY is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_DELAY                      CODEC_CAP_DELAY                         /**< @brief AV_CODEC_CAP_DELAY is missing in older FFmpeg versions */
 #endif
 
 #if !defined(AV_CODEC_CAP_TRUNCATED) && defined(CODEC_CAP_TRUNCATED)
-#define AV_CODEC_CAP_TRUNCATED          	CODEC_CAP_TRUNCATED                     /**< @brief AV_CODEC_CAP_TRUNCATED is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_TRUNCATED                  CODEC_CAP_TRUNCATED                     /**< @brief AV_CODEC_CAP_TRUNCATED is missing in older FFmpeg versions */
 #endif
 
 #if !defined(AV_CODEC_FLAG_TRUNCATED) && defined(CODEC_FLAG_TRUNCATED)
-#define AV_CODEC_FLAG_TRUNCATED         	CODEC_FLAG_TRUNCATED                    /**< @brief AV_CODEC_FLAG_TRUNCATED is missing in older FFmpeg versions */
+#define AV_CODEC_FLAG_TRUNCATED                 CODEC_FLAG_TRUNCATED                    /**< @brief AV_CODEC_FLAG_TRUNCATED is missing in older FFmpeg versions */
 #endif
 
 #ifndef AV_CODEC_FLAG_GLOBAL_HEADER
-#define AV_CODEC_FLAG_GLOBAL_HEADER     	CODEC_FLAG_GLOBAL_HEADER                /**< @brief AV_CODEC_FLAG_GLOBAL_HEADER is missing in older FFmpeg versions */
+#define AV_CODEC_FLAG_GLOBAL_HEADER             CODEC_FLAG_GLOBAL_HEADER                /**< @brief AV_CODEC_FLAG_GLOBAL_HEADER is missing in older FFmpeg versions */
 #endif
 
 #ifndef FF_INPUT_BUFFER_PADDING_SIZE
-#define FF_INPUT_BUFFER_PADDING_SIZE    	256                                     /**< @brief FF_INPUT_BUFFER_PADDING_SIZE is missing in newer FFmpeg versions */
+#define FF_INPUT_BUFFER_PADDING_SIZE            256                                     /**< @brief FF_INPUT_BUFFER_PADDING_SIZE is missing in newer FFmpeg versions */
 #endif
 
 #ifndef AV_CODEC_CAP_VARIABLE_FRAME_SIZE
-#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE	CODEC_CAP_VARIABLE_FRAME_SIZE           /**< @brief AV_CODEC_CAP_VARIABLE_FRAME_SIZE is missing in older FFmpeg versions */
+#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE        CODEC_CAP_VARIABLE_FRAME_SIZE           /**< @brief AV_CODEC_CAP_VARIABLE_FRAME_SIZE is missing in older FFmpeg versions */
 #endif
 
 #if (LIBAVUTIL_VERSION_MAJOR > 54)
@@ -572,6 +580,15 @@ FILETYPE            get_filetype_from_list(const std::string & desttypelist);
  */
 int                 print_stream_info(const AVStream* stream);
 /**
+ * Fill the provided buffer with a string containing a FourCC (four-character
+ * code) representation.
+ *
+ * @param buf - Upon return, filled in with the FourCC representation.
+ * @param fourcc - The fourcc to represent
+ * @return The buffer in input.
+ */
+std::string         fourcc_make_string(std::string * buf, uint32_t fourcc);
+/**
  * @brief Compare value with pattern.
  * @param[in] value - Value to check.
  * @param[in] pattern - Regexp pattern to match.
@@ -702,6 +719,15 @@ std::string         make_filename(uint32_t file_no, const std::string &fileext);
  */
 bool                file_exists(const std::string & filename);
 
+/** Save version of hwdevice_get_type_name:
+ * Get the string name of an AVHWDeviceType.
+ *
+ * @param[in] dev_type - Type from enum AVHWDeviceType.
+ * @return Pointer to a static string containing the name, or "unknown" if the type
+ *         is not valid.
+ */
+const char *        hwdevice_get_type_name(AVHWDeviceType dev_type);
+
 /**
   * Detected encoding types
   */
@@ -751,6 +777,7 @@ int                 read_file(const std::string & path, std::string & result);
  * @param[in] size size value to copy
  */
 void                stat_set_size(struct stat *st, size_t size);
+
 /**
  * @brief Detect if we are running under Docker.
  * @return Returns true, if running under Docker, or false if not.

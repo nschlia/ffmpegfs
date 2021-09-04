@@ -1062,6 +1062,15 @@ int print_stream_info(const AVStream* stream)
     return ret;
 }
 
+std::string fourcc_make_string(std::string * buf, uint32_t fourcc)
+{
+    std::string fourcc2str(AV_FOURCC_MAX_STRING_SIZE, '\0');
+    av_fourcc_make_string(&fourcc2str[0], fourcc);
+    fourcc2str.resize(std::strlen(fourcc2str.c_str()));
+    *buf = fourcc2str;
+    return *buf;
+}
+
 void exepath(std::string * path)
 {
     char result[PATH_MAX + 1] = "";
@@ -1353,6 +1362,12 @@ void make_lower(std::string * input)
     std::for_each(std::begin(*input), std::end(*input), [](char& c) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
     });
+}
+
+const char * hwdevice_get_type_name(AVHWDeviceType dev_type)
+{
+    const char *type_name = av_hwdevice_get_type_name(dev_type);
+    return (type_name != nullptr ? type_name : "unknown");
 }
 
 int to_utf8(std::string & text, const std::string & encoding)

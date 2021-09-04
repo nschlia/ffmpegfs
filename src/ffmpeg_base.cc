@@ -80,7 +80,7 @@ int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
     return 0;
 }
 
-void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate) const
+void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat  enc_hw_pix_fmt) const
 {
     AVRational time_base_tbn;
     AVRational time_base_tbc;
@@ -149,38 +149,41 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     output_stream->avg_frame_rate               = framerate;
     // output_codec_ctx->framerate                 = framerate;
 
-    int alpha = 0;
-    int loss = 0;
-
-    AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
-    AVPixelFormat  dst_pix_fmt                  = AV_PIX_FMT_NONE;
-    if (output_codec_ctx->codec->pix_fmts != nullptr)
+    if (enc_hw_pix_fmt == AV_PIX_FMT_NONE)
     {
-        dst_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
+        // Automatic pix_fmt selection
+        int alpha = 0;
+        int loss = 0;
+
+        AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
+        if (output_codec_ctx->codec->pix_fmts != nullptr)
+        {
+            enc_hw_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
+        }
+
+        if (enc_hw_pix_fmt == AV_PIX_FMT_NONE)
+        {
+            // Fail safe if avcodec_find_best_pix_fmt_of_list has no idea what to use.
+            switch (output_codec_ctx->codec_id)
+            {
+            case AV_CODEC_ID_PRORES:       // mov/prores
+            {
+                //  yuva444p10le
+                // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
+                enc_hw_pix_fmt                         = AV_PIX_FMT_YUV422P10LE;
+                break;
+            }
+            default:                        // all others
+            {
+                // At this moment the output format must be AV_PIX_FMT_YUV420P;
+                enc_hw_pix_fmt                         = AV_PIX_FMT_YUV420P;
+                break;
+            }
+            }
+        }
     }
 
-    if (dst_pix_fmt == AV_PIX_FMT_NONE)
-    {
-        // Fail safe if avcodec_find_best_pix_fmt_of_list has no idea what to use.
-        switch (output_codec_ctx->codec_id)
-        {
-        case AV_CODEC_ID_PRORES:       // mov/prores
-        {
-            //  yuva444p10le
-            // ProRes 4:4:4 if the source is RGB and ProRes 4:2:2 if the source is YUV.
-            dst_pix_fmt                         = AV_PIX_FMT_YUV422P10LE;
-            break;
-        }
-        default:                        // all others
-        {
-            // At this moment the output format must be AV_PIX_FMT_YUV420P;
-            dst_pix_fmt                         = AV_PIX_FMT_YUV420P;
-            break;
-        }
-        }
-    }
-
-    output_codec_ctx->pix_fmt                   = dst_pix_fmt;
+    output_codec_ctx->pix_fmt                   = enc_hw_pix_fmt;
     output_codec_ctx->gop_size                  = 12;   // emit one intra frame every twelve frames at most
 }
 

@@ -45,6 +45,8 @@ public:
 #define OPT_ALL         0x00000000                      /**< @brief All files */
 #define OPT_AUDIO       0x00000001                      /**< @brief For audio only files */
 #define OPT_VIDEO       0x00000002                      /**< @brief For videos (not audio only) */
+#define OPT_SW_ONLY     0x00000004                      /**< @brief Use this option for software encoding only */
+#define OPT_HW_ONLY     0x00000008                      /**< @brief Use this option for hardware encoding only */
 
     typedef struct PROFILE_OPTION                       /**< @brief Profiles options */
     {

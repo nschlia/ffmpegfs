@@ -5,6 +5,27 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
+Important changes in 2.6 (2021-09-04):
+
+* No new features, just a bugfix. See V2.4 for details. 
+
+Important changes in 2.5 (2021-06-18)
+
+* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 
+  implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
+  - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
+  - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
+  - VAAPI: MJPEG and VC-9 do not work (yet).
+  - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.
+  - OMX: H264 encoding.
+  - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
+* Feature: Added unit tests for hardware acceleration. Failing tests will
+           report as SKIPPED and not fail the whole test.
+* Note: Which hardware en/decoder actually works depends on what your hardware
+        supports.
+* Call for testers: Have a CUDA capable graphics adapter and interested in
+  testing? Please write me an E-Mail.
+
 Important changes in 2.4 (2021-09-04)
 
 * Bugfix: Issue #90: Make sure that one keyframe gets inserted at the start of

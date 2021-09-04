@@ -16,7 +16,11 @@ News
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-### Version 2.6 under development
+### **Version 2.6 released**
+
+**New in 2.6 (2021-09-04):**
+
+* No new features, just a bugfix. See V2.4 for details.
 
 ### Version 2.5 released
 

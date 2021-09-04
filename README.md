@@ -16,9 +16,11 @@ News
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-### Version 2.4 under development
+### **Version 2.4 released**
 
-Version 2.4 may be a maintenance (bug fixes only) release. New features will go into version 2.5 which will be ready soon, adding hardware acceleration support.  
+**New in 2.4 (2021-09-04):**
+
+* **Bugfix:** [Issue #90](https://github.com/nschlia/ffmpegfs/issues/90): Make sure that one keyframe gets inserted at the start of each HLS segment.
 
 ### **Version 2.3 released**
 

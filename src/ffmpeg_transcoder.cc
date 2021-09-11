@@ -486,7 +486,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
             else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
             {
                 // No hardware acceleration, fallback to software,
-                Logging::debug(destname(), "Hardware encoder frame buffering %1 not suported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+                Logging::debug(destname(), "Hardware encoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
             }
             else if (!hw_encoder_codec_name.empty())
             {
@@ -1065,7 +1065,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         {
             if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)
             {
-                Logging::info(filename(), "Unable to use ouput codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec_id()));
+                Logging::info(filename(), "Unable to use output codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec_id()));
 
                 m_hwaccel_enc_mode              = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_enc_buffering  = false;

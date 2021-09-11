@@ -1,11 +1,13 @@
 <map id="src/ffmpeg_base.cc" name="src/ffmpeg_base.cc">
-<area shape="rect" id="node1" title="FFmpeg_Base class implementation." alt="" coords="819,5,967,32"/>
+<area shape="rect" id="node1" title="FFmpeg_Base class implementation." alt="" coords="949,5,1097,32"/>
 <area shape="rect" id="node2" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base." alt="" coords="460,155,579,181"/>
 <area shape="rect" id="node10" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="710,80,809,107"/>
 <area shape="rect" id="node18" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="995,229,1078,256"/>
 <area shape="rect" id="node21" title=" " alt="" coords="883,80,995,107"/>
 <area shape="rect" id="node22" title=" " alt="" coords="1020,80,1197,107"/>
 <area shape="rect" id="node23" title=" " alt="" coords="1222,80,1363,107"/>
+<area shape="rect" id="node24" title=" " alt="" coords="1388,80,1579,107"/>
+<area shape="rect" id="node25" title=" " alt="" coords="1603,80,1766,107"/>
 <area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="420,229,536,256"/>
 <area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,304,143,331"/>
 <area shape="rect" id="node5" title=" " alt="" coords="585,304,643,331"/>

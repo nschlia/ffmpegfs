@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.3</span>
+   &#160;<span id="projectnumber">2.7</span>
    </div>
   </td>
  </tr>
@@ -68,17 +68,40 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
-<div class="line">* FFmpegfs has been added to Debian 10 Buster Backports, Debian 11 Bullseye and</div>
-<div class="line">  Ubuntu 20.04. See INSTALL.md &quot;Installation from repository&quot; for details.</div>
-<div class="line"> </div>
+<div class="line">* FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04 and Debian 10</div>
+<div class="line">  Buster Backports. See INSTALL.md &quot;Installation from repository&quot; for details.</div>
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
-<div class="line">Preparing release 2.3</div>
+<div class="line">Important changes in 2.6 (2021-09-04):</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.3 (2021-05-XX)</div>
+<div class="line">* No new features, just a bugfix. See V2.4 for details. </div>
 <div class="line"> </div>
-<div class="line">* Enhancement: Issue #80: Open input video codec, but only if target supports</div>
+<div class="line">Important changes in 2.5 (2021-06-18)</div>
+<div class="line"> </div>
+<div class="line">* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly </div>
+<div class="line">  implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.</div>
+<div class="line">  - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).</div>
+<div class="line">  - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.</div>
+<div class="line">  - VAAPI: MJPEG and VC-9 do not work (yet).</div>
+<div class="line">  - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.</div>
+<div class="line">  - OMX: H264 encoding.</div>
+<div class="line">  - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.</div>
+<div class="line">* Feature: Added unit tests for hardware acceleration. Failing tests will</div>
+<div class="line">           report as SKIPPED and not fail the whole test.</div>
+<div class="line">* Note: Which hardware en/decoder actually works depends on what your hardware</div>
+<div class="line">        supports.</div>
+<div class="line">* Call for testers: Have a CUDA capable graphics adapter and interested in</div>
+<div class="line">  testing? Please write me an E-Mail.</div>
+<div class="line"> </div>
+<div class="line">Important changes in 2.4 (2021-09-04)</div>
+<div class="line"> </div>
+<div class="line">* Bugfix: Issue #90: Make sure that one keyframe gets inserted at the start of</div>
+<div class="line">          each HLS segment.</div>
+<div class="line"> </div>
+<div class="line">Important changes in 2.3 (2021-06-11)</div>
+<div class="line"> </div>
+<div class="line">* Enhancement: Issue #80: Open input video codec only if target supports</div>
 <div class="line">  video. Saves resources: no need to decode video frames if not used.</div>
 <div class="line">* Enhancement: Issue #81: If source format has no audio, and the target supports</div>
 <div class="line">  no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not</div>
@@ -384,7 +407,7 @@ $(function() {
 <div class="line">          on the cache drive. This is now properly reported and transcoding aborted. Thanks for Muf for reporting</div>
 <div class="line">          the issue.</div>
 <div class="line">* Bugfix: Fixed crash when DVD nav packet was missing</div>
-<div class="line">* Bugfix: Fixed clang compatiblity. Project did not build with clang, this has gone unnoticed for a while...</div>
+<div class="line">* Bugfix: Fixed clang compatibility. Project did not build with clang, this has gone unnoticed for a while...</div>
 <div class="line">* Bugfix: Fixed terrible miscalculation of DVD play time. No one told me the values are BCD, not decimal...</div>
 <div class="line">* Bugfix: Fixed conversion of DVD chapters consisting of more than one cell.</div>
 <div class="line">* Bugfix: Fixed pts/dts generation</div>

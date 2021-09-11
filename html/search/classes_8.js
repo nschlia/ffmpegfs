@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['outputfile_1114',['OUTPUTFILE',['../structFFmpeg__Transcoder_1_1OUTPUTFILE.html',1,'FFmpeg_Transcoder']]]
+  ['logger_1167',['Logger',['../classLogging_1_1Logger.html',1,'Logging']]],
+  ['logging_1168',['Logging',['../classLogging.html',1,'']]]
 ];

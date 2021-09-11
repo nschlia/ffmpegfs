@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['logdebug_2066',['LOGDEBUG',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aab8f73513ec0f2b730dbee65fdb0d66fb',1,'Logging']]],
-  ['logerror_2067',['LOGERROR',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aadf23add0723043a76dda3d86c4a53abf',1,'Logging']]],
-  ['loginfo_2068',['LOGINFO',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2cc51af136473955bd58302d21eed12b',1,'Logging']]],
-  ['logtrace_2069',['LOGTRACE',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aabc556bb176a3964b482f0930b691aee0',1,'Logging']]],
-  ['logwarn_2070',['LOGWARN',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aaa54958b19f8cf89c793d0093ed60d365',1,'Logging']]]
+  ['hwaccelapi_5fmmal_2169',['HWACCELAPI_MMAL',['../ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6cabdaae8217c6b9a169b05ea9d040965cc',1,'ffmpegfs.h']]],
+  ['hwaccelapi_5fomx_2170',['HWACCELAPI_OMX',['../ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6ca8e4e088e5451e149a5ff74c524fc9c9c',1,'ffmpegfs.h']]],
+  ['hwaccelapi_5fvaapi_2171',['HWACCELAPI_VAAPI',['../ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6ca90b09f4fc45d4e81429cb192f7984844',1,'ffmpegfs.h']]],
+  ['hwaccelmode_5fenabled_2172',['HWACCELMODE_ENABLED',['../classFFmpeg__Transcoder.html#a069bfc8760dc23399d2f9a044aeacf51a58cdc8554f2784ac92074a2d36057d14',1,'FFmpeg_Transcoder']]],
+  ['hwaccelmode_5ffallback_2173',['HWACCELMODE_FALLBACK',['../classFFmpeg__Transcoder.html#a069bfc8760dc23399d2f9a044aeacf51afc06420ac0aaa932f8f4b02a1836f4ff',1,'FFmpeg_Transcoder']]],
+  ['hwaccelmode_5fnone_2174',['HWACCELMODE_NONE',['../classFFmpeg__Transcoder.html#a069bfc8760dc23399d2f9a044aeacf51a5f6ad8669ced8c0309664f29cafd8c91',1,'FFmpeg_Transcoder']]]
 ];

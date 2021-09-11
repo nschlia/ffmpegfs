@@ -16,5 +16,6 @@ var searchData=
   ['buffer_2eh_45',['buffer.h',['../buffer_8h.html',1,'']]],
   ['buffer_5fwatermark_46',['buffer_watermark',['../classBuffer.html#af40aa3d2d92dbae336dca9de9705c927',1,'Buffer']]],
   ['bufsize_47',['bufsize',['../classFileIO.html#a9ef072d7a6f475c0b185c3912d828342',1,'FileIO::bufsize()'],['../classVcdIO.html#a6cac727f75ae3bb74bd9cf728d91ae03',1,'VcdIO::bufsize()'],['../classDvdIO.html#a33507ad28016e9d9a42ae1204d00de32',1,'DvdIO::bufsize()'],['../classDiskIO.html#aacda7d4216981a43ae67fafb9048b291',1,'DiskIO::bufsize()'],['../classBuffer.html#a4cbffc6461e103922decdded784def8e',1,'Buffer::bufsize()'],['../classBlurayIO.html#a52d2acbf954e25466b1b60e653bbbb9d',1,'BlurayIO::bufsize()']]],
-  ['bug_20list_48',['Bug List',['../bug.html',1,'']]]
+  ['bug_20list_48',['Bug List',['../bug.html',1,'']]],
+  ['build_5fdevice_5ftype_5flist_49',['build_device_type_list',['../ffmpegfs_8cc.html#a1cafc926531bc7fa71036ed0d05b8908',1,'ffmpegfs.cc']]]
 ];

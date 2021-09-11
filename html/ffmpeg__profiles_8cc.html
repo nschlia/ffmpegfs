@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.3</span>
+   &#160;<span id="projectnumber">2.7</span>
    </div>
   </td>
  </tr>
@@ -185,9 +185,8 @@ NOT GOOD: Starts when decode is complete.  <a href="ffmpeg__profiles_8cc.html#af
 <tr class="memitem:a311dfbebcd38f337b62f52a7ac686b14"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">FFmpeg_Profiles::PROFILE_OPTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__profiles_8cc.html#a311dfbebcd38f337b62f52a7ac686b14">m_option_alac_format</a> []</td></tr>
 <tr class="memdesc:a311dfbebcd38f337b62f52a7ac686b14"><td class="mdescLeft">&#160;</td><td class="mdescRight">ALAC profile: ProRes/ALAC format options.  <a href="ffmpeg__profiles_8cc.html#a311dfbebcd38f337b62f52a7ac686b14">More...</a><br /></td></tr>
 <tr class="separator:a311dfbebcd38f337b62f52a7ac686b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec0edfca835de218bb5acfa29e54a90"><td class="memItemLeft" align="right" valign="top"><a id="a2ec0edfca835de218bb5acfa29e54a90"></a>
-static const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">FFmpeg_Profiles::PROFILE_OPTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__profiles_8cc.html#a2ec0edfca835de218bb5acfa29e54a90">m_option_webm_codec_default</a> []</td></tr>
-<tr class="memdesc:a2ec0edfca835de218bb5acfa29e54a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebM codec options. <br /></td></tr>
+<tr class="memitem:a2ec0edfca835de218bb5acfa29e54a90"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">FFmpeg_Profiles::PROFILE_OPTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__profiles_8cc.html#a2ec0edfca835de218bb5acfa29e54a90">m_option_webm_codec_default</a> []</td></tr>
+<tr class="memdesc:a2ec0edfca835de218bb5acfa29e54a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebM codec options.  <a href="ffmpeg__profiles_8cc.html#a2ec0edfca835de218bb5acfa29e54a90">More...</a><br /></td></tr>
 <tr class="separator:a2ec0edfca835de218bb5acfa29e54a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78227c2200399ea9436d7834bf8695d4"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">FFmpeg_Profiles::PROFILE_OPTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__profiles_8cc.html#a78227c2200399ea9436d7834bf8695d4">m_option_webm_format_default</a> []</td></tr>
 <tr class="memdesc:a78227c2200399ea9436d7834bf8695d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebM format options.  <a href="ffmpeg__profiles_8cc.html#a78227c2200399ea9436d7834bf8695d4">More...</a><br /></td></tr>
@@ -231,9 +230,10 @@ Options</h2>
 <div class="line">{ <span class="stringliteral">&quot;level&quot;</span>,                  <span class="stringliteral">&quot;3.1&quot;</span>,                      0,  0 },</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Set speed (changes profile!): utra/veryfast and zerolatency</span></div>
-<div class="line">{ <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  0 },</div>
-<div class="line">{ <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;veryfast&quot;</span>,                 0,  0 },</div>
-<div class="line">{ <span class="stringliteral">&quot;tune&quot;</span>,                   <span class="stringliteral">&quot;zerolatency&quot;</span>,              0,  0 },</div>
+<div class="line">{ <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line">{ <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;veryfast&quot;</span>,                 0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line">{ <span class="stringliteral">&quot;tune&quot;</span>,                   <span class="stringliteral">&quot;zerolatency&quot;</span>,              0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="ttc" id="affmpeg__profiles_8h_html_aceff6ae60877309f3b3cd22e6df61968"><div class="ttname"><a href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a></div><div class="ttdeci">#define OPT_SW_ONLY</div><div class="ttdoc">Use this option for software encoding only.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__profiles_8h_source.html#l00048">ffmpeg_profiles.h:48</a></div></div>
 </div><!-- fragment --><p>Possible format options:</p>
 <div class="fragment"><div class="line">{ <span class="stringliteral">&quot;moov_size&quot;</span>,              <span class="stringliteral">&quot;1000000&quot;</span>,                  0, <a class="code" href="ffmpeg__profiles_8h.html#a2981c5f50d55930a31b22cc2d44a7989">OPT_ALL</a> },   <span class="comment">// bytes</span></div>
 <div class="line">{ <span class="stringliteral">&quot;movflags&quot;</span>,               <span class="stringliteral">&quot;+frag_keyframe&quot;</span>,           0, <a class="code" href="ffmpeg__profiles_8h.html#a2981c5f50d55930a31b22cc2d44a7989">OPT_ALL</a> },</div>
@@ -331,11 +331,11 @@ Options</h2>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">{</div>
-<div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  0 },</div>
-<div class="line"> </div>
 <div class="line">    { <span class="stringliteral">&quot;profile&quot;</span>,                <span class="stringliteral">&quot;high&quot;</span>,                     0,  0 },</div>
 <div class="line">    { <span class="stringliteral">&quot;level&quot;</span>,                  <span class="stringliteral">&quot;3.1&quot;</span>,                      0,  0 },</div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line"> </div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
@@ -402,7 +402,7 @@ Options</h2>
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">{</div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -466,7 +466,7 @@ Options</h2>
 <div class="line">{</div>
 <div class="line"> </div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -502,7 +502,7 @@ Options</h2>
 <div class="line">    { <span class="stringliteral">&quot;level&quot;</span>,                  <span class="stringliteral">&quot;3.1&quot;</span>,                      0,  0 },</div>
 <div class="line"> </div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,                 <span class="stringliteral">&quot;ultrafast&quot;</span>,                0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -534,7 +534,7 @@ Options</h2>
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">{</div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -571,7 +571,7 @@ GOOD: Starts immediately while still decoding. </p>
 <div class="line">    { <span class="stringliteral">&quot;level&quot;</span>,                <span class="stringliteral">&quot;3.1&quot;</span>,                        0,  0 },</div>
 <div class="line"> </div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -609,7 +609,7 @@ GOOD: Starts immediately while still decoding. </p>
 <div class="line">    { <span class="stringliteral">&quot;level&quot;</span>,                <span class="stringliteral">&quot;3.1&quot;</span>,                        0,  0 },</div>
 <div class="line"> </div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -646,7 +646,7 @@ NOT GOOD: Starts when decode is complete. </p>
 <div class="line">    { <span class="stringliteral">&quot;level&quot;</span>,                <span class="stringliteral">&quot;3.1&quot;</span>,                        0,  0 },</div>
 <div class="line"> </div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -678,7 +678,7 @@ NOT GOOD: Starts when decode is complete. </p>
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">{</div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -710,7 +710,7 @@ NOT GOOD: Starts when decode is complete. </p>
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">{</div>
 <div class="line">    </div>
-<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  0 },</div>
+<div class="line">    { <span class="stringliteral">&quot;preset&quot;</span>,               <span class="stringliteral">&quot;ultrafast&quot;</span>,                  0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
 <div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
 <div class="line">}</div>
 </div><!-- fragment -->
@@ -1031,6 +1031,58 @@ NOT GOOD: Starts when decode is complete. </p>
 
 </div>
 </div>
+<a id="a2ec0edfca835de218bb5acfa29e54a90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ec0edfca835de218bb5acfa29e54a90">&#9670;&nbsp;</a></span>m_option_webm_codec_default</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">FFmpeg_Profiles::PROFILE_OPTION</a> m_option_webm_codec_default[]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">{</div>
+<div class="line">    { <span class="stringliteral">&quot;deadline&quot;</span>,               <span class="stringliteral">&quot;realtime&quot;</span>,                 0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line"> </div>
+<div class="line">    { <span class="stringliteral">&quot;cpu-used&quot;</span>,               <span class="stringliteral">&quot;8&quot;</span>,                        0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line">    </div>
+<div class="line">    { <span class="stringliteral">&quot;tile-columns&quot;</span>,           <span class="stringliteral">&quot;6&quot;</span>,                        0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line">    { <span class="stringliteral">&quot;frame-parallel&quot;</span>,         <span class="stringliteral">&quot;1&quot;</span>,                        0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line">    { <span class="stringliteral">&quot;auto-alt-ref&quot;</span>,           <span class="stringliteral">&quot;1&quot;</span>,                        0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line">    { <span class="stringliteral">&quot;lag-in-frames&quot;</span>,          <span class="stringliteral">&quot;25&quot;</span>,                       0,  <a class="code" href="ffmpeg__profiles_8h.html#aceff6ae60877309f3b3cd22e6df61968">OPT_SW_ONLY</a> },</div>
+<div class="line"> </div>
+<div class="line">    { <span class="keyword">nullptr</span>,                  <span class="keyword">nullptr</span>,                    0,  0 }</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>WebM codec options. </p>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__profiles_8cc_source.html#l00518">518</a> of file <a class="el" href="ffmpeg__profiles_8cc_source.html">ffmpeg_profiles.cc</a>.</p>
+
+</div>
+</div>
 <a id="a78227c2200399ea9436d7834bf8695d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a78227c2200399ea9436d7834bf8695d4">&#9670;&nbsp;</a></span>m_option_webm_format_default</h2>
 
@@ -1057,7 +1109,7 @@ NOT GOOD: Starts when decode is complete. </p>
 </div><!-- fragment -->
 <p>WebM format options. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__profiles_8cc_source.html#l00554">554</a> of file <a class="el" href="ffmpeg__profiles_8cc_source.html">ffmpeg_profiles.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__profiles_8cc_source.html#l00548">548</a> of file <a class="el" href="ffmpeg__profiles_8cc_source.html">ffmpeg_profiles.cc</a>.</p>
 
 </div>
 </div>

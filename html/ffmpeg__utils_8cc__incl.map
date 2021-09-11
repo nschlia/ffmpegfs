@@ -1,5 +1,5 @@
 <map id="src/ffmpeg_utils.cc" name="src/ffmpeg_utils.cc">
-<area shape="rect" id="node1" title="FFmpegfs utility set implementation." alt="" coords="1383,5,1529,32"/>
+<area shape="rect" id="node1" title="FFmpegfs utility set implementation." alt="" coords="1433,5,1578,32"/>
 <area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="469,155,585,181"/>
 <area shape="rect" id="node5" title=" " alt="" coords="663,229,726,256"/>
 <area shape="rect" id="node9" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="777,80,868,107"/>
@@ -19,6 +19,7 @@
 <area shape="rect" id="node29" title=" " alt="" coords="2099,80,2258,107"/>
 <area shape="rect" id="node30" title=" " alt="" coords="2283,80,2491,107"/>
 <area shape="rect" id="node31" title=" " alt="" coords="2515,80,2664,107"/>
+<area shape="rect" id="node32" title=" " alt="" coords="2688,80,2851,107"/>
 <area shape="rect" id="node3" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="335,229,473,256"/>
 <area shape="rect" id="node4" title=" " alt="" coords="580,229,639,256"/>
 <area shape="rect" id="node6" title=" " alt="" coords="497,229,556,256"/>

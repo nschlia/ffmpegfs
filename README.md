@@ -11,11 +11,9 @@ FFmpegfs
 News
 ----
 
-* FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04, also to Debian 10 Buster Backports. See [INSTALL](INSTALL.md) "Installation from repository" for details.
-  
-* Cool, there's an online review on Linux Uprising, you can read it here:
-  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
-
+* 04.09.2021: The feature branch FB (V2.6) has been merged into trunk (V2.4), becoming the new release branch. The next release will be 2.7. To get the latest code please checkout master from now on.
+* 04.09.2021: Released V2.6 to Debian Bullseye. This release finally features hardware decoding and encoding.
+ 
 ### **Version 2.6 released**
 
 **New in 2.6 (2021-09-04):**

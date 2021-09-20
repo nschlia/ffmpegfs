@@ -14,7 +14,7 @@ News
 * 04.09.2021: The feature branch FB (V2.6) has been merged into trunk (V2.4), becoming the new release branch. The next release will be version 2.7. To get the latest code please checkout master from now on.
 * 04.09.2021: Released V2.6 to Debian Bullseye. This official release finally features hardware decoding and encoding.
  
-### **Version 2.6 released**
+### Version 2.6 released
 
 **New in 2.6 (2021-09-04):**
 
@@ -36,13 +36,13 @@ News
 * **Call for testers**: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.
 * See [NEWS](NEWS) for details.
 
-### **Version 2.4 released**
+### Version 2.4 released
 
 **New in 2.4 (2021-09-04):**
 
 * **Bugfix:** [Issue #90](https://github.com/nschlia/ffmpegfs/issues/90): Make sure that one keyframe gets inserted at the start of each HLS segment.
 
-### **Version 2.3 released**
+### Version 2.3 released
 
 **New in 2.3 (2021-06-11):**
 

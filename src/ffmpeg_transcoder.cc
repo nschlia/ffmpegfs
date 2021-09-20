@@ -6419,7 +6419,7 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
           * mmal: mmal_port_disable: port vc.ril.video_decode:in:0(MP2V)(0x6b985440) is not enabled @n
           * mmal: mmal_port_disable: port vc.ril.video_decode:out:0(0x6b985890) is not enabled @n
           * mmal: mmal_port_disable: port vc.ril.video_decode:ctr:0(0x6b94db90) is not enabled @n
-          * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Failed to open video input codec for stream #video (error '0'). @n
+          * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Failed to open video input codec for stream video (error '0'). @n
           * ERROR  : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Failed to open video codec (error 'Unknown error occurred'). @n
           * ERROR  : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] Transcoding exited with error. @n
           * ERROR  : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] System error: (5) Input/output error @n
@@ -6445,7 +6445,7 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
             * mmal: mmal_port_disable: port vc.ril.video_decode:in:0(WVC1)(0x6e54c560) is not enabled @n
             * mmal: mmal_port_disable: port vc.ril.video_decode:out:0(0x6e546660) is not enabled @n
             * mmal: mmal_port_disable: port vc.ril.video_decode:ctr:0(0x6e54c240) is not enabled @n
-            * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video input codec for stream #video (error '0'). @n
+            * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video input codec for stream video (error '0'). @n
             * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video codec (error 'Unknown error occurred').
             */
     case AV_CODEC_ID_VC1:

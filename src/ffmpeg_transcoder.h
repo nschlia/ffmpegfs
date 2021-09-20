@@ -923,7 +923,7 @@ protected:
      * @return 0 on success, AVERROR_DECODER_NOT_FOUND if no codec available.
      */
     int                         get_hw_mmal_decoder_name(AVCodecID codec_id, std::string *codec_name) const;
-    /**
+    /*
      * @brief Determine video for linux decoder codec name
      * @param[in] codec_id - Id of encoder/decoder codec
      * @param[out] codec_name - Name of the codec.

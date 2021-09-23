@@ -213,10 +213,9 @@ To switch from repository to a source build do
 apt-get remove ffmpegfs
 ```
 
-Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, you self-build could be inadvertently up- or downgraded when a new version becomes available from the repository.
+Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, your self-build could inadvertently be up- or downgraded when a new version becomes available from the repository.
 
-To switch from a source build to a repository installation change to
-the build directory and do
+To switch from a source build to a repository installation change to the build directory and do
 
 ```
 make uninstall

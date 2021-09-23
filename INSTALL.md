@@ -336,7 +336,7 @@ And your troubles should be gone.
 
 ### "make check": all audio checks fail
 
-Logfiles contain "bc: command not found", so the command line communicator is missing.
+Log files contain "bc: command not found", so the command line communicator is missing.
 
 Fix by installing it (or similar):
 

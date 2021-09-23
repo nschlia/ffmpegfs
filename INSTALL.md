@@ -131,7 +131,7 @@ If you want to build the documentation you will find "asciidoc" missing from the
 
 **On Funtoo Linux:**
 
-To get fuse suppprt and chromaprint (for make check):
+To get fuse support and chromaprint (for make check):
 
     emerge sys-fs/fuse
     emerge media-libs/chromaprint

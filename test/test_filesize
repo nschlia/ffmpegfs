@@ -37,7 +37,7 @@ elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
     check_filesize "raven_e.flac" 421675 548761
-    check_filesize "raven_d.ogg" 255780 393946 
+    check_filesize "raven_d.ogg" 255779 393946 
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov

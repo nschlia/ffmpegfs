@@ -5974,7 +5974,7 @@ enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodec
     if (params.m_hwaccel_dec_device_type == AV_HWDEVICE_TYPE_NONE)
     {
         // We should never happen to end up here...
-        Logging::error(filename(), "Unable to decode this file using hardware acceleration: Internal error! No hardware device tyoe set.");
+        Logging::error(filename(), "Unable to decode this file using hardware acceleration: Internal error! No hardware device type set.");
         return AV_PIX_FMT_NONE;
     }
 

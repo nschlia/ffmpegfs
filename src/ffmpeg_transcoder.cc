@@ -2652,10 +2652,16 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
     if (pkt != nullptr)
     {
         ret = avcodec_send_packet(avctx, pkt);
-        // In particular, we don't expect AVERROR(EAGAIN), because we read all
-        // decoded frames with avcodec_receive_frame() until done.
         if (ret < 0 && ret != AVERROR_EOF)
         {
+            // In particular, we don't expect AVERROR(EAGAIN), because we read all
+            // decoded frames with avcodec_receive_frame() until done, so this should be handled
+            // as an error.
+            if (ret == AVERROR(EAGAIN))
+            {
+                ret = AVERROR_EXTERNAL;
+            }
+
             if (pkt->stream_index == m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM)
             {
                 Logging::error(filename(), "Could not send audio packet at PTS=%1 to decoder (error '%2').", av_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
@@ -3306,8 +3312,13 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         }
     }
 
-    if (!params.m_decoding_errors && ret < 0 && ret != AVERROR(EAGAIN))
+    // If decoding errors should be ignored by command line, reset return code.
+    // Exemptions that need to be passed on anyway:
+    // * EAGAIN tells the caller to retry, this is not an error
+    // * AVERROR_EXTERNAL is an unrecoverable error and should be handled
+    if (!params.m_decoding_errors && ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EXTERNAL)
     {
+        // Ignore error, go on with transcoding
         ret = 0;
     }
 

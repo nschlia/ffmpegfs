@@ -3262,7 +3262,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
-                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
                         return ret;
                     }
 
@@ -3270,7 +3270,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #else
                     if (ret < 0)
                     {
-                        Logging::error(filename(), "Could not decode frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
                         return ret;
                     }
 #endif

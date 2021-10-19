@@ -3045,7 +3045,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                 if (frame->pts != AV_NOPTS_VALUE)
                 {
-					// Issue #90: Insert key frame at start of each subsequent HLS segment
+                    // Issue #90: Insert key frame at start of each subsequent HLS segment
                     int64_t pts = frame->pts - video_start_time;
                     int64_t pos = av_rescale_q_rnd(pts, m_out.m_video.m_codec_ctx->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
                     if (pos < 0)

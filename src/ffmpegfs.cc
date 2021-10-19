@@ -84,10 +84,10 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_deinterlace(0)                          // default: do not interlace video
     , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
     // Hardware acceleration
-    , m_hwaccel_enc_API(HWACCELAPI_NONE)                // Default: Use software encoder
-    , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software encoder
-    , m_hwaccel_dec_API(HWACCELAPI_NONE)                // Default: Use software encoder
-    , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)    // Default: Use software decoder
+    , m_hwaccel_enc_API(HWACCELAPI_NONE)                // default: Use software encoder
+    , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software encoder
+    , m_hwaccel_dec_API(HWACCELAPI_NONE)                // default: Use software encoder
+    , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software decoder
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -127,7 +127,7 @@ bool FFMPEGFS_PARAMS::smart_transcode(void) const
 
 int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
 {
-    const AVOutputFormat* oformat = av_guess_format(nullptr, filepath.c_str(), nullptr);
+    const AVOutputFormat* oformat = ::av_guess_format(nullptr, filepath.c_str(), nullptr);
 
     if (oformat != nullptr)
     {
@@ -1097,7 +1097,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
         if (it == hwaccel_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid hardware acceleration encoder API: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER: Invalid hardware acceleration API: %s\n", data.c_str());
             return -1;
         }
 
@@ -1105,7 +1105,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
         if (!hwaccel.m_supported)
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Unsupported hardware acceleration encoder API: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER: Unsupported hardware acceleration API: %s\n", data.c_str());
             return -1;
         }
 
@@ -1114,7 +1114,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration encoder API string\n");
+    std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration API string\n");
 
     return -1;
 }
@@ -1585,7 +1585,7 @@ int main(int argc, char *argv[])
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {
-        std::fprintf(stderr, "INVALID PARAMETER: Parsing options.\n\n");
+        std::fprintf(stderr, "Error parsing command line options.\n\n");
         //usage(argv[0]);
         return 1;
     }

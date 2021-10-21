@@ -21,7 +21,7 @@ dist_man_MANS = ffmpegfs.1
 
 MAINTAINERCLEANFILES = ffmpegfs.1
 
-EXTRA_DIST = INSTALL.md README.md ffmpegfs.1.txt src/makehelp.sh
+EXTRA_DIST = INSTALL.md README.md HISTORY.md ffmpegfs.1.txt src/makehelp.sh
 
 #CLEANFILES =
 
@@ -83,6 +83,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "EXCLUDE                += doxyfile.inc" >> doxyfile.inc
 	@echo "INPUT                  += README.md" >> doxyfile.inc
 	@echo "INPUT	              += INSTALL.md" >> doxyfile.inc
+	@echo "INPUT                  += HISTORY.md" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += NEWS" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += TODO" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc

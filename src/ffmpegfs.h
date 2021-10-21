@@ -49,6 +49,7 @@
  * @section ffmpeg_documentation Documentation
  *
  * @li [Read me!](README.md)
+ * @li [History](HISTORY.md)
  * @li [Installation instructions](INSTALL.md)
  * @li @ref todo
  * @li @ref bug

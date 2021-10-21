@@ -263,14 +263,14 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("--segment_duration=%s",           KEY_SEGMENT_DURATION),
     FUSE_OPT_KEY("segment_duration=%s",             KEY_SEGMENT_DURATION),
     // Hardware acceleration
-    FUSE_OPT_KEY("--hwaccel_enc=%s",            KEY_HWACCEL_ENCODER_API),
-    FUSE_OPT_KEY("hwaccel_enc=%s",              KEY_HWACCEL_ENCODER_API),
-    FUSE_OPT_KEY("--hwaccel_enc_device=%s",     KEY_HWACCEL_ENCODER_DEVICE),
-    FUSE_OPT_KEY("hwaccel_enc_device=%s",       KEY_HWACCEL_ENCODER_DEVICE),
-    FUSE_OPT_KEY("--hwaccel_dec=%s",            KEY_HWACCEL_DECODER_API),
-    FUSE_OPT_KEY("hwaccel_dec=%s",              KEY_HWACCEL_DECODER_API),
-    FUSE_OPT_KEY("--hwaccel_dec_device=%s",     KEY_HWACCEL_DECODER_DEVICE),
-    FUSE_OPT_KEY("hwaccel_dec_device=%s",       KEY_HWACCEL_DECODER_DEVICE),
+    FUSE_OPT_KEY("--hwaccel_enc=%s",                KEY_HWACCEL_ENCODER_API),
+    FUSE_OPT_KEY("hwaccel_enc=%s",                  KEY_HWACCEL_ENCODER_API),
+    FUSE_OPT_KEY("--hwaccel_enc_device=%s",         KEY_HWACCEL_ENCODER_DEVICE),
+    FUSE_OPT_KEY("hwaccel_enc_device=%s",           KEY_HWACCEL_ENCODER_DEVICE),
+    FUSE_OPT_KEY("--hwaccel_dec=%s",                KEY_HWACCEL_DECODER_API),
+    FUSE_OPT_KEY("hwaccel_dec=%s",                  KEY_HWACCEL_DECODER_API),
+    FUSE_OPT_KEY("--hwaccel_dec_device=%s",         KEY_HWACCEL_DECODER_DEVICE),
+    FUSE_OPT_KEY("hwaccel_dec_device=%s",           KEY_HWACCEL_DECODER_DEVICE),
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -429,7 +429,7 @@ static HWACCEL_MAP hwaccel_map =
     { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom. Encoding only.
     { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration). Decoding only.
 
-#if 0
+    #if 0
     // Additional formats
     { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
     { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)

@@ -4,6 +4,18 @@ Installation Instructions for FFmpegfs
 Installation from repository
 ----------------------------
 
+### Debian Bullseye
+
+FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
+
+On Debian 11 Bullseye you can simply do
+
+    apt-get install ffmpegfs
+
+For Ubuntu 20.04 and Linux distributions based on it this is
+
+    apt install ffmpegfs
+
 ### Debian Buster
 
 FFmpegfs can be installed on Debian 10 Buster from Buster Backports and sid (which is not recommended and therefore not described here).
@@ -17,18 +29,6 @@ To enable Buster Backports:
 Then install FFmpegfs:
 
      sudo apt-get -t buster-backports install ffmpegfs
-
-### Debian Bullseye
-
-FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
-
-On Debian 11 Bullseye you can simply do
-
-    apt-get install ffmpegfs
-
-For Ubuntu 20.04 and Linux distributions based on it this is
-
-    apt install ffmpegfs
 
 ### Other Distributions
 

@@ -796,68 +796,80 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         codec_id = input_codec_ctx->codec_id;
 #endif
-
-        if (type == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
+        if (params.m_hwaccel_dec_API != HWACCELAPI_NONE)
         {
-            // Decide whether to use a hardware decoder
-            // Check to see if decoder hardware acceleration is both requested and supported by codec.
-            std::string hw_decoder_codec_name;
-            if (!get_hw_decoder_name(input_codec_ctx->codec_id, &hw_decoder_codec_name))
+            if (type == AVMEDIA_TYPE_VIDEO)
             {
-                m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, true);
-
-                m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE && m_dec_hw_pix_fmt != AV_PIX_FMT_NONE);
-                //{
-                //    std::string fourcc2str;
-                //    fourcc_make_string(&fourcc2str, input_codec_ctx->codec_tag);
-                //    fprintf(stderr, "fourcc2str %s\n", fourcc2str.c_str());
-                //}
-            }
-
-            if (m_hwaccel_enable_dec_buffering)
-            {
-                // Hardware buffers available, enabling decoder hardware acceleration.
-                Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
-                ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
-                if (ret < 0)
+                if (check_hwaccel_dec_blocked(input_stream->codecpar->codec_id, input_stream->codecpar->profile))
                 {
-                    Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), ffmpeg_geterror(ret).c_str());
-                    return ret;
+                    const char *profile = ::avcodec_profile_name(codec_id, input_stream->codecpar->profile);
+                    Logging::info(filename(), "Codec '%1' %2 is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id, false), profile != nullptr ? profile : "Profile unknown");
+                    m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
                 }
-                Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", input_codec->name);
-
-                m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
             }
-            else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
-            {
-                // No hardware acceleration, fallback to software,
-                Logging::info(filename(), "Hardware decoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(input_codec_ctx->codec_id, true));
-            }
-            else if (!hw_decoder_codec_name.empty())
-            {
-                // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-                Logging::info(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
 
-                // Open hw_decoder_codec_name codec here
-                input_codec = avcodec_find_decoder_by_name(hw_decoder_codec_name.c_str());
-
-                if (input_codec == nullptr)
+            if (type == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
+            {
+                // Decide whether to use a hardware decoder
+                // Check to see if decoder hardware acceleration is both requested and supported by codec.
+                std::string hw_decoder_codec_name;
+                if (!get_hw_decoder_name(input_codec_ctx->codec_id, &hw_decoder_codec_name))
                 {
-                    Logging::error(filename(), "Could not find decoder '%1'.", hw_decoder_codec_name.c_str());
-                    return AVERROR(EINVAL);
+                    m_dec_hw_pix_fmt = get_hw_pix_fmt(input_codec, params.m_hwaccel_dec_device_type, true);
+
+                    m_hwaccel_enable_dec_buffering = (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE && m_dec_hw_pix_fmt != AV_PIX_FMT_NONE);
+                    //{
+                    //    std::string fourcc2str;
+                    //    fourcc_make_string(&fourcc2str, input_codec_ctx->codec_tag);
+                    //    fprintf(stderr, "fourcc2str %s\n", fourcc2str.c_str());
+                    //}
                 }
 
-                Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
-
-                m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
-            }
-
-            if (m_hwaccel_enable_dec_buffering)
-            {
-                ret = hwdevice_ctx_add_ref(input_codec_ctx);
-                if (ret < 0)
+                if (m_hwaccel_enable_dec_buffering)
                 {
-                    return ret;
+                    // Hardware buffers available, enabling decoder hardware acceleration.
+                    Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
+                    ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
+                    if (ret < 0)
+                    {
+                        Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+                    Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", input_codec->name);
+
+                    m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                }
+                else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
+                {
+                    // No hardware acceleration, fallback to software,
+                    Logging::info(filename(), "Hardware decoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(input_codec_ctx->codec_id, true));
+                }
+                else if (!hw_decoder_codec_name.empty())
+                {
+                    // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
+                    Logging::info(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
+
+                    // Open hw_decoder_codec_name codec here
+                    input_codec = avcodec_find_decoder_by_name(hw_decoder_codec_name.c_str());
+
+                    if (input_codec == nullptr)
+                    {
+                        Logging::error(filename(), "Could not find decoder '%1'.", hw_decoder_codec_name.c_str());
+                        return AVERROR(EINVAL);
+                    }
+
+                    Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
+
+                    m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                }
+
+                if (m_hwaccel_enable_dec_buffering)
+                {
+                    ret = hwdevice_ctx_add_ref(input_codec_ctx);
+                    if (ret < 0)
+                    {
+                        return ret;
+                    }
                 }
             }
         }

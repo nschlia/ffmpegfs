@@ -132,12 +132,15 @@ typedef enum HWACCELAPI
 #endif
 } HWACCELAPI;
 
+typedef std::multimap<AVCodecID, int> HWACCEL_BLOCKED_MAP;      /**< @brief Map command line option to AVCodecID */
+
 /**
  * @brief Global program parameters
  */
 extern struct FFMPEGFS_PARAMS
 {
     FFMPEGFS_PARAMS();
+    ~FFMPEGFS_PARAMS();
 
     /**
      * @brief Check for smart transcode mode
@@ -191,6 +194,7 @@ extern struct FFMPEGFS_PARAMS
     HWACCELAPI          m_hwaccel_dec_API;          /**< @brief Decoder API */
     AVHWDeviceType      m_hwaccel_dec_device_type;  /**< @brief Enable hardware acceleration buffering for decoder */
     std::string         m_hwaccel_dec_device;       /**< @brief Decoder device. May be AUTO to auto detect or empty */
+    HWACCEL_BLOCKED_MAP*m_hwaccel_dec_blocked;      /**< @brief List of blocked decoders and optional profiles */
     // Album arts
     int                 m_noalbumarts;              /**< @brief skip album arts */
     // Virtual script
@@ -391,6 +395,14 @@ std::string 		get_level_text(PRORESLEVEL level);
  * @return Hardware acceleration API as string.
  */
 std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
+
+/**
+ * @brief Check if codec_id and optional profile is in block list.
+ * @param codec_id - Codec ID of rto check
+ * @param profile - Profile to check. Set to FF_PROFILE_UNKOWN to ignore.
+ * @return Returns true if codec is in block list, false if not.
+ */
+bool                check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
 
 /**
  * @brief Wrapper to the Fuse filler function.

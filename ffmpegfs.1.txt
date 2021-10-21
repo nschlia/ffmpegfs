@@ -225,6 +225,29 @@ Default: *NONE* (no acceleration)
  * *VAAPI*: Video Acceleration API (VA-API)
  * *OMX*: OpenMAX (Open Media Acceleration)
 
+*--hwaccel_dec_blocked*=CODEC[:PROFILE[:PROFILE]], *-o hwaccel_dec_blocked*=CODEC:[:PROFILE[:PROFILE]]::
+Block codec and optionally profile from hardware decoding. Option can be
+repeated to block serveral codecs
++
+Default: no codecs blocked
++
+*CODEC*:: can be defined as...
+ * *H263*:  H.263
+ * *H264*:  H.264
+ * *HEVC*:  H.265 / HEVC
+ * *MPEG2*: MPEG-2 video
+ * *MPEG4*: MPEG-4 video
+ * *VC1*:   SMPTE VC-1
+ * *VP8*:   Google VP9
+ * *VP9*:   Google VP9
+ * *WMV3*:  Windows Media Video 9
++
+*PROFILE*:: can optionally be added to block a certain profile only.
++
+Example: VP9:0 blocks Google VP profile 0
++
+Example: H264:1:33 blocks H.264 profile 1 and 33
+
 *--hwaccel_enc_device*=DEVICE, -o *hwaccel_enc_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially
 if more the one device is available.

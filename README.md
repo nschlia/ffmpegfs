@@ -13,7 +13,19 @@ News
 
 * 04.09.2021: The feature branch FB (V2.6) has been merged into trunk (V2.4), becoming the new release branch. The next release will be version 2.7. To get the latest code please checkout master from now on.
 * 04.09.2021: Released V2.6 to Debian Bullseye. This official release finally features hardware decoding and encoding.
- 
+
+### Version 2.7 under development
+
+**New in in 2.7 (2021-10-XX):
+
+* **Bugfix:** [Issue #92](https://github.com/nschlia/ffmpegfs/issues/92): Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered.
+  It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a --hwaccel_dec_blocked parameter has been added.
+  If hardware decoding fails, check the log for a message similar this:
+  "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0."
+  If VP9 profile 0 is not supported, the parameter would be:
+  --hwaccel_dec_blocked=VP9:0
+  This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.
+
 ### Version 2.6 released
 
 **New in 2.6 (2021-09-04):**

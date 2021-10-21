@@ -88,6 +88,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software encoder
     , m_hwaccel_dec_API(HWACCELAPI_NONE)                // default: Use software encoder
     , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software decoder
+    , m_hwaccel_dec_blocked(nullptr)                    // default: No blocked encoders
     // Album arts
     , m_noalbumarts(0)                          // default: copy album arts
     // Virtual Script
@@ -118,6 +119,11 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_oldnamescheme(0)                        // default: new scheme
     , m_win_smb_fix(1)                          // default: fix enabled
 {
+}
+
+FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
+{
+    delete m_hwaccel_dec_blocked;
 }
 
 bool FFMPEGFS_PARAMS::smart_transcode(void) const
@@ -217,7 +223,8 @@ enum
     KEY_HWACCEL_ENCODER_API,
     KEY_HWACCEL_ENCODER_DEVICE,
     KEY_HWACCEL_DECODER_API,
-    KEY_HWACCEL_DECODER_DEVICE
+    KEY_HWACCEL_DECODER_DEVICE,
+    KEY_HWACCEL_DECODER_BLOCKED,
 };
 
 /**
@@ -271,6 +278,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("hwaccel_dec=%s",                  KEY_HWACCEL_DECODER_API),
     FUSE_OPT_KEY("--hwaccel_dec_device=%s",         KEY_HWACCEL_DECODER_DEVICE),
     FUSE_OPT_KEY("hwaccel_dec_device=%s",           KEY_HWACCEL_DECODER_DEVICE),
+    FUSE_OPT_KEY("--hwaccel_dec_blocked=%s",        KEY_HWACCEL_DECODER_BLOCKED),
+    FUSE_OPT_KEY("hwaccel_dec_blocked=%s",          KEY_HWACCEL_DECODER_BLOCKED),
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -353,6 +362,7 @@ typedef struct HWACCEL                                          /**< @brief Hard
 } HWACCEL;
 
 typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;       /**< @brief Map command line option to HWACCEL struct */
+typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;       /**< @brief Map command line option to AVCodecID */
 
 /**
   * List of AUTOCOPY options
@@ -460,6 +470,22 @@ static HWACCEL_MAP hwaccel_map =
     #endif
 };
 
+/**
+  * List of AUTOCOPY options
+  */
+static const CODEC_MAP hwaccel_codec_map =
+{
+    { "H263",   AV_CODEC_ID_H263 },
+    { "H264",   AV_CODEC_ID_H264 },
+    { "HEVC",   AV_CODEC_ID_HEVC },
+    { "MPEG2",  AV_CODEC_ID_MPEG2VIDEO },
+    { "MPEG4",  AV_CODEC_ID_MPEG4 },
+    { "VC1",    AV_CODEC_ID_VC1 },
+    { "VP8",    AV_CODEC_ID_VP8 },
+    { "VP9",    AV_CODEC_ID_VP9 },
+    { "WMV3",   AV_CODEC_ID_WMV3 },
+};
+
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
 static int          get_samplerate(const std::string & arg, int *samplerate);
 static int          get_time(const std::string & arg, time_t *time);
@@ -471,9 +497,11 @@ static int          get_profile(const std::string & arg, PROFILE *profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
 static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type);
+static int          get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
 static int          get_value(const std::string & arg, double *value);
+static int          get_codec(const std::string & arg, AVCodecID *codec_id);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults(void);
@@ -1127,6 +1155,109 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
     return -1;
 }
 
+/**
+ * @brief Get AVCodecID for codec string
+ * @param[in] codec - Codec string
+ * @param[out] codec_id - AVCodecID of codec string
+ * @return Returns 0 if found; if not found returns -1 and codec_id set to AV_CODEC_ID_NONE.
+ */
+static int get_codec(const std::string & codec, AVCodecID *codec_id)
+{
+    CODEC_MAP::const_iterator it = hwaccel_codec_map.find(codec);
+
+    if (it == hwaccel_codec_map.cend())
+    {
+        std::fprintf(stderr, "INVALID PARAMETER: Unknown codec '%s'. Valid codecs are:\n", codec.c_str());
+
+        for(CODEC_MAP::const_iterator it = hwaccel_codec_map.begin(); it != hwaccel_codec_map.cend(); it++)
+        {
+            std::fprintf(stderr, " %s\n", it->first.c_str());
+        }
+
+        *codec_id = AV_CODEC_ID_NONE;
+        return -1;
+    }
+
+    *codec_id = it->second;
+
+    return 0;
+}
+
+/**
+ * @brief Get list of codecs and optional profiles blocked for hardware accelerated decoding
+ * @param[in] arg - Parameter with codec string and optional profile
+ * @param[out] hwaccel_dec_blocked - Map with blocked codecs and profiles. Will be allocated if necessary.
+ * @return Returns 0 on success; on erro returns -1.
+ */
+static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string param(arg.substr(0, pos));
+        std::stringstream data(arg.substr(pos + 1));
+        std::string codec;
+
+        if (*hwaccel_dec_blocked == nullptr)
+        {
+            *hwaccel_dec_blocked = new HWACCEL_BLOCKED_MAP;
+        }
+
+        if (!std::getline(data, codec, ':'))
+        {
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", param.c_str());
+            return -1;
+        }
+
+        AVCodecID codec_id;
+
+        if (get_codec(codec, &codec_id))
+        {
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Unknown codec '%s'\n", param.c_str(), codec.c_str());
+            return -1;
+        }
+
+        int nProfilesFound = 0;
+        for (std::string profile; std::getline(data, profile, ':');)
+        {
+            nProfilesFound++;
+            // Block codec and profile
+            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, std::atoi(profile.c_str())));
+        }
+
+        if (!nProfilesFound)
+        {
+            // No profile
+            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, FF_PROFILE_UNKNOWN));
+        }
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+    return -1;
+}
+
+bool check_hwaccel_dec_blocked(AVCodecID codec_id, int profile)
+{
+    if (params.m_hwaccel_dec_blocked == nullptr)
+    {
+        return false;   // Nothing blocked
+    }
+
+    for (HWACCEL_BLOCKED_MAP::const_iterator it = params.m_hwaccel_dec_blocked->find(codec_id); it != params.m_hwaccel_dec_blocked->cend(); it++)
+    {
+        if (it->first == codec_id && (it->second == profile || it->second == FF_PROFILE_UNKNOWN))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
 {
     HWACCEL_MAP::const_iterator it = hwaccel_map.cbegin();
@@ -1380,6 +1511,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     case KEY_HWACCEL_DECODER_DEVICE:
     {
         return get_value(arg, &params.m_hwaccel_dec_device);
+    }
+    case KEY_HWACCEL_DECODER_BLOCKED:
+    {
+        return get_hwaccel_dec_blocked(arg, &params.m_hwaccel_dec_blocked);
     }
     case KEY_EXPIRY_TIME:
     {

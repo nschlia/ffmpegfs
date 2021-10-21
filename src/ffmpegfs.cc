@@ -534,6 +534,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
         int reti;
 
@@ -576,12 +577,10 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid bit rate '%s'\n", data.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid bit rate '%s'\n", param.c_str(), data.c_str());
     }
-    else
-    {
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid bit rate\n");
-    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -603,6 +602,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
         int reti;
 
@@ -632,11 +632,11 @@ static int get_samplerate(const std::string & arg, int * samplerate)
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid sample rate '%s'\n", data.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid sample rate '%s'\n", param.c_str(), data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid sample rate\n");
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
     }
 
     return -1;
@@ -663,6 +663,7 @@ static int get_time(const std::string & arg, time_t *time)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
         int reti;
 
@@ -731,11 +732,11 @@ static int get_time(const std::string & arg, time_t *time)
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid time format '%s'\n", data.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid time format '%s'\n", param.c_str(), data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid time format\n");
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid time format\n", arg.c_str());
     }
 
     return -1;
@@ -761,6 +762,7 @@ static int get_size(const std::string & arg, size_t *size)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
         int reti;
 
@@ -829,11 +831,11 @@ static int get_size(const std::string & arg, size_t *size)
             return 0;   // OK
         }
 
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid size '%s'\n", data.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid size '%s'\n", param.c_str(), data.c_str());
     }
     else
     {
-        std::fprintf(stderr, "INVALID PARAMETER: Invalid size\n");
+        std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid size\n", arg.c_str());
     }
 
     return -1;
@@ -852,6 +854,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::vector<std::string> results =  split(arg.substr(pos + 1), "\\+");
 
         if (results.size() > 0 && results.size() < 3)
@@ -859,7 +862,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
             // Check for valid destination type and obtain codecs and file type.
             if (!format[0].init(results[0]))
             {
-                std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[0].c_str());
+                std::fprintf(stderr, "INVALID PARAMETER (%s): No codecs available for desttype: %s\n", param.c_str(), results[0].c_str());
                 return 1;
             }
 
@@ -867,7 +870,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
             {
                 if (!format[1].init(results[1]))
                 {
-                    std::fprintf(stderr, "INVALID PARAMETER: No codecs available for desttype: %s\n", results[1].c_str());
+                    std::fprintf(stderr, "INVALID PARAMETER (%s): No codecs available for desttype: %s\n", param.c_str(), results[1].c_str());
                     return 1;
                 }
             }
@@ -876,7 +879,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
         }
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing destination type string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -893,13 +896,14 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
         AUTOCOPY_MAP::const_iterator it = autocopy_map.find(data);
 
         if (it == autocopy_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid autocopy option: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid autocopy option: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -908,7 +912,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing autocopy string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -935,13 +939,14 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
         RECODESAME_MAP::const_iterator it = recode_map.find(data);
 
         if (it == recode_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid recode option: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid recode option: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -950,7 +955,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing recode string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -977,13 +982,14 @@ static int get_profile(const std::string & arg, PROFILE *profile)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
         PROFILE_MAP::const_iterator it = profile_map.find(data);
 
         if (it == profile_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid profile: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid profile: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -992,7 +998,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing profile string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1020,13 +1026,14 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
         LEVEL_MAP::const_iterator it = level_map.find(data);
 
         if (it == level_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid level: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid level: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -1035,7 +1042,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing level string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1091,13 +1098,14 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
     if (pos != std::string::npos)
     {
+        std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
         HWACCEL_MAP::const_iterator it = hwaccel_map.find(data);
 
         if (it == hwaccel_map.cend())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Invalid hardware acceleration API: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid hardware acceleration API: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -1105,7 +1113,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
 
         if (!hwaccel.m_supported)
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Unsupported hardware acceleration API: %s\n", data.c_str());
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Unsupported hardware acceleration API: %s\n", param.c_str(), data.c_str());
             return -1;
         }
 
@@ -1114,7 +1122,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing hardware acceleration API string\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1152,7 +1160,7 @@ static int get_value(const std::string & arg, int *value)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1175,7 +1183,7 @@ static int get_value(const std::string & arg, std::string *value)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1198,7 +1206,7 @@ static int get_value(const std::string & arg, double *value)
         return 0;
     }
 
-    std::fprintf(stderr, "INVALID PARAMETER: Missing value\n");
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
     return -1;
 }
@@ -1585,7 +1593,7 @@ int main(int argc, char *argv[])
 
     if (fuse_opt_parse(&args, &params, ffmpegfs_opts, ffmpegfs_opt_proc))
     {
-        std::fprintf(stderr, "Error parsing command line options.\n\n");
+        std::fprintf(stderr, "\nError parsing command line options.\n\n");
         //usage(argv[0]);
         return 1;
     }

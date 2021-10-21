@@ -73,6 +73,26 @@ $(function() {
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
+<div class="line">Important changes in 2.7 (2021-10-XX):</div>
+<div class="line"> </div>
+<div class="line">* Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem</div>
+<div class="line">  is that the FFmpeg API very late reports that it cannot decode the file in</div>
+<div class="line">  hardware. To find out about that, the source file must be decoded until the</div>
+<div class="line">  first video frame is encountered.</div>
+<div class="line">  It would be very time consuming to do this on every file (decode until it</div>
+<div class="line">  is clear that the file is supported, then actually start transcoding it</div>
+<div class="line">  from scratch). There is no feasible way to automatically handle the</div>
+<div class="line">  situation. To get around this a --hwaccel_dec_blocked parameter has been</div>
+<div class="line">  added.</div>
+<div class="line">  If hardware decoding fails, check the log for a message similar this:</div>
+<div class="line">  &quot;[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0.&quot;</div>
+<div class="line">  If VP9 profile 0 is not supported, the parameter would be:</div>
+<div class="line">  --hwaccel_dec_blocked=VP9:0</div>
+<div class="line">  This will tell FFmpegfs to decode the file in software. To block VP9</div>
+<div class="line">  as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block</div>
+<div class="line">  both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1.</div>
+<div class="line">  The parameter can be repeated to block even more codecs.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.6 (2021-09-04):</div>
 <div class="line"> </div>
 <div class="line">* No new features, just a bugfix. See V2.4 for details. </div>

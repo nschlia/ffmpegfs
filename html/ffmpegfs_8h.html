@@ -158,6 +158,10 @@ Typedefs</h2></td></tr>
 typedef enum <a class="el" href="ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6c">HWACCELAPI</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8h.html#a74db72d214628072d3786303f243a5ff">HWACCELAPI</a></td></tr>
 <tr class="memdesc:a74db72d214628072d3786303f243a5ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hardware acceleration types. <br /></td></tr>
 <tr class="separator:a74db72d214628072d3786303f243a5ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4ee1571355b2e61e5b47fc6e8d26183"><td class="memItemLeft" align="right" valign="top"><a id="ac4ee1571355b2e61e5b47fc6e8d26183"></a>
+typedef std::multimap&lt; AVCodecID, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8h.html#ac4ee1571355b2e61e5b47fc6e8d26183">HWACCEL_BLOCKED_MAP</a></td></tr>
+<tr class="memdesc:ac4ee1571355b2e61e5b47fc6e8d26183"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to AVCodecID. <br /></td></tr>
+<tr class="separator:ac4ee1571355b2e61e5b47fc6e8d26183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -239,6 +243,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmp
 <tr class="memitem:ae54dbd2180f2cf31a21269ef19775466"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8h.html#ae54dbd2180f2cf31a21269ef19775466">get_hwaccel_API_text</a> (<a class="el" href="ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6c">HWACCELAPI</a> hwaccel_API)</td></tr>
 <tr class="memdesc:ae54dbd2180f2cf31a21269ef19775466"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the selected hardware acceleration as text.  <a href="ffmpegfs_8h.html#ae54dbd2180f2cf31a21269ef19775466">More...</a><br /></td></tr>
 <tr class="separator:ae54dbd2180f2cf31a21269ef19775466"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1a8568f7e0985aec09089e008336677"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8h.html#ae1a8568f7e0985aec09089e008336677">check_hwaccel_dec_blocked</a> (AVCodecID codec_id, int profile)</td></tr>
+<tr class="memdesc:ae1a8568f7e0985aec09089e008336677"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if codec_id and optional profile is in block list.  <a href="ffmpegfs_8h.html#ae1a8568f7e0985aec09089e008336677">More...</a><br /></td></tr>
+<tr class="separator:ae1a8568f7e0985aec09089e008336677"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0b9db4444cc84b796a0e6dd95c64684"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8h.html#ab0b9db4444cc84b796a0e6dd95c64684">add_fuse_entry</a> (void *buf, fuse_fill_dir_t filler, const char *name, const struct stat *stbuf, off_t off)</td></tr>
 <tr class="memdesc:ab0b9db4444cc84b796a0e6dd95c64684"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper to the Fuse filler function.  <a href="ffmpegfs_8h.html#ab0b9db4444cc84b796a0e6dd95c64684">More...</a><br /></td></tr>
 <tr class="separator:ab0b9db4444cc84b796a0e6dd95c64684"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -295,7 +302,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00100">100</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00102">102</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
 
 </div>
 </div>
@@ -421,6 +428,48 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 </div>
 </div>
+<a id="ae1a8568f7e0985aec09089e008336677"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1a8568f7e0985aec09089e008336677">&#9670;&nbsp;</a></span>check_hwaccel_dec_blocked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool check_hwaccel_dec_blocked </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecID&#160;</td>
+          <td class="paramname"><em>codec_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>profile</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if codec_id and optional profile is in block list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">codec_id</td><td>- Codec ID of rto check </td></tr>
+    <tr><td class="paramname">profile</td><td>- Profile to check. Set to FF_PROFILE_UNKOWN to ignore. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if codec is in block list, false if not. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01243">1243</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00199">FFMPEGFS_PARAMS::m_hwaccel_dec_blocked</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>.</p>
+
+</div>
+</div>
 <a id="aaccd4c147efa346efcbb3c4fbb1e0a1a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaccd4c147efa346efcbb3c4fbb1e0a1a">&#9670;&nbsp;</a></span>check_path()</h2>
 
@@ -507,7 +556,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="logging_8cc_source.html#l00180">Logging::log_with_level()</a>, <a class="el" href="logging_8h_source.html#l00378">LOGDEBUG</a>, <a class="el" href="logging_8h_source.html#l00375">LOGERROR</a>, <a class="el" href="logging_8h_source.html#l00377">LOGINFO</a>, <a class="el" href="logging_8h_source.html#l00379">LOGTRACE</a>, and <a class="el" href="logging_8h_source.html#l00376">LOGWARN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>.</p>
 
 </div>
 </div>
@@ -540,7 +589,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00090">filenames</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01253">sanitise_filepath()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00470">check_cuesheet()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00158">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05205">FFmpeg_Transcoder::encode_finish()</a>, and <a class="el" href="fuseops_8cc_source.html#l00656">find_original()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00470">check_cuesheet()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05228">FFmpeg_Transcoder::encode_finish()</a>, and <a class="el" href="fuseops_8cc_source.html#l00656">find_original()</a>.</p>
 
 </div>
 </div>
@@ -605,7 +654,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00656">656</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00299">append_filename()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00254">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00363">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00511">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00274">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::m_origfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00349">remove_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00318">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00334">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01253">sanitise_filepath()</a>, <a class="el" href="fuseops_8cc_source.html#l00630">scandir()</a>, <a class="el" href="fuseops_8cc_source.html#l00606">selector()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00123">FFMPEGFS_PARAMS::smart_transcode()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01119">strcasecmp()</a>, <a class="el" href="fileio_8h_source.html#l00107">VIRTUALFLAG_PASSTHROUGH</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00299">append_filename()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00254">FFmpegfs_Format::fileext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00363">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00511">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00274">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00180">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::m_origfile</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00349">remove_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00318">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00334">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01253">sanitise_filepath()</a>, <a class="el" href="fuseops_8cc_source.html#l00630">scandir()</a>, <a class="el" href="fuseops_8cc_source.html#l00606">selector()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00129">FFMPEGFS_PARAMS::smart_transcode()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01119">strcasecmp()</a>, <a class="el" href="fileio_8h_source.html#l00107">VIRTUALFLAG_PASSTHROUGH</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
 
 </div>
 </div>
@@ -667,11 +716,11 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>AUTOCOPY enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00916">916</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00948">948</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00360">autocopy_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00505">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00370">autocopy_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00533">search_by_value()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -700,11 +749,11 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Hardware acceleration API as string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01122">1122</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01261">1261</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00419">hwaccel_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00429">hwaccel_map</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01410">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00759">FFmpeg_Transcoder::open_decoder()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00244">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01422">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00244">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -733,11 +782,11 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>PRORESLEVEL enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01044">1044</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01079">1079</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00392">level_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00505">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00402">level_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00533">search_by_value()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -766,11 +815,11 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>PROFILE enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01000">1000</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01034">1034</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00372">profile_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00505">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00382">profile_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00533">search_by_value()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -799,11 +848,11 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>RECODESAME enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00958">958</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00991">991</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00404">recode_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00505">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00414">recode_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00533">search_by_value()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -859,9 +908,9 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l01087">1087</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00170">Logging::init_logging()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00392">level_map</a>, <a class="el" href="logging_8h_source.html#l00378">LOGDEBUG</a>, <a class="el" href="logging_8h_source.html#l00375">LOGERROR</a>, <a class="el" href="logging_8h_source.html#l00377">LOGINFO</a>, <a class="el" href="logging_8h_source.html#l00379">LOGTRACE</a>, and <a class="el" href="logging_8h_source.html#l00376">LOGWARN</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00170">Logging::init_logging()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00402">level_map</a>, <a class="el" href="logging_8h_source.html#l00378">LOGDEBUG</a>, <a class="el" href="logging_8h_source.html#l00375">LOGERROR</a>, <a class="el" href="logging_8h_source.html#l00377">LOGINFO</a>, <a class="el" href="logging_8h_source.html#l00379">LOGTRACE</a>, and <a class="el" href="logging_8h_source.html#l00376">LOGWARN</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>.</p>
 
 </div>
 </div>
@@ -917,7 +966,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00481">481</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00289">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">FFmpegfs_Format::is_frameset()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00274">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="fileio_8h_source.html#l00108">VIRTUALFLAG_DIRECTORY</a>, <a class="el" href="fileio_8h_source.html#l00109">VIRTUALFLAG_FILESET</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_FRAME</a>, and <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_HLS</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00289">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00438">insert_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">FFmpegfs_Format::is_frameset()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00274">FFmpegfs_Format::is_hls()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00180">FFMPEGFS_PARAMS::m_format</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="fileio_8h_source.html#l00108">VIRTUALFLAG_DIRECTORY</a>, <a class="el" href="fileio_8h_source.html#l00109">VIRTUALFLAG_FILESET</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_FRAME</a>, and <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_HLS</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00369">create_bluray_virtualfile()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00150">create_cuesheet_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, and <a class="el" href="cuesheetparser_8cc_source.html#l00302">parse_cuesheet()</a>.</p>
 
@@ -982,7 +1031,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00443">443</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00090">filenames</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00128">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="fileio_8h_source.html#l00137">VIRTUALFILE::m_destfile</a>, <a class="el" href="fileio_8h_source.html#l00134">VIRTUALFILE::m_flags</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00133">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01253">sanitise_filepath()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00090">filenames</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00134">FFMPEGFS_PARAMS::guess_format_idx()</a>, <a class="el" href="fileio_8h_source.html#l00137">VIRTUALFILE::m_destfile</a>, <a class="el" href="fileio_8h_source.html#l00134">VIRTUALFILE::m_flags</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00138">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00133">VIRTUALFILE::m_type</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01253">sanitise_filepath()</a>.</p>
 
 </div>
 </div>
@@ -1126,7 +1175,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="transcode_8cc_source.html#l00063">cache</a>, and <a class="el" href="cache_8cc_source.html#l01285">Cache::clear()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>.</p>
 
 </div>
 </div>
@@ -1153,7 +1202,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="transcode_8cc_source.html#l00063">cache</a>, and <a class="el" href="cache_8cc_source.html#l01269">Cache::maintenance()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00068">maintenance_handler()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>, and <a class="el" href="cache__maintenance_8cc_source.html#l00068">maintenance_handler()</a>.</p>
 
 </div>
 </div>
@@ -1183,9 +1232,9 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00178">178</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00289">append_sep()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01155">expand_path()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00213">FFMPEGFS_PARAMS::m_cachepath</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00289">append_sep()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01155">expand_path()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00219">FFMPEGFS_PARAMS::m_cachepath</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>, <a class="el" href="buffer_8cc_source.html#l00913">Buffer::make_cachefile_name()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01472">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>, <a class="el" href="buffer_8cc_source.html#l00913">Buffer::make_cachefile_name()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01615">print_params()</a>.</p>
 
 </div>
 </div>
@@ -1212,7 +1261,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="reference">References <a class="el" href="transcode_8cc_source.html#l00063">cache</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, and <a class="el" href="cache_8cc_source.html#l00539">Cache::load_index()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>.</p>
 
 </div>
 </div>
@@ -1242,7 +1291,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 
 <p class="definition">Definition at line <a class="el" href="fuseops_8cc_source.html#l00097">97</a> of file <a class="el" href="fuseops_8cc_source.html">fuseops.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00239">init_fuse_ops()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01546">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00239">init_fuse_ops()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01689">main()</a>.</p>
 
 </div>
 </div>

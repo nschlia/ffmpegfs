@@ -42,6 +42,7 @@ help-pdf: ffmpegfs.1.pdf
 ffmpegfs.1.htmlhelp: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
 		-a revdate="$(shell date +'%B %Y')" -f htmlhelp $<
+	@mv ffmpegfs.1.htmlhelp/index.html ffmpegfs.1.htmlhelp/manpages.html
 
 help-html: ffmpegfs.1.htmlhelp
 
@@ -81,6 +82,8 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "EXCLUDE                = src/config.h" >> doxyfile.inc
 	@echo "EXCLUDE                += src/ffmpegfshelp.h" >> doxyfile.inc
 	@echo "EXCLUDE                += doxyfile.inc" >> doxyfile.inc
+	@echo "HTML_EXTRA_FILES        += ffmpegfs.1.htmlhelp/manpages.html" >> doxyfile.inc
+	@echo "HTML_EXTRA_FILES        += ffmpegfs.1.htmlhelp/docbook-xsl.css" >> doxyfile.inc
 	@echo "INPUT                  += README.md" >> doxyfile.inc
 	@echo "INPUT	              += INSTALL.md" >> doxyfile.inc
 	@echo "INPUT                  += HISTORY.md" >> doxyfile.inc
@@ -99,7 +102,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "PROJECT_NUMBER         = ${VERSION}" >> doxyfile.inc
 
 # Run doxygen, first render Github markdown documents, see https://developer.github.com/v3/markdown/#render-an-arbitrary-markdown-document
-doxy: doxyfile.inc $(SRCS)
+doxy: doxyfile.inc ffmpegfs.1.htmlhelp $(SRCS)
 	@doxygen Doxyfile
 
 # Clean up Doxygen files

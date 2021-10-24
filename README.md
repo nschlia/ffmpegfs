@@ -32,7 +32,9 @@ See [HISTORY](HISTORY.md) for details.
 
 ## Planned Features
 
+* DASH support is on my list, but the format is complicated and I currently do no have the time for that. 
 * Currently I am preparing a Windows version, but this is going to take some time.
+* *Any ideas or wishes?* Create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
 
 About
 -----

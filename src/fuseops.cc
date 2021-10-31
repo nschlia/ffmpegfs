@@ -838,18 +838,16 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
         //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=61000,CODECS= \"mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
         //"index_3_a.m3u8\n";
 
-        master_contents =
-                "#EXTM3U\n"
+        master_contents = "#EXTM3U\n"
                 "#EXT-X-STREAM-INF:PROGRAM-ID=1\n"
                 "index_0_av.m3u8\n";
 
-        index_0_av_contents =
-                "#EXTM3U\n"
-                "#EXT-X-TARGETDURATION:10\n"
+        index_0_av_contents = string_format("#EXTM3U\n"
+                "#EXT-X-TARGETDURATION:%i\n"
                 "#EXT-X-ALLOW-CACHE:YES\n"
                 "#EXT-X-PLAYLIST-TYPE:VOD\n"
                 "#EXT-X-VERSION:3\n"
-                "#EXT-X-MEDIA-SEQUENCE:1\n";
+                "#EXT-X-MEDIA-SEQUENCE:1\n", static_cast<int32_t>(params.m_segment_duration / AV_TIME_BASE));
 
         int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
         size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count();

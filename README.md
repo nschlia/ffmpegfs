@@ -16,7 +16,7 @@ News
 
 ### Version 2.7 under development
 
-**New in in 2.7 (2021-10-XX):
+**New in in 2.7 (2021-11-XX):
 
 * **Bugfix:** [Issue #92](https://github.com/nschlia/ffmpegfs/issues/92): Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered.
   It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a --hwaccel_dec_blocked parameter has been added.
@@ -25,6 +25,7 @@ News
   If VP9 profile 0 is not supported, the parameter would be:
   --hwaccel_dec_blocked=VP9:0
   This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.
+* **Bugfix:** [Issue #96](https://github.com/nschlia/ffmpegfs/issues/96): Fixed potential buffer overrun and crash when reading corrupted input files.
 
 ## History
 

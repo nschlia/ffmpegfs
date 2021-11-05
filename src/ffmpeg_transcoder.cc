@@ -2791,21 +2791,22 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         {
             // Temporary storage for the converted input samples.
             uint8_t **converted_input_samples = nullptr;
-            int nb_output_samples;
-#if LAVR_DEPRECATE
-            nb_output_samples = (m_audio_resample_ctx != nullptr) ? swr_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
-#else
-            nb_output_samples = (m_audio_resample_ctx != nullptr) ? avresample_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
-#endif
-
             try
             {
+                int nb_output_samples;
+
                 // Initialise the resampler to be able to convert audio sample formats.
                 ret = init_resampler();
                 if (ret)
                 {
                     throw ret;
                 }
+
+#if LAVR_DEPRECATE
+                nb_output_samples = (m_audio_resample_ctx != nullptr) ? swr_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
+#else
+                nb_output_samples = (m_audio_resample_ctx != nullptr) ? avresample_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
+#endif
 
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.
@@ -3065,9 +3066,9 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         pos = 0;
                     }
 
-                    uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+                    uint32_t next_segment = get_next_segment(pos);
 
-                    if (next_segment == m_current_segment + 1 && !m_insert_keyframe)
+                    if (goto_next_segment(next_segment) && !m_insert_keyframe)
                     {
                         Logging::debug(destname(), "Force key frame for next segment %1 at PTS %2 %3", next_segment, pts, format_duration(pos).c_str());
 
@@ -3103,9 +3104,9 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
             {
                 pos = 0;
             }
-            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+            uint32_t next_segment = get_next_segment(pos);
 
-            if (next_segment == m_current_segment + 1)
+            if (goto_next_segment(next_segment))
             {
                 if (!(m_inhibit_stream_msk & FFMPEGFS_AUDIO))
                 {
@@ -3126,9 +3127,9 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
             {
                 pos = 0;
             }
-            uint32_t next_segment = static_cast<uint32_t>(pos / params.m_segment_duration + 1);
+            uint32_t next_segment = get_next_segment(pos);
 
-            if (next_segment == m_current_segment + 1)
+            if (goto_next_segment(next_segment))
             {
                 if (!(m_inhibit_stream_msk & FFMPEGFS_VIDEO))
                 {
@@ -3388,15 +3389,19 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
     }
     else
     {
+		*out_samples = in_samples;
+		
         // No resampling, just copy samples
-        if (!av_sample_fmt_is_planar(m_in.m_audio.m_codec_ctx->sample_fmt))
+        if (!av_sample_fmt_is_planar(m_out.m_audio.m_codec_ctx->sample_fmt))
         {
+            // Interleaved format
             memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * m_in.m_audio.m_codec_ctx->channels));
         }
         else
         {
+            // Planar format
             size_t samples = static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
-            for (int n = 0; n < m_in.m_audio.m_codec_ctx->channels; n++)
+            for (int n = 0; n < m_out.m_audio.m_codec_ctx->channels; n++)
             {
                 memcpy(converted_data[n], input_data[n], samples);
             }
@@ -4720,7 +4725,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
         if (is_hls())
         {
-            uint32_t next_segment;
             if (m_active_stream_msk == m_inhibit_stream_msk)
             {
                 bool opened = false;
@@ -4738,7 +4742,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 encode_finish();
 
                 // Go to next requested segment...
-                next_segment = m_current_segment + 1;
+                uint32_t next_segment = m_current_segment + 1;
 
                 // ...or process any stacked seek requests.
                 while (!m_seek_to_fifo.empty())
@@ -6683,3 +6687,14 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
         *out_pix_fmt = reinterpret_cast<AVHWFramesContext*>(output_codec_ctx->hw_frames_ctx->data)->sw_format;
     }
 }
+
+uint32_t FFmpeg_Transcoder::get_next_segment(int64_t pos) const
+{
+    return (static_cast<uint32_t>(pos / params.m_segment_duration + 1));
+}
+
+bool FFmpeg_Transcoder::goto_next_segment(uint32_t next_segment) const
+{
+    return (next_segment == m_current_segment + 1);
+}
+

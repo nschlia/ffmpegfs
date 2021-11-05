@@ -25,6 +25,7 @@ News
   If VP9 profile 0 is not supported, the parameter would be:
   --hwaccel_dec_blocked=VP9:0
   This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.
+* **Bugfix:** [Issue #96](https://github.com/nschlia/ffmpegfs/issues/96): Fixed crash with corrupted input files. Transcoding a file with many defects sometimes caused internal buffer overruns.
 
 ## History
 

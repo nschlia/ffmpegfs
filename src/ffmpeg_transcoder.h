@@ -950,6 +950,18 @@ protected:
      * @return 0 on success, a negative AVERROR code on failure.
      */
     static AVPixelFormat        find_sw_fmt_by_hw_type(AVHWDeviceType type);
+    /**
+     * @brief Calculate next HLS segment from position
+     * @param[i] pos - Current transcoder position in AV_TIMEBASE fractional seconds.
+     * @return Number of next segment
+     */
+    uint32_t                    get_next_segment(int64_t pos) const;
+    /**
+     * @brief Check if segment number is next desigated segment.
+     * @param[i] next_segment - Number next current segment
+     * @return Returns true if next segment should start, false if not.
+     */
+    bool                        goto_next_segment(uint32_t next_segment) const;
 
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */

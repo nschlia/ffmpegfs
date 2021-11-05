@@ -867,27 +867,26 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
             if (!lstat(cachefile.c_str(), &stbuf))
             {
                 make_file(buf, filler, virtualfile->m_type, origpath, segment_name, static_cast<size_t>(stbuf.st_size), virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                if (file_no < virtualfile->get_segment_count())
-                {
-                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
-                }
-                else
-                {
-                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
-                }
             }
             else
             {
                 if (file_no < virtualfile->get_segment_count())
                 {
                     make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
                 }
                 else
                 {
                     make_file(buf, filler, virtualfile->m_type, origpath, segment_name, remaining_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                    buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
                 }
+            }
+
+            if (file_no < virtualfile->get_segment_count())
+            {
+                buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
+            }
+            else
+            {
+                buffer = string_format("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
             }
 
             index_0_av_contents += buffer;

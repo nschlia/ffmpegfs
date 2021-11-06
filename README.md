@@ -26,6 +26,7 @@ News
   --hwaccel_dec_blocked=VP9:0
   This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.
 * **Bugfix:** [Issue #96](https://github.com/nschlia/ffmpegfs/issues/96): Fixed potential buffer overrun and crash when reading corrupted input files.
+* **Enhancement:** [Issue #99](https://github.com/nschlia/ffmpegfs/issues/99): Report command line error if --desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, --desttype=aiff+mov would create MOV files out of any input. Correct would be --desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.
 
 ## History
 
@@ -351,13 +352,15 @@ Smart Transcoding
 
 Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense as MP4 or WebM work perfectly with audio only content.
 
-To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.
+To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, *--desttype=mov+aiff* will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.
 
-*Note*
+*Notes*
 
-Smart transcoding currently simply determines the output format by  taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video  stream.
+1. The first format must be a video codec, the second must be an audio codec. For example, *--desttype=wav+mp4* is invalid, instead it should be *--desttype=mp4+wav*.   
 
-The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See  [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
+2. Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.
+
+   The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
 
 Transcode To Frame Images
 -------------------------

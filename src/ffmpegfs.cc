@@ -896,9 +896,21 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 
             if (results.size() == 2)
             {
+                if (format[0].video_codec_id() == AV_CODEC_ID_NONE)
+                {
+                    std::fprintf(stderr, "INVALID PARAMETER (%s): First format in %s does not support video\n", param.c_str(), results[0].c_str());
+                    return 1;
+                }
+
                 if (!format[1].init(results[1]))
                 {
                     std::fprintf(stderr, "INVALID PARAMETER (%s): No codecs available for desttype: %s\n", param.c_str(), results[1].c_str());
+                    return 1;
+                }
+
+                if (format[1].video_codec_id() != AV_CODEC_ID_NONE)
+                {
+                    std::fprintf(stderr, "INVALID PARAMETER (%s): Second format in %s should be audio only\n", param.c_str(), results[0].c_str());
                     return 1;
                 }
             }

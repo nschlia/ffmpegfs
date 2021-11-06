@@ -26,7 +26,12 @@ Important changes in 2.7 (2021-11-XX):
   The parameter can be repeated to block even more codecs.
 * Bugfix: Issue #96: Fixed potential buffer overrun and crash when reading
   corrupted input files.
-
+* Enhancement: Issue #99: Report command line error if --desttype specifies
+  audio format first, or if the second format is not audio only. Avoid
+  misinterpretations. For example, --desttype=aiff+mov would create MOV
+  files out of any input. Correct would be --desttype=mov+aiff which will
+  create MOV files out of videos and AIFF from audio files, as expected.
+  
 Important changes in 2.6 (2021-09-04):
 
 * No new features, just a bugfix. See V2.4 for details. 

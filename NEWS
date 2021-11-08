@@ -5,7 +5,7 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-Important changes in 2.7 (2021-11-XX):
+Important changes in 2.7 (2021-11-08):
 
 * Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem
   is that the FFmpeg API very late reports that it cannot decode the file in

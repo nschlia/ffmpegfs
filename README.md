@@ -1,6 +1,10 @@
 FFmpegfs
 ========
 
+<a href="https://repology.org/project/ffmpegfs/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/ffmpegfs.svg" alt="Packaging status" align="right">
+</a>
+
 | Branch | State | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | testing | gcc 10.2.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |

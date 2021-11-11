@@ -227,7 +227,7 @@ Default: *NONE* (no acceleration)
 
 *--hwaccel_dec_blocked*=CODEC[:PROFILE[:PROFILE]], *-o hwaccel_dec_blocked*=CODEC:[:PROFILE[:PROFILE]]::
 Block codec and optionally profile from hardware decoding. Option can be
-repeated to block serveral codecs
+repeated to block several codecs
 +
 Default: no codecs blocked
 +

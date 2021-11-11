@@ -13,10 +13,9 @@ FFmpegfs
 News
 ----
 
-* 04.09.2021: The feature branch FB (V2.6) has been merged into trunk (V2.4), becoming the new release branch. The next release will be version 2.7. To get the latest code please checkout master from now on.
-* 04.09.2021: Released V2.6 to Debian Bullseye. This official release finally features hardware decoding and encoding.
-
 ### Version 2.8 under development
+
+### Version 2.7 released
 
 **New in in 2.7 (2021-11-08):
 

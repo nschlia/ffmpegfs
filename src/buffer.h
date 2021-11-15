@@ -413,9 +413,10 @@ private:
      * If true, the defaultsize will be used in any case, resizing an existing file if necessary.@n
      * Out: true if the file size was set to default.
      * @param[out] defaultsize - Default size of the file if it does not exist. This parameter can be zero in which case the size will be set to the system's page size.
+     * @param[out] truncate - If true, truncate file when opened.
      * @return Returns true if successful and fd, p, filesize, isdefaultsize filled in or false on error.
      */
-    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const;
+    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const;
     /**
      * @brief Unmap memory from file.
      * @param[in] filename - Name of cache file to unmap.

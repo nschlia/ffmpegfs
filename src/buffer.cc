@@ -105,7 +105,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
     bool isdefaultsize  = false;
     uint8_t *p          = nullptr;
 
-    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, 0))
+    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, 0, (flags & CACHE_FLAG_RW) ? true : false))
     {
         return false;
     }
@@ -254,7 +254,7 @@ bool Buffer::init(bool erase_cache)
             bool isdefaultsize  = false;
             uint8_t *p          = nullptr;
 
-            if (!map_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count))
+            if (!map_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count, false))
             {
                 throw false;
             }
@@ -337,7 +337,7 @@ bool Buffer::segment_exists(uint32_t segment_no)
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const
+bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const
 {
     bool success = true;
 
@@ -347,7 +347,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     {
         struct stat sb;
 
-        *fd = ::open(filename.c_str(), O_CREAT | O_RDWR, static_cast<mode_t>(0644));
+        *fd = ::open(filename.c_str(), O_CREAT | O_RDWR | (truncate ? O_TRUNC : 0), static_cast<mode_t>(0644));
         if (*fd == -1)
         {
             Logging::error(filename, "Error opening cache file: (%1) %2", errno, strerror(errno));

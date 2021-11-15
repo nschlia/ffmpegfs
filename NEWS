@@ -12,6 +12,9 @@ Important changes in 2.8 (2021-11-XX):
   Made all queries case sensitive.
   Make sure that the cache is clean when transcoding starts. There should be
   no remains left, all segments must be created or recreated anyway.
+  Do not append to cache when writing. This caused cache files to become
+  larger and larger.
+
 Important changes in 2.7 (2021-11-08):
 
 * Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem

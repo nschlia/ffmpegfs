@@ -1300,9 +1300,9 @@ bool is_album_art(AVCodecID codec_id, const AVRational * frame_rate)
     return true;
 }
 
-bool nocasecompare(const std::string & lhs, const std::string &rhs)
+int nocasecompare(const std::string & lhs, const std::string &rhs)
 {
-    return (strcasecmp(lhs, rhs) < 0);
+    return (strcasecmp(lhs, rhs));
 }
 
 size_t get_disk_free(std::string & path)

@@ -670,7 +670,7 @@ bool                is_album_art(AVCodecID codec_id, const AVRational *frame_rat
  * @param[in] rhs - right hand string
  * @return -1 if lhs < rhs; 0 if lhs == rhs and 1 if lhs > rhs
  */
-bool                nocasecompare(const std::string & lhs, const std::string &rhs);
+int                 nocasecompare(const std::string & lhs, const std::string &rhs);
 
 /**
  * @brief The comp struct to make std::string find operations case insensitive
@@ -681,11 +681,11 @@ struct comp
      * @brief operator () to make std::string find operations case insensitive
      * @param[in] lhs - left hand string
      * @param[in] rhs - right hand string
-     * @return -1 if lhs < rhs; 0 if lhs == rhs and 1 if lhs > rhs
+     * @return true if lhs < rhs; false if lhs >= rhs
      */
     bool operator() (const std::string& lhs, const std::string& rhs) const
     {
-        return nocasecompare(lhs, rhs);
+        return (nocasecompare(lhs, rhs) < 0);
     }
 };
 

@@ -559,34 +559,37 @@ bool Buffer::clear()
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    if (!segment_count() || m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
-    {
-        errno = EBADF;
-        return false;
-    }
-
     bool success = true;
 
-    m_cur_ci->m_buffer_pos          = 0;
-    m_cur_ci->m_buffer_watermark    = 0;
-    m_cur_ci->m_buffer_size         = 0;
-    m_cur_ci->m_seg_finished        = false;
-
-    // If empty set file size to 1 page
-    long filesize = sysconf (_SC_PAGESIZE);
-
-    if (m_cur_ci->m_fd != -1)
+    for (uint32_t n = 0; n < segment_count(); n++)
     {
-        if (ftruncate(m_cur_ci->m_fd, filesize) == -1)
+        LPCACHEINFO ci = &m_ci[n];
+
+        ci->m_buffer_pos          = 0;
+        ci->m_buffer_watermark    = 0;
+        ci->m_buffer_size         = 0;
+        ci->m_seg_finished        = false;
+
+        if (ci->m_fd != -1)
         {
-            Logging::error(m_cur_ci->m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
-            success = false;
-        }
-    }
+            // If empty set file size to 1 page
+            long filesize = sysconf(_SC_PAGESIZE);
 
-    if (m_cur_ci->m_fd_idx != -1)
-    {
-        memset(m_cur_ci->m_buffer_idx, 0, m_cur_ci->m_buffer_size_idx);
+            if (ftruncate(ci->m_fd, filesize) == -1)
+            {
+                Logging::error(ci->m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), ci->m_fd);
+                success = false;
+            }
+        }
+        else
+        {
+            remove_file(ci->m_cachefile);
+        }
+
+        if (ci->m_fd_idx != -1)
+        {
+            memset(ci->m_buffer_idx, 0, ci->m_buffer_size_idx);
+        }
     }
 
     return success;

@@ -380,11 +380,8 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 Logging::debug(cache_entry->filename(), "Starting decoder thread.");
 
-                if (cache_entry->m_cache_info.m_error)
-                {
-                    // If error occurred last time, clear cache
-                    cache_entry->clear();
-                }
+                // Clear cache to remove any older remains
+                cache_entry->clear();
 
                 // Must decode the file, otherwise simply use cache
                 cache_entry->m_is_decoding  = true;

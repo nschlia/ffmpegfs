@@ -4750,6 +4750,15 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     uint32_t segment_no = m_seek_to_fifo.front();
                     m_seek_to_fifo.pop();
 
+                    // No check if m_segment_duration == 0, values <= 0 not accepted
+                    // Cast is OK here, the result will always be small enough for an int32.
+                    uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+                    if (min_seek_segments && next_segment + min_seek_segments >= segment_no)
+                    {
+                        Logging::info(destname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) away.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments);
+                        continue;
+                    }
+
                     if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
                     {
                         m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position

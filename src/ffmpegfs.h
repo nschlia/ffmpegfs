@@ -189,6 +189,7 @@ extern struct FFMPEGFS_PARAMS
     int                 m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
     // HLS Options
     int64_t             m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
+    int64_t             m_min_seek_time_diff;       /**< @brief Minimum time diff from current to next requested segment to perform a seek, in AV_TIME_BASE fractional seconds. */
     // Hardware acceleration
     HWACCELAPI          m_hwaccel_enc_API;          /**< @brief Encoder API */
     AVHWDeviceType      m_hwaccel_enc_device_type;  /**< @brief Enable hardware acceleration buffering for encoder */

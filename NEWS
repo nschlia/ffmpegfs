@@ -14,6 +14,10 @@ Important changes in 2.8 (2021-11-XX):
   There should be no remains left, all segments must be created or recreated
   anyway. Do not append to cache when writing. This caused cache files to
   become larger and larger.
+* Enhancement: Issue #103: If requested HLS segment is less than X (adjustable)
+  seconds away, discard seek request. Segment would be available very soon
+  anyway, and that seek makes a re-transcode necessary. Can be set with
+  --min_seek_time_diff. defaults to 30 seconds. Set to 0 to disable.
 
 Important changes in 2.7 (2021-11-08):
 

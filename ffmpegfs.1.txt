@@ -214,6 +214,17 @@ Should normally be left at default.
 +
 Default: *10 seconds*
 
+*--min_seek_time_diff*, -o *min_seek_time_diff*::
+If requested HLS segment is less than min_seek_time seconds away,  discard seek request.
+The segment will be available very soon anyway, and that seek makes a re-transcode
+necessary. Set to 0 to disable.
++
+Should normally be left at default.
++
+*Note:* Applies to HLS output format only, ignored for all other formats.
++
+Default: *30 seconds*
+
 === Hardware Acceleration Options ===
 *--hwaccel_enc*=API, *-o hwaccel_enc*=API::
 Select the hardware acceleration API for encoding.

@@ -83,6 +83,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_videoheight(0)                          // default: do not change height
     , m_deinterlace(0)                          // default: do not interlace video
     , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
+    , m_min_seek_time_diff(30 * AV_TIME_BASE)   // default: 30 seconds
     // Hardware acceleration
     , m_hwaccel_enc_API(HWACCELAPI_NONE)                // default: Use software encoder
     , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software encoder
@@ -204,6 +205,7 @@ enum
     KEY_AUDIO_CHANNELS,
     KEY_VIDEO_BITRATE,
     KEY_SEGMENT_DURATION,
+    KEY_MIN_SEEK_TIME_DIFF,
     KEY_SCRIPTFILE,
     KEY_SCRIPTSOURCE,
     KEY_EXPIRY_TIME,
@@ -269,6 +271,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     // HLS
     FUSE_OPT_KEY("--segment_duration=%s",           KEY_SEGMENT_DURATION),
     FUSE_OPT_KEY("segment_duration=%s",             KEY_SEGMENT_DURATION),
+    FUSE_OPT_KEY("--min_seek_time_diff=%s",         KEY_MIN_SEEK_TIME_DIFF),
+    FUSE_OPT_KEY("min_seek_time_diff=%s",           KEY_MIN_SEEK_TIME_DIFF),
     // Hardware acceleration
     FUSE_OPT_KEY("--hwaccel_enc=%s",                KEY_HWACCEL_ENCODER_API),
     FUSE_OPT_KEY("hwaccel_enc=%s",                  KEY_HWACCEL_ENCODER_API),
@@ -496,6 +500,7 @@ static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static int          get_profile(const std::string & arg, PROFILE *profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
+static int          get_seek_time_diff(const std::string & arg, int64_t *value);
 static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type);
 static int          get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked);
 static int          get_value(const std::string & arg, int *value);
@@ -1124,6 +1129,31 @@ static int get_segment_duration(const std::string & arg, int64_t *value)
 }
 
 /**
+ * @brief Get seek time diff. Input value must be in seconds.
+ * @param[in] arg - Segment duration in seconds. Must be greater or equal 0.
+ * @param[out] value - Upon return contains seek time diff in AV_TIME_BASE units.
+ * @return Returns 0 if valid; if out of range returns -1.
+ */
+static int get_seek_time_diff(const std::string & arg, int64_t *value)
+{
+    double duration;
+    if (get_value(arg, &duration) < 0)
+    {
+        return -1;
+    }
+
+    if (*value <= 0)
+    {
+        std::fprintf(stderr, "INVALID PARAMETER: seek time %.1f is out of range. For obvious reasons this must be greater than or equal zero.\n", duration);
+        return -1;
+    }
+
+    *value = static_cast<int>(duration * AV_TIME_BASE);
+
+    return 0;
+}
+
+/**
  * @brief Get type of hardware acceleration.
  * To keep it simple, currently all values are accepted.
  * @param[in] arg - One of the hardware acceleration types, e.g. VAAPI.
@@ -1508,6 +1538,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_segment_duration(arg, &params.m_segment_duration);
     }
+    case KEY_MIN_SEEK_TIME_DIFF:
+    {
+        return get_seek_time_diff(arg, &params.m_min_seek_time_diff);
+    }
     case KEY_HWACCEL_ENCODER_API:
     {
         return get_hwaccel(arg, &params.m_hwaccel_enc_API, &params.m_hwaccel_enc_device_type);
@@ -1652,6 +1686,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
     Logging::trace(nullptr, "--------- HLS Options ---------");
     Logging::trace(nullptr, "Segment Duration  : %1", format_time(static_cast<time_t>(params.m_segment_duration / AV_TIME_BASE)).c_str());
+    Logging::trace(nullptr, "Seek Time Diff    : %1", format_time(static_cast<time_t>(params.m_min_seek_time_diff / AV_TIME_BASE)).c_str());
     Logging::trace(nullptr, "---- Hardware Acceleration ----");
     Logging::trace(nullptr, "Hardware Decoder:");
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());

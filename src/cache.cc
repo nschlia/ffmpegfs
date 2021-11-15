@@ -585,6 +585,14 @@ bool Cache::load_index()
             throw false;
         }
 
+		// Very strange: Compare operations with =, > etc. are case sensitive, while LIKE by default ignores upper/lowercase.
+		// Produces strange results when reading from a Samba drive and different cases are used...
+        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "PRAGMA case_sensitive_like = 1;", nullptr, nullptr, nullptr)))
+        {
+            Logging::error(m_cacheidx_file, "Failed to set SQLite3 case_sensitive_like = 1: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
+            throw false;
+        }
+
         // Make sure the next changes are either all successfull or rolled back
         if (!begin_transaction())
         {

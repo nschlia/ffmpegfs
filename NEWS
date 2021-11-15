@@ -5,6 +5,11 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
+Important changes in 2.8 (2021-11-XX):
+
+* Bugfix: Issue #102: Not all SQL queries where case sensitive, causing cache
+  confusion. Several database entries were created, but only one was updated.
+  Made all queries case sensitive.
 Important changes in 2.7 (2021-11-08):
 
 * Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem

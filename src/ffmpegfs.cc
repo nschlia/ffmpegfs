@@ -554,7 +554,7 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
  @endverbatim
  * @param[in] arg - Bitrate as string.
  * @param[in] bitrate - On return, contains parsed bitrate.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_bitrate(const std::string & arg, BITRATE *bitrate)
 {
@@ -622,7 +622,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
  @endverbatim
  * @param[in] arg - Samplerate as string.
  * @param[in] samplerate - On return, contains parsed sample rate.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_samplerate(const std::string & arg, int * samplerate)
 {
@@ -683,7 +683,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
  @endverbatim
  * @param[in] arg - Time as string.
  * @param[in] time - On return, contains parsed time.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_time(const std::string & arg, time_t *time)
 {
@@ -782,7 +782,7 @@ static int get_time(const std::string & arg, time_t *time)
  @endverbatim
  * @param[in] arg - Time as string.
  * @param[out] size - On return, contains parsed size.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_size(const std::string & arg, size_t *size)
 {
@@ -1100,9 +1100,9 @@ std::string get_level_text(PRORESLEVEL level)
 
 /**
  * @brief Get HLS segment duration. Input value must be in seconds.
- * @param[in] arg - One of the ProRes levels.
+ * @param[in] arg - Segment duration in seconds. Must be greater than 0.
  * @param[out] value - Upon return contains segment duration in AV_TIME_BASE units.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if out of range returns -1.
  */
 static int get_segment_duration(const std::string & arg, int64_t *value)
 {
@@ -1199,7 +1199,7 @@ static int get_codec(const std::string & codec, AVCodecID *codec_id)
  * @brief Get list of codecs and optional profiles blocked for hardware accelerated decoding
  * @param[in] arg - Parameter with codec string and optional profile
  * @param[out] hwaccel_dec_blocked - Map with blocked codecs and profiles. Will be allocated if necessary.
- * @return Returns 0 on success; on erro returns -1.
+ * @return Returns 0 on success; on error returns -1.
  */
 static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked)
 {
@@ -1290,7 +1290,7 @@ std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_value(const std::string & arg, int *value)
 {
@@ -1313,7 +1313,7 @@ static int get_value(const std::string & arg, int *value)
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_value(const std::string & arg, std::string *value)
 {
@@ -1336,7 +1336,7 @@ static int get_value(const std::string & arg, std::string *value)
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.
- * @return Returns 0 if found; if not found returns -1.
+ * @return Returns 0 if valid; if invalid returns -1.
  */
 static int get_value(const std::string & arg, double *value)
 {

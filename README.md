@@ -18,6 +18,7 @@ News
 New in in 2.8 (2021-11-XX):
 
 * **Bugfix:** [Issue #102](https://github.com/nschlia/ffmpegfs/issues/102): Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.
+* **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fix problems with cache causing garbled videos and hick-ups in audio.
 ### Version 2.7 released
 
 **New in in 2.7 (2021-11-08):

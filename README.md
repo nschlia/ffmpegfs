@@ -21,7 +21,7 @@ New in in 2.8 (2021-11-XX):
 * **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fix problems with cache causing garbled videos and hick-ups in audio.
 ### Version 2.7 released
 
-**New in in 2.7 (2021-11-08):
+New in in 2.7 (2021-11-08):
 
 * **Bugfix:** [Issue #92](https://github.com/nschlia/ffmpegfs/issues/92): Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered.
   It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a --hwaccel_dec_blocked parameter has been added.

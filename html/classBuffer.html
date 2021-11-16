@@ -301,9 +301,9 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:abbd9386f99f609c04764db011731f264"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuffer.html#abbd9386f99f609c04764db011731f264">reallocate</a> (size_t newsize)</td></tr>
 <tr class="memdesc:abbd9386f99f609c04764db011731f264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reallocate buffer to new size.  <a href="classBuffer.html#abbd9386f99f609c04764db011731f264">More...</a><br /></td></tr>
 <tr class="separator:abbd9386f99f609c04764db011731f264"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8608a76fc9d6f729bce7df3af7268356"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuffer.html#a8608a76fc9d6f729bce7df3af7268356">map_file</a> (const std::string &amp;<a class="el" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">filename</a>, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize) const</td></tr>
-<tr class="memdesc:a8608a76fc9d6f729bce7df3af7268356"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map memory to file.  <a href="classBuffer.html#a8608a76fc9d6f729bce7df3af7268356">More...</a><br /></td></tr>
-<tr class="separator:a8608a76fc9d6f729bce7df3af7268356"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5422581af1c76f9b1e05a5b75f708c2c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuffer.html#a5422581af1c76f9b1e05a5b75f708c2c">map_file</a> (const std::string &amp;<a class="el" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">filename</a>, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const</td></tr>
+<tr class="memdesc:a5422581af1c76f9b1e05a5b75f708c2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map memory to file.  <a href="classBuffer.html#a5422581af1c76f9b1e05a5b75f708c2c">More...</a><br /></td></tr>
+<tr class="separator:a5422581af1c76f9b1e05a5b75f708c2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af37d881ca60a6f5482428eb5eee591fc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuffer.html#af37d881ca60a6f5482428eb5eee591fc">unmap_file</a> (const std::string &amp;<a class="el" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">filename</a>, int *fd, uint8_t **p, size_t *filesize) const</td></tr>
 <tr class="memdesc:af37d881ca60a6f5482428eb5eee591fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unmap memory from file.  <a href="classBuffer.html#af37d881ca60a6f5482428eb5eee591fc">More...</a><br /></td></tr>
 <tr class="separator:af37d881ca60a6f5482428eb5eee591fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -397,11 +397,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the current watermark. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00826">826</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00829">829</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05228">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="cache__entry_8cc_source.html#l00262">Cache_Entry::size()</a>, <a class="el" href="transcode_8cc_source.html#l00139">transcode_finish()</a>, <a class="el" href="transcode_8cc_source.html#l00713">transcoder_buffer_watermark()</a>, <a class="el" href="transcode_8cc_source.html#l00756">transcoder_thread()</a>, and <a class="el" href="buffer_8cc_source.html#l00651">write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05241">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="cache__entry_8cc_source.html#l00262">Cache_Entry::size()</a>, <a class="el" href="transcode_8cc_source.html#l00139">transcode_finish()</a>, <a class="el" href="transcode_8cc_source.html#l00709">transcoder_buffer_watermark()</a>, <a class="el" href="transcode_8cc_source.html#l00752">transcoder_thread()</a>, and <a class="el" href="buffer_8cc_source.html#l00654">write_frame()</a>.</p>
 
 </div>
 </div>
@@ -435,7 +435,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00060">60</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00844">copy()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00847">copy()</a>.</p>
 
 </div>
 </div>
@@ -464,11 +464,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns cache filename. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00899">899</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00902">902</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="buffer_8cc_source.html#l00913">make_cachefile_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="buffer_8cc_source.html#l00916">make_cachefile_name()</a>.</p>
 
 </div>
 </div>
@@ -505,11 +505,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01060">1060</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01063">1063</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00732">seek()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00735">seek()</a>.</p>
 
 </div>
 </div>
@@ -533,7 +533,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00558">558</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00090">Buffer::_tagCACHEINFO::m_buffer_size_idx</a>, <a class="el" href="buffer_8h_source.html#l00083">Buffer::_tagCACHEINFO::m_buffer_watermark</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00080">Buffer::_tagCACHEINFO::m_fd</a>, <a class="el" href="buffer_8h_source.html#l00088">Buffer::_tagCACHEINFO::m_fd_idx</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, <a class="el" href="buffer_8h_source.html#l00085">Buffer::_tagCACHEINFO::m_seg_finished</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00090">Buffer::_tagCACHEINFO::m_buffer_size_idx</a>, <a class="el" href="buffer_8h_source.html#l00083">Buffer::_tagCACHEINFO::m_buffer_watermark</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00080">Buffer::_tagCACHEINFO::m_fd</a>, <a class="el" href="buffer_8h_source.html#l00088">Buffer::_tagCACHEINFO::m_fd_idx</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, <a class="el" href="buffer_8h_source.html#l00085">Buffer::_tagCACHEINFO::m_seg_finished</a>, <a class="el" href="buffer_8cc_source.html#l00936">remove_file()</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00088">Cache_Entry::clear()</a>.</p>
 
@@ -577,9 +577,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00126">126</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_open</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="buffer_8cc_source.html#l00415">unmap_file()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00446">m_cur_open</a>, <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>, and <a class="el" href="buffer_8cc_source.html#l00415">unmap_file()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l02025">ffmpegfs_release()</a>, <a class="el" href="buffer_8cc_source.html#l00465">release()</a>, and <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l02022">ffmpegfs_release()</a>, <a class="el" href="buffer_8cc_source.html#l00465">release()</a>, and <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>.</p>
 
 </div>
 </div>
@@ -616,11 +616,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01077">1077</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01080">1080</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, and <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, and <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00826">buffer_watermark()</a>, <a class="el" href="buffer_8cc_source.html#l00899">cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00844">copy()</a>, <a class="el" href="buffer_8cc_source.html#l01047">is_segment_finished()</a>, <a class="el" href="buffer_8cc_source.html#l00813">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00789">tell()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00829">buffer_watermark()</a>, <a class="el" href="buffer_8cc_source.html#l00902">cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00847">copy()</a>, <a class="el" href="buffer_8cc_source.html#l01050">is_segment_finished()</a>, <a class="el" href="buffer_8cc_source.html#l00816">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00792">tell()</a>.</p>
 
 </div>
 </div>
@@ -667,9 +667,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00839">839</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00842">842</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00954">read_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00957">read_frame()</a>.</p>
 
 </div>
 </div>
@@ -723,9 +723,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00844">844</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00847">847</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00060">bufsize()</a>, <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00808">size()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00060">bufsize()</a>, <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00811">size()</a>.</p>
 
 </div>
 </div>
@@ -749,7 +749,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00318">318</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>.</p>
 
@@ -783,7 +783,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p>Implements <a class="el" href="classFileIO.html#aaffdefd15fa7c5e54a9733b1770c8bcd">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00803">803</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00806">806</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
 </div>
 </div>
@@ -815,7 +815,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p>Implements <a class="el" href="classFileIO.html#ad7bf956d13e66a11644c30c4b2b7d0ee">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00986">986</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00989">989</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
 </div>
 </div>
@@ -852,9 +852,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if at end of buffer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00991">991</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00994">994</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00808">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00784">tell()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00811">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00787">tell()</a>.</p>
 
 </div>
 </div>
@@ -886,7 +886,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p>Implements <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00981">981</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00984">984</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
 </div>
 </div>
@@ -910,9 +910,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00530">530</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00090">Buffer::_tagCACHEINFO::m_buffer_size_idx</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00087">Buffer::_tagCACHEINFO::m_cachefile_idx</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00090">Buffer::_tagCACHEINFO::m_buffer_size_idx</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00087">Buffer::_tagCACHEINFO::m_cachefile_idx</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l01035">finished_segment()</a>, <a class="el" href="cache__entry_8cc_source.html#l00248">Cache_Entry::flush()</a>, and <a class="el" href="buffer_8cc_source.html#l00465">release()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l01038">finished_segment()</a>, <a class="el" href="cache__entry_8cc_source.html#l00248">Cache_Entry::flush()</a>, and <a class="el" href="buffer_8cc_source.html#l00465">release()</a>.</p>
 
 </div>
 </div>
@@ -941,11 +941,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true of frame is already in cache, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01001">1001</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01004">1004</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04500">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04373">FFmpeg_Transcoder::skip_decoded_frames()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04505">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04378">FFmpeg_Transcoder::skip_decoded_frames()</a>.</p>
 
 </div>
 </div>
@@ -981,11 +981,11 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00722">722</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00725">725</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, and <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, and <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00627">write()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00630">write()</a>.</p>
 
 </div>
 </div>
@@ -1016,7 +1016,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00164">164</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00899">cachefile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00164">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="fileio_8cc_source.html#l00048">VIRTUALFILE::get_segment_count()</a>, <a class="el" href="buffer_8cc_source.html#l01020">is_open()</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00913">make_cachefile_name()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01345">make_filename()</a>, <a class="el" href="buffer_8cc_source.html#l00340">map_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00670">mktree()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00420">new_strdup()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>, <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_FRAME</a>, and <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_HLS</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00902">cachefile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00165">FFMPEGFS_PARAMS::current_format()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="fileio_8cc_source.html#l00048">VIRTUALFILE::get_segment_count()</a>, <a class="el" href="buffer_8cc_source.html#l01023">is_open()</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00916">make_cachefile_name()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01345">make_filename()</a>, <a class="el" href="buffer_8cc_source.html#l00340">map_file()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00670">mktree()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00420">new_strdup()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>, <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>, <a class="el" href="fileio_8h_source.html#l00110">VIRTUALFLAG_FRAME</a>, and <a class="el" href="fileio_8h_source.html#l00111">VIRTUALFLAG_HLS</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00163">Cache_Entry::open()</a>.</p>
 
@@ -1048,9 +1048,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 <p>Check if the cache file is open. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the cache file is open; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01020">1020</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01023">1023</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="buffer_8cc_source.html#l00465">release()</a>.</p>
 
@@ -1081,9 +1081,9 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if finished, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01047">1047</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l01050">1050</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>.</p>
 
@@ -1147,16 +1147,16 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the name of the cache file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00913">913</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00916">916</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00899">cachefile()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00173">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00902">cachefile()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00173">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, and <a class="el" href="transcode_8cc_source.html#l00178">transcoder_cache_path()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="fuseops_8cc_source.html#l00811">make_hls_fileset()</a>.</p>
 
 </div>
 </div>
-<a id="a8608a76fc9d6f729bce7df3af7268356"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8608a76fc9d6f729bce7df3af7268356">&#9670;&nbsp;</a></span>map_file()</h2>
+<a id="a5422581af1c76f9b1e05a5b75f708c2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5422581af1c76f9b1e05a5b75f708c2c">&#9670;&nbsp;</a></span>map_file()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1198,7 +1198,13 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">off_t&#160;</td>
-          <td class="paramname"><em>defaultsize</em>&#160;</td>
+          <td class="paramname"><em>defaultsize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>truncate</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1224,6 +1230,7 @@ std::vector&lt; <a class="el" href="classBuffer.html#aadb6390b55aac6776448a8adc8
 In: If false, the file size will be the size of the existing file, returning the size in filesize. If the file does not exist, it will be sized to defaultsize. If true, the defaultsize will be used in any case, resizing an existing file if necessary.<br  />
 Out: true if the file size was set to default. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">defaultsize</td><td>- Default size of the file if it does not exist. This parameter can be zero in which case the size will be set to the system's page size. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">truncate</td><td>- If true, truncate file when opened. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1231,7 +1238,7 @@ Out: true if the file size was set to default. </td></tr>
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00340">340</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00996">close()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="buffer_8cc_source.html#l00065">open()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00999">close()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="buffer_8cc_source.html#l00065">open()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="buffer_8cc_source.html#l00078">open_file()</a>.</p>
 
@@ -1318,9 +1325,9 @@ Out: true if the file size was set to default. </td></tr>
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00078">78</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_open</a>, <a class="el" href="buffer_8cc_source.html#l00340">map_file()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00446">m_cur_open</a>, <a class="el" href="buffer_8cc_source.html#l00340">map_file()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>, <a class="el" href="transcode_8cc_source.html#l00451">transcoder_read()</a>, and <a class="el" href="transcode_8cc_source.html#l00585">transcoder_read_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>, <a class="el" href="transcode_8cc_source.html#l00447">transcoder_read()</a>, and <a class="el" href="transcode_8cc_source.html#l00581">transcoder_read_frame()</a>.</p>
 
 </div>
 </div>
@@ -1370,7 +1377,7 @@ Out: true if the file size was set to default. </td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00947">947</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00950">950</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
 </div>
 </div>
@@ -1413,11 +1420,11 @@ Out: true if the file size was set to default. </td></tr>
  On error, the value 0 is returned and errno is set to indicate the error. <br  />
  If at end of file, 0 may be returned by errno not set. <a class="el" href="classBuffer.html#a33be90e718956cdb86d4f7b641b7178b" title="Get last error.">error()</a> will return 0 if at EOF. If the image frame is not yet read, the function also returns 0 and errno is EAGAIN. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00954">954</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00957">957</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00839">copy()</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00842">copy()</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00585">transcoder_read_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00581">transcoder_read_frame()</a>.</p>
 
 </div>
 </div>
@@ -1454,11 +1461,11 @@ Out: true if the file size was set to default. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00883">883</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00886">886</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="buffer_8cc_source.html#l00595">reserve()</a>, <a class="el" href="buffer_8cc_source.html#l00808">size()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, <a class="el" href="buffer_8cc_source.html#l00598">reserve()</a>, <a class="el" href="buffer_8cc_source.html#l00811">size()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00705">write_prepare()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00708">write_prepare()</a>.</p>
 
 </div>
 </div>
@@ -1489,9 +1496,9 @@ Out: true if the file size was set to default. </td></tr>
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00465">465</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00047">CACHE_CLOSE_DELETE</a>, <a class="el" href="buffer_8h_source.html#l00049">CACHE_FLAG_RO</a>, <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="buffer_8cc_source.html#l00126">close_file()</a>, <a class="el" href="buffer_8cc_source.html#l00530">flush()</a>, <a class="el" href="buffer_8cc_source.html#l01020">is_open()</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>, and <a class="el" href="buffer_8cc_source.html#l00415">unmap_file()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00047">CACHE_CLOSE_DELETE</a>, <a class="el" href="buffer_8h_source.html#l00049">CACHE_FLAG_RO</a>, <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="buffer_8cc_source.html#l00126">close_file()</a>, <a class="el" href="buffer_8cc_source.html#l00530">flush()</a>, <a class="el" href="buffer_8cc_source.html#l01023">is_open()</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>, <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>, and <a class="el" href="buffer_8cc_source.html#l00415">unmap_file()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00996">close()</a>, <a class="el" href="cache__entry_8cc_source.html#l00208">Cache_Entry::close_buffer()</a>, and <a class="el" href="buffer_8cc_source.html#l00050">~Buffer()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00999">close()</a>, <a class="el" href="cache__entry_8cc_source.html#l00208">Cache_Entry::close_buffer()</a>, and <a class="el" href="buffer_8cc_source.html#l00050">~Buffer()</a>.</p>
 
 </div>
 </div>
@@ -1530,7 +1537,7 @@ Out: true if the file size was set to default. </td></tr>
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00515">515</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00087">Buffer::_tagCACHEINFO::m_cachefile_idx</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00933">remove_file()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00087">Buffer::_tagCACHEINFO::m_cachefile_idx</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00936">remove_file()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, and <a class="el" href="buffer_8cc_source.html#l00465">release()</a>.</p>
 
@@ -1569,11 +1576,11 @@ Out: true if the file size was set to default. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00933">933</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00936">936</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00558">clear()</a>, and <a class="el" href="buffer_8cc_source.html#l00515">remove_cachefile()</a>.</p>
 
 </div>
 </div>
@@ -1602,11 +1609,11 @@ Out: true if the file size was set to default. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00595">595</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00598">598</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00080">Buffer::_tagCACHEINFO::m_fd</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00808">size()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00084">Buffer::_tagCACHEINFO::m_buffer_size</a>, <a class="el" href="buffer_8h_source.html#l00079">Buffer::_tagCACHEINFO::m_cachefile</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00080">Buffer::_tagCACHEINFO::m_fd</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00811">size()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00883">reallocate()</a>, and <a class="el" href="transcode_8cc_source.html#l00139">transcode_finish()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00886">reallocate()</a>, and <a class="el" href="transcode_8cc_source.html#l00139">transcode_finish()</a>.</p>
 
 </div>
 </div>
@@ -1660,9 +1667,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p>Implements <a class="el" href="classFileIO.html#a0171ca18c497a09971e22cc5c381304b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00727">727</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00730">730</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00651">write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00654">write_frame()</a>.</p>
 
 </div>
 </div>
@@ -1721,9 +1728,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBuffer.html#a17c6c9e98cfce397d937259e1e4712e6" title="Seek to position in file.">seek()</a> returns the resulting offset location as measured in bytes from the beginning of the file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00732">732</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00735">735</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01060">cacheinfo()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8cc_source.html#l00808">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00784">tell()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01063">cacheinfo()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8cc_source.html#l00811">size()</a>, and <a class="el" href="buffer_8cc_source.html#l00787">tell()</a>.</p>
 
 </div>
 </div>
@@ -1747,9 +1754,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00311">311</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, and <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, and <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l01060">cacheinfo()</a>, <a class="el" href="buffer_8cc_source.html#l00558">clear()</a>, <a class="el" href="buffer_8cc_source.html#l00318">current_segment_no()</a>, <a class="el" href="buffer_8cc_source.html#l00530">flush()</a>, <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, <a class="el" href="buffer_8cc_source.html#l01020">is_open()</a>, <a class="el" href="buffer_8cc_source.html#l00465">release()</a>, <a class="el" href="buffer_8cc_source.html#l00329">segment_exists()</a>, and <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l01063">cacheinfo()</a>, <a class="el" href="buffer_8cc_source.html#l00558">clear()</a>, <a class="el" href="buffer_8cc_source.html#l00318">current_segment_no()</a>, <a class="el" href="buffer_8cc_source.html#l00530">flush()</a>, <a class="el" href="buffer_8cc_source.html#l00164">init()</a>, <a class="el" href="buffer_8cc_source.html#l01023">is_open()</a>, <a class="el" href="buffer_8cc_source.html#l00465">release()</a>, <a class="el" href="buffer_8cc_source.html#l00329">segment_exists()</a>, and <a class="el" href="buffer_8cc_source.html#l00286">set_segment()</a>.</p>
 
 </div>
 </div>
@@ -1780,9 +1787,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00329">329</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01350">file_exists()</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01350">file_exists()</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04500">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="transcode_8cc_source.html#l00451">transcoder_read()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04505">FFmpeg_Transcoder::process_single_fr()</a>, and <a class="el" href="transcode_8cc_source.html#l00447">transcoder_read()</a>.</p>
 
 </div>
 </div>
@@ -1813,9 +1820,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00286">286</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="buffer_8cc_source.html#l00126">close_file()</a>, <a class="el" href="buffer_8cc_source.html#l00318">current_segment_no()</a>, <a class="el" href="buffer_8h_source.html#l00447">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00078">open_file()</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00050">CACHE_FLAG_RW</a>, <a class="el" href="buffer_8cc_source.html#l00126">close_file()</a>, <a class="el" href="buffer_8cc_source.html#l00318">current_segment_no()</a>, <a class="el" href="buffer_8h_source.html#l00448">m_ci</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, <a class="el" href="buffer_8cc_source.html#l00078">open_file()</a>, and <a class="el" href="buffer_8cc_source.html#l00311">segment_count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04500">FFmpeg_Transcoder::process_single_fr()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04505">FFmpeg_Transcoder::process_single_fr()</a>.</p>
 
 </div>
 </div>
@@ -1847,9 +1854,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p>Implements <a class="el" href="classFileIO.html#a28df61747de114001d67ef6abad2ca7d">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00808">808</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00811">811</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00844">copy()</a>, <a class="el" href="buffer_8cc_source.html#l00991">eof()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00883">reallocate()</a>, <a class="el" href="buffer_8cc_source.html#l00595">reserve()</a>, <a class="el" href="buffer_8cc_source.html#l00732">seek()</a>, and <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00847">copy()</a>, <a class="el" href="buffer_8cc_source.html#l00994">eof()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01058">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00930">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="buffer_8cc_source.html#l00886">reallocate()</a>, <a class="el" href="buffer_8cc_source.html#l00598">reserve()</a>, <a class="el" href="buffer_8cc_source.html#l00735">seek()</a>, and <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>.</p>
 
 </div>
 </div>
@@ -1886,9 +1893,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the value of the internal buffer size pointer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00813">813</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00816">816</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>.</p>
 
 </div>
 </div>
@@ -1920,9 +1927,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p>Implements <a class="el" href="classFileIO.html#a3a40140f766ff539cde0da854a1a9526">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00784">784</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00787">787</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00991">eof()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04500">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="buffer_8cc_source.html#l00732">seek()</a>, <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>, and <a class="el" href="transcode_8cc_source.html#l00718">transcoder_buffer_tell()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00994">eof()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04505">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="buffer_8cc_source.html#l00735">seek()</a>, <a class="el" href="transcode_8cc_source.html#l00080">transcode_until()</a>, and <a class="el" href="transcode_8cc_source.html#l00714">transcoder_buffer_tell()</a>.</p>
 
 </div>
 </div>
@@ -1959,9 +1966,9 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the value of the internal read position pointer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00789">789</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00792">792</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01077">const_cacheinfo()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l01080">const_cacheinfo()</a>.</p>
 
 </div>
 </div>
@@ -2059,7 +2066,7 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 
 <p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00415">415</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00996">close()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00999">close()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="fileio_8cc_source.html#l00133">FileIO::filename()</a>, and <a class="el" href="logging_8h_source.html#l00162">Logging::trace()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00126">close_file()</a>, and <a class="el" href="buffer_8cc_source.html#l00465">release()</a>.</p>
 
@@ -2101,11 +2108,11 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00627">627</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00630">630</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00722">increment_pos()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00705">write_prepare()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00725">increment_pos()</a>, <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, and <a class="el" href="buffer_8cc_source.html#l00708">write_prepare()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05296">FFmpeg_Transcoder::output_write()</a>, and <a class="el" href="buffer_8cc_source.html#l00651">write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05309">FFmpeg_Transcoder::output_write()</a>, and <a class="el" href="buffer_8cc_source.html#l00654">write_frame()</a>.</p>
 
 </div>
 </div>
@@ -2152,11 +2159,11 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00651">651</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00654">654</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00826">buffer_watermark()</a>, <a class="el" href="fileio_8h_source.html#l00064">IMAGE_FRAME_TAG</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, <a class="el" href="fileio_8h_source.html#l00074">IMAGE_FRAME::m_frame_no</a>, <a class="el" href="buffer_8h_source.html#l00443">m_mutex</a>, <a class="el" href="fileio_8h_source.html#l00075">IMAGE_FRAME::m_offset</a>, <a class="el" href="fileio_8h_source.html#l00076">IMAGE_FRAME::m_size</a>, <a class="el" href="fileio_8h_source.html#l00073">IMAGE_FRAME::m_tag</a>, <a class="el" href="buffer_8cc_source.html#l00727">seek()</a>, <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>, and <a class="el" href="buffer_8cc_source.html#l00627">write()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8cc_source.html#l00829">buffer_watermark()</a>, <a class="el" href="fileio_8h_source.html#l00064">IMAGE_FRAME_TAG</a>, <a class="el" href="buffer_8h_source.html#l00089">Buffer::_tagCACHEINFO::m_buffer_idx</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, <a class="el" href="fileio_8h_source.html#l00074">IMAGE_FRAME::m_frame_no</a>, <a class="el" href="buffer_8h_source.html#l00444">m_mutex</a>, <a class="el" href="fileio_8h_source.html#l00075">IMAGE_FRAME::m_offset</a>, <a class="el" href="fileio_8h_source.html#l00076">IMAGE_FRAME::m_size</a>, <a class="el" href="fileio_8h_source.html#l00073">IMAGE_FRAME::m_tag</a>, <a class="el" href="buffer_8cc_source.html#l00730">seek()</a>, <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>, and <a class="el" href="buffer_8cc_source.html#l00630">write()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03805">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03810">FFmpeg_Transcoder::encode_image_frame()</a>.</p>
 
 </div>
 </div>
@@ -2193,11 +2200,11 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the memory to write. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00705">705</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="buffer_8cc_source.html#l00708">708</a> of file <a class="el" href="buffer_8cc_source.html">buffer.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8h_source.html#l00083">Buffer::_tagCACHEINFO::m_buffer_watermark</a>, <a class="el" href="buffer_8h_source.html#l00444">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00883">reallocate()</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00081">Buffer::_tagCACHEINFO::m_buffer</a>, <a class="el" href="buffer_8h_source.html#l00082">Buffer::_tagCACHEINFO::m_buffer_pos</a>, <a class="el" href="buffer_8h_source.html#l00083">Buffer::_tagCACHEINFO::m_buffer_watermark</a>, <a class="el" href="buffer_8h_source.html#l00445">m_cur_ci</a>, and <a class="el" href="buffer_8cc_source.html#l00886">reallocate()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00627">write()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00630">write()</a>.</p>
 
 </div>
 </div>

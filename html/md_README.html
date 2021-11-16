@@ -70,35 +70,44 @@ $(function() {
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Branch   </th><th class="markdownTableHeadNone">State   </th><th class="markdownTableHeadNone">Compiler   </th><th class="markdownTableHeadNone">Library   </th><th class="markdownTableHeadNone">Build State    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">gcc 8.3.0   </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">gcc 10.2.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">7.0.1-8+deb10u2   </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>    </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">clang 11.0.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">gcc 8.3.0   </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">gcc 10.2.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">7.0.1-8+deb10u2   </td><td class="markdownTableBodyNone">FFmpeg 4.1.6-1~deb10u1   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">clang 11.0.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
 </table>
+<p><a href="https://repology.org/project/ffmpegfs/versions"><img src="https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4" alt="Packaging status" style="pointer-events: none;" class="inline"/></a></p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
-<ul>
-<li>04.09.2021: The feature branch FB (V2.6) has been merged into trunk (V2.4), becoming the new release branch. The next release will be version 2.7. To get the latest code please checkout master from now on.</li>
-<li>04.09.2021: Released V2.6 to Debian Bullseye. This official release finally features hardware decoding and encoding.</li>
-</ul>
 <h2><a class="anchor" id="autotoc_md3"></a>
-Version 2.7 under development</h2>
-<p>**New in in 2.7 (2021-10-XX):</p>
+Version 2.8 under development</h2>
+<p>New in in 2.8 (2021-11-XX):</p>
+<ul>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/102">Issue #102</a>: Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fix problems with cache causing garbled videos and hick-ups in audio.</li>
+<li><b>Enhancement</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/103">Issue #103</a>: If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with &ndash;min_seek_time_diff. defaults to 30 seconds. Set to 0 to disable.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Version 2.7 released</h2>
+<p>New in in 2.7 (2021-11-08):</p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/92">Issue #92</a>: Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered. It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a &ndash;hwaccel_dec_blocked parameter has been added. If hardware decoding fails, check the log for a message similar this: "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0." If VP9 profile 0 is not supported, the parameter would be: &ndash;hwaccel_dec_blocked=VP9:0 This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be &ndash;hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use &ndash;hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/96">Issue #96</a>: Fixed potential buffer overrun and crash when reading corrupted input files.</li>
+<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/99">Issue #99</a>: Report command line error if &ndash;desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, &ndash;desttype=aiff+mov would create MOV files out of any input. Correct would be &ndash;desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<h1><a class="anchor" id="autotoc_md5"></a>
 History</h1>
 <p>See <a class="el" href="md_HISTORY.html">HISTORY</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Planned Features</h1>
 <ul>
+<li>DASH support is on my list, but the format is complicated and I currently do no have the time for that.</li>
 <li>Currently I am preparing a Windows version, but this is going to take some time.</li>
+<li><em>Any ideas or wishes?</em> Create <a href="https://github.com/nschlia/ffmpegfs/issues">an issue</a> and let me know. Some great features started this way!</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md6"></a>
+<h1><a class="anchor" id="autotoc_md7"></a>
 About</h1>
 <p>Web site: <a href="https://nschlia.github.io/ffmpegfs/">https://nschlia.github.io/ffmpegfs/</a></p>
 <p>FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video formats on the fly when opened and read.</p>
@@ -142,12 +151,12 @@ About</h1>
 <p>When a destination <em>JPG</em>, <em>PNG</em> or <em>BMP</em> is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.</p>
 <p>Selecting <em>HLS</em> creates a directory with TS segments together with a M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.</p>
 <p>Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See <a href="README.md#fixing-problems">FIXING PROBLEMS</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 Installation Instructions</h1>
 <ul>
 <li>Please read the <a class="el" href="md_INSTALL.html">INSTALL</a> file.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md8"></a>
+<h1><a class="anchor" id="autotoc_md9"></a>
 Supported Linux Distributions</h1>
 <p>Tested with:</p>
 <table class="markdownTable">
@@ -164,22 +173,24 @@ Supported Linux Distributions</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Raspbian 10 Buster</code>   </td><td class="markdownTableBodyNone"><b>4.1.6-1~deb10u1+rpt1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>Raspbian 11 Bullseye</code>   </td><td class="markdownTableBodyNone"><b>4.3.2-0+rpt3+deb11u2</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Ubuntu 16.04.3 LTS</code>   </td><td class="markdownTableBodyNone">**.8.11-0ubuntu0.16.04.1**   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>Ubuntu 17.10</code>   </td><td class="markdownTableBodyNone"><b>3.3.4-2</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>Ubuntu 20.04</code>   </td><td class="markdownTableBodyNone"><b>4.2.2-1ubuntu1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Suse 42</code>   </td><td class="markdownTableBodyNone"><b>3.3.4</b>   </td><td class="markdownTableBodyNone">See notes below   </td><td class="markdownTableBodyNone">not OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Red Hat 7</code>   </td><td class="markdownTableBodyNone"><b>FFmpeg must be compiled from sources</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><code>Suse 42</code>   </td><td class="markdownTableBodyNone"><b>3.3.4</b>   </td><td class="markdownTableBodyNone">See notes below   </td><td class="markdownTableBodyNone">not OK    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>Red Hat 7</code>   </td><td class="markdownTableBodyNone"><b>FFmpeg must be compiled from sources</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>Funtoo 7.3.1</code>   </td><td class="markdownTableBodyNone"><b>3.4.1</b>   </td><td class="markdownTableBodyNone">FFmpeg needs to be installed with correct "USE flags", see <a class="el" href="md_INSTALL.html">install</a>   </td><td class="markdownTableBodyNone">OK   </td></tr>
 </table>
 <p><b>Suse</b> does not provide proprietary formats like AAC and H264, thus the distribution FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.</p>
 <p>See <a href="https://en.opensuse.org/Restricted_formats">https://en.opensuse.org/Restricted_formats</a>.</p>
 <p><b>Tips on other OSs and distributions like Mac or other *nixes are welcome.</b></p>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="autotoc_md10"></a>
 Usage</h1>
 <p>Mount your file system like this: </p><pre class="fragment">ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 </pre><p> For example, to run FFmpegfs as daemon and encode to MPEG-4: </p><pre class="fragment">ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
@@ -194,10 +205,10 @@ Usage</h1>
 </pre><p> Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 </pre><p> Same as above, but also limit video with to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 </pre><p> Enable deinterlacing for enhanced image quality.</p>
-<h1><a class="anchor" id="autotoc_md10"></a>
+<h1><a class="anchor" id="autotoc_md11"></a>
 Hardware Acceleration</h1>
 <p>The new hardware acceleration feature depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.</p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 How It Works</h2>
 <p>Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs. As of today even cheapy on board chips can do hardware acceleration.</p>
 <p>Here is an incomplete list.</p>
@@ -217,9 +228,9 @@ How It Works</h2>
 <li>MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)</li>
 </ul>
 <p>More details see: <a href="https://trac.ffmpeg.org/wiki/HWAccelIntro">https://trac.ffmpeg.org/wiki/HWAccelIntro</a></p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 Current Implementation</h2>
-<h3><a class="anchor" id="autotoc_md13"></a>
+<h3><a class="anchor" id="autotoc_md14"></a>
 Supported Hardware Acceleration APIs</h3>
 <p>These APIs are implemented and tested. VAAPI mostly targets at Intel Hardware, but there are other hardware vendors that offer support now. MMAL and OpenMAX is supported by Raspberry PI boards.</p>
 <table class="markdownTable">
@@ -234,7 +245,7 @@ Supported Hardware Acceleration APIs</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>OMX</b>   </td><td class="markdownTableBodyNone">x   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OpenMAX (Open Media Acceleration)   </td><td class="markdownTableBodyNone"><a href="https://en.wikipedia.org/wiki/OpenMAX">https://en.wikipedia.org/wiki/OpenMAX</a>   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md14"></a>
+<h3><a class="anchor" id="autotoc_md15"></a>
 Tested On</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -252,7 +263,7 @@ Raspberry Pi 3 Model B Plus Rev 1.3   </td><td class="markdownTableBodyNone"><br
 ARMv7 Processor rev 5 (v7l)<br  />
 ARMv7 Processor rev 4 (v7l)   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OpenMAX/MMAL   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md16"></a>
 Planned Hardware Acceleration APIs</h2>
 <p>There are several more APIs that could be added. Currently this is not possible due to lack of hardware.</p>
 <table class="markdownTable">
@@ -273,7 +284,7 @@ Planned Hardware Acceleration APIs</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>VULKAN</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil &gt;= 56.30.100   </td><td class="markdownTableBodyNone"><a href="https://en.wikipedia.org/wiki/Vulkan_(API)">https://en.wikipedia.org/wiki/Vulkan_(API)</a>   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md16"></a>
+<h2><a class="anchor" id="autotoc_md17"></a>
 Hardware Encoding</h2>
 <p>This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.</p>
 <p>To enable hardware support, use these parameters respectively (of course use only one):</p>
@@ -297,7 +308,7 @@ Hardware Encoding</h2>
 <li>If no bitrate is set, try ICQ, then CQP.</li>
 </ul>
 <p>At the moment this is hardwired in code. None of these values can be controlled now by command line. This is planned of course, but not implemented in the current version yet.</p>
-<h2><a class="anchor" id="autotoc_md17"></a>
+<h2><a class="anchor" id="autotoc_md18"></a>
 Hardware Decoding</h2>
 <p>This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.</p>
 <p>To enable hardware support, use these parameters respectively (of course use only one):</p>
@@ -309,18 +320,18 @@ Hardware Decoding</h2>
 </ul>
 <p>On slow machines like the Raspberry this should give an extra kick and also relieve the CPU from load. On faster machines this impact may be smaller, yet noticeable.</p>
 <p>The decoding part is a bit tricky, if encoding is set set to hardware, this hardware is there and capable of encoding, it will work. If decoding in hardware is possible depends on the source file, thus the file needs to be checked first and then decided if hardware acceleration can be used or fallback to software is required. FFmpeg requires that to be set via command line, but FFmpegfs must be able to decide that automatically.</p>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md19"></a>
 TODOs</h2>
 <p>Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory unneccessary.</p>
 <p>It is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing) which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.</p>
 <p>Selecting a target bitrate turns out to be a bit tricky, see above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).</p>
 <p>On the other hand everything seems to work and there are no show stoppers in sight. Sheesh, wiping the sweat off my chin :)</p>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<h1><a class="anchor" id="autotoc_md20"></a>
 HTTP Live Streaming</h1>
 <p>FFmpegfs supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience it will also offer a virtual test.html file that can playback the segments using the hls.js library (see <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a>).</p>
 <p>To use the new HLS feature invoke FFmpegfs with: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 </pre><p> Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from disk. Simply navigate to the directory and open test.html.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md21"></a>
 Cue Sheets</h1>
 <p>Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically they are used to define a CD/DVD track layout. Today they are supported by a wide range of optical disc authoring applications, and moreover, media players.</p>
 <p>When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. It can also be embedded into the media file.</p>
@@ -336,7 +347,7 @@ Cue Sheets</h1>
  myfile.mp4.tracks/
  myfile.ogv.tracks/
 </pre><p> Tracks defined in the cue sheet will show up in the *.tracks sub directories.</p>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md22"></a>
 Building A Docker Container</h1>
 <p>FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the "docker" directory and run </p><pre class="fragment"> docker build --build-arg -t nschlia/ffmpegfs .
 </pre><p> Depending on the machine speed, this will take quite a while. After the command completed, the container can be started with </p><pre class="fragment"> docker run --rm \
@@ -349,7 +360,7 @@ Building A Docker Container</h1>
       nschlia/ffmpegfs \
       -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 </pre><p> Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to MP4 or whatever desired.</p>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md23"></a>
 Auto Copy</h1>
 <p>"Auto copy" performs intelligent stream copy, for example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream it is possible to simply repackage it to a mp4 container without recoding.</p>
 <p>This is very efficient as it does not require as much computing as de- and encoding does, and it also will not degrade quality as the original file basically stays the same.</p>
@@ -365,14 +376,19 @@ Auto Copy</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ALWAYS   </td><td class="markdownTableBodyNone">auto copy whenever possible even if the target file becomes larger   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md23"></a>
+<h1><a class="anchor" id="autotoc_md24"></a>
 Smart Transcoding</h1>
 <p>Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense as MP4 or WebM work perfectly with audio only content.</p>
-<p>To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, &ndash;desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.</p>
-<p><em>Note</em></p>
-<p>Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.</p>
-<p>The input format should be scanned for streams and the output selected appropriately: An MP4 with video should be transcoded to MOV, an MP4 with audio only to AIFF. See <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>.</p>
-<h1><a class="anchor" id="autotoc_md24"></a>
+<p>To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, <em>&ndash;desttype=mov+aiff</em> will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed for example by some Apple Editing software which is very picky about the input format.</p>
+<p><em>Notes</em></p>
+<ol type="1">
+<li>The first format must be a video codec, the second must be an audio codec. For example, <em>&ndash;desttype=wav+mp4</em> is invalid, instead it should be <em>&ndash;desttype=mp4+wav</em>. <br  />
+</li>
+<li><p class="startli">Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.</p>
+<p class="startli">The input format should be scanned for streams and the output selected appropriately: An MP4 with video should be transcoded to MOV, an MP4 with audio only to AIFF. See <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>.</p>
+</li>
+</ol>
+<h1><a class="anchor" id="autotoc_md25"></a>
 Transcode To Frame Images</h1>
 <p>To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos to virtual folders with one image for each frame.</p>
 <div class="fragment"><div class="line">$ ls /storage/videos</div>
@@ -386,12 +402,12 @@ Transcode To Frame Images</h1>
 <div class="line">  ...</div>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00001.png</div>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00002.png</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md25"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md26"></a>
 A Few Words On ProRes</h1>
 <p>Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines highest possible quality while still saving some disk space and not requiring high performance disk systems. On the other hand this means that ProRes encoded videos will become quite large - for example a 60 minute video may require up to 25 GB.</p>
 <p>It is not for target audience use, and certainly not suitable for internet streaming.</p>
 <p>Also please keep in mind that when using lossy source input formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.</p>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<h1><a class="anchor" id="autotoc_md27"></a>
 MP4 Format Profiles</h1>
 <p>The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different as for Firefox, unfortunately.</p>
 <p>The &ndash;profile option allows to select the format:</p>
@@ -429,7 +445,7 @@ MP4 Format Profiles</h1>
 <p>This all boils down to the fact than Firefox and Edge are the only browsers that support the necessary extensions to start playback while still transcoding.</p>
 <p>In most cases files will not play if not properly optimised.</p>
 <p>See [TODO](TODO) for details.</p>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md28"></a>
 How It Works</h1>
 <p>When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.</p>
 <p>As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded. Once decoded the file is kept in a disk buffer and can be accessed very fast.</p>
@@ -439,7 +455,7 @@ How It Works</h1>
 <p>MP4: Same applies to meta atoms in MP4 containers.</p>
 <p>MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This <em>dramatically</em> speeds up such applications.</p>
 <p>WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.</p>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md29"></a>
 About Output Formats</h1>
 <p>A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.</p>
 <p>MP4 files are special, though, as regular MP4s are not quite suited for live streaming. Reason being that the start block of an MP4 contains a field with the size of the compressed data section. Suffice to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.</p>
@@ -451,12 +467,16 @@ About Output Formats</h1>
 <p>The data part is divided into chunks of about 1 second length, each with its own header, thus it is possible to fill in the size fields early enough.</p>
 <p>As a draw back not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback cannot be positioned past the current playback position, only backwards.</p>
 <p>But that's the price of starting playback fast.</p>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 Fixing Problems</h1>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
+General problems accessing a file</h2>
+<p>Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get a "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system.</p>
+<p>What you will have to do is refer to the syslog, system journal or to the FFmpeg log itself, optionally at a higher verbosity. If you are unable to resolve the problem yourself, feel free to create <a href="https://github.com/nschlia/ffmpegfs/issues">an issue</a>, stating what you have done and what has happened. Do not forget to add logs (preferably at a higher verbosity) and if possible a description how to recreate the issue. A demo file that causes the error would be helpful as well.</p>
+<h2><a class="anchor" id="autotoc_md32"></a>
 Transcoding too slow</h2>
 <p>See <a href="INSTALL.md#building-ffmpeg-with-optimisations">Building FFmpeg with optimisations</a></p>
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md33"></a>
 Lock ups when accessed through Samba</h2>
 <p>When accessed one a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data was returned.</p>
 <p>Seems others had the same problem:</p>
@@ -465,12 +485,12 @@ Lock ups when accessed through Samba</h2>
 level2 oplocks = no
 aio read size = 1
 </pre><p> The "aio read size" parameter may be moved to the share config: </p><pre class="fragment">aio read size = 1
-</pre> <h2><a class="anchor" id="autotoc_md32"></a>
+</pre> <h2><a class="anchor" id="autotoc_md34"></a>
 rsync, Beyond Compare and other tools</h2>
 <p>Some copy tools do not go along very well with dynamically generated files as in <a href="https://github.com/nschlia/ffmpegfs/issues/22">Issue #23: Partial transcode of some files</a>.</p>
 <p>Under Linux it is best to use (optionally with -r parameter) </p><pre class="fragment">    cp -uv /path/to/source /path/to/target
 </pre><p> This will copy all missing/changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only copy the predicted size first and not respond to size changes.</p>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 Play HLS output by opening hls.html from disk</h2>
 <p>Most browser prevent playback of files from disk. You may put them into a website directory, but sometimes even https must be used or playback will be blocked.</p>
 <p><b>To enable disk playback in Firefox:</b></p>
@@ -478,14 +498,14 @@ Play HLS output by opening hls.html from disk</h2>
 <li>Open about:config</li>
 <li>Set security.fileuri.strict_origin_policy to false</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md34"></a>
+<h2><a class="anchor" id="autotoc_md36"></a>
 Songs get cut short</h2>
 <p>If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.</p>
 <p>Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.</p>
 <p>SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file ist larger than predicted.</p>
 <p>NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.</p>
 <p>As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.</p>
-<h1><a class="anchor" id="autotoc_md35"></a>
+<h1><a class="anchor" id="autotoc_md37"></a>
 Development</h1>
 <p>FFmpegfs uses Git for revision control. You can obtain the full repository with: </p><pre class="fragment">git clone https://github.com/nschlia/ffmpegfs.git
 </pre><p> FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:</p>
@@ -498,29 +518,29 @@ Development</h1>
 </ul>
 <p>Please note that FFmpegfs is in active development, so the main branch may be unstable (but offer nice gimmicks, though). If you need a stable version please get one (preferrably the latest) release.</p>
 <p>Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!</p>
-<h1><a class="anchor" id="autotoc_md36"></a>
+<h1><a class="anchor" id="autotoc_md38"></a>
 Future Plans</h1>
 <ul>
 <li>Create a windows version</li>
 <li>and more, see [TODO](TODO)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md37"></a>
+<h1><a class="anchor" id="autotoc_md39"></a>
 Demo Code</h1>
 <p>HLS player and demo code see: <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a></p>
-<h1><a class="anchor" id="autotoc_md38"></a>
+<h1><a class="anchor" id="autotoc_md40"></a>
 Authors</h1>
 <p>This fork with FFmpeg support is maintained by Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) since 2017 to date.</p>
 <p>Based on work by K. Henriksson (from 2008 to 2017) and the original author David Collett (from 2006 to 2008).</p>
 <p>Much thanks to them for the original work and giving me a good head start!</p>
-<h1><a class="anchor" id="autotoc_md39"></a>
+<h1><a class="anchor" id="autotoc_md41"></a>
 License</h1>
 <p>This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found <a href="http://www.gnu.org/licenses/gpl-3.0.html">online</a> or in the COPYING file.</p>
 <p>This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
-<h1><a class="anchor" id="autotoc_md40"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 FFmpeg License</h1>
 <p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.</p>
 <p>See <a href="https://www.ffmpeg.org/legal.html">https://www.ffmpeg.org/legal.html</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md41"></a>
+<h1><a class="anchor" id="autotoc_md43"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2021 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>

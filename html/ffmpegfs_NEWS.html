@@ -73,7 +73,21 @@ $(function() {
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.7 (2021-10-XX):</div>
+<div class="line">Important changes in 2.8 (2021-11-XX):</div>
+<div class="line"> </div>
+<div class="line">* Bugfix: Issue #102: Not all SQL queries where case sensitive, causing cache</div>
+<div class="line">  confusion. Several database entries were created, but only one was updated.</div>
+<div class="line">  Made all queries case sensitive.</div>
+<div class="line">* Bugfix: Issue #91: Make sure that the cache is clean when transcoding starts.</div>
+<div class="line">  There should be no remains left, all segments must be created or recreated</div>
+<div class="line">  anyway. Do not append to cache when writing. This caused cache files to</div>
+<div class="line">  become larger and larger.</div>
+<div class="line">* Enhancement: Issue #103: If requested HLS segment is less than X (adjustable)</div>
+<div class="line">  seconds away, discard seek request. Segment would be available very soon</div>
+<div class="line">  anyway, and that seek makes a re-transcode necessary. Can be set with</div>
+<div class="line">  --min_seek_time_diff. defaults to 30 seconds. Set to 0 to disable.</div>
+<div class="line"> </div>
+<div class="line">Important changes in 2.7 (2021-11-08):</div>
 <div class="line"> </div>
 <div class="line">* Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem</div>
 <div class="line">  is that the FFmpeg API very late reports that it cannot decode the file in</div>
@@ -92,7 +106,14 @@ $(function() {
 <div class="line">  as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block</div>
 <div class="line">  both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1.</div>
 <div class="line">  The parameter can be repeated to block even more codecs.</div>
-<div class="line"> </div>
+<div class="line">* Bugfix: Issue #96: Fixed potential buffer overrun and crash when reading</div>
+<div class="line">  corrupted input files.</div>
+<div class="line">* Enhancement: Issue #99: Report command line error if --desttype specifies</div>
+<div class="line">  audio format first, or if the second format is not audio only. Avoid</div>
+<div class="line">  misinterpretations. For example, --desttype=aiff+mov would create MOV</div>
+<div class="line">  files out of any input. Correct would be --desttype=mov+aiff which will</div>
+<div class="line">  create MOV files out of videos and AIFF from audio files, as expected.</div>
+<div class="line">  </div>
 <div class="line">Important changes in 2.6 (2021-09-04):</div>
 <div class="line"> </div>
 <div class="line">* No new features, just a bugfix. See V2.4 for details. </div>

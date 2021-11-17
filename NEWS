@@ -10,14 +10,15 @@ Important changes in 2.8 (2021-11-XX):
 * Bugfix: Issue #102: Not all SQL queries where case sensitive, causing cache
   confusion. Several database entries were created, but only one was updated.
   Made all queries case sensitive.
-* Bugfix: Issue #91: Make sure that the cache is clean when transcoding starts.
+* Bugfix: Issue #91: Fixed HLS problems with cache causing garbled videos and
+  hick-ups in audio. Make sure that the cache is clean when transcoding starts.
   There should be no remains left, all segments must be created or recreated
   anyway. Do not append to cache when writing. This caused cache files to
   become larger and larger.
 * Enhancement: Issue #103: If requested HLS segment is less than X (adjustable)
   seconds away, discard seek request. Segment would be available very soon
   anyway, and that seek makes a re-transcode necessary. Can be set with
-  --min_seek_time_diff. defaults to 30 seconds. Set to 0 to disable.
+  --min_seek_time_diff. Defaults to 30 seconds.
 
 Important changes in 2.7 (2021-11-08):
 

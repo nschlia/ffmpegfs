@@ -1,10 +1,10 @@
 FFmpegfs
 ========
 
-| Branch | State | Compiler | Library | Build State |
-| ------------- | ------------- | ------------- | ------------- | ------------- |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | testing | gcc 10.2.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | testing | clang 11.0.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| Branch | Version | State | Compiler | Library | Build State |
+| ------------- | -------------| ------------- | ------------- | ------------- | ------------- |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | 2.8 | testing | gcc 10.2.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | 2.8  | testing | clang 11.0.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
 

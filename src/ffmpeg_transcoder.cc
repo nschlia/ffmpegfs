@@ -2369,7 +2369,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    if (!params.m_noalbumarts)
+    if (!params.m_noalbumarts && m_current_format->albumart_supported())
     {
         for (size_t n = 0; n < m_in.m_album_art.size(); n++)
         {
@@ -3310,7 +3310,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else
     {
-        for (size_t n = 0; n < m_in.m_album_art.size(); n++)
+        for (size_t n = 0; n < m_in.m_album_art.size() && n < m_out.m_album_art.size(); n++)
         {
             AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
 
@@ -4292,7 +4292,7 @@ int FFmpeg_Transcoder::process_metadata()
     }
 
     // Also copy album art meta tags
-    for (size_t n = 0; n < m_in.m_album_art.size(); n++)
+    for (size_t n = 0; n < m_in.m_album_art.size() && n < m_out.m_album_art.size(); n++)
     {
         AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
         AVStream *output_stream = m_out.m_album_art.at(n).m_stream;
@@ -4323,7 +4323,7 @@ int FFmpeg_Transcoder::process_albumarts()
 {
     int ret = 0;
 
-    for (size_t n = 0; n < m_in.m_album_art.size(); n++)
+    for (size_t n = 0; n < m_in.m_album_art.size() && n < m_out.m_album_art.size(); n++)
     {
         AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
 

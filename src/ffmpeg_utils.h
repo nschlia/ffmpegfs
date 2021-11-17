@@ -334,6 +334,11 @@ public:
      * @return Returns true for formats that create an HLS set including the m3u file.
      */
     bool                is_hls() const;
+    /**
+     * @brief Check if album arts are supported
+     * @return true if album arts are supported or false if not
+     */
+    bool                albumart_supported() const;
 
 protected:
     std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
@@ -342,6 +347,7 @@ protected:
     FILETYPE    m_filetype;                 /**< @brief File type, MP3, MP4, OPUS etc. */
     AVCodecID   m_video_codec_id;           /**< @brief AVCodec used for video encoding */
     AVCodecID   m_audio_codec_id;           /**< @brief AVCodec used for audio encoding */
+    bool        m_albumart_supported;       /**< @brief true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff) */
 };
 
 /**

@@ -89,6 +89,7 @@ FFmpegfs_Format::FFmpegfs_Format()
     , m_filetype(FILETYPE_UNKNOWN)
     , m_video_codec_id(AV_CODEC_ID_NONE)
     , m_audio_codec_id(AV_CODEC_ID_NONE)
+    , m_albumart_supported(false)
 {
 
 }
@@ -99,6 +100,7 @@ FFmpegfs_Format::FFmpegfs_Format(const std::string & format_name, const std::str
     , m_filetype(filetype)
     , m_video_codec_id(video_codec_id)
     , m_audio_codec_id(audio_codec_id)
+    , m_albumart_supported(false)
 {
 
 }
@@ -116,106 +118,119 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     {
     case FILETYPE_MP3:
     {
-        m_audio_codec_id    = AV_CODEC_ID_MP3;
-        m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "mp3";
-        m_fileext           = "mp3";
+        m_audio_codec_id        = AV_CODEC_ID_MP3;
+        m_video_codec_id        = AV_CODEC_ID_NONE;
+        m_format_name           = "mp3";
+        m_fileext               = "mp3";
+        m_albumart_supported    = true;
         break;
     }
     case FILETYPE_MP4:
     {
-        m_audio_codec_id    = AV_CODEC_ID_AAC;
-        m_video_codec_id    = AV_CODEC_ID_H264;
-        m_format_name       = "mp4";
-        m_fileext           = "mp4";
+        m_audio_codec_id        = AV_CODEC_ID_AAC;
+        m_video_codec_id        = AV_CODEC_ID_H264;
+        m_format_name           = "mp4";
+        m_fileext               = "mp4";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_WAV:
     {
-        m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
-        m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "wav";
-        m_fileext           = "wav";
+        m_audio_codec_id        = AV_CODEC_ID_PCM_S16LE;
+        m_video_codec_id        = AV_CODEC_ID_NONE;
+        m_format_name           = "wav";
+        m_fileext               = "wav";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_OGG:
     {
-        m_audio_codec_id    = AV_CODEC_ID_VORBIS;
-        m_video_codec_id    = AV_CODEC_ID_THEORA;
-        m_format_name       = "ogg";
-        m_fileext           = "ogg";
+        m_audio_codec_id        = AV_CODEC_ID_VORBIS;
+        m_video_codec_id        = AV_CODEC_ID_THEORA;
+        m_format_name           = "ogg";
+        m_fileext               = "ogg";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_WEBM:
     {
-        m_audio_codec_id    = AV_CODEC_ID_OPUS;
-        m_video_codec_id    = AV_CODEC_ID_VP9;
-        m_format_name       = "webm";
-        m_fileext           = "webm";
+        m_audio_codec_id        = AV_CODEC_ID_OPUS;
+        m_video_codec_id        = AV_CODEC_ID_VP9;
+        m_format_name           = "webm";
+        m_fileext               = "webm";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_MOV:
     {
-        m_audio_codec_id    = AV_CODEC_ID_AAC;
-        m_video_codec_id    = AV_CODEC_ID_H264;
-        m_format_name       = "mov";
-        m_fileext           = "mov";
+        m_audio_codec_id        = AV_CODEC_ID_AAC;
+        m_video_codec_id        = AV_CODEC_ID_H264;
+        m_format_name           = "mov";
+        m_fileext               = "mov";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_AIFF:
     {
-        m_audio_codec_id    = AV_CODEC_ID_PCM_S16BE;
-        m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "aiff";
-        m_fileext           = "aiff";
+        m_audio_codec_id        = AV_CODEC_ID_PCM_S16BE;
+        m_video_codec_id        = AV_CODEC_ID_NONE;
+        m_format_name           = "aiff";
+        m_fileext               = "aiff";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_OPUS:
     {
-        m_audio_codec_id    = AV_CODEC_ID_OPUS;
-        m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "opus";
-        m_fileext           = "opus";
+        m_audio_codec_id        = AV_CODEC_ID_OPUS;
+        m_video_codec_id        = AV_CODEC_ID_NONE;
+        m_format_name           = "opus";
+        m_fileext               = "opus";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_PRORES:
     {
-        m_audio_codec_id    = AV_CODEC_ID_PCM_S16LE;
-        m_video_codec_id    = AV_CODEC_ID_PRORES;
-        m_format_name       = "mov";
-        m_fileext           = "mov";
+        m_audio_codec_id        = AV_CODEC_ID_PCM_S16LE;
+        m_video_codec_id        = AV_CODEC_ID_PRORES;
+        m_format_name           = "mov";
+        m_fileext               = "mov";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_ALAC:
     {
-        m_audio_codec_id    = AV_CODEC_ID_ALAC;
-        m_video_codec_id    = AV_CODEC_ID_NONE;
-        m_format_name       = "m4a";
-        m_fileext           = "m4a";
+        m_audio_codec_id        = AV_CODEC_ID_ALAC;
+        m_video_codec_id        = AV_CODEC_ID_NONE;
+        m_format_name           = "m4a";
+        m_fileext               = "m4a";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_PNG:
     {
-        m_audio_codec_id    = AV_CODEC_ID_NONE;
-        m_video_codec_id    = AV_CODEC_ID_PNG;
-        m_format_name       = "png";
-        m_fileext           = "png";
+        m_audio_codec_id        = AV_CODEC_ID_NONE;
+        m_video_codec_id        = AV_CODEC_ID_PNG;
+        m_format_name           = "png";
+        m_fileext               = "png";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_JPG:
     {
-        m_audio_codec_id    = AV_CODEC_ID_NONE;
-        m_video_codec_id    = AV_CODEC_ID_MJPEG;
-        m_format_name       = "jpg";
-        m_fileext           = "jpg";
+        m_audio_codec_id        = AV_CODEC_ID_NONE;
+        m_video_codec_id        = AV_CODEC_ID_MJPEG;
+        m_format_name           = "jpg";
+        m_fileext               = "jpg";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_BMP:
     {
-        m_audio_codec_id    = AV_CODEC_ID_NONE;
-        m_video_codec_id    = AV_CODEC_ID_BMP;
-        m_format_name       = "bmp";
-        m_fileext           = "bmp";
+        m_audio_codec_id        = AV_CODEC_ID_NONE;
+        m_video_codec_id        = AV_CODEC_ID_BMP;
+        m_format_name           = "bmp";
+        m_fileext               = "bmp";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_TS:
@@ -225,10 +240,11 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         // m_audio_codec_id    = AV_CODEC_ID_AC3;
         // Also allowed:
         // m_audio_codec_id    = AV_CODEC_ID_MP3;
-        m_audio_codec_id    = AV_CODEC_ID_AAC;
-        m_video_codec_id    = AV_CODEC_ID_H264;
-        m_format_name       = "mpegts";
-        m_fileext           = "ts";
+        m_audio_codec_id        = AV_CODEC_ID_AAC;
+        m_video_codec_id        = AV_CODEC_ID_H264;
+        m_format_name           = "mpegts";
+        m_fileext               = "ts";
+        m_albumart_supported    = false;
         break;
     }
     case FILETYPE_UNKNOWN:
@@ -274,6 +290,11 @@ bool FFmpegfs_Format::is_frameset() const
 bool FFmpegfs_Format::is_hls() const
 {
     return (m_filetype == FILETYPE_HLS);
+}
+
+bool FFmpegfs_Format::albumart_supported() const
+{
+    return m_albumart_supported;
 }
 
 AVCodecID FFmpegfs_Format::video_codec_id() const

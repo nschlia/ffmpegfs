@@ -83,178 +83,192 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 #define AV_ERROR_MAX_STRING_SIZE 128                    /**< @brief Max. length of a FFmpeg error string */
 #endif // AV_ERROR_MAX_STRING_SIZE
 
-FFmpegfs_Format::FFmpegfs_Format()
-    : m_format_name("")
-    , m_fileext("")
-    , m_filetype(FILETYPE_UNKNOWN)
-    , m_video_codec_id(AV_CODEC_ID_NONE)
-    , m_audio_codec_id(AV_CODEC_ID_NONE)
-    , m_albumart_supported(false)
+const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 {
+    {
+        FILETYPE_MP3,
+        {
+            "mp3",                  // Descriptive name of the format.
+            "mp3",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,       // AVCodec used for video encoding
+            AV_CODEC_ID_MP3,        // AVCodec used for audio encoding
+            true                    // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_MP4,
+        {
+            "mp4",                  // Descriptive name of the format.
+            "mp4",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_H264,       // AVCodec used for video encoding
+            AV_CODEC_ID_AAC,        // AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_WAV,
+        {
+            "wav",                  // Descriptive name of the format.
+            "wav",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,		// AVCodec used for video encoding
+            AV_CODEC_ID_PCM_S16LE,	// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_OGG,
+        {
+            "ogg",                  // Descriptive name of the format.
+            "ogg",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_THEORA,		// AVCodec used for video encoding
+            AV_CODEC_ID_VORBIS,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_WEBM,
+        {
+            "webm",                 // Descriptive name of the format.
+            "webm",                 // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_VP9,		// AVCodec used for video encoding
+            AV_CODEC_ID_OPUS,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_MOV,
+        {
+            "mov",                  // Descriptive name of the format.
+            "mov",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_H264,		// AVCodec used for video encoding
+            AV_CODEC_ID_AAC,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_AIFF,
+        {
+            "aiff",                 // Descriptive name of the format.
+            "aiff",                 // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,		// AVCodec used for video encoding
+            AV_CODEC_ID_PCM_S16BE,	// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_OPUS,
+        {
+            "opus",                 // Descriptive name of the format.
+            "opus",                 // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,		// AVCodec used for video encoding
+            AV_CODEC_ID_OPUS,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_PRORES,
+        {
+            "mov",                  // Descriptive name of the format.
+            "mov",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_PRORES,		// AVCodec used for video encoding
+            AV_CODEC_ID_PCM_S16LE,	// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_ALAC,
+        {
+            "m4a",                  // Descriptive name of the format.
+            "m4a",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,		// AVCodec used for video encoding
+            AV_CODEC_ID_ALAC,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_PNG,
+        {
+            "png",                  // Descriptive name of the format.
+            "png",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_PNG,		// AVCodec used for video encoding
+            AV_CODEC_ID_NONE,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_JPG,
+        {
+            "jpg",                  // Descriptive name of the format.
+            "jpg",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_MJPEG,		// AVCodec used for video encoding
+            AV_CODEC_ID_NONE,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_BMP,
+        {
+            "bmp",			        // Descriptive name of the format.
+            "bmp",                  // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_BMP,		// AVCodec used for video encoding
+            AV_CODEC_ID_NONE,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_TS,
+        {
+            "mpegts",			     // Descriptive name of the format.
+            "ts",                    // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_H264,        // AVCodec used for video encoding
+            // AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers
+            // AV_CODEC_ID_MP3 Also allowed, but as effective.
+            AV_CODEC_ID_AAC,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+    {
+        FILETYPE_HLS,
+        {
+            "mpegts",               // Descriptive name of the format.
+            "ts",                   // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_H264,
+            // AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers
+            // AV_CODEC_ID_MP3 Also allowed, but as effective.
+            AV_CODEC_ID_AAC,		// AVCodec used for audio encoding
+            false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
+};
 
-}
-
-FFmpegfs_Format::FFmpegfs_Format(const std::string & format_name, const std::string & fileext, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id)
-    : m_format_name(format_name)
-    , m_fileext(fileext)
-    , m_filetype(filetype)
-    , m_video_codec_id(video_codec_id)
-    , m_audio_codec_id(audio_codec_id)
-    , m_albumart_supported(false)
+FFmpegfs_Format::FFmpegfs_Format() :
+    m_cur_opts(&m_empty_options)
 {
 
 }
 
 bool FFmpegfs_Format::init(const std::string & desttype)
 {
-    int found = true;
+    OPTIONS_MAP::const_iterator it = m_options_map.find(get_filetype(desttype));
+    if (it == m_options_map.cend())
+    {
+        // Not found/invalid desttype
 
-    m_filetype              = get_filetype(desttype);
+        m_desttype.empty();
+        m_filetype 	= FILETYPE_UNKNOWN;
+        m_cur_opts   = &m_empty_options;
 
-    // Please note that m_format_name is used to select the FFmpeg container
-    // by passing it to avformat_alloc_output_context2().
-    m_desttype              = desttype;
-    switch (m_filetype)
-    {
-    case FILETYPE_MP3:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_MP3;
-        m_video_codec_id        = AV_CODEC_ID_NONE;
-        m_format_name           = "mp3";
-        m_fileext               = "mp3";
-        m_albumart_supported    = true;
-        break;
+        return false;
     }
-    case FILETYPE_MP4:
+    else
     {
-        m_audio_codec_id        = AV_CODEC_ID_AAC;
-        m_video_codec_id        = AV_CODEC_ID_H264;
-        m_format_name           = "mp4";
-        m_fileext               = "mp4";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_WAV:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_PCM_S16LE;
-        m_video_codec_id        = AV_CODEC_ID_NONE;
-        m_format_name           = "wav";
-        m_fileext               = "wav";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_OGG:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_VORBIS;
-        m_video_codec_id        = AV_CODEC_ID_THEORA;
-        m_format_name           = "ogg";
-        m_fileext               = "ogg";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_WEBM:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_OPUS;
-        m_video_codec_id        = AV_CODEC_ID_VP9;
-        m_format_name           = "webm";
-        m_fileext               = "webm";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_MOV:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_AAC;
-        m_video_codec_id        = AV_CODEC_ID_H264;
-        m_format_name           = "mov";
-        m_fileext               = "mov";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_AIFF:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_PCM_S16BE;
-        m_video_codec_id        = AV_CODEC_ID_NONE;
-        m_format_name           = "aiff";
-        m_fileext               = "aiff";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_OPUS:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_OPUS;
-        m_video_codec_id        = AV_CODEC_ID_NONE;
-        m_format_name           = "opus";
-        m_fileext               = "opus";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_PRORES:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_PCM_S16LE;
-        m_video_codec_id        = AV_CODEC_ID_PRORES;
-        m_format_name           = "mov";
-        m_fileext               = "mov";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_ALAC:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_ALAC;
-        m_video_codec_id        = AV_CODEC_ID_NONE;
-        m_format_name           = "m4a";
-        m_fileext               = "m4a";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_PNG:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_NONE;
-        m_video_codec_id        = AV_CODEC_ID_PNG;
-        m_format_name           = "png";
-        m_fileext               = "png";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_JPG:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_NONE;
-        m_video_codec_id        = AV_CODEC_ID_MJPEG;
-        m_format_name           = "jpg";
-        m_fileext               = "jpg";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_BMP:
-    {
-        m_audio_codec_id        = AV_CODEC_ID_NONE;
-        m_video_codec_id        = AV_CODEC_ID_BMP;
-        m_format_name           = "bmp";
-        m_fileext               = "bmp";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_TS:
-    case FILETYPE_HLS:
-    {
-        // AC3 possible in container, but not supported in browsers:
-        // m_audio_codec_id    = AV_CODEC_ID_AC3;
-        // Also allowed:
-        // m_audio_codec_id    = AV_CODEC_ID_MP3;
-        m_audio_codec_id        = AV_CODEC_ID_AAC;
-        m_video_codec_id        = AV_CODEC_ID_H264;
-        m_format_name           = "mpegts";
-        m_fileext               = "ts";
-        m_albumart_supported    = false;
-        break;
-    }
-    case FILETYPE_UNKNOWN:
-    {
-        found = false;
-        break;
-    }
-    }
+        // OK
+        m_desttype  = desttype;
+        m_filetype 	= it->first;
+        m_cur_opts   = &it->second;
 
-    return found;
+        return true;
+    }
 }
 
 const std::string & FFmpegfs_Format::desttype() const
@@ -264,12 +278,12 @@ const std::string & FFmpegfs_Format::desttype() const
 
 const std::string & FFmpegfs_Format::format_name() const
 {
-    return m_format_name;
+    return m_cur_opts->m_format_name;
 }
 
 const std::string & FFmpegfs_Format::fileext() const
 {
-    return m_fileext;
+    return m_cur_opts->m_fileext;
 }
 
 FILETYPE FFmpegfs_Format::filetype() const
@@ -294,17 +308,17 @@ bool FFmpegfs_Format::is_hls() const
 
 bool FFmpegfs_Format::albumart_supported() const
 {
-    return m_albumart_supported;
+    return m_cur_opts->m_albumart_supported;
 }
 
 AVCodecID FFmpegfs_Format::video_codec_id() const
 {
-    return m_video_codec_id;
+    return m_cur_opts->m_video_codec_id;
 }
 
 AVCodecID FFmpegfs_Format::audio_codec_id() const
 {
-    return m_audio_codec_id;
+    return m_cur_opts->m_audio_codec_id;
 }
 
 const std::string & append_sep(std::string * path)

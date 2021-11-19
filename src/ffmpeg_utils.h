@@ -257,29 +257,79 @@ typedef enum AUTOCOPY
   */
 typedef enum RECODESAME
 {
-     RECODESAME_NO = 0,     /**< @brief Never recode to same format. */
-     RECODESAME_YES,        /**< @brief Always recode to same format. */
+    RECODESAME_NO = 0,     /**< @brief Never recode to same format. */
+    RECODESAME_YES,        /**< @brief Always recode to same format. */
 } RECODESAME;
+
+/**
+ * Format options: Defines file extension, codecs etc.
+ * for each format.
+ */
+struct Format_Options
+{
+public:
+    /**
+     * @brief Construct Format_Options object with defaults (empty)
+     */
+    Format_Options()
+        : m_video_codec_id(AV_CODEC_ID_NONE)
+        , m_audio_codec_id(AV_CODEC_ID_NONE)
+        , m_albumart_supported(false)
+    {
+
+    }
+
+    /**
+     * @brief Construct Format_Options object
+     * @param[in] format_name - Descriptive name of the format, e.g. "Opus Audio",
+     * @param[in] fileext - File extension: mp4, mp3, flac or other
+     * @param[in] video_codec_id - AVCodec used for video encoding
+     * @param[in] audio_codec_id - AVCodec used for audio encoding
+     * @param[in] albumart_supported - true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff
+     */
+    Format_Options(
+            std::string format_name,
+            std::string fileext,
+            AVCodecID   video_codec_id,
+            AVCodecID   audio_codec_id,
+            bool        albumart_supported
+            )
+        : m_format_name(format_name)
+        , m_fileext(fileext)
+        , m_video_codec_id(video_codec_id)
+        , m_audio_codec_id(audio_codec_id)
+        , m_albumart_supported(albumart_supported)
+    {
+
+    }
+
+public:
+    /**
+     *  @brief Descriptive name of the format.
+     *  Descriptive name of the format, e.g. "opus", "mpegts".
+     *  Please note that m_format_name is used to select the FFmpeg container
+     *  by passing it to avformat_alloc_output_context2().
+     *  Mostly, but not always, same as m_fileext.
+     */
+    std::string m_format_name;
+    std::string m_fileext;              /**< @brief File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name. */
+    AVCodecID   m_video_codec_id;       /**< @brief AVCodec used for video encoding */
+    AVCodecID   m_audio_codec_id;       /**< @brief AVCodec used for audio encoding */
+    bool        m_albumart_supported;   /**< @brief true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff) */
+};
 
 /**
  * @brief The #FFmpegfs_Format class
  */
 class FFmpegfs_Format
 {
+    typedef std::map<FILETYPE, const Format_Options> OPTIONS_MAP;   /**< @brief Map of options. One entry per supported destination type. */
+
 public:
     /**
      * @brief Construct FFmpegfs_Format object
      */
     FFmpegfs_Format();
-    /**
-     * @brief Construct FFmpegfs_Format object
-     * @param[in] format_name - Name of this format, e.g. "MP4"
-     * @param[in] fileext - File extension for this format, e.g. "mp4"
-     * @param[in] filetype - File type, MP3, MP4, OPUS etc.
-     * @param[in] video_codec_id - AVCodec used for video encoding
-     * @param[in] audio_codec_id - AVCodec used for audio encoding
-     */
-    FFmpegfs_Format(const std::string & format_name, const std::string &fileext, FILETYPE filetype, AVCodecID video_codec_id, AVCodecID audio_codec_id);
 
     /**
      * @brief Get codecs for the selected destination type.
@@ -341,13 +391,11 @@ public:
     bool                albumart_supported() const;
 
 protected:
-    std::string m_format_name;              /**< @brief Descriptive name of the format, e.g. "Opus Audio". */
-    std::string m_desttype;                 /**< @brief Destination type: mp4, mp3 or other */
-    std::string m_fileext;                  /**< @brief File extension: mp4, mp3, flac or other */
-    FILETYPE    m_filetype;                 /**< @brief File type, MP3, MP4, OPUS etc. */
-    AVCodecID   m_video_codec_id;           /**< @brief AVCodec used for video encoding */
-    AVCodecID   m_audio_codec_id;           /**< @brief AVCodec used for audio encoding */
-    bool        m_albumart_supported;       /**< @brief true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff) */
+    const Format_Options        m_empty_options;    /**< @brief Set of empty (invalid) options as default */
+    const Format_Options *      m_cur_opts;         /**< @brief Currently selected options. Will never be nullptr */
+    static const OPTIONS_MAP    m_options_map;      /**< @brief Map of options. One entry per supported destination type. */
+    std::string                 m_desttype;         /**< @brief Destination type: mp4, mp3 or other */
+    FILETYPE                    m_filetype;         /**< @brief File type, MP3, MP4, OPUS etc. */
 };
 
 /**

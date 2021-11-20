@@ -552,6 +552,26 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
 }
 
 /**
+ * @brief Iterate through all elements in map print all keys
+ * @param[in] map - map to go through.
+ */
+template<typename T>
+void list_options(const char * info, const T & map)
+{
+    std::string buffer;
+    for (typename T::const_iterator it = map.cbegin(); it != map.cend();)
+    {
+        buffer += it->first.c_str();
+
+        if (++it != map.cend())
+        {
+            buffer += ", ";
+        }
+    }
+    std::fprintf(stderr, "%s: %s\n", info, buffer.c_str());
+}
+
+/**
  * @brief Get formatted bitrate.
  @verbatim
  Supported formats:
@@ -951,6 +971,9 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
         if (it == autocopy_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid autocopy option: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid autocopy options are:", autocopy_map);
+
             return -1;
         }
 
@@ -994,6 +1017,9 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
         if (it == recode_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid recode option: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid recode options are:", recode_map);
+
             return -1;
         }
 
@@ -1037,6 +1063,9 @@ static int get_profile(const std::string & arg, PROFILE *profile)
         if (it == profile_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid profile: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid profiles are:", profile_map);
+
             return -1;
         }
 
@@ -1081,6 +1110,9 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
         if (it == level_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid level: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid levels are:", level_map);
+
             return -1;
         }
 
@@ -1178,6 +1210,9 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
         if (it == hwaccel_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid hardware acceleration API: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid hardware acceleration APIs are:", hwaccel_map);
+
             return -1;
         }
 
@@ -1211,12 +1246,9 @@ static int get_codec(const std::string & codec, AVCodecID *codec_id)
 
     if (it == hwaccel_codec_map.cend())
     {
-        std::fprintf(stderr, "INVALID PARAMETER: Unknown codec '%s'. Valid codecs are:\n", codec.c_str());
+        std::fprintf(stderr, "INVALID PARAMETER: Unknown codec '%s'.\n", codec.c_str());
 
-        for(CODEC_MAP::const_iterator it = hwaccel_codec_map.begin(); it != hwaccel_codec_map.cend(); it++)
-        {
-            std::fprintf(stderr, " %s\n", it->first.c_str());
-        }
+        list_options("Valid hardware acceleration APIs are:", hwaccel_codec_map);
 
         *codec_id = AV_CODEC_ID_NONE;
         return -1;

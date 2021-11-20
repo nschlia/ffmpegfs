@@ -133,7 +133,7 @@ protected:
     static std::string  get_pix_fmt_name(AVPixelFormat pix_fmt);
     /**
      * @brief Calls av_get_sample_fmt_name and returns a std::string with the format name.
-     * @param[in] sample_fmt - AVSampleFormat  enum to convert.
+     * @param[in] sample_fmt - AVSampleFormat enum to convert.
      * @return Returns a std::string with the format name.
      */
     static std::string  get_sample_fmt_name(AVSampleFormat sample_fmt);

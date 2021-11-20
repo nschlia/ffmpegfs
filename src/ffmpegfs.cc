@@ -66,24 +66,26 @@ extern "C" {
 FFMPEGFS_PARAMS     params;                     /**< @brief FFmpegfs command line parameters */
 
 FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
-    : m_basepath("")                            // required parameter
-    , m_mountpath("")                           // required parameter
+    : m_basepath("")                                    // required parameter
+    , m_mountpath("")                                   // required parameter
 
-    , m_autocopy(AUTOCOPY_OFF)                  // default: off
-    , m_profile(PROFILE_DEFAULT)                // default: no profile
-    , m_level(PRORESLEVEL_NONE)                 // default: no level
+    , m_autocopy(AUTOCOPY_OFF)                          // default: off
+    , m_profile(PROFILE_DEFAULT)                        // default: no profile
+    , m_level(PRORESLEVEL_NONE)                         // default: no level
 
     // Format
-    , m_audiobitrate(128*1024)                  // default: 128 kBit
-    , m_audiosamplerate(44100)                  // default: 44.1 kHz
-    , m_audiochannels(2)                        // default: 2 channels
+    // Audio
+    , m_audiobitrate(128*1024)                          // default: 128 kBit
+    , m_audiosamplerate(44100)                          // default: 44.1 kHz
+    , m_audiochannels(2)                                // default: 2 channels
 
-    , m_videobitrate(2*1024*1024)               // default: 2 MBit
-    , m_videowidth(0)                           // default: do not change width
-    , m_videoheight(0)                          // default: do not change height
-    , m_deinterlace(0)                          // default: do not interlace video
-    , m_segment_duration(10 * AV_TIME_BASE)     // default: 10 seconds
-    , m_min_seek_time_diff(30 * AV_TIME_BASE)   // default: 30 seconds
+    // Video
+    , m_videobitrate(2*1024*1024)                       // default: 2 MBit
+    , m_videowidth(0)                                   // default: do not change width
+    , m_videoheight(0)                                  // default: do not change height
+    , m_deinterlace(0)                                  // default: do not interlace video
+    , m_segment_duration(10 * AV_TIME_BASE)             // default: 10 seconds
+    , m_min_seek_time_diff(30 * AV_TIME_BASE)           // default: 30 seconds
     // Hardware acceleration
     , m_hwaccel_enc_API(HWACCELAPI_NONE)                // default: Use software encoder
     , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software encoder
@@ -91,34 +93,34 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software decoder
     , m_hwaccel_dec_blocked(nullptr)                    // default: No blocked encoders
     // Album arts
-    , m_noalbumarts(0)                          // default: copy album arts
+    , m_noalbumarts(0)                                  // default: copy album arts
     // Virtual Script
-    , m_enablescript(0)                         // default: no virtual script
-    , m_scriptfile("index.php")                 // default name
-    , m_scriptsource("scripts/videotag.php")    // default name
+    , m_enablescript(0)                                 // default: no virtual script
+    , m_scriptfile("index.php")                         // default name
+    , m_scriptsource("scripts/videotag.php")            // default name
     // Other
-    , m_debug(0)                                // default: no debug messages
-    , m_log_maxlevel("INFO")                    // default: INFO level
-    , m_log_stderr(0)                           // default: do not log to stderr
-    , m_log_syslog(0)                           // default: do not use syslog
-    , m_logfile("")                             // default: none
+    , m_debug(0)                                        // default: no debug messages
+    , m_log_maxlevel("INFO")                            // default: INFO level
+    , m_log_stderr(0)                                   // default: do not log to stderr
+    , m_log_syslog(0)                                   // default: do not use syslog
+    , m_logfile("")                                     // default: none
     // Cache/recoding options
-    , m_expiry_time((60*60*24 /* d */) * 7)     // default: 1 week)
-    , m_max_inactive_suspend(15)                // default: 15 seconds
-    , m_max_inactive_abort(30)                  // default: 30 seconds
-    , m_prebuffer_size(100 /* KB */ * 1024)     // default: 100 KB
-    , m_max_cache_size(0)                       // default: no limit
-    , m_min_diskspace(0)                        // default: no minimum
-    , m_cachepath("")                           // default: $XDG_CACHE_HOME/ffmpegfs
-    , m_disable_cache(0)                        // default: enabled
-    , m_cache_maintenance((60*60))              // default: prune every 60 minutes
-    , m_prune_cache(0)                          // default: Do not prune cache immediately
-    , m_clear_cache(0)                          // default: Do not clear cache on startup
-    , m_max_threads(0)                          // default: 16 * CPU cores (this value here is overwritten later)
-    , m_decoding_errors(0)                      // default: ignore errors
-    , m_min_dvd_chapter_duration(1)             // default: 1 second
-    , m_oldnamescheme(0)                        // default: new scheme
-    , m_win_smb_fix(1)                          // default: fix enabled
+    , m_expiry_time((60*60*24 /* d */) * 7)             // default: 1 week)
+    , m_max_inactive_suspend(15)                        // default: 15 seconds
+    , m_max_inactive_abort(30)                          // default: 30 seconds
+    , m_prebuffer_size(100 /* KB */ * 1024)             // default: 100 KB
+    , m_max_cache_size(0)                               // default: no limit
+    , m_min_diskspace(0)                                // default: no minimum
+    , m_cachepath("")                                   // default: $XDG_CACHE_HOME/ffmpegfs
+    , m_disable_cache(0)                                // default: enabled
+    , m_cache_maintenance((60*60))                      // default: prune every 60 minutes
+    , m_prune_cache(0)                                  // default: Do not prune cache immediately
+    , m_clear_cache(0)                                  // default: Do not clear cache on startup
+    , m_max_threads(0)                                  // default: 16 * CPU cores (this value here is overwritten later)
+    , m_decoding_errors(0)                              // default: ignore errors
+    , m_min_dvd_chapter_duration(1)                     // default: 1 second
+    , m_oldnamescheme(0)                                // default: new scheme
+    , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
 
@@ -353,20 +355,20 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;     /**< @brief Map command line option to AUTOCOPY enum */
-typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;       /**< @brief Map command line option to PROFILE enum */
-typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;     /**< @brief Map command line option to LEVEL enum */
-typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP; /**< @brief Map command line option to RECODESAME enum */
+typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;             /**< @brief Map command line option to AUTOCOPY enum */
+typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;               /**< @brief Map command line option to PROFILE enum */
+typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;             /**< @brief Map command line option to LEVEL enum */
+typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP;         /**< @brief Map command line option to RECODESAME enum */
 
-typedef struct HWACCEL                                          /**< @brief Hardware acceleration device and type */
+typedef struct HWACCEL                                                  /**< @brief Hardware acceleration device and type */
 {
-    bool                m_supported;                            /**< @brief true if API supported, false if not */
-    HWACCELAPI          m_hwaccel_API;                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
-    AVHWDeviceType      m_hwaccel_device_type;                  /**< @brief Hardware buffering type, NONE if not used */
+    bool                m_supported;                                    /**< @brief true if API supported, false if not */
+    HWACCELAPI          m_hwaccel_API;                                  /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
+    AVHWDeviceType      m_hwaccel_device_type;                          /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
 
-typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;       /**< @brief Map command line option to HWACCEL struct */
-typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;       /**< @brief Map command line option to AVCodecID */
+typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
+typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
 
 /**
   * List of AUTOCOPY options

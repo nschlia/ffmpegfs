@@ -177,7 +177,7 @@ extern struct FFMPEGFS_PARAMS
     PROFILE             m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */
     PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Format
-    FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file  */
+    FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
     // Audio
     BITRATE             m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */

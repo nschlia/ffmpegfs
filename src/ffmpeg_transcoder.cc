@@ -1620,7 +1620,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
         else
         {
-            // If supported sample formats are unknown simply take input format and cross our fingers it works...
+            // If supported sample formats are unknown simply take input format and cross our fingers it'll work...
             output_codec_ctx->sample_fmt        = m_in.m_audio.m_codec_ctx->sample_fmt;
         }
 
@@ -3389,8 +3389,8 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
     }
     else
     {
-		*out_samples = in_samples;
-		
+        *out_samples = in_samples;
+
         // No resampling, just copy samples
         if (!av_sample_fmt_is_planar(m_out.m_audio.m_codec_ctx->sample_fmt))
         {

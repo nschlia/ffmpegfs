@@ -17,7 +17,7 @@ New in in 2.8 (2021-11-XX):
 
 * **Bugfix:** [Issue #102](https://github.com/nschlia/ffmpegfs/issues/102): Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.
 * **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fixed HLS problems with cache causing garbled videos and hick-ups in audio.
-* **Enhancement**: [Issue #103](https://github.com/nschlia/ffmpegfs/issues/103): If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with --min_seek_time_diff. Defaults to 30 seconds.
+* **Enhancement**: [Issue #103](https://github.com/nschlia/ffmpegfs/issues/103): If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with *--min_seek_time_diff*. Defaults to 30 seconds.
 
 ### Version 2.7 released
 

@@ -19,6 +19,8 @@ Important changes in 2.8 (2021-11-XX):
   seconds away, discard seek request. Segment would be available very soon
   anyway, and that seek makes a re-transcode necessary. Can be set with
   --min_seek_time_diff. Defaults to 30 seconds.
+* Enhancement: Issue #105: Added Free Lossless Audio Codec (FLAC) support.
+  Activate with *--desttype=FLAC*.
 
 Important changes in 2.7 (2021-11-08):
 

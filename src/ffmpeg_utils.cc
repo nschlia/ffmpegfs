@@ -239,6 +239,16 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
             false                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
         }
     },
+    {
+        FILETYPE_FLAC,
+        {
+            "flac",                 // Descriptive name of the format.
+            "flac",                 // File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name.
+            AV_CODEC_ID_NONE,		// AVCodec used for video encoding
+            AV_CODEC_ID_FLAC,       // AVCodec used for audio encoding
+            true                   // true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff)
+        }
+    },
 };
 
 FFmpegfs_Format::FFmpegfs_Format() :
@@ -785,6 +795,7 @@ FILETYPE get_filetype(const std::string & desttype)
         { "bmp",    FILETYPE_BMP },
         { "ts",     FILETYPE_TS },
         { "hls",    FILETYPE_HLS },
+        { "flac",   FILETYPE_FLAC },
     };
 
     try

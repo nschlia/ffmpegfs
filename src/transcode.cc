@@ -275,7 +275,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
     Cache_Entry* cache_entry = cache->open(virtualfile);
     if (cache_entry == nullptr)
     {
-        Logging::error(cache_entry->destname(), "Out of memory getting file size.");
+        Logging::error(nullptr, "Out of memory getting file size.");
         return false;
     }
 

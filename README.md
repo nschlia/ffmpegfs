@@ -55,22 +55,22 @@ Currently supported output formats:
 
 | Format | Description | Video | Audio |
 | ------------- | ------------- | ------------- | ------------- |
-| FLAC | Free Lossless Audio |  | FLAC |
-| MP4 | MPEG-4 | H264 | AAC |
-| WebM|| VP9 | Opus |
-| OGG|| Theora | Vorbis |
-| MOV | QuickTime File Format | H264 | AAC |
-| ProRes | Apple ProRes | ProRes | PCM 16 bit LE |
-| Opus ||| Opus |
-| MP3 | MPEG-2 Audio Layer III || MP3 |
-| WAV | Waveform Audio File Format || PCM 16 bit LE |
 | AIFF | Audio Interchange File Format || PCM 16 bit BE |
 | ALAC | Apple Lossless Audio Codec || ALAC |
-| JPG | Video to frameset |JPEG|  |
-| PNG | Video to frameset |PNG|  |
 | BMP | Video to frameset |BMP|  |
-| TS | MPEG Transport Stream | H264 | AAC |
+| FLAC | Free Lossless Audio |  | FLAC |
 | HLS | HTTP Live Streaming | H264 | AAC |
+| JPG | Video to frameset |JPEG|  |
+| MOV | QuickTime File Format | H264 | AAC |
+| MP3 | MPEG-2 Audio Layer III || MP3 |
+| MP4 | MPEG-4 | H264 | AAC |
+| OGG|| Theora | Vorbis |
+| Opus ||| Opus |
+| PNG | Video to frameset |PNG|  |
+| ProRes | Apple ProRes | ProRes | PCM 16 bit LE |
+| TS | MPEG Transport Stream | H264 | AAC |
+| WAV | Waveform Audio File Format || PCM 16 bit LE |
+| WebM|| VP9 | Opus |
 
 This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.
 

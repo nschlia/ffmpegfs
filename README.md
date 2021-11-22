@@ -55,6 +55,7 @@ Currently supported output formats:
 
 | Format | Description | Video | Audio |
 | ------------- | ------------- | ------------- | ------------- |
+| FLAC | Free Lossless Audio |  | FLAC |
 | MP4 | MPEG-4 | H264 | AAC |
 | WebM|| VP9 | Opus |
 | OGG|| Theora | Vorbis |

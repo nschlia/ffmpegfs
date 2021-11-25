@@ -2589,8 +2589,6 @@ int FFmpeg_Transcoder::create_fake_wav_header()
     // HINWEIS:
     // Aus 16 Bit 24/32/64 Bit machen bringt nix, die höheren Bytes sind dann einfach 0.
 
-    std::fprintf(stderr, "\n\nInsert fake WAV header (fill in size fields with estimated values instead of setting to -1)\n\n");
-
     // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
     AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
     Buffer *buffer = static_cast<Buffer *>(output_io_context->opaque);
@@ -2605,8 +2603,6 @@ int FFmpeg_Transcoder::create_fake_wav_header()
 
     if (wav_header.m_audio_format == 0xfffe)
     {
-        std::fprintf(stderr, "\n\nWAV_FORMAT_EX\n\n");
-
         //WAV_HEADER_EX wav_header_ex;
         WAV_FACT wav_fact;
 
@@ -2617,7 +2613,6 @@ int FFmpeg_Transcoder::create_fake_wav_header()
         buffer->copy(reinterpret_cast<uint8_t*>(&wav_fact), read_offset, sizeof(WAV_FACT));
         if (!memcmp(&wav_fact.m_chunk_id, "fact", sizeof(wav_fact.m_chunk_id)))
         {
-            std::fprintf(stderr, "\n\nWAV_FACT\n\n");
             read_offset += sizeof(WAV_FACT);    // Also skip fact header
         }
     }

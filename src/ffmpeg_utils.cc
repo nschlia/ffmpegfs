@@ -146,7 +146,6 @@ AVSampleFormat Format_Options::sample_format() const
 bool Format_Options::is_sample_fmt_supported() const
 {
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
-    fprintf(stderr, "is_sample_fmt_supported %i FMT %i\n", it != m_format_map.cend(), params.m_sample_fmt);
     return (it != m_format_map.cend());
 }
 

@@ -13,6 +13,9 @@ then
 elif [ "${FILEEXT}" == "ogg" ]
 then
     [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+elif [ "${FILEEXT}" == "flac" ]
+then
+    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
 else
     [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
 fi

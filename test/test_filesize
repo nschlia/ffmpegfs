@@ -63,6 +63,11 @@ then
     # ts
     check_filesize "raven_e.flac" 489113 811408
     check_filesize "raven_d.ogg" 351126 545388 
+elif [ "${DESTTYPE}" == "flac" ];
+then
+    # flac
+    check_filesize "raven_e.flac" 3037628 3596355
+    check_filesize "raven_d.ogg" 3021401
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

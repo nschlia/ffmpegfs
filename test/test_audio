@@ -88,6 +88,11 @@ then
 	# ts
 	check_audio "raven_e" "flac" 0.039136
 	check_audio "raven_d" "ogg" 0.050
+elif [ "${DESTTYPE}" == "flac" ];
+then
+	# flac
+	check_audio "raven_e" "flac" 0.0
+	check_audio "raven_d" "ogg" 0.0
 else
         echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 	exit 99

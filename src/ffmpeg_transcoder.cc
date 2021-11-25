@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1592,10 +1592,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             }
         }
 
+        // If sample format not pre-defined (not AV_SAMPLE_FMT_NONE), use input file setting.
+        AVSampleFormat in_sample_format = (m_current_format->sample_format() == AV_SAMPLE_FMT_NONE) ? m_in.m_audio.m_codec_ctx->sample_fmt : m_current_format->sample_format();
         if (output_codec->sample_fmts != nullptr)
         {
             // Check if input sample format is supported and if so, use it (avoiding resampling)
-            AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(m_in.m_audio.m_codec_ctx->sample_fmt);
+            AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(in_sample_format);
 
             output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
 
@@ -1603,7 +1605,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             {
                 AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(*sample_fmt);
 
-                if (*sample_fmt == m_in.m_audio.m_codec_ctx->sample_fmt ||
+                if (*sample_fmt == in_sample_format ||
                         (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
                          input_fmt_planar == output_fmt_planar))
                 {
@@ -1621,7 +1623,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         else
         {
             // If supported sample formats are unknown simply take input format and cross our fingers it'll work...
-            output_codec_ctx->sample_fmt        = m_in.m_audio.m_codec_ctx->sample_fmt;
+            output_codec_ctx->sample_fmt        = in_sample_format;
         }
 
         // Set the sample rate for the container.
@@ -2582,6 +2584,68 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
     return ret;
 }
 
+int FFmpeg_Transcoder::create_fake_wav_header()
+{
+    // HINWEIS:
+    // Aus 16 Bit 24/32/64 Bit machen bringt nix, die höheren Bytes sind dann einfach 0.
+
+    std::fprintf(stderr, "\n\nInsert fake WAV header (fill in size fields with estimated values instead of setting to -1)\n\n");
+
+    // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
+    AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
+    Buffer *buffer = static_cast<Buffer *>(output_io_context->opaque);
+    size_t current_offset = buffer->tell();
+    size_t read_offset = 0;
+    WAV_HEADER wav_header;
+    WAV_LIST_HEADER list_header;
+    WAV_DATA_HEADER data_header;
+
+    buffer->copy(reinterpret_cast<uint8_t*>(&wav_header), 0, sizeof(WAV_HEADER));
+    read_offset = sizeof(WAV_HEADER);
+
+    if (wav_header.m_audio_format == 0xfffe)
+    {
+        std::fprintf(stderr, "\n\nWAV_FORMAT_EX\n\n");
+
+        //WAV_HEADER_EX wav_header_ex;
+        WAV_FACT wav_fact;
+
+        //buffer->copy(reinterpret_cast<uint8_t*>(&wav_header_ex), read_offset, sizeof(WAV_HEADER_EX));
+        read_offset += sizeof(WAV_HEADER_EX);   // Need to skip extension header
+
+        // Check for presence of "fact" chunk
+        buffer->copy(reinterpret_cast<uint8_t*>(&wav_fact), read_offset, sizeof(WAV_FACT));
+        if (!memcmp(&wav_fact.m_chunk_id, "fact", sizeof(wav_fact.m_chunk_id)))
+        {
+            std::fprintf(stderr, "\n\nWAV_FACT\n\n");
+            read_offset += sizeof(WAV_FACT);    // Also skip fact header
+        }
+    }
+
+    // Read list header
+    buffer->copy(reinterpret_cast<uint8_t*>(&list_header), read_offset, sizeof(WAV_LIST_HEADER));
+    read_offset += sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4;
+    // Read data header
+    buffer->copy(reinterpret_cast<uint8_t*>(&data_header), read_offset, sizeof(WAV_DATA_HEADER));
+
+    // Fill in size fields with predicted size
+    wav_header.m_wav_size = static_cast<unsigned int>(predicted_filesize() - 8);
+    data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (read_offset + sizeof(WAV_DATA_HEADER)));
+
+    // Write updated wav header
+    buffer->seek(0, SEEK_SET);
+    buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
+
+    // Write updated data header
+    buffer->seek(static_cast<long>(read_offset), SEEK_SET);
+    buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
+
+    // Restore write position
+    buffer->seek(static_cast<long>(current_offset), SEEK_SET);
+
+    return 0;
+}
+
 int FFmpeg_Transcoder::write_output_file_header()
 {
     AVDictionary* dict = nullptr;
@@ -2600,31 +2664,12 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-    if (m_out.m_filetype == FILETYPE_WAV)
+    if (!nocasecompare(m_current_format->format_name(), "wav"))
     {
-        // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
-        AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
-        Buffer *buffer = static_cast<Buffer *>(output_io_context->opaque);
-        size_t pos = buffer->tell();
-        WAV_HEADER wav_header;
-        WAV_LIST_HEADER list_header;
-        WAV_DATA_HEADER data_header;
-
-        buffer->copy(reinterpret_cast<uint8_t*>(&wav_header), 0, sizeof(WAV_HEADER));
-        buffer->copy(reinterpret_cast<uint8_t*>(&list_header), sizeof(WAV_HEADER), sizeof(WAV_LIST_HEADER));
-        buffer->copy(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4, sizeof(WAV_DATA_HEADER));
-
-        wav_header.m_wav_size = static_cast<unsigned int>(predicted_filesize() - 8);
-        data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER) + list_header.m_data_bytes - 4));
-
-        buffer->seek(0, SEEK_SET);
-        buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
-        buffer->seek(static_cast<long>(sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + list_header.m_data_bytes - 4), SEEK_SET);
-        buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
-        buffer->seek(static_cast<long>(pos), SEEK_SET);
+        ret = create_fake_wav_header();
     }
 
-    return 0;
+    return ret;
 }
 
 AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int height)
@@ -4946,7 +4991,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
     return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
 }
 
-bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate)
+bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate, AVSampleFormat sample_format)
 {
     BITRATE output_audio_bit_rate;
     int output_sample_rate;
@@ -4975,13 +5020,105 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE)) + ID3V1_TAG_LENGTH;
         break;
     }
+    case AV_CODEC_ID_PCM_U8:
+    case AV_CODEC_ID_PCM_S8:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_U8); // Unsigned/signed 8 have the same width
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_S8_PLANAR:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_U8P);
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_U16LE:
+    case AV_CODEC_ID_PCM_U16BE:
     case AV_CODEC_ID_PCM_S16LE:
     case AV_CODEC_ID_PCM_S16BE:
     {
-        // bits_per_sample = av_get_bits_per_sample(ctx->codec_id);
-        // bit_rate = bits_per_sample ? ctx->sample_rate * (int64_t)ctx->channels * bits_per_sample : ctx->bit_rate;
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16); // Unsigned/signed 16 have the same width
 
-        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_S16LE_PLANAR:
+    case AV_CODEC_ID_PCM_S16BE_PLANAR:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16P); // Unsigned/signed 16 have the same width
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_U24LE: // U/S24 uses U/S32 storage
+    case AV_CODEC_ID_PCM_U24BE:
+    case AV_CODEC_ID_PCM_S24LE:
+    case AV_CODEC_ID_PCM_S24BE:
+    case AV_CODEC_ID_PCM_U32LE:
+    case AV_CODEC_ID_PCM_U32BE:
+    case AV_CODEC_ID_PCM_S32LE:
+    case AV_CODEC_ID_PCM_S32BE:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S32); // Unsigned/signed 32 have the same width
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_S24LE_PLANAR:   // S24 uses S32 storage
+    case AV_CODEC_ID_PCM_S32LE_PLANAR:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S32P);
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_S64LE:
+    case AV_CODEC_ID_PCM_S64BE:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S64);
+
+        // File size:
+        // file duration * sample rate (HZ) * channels * bytes per sample
+        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
+        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case AV_CODEC_ID_PCM_F16LE:
+    case AV_CODEC_ID_PCM_F24LE:
+    case AV_CODEC_ID_PCM_F32BE:
+    case AV_CODEC_ID_PCM_F32LE:
+    case AV_CODEC_ID_PCM_F64BE:
+    case AV_CODEC_ID_PCM_F64LE:
+    {
+        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_FLT);
 
         // File size:
         // file duration * sample rate (HZ) * channels * bytes per sample
@@ -5022,14 +5159,15 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     }
     case AV_CODEC_ID_FLAC:
     {
-        int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S32); // Unsigned/signed 32 have the same width
+        int bytes_per_sample    = av_get_bytes_per_sample(sample_format != AV_SAMPLE_FMT_NONE ? sample_format : AV_SAMPLE_FMT_S16);
 
         // File size:
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE * 0.7);
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
+        //*filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(700 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -5137,7 +5275,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     {
         int channels = m_in.m_audio.m_codec_ctx->channels;
 
-        if (!audio_size(&filesize, m_current_format->audio_codec_id(), input_audio_bit_rate, duration, channels, input_sample_rate))
+        if (!audio_size(&filesize, m_current_format->audio_codec_id(), input_audio_bit_rate, duration, channels, input_sample_rate, m_cur_sample_fmt))
         {
             Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec_id(), 0), m_current_format->desttype().c_str());
         }

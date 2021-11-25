@@ -67,19 +67,19 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     {
         size = static_cast<size_t>(chapter1->get_size());
         duration = chapter1->get_duration();
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].fileext().c_str()); // can safely assume this a video
+        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
     else
     {
         size = static_cast<size_t>(vcd.get_size());
         duration = vcd.get_duration();
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), params.m_format[0].fileext().c_str()); // can safely assume this a video
+        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
 
     std::string filename(title_buf);
 
     LPVIRTUALFILE virtualfile = nullptr;
-    if (!params.m_format[0].is_multiformat())
+    if (!ffmpeg_format[0].is_multiformat())
     {
         virtualfile = insert_file(VIRTUALTYPE_VCD, vcd.get_disk_path() + filename, statbuf);
     }

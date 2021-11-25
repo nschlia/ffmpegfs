@@ -55,6 +55,7 @@ bool            transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct sta
  * @param[in] audio_bit_rate - average bitrate of audio data (in bits per second).
  * @param[in] channels - number of channels (1: mono, 2: stereo, or more).
  * @param[in] sample_rate - number of audio samples per second.
+ * @param[in] sample_format - Selected sample format
  * @param[in] video_bit_rate - average bitrate of video data (in bits per second).
  * @param[in] width - video width in pixels.
  * @param[in] height - video height in pixels.
@@ -62,7 +63,7 @@ bool            transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct sta
  * @param[in] framerate - frame rate per second (e.g. 24, 25, 30...).
  * @return On error, returns false (size could not be set) or true on success.
  */
-bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational & framerate);
+bool            transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational & framerate);
 /**
  * @brief Predict file size
  * @param[in] virtualfile - virtual file object to open

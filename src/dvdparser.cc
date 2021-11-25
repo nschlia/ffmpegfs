@@ -315,7 +315,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         chapter_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        params.m_format[0].fileext().c_str());
+                        ffmpeg_format[0].fileext().c_str());
             }
             else
             {
@@ -323,7 +323,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         title_no,
                         chapter_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        params.m_format[0].fileext().c_str());
+                        ffmpeg_format[0].fileext().c_str());
             }
         }
         else
@@ -335,21 +335,21 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         title_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        params.m_format[0].fileext().c_str());
+                        ffmpeg_format[0].fileext().c_str());
             }
             else
             {
                 snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s].%s",
                         title_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        params.m_format[0].fileext().c_str());
+                        ffmpeg_format[0].fileext().c_str());
             }
         }
 
         std::string filename(title_buf);
 
         LPVIRTUALFILE virtualfile = nullptr;
-        if (!params.m_format[0].is_multiformat())
+        if (!ffmpeg_format[0].is_multiformat())
         {
             virtualfile = insert_file(VIRTUALTYPE_DVD, path + filename, statbuf);
         }
@@ -399,7 +399,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                 Logging::trace(virtualfile->m_destfile, "Audio %1 Channels %2", audio_settings.m_channels, audio_settings.m_sample_rate);
             }
 
-            transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
+            transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);
 
             virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
             virtualfile->m_predicted_size       = static_cast<size_t>(size);

@@ -18,7 +18,10 @@ New in in 2.8 (2021-11-XX):
 * **Bugfix:** [Issue #102](https://github.com/nschlia/ffmpegfs/issues/102): Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.
 * **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fixed HLS problems with cache causing garbled videos and hick-ups in audio.
 * **Enhancement**: [Issue #103](https://github.com/nschlia/ffmpegfs/issues/103): If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with *--min_seek_time_diff*. Defaults to 30 seconds.
-* **Enhancement**: [Issue #105](https://github.com/nschlia/ffmpegfs/issues/105): Added Free Lossless Audio Codec (FLAC) support. Activate with *--desttype=FLAC*.
+* **Feature**: [Issue #105](https://github.com/nschlia/ffmpegfs/issues/105): Added Free Lossless Audio Codec (FLAC) support. Activate with *--desttype=FLAC*.
+* **Feature:** [Issue #101](https://github.com/nschlia/ffmpegfs/issues/101): Sample format for audio files can be selected via command line with *--audiosamplefmt*. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point.
+  Not all formats are supported by all destination types, so selecting an invalid format for will be reported as error and a list of values printed.
+  Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).
 
 ### Version 2.7 released
 

@@ -496,11 +496,11 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const st
     std::string path(virtdir);
     append_sep(&path);
 
-    if (params.m_format[0].is_frameset())
+    if (ffmpeg_format[0].is_frameset())
     {
         flags |= VIRTUALFLAG_FRAME;
     }
-    else if (params.m_format[0].is_hls())
+    else if (ffmpeg_format[0].is_hls())
     {
         flags |= VIRTUALFLAG_HLS;
     }
@@ -670,7 +670,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (!params.m_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, params.m_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, params.m_format[1].fileext()) == 0)))
+        if (!ffmpeg_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, ffmpeg_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, ffmpeg_format[1].fileext()) == 0)))
         {
             std::string dir(*filepath);
             std::string searchexp(*filepath);
@@ -1385,7 +1385,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         res = check_cuesheet(origpath);
                     }
 
-                    if (params.m_format[0].is_frameset())
+                    if (ffmpeg_format[0].is_frameset())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -1421,7 +1421,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                             return 0;
                         }
                     }
-                    else if (params.m_format[0].is_hls())
+                    else if (ffmpeg_format[0].is_hls())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -1484,11 +1484,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
-                if (params.m_format[0].is_frameset())
+                if (ffmpeg_format[0].is_frameset())
                 {
                     flags |= VIRTUALFLAG_FRAME;
                 }
-                else if (params.m_format[0].is_hls())
+                else if (ffmpeg_format[0].is_hls())
                 {
                     flags |= VIRTUALFLAG_HLS;
                 }

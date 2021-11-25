@@ -257,9 +257,10 @@ public:
      * @param[in] duration - File duration.
      * @param[in] channels - Number of channels in target file.
      * @param[in] sample_rate - Sample rate of target file.
+     * @param[in] sample_format - Selected sample format
      * @return On success, returns true; on failure, returns false.
      */
-    static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate);
+    static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate, AVSampleFormat sample_format);
     /**
      * @brief Predict video file size. This may (better will surely) be inaccurate.
      * @param[in] filesize - Predicted file size in bytes.
@@ -963,6 +964,14 @@ protected:
      */
     bool                        goto_next_segment(uint32_t next_segment) const;
 
+    /**
+     * @brief Create a fake WAV header
+     * Create a fake WAV header. Inserts predicted file sizes to allow playback
+     * to start directly.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         create_fake_wav_header();
+    
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */

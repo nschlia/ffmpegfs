@@ -22,6 +22,7 @@
 /**
  * @file
  * @brief WAVE file structures
+ * https://wavefilegem.com/how_wave_files_work.html
  *
  * @ingroup ffmpegfs
  *
@@ -38,6 +39,7 @@
 
 /**
  * @brief WAVE header structure
+ *
  * @note All numeric values are in big-endian format.
  */
 typedef struct WAV_HEADER
@@ -70,7 +72,33 @@ typedef struct WAV_HEADER
     /**@}*/
 } WAV_HEADER;
 
-/** @brief WAVE list header structure
+/**
+ * @brief WAVE extended header structure
+ *
+ * @note All numeric values are in big-endian format.
+ */
+typedef struct WAV_HEADER_EX
+{
+    uint16_t    m_extension_size;           /**< @brief Extension Size           2 	16-bit unsigned integer (value 22) */
+    uint16_t    m_valid_bits_per_sample;    /**< @brief Valid Bits Per Sample    2 	16-bit unsigned integer */
+    uint32_t    m_channel_mask;             /**< @brief Channel Mask             4 	32-bit unsigned integer */
+    uint8_t     m_sub_format_guid[16];      /**< @brief Sub Format GUID          16 	16-byte GUID */
+} WAV_HEADER_EX;
+
+/**
+ * @brief WAVE "fact" header structure
+ *
+ * @note All numeric values are in big-endian format.
+ */
+typedef struct WAV_FACT
+{
+    uint8_t     m_chunk_id[4];              /**< @brief Chunk ID                4 	0x66 0x61 0x63 0x74 (i.e. "fact") */
+    uint32_t    m_body_size;                /**< @brief Chunk Body Size         4 	32-bit unsigned integer */
+    uint32_t    m_number_of_sample_frames;  /**< @brief Number of sample frames 4 	32-bit unsigned integer */
+} WAV_FACT;
+
+/**
+ *  @brief WAVE list header structure
  *
  *  @note All numeric values are in big-endian format.
  */

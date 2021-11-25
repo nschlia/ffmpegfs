@@ -136,6 +136,9 @@ typedef enum HWACCELAPI
 
 typedef std::multimap<AVCodecID, int> HWACCEL_BLOCKED_MAP;      /**< @brief Map command line option to AVCodecID */
 
+// Format
+extern FFmpegfs_Format     ffmpeg_format[2];                    /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
+
 /**
  * @brief Global program parameters
  */
@@ -176,12 +179,11 @@ extern struct FFMPEGFS_PARAMS
     RECODESAME          m_recodesame;               /**< @brief Recode to same format options */
     PROFILE             m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */
     PRORESLEVEL         m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
-    // Format
-    FFmpegfs_Format     m_format[2];                /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
     // Audio
     BITRATE             m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */
     int                 m_audiochannels;            /**< @brief Max. number of audio channels */
+    SAMPLE_FMT          m_sample_fmt;               /**< @brief Sample format */
     // Video
     BITRATE             m_videobitrate;             /**< @brief Output video bit rate (bits per second) */
     int                 m_videowidth;               /**< @brief Output video width */
@@ -368,6 +370,13 @@ LPVIRTUALFILE   find_original(std::string *filepath);
  * @return Returns contstant pointer to VIRTUALFILE object of file, nullptr if not found
  */
 LPVIRTUALFILE   find_parent(const std::string & origpath);
+
+/**
+ * @brief Convert SAMPLE_FMT enum to human readable text.
+ * @param[in] autocopy - SAMPLE_FMT enum value to convert.
+ * @return SAMPLE_FMT enum as text or "INVALID" if not known.
+ */
+std::string         get_sampleformat_text(SAMPLE_FMT sample_fmt);
 /**
  * @brief Convert AUTOCOPY enum to human readable text.
  * @param[in] autocopy - AUTOCOPY enum value to convert.

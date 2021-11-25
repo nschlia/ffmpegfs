@@ -194,7 +194,7 @@ typedef enum FILETYPE
     FILETYPE_BMP,
     FILETYPE_TS,
     FILETYPE_HLS,
-    FILETYPE_FLAC
+    FILETYPE_FLAC,
 } FILETYPE;
 
 /**
@@ -262,23 +262,42 @@ typedef enum RECODESAME
     RECODESAME_YES,        /**< @brief Always recode to same format. */
 } RECODESAME;
 
+typedef enum SAMPLE_FMT
+{
+    SAMPLE_FMT_DONTCARE = -1,
+    SAMPLE_FMT_8,
+    SAMPLE_FMT_16,
+    SAMPLE_FMT_24,
+    SAMPLE_FMT_32,
+    SAMPLE_FMT_64,
+    SAMPLE_FMT_F16,
+    SAMPLE_FMT_F24,
+    SAMPLE_FMT_F32,
+    SAMPLE_FMT_F64
+} SAMPLE_FMT;
+
 /**
  * Format options: Defines file extension, codecs etc.
  * for each format.
  */
 struct Format_Options
 {
+    friend class FFmpegfs_Format;
+
+    typedef struct _tagFORMAT
+    {
+        AVCodecID       m_video_codec_id;   /**< @brief AVCodec used for video encoding */
+        AVCodecID       m_audio_codec_id;   /**< @brief AVCodec used for audio encoding */
+        AVSampleFormat  m_sample_format;    /**< @brief AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" */
+    } FORMAT;
+
+    typedef std::map<SAMPLE_FMT, const FORMAT> FORMAT_MAP;   /**< @brief Map of formats. One entry per format derivative. */
+
 public:
     /**
      * @brief Construct Format_Options object with defaults (empty)
      */
-    Format_Options()
-        : m_video_codec_id(AV_CODEC_ID_NONE)
-        , m_audio_codec_id(AV_CODEC_ID_NONE)
-        , m_albumart_supported(false)
-    {
-
-    }
+    Format_Options();
 
     /**
      * @brief Construct Format_Options object
@@ -286,25 +305,56 @@ public:
      * @param[in] fileext - File extension: mp4, mp3, flac or other
      * @param[in] video_codec_id - AVCodec used for video encoding
      * @param[in] audio_codec_id - AVCodec used for audio encoding
+     * @param[in] sample_format - AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care"
      * @param[in] albumart_supported - true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff
      */
     Format_Options(
-            std::string format_name,
-            std::string fileext,
-            AVCodecID   video_codec_id,
-            AVCodecID   audio_codec_id,
-            bool        albumart_supported
-            )
-        : m_format_name(format_name)
-        , m_fileext(fileext)
-        , m_video_codec_id(video_codec_id)
-        , m_audio_codec_id(audio_codec_id)
-        , m_albumart_supported(albumart_supported)
-    {
+            const std::string & format_name,
+            const std::string & fileext,
+            const FORMAT_MAP &  format,
+            bool                albumart_supported
+            );
 
-    }
+    /**
+     * @brief Convert destination type to "real" type, i.e., the file extension to be used.
+     * @note Currently "prores" is mapped to "mov".
+     * @return Destination type
+     */
+    const std::string & format_name() const;
 
-public:
+    /**
+     * @brief Get file extension
+     * @return File extension
+     */
+    const std::string & fileext() const;
+
+    /**
+     * @brief Get video codec_id
+     * @return Returns video codec_id
+     */
+    AVCodecID           video_codec_id() const;
+    /**
+     * @brief Get audio codec_id
+     * @return Returns audio codec_id
+     */
+    AVCodecID           audio_codec_id() const;
+    /**
+     * @brief Get sample format (bit width)
+     * @return Returns sample format
+     */
+    AVSampleFormat      sample_format() const;
+    /**
+     * @brief Check if audio codec/sample format combination is supported
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_sample_fmt_supported() const;
+    /**
+     * @brief Create a list of supported sample formats for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         sample_fmt_list() const;
+
+protected:
     /**
      *  @brief Descriptive name of the format.
      *  Descriptive name of the format, e.g. "opus", "mpegts".
@@ -312,11 +362,10 @@ public:
      *  by passing it to avformat_alloc_output_context2().
      *  Mostly, but not always, same as m_fileext.
      */
-    std::string m_format_name;
-    std::string m_fileext;              /**< @brief File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name. */
-    AVCodecID   m_video_codec_id;       /**< @brief AVCodec used for video encoding */
-    AVCodecID   m_audio_codec_id;       /**< @brief AVCodec used for audio encoding */
-    bool        m_albumart_supported;   /**< @brief true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff) */
+    std::string     m_format_name;
+    std::string     m_fileext;              /**< @brief File extension: mp4, mp3, flac or other. Mostly, but not always, same as m_format_name. */
+    FORMAT_MAP      m_format_map;           /**< @brief Format definition (audio/videocodec, sample format) */
+    bool            m_albumart_supported;   /**< @brief true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff) */
 };
 
 /**
@@ -370,6 +419,11 @@ public:
      */
     AVCodecID           audio_codec_id() const;
     /**
+     * @brief Get sample format (bit width)
+     * @return Returns sample format
+     */
+    AVSampleFormat      sample_format() const;
+    /**
      * @brief Check if this si some sort of multi file format
      * (any of the following: is_frameset() or is_hls()).
      * @return Returns true for a multi file format.
@@ -390,6 +444,16 @@ public:
      * @return true if album arts are supported or false if not
      */
     bool                albumart_supported() const;
+    /**
+     * @brief Check if audio codec/sample format combination is supported
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_sample_fmt_supported() const;
+    /**
+     * @brief Create a list of supported sample formats for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         sample_fmt_list() const;
 
 protected:
     const Format_Options        m_empty_options;    /**< @brief Set of empty (invalid) options as default */

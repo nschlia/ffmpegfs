@@ -170,12 +170,12 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
              performer.c_str(),
              title.c_str(),
              replace_all(format_duration(duration), ":", "-").c_str(),
-             params.m_format[0].fileext().c_str());                     ///<* @todo Should use the correct index (audio) here
+             ffmpeg_format[0].fileext().c_str());                     ///<* @todo Should use the correct index (audio) here
 
     std::string virtfilename(title_buf);
 
     LPVIRTUALFILE virtualfile = nullptr;
-    if (!params.m_format[0].is_multiformat())
+    if (!ffmpeg_format[0].is_multiformat())
     {
         virtualfile = insert_file(VIRTUALTYPE_DISK, path + virtfilename, filename, statbuf, VIRTUALFLAG_CUESHEET);
     }
@@ -226,7 +226,7 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         }
         *lastfile                               = virtualfile;
 
-        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
+        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, width, height, interleaved, framerate);
 
         stat_set_size(&virtualfile->m_st, virtualfile->m_predicted_size);
     }

@@ -63,7 +63,8 @@ extern "C" {
 
 #include "ffmpeg_utils.h"
 
-FFMPEGFS_PARAMS     params;                     /**< @brief FFmpegfs command line parameters */
+FFmpegfs_Format     ffmpeg_format[2];               /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
+FFMPEGFS_PARAMS     params;                         /**< @brief FFmpegfs command line parameters */
 
 FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter
@@ -78,6 +79,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_audiobitrate(128*1024)                          // default: 128 kBit
     , m_audiosamplerate(44100)                          // default: 44.1 kHz
     , m_audiochannels(2)                                // default: 2 channels
+    , m_sample_fmt(SAMPLE_FMT_DONTCARE)                 // default: use source format
 
     // Video
     , m_videobitrate(2*1024*1024)                       // default: 2 MBit
@@ -131,7 +133,7 @@ FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 
 bool FFMPEGFS_PARAMS::smart_transcode(void) const
 {
-    return (params.m_format[1].filetype() != FILETYPE_UNKNOWN && params.m_format[0].filetype() != params.m_format[1].filetype());
+    return (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN && ffmpeg_format[0].filetype() != ffmpeg_format[1].filetype());
 }
 
 int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
@@ -148,12 +150,12 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
         else
         {
             // Smart transcoding
-            if (params.m_format[0].video_codec_id() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
+            if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (params.m_format[1].audio_codec_id() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
+            else if (ffmpeg_format[1].audio_codec_id() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;
@@ -179,7 +181,7 @@ FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 
     if (format_idx > -1)
     {
-        return &m_format[format_idx];
+        return &ffmpeg_format[format_idx];
     }
 
     return nullptr;
@@ -191,7 +193,7 @@ FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)
     {
         return nullptr;
     }
-    return &m_format[virtualfile->m_format_idx];
+    return &ffmpeg_format[virtualfile->m_format_idx];
 }
 
 enum
@@ -205,6 +207,7 @@ enum
     KEY_AUDIO_BITRATE,
     KEY_AUDIO_SAMPLERATE,
     KEY_AUDIO_CHANNELS,
+    KEY_AUDIO_SAMPLE_FMT,
     KEY_VIDEO_BITRATE,
     KEY_SEGMENT_DURATION,
     KEY_MIN_SEEK_TIME_DIFF,
@@ -260,7 +263,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("audiosamplerate=%s",              KEY_AUDIO_SAMPLERATE),
     FUSE_OPT_KEY("--audiochannels=%s",              KEY_AUDIO_CHANNELS),
     FUSE_OPT_KEY("audiochannels=%s",                KEY_AUDIO_CHANNELS),
-
+    FUSE_OPT_KEY("--audiosamplefmt=%s",             KEY_AUDIO_SAMPLE_FMT),
+    FUSE_OPT_KEY("audiosamplefmt=%s",               KEY_AUDIO_SAMPLE_FMT),
     // Video
     FUSE_OPT_KEY("--videobitrate=%s",               KEY_VIDEO_BITRATE),
     FUSE_OPT_KEY("videobitrate=%s",                 KEY_VIDEO_BITRATE),
@@ -369,6 +373,7 @@ typedef struct HWACCEL                                                  /**< @br
 
 typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
 typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
+typedef std::map<std::string, SAMPLE_FMT, comp> SAMPLE_FMT_MAP;         /**< @brief Map command line option to SAMPLE_FMT */
 
 /**
   * List of AUTOCOPY options
@@ -492,23 +497,41 @@ static const CODEC_MAP hwaccel_codec_map =
     { "WMV3",   AV_CODEC_ID_WMV3 },
 };
 
+/**
+ * List of sample formats.
+ */
+static const SAMPLE_FMT_MAP sample_fmt_map =
+{
+    { "0",      SAMPLE_FMT_DONTCARE },
+    { "8",      SAMPLE_FMT_8 },
+    { "16",     SAMPLE_FMT_16 },
+    { "24",     SAMPLE_FMT_24 },
+    { "32",     SAMPLE_FMT_32 },
+    { "64",     SAMPLE_FMT_64 },
+    { "F16",    SAMPLE_FMT_F16 },
+    { "F24",    SAMPLE_FMT_F24 },
+    { "F32",    SAMPLE_FMT_F32 },
+    { "F64",    SAMPLE_FMT_F64 },
+};
+
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
-static int          get_samplerate(const std::string & arg, int *samplerate);
+static int          get_samplerate(const std::string & arg, int * samplerate);
+static int          get_sampleformat(const std::string & arg, SAMPLE_FMT * sample_fmt);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
-static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
+static int          get_recodesame(const std::string & arg, RECODESAME *recode);
 static int          get_profile(const std::string & arg, PROFILE *profile);
 static int          get_level(const std::string & arg, PRORESLEVEL *level);
 static int          get_segment_duration(const std::string & arg, int64_t *value);
 static int          get_seek_time_diff(const std::string & arg, int64_t *value);
 static int          get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDeviceType *hwaccel_device_type);
+static int          get_codec(const std::string & codec, AVCodecID *codec_id);
 static int          get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
 static int          get_value(const std::string & arg, double *value);
-static int          get_codec(const std::string & arg, AVCodecID *codec_id);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults(void);
@@ -697,6 +720,55 @@ static int get_samplerate(const std::string & arg, int * samplerate)
     return -1;
 }
 
+/**
+ * @brief Get sample format
+ * @param[in] arg - Sample format as string.
+ * @param[in] sample_fmt - On return, contains parsed sample format.
+ * @return Returns 0 if valid; if invalid returns -1.
+ */
+static int get_sampleformat(const std::string & arg, SAMPLE_FMT * sample_fmt)
+{
+    size_t pos = arg.find('=');
+
+    *sample_fmt = SAMPLE_FMT_DONTCARE;
+
+    if (pos != std::string::npos)
+    {
+        std::string param(arg.substr(0, pos));
+        std::string data(arg.substr(pos + 1));
+
+        SAMPLE_FMT_MAP::const_iterator it = sample_fmt_map.find(data);
+
+        if (it == sample_fmt_map.cend())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid sample format option: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid sample formats are:", sample_fmt_map);
+
+            return -1;
+        }
+
+        // May fail later: Can only be checked when destination format is known.
+        *sample_fmt = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+    return -1;
+
+}
+
+std::string get_sampleformat_text(SAMPLE_FMT sample_fmt)
+{
+    SAMPLE_FMT_MAP::const_iterator it = search_by_value(sample_fmt_map, sample_fmt);
+    if (it != sample_fmt_map.cend())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
 
 /**
  * @brief Get formatted time,
@@ -1334,7 +1406,7 @@ bool check_hwaccel_dec_blocked(AVCodecID codec_id, int profile)
     return false;
 }
 
-std::string  get_hwaccel_API_text(HWACCELAPI hwaccel_API)
+std::string get_hwaccel_API_text(HWACCELAPI hwaccel_API)
 {
     HWACCEL_MAP::const_iterator it = hwaccel_map.cbegin();
     while (it != hwaccel_map.cend())
@@ -1526,7 +1598,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_DESTTYPE:
     {
-        return get_desttype(arg, params.m_format);
+        return get_desttype(arg, ffmpeg_format);
     }
     case KEY_AUTOCOPY:
     {
@@ -1555,6 +1627,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     case KEY_AUDIO_CHANNELS:
     {
         return get_value(arg, &params.m_audiochannels);
+    }
+    case KEY_AUDIO_SAMPLE_FMT:
+    {
+        return get_sampleformat(arg, &params.m_sample_fmt);
     }
     case KEY_SCRIPTFILE:
     {
@@ -1658,7 +1734,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
  */
 static bool set_defaults(void)
 {
-    if (params.m_format[0].video_codec_id() == AV_CODEC_ID_PRORES)
+    if (ffmpeg_format[0].video_codec_id() == AV_CODEC_ID_PRORES)
     {
         if (params.m_level == PRORESLEVEL_NONE)
         {
@@ -1704,17 +1780,28 @@ static void print_params(void)
     Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
     Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
     Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
-    Logging::trace(nullptr, "Audio File Type   : %1", params.m_format[1].desttype().c_str());
-    Logging::trace(nullptr, "Video File Type   : %1", params.m_format[0].desttype().c_str());
+    if (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN)
+    {
+        Logging::trace(nullptr, "Audio File Type   : %1", ffmpeg_format[1].desttype().c_str());
+        Logging::trace(nullptr, "Video File Type   : %1", ffmpeg_format[0].desttype().c_str());
+    }
+    else
+    {
+        Logging::trace(nullptr, "File Type         : %1", ffmpeg_format[0].desttype().c_str());
+    }
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
-    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(params.m_format[0].audio_codec_id(), true), get_codec_name(params.m_format[1].audio_codec_id(), true));
+    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec_id(), true), get_codec_name(ffmpeg_format[1].audio_codec_id(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
     Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate).c_str());
     Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
+    if (params.m_sample_fmt != SAMPLE_FMT_DONTCARE)
+    {
+        Logging::trace(nullptr, "Sample Format     : %1", get_sampleformat_text(params.m_sample_fmt).c_str());
+    }
     Logging::trace(nullptr, "--------- Video ---------");
-    Logging::trace(nullptr, "Codec             : %1", get_codec_name(params.m_format[0].video_codec_id(), true));
+    Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec_id(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
@@ -1897,6 +1984,16 @@ int main(int argc, char *argv[])
     {
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;
+    }
+
+    for (size_t n = 0; n < 2; n++)
+    {
+        if (ffmpeg_format[n].filetype() != FILETYPE_UNKNOWN && !ffmpeg_format[n].is_sample_fmt_supported())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_sampleformat_text(params.m_sample_fmt).c_str(), ffmpeg_format[n].desttype().c_str());
+            std::fprintf(stderr, "Supported formats: %s\n\n", ffmpeg_format[n].sample_fmt_list().c_str());
+            return 1;
+        }
     }
 
     if (!set_defaults())

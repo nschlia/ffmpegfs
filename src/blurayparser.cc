@@ -387,7 +387,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
                  title_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),
                  is_main_title ? "+" : "",
-                 params.m_format[0].fileext().c_str()); // can safely assume this is a video format
+                 ffmpeg_format[0].fileext().c_str()); // can safely assume this is a video format
     }
     else
     {
@@ -404,14 +404,14 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
                  chapter_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),
                  is_main_title ? "+" : "",
-                 params.m_format[0].fileext().c_str()); // can safely assume this is a video format
+                 ffmpeg_format[0].fileext().c_str()); // can safely assume this is a video format
 
     }
 
     std::string filename(title_buf);
 
     LPVIRTUALFILE virtualfile = nullptr;
-    if (!params.m_format[0].is_multiformat())
+    if (!ffmpeg_format[0].is_multiformat())
     {
         virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, statbuf);
     }
@@ -492,7 +492,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             Logging::trace(virtualfile->m_destfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
         }
 
-        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, video_bit_rate, width, height, interleaved, framerate);
+        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, width, height, interleaved, framerate);
 
         virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
         virtualfile->m_predicted_size       = static_cast<size_t>(size);

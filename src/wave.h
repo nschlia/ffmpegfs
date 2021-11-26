@@ -37,6 +37,8 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
+
 /**
  * @brief WAVE header structure
  *
@@ -120,5 +122,7 @@ typedef struct WAV_DATA_HEADER
     // Remainder of wave file: actual sound data
     // uint8_t m_bytes[];
 } WAV_DATA_HEADER;
+
+#pragma pack(pop)
 
 #endif // WAVE_H

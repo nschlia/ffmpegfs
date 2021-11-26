@@ -32,6 +32,7 @@ SOURCES += \
     src/thread_pool.cc
 
 HEADERS += \
+    src/aiff.h \
     src/blurayio.h \
     src/blurayparser.h \
     src/buffer.h \

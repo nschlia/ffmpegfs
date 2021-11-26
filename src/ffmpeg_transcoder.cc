@@ -33,6 +33,7 @@
 #include "transcode.h"
 #include "buffer.h"
 #include "wave.h"
+#include "aiff.h"
 #include "logging.h"
 
 #include <assert.h>
@@ -2637,6 +2638,107 @@ int FFmpeg_Transcoder::create_fake_wav_header()
     buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
 
     // Restore write position
+    buffer->seek(static_cast<long>(current_offset), SEEK_SET);
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const
+{
+    AIFF_CHUNK *p = reinterpret_cast<AIFF_CHUNK*>(chunk);
+
+    for (;;)
+    {
+        if (!buffer->copy(chunk, *buffoffset, *size))
+        {
+            return -1;
+        }
+
+        if (buffer->eof())
+        {
+            errno = 0;
+            return -1;
+        }
+
+        if (!memcmp(&p->m_ckID, AIFF_FORMID, sizeof(p->m_ckID)))
+        {
+            // Special case: FormChunk has a fixed size
+            *size = sizeof(AIFF_FORMCHUNK);
+        }
+        else
+        {
+#if __BYTE_ORDER == __BIG_ENDIAN
+            *size = p->ckSize + 8;
+#else
+            *size = __builtin_bswap32(p->m_ckSize) + 8;
+#endif
+        }
+
+        if (!memcmp(&p->m_ckID, ID, sizeof(p->m_ckID)))
+        {
+            // Found
+            break;
+        }
+
+        // Advance to next potential position
+        *buffoffset += *size;
+    }
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::create_fake_aiff_header()
+{
+    // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
+    AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
+    Buffer *buffer = static_cast<Buffer *>(output_io_context->opaque);
+    size_t current_offset = buffer->tell();
+    size_t read_offset = 0;
+    size_t size;
+    AIFF_FORMCHUNK form_chunk;
+    AIFF_COMMONCHUNK common_chunk;
+
+    size = sizeof(form_chunk);
+    if (read_aiff_chunk(buffer, &read_offset, AIFF_FORMID, reinterpret_cast<uint8_t*>(&form_chunk), &size))
+    {
+        return -1;
+    }
+
+    read_offset += size;
+
+    form_chunk.m_ckSize = static_cast<uint32_t>(predicted_filesize() - 8);
+#if __BYTE_ORDER != __BIG_ENDIAN
+    form_chunk.m_ckSize = __builtin_bswap32(form_chunk.m_ckSize);
+#endif
+
+    size = sizeof(common_chunk);
+    if (read_aiff_chunk(buffer, &read_offset, AIFF_COMMONID, reinterpret_cast<uint8_t*>(&common_chunk), &size))
+    {
+        return -1;
+    }
+
+    read_offset += size;
+
+    AIFF_SOUNDDATACHUNK sounddata_chunk;
+
+    size = sizeof(sounddata_chunk);
+    if (read_aiff_chunk(buffer, &read_offset, AIFF_SOUNDATAID, reinterpret_cast<uint8_t*>(&sounddata_chunk), &size))
+    {
+        return -1;
+    }
+
+    sounddata_chunk.m_ckSize = static_cast<uint32_t>(predicted_filesize() - read_offset);
+#if __BYTE_ORDER != __BIG_ENDIAN
+    sounddata_chunk.m_ckSize = __builtin_bswap32(sounddata_chunk.m_ckSize);
+#endif
+
+    // Write updated AIFF header
+    buffer->seek(0, SEEK_SET);
+    buffer->write(reinterpret_cast<uint8_t*>(&form_chunk), sizeof(form_chunk));
+
+    // Write updated data header
+    buffer->seek(static_cast<long>(read_offset), SEEK_SET);
+    buffer->write(reinterpret_cast<uint8_t*>(&sounddata_chunk), sizeof(sounddata_chunk));
 
     // Restore write position
     buffer->seek(static_cast<long>(current_offset), SEEK_SET);
@@ -2662,9 +2764,13 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-    if (!nocasecompare(m_current_format->format_name(), "wav"))
+    if (m_current_format->filetype() == FILETYPE_WAV)
     {
         ret = create_fake_wav_header();
+    }
+    else if (m_current_format->filetype() == FILETYPE_AIFF)
+    {
+        ret = create_fake_aiff_header();
     }
 
     return ret;

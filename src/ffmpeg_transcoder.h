@@ -971,7 +971,24 @@ protected:
      * @return 0 on success, a negative AVERROR code on failure.
      */
     int                         create_fake_wav_header();
-    
+    /**
+     * @brief Create a fake AIFF header
+     * Create a fake AIFF header. Inserts predicted file sizes to allow playback
+     * to start directly.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         create_fake_aiff_header();
+    /**
+     * @brief Read AIFF chunk
+     * @param[in] buffer - Cache buffer to read from
+     * @param[inout] buffoffset - Byte offset into buffer. Upon return holds offset to the position of the chunk.
+     * @param[in] ID - Chunk ID (fourCC)
+     * @param[out] chunk - Buffer for chunk
+     * @param[inout] size - Size of chunk. Buffer for chunk must be large enough to hold it. Upon return holds the actual size of the chunk read.
+     * @return Returns 0 if successful or -1 on error or end of file. Check buffer->eof().
+     */
+    int                         read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const;
+
 private:
     FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
     bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */

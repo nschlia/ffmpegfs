@@ -20,7 +20,7 @@ New in in 2.8 (2021-11-XX):
 * **Enhancement**: [Issue #103](https://github.com/nschlia/ffmpegfs/issues/103): If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with *--min_seek_time_diff*. Defaults to 30 seconds.
 * **Feature**: [Issue #105](https://github.com/nschlia/ffmpegfs/issues/105): Added Free Lossless Audio Codec (FLAC) support. Activate with *--desttype=FLAC*.
 * **Feature:** [Issue #101](https://github.com/nschlia/ffmpegfs/issues/101): Sample format for audio files can be selected via command line with *--audiosamplefmt*. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point.
-  Not all formats are supported by all destination types, so selecting an invalid format for will be reported as error and a list of values printed.
+  Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed.
   Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).
 
 ### Version 2.7 released

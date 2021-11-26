@@ -2586,9 +2586,6 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
 
 int FFmpeg_Transcoder::create_fake_wav_header()
 {
-    // HINWEIS:
-    // Aus 16 Bit 24/32/64 Bit machen bringt nix, die höheren Bytes sind dann einfach 0.
-
     // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
     AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
     Buffer *buffer = static_cast<Buffer *>(output_io_context->opaque);
@@ -2626,6 +2623,10 @@ int FFmpeg_Transcoder::create_fake_wav_header()
     // Fill in size fields with predicted size
     wav_header.m_wav_size = static_cast<unsigned int>(predicted_filesize() - 8);
     data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (read_offset + sizeof(WAV_DATA_HEADER)));
+#if __BYTE_ORDER == __BIG_ENDIAN
+    wav_header.m_wav_size = __builtin_bswap32(wav_header.m_wav_size);
+    wav_header.m_data_bytes = __builtin_bswap32(m_data_bytes);
+#endif
 
     // Write updated wav header
     buffer->seek(0, SEEK_SET);
@@ -2634,6 +2635,8 @@ int FFmpeg_Transcoder::create_fake_wav_header()
     // Write updated data header
     buffer->seek(static_cast<long>(read_offset), SEEK_SET);
     buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
+
+    // Restore write position
 
     // Restore write position
     buffer->seek(static_cast<long>(current_offset), SEEK_SET);

@@ -17,7 +17,7 @@ elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
     check_filesize "raven_e.flac" 466981 490440
-    check_filesize "raven_d.ogg" 343527
+    check_filesize "raven_d.ogg" 342690 343527
 elif [ "${DESTTYPE}" == "wav" ];
 then
     # wav
@@ -41,13 +41,13 @@ then
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "raven_e.flac" 491651 495447
-    check_filesize "raven_d.ogg" 355300 356142
+    check_filesize "raven_e.flac" 489113 495447
+    check_filesize "raven_d.ogg" 342690 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then
     # aiff
-    check_filesize "raven_e.flac" 5137724 5140125
-    check_filesize "raven_d.ogg" 4316488
+    check_filesize "raven_e.flac" 5137707 5140125
+    check_filesize "raven_d.ogg" 4316344 4316488
 elif [ "${DESTTYPE}" == "prores" ];
 then
     # prores

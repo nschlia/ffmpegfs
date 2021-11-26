@@ -1,5 +1,5 @@
 artist=Edgar Allan Poe
-compatible_brands=qt  iso6
+compatible_brands=qt  
 
 handler_name=SoundHandler
 major_brand=qt  

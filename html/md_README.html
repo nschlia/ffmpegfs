@@ -68,15 +68,11 @@ $(function() {
 <div class="contents">
 <div class="textblock"><table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Branch   </th><th class="markdownTableHeadNone">State   </th><th class="markdownTableHeadNone">Compiler   </th><th class="markdownTableHeadNone">Library   </th><th class="markdownTableHeadNone">Build State    </th></tr>
+<th class="markdownTableHeadNone">Branch   </th><th class="markdownTableHeadNone">Version   </th><th class="markdownTableHeadNone">State   </th><th class="markdownTableHeadNone">Compiler   </th><th class="markdownTableHeadNone">Library   </th><th class="markdownTableHeadNone">Build State    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">gcc 10.2.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">2.8   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">gcc 10.2.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">clang 11.0.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">gcc 10.2.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg)" alt="Build Status" class="inline"/>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/FB">FB</a>   </td><td class="markdownTableBodyNone">experimental   </td><td class="markdownTableBodyNone">clang 11.0.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-FB-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
+<td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone">2.8   </td><td class="markdownTableBodyNone">testing   </td><td class="markdownTableBodyNone">clang 11.0.1   </td><td class="markdownTableBodyNone">FFmpeg 4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"><img src="https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)" alt="Build Status" class="inline"/>   </td></tr>
 </table>
 <p><a href="https://repology.org/project/ffmpegfs/versions"><img src="https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4" alt="Packaging status" style="pointer-events: none;" class="inline"/></a></p>
 <h1><a class="anchor" id="autotoc_md2"></a>
@@ -86,8 +82,10 @@ Version 2.8 under development</h2>
 <p>New in in 2.8 (2021-11-XX):</p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/102">Issue #102</a>: Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fix problems with cache causing garbled videos and hick-ups in audio.</li>
-<li><b>Enhancement</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/103">Issue #103</a>: If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with &ndash;min_seek_time_diff. defaults to 30 seconds. Set to 0 to disable.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fixed HLS problems with cache causing garbled videos and hick-ups in audio.</li>
+<li><b>Enhancement</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/103">Issue #103</a>: If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with <em>&ndash;min_seek_time_diff</em>. Defaults to 30 seconds.</li>
+<li><b>Feature</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/105">Issue #105</a>: Added Free Lossless Audio Codec (FLAC) support. Activate with <em>&ndash;desttype=FLAC</em>.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/101">Issue #101</a>: Sample format for audio files can be selected via command line with <em>&ndash;audiosamplefmt</em>. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point. Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed. Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.7 released</h2>
@@ -116,35 +114,37 @@ About</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Format   </th><th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Video   </th><th class="markdownTableHeadNone">Audio    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">MP4   </td><td class="markdownTableBodyNone">MPEG-4   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone" colspan="2">WebM   </td><td class="markdownTableBodyNone">VP9   </td><td class="markdownTableBodyNone">Opus    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone" colspan="2">OGG   </td><td class="markdownTableBodyNone">Theora   </td><td class="markdownTableBodyNone">Vorbis    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">MOV   </td><td class="markdownTableBodyNone">QuickTime File Format   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">ProRes   </td><td class="markdownTableBodyNone">Apple ProRes   </td><td class="markdownTableBodyNone">ProRes   </td><td class="markdownTableBodyNone">PCM 16 bit LE    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone" colspan="3">Opus   </td><td class="markdownTableBodyNone">Opus    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">MP3   </td><td class="markdownTableBodyNone" colspan="2">MPEG-2 Audio Layer III   </td><td class="markdownTableBodyNone">MP3    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">WAV   </td><td class="markdownTableBodyNone" colspan="2">Waveform Audio File Format   </td><td class="markdownTableBodyNone">PCM 16 bit LE    </td></tr>
-<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AIFF   </td><td class="markdownTableBodyNone" colspan="2">Audio Interchange File Format   </td><td class="markdownTableBodyNone">PCM 16 bit BE    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">ALAC   </td><td class="markdownTableBodyNone" colspan="2">Apple Lossless Audio Codec   </td><td class="markdownTableBodyNone">ALAC    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">BMP   </td><td class="markdownTableBodyNone">Video to frameset   </td><td class="markdownTableBodyNone">BMP   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">FLAC   </td><td class="markdownTableBodyNone">Free Lossless Audio   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">FLAC    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">HLS   </td><td class="markdownTableBodyNone">HTTP Live Streaming   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">JPG   </td><td class="markdownTableBodyNone">Video to frameset   </td><td class="markdownTableBodyNone">JPEG   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">MOV   </td><td class="markdownTableBodyNone">QuickTime File Format   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">MP3   </td><td class="markdownTableBodyNone" colspan="2">MPEG-2 Audio Layer III   </td><td class="markdownTableBodyNone">MP3    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">MP4   </td><td class="markdownTableBodyNone">MPEG-4   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone" colspan="2">OGG   </td><td class="markdownTableBodyNone">Theora   </td><td class="markdownTableBodyNone">Vorbis    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone" colspan="3">Opus   </td><td class="markdownTableBodyNone">Opus    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">PNG   </td><td class="markdownTableBodyNone">Video to frameset   </td><td class="markdownTableBodyNone">PNG   </td><td class="markdownTableBodyNone"></td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">BMP   </td><td class="markdownTableBodyNone">Video to frameset   </td><td class="markdownTableBodyNone">BMP   </td><td class="markdownTableBodyNone"></td></tr>
+<td class="markdownTableBodyNone">ProRes   </td><td class="markdownTableBodyNone">Apple ProRes   </td><td class="markdownTableBodyNone">ProRes   </td><td class="markdownTableBodyNone">PCM 16 bit LE    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">TS   </td><td class="markdownTableBodyNone">MPEG Transport Stream   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">HLS   </td><td class="markdownTableBodyNone">HTTP Live Streaming   </td><td class="markdownTableBodyNone">H264   </td><td class="markdownTableBodyNone">AAC   </td></tr>
+<td class="markdownTableBodyNone">WAV   </td><td class="markdownTableBodyNone" colspan="2">Waveform Audio File Format   </td><td class="markdownTableBodyNone">PCM 16 bit LE    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone" colspan="2">WebM   </td><td class="markdownTableBodyNone">VP9   </td><td class="markdownTableBodyNone">Opus   </td></tr>
 </table>
 <p>This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.</p>
 <p>For live streaming select <em>WebM</em> or <em>MP4</em> for best results. If video transcoding is not required <em>MP3</em> will also do, but <em>WebM</em> and <em>MP4</em> create better results. The <em>OGG</em> encoder is not fast enough for real-time recoding files.</p>
@@ -163,29 +163,29 @@ Supported Linux Distributions</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Distribution   </th><th class="markdownTableHeadNone">FFmpeg Version   </th><th class="markdownTableHeadNone">Remarks   </th><th class="markdownTableHeadNone">Result    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Daily build</code>   </td><td class="markdownTableBodyNone"><b>N-99880-g8fbcc546b8</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Daily build</b>   </td><td class="markdownTableBodyNone">N-99880-g8fbcc546b8   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Debian 9 Stretch</code>   </td><td class="markdownTableBodyNone"><b>3.2.8-1~deb9u1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Debian 9 Stretch</b>   </td><td class="markdownTableBodyNone">3.2.8-1~deb9u1   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Debian 10 Buster</code>   </td><td class="markdownTableBodyNone"><b>4.1.6-1~deb10u1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Debian 10 Buster</b>   </td><td class="markdownTableBodyNone">4.1.6-1~deb10u1   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Debian 11 Bullseye</code>   </td><td class="markdownTableBodyNone"><b>4.3.2-0+deb11u2</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Debian 11 Bullseye</b>   </td><td class="markdownTableBodyNone">4.3.2-0+deb11u2   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Raspbian 10 Buster</code>   </td><td class="markdownTableBodyNone"><b>4.1.6-1~deb10u1+rpt1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Raspbian 10 Buster</b>   </td><td class="markdownTableBodyNone">4.1.6-1~deb10u1+rpt1   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Raspbian 11 Bullseye</code>   </td><td class="markdownTableBodyNone"><b>4.3.2-0+rpt3+deb11u2</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Raspbian 11 Bullseye</b>   </td><td class="markdownTableBodyNone">4.3.2-0+rpt3+deb11u2   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Ubuntu 16.04.3 LTS</code>   </td><td class="markdownTableBodyNone">**.8.11-0ubuntu0.16.04.1**   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Ubuntu 16.04.3 LTS</b>   </td><td class="markdownTableBodyNone">.8.11-0ubuntu0.16.04.1   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Ubuntu 17.10</code>   </td><td class="markdownTableBodyNone"><b>3.3.4-2</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Ubuntu 17.10</b>   </td><td class="markdownTableBodyNone">3.3.4-2   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Ubuntu 20.04</code>   </td><td class="markdownTableBodyNone"><b>4.2.2-1ubuntu1</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Ubuntu 20.04</b>   </td><td class="markdownTableBodyNone">4.2.2-1ubuntu1   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Suse 42</code>   </td><td class="markdownTableBodyNone"><b>3.3.4</b>   </td><td class="markdownTableBodyNone">See notes below   </td><td class="markdownTableBodyNone">not OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Suse 42</b>   </td><td class="markdownTableBodyNone">3.3.4   </td><td class="markdownTableBodyNone">See notes below   </td><td class="markdownTableBodyNone">not OK    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Red Hat 7</code>   </td><td class="markdownTableBodyNone"><b>FFmpeg must be compiled from sources</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
+<td class="markdownTableBodyNone"><b>Red Hat 7</b>   </td><td class="markdownTableBodyNone">FFmpeg must be compiled from sources   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OK    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Funtoo 7.3.1</code>   </td><td class="markdownTableBodyNone"><b>3.4.1</b>   </td><td class="markdownTableBodyNone">FFmpeg needs to be installed with correct "USE flags", see <a class="el" href="md_INSTALL.html">install</a>   </td><td class="markdownTableBodyNone">OK   </td></tr>
+<td class="markdownTableBodyNone"><b>Funtoo 7.3.1</b>   </td><td class="markdownTableBodyNone">3.4.1   </td><td class="markdownTableBodyNone">FFmpeg needs to be installed with correct "USE flags", see <a class="el" href="md_INSTALL.html">install</a>   </td><td class="markdownTableBodyNone">OK   </td></tr>
 </table>
 <p><b>Suse</b> does not provide proprietary formats like AAC and H264, thus the distribution FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.</p>
 <p>See <a href="https://en.opensuse.org/Restricted_formats">https://en.opensuse.org/Restricted_formats</a>.</p>

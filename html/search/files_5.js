@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['logging_2ecc_1241',['logging.cc',['../logging_8cc.html',1,'']]],
-  ['logging_2eh_1242',['logging.h',['../logging_8h.html',1,'']]]
+  ['id3v1tag_2eh_1288',['id3v1tag.h',['../id3v1tag_8h.html',1,'']]]
 ];

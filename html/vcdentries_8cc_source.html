@@ -206,13 +206,13 @@ $(function() {
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <a class="code" href="classVcdEntries.html#ac4f2d5521cc2ed040d6d999f9eb77810">m_duration</a> += chapter_duration;</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        }</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    }</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordflow">catch</span> (<span class="keywordtype">int</span> _errno)</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordflow">catch</span> (<span class="keywordtype">int</span> orgerrno)</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    {</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;        <span class="keywordflow">if</span> (fpi != <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        {</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            fclose(fpi);</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        }</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="keywordflow">return</span> _errno;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="keywordflow">return</span> orgerrno;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    }</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    fclose(fpi);</div>
@@ -242,10 +242,10 @@ $(function() {
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            {</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                last_track_no = <a class="code" href="classVcdEntries.html#ab8114296152d3e0519be909b699dcbf4">m_chapters</a>[chapter_no].get_track_no();</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                <span class="keywordtype">int</span> _errno = <a class="code" href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">VCDUTILS::locate_video</a>(<a class="code" href="classVcdEntries.html#a20215b636016b3e77e05ca5a647a59cc">m_disk_path</a>, last_track_no, fullname);</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                <span class="keywordflow">if</span> (_errno != 0)</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                <span class="keywordtype">int</span> orgerrno = <a class="code" href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">VCDUTILS::locate_video</a>(<a class="code" href="classVcdEntries.html#a20215b636016b3e77e05ca5a647a59cc">m_disk_path</a>, last_track_no, fullname);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                <span class="keywordflow">if</span> (orgerrno != 0)</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(_errno);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(orgerrno);</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                }</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                <span class="keywordflow">if</span> (chapter_no)</div>
@@ -297,10 +297,10 @@ $(function() {
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ferror(fpi));</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                }</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                <span class="keywordtype">int</span> _errno = buffer.<a class="code" href="classVcdChapter.html#ac40d07e2d8f6a7551d6e1c3291194215">read</a>(fpi, last_track_no);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                <span class="keywordflow">if</span> (_errno)</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                <span class="keywordtype">int</span> orgerrno = buffer.<a class="code" href="classVcdChapter.html#ac40d07e2d8f6a7551d6e1c3291194215">read</a>(fpi, last_track_no);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;                <span class="keywordflow">if</span> (orgerrno)</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                {</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(_errno);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                    <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(orgerrno);</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                }</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                <span class="keywordflow">if</span> (buffer &lt; <a class="code" href="classVcdEntries.html#ab8114296152d3e0519be909b699dcbf4">m_chapters</a>[chapter_no])</div>
@@ -336,10 +336,10 @@ $(function() {
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(ferror(fpi));</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            }</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="keywordtype">int</span> _errno = buffer.<a class="code" href="classVcdChapter.html#ac40d07e2d8f6a7551d6e1c3291194215">read</a>(fpi, last_track_no);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">if</span> (_errno)</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <span class="keywordtype">int</span> orgerrno = buffer.<a class="code" href="classVcdChapter.html#ac40d07e2d8f6a7551d6e1c3291194215">read</a>(fpi, last_track_no);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">if</span> (orgerrno)</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(_errno);</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(orgerrno);</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            }</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <a class="code" href="classVcdChapter.html">VcdChapter</a> &amp; chapter1 = <a class="code" href="classVcdEntries.html#ab8114296152d3e0519be909b699dcbf4">m_chapters</a>[<a class="code" href="classVcdEntries.html#ab8114296152d3e0519be909b699dcbf4">m_chapters</a>.size() - 1];</div>
@@ -351,13 +351,13 @@ $(function() {
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            <a class="code" href="classVcdEntries.html#ac4f2d5521cc2ed040d6d999f9eb77810">m_duration</a> += chapter_duration;</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        }</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    }</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">catch</span> (<span class="keywordtype">int</span> _errno)</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">catch</span> (<span class="keywordtype">int</span> orgerrno)</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    {</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordflow">if</span> (fpi != <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        {</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            fclose(fpi);</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        }</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        <span class="keywordflow">return</span> _errno;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        <span class="keywordflow">return</span> orgerrno;</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    }</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="comment">// End of last chapter</span></div>

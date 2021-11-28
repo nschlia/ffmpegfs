@@ -75,15 +75,6 @@ $(function() {
  <a href="structFFMPEGFS__PARAMS.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&gt;</code></p>
-<div class="dynheader">
-Collaboration diagram for FFMPEGFS_PARAMS:</div>
-<div class="dyncontent">
-<div class="center"><img src="structFFMPEGFS__PARAMS__coll__graph.png" border="0" usemap="#aFFMPEGFS__PARAMS_coll__map" alt="Collaboration graph"/></div>
-<map name="aFFMPEGFS__PARAMS_coll__map" id="aFFMPEGFS__PARAMS_coll__map">
-<area shape="rect" title="Global program parameters." alt="" coords="5,95,160,121"/>
-<area shape="rect" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class." alt="" coords="13,5,153,32"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,11 +117,6 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a class="el" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfda">PRORESLEVEL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#ad70d363cb597650677458839f9827306">m_level</a></td></tr>
 <tr class="memdesc:ad70d363cb597650677458839f9827306"><td class="mdescLeft">&#160;</td><td class="mdescRight">Level, currently proxy/hq/lt/HQ (ProRes only) <br /></td></tr>
 <tr class="separator:ad70d363cb597650677458839f9827306"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bb74c57eb4c641eff33e71993c9d924"><td class="memItemLeft" align="right" valign="top"><a id="a8bb74c57eb4c641eff33e71993c9d924"></a>
-<a class="el" href="classFFmpegfs__Format.html">FFmpegfs_Format</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a8bb74c57eb4c641eff33e71993c9d924">m_format</a> [2]</td></tr>
-<tr class="memdesc:a8bb74c57eb4c641eff33e71993c9d924"><td class="mdescLeft">&#160;</td><td class="mdescRight">Two <a class="el" href="classFFmpegfs__Format.html" title="The FFmpegfs_Format class.">FFmpegfs_Format</a> infos, 0: video file, 1: audio file <br  />
- <br /></td></tr>
-<tr class="separator:a8bb74c57eb4c641eff33e71993c9d924"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a781c1b783c0197537755e5c67513709c"><td class="memItemLeft" align="right" valign="top"><a id="a781c1b783c0197537755e5c67513709c"></a>
 <a class="el" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a781c1b783c0197537755e5c67513709c">m_audiobitrate</a></td></tr>
 <tr class="memdesc:a781c1b783c0197537755e5c67513709c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output audio bit rate (bits per second) <br /></td></tr>
@@ -143,6 +129,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a4c3d30d9337717046bdd72229b39650f">m_audiochannels</a></td></tr>
 <tr class="memdesc:a4c3d30d9337717046bdd72229b39650f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max. number of audio channels. <br /></td></tr>
 <tr class="separator:a4c3d30d9337717046bdd72229b39650f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8977958f8a6975cbeba15f165af99c86"><td class="memItemLeft" align="right" valign="top"><a id="a8977958f8a6975cbeba15f165af99c86"></a>
+SAMPLE_FMT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a8977958f8a6975cbeba15f165af99c86">m_sample_fmt</a></td></tr>
+<tr class="memdesc:a8977958f8a6975cbeba15f165af99c86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sample format. <br /></td></tr>
+<tr class="separator:a8977958f8a6975cbeba15f165af99c86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e449ddb9fe6a95b16358ceaeeb850d4"><td class="memItemLeft" align="right" valign="top"><a id="a5e449ddb9fe6a95b16358ceaeeb850d4"></a>
 <a class="el" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a5e449ddb9fe6a95b16358ceaeeb850d4">m_videobitrate</a></td></tr>
 <tr class="memdesc:a5e449ddb9fe6a95b16358ceaeeb850d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output video bit rate (bits per second) <br /></td></tr>
@@ -299,7 +289,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Global program parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00142">142</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8h_source.html#l00145">145</a> of file <a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a3f5a3c0e70661f5010a4285292f4ac57"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3f5a3c0e70661f5010a4285292f4ac57">&#9670;&nbsp;</a></span>current_format() <span class="overload">[1/2]</span></h2>
@@ -326,11 +316,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to format. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00165">165</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00169">169</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l00511">find_file()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00135">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8h_source.html#l00180">m_format</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>, <a class="el" href="fuseops_8cc_source.html#l00511">find_file()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00139">guess_format_idx()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05241">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="fuseops_8cc_source.html#l01237">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00964">ffmpegfs_readdir()</a>, <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="fuseops_8cc_source.html#l00811">make_hls_fileset()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00244">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00380">transcoded_name()</a>, <a class="el" href="transcode_8cc_source.html#l00447">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00273">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00752">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05495">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="fuseops_8cc_source.html#l01237">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00964">ffmpegfs_readdir()</a>, <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="fuseops_8cc_source.html#l00811">make_hls_fileset()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00245">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="fuseops_8cc_source.html#l00380">transcoded_name()</a>, <a class="el" href="transcode_8cc_source.html#l00447">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00273">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00752">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -359,9 +349,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to format. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00186">186</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00190">190</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00180">m_format</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>.</p>
 
 </div>
 </div>
@@ -390,11 +380,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Index 0 or 1 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00135">135</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00139">139</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00284">FFmpegfs_Format::audio_codec_id()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01276">is_album_art()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00180">m_format</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00130">smart_transcode()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00279">FFmpegfs_Format::video_codec_id()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01718">is_album_art()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00134">smart_transcode()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00165">current_format()</a>, <a class="el" href="fuseops_8cc_source.html#l00443">insert_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00244">FFmpeg_Transcoder::open_input_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00169">current_format()</a>, <a class="el" href="fuseops_8cc_source.html#l00443">insert_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00245">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
 </div>
 </div>
@@ -417,11 +407,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <p>Check for smart transcode mode. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if smart transcode is active, false if not </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00130">130</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00134">134</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00259">FFmpegfs_Format::filetype()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00180">m_format</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00066">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00656">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00135">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01661">print_params()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00656">find_original()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00139">guess_format_idx()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01771">print_params()</a>.</p>
 
 </div>
 </div>

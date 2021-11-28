@@ -2626,7 +2626,7 @@ int FFmpeg_Transcoder::create_fake_wav_header()
     data_header.m_data_bytes = static_cast<unsigned int>(predicted_filesize() - (read_offset + sizeof(WAV_DATA_HEADER)));
 #if __BYTE_ORDER == __BIG_ENDIAN
     wav_header.m_wav_size = __builtin_bswap32(wav_header.m_wav_size);
-    wav_header.m_data_bytes = __builtin_bswap32(m_data_bytes);
+    data_header.m_data_bytes = __builtin_bswap32(data_header.m_data_bytes);
 #endif
 
     // Write updated wav header
@@ -2668,7 +2668,7 @@ int FFmpeg_Transcoder::read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const
         else
         {
 #if __BYTE_ORDER == __BIG_ENDIAN
-            *size = p->ckSize + 8;
+            *size = p->m_ckSize + 8;
 #else
             *size = __builtin_bswap32(p->m_ckSize) + 8;
 #endif

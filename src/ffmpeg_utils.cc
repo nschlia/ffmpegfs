@@ -1847,12 +1847,12 @@ int to_utf8(std::string & text, const std::string & encoding)
     }
     else
     {
-        int _errno = errno;
+        int orgerrno = errno;
 
         iconv_close(conv);
 
         // Error in iconv, errno in return code.
-        return _errno;
+        return orgerrno;
     }
 }
 

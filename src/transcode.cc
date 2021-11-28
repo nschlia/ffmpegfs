@@ -432,13 +432,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
         cache_entry->unlock();
     }
-    catch (int _errno)
+    catch (int orgerrno)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();
         cache->close(&cache_entry, CACHE_CLOSE_DELETE);
         cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
-        errno = _errno;         // Restore last errno
+        errno = orgerrno;         // Restore last errno
     }
 
     return cache_entry;

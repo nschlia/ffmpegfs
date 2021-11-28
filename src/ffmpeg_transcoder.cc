@@ -312,9 +312,9 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (m_fileio == nullptr)
     {
-        int _errno = errno;
+        int orgerrno = errno;
         Logging::error(filename(), "Error opening file: (%1) %2", errno, strerror(errno));
-        return AVERROR(_errno);
+        return AVERROR(orgerrno);
     }
 
     ret = m_fileio->open(m_virtualfile);
@@ -1048,9 +1048,9 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
     if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
-        int _errno = errno;
+        int orgerrno = errno;
         Logging::error(destname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        return AVERROR(_errno);
+        return AVERROR(orgerrno);
     }
 
     return 0;
@@ -1127,9 +1127,9 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     size_t buffsize = predicted_filesize();
     if (buffer->size() < buffsize && !buffer->reserve(buffsize))
     {
-        int _errno = errno;
+        int orgerrno = errno;
         Logging::error(destname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        return AVERROR(_errno);
+        return AVERROR(orgerrno);
     }
 
     ret = process_output();

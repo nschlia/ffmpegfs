@@ -155,13 +155,13 @@ int VcdEntries::load_file(const std::string & path)
             m_duration += chapter_duration;
         }
     }
-    catch (int _errno)
+    catch (int orgerrno)
     {
         if (fpi != nullptr)
         {
             fclose(fpi);
         }
-        return _errno;
+        return orgerrno;
     }
 
     fclose(fpi);
@@ -191,10 +191,10 @@ int VcdEntries::scan_chapters()
             {
                 last_track_no = m_chapters[chapter_no].get_track_no();
 
-                int _errno = VCDUTILS::locate_video(m_disk_path, last_track_no, fullname);
-                if (_errno != 0)
+                int orgerrno = VCDUTILS::locate_video(m_disk_path, last_track_no, fullname);
+                if (orgerrno != 0)
                 {
-                    throw static_cast<int>(_errno);
+                    throw static_cast<int>(orgerrno);
                 }
 
                 if (chapter_no)
@@ -246,10 +246,10 @@ int VcdEntries::scan_chapters()
                     throw static_cast<int>(ferror(fpi));
                 }
 
-                int _errno = buffer.read(fpi, last_track_no);
-                if (_errno)
+                int orgerrno = buffer.read(fpi, last_track_no);
+                if (orgerrno)
                 {
-                    throw static_cast<int>(_errno);
+                    throw static_cast<int>(orgerrno);
                 }
 
                 if (buffer < m_chapters[chapter_no])
@@ -285,10 +285,10 @@ int VcdEntries::scan_chapters()
                 throw static_cast<int>(ferror(fpi));
             }
 
-            int _errno = buffer.read(fpi, last_track_no);
-            if (_errno)
+            int orgerrno = buffer.read(fpi, last_track_no);
+            if (orgerrno)
             {
-                throw static_cast<int>(_errno);
+                throw static_cast<int>(orgerrno);
             }
 
             VcdChapter & chapter1 = m_chapters[m_chapters.size() - 1];
@@ -300,13 +300,13 @@ int VcdEntries::scan_chapters()
             m_duration += chapter_duration;
         }
     }
-    catch (int _errno)
+    catch (int orgerrno)
     {
         if (fpi != nullptr)
         {
             fclose(fpi);
         }
-        return _errno;
+        return orgerrno;
     }
 
     // End of last chapter

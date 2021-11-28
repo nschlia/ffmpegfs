@@ -183,16 +183,16 @@ int VcdInfo::load_file(const std::string & path)
         success = false;
     }
 
-    int _errno = 0;
+    int orgerrno = 0;
 
     if (success)
     {
-        _errno = ferror(fpi);
+        orgerrno = ferror(fpi);
     }
 
     fclose(fpi);
 
-    return _errno;
+    return orgerrno;
 }
 
 const time_t &VcdInfo::get_file_date() const

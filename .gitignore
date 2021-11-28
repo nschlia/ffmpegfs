@@ -3,7 +3,7 @@
 .directory
 core
 doxyfile.inc
-/*.log
+*.log
 doxygen/
 /ffmpegfs.1
 /ffmpegfs.1.hhc
@@ -11,6 +11,8 @@ doxygen/
 /ffmpegfs.1.htmlhelp/
 /ffmpegfs.1.pdf
 /ffmpegfs.1.text
+/ffmpegfs.1.fo
+/ffmpegfs.1.xml
 Makefile
 Makefile.in
 .deps/
@@ -29,7 +31,6 @@ Makefile.in
 /src/stamp-h1
 /src/vcd/.deps/
 /src/vcd/.dirstamp
-/test/*.log
 /test/*.trs
 /test/.deps/
 /test/fpcompare

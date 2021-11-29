@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -78,22 +78,16 @@ $(function() {
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
-Version 2.8 under development</h2>
-<p>New in in 2.8 (2021-11-XX):</p>
+Version 2.9 under development</h2>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Version 2.8 released</h2>
+<p><b>New in in 2.8 (2021-11-29):</b></p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/102">Issue #102</a>: Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fixed HLS problems with cache causing garbled videos and hick-ups in audio.</li>
 <li><b>Enhancement</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/103">Issue #103</a>: If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with <em>&ndash;min_seek_time_diff</em>. Defaults to 30 seconds.</li>
 <li><b>Feature</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/105">Issue #105</a>: Added Free Lossless Audio Codec (FLAC) support. Activate with <em>&ndash;desttype=FLAC</em>.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/101">Issue #101</a>: Sample format for audio files can be selected via command line with <em>&ndash;audiosamplefmt</em>. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point. Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed. Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md4"></a>
-Version 2.7 released</h2>
-<p>New in in 2.7 (2021-11-08):</p>
-<ul>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/92">Issue #92</a>: Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered. It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a &ndash;hwaccel_dec_blocked parameter has been added. If hardware decoding fails, check the log for a message similar this: "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0." If VP9 profile 0 is not supported, the parameter would be: &ndash;hwaccel_dec_blocked=VP9:0 This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be &ndash;hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use &ndash;hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/96">Issue #96</a>: Fixed potential buffer overrun and crash when reading corrupted input files.</li>
-<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/99">Issue #99</a>: Report command line error if &ndash;desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, &ndash;desttype=aiff+mov would create MOV files out of any input. Correct would be &ndash;desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md5"></a>
 History</h1>

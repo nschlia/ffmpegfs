@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -100,64 +100,80 @@ $(function() {
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#pragma pack(push, 1)</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">typedef</span> uint8_t AIFF_ID[4];</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#define AIFF_FORMID &quot;FORM&quot;</span> <span class="comment">/* ckID for Form Chunk */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structAIFF__FORMCHUNK.html">   45</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;{</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    AIFF_ID     m_ckID;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    uint32_t    m_ckSize;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    AIFF_ID     formType;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">//uint8_t   chunks[];</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;} <a class="code" href="structAIFF__FORMCHUNK.html">AIFF_FORMCHUNK</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structAIFF__CHUNK.html">   53</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;{</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    AIFF_ID     m_ckID;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    uint32_t    m_ckSize;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">//uint8_t   data[];</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;} <a class="code" href="structAIFF__CHUNK.html">AIFF_CHUNK</a>;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#define AIFF_COMMONID &quot;COMM&quot;</span> <span class="comment">/* ckID for Common Chunk */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html">   61</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    AIFF_ID     m_ckID;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    uint32_t    m_ckSize;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    uint8_t     m_numChannels;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    uint32_t    m_numSampleFrames;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    uint8_t     m_sampleSize;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">//extended sampleRate;</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;} <a class="code" href="structAIFF__COMMONCHUNK.html">AIFF_COMMONCHUNK</a>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#define AIFF_SOUNDATAID &quot;SSND&quot;</span> <span class="comment">/* ckID for Sound Data Chunk */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html">   72</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    AIFF_ID     m_ckID;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    uint32_t    m_ckSize;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    uint32_t    m_offset;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    uint32_t    m_blockSize;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="comment">//uint8_t   soundData[];</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;} <a class="code" href="structAIFF__SOUNDDATACHUNK.html">AIFF_SOUNDDATACHUNK</a>;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#define AIFF_NAMEID &quot;NAME&quot;</span> <span class="comment">/* ckID for Name Chunk. */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">#define AIFF_AUTHORID &quot;AUTH&quot;</span> <span class="comment">/* ckID for Author Chunk. */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#define AIFF_COPYRIGHTID &quot;(c) &quot;</span> <span class="comment">/* ckID for Copyright Chunk. */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#define AIFF_ANNOTATIONID &quot;ANNO&quot;</span> <span class="comment">/* ckID for Annotation Chunk. */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="structAIFF__TEXTCHUNK.html">   85</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;{</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    AIFF_ID     m_ckID;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    uint32_t    m_ckSize;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">//uint8_t   text[];</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;} <a class="code" href="structAIFF__TEXTCHUNK.html">AIFF_TEXTCHUNK</a>;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#pragma pack(pop)</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// AIFF_H</span></div>
-<div class="ttc" id="astructAIFF__CHUNK_html"><div class="ttname"><a href="structAIFF__CHUNK.html">AIFF_CHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00053">aiff.h:54</a></div></div>
-<div class="ttc" id="astructAIFF__COMMONCHUNK_html"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html">AIFF_COMMONCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00061">aiff.h:62</a></div></div>
-<div class="ttc" id="astructAIFF__FORMCHUNK_html"><div class="ttname"><a href="structAIFF__FORMCHUNK.html">AIFF_FORMCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00045">aiff.h:46</a></div></div>
-<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html">AIFF_SOUNDDATACHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00072">aiff.h:73</a></div></div>
-<div class="ttc" id="astructAIFF__TEXTCHUNK_html"><div class="ttname"><a href="structAIFF__TEXTCHUNK.html">AIFF_TEXTCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00085">aiff.h:86</a></div></div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">   42</a></span>&#160;<span class="keyword">typedef</span> uint8_t <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>[4];         </div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="aiff_8h.html#addbd95f36de8d33f2faa862995522c9a">   44</a></span>&#160;<span class="preprocessor">#define AIFF_FORMID         &quot;FORM&quot;</span>  </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structAIFF__FORMCHUNK.html">   48</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structAIFF__FORMCHUNK.html#a78b5bd6aa509690c2a8f29570f19338e">   50</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__FORMCHUNK.html#a78b5bd6aa509690c2a8f29570f19338e">m_ckID</a>;             </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structAIFF__FORMCHUNK.html#a1b468f883935337896fab73e43cfd4ac">   51</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__FORMCHUNK.html#a1b468f883935337896fab73e43cfd4ac">m_ckSize</a>;           </div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structAIFF__FORMCHUNK.html#af9e5dcbc8c984ff347ce4f493d38983b">   52</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__FORMCHUNK.html#af9e5dcbc8c984ff347ce4f493d38983b">formType</a>;           </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">//uint8_t   chunks[];</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;} <a class="code" href="structAIFF__FORMCHUNK.html">AIFF_FORMCHUNK</a>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="structAIFF__CHUNK.html">   59</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="structAIFF__CHUNK.html#af402f23a98964d0a9119e3d636ef8881">   61</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__CHUNK.html#af402f23a98964d0a9119e3d636ef8881">m_ckID</a>;             </div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="structAIFF__CHUNK.html#a8b6d34dc81e7ecc32f8dedc2d5a7d0f0">   62</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__CHUNK.html#a8b6d34dc81e7ecc32f8dedc2d5a7d0f0">m_ckSize</a>;           </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="comment">//uint8_t   data[];</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;} <a class="code" href="structAIFF__CHUNK.html">AIFF_CHUNK</a>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="aiff_8h.html#a956cce9d8beb8ed7ea32ade05588df3e">   66</a></span>&#160;<span class="preprocessor">#define AIFF_COMMONID       &quot;COMM&quot;</span>  </div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html">   70</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;{</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html#a42fda8c8f53033437b0d4edb5aa8e1b4">   72</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__COMMONCHUNK.html#a42fda8c8f53033437b0d4edb5aa8e1b4">m_ckID</a>;             </div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html#a5ef5c11b1d527fe570c49d9c67c652a0">   73</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__COMMONCHUNK.html#a5ef5c11b1d527fe570c49d9c67c652a0">m_ckSize</a>;           </div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html#a659742886b0c5d4e5992c8c2f316d187">   74</a></span>&#160;    uint8_t     <a class="code" href="structAIFF__COMMONCHUNK.html#a659742886b0c5d4e5992c8c2f316d187">m_numChannels</a>;      </div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html#a7a4220188cf93508b05d21cf1445422d">   75</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__COMMONCHUNK.html#a7a4220188cf93508b05d21cf1445422d">m_numSampleFrames</a>;  </div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="structAIFF__COMMONCHUNK.html#a4647d18be380d1db8b5062de00944b6b">   76</a></span>&#160;    uint8_t     <a class="code" href="structAIFF__COMMONCHUNK.html#a4647d18be380d1db8b5062de00944b6b">m_sampleSize</a>;       </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="comment">//extended sampleRate;</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;} <a class="code" href="structAIFF__COMMONCHUNK.html">AIFF_COMMONCHUNK</a>;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="aiff_8h.html#a347b542041869eeec25860d6cd267c09">   80</a></span>&#160;<span class="preprocessor">#define AIFF_SOUNDATAID     &quot;SSND&quot;</span>  </div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html">   84</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;{</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html#a931e65da3b8942fca462b3a7b6b4d987">   86</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__SOUNDDATACHUNK.html#a931e65da3b8942fca462b3a7b6b4d987">m_ckID</a>;             </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html#ac4c2c69da113a8f51624cea9269fab85">   87</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__SOUNDDATACHUNK.html#ac4c2c69da113a8f51624cea9269fab85">m_ckSize</a>;           </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html#ac29a2204db4a02255280f50541b32833">   88</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__SOUNDDATACHUNK.html#ac29a2204db4a02255280f50541b32833">m_offset</a>;           </div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="structAIFF__SOUNDDATACHUNK.html#a027d711de687287d2f246191aacd85ad">   89</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__SOUNDDATACHUNK.html#a027d711de687287d2f246191aacd85ad">m_blockSize</a>;        </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">//uint8_t   soundData[];</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;} <a class="code" href="structAIFF__SOUNDDATACHUNK.html">AIFF_SOUNDDATACHUNK</a>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="aiff_8h.html#af301a699ee7878ab94f99113c1ab3da6">   93</a></span>&#160;<span class="preprocessor">#define AIFF_NAMEID         &quot;NAME&quot;</span>  </div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="aiff_8h.html#adbe2ec9a8aac0645c70447ba9e22446e">   94</a></span>&#160;<span class="preprocessor">#define AIFF_AUTHORID       &quot;AUTH&quot;</span>  </div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="aiff_8h.html#a823a1021934ec996039da94baf31ad13">   95</a></span>&#160;<span class="preprocessor">#define AIFF_COPYRIGHTID    &quot;(c) &quot;</span>  </div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="aiff_8h.html#a09d56cee199068ccf640406f2845a7a0">   96</a></span>&#160;<span class="preprocessor">#define AIFF_ANNOTATIONID   &quot;ANNO&quot;</span>  </div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="structAIFF__TEXTCHUNK.html">  100</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;{</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="structAIFF__TEXTCHUNK.html#a65babd7bd74bc6b4419a45aa73b72583">  102</a></span>&#160;    <a class="code" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>     <a class="code" href="structAIFF__TEXTCHUNK.html#a65babd7bd74bc6b4419a45aa73b72583">m_ckID</a>;             </div>
+<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="structAIFF__TEXTCHUNK.html#a64ee53cbf162bb5a010d429a0fc585ca">  103</a></span>&#160;    uint32_t    <a class="code" href="structAIFF__TEXTCHUNK.html#a64ee53cbf162bb5a010d429a0fc585ca">m_ckSize</a>;           </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="comment">//uint8_t   text[];</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;} <a class="code" href="structAIFF__TEXTCHUNK.html">AIFF_TEXTCHUNK</a>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#pragma pack(pop)</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// AIFF_H</span></div>
+<div class="ttc" id="aaiff_8h_html_af83f3471a7a94b914e566c3a4918c4bb"><div class="ttname"><a href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a></div><div class="ttdeci">uint8_t AIFF_ID[4]</div><div class="ttdoc">AIFF fourcc ID.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00042">aiff.h:42</a></div></div>
+<div class="ttc" id="astructAIFF__CHUNK_html"><div class="ttname"><a href="structAIFF__CHUNK.html">AIFF_CHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00059">aiff.h:60</a></div></div>
+<div class="ttc" id="astructAIFF__CHUNK_html_a8b6d34dc81e7ecc32f8dedc2d5a7d0f0"><div class="ttname"><a href="structAIFF__CHUNK.html#a8b6d34dc81e7ecc32f8dedc2d5a7d0f0">AIFF_CHUNK::m_ckSize</a></div><div class="ttdeci">uint32_t m_ckSize</div><div class="ttdoc">Size of this chunk - 8.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00062">aiff.h:62</a></div></div>
+<div class="ttc" id="astructAIFF__CHUNK_html_af402f23a98964d0a9119e3d636ef8881"><div class="ttname"><a href="structAIFF__CHUNK.html#af402f23a98964d0a9119e3d636ef8881">AIFF_CHUNK::m_ckID</a></div><div class="ttdeci">AIFF_ID m_ckID</div><div class="ttdoc">Chunk ID.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00061">aiff.h:61</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html">AIFF_COMMONCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00070">aiff.h:71</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html_a42fda8c8f53033437b0d4edb5aa8e1b4"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html#a42fda8c8f53033437b0d4edb5aa8e1b4">AIFF_COMMONCHUNK::m_ckID</a></div><div class="ttdeci">AIFF_ID m_ckID</div><div class="ttdoc">Chunk ID, always &quot;COMM&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00072">aiff.h:72</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html_a4647d18be380d1db8b5062de00944b6b"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html#a4647d18be380d1db8b5062de00944b6b">AIFF_COMMONCHUNK::m_sampleSize</a></div><div class="ttdeci">uint8_t m_sampleSize</div><div class="ttdoc">Number of bits in each sample point.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00076">aiff.h:76</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html_a5ef5c11b1d527fe570c49d9c67c652a0"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html#a5ef5c11b1d527fe570c49d9c67c652a0">AIFF_COMMONCHUNK::m_ckSize</a></div><div class="ttdeci">uint32_t m_ckSize</div><div class="ttdoc">Size of this chunk - 8.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00073">aiff.h:73</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html_a659742886b0c5d4e5992c8c2f316d187"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html#a659742886b0c5d4e5992c8c2f316d187">AIFF_COMMONCHUNK::m_numChannels</a></div><div class="ttdeci">uint8_t m_numChannels</div><div class="ttdoc">Number of audio channels for the sound.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00074">aiff.h:74</a></div></div>
+<div class="ttc" id="astructAIFF__COMMONCHUNK_html_a7a4220188cf93508b05d21cf1445422d"><div class="ttname"><a href="structAIFF__COMMONCHUNK.html#a7a4220188cf93508b05d21cf1445422d">AIFF_COMMONCHUNK::m_numSampleFrames</a></div><div class="ttdeci">uint32_t m_numSampleFrames</div><div class="ttdoc">Number of sample frames in the sound data chunk.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00075">aiff.h:75</a></div></div>
+<div class="ttc" id="astructAIFF__FORMCHUNK_html"><div class="ttname"><a href="structAIFF__FORMCHUNK.html">AIFF_FORMCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00048">aiff.h:49</a></div></div>
+<div class="ttc" id="astructAIFF__FORMCHUNK_html_a1b468f883935337896fab73e43cfd4ac"><div class="ttname"><a href="structAIFF__FORMCHUNK.html#a1b468f883935337896fab73e43cfd4ac">AIFF_FORMCHUNK::m_ckSize</a></div><div class="ttdeci">uint32_t m_ckSize</div><div class="ttdoc">Total file size - 8.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00051">aiff.h:51</a></div></div>
+<div class="ttc" id="astructAIFF__FORMCHUNK_html_a78b5bd6aa509690c2a8f29570f19338e"><div class="ttname"><a href="structAIFF__FORMCHUNK.html#a78b5bd6aa509690c2a8f29570f19338e">AIFF_FORMCHUNK::m_ckID</a></div><div class="ttdeci">AIFF_ID m_ckID</div><div class="ttdoc">Chunk ID, always &quot;FORM&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00050">aiff.h:50</a></div></div>
+<div class="ttc" id="astructAIFF__FORMCHUNK_html_af9e5dcbc8c984ff347ce4f493d38983b"><div class="ttname"><a href="structAIFF__FORMCHUNK.html#af9e5dcbc8c984ff347ce4f493d38983b">AIFF_FORMCHUNK::formType</a></div><div class="ttdeci">AIFF_ID formType</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00052">aiff.h:52</a></div></div>
+<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html">AIFF_SOUNDDATACHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00084">aiff.h:85</a></div></div>
+<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html_a027d711de687287d2f246191aacd85ad"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html#a027d711de687287d2f246191aacd85ad">AIFF_SOUNDDATACHUNK::m_blockSize</a></div><div class="ttdeci">uint32_t m_blockSize</div><div class="ttdoc">Contains the size in bytes of the blocks that sound data is aligned to.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00089">aiff.h:89</a></div></div>
+<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html_a931e65da3b8942fca462b3a7b6b4d987"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html#a931e65da3b8942fca462b3a7b6b4d987">AIFF_SOUNDDATACHUNK::m_ckID</a></div><div class="ttdeci">AIFF_ID m_ckID</div><div class="ttdoc">Chunk ID, always &quot;SSND&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00086">aiff.h:86</a></div></div>
+<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html_ac29a2204db4a02255280f50541b32833"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html#ac29a2204db4a02255280f50541b32833">AIFF_SOUNDDATACHUNK::m_offset</a></div><div class="ttdeci">uint32_t m_offset</div><div class="ttdoc">Determines where the first sample frame in the soundData starts.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00088">aiff.h:88</a></div></div>
+<div class="ttc" id="astructAIFF__SOUNDDATACHUNK_html_ac4c2c69da113a8f51624cea9269fab85"><div class="ttname"><a href="structAIFF__SOUNDDATACHUNK.html#ac4c2c69da113a8f51624cea9269fab85">AIFF_SOUNDDATACHUNK::m_ckSize</a></div><div class="ttdeci">uint32_t m_ckSize</div><div class="ttdoc">Total size of sound data chunk - 8.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00087">aiff.h:87</a></div></div>
+<div class="ttc" id="astructAIFF__TEXTCHUNK_html"><div class="ttname"><a href="structAIFF__TEXTCHUNK.html">AIFF_TEXTCHUNK</a></div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00100">aiff.h:101</a></div></div>
+<div class="ttc" id="astructAIFF__TEXTCHUNK_html_a64ee53cbf162bb5a010d429a0fc585ca"><div class="ttname"><a href="structAIFF__TEXTCHUNK.html#a64ee53cbf162bb5a010d429a0fc585ca">AIFF_TEXTCHUNK::m_ckSize</a></div><div class="ttdeci">uint32_t m_ckSize</div><div class="ttdoc">Size of this chunk - 8.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00103">aiff.h:103</a></div></div>
+<div class="ttc" id="astructAIFF__TEXTCHUNK_html_a65babd7bd74bc6b4419a45aa73b72583"><div class="ttname"><a href="structAIFF__TEXTCHUNK.html#a65babd7bd74bc6b4419a45aa73b72583">AIFF_TEXTCHUNK::m_ckID</a></div><div class="ttdeci">AIFF_ID m_ckID</div><div class="ttdoc">Chunk ID, one of &quot;NAME&quot;, &quot;AUTH&quot;, &quot;(c) &quot;, &quot;ANNO&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="aiff_8h_source.html#l00102">aiff.h:102</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

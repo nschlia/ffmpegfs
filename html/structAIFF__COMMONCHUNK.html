@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -69,28 +69,36 @@ $(function() {
 <div class="title">AIFF_COMMONCHUNK Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="aiff_8h_source.html">aiff.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a42fda8c8f53033437b0d4edb5aa8e1b4"><td class="memItemLeft" align="right" valign="top"><a id="a42fda8c8f53033437b0d4edb5aa8e1b4"></a>
-AIFF_ID&#160;</td><td class="memItemRight" valign="bottom"><b>m_ckID</b></td></tr>
+<a class="el" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__COMMONCHUNK.html#a42fda8c8f53033437b0d4edb5aa8e1b4">m_ckID</a></td></tr>
+<tr class="memdesc:a42fda8c8f53033437b0d4edb5aa8e1b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chunk ID, always "COMM". <br /></td></tr>
 <tr class="separator:a42fda8c8f53033437b0d4edb5aa8e1b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ef5c11b1d527fe570c49d9c67c652a0"><td class="memItemLeft" align="right" valign="top"><a id="a5ef5c11b1d527fe570c49d9c67c652a0"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_ckSize</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__COMMONCHUNK.html#a5ef5c11b1d527fe570c49d9c67c652a0">m_ckSize</a></td></tr>
+<tr class="memdesc:a5ef5c11b1d527fe570c49d9c67c652a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of this chunk - 8. <br /></td></tr>
 <tr class="separator:a5ef5c11b1d527fe570c49d9c67c652a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a659742886b0c5d4e5992c8c2f316d187"><td class="memItemLeft" align="right" valign="top"><a id="a659742886b0c5d4e5992c8c2f316d187"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_numChannels</b></td></tr>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__COMMONCHUNK.html#a659742886b0c5d4e5992c8c2f316d187">m_numChannels</a></td></tr>
+<tr class="memdesc:a659742886b0c5d4e5992c8c2f316d187"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of audio channels for the sound. <br /></td></tr>
 <tr class="separator:a659742886b0c5d4e5992c8c2f316d187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a4220188cf93508b05d21cf1445422d"><td class="memItemLeft" align="right" valign="top"><a id="a7a4220188cf93508b05d21cf1445422d"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_numSampleFrames</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__COMMONCHUNK.html#a7a4220188cf93508b05d21cf1445422d">m_numSampleFrames</a></td></tr>
+<tr class="memdesc:a7a4220188cf93508b05d21cf1445422d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of sample frames in the sound data chunk. <br /></td></tr>
 <tr class="separator:a7a4220188cf93508b05d21cf1445422d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4647d18be380d1db8b5062de00944b6b"><td class="memItemLeft" align="right" valign="top"><a id="a4647d18be380d1db8b5062de00944b6b"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_sampleSize</b></td></tr>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__COMMONCHUNK.html#a4647d18be380d1db8b5062de00944b6b">m_sampleSize</a></td></tr>
+<tr class="memdesc:a4647d18be380d1db8b5062de00944b6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of bits in each sample point. <br /></td></tr>
 <tr class="separator:a4647d18be380d1db8b5062de00944b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00061">61</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<div class="textblock"><p>AIFF Common chunk </p>
+
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00070">70</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="aiff_8h_source.html">aiff.h</a></li>
 </ul>

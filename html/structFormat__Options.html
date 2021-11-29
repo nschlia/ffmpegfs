@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -83,11 +83,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a07f1b98b4f2310f7f2941c7647da8c7d"><td class="memItemLeft" align="right" valign="top"><a id="a07f1b98b4f2310f7f2941c7647da8c7d"></a>
-typedef struct <a class="el" href="structFormat__Options_1_1__tagFORMAT.html">Format_Options::_tagFORMAT</a>&#160;</td><td class="memItemRight" valign="bottom"><b>FORMAT</b></td></tr>
+<tr class="memitem:a07f1b98b4f2310f7f2941c7647da8c7d"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structFormat__Options_1_1__tagFORMAT.html">Format_Options::_tagFORMAT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d">FORMAT</a></td></tr>
 <tr class="separator:a07f1b98b4f2310f7f2941c7647da8c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abaaa9bc7dd414a1ec4639490b396724c"><td class="memItemLeft" align="right" valign="top"><a id="abaaa9bc7dd414a1ec4639490b396724c"></a>
-typedef std::map&lt; SAMPLE_FMT, const <a class="el" href="structFormat__Options_1_1__tagFORMAT.html">FORMAT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#abaaa9bc7dd414a1ec4639490b396724c">FORMAT_MAP</a></td></tr>
+typedef std::map&lt; <a class="el" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657">SAMPLE_FMT</a>, const <a class="el" href="structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d">FORMAT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#abaaa9bc7dd414a1ec4639490b396724c">FORMAT_MAP</a></td></tr>
 <tr class="memdesc:abaaa9bc7dd414a1ec4639490b396724c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of formats. One entry per format derivative. <br /></td></tr>
 <tr class="separator:abaaa9bc7dd414a1ec4639490b396724c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -150,8 +149,24 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Format options: Defines file extension, codecs etc. for each format. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00283">283</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00287">287</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a07f1b98b4f2310f7f2941c7647da8c7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07f1b98b4f2310f7f2941c7647da8c7d">&#9670;&nbsp;</a></span>FORMAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="structFormat__Options_1_1__tagFORMAT.html">Format_Options::_tagFORMAT</a> <a class="el" href="structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d">Format_Options::FORMAT</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Format options: Audio/video codecs and sample format </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a41715394c3a5d1e5c4598da3a1e7959c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a41715394c3a5d1e5c4598da3a1e7959c">&#9670;&nbsp;</a></span>Format_Options()</h2>
 
@@ -195,19 +210,13 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">format_name</td><td>- Descriptive name of the format, e.g. "Opus Audio", </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fileext</td><td>- File extension: mp4, mp3, flac or other </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">video_codec_id</td><td>- AVCodec used for video encoding </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">audio_codec_id</td><td>- AVCodec used for audio encoding </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">sample_format</td><td>- AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">albumart_supported</td><td>- true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_name</td><td>- Descriptive name of the format, e.g. "Opus Audio", </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fileext</td><td>- File extension: mp4, mp3, flac or other </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>- Codec and sample format </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>- Format options: Possible audio/video codecs and sample formats </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">albumart_supported</td><td>- true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00099">99</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00092">92</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
@@ -230,11 +239,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get audio codec_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns audio codec_id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00124">124</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00117">117</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00367">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00710">FFmpegfs_Format::audio_codec_id()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00703">FFmpegfs_Format::audio_codec_id()</a>.</p>
 
 </div>
 </div>
@@ -297,11 +306,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Check if audio codec/sample format combination is supported. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if supported, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00146">146</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00139">139</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00367">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00720">FFmpegfs_Format::is_sample_fmt_supported()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00713">FFmpegfs_Format::is_sample_fmt_supported()</a>.</p>
 
 </div>
 </div>
@@ -323,11 +332,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Create a list of supported sample formats for current audio codec. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns comma separated list of formats, or empty if not available. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00152">152</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00145">145</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00763">get_sampleformat_text()</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00367">m_format_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00772">get_sampleformat_text()</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00725">FFmpegfs_Format::sample_fmt_list()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00718">FFmpegfs_Format::sample_fmt_list()</a>.</p>
 
 </div>
 </div>
@@ -349,11 +358,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get sample format (bit width) </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns sample format </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00135">135</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00128">128</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00367">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00715">FFmpegfs_Format::sample_format()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00708">FFmpegfs_Format::sample_format()</a>.</p>
 
 </div>
 </div>
@@ -375,11 +384,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get video codec_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns video codec_id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00113">113</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00106">106</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00367">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00705">FFmpegfs_Format::video_codec_id()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00698">FFmpegfs_Format::video_codec_id()</a>.</p>
 
 </div>
 </div>

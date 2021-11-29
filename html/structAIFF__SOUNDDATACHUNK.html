@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -69,25 +69,32 @@ $(function() {
 <div class="title">AIFF_SOUNDDATACHUNK Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="aiff_8h_source.html">aiff.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a931e65da3b8942fca462b3a7b6b4d987"><td class="memItemLeft" align="right" valign="top"><a id="a931e65da3b8942fca462b3a7b6b4d987"></a>
-AIFF_ID&#160;</td><td class="memItemRight" valign="bottom"><b>m_ckID</b></td></tr>
+<a class="el" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__SOUNDDATACHUNK.html#a931e65da3b8942fca462b3a7b6b4d987">m_ckID</a></td></tr>
+<tr class="memdesc:a931e65da3b8942fca462b3a7b6b4d987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chunk ID, always "SSND". <br /></td></tr>
 <tr class="separator:a931e65da3b8942fca462b3a7b6b4d987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4c2c69da113a8f51624cea9269fab85"><td class="memItemLeft" align="right" valign="top"><a id="ac4c2c69da113a8f51624cea9269fab85"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_ckSize</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__SOUNDDATACHUNK.html#ac4c2c69da113a8f51624cea9269fab85">m_ckSize</a></td></tr>
+<tr class="memdesc:ac4c2c69da113a8f51624cea9269fab85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total size of sound data chunk - 8. <br /></td></tr>
 <tr class="separator:ac4c2c69da113a8f51624cea9269fab85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac29a2204db4a02255280f50541b32833"><td class="memItemLeft" align="right" valign="top"><a id="ac29a2204db4a02255280f50541b32833"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_offset</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__SOUNDDATACHUNK.html#ac29a2204db4a02255280f50541b32833">m_offset</a></td></tr>
+<tr class="memdesc:ac29a2204db4a02255280f50541b32833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines where the first sample frame in the soundData starts. <br /></td></tr>
 <tr class="separator:ac29a2204db4a02255280f50541b32833"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a027d711de687287d2f246191aacd85ad"><td class="memItemLeft" align="right" valign="top"><a id="a027d711de687287d2f246191aacd85ad"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_blockSize</b></td></tr>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAIFF__SOUNDDATACHUNK.html#a027d711de687287d2f246191aacd85ad">m_blockSize</a></td></tr>
+<tr class="memdesc:a027d711de687287d2f246191aacd85ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the size in bytes of the blocks that sound data is aligned to. <br /></td></tr>
 <tr class="separator:a027d711de687287d2f246191aacd85ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00072">72</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<div class="textblock"><p>AIFF sound data chunk </p>
+
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00084">84</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="aiff_8h_source.html">aiff.h</a></li>
 </ul>

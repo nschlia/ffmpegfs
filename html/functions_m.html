@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.7</span>
+   &#160;<span id="projectnumber">2.8</span>
    </div>
   </td>
  </tr>
@@ -165,6 +165,9 @@ $(function() {
 <li>m_bitrate
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#a79fd57a78d79f49b409d139be00915de">FFmpeg_Transcoder::PRORES_BITRATE</a>
 </li>
+<li>m_blockSize
+: <a class="el" href="structAIFF__SOUNDDATACHUNK.html#a027d711de687287d2f246191aacd85ad">AIFF_SOUNDDATACHUNK</a>
+</li>
 <li>m_bluray
 : <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE</a>
 </li>
@@ -265,6 +268,20 @@ $(function() {
 </li>
 <li>m_ci
 : <a class="el" href="classBuffer.html#a06d70fd4eff6ff0addb7bbd41f4654a1">Buffer</a>
+</li>
+<li>m_ckID
+: <a class="el" href="structAIFF__CHUNK.html#af402f23a98964d0a9119e3d636ef8881">AIFF_CHUNK</a>
+, <a class="el" href="structAIFF__COMMONCHUNK.html#a42fda8c8f53033437b0d4edb5aa8e1b4">AIFF_COMMONCHUNK</a>
+, <a class="el" href="structAIFF__FORMCHUNK.html#a78b5bd6aa509690c2a8f29570f19338e">AIFF_FORMCHUNK</a>
+, <a class="el" href="structAIFF__SOUNDDATACHUNK.html#a931e65da3b8942fca462b3a7b6b4d987">AIFF_SOUNDDATACHUNK</a>
+, <a class="el" href="structAIFF__TEXTCHUNK.html#a65babd7bd74bc6b4419a45aa73b72583">AIFF_TEXTCHUNK</a>
+</li>
+<li>m_ckSize
+: <a class="el" href="structAIFF__CHUNK.html#a8b6d34dc81e7ecc32f8dedc2d5a7d0f0">AIFF_CHUNK</a>
+, <a class="el" href="structAIFF__COMMONCHUNK.html#a5ef5c11b1d527fe570c49d9c67c652a0">AIFF_COMMONCHUNK</a>
+, <a class="el" href="structAIFF__FORMCHUNK.html#a1b468f883935337896fab73e43cfd4ac">AIFF_FORMCHUNK</a>
+, <a class="el" href="structAIFF__SOUNDDATACHUNK.html#ac4c2c69da113a8f51624cea9269fab85">AIFF_SOUNDDATACHUNK</a>
+, <a class="el" href="structAIFF__TEXTCHUNK.html#a64ee53cbf162bb5a010d429a0fc585ca">AIFF_TEXTCHUNK</a>
 </li>
 <li>m_clear_cache
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a40ecb6ebb2840305e43efa22fb7f3f4d">FFMPEGFS_PARAMS</a>
@@ -589,10 +606,12 @@ $(function() {
 </li>
 <li>m_id
 : <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
-, <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_ID
 : <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
+</li>
+<li>m_id
+: <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_id3v1
 : <a class="el" href="classCache__Entry.html#aa33524817fcebc9a0daca7864d1863ab">Cache_Entry</a>
@@ -742,8 +761,15 @@ $(function() {
 <li>m_numberof_cds
 : <a class="el" href="structVCDINFO.html#abb48ae32876d051932f06a74595302fc">VCDINFO</a>
 </li>
+<li>m_numChannels
+: <a class="el" href="structAIFF__COMMONCHUNK.html#a659742886b0c5d4e5992c8c2f316d187">AIFF_COMMONCHUNK</a>
+</li>
+<li>m_numSampleFrames
+: <a class="el" href="structAIFF__COMMONCHUNK.html#a7a4220188cf93508b05d21cf1445422d">AIFF_COMMONCHUNK</a>
+</li>
 <li>m_offset
-: <a class="el" href="structIMAGE__FRAME.html#a166c08177cd10feba5cf71ae6663ba48">IMAGE_FRAME</a>
+: <a class="el" href="structAIFF__SOUNDDATACHUNK.html#ac29a2204db4a02255280f50541b32833">AIFF_SOUNDDATACHUNK</a>
+, <a class="el" href="structIMAGE__FRAME.html#a166c08177cd10feba5cf71ae6663ba48">IMAGE_FRAME</a>
 </li>
 <li>m_oldnamescheme
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a301db9d4e3b378380316767d4ba2d588">FFMPEGFS_PARAMS</a>
@@ -864,6 +890,9 @@ $(function() {
 <li>m_sample_rate
 : <a class="el" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">AUDIO_SETTINGS</a>
 , <a class="el" href="structWAV__HEADER.html#a47556ecf7a6c5f86c3a43eb458857dd1">WAV_HEADER</a>
+</li>
+<li>m_sampleSize
+: <a class="el" href="structAIFF__COMMONCHUNK.html#a4647d18be380d1db8b5062de00944b6b">AIFF_COMMONCHUNK</a>
 </li>
 <li>m_scriptfile
 : <a class="el" href="structFFMPEGFS__PARAMS.html#af06eab6ac6cb38d4978b9dc0c0d8b465">FFMPEGFS_PARAMS</a>
@@ -987,10 +1016,10 @@ $(function() {
 : <a class="el" href="structVIRTUALFILE_1_1CUESHEET__TRACK.html#aac21e3458448b474c340f10c6b50c207">VIRTUALFILE::CUESHEET_TRACK</a>
 </li>
 <li>m_type
-: <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
-, <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
-, <a class="el" href="structVCDINFO.html#a3c3488d8b79ae54e2d2a6fbd1a9644f3">VCDINFO</a>
+: <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
+, <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
 , <a class="el" href="classVcdInfo.html#acf8cf2e64c1091a63df1aa2cea15bc62">VcdInfo</a>
+, <a class="el" href="structVCDINFO.html#a3c3488d8b79ae54e2d2a6fbd1a9644f3">VCDINFO</a>
 , <a class="el" href="structVIRTUALFILE.html#a27038be2501f0f2a535748179cf90ec0">VIRTUALFILE</a>
 </li>
 <li>m_valid_bits_per_sample

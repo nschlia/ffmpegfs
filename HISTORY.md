@@ -1,6 +1,32 @@
 History
 =======
 
+### Version 2.8 released
+
+**New in in 2.8 (2021-11-29):**
+
+* **Bugfix:** [Issue #102](https://github.com/nschlia/ffmpegfs/issues/102): Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.
+* **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fixed HLS problems with cache causing garbled videos and hick-ups in audio.
+* **Enhancement**: [Issue #103](https://github.com/nschlia/ffmpegfs/issues/103): If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with *--min_seek_time_diff*. Defaults to 30 seconds.
+* **Feature**: [Issue #105](https://github.com/nschlia/ffmpegfs/issues/105): Added Free Lossless Audio Codec (FLAC) support. Activate with *--desttype=FLAC*.
+* **Feature:** [Issue #101](https://github.com/nschlia/ffmpegfs/issues/101): Sample format for audio files can be selected via command line with *--audiosamplefmt*. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point.
+  Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed.
+  Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).
+
+### Version 2.7 released
+
+**New in in 2.7 (2021-11-08):**
+
+* **Bugfix:** [Issue #92](https://github.com/nschlia/ffmpegfs/issues/92): Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered.
+  It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a --hwaccel_dec_blocked parameter has been added.
+  If hardware decoding fails, check the log for a message similar this:
+  "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0."
+  If VP9 profile 0 is not supported, the parameter would be:
+  --hwaccel_dec_blocked=VP9:0
+  This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.
+* **Bugfix:** [Issue #96](https://github.com/nschlia/ffmpegfs/issues/96): Fixed potential buffer overrun and crash when reading corrupted input files.
+* **Enhancement:** [Issue #99](https://github.com/nschlia/ffmpegfs/issues/99): Report command line error if --desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, --desttype=aiff+mov would create MOV files out of any input. Correct would be --desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.
+
 ### Version 2.6 released
 
 **New in 2.6 (2021-09-04):**

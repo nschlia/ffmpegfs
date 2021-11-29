@@ -576,7 +576,8 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
 
 /**
  * @brief Iterate through all elements in map print all keys
- * @param[in] map - map to go through.
+ * @param[in] info - Informative text, will be printed before the list. May be nullptr.
+ * @param[in] map - Map to go through.
  */
 template<typename T>
 void list_options(const char * info, const T & map)
@@ -591,7 +592,15 @@ void list_options(const char * info, const T & map)
             buffer += ", ";
         }
     }
-    std::fprintf(stderr, "%s: %s\n", info, buffer.c_str());
+
+    if (info != nullptr)
+    {
+        std::fprintf(stderr, "%s: %s\n", info, buffer.c_str());
+    }
+    else
+    {
+        std::fprintf(stderr, "%s\n", buffer.c_str());
+    }
 }
 
 /**

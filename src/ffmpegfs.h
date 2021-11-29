@@ -373,7 +373,6 @@ LPVIRTUALFILE   find_parent(const std::string & origpath);
 
 /**
  * @brief Convert SAMPLE_FMT enum to human readable text.
- * @param[in] autocopy - SAMPLE_FMT enum value to convert.
  * @return SAMPLE_FMT enum as text or "INVALID" if not known.
  */
 std::string         get_sampleformat_text(SAMPLE_FMT sample_fmt);

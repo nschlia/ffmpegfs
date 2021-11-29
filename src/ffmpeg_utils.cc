@@ -89,13 +89,6 @@ Format_Options::Format_Options()
 {
 }
 
-/**
- * @brief Construct Format_Options object
- * @param[in] format_name - Descriptive name of the format, e.g. "Opus Audio",
- * @param[in] fileext - File extension: mp4, mp3, flac or other
- * @param[in] format - Codec and sample format
- * @param[in] albumart_supported - true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff
- */
 Format_Options::Format_Options(
         const std::string & format_name,
         const std::string & fileext,

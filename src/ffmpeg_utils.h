@@ -262,18 +262,22 @@ typedef enum RECODESAME
     RECODESAME_YES,        /**< @brief Always recode to same format. */
 } RECODESAME;
 
+/**
+  * List of sample formats.
+  * User selection, we don't care about planar or interleaved.
+  */
 typedef enum SAMPLE_FMT
 {
-    SAMPLE_FMT_DONTCARE = -1,
-    SAMPLE_FMT_8,
-    SAMPLE_FMT_16,
-    SAMPLE_FMT_24,
-    SAMPLE_FMT_32,
-    SAMPLE_FMT_64,
-    SAMPLE_FMT_F16,
-    SAMPLE_FMT_F24,
-    SAMPLE_FMT_F32,
-    SAMPLE_FMT_F64
+    SAMPLE_FMT_DONTCARE = -1,   /**< @brief Don't care, leave to FFmpegfs to choose */
+    SAMPLE_FMT_8,               /**< @brief 8 bit integer */
+    SAMPLE_FMT_16,              /**< @brief 16 bit integer */
+    SAMPLE_FMT_24,              /**< @brief 24 bit integer */
+    SAMPLE_FMT_32,              /**< @brief 32 bit integer */
+    SAMPLE_FMT_64,              /**< @brief 64 bit integer */
+    SAMPLE_FMT_F16,             /**< @brief 16 bit floating point */
+    SAMPLE_FMT_F24,             /**< @brief 24 bit floating point */
+    SAMPLE_FMT_F32,             /**< @brief 32 bit floating point */
+    SAMPLE_FMT_F64              /**< @brief 64 bit floating point */
 } SAMPLE_FMT;
 
 /**
@@ -284,6 +288,9 @@ struct Format_Options
 {
     friend class FFmpegfs_Format;
 
+    /**
+      * Format options: Audio/video codecs and sample format
+      */
     typedef struct _tagFORMAT
     {
         AVCodecID       m_video_codec_id;   /**< @brief AVCodec used for video encoding */
@@ -303,9 +310,7 @@ public:
      * @brief Construct Format_Options object
      * @param[in] format_name - Descriptive name of the format, e.g. "Opus Audio",
      * @param[in] fileext - File extension: mp4, mp3, flac or other
-     * @param[in] video_codec_id - AVCodec used for video encoding
-     * @param[in] audio_codec_id - AVCodec used for audio encoding
-     * @param[in] sample_format - AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care"
+     * @param[in] format - Format options: Possible audio/video codecs and sample formats
      * @param[in] albumart_supported - true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff
      */
     Format_Options(

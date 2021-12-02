@@ -615,7 +615,7 @@ $(function() {
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;                    {</div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;                        AV_CODEC_ID_H264,        <span class="comment">// AVCodec used for video encoding</span></div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;                        <span class="comment">// AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers</span></div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;                        <span class="comment">// AV_CODEC_ID_MP3 Also allowed, but as effective.</span></div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;                        <span class="comment">// AV_CODEC_ID_MP3 Also allowed, but less effective.</span></div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;                        AV_CODEC_ID_AAC,        <span class="comment">// AVCodec used for audio encoding</span></div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                        AV_SAMPLE_FMT_NONE,     <span class="comment">// &quot;don&#39;t care&quot;</span></div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                    }</div>
@@ -639,7 +639,7 @@ $(function() {
 <div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;                    {</div>
 <div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;                        AV_CODEC_ID_H264,        <span class="comment">// AVCodec used for video encoding</span></div>
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;                        <span class="comment">// AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers</span></div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;                        <span class="comment">// AV_CODEC_ID_MP3 Also allowed, but as effective.</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;                        <span class="comment">// AV_CODEC_ID_MP3 Also allowed, but less effective.</span></div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;                        AV_CODEC_ID_AAC,        <span class="comment">// AVCodec used for audio encoding</span></div>
 <div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;                        AV_SAMPLE_FMT_NONE,     <span class="comment">// &quot;don&#39;t care&quot;</span></div>
 <div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;                    }</div>
@@ -2146,14 +2146,16 @@ $(function() {
 <div class="line"><a name="l02108"></a><span class="lineno"> 2108</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l02109"></a><span class="lineno"> 2109</span>&#160;    }</div>
 <div class="line"><a name="l02110"></a><span class="lineno"> 2110</span>&#160;    <span class="keywordtype">char</span> line[4096];</div>
-<div class="line"><a name="l02111"></a><span class="lineno"> 2111</span>&#160;    fgets(line, <span class="keyword">sizeof</span> line, fp);</div>
+<div class="line"><a name="l02111"></a><span class="lineno"> 2111</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *p = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l02112"></a><span class="lineno"> 2112</span>&#160; </div>
-<div class="line"><a name="l02113"></a><span class="lineno"> 2113</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span> *p = strstr(line, <span class="stringliteral">&quot;/docker/&quot;</span>);</div>
-<div class="line"><a name="l02114"></a><span class="lineno"> 2114</span>&#160; </div>
-<div class="line"><a name="l02115"></a><span class="lineno"> 2115</span>&#160;    fclose(fp);</div>
-<div class="line"><a name="l02116"></a><span class="lineno"> 2116</span>&#160; </div>
-<div class="line"><a name="l02117"></a><span class="lineno"> 2117</span>&#160;    <span class="keywordflow">return</span> (p != <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l02118"></a><span class="lineno"> 2118</span>&#160;}</div>
+<div class="line"><a name="l02113"></a><span class="lineno"> 2113</span>&#160;    <span class="keywordflow">if</span> (fgets(line, <span class="keyword">sizeof</span> line, fp) != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l02114"></a><span class="lineno"> 2114</span>&#160;    {</div>
+<div class="line"><a name="l02115"></a><span class="lineno"> 2115</span>&#160;        p = strstr(line, <span class="stringliteral">&quot;/docker/&quot;</span>);</div>
+<div class="line"><a name="l02116"></a><span class="lineno"> 2116</span>&#160;    }</div>
+<div class="line"><a name="l02117"></a><span class="lineno"> 2117</span>&#160;    fclose(fp);</div>
+<div class="line"><a name="l02118"></a><span class="lineno"> 2118</span>&#160; </div>
+<div class="line"><a name="l02119"></a><span class="lineno"> 2119</span>&#160;    <span class="keywordflow">return</span> (p != <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l02120"></a><span class="lineno"> 2120</span>&#160;}</div>
 <div class="ttc" id="aclassFFmpegfs__Format_html_a00e5c92b14e8554d62c816a754df5eeb"><div class="ttname"><a href="classFFmpegfs__Format.html#a00e5c92b14e8554d62c816a754df5eeb">FFmpegfs_Format::desttype</a></div><div class="ttdeci">const std::string &amp; desttype() const</div><div class="ttdoc">Get destination type.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00658">ffmpeg_utils.cc:658</a></div></div>
 <div class="ttc" id="aclassFFmpegfs__Format_html_a0d5987f7b2cca19160b70021cf348f30"><div class="ttname"><a href="classFFmpegfs__Format.html#a0d5987f7b2cca19160b70021cf348f30">FFmpegfs_Format::OPTIONS_MAP</a></div><div class="ttdeci">std::map&lt; FILETYPE, const Format_Options &gt; OPTIONS_MAP</div><div class="ttdoc">Map of options. One entry per supported destination type.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00381">ffmpeg_utils.h:381</a></div></div>
 <div class="ttc" id="aclassFFmpegfs__Format_html_a29a29e18f3ec03013e68a9d7b40873bd"><div class="ttname"><a href="classFFmpegfs__Format.html#a29a29e18f3ec03013e68a9d7b40873bd">FFmpegfs_Format::m_cur_opts</a></div><div class="ttdeci">const Format_Options * m_cur_opts</div><div class="ttdoc">Currently selected options. Will never be nullptr.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00465">ffmpeg_utils.h:465</a></div></div>

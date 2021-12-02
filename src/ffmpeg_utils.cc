@@ -553,7 +553,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         AV_CODEC_ID_H264,        // AVCodec used for video encoding
                         // AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers
-                        // AV_CODEC_ID_MP3 Also allowed, but as effective.
+                        // AV_CODEC_ID_MP3 Also allowed, but less effective.
                         AV_CODEC_ID_AAC,		// AVCodec used for audio encoding
                         AV_SAMPLE_FMT_NONE,     // "don't care"
                     }
@@ -577,7 +577,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         AV_CODEC_ID_H264,        // AVCodec used for video encoding
                         // AV_CODEC_ID_AC3: AC3 possible in container, but not supported in browsers
-                        // AV_CODEC_ID_MP3 Also allowed, but as effective.
+                        // AV_CODEC_ID_MP3 Also allowed, but less effective.
                         AV_CODEC_ID_AAC,		// AVCodec used for audio encoding
                         AV_SAMPLE_FMT_NONE,     // "don't care"
                     }

@@ -66,6 +66,7 @@ set -e
 trap cleanup EXIT
 trap ffmpegfserr USR1
 DESTTYPE=$1
+EXTRANAME=$3
 # Map filenames
 if [ "${DESTTYPE}" == "prores" ];
 then
@@ -78,12 +79,27 @@ then
 else
     FILEEXT=${DESTTYPE}
 fi
+if [ -z "${EXTRANAME}" ];
+then
+    EXTRANAME=$DESTTYPE
+fi
+if [ "${EXTRANAME}" == "hls" ];
+then
+    EXTRANAME=
+fi
+if [ ! -z "${EXTRANAME}" ];
+then
+    EXTRANAME=_$EXTRANAME
+fi
+
 SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
 DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
 
+echo $0${EXTRANAME}.builtin.log ${EXTRANAME}
+
 #--disable_cache
-( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=$0_${DESTTYPE}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null || kill -USR1 $$ ) &
+( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=$0${EXTRANAME}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null || kill -USR1 $$ ) &
 while ! mount | grep -q "${DIRNAME}" ; do
     sleep 0.1
 done

@@ -2108,10 +2108,12 @@ bool detect_docker(void)
         return false;
     }
     char line[4096];
-    fgets(line, sizeof line, fp);
+    const char *p = nullptr;
 
-    const char *p = strstr(line, "/docker/");
-
+    if (fgets(line, sizeof line, fp) != nullptr)
+    {
+        p = strstr(line, "/docker/");
+    }
     fclose(fp);
 
     return (p != nullptr);

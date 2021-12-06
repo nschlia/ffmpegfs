@@ -1632,13 +1632,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         output_stream->time_base.num            = 1;
         output_codec_ctx->time_base             = output_stream->time_base;
 
-        //#if !FFMPEG_VERSION3 // Check for FFmpeg 3
         // set -strict -2 for aac (required for FFmpeg 2)
         dict_set_with_check(&opt, "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
-        //#endif
 
         // Set duration as hint for muxer
         if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
@@ -1948,6 +1946,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         {
             return ret;
         }
+
+        // set -strict -2 for aac (required for FFmpeg 2)
+        dict_set_with_check(&opt, "strict", "-2", 0);
+
+        // Allow the use of the experimental AAC encoder
+        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 
 #ifdef _DEBUG
         print_stream_info(output_stream);
@@ -5261,7 +5265,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_FLAC:
+    case AV_CODEC_ID_FLAC:      // TODO...
     {
         int bytes_per_sample    = av_get_bytes_per_sample(sample_format != AV_SAMPLE_FMT_NONE ? sample_format : AV_SAMPLE_FMT_S16);
 
@@ -5296,7 +5300,31 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
 
     switch (codec_id)
     {
+    case AV_CODEC_ID_MPEG1VIDEO:    // TODO...
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        break;
+    }
+    case AV_CODEC_ID_MPEG2VIDEO:    // TODO...
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        break;
+    }
     case AV_CODEC_ID_H264:
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        break;
+    }
+    case AV_CODEC_ID_H265:          // TODO...
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        break;
+    }
+    case AV_CODEC_ID_VC1:           // TODO...
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
         *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
@@ -5308,7 +5336,19 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
         break;
     }
+    case AV_CODEC_ID_VP8:           // TODO...
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        break;
+    }
     case AV_CODEC_ID_VP9:
+    {
+        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
+        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        break;
+    }
+    case AV_CODEC_ID_AV1:           // TODO...
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
         *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead

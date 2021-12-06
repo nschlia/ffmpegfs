@@ -117,6 +117,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
         break;
     }
     case AV_CODEC_ID_H264:          // h264
+    case AV_CODEC_ID_H265:          // h265
     {
         time_base_tbn.num                       = 1;
         time_base_tbn.den                       = 90000;

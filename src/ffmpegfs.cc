@@ -70,6 +70,9 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter
     , m_mountpath("")                                   // required parameter
 
+    , m_audiocodec(AV_CODEC_ID_NONE)                    // default: use predefined option
+    , m_videocodec(AV_CODEC_ID_NONE)                    // default: use predefined option
+
     , m_autocopy(AUTOCOPY_OFF)                          // default: off
     , m_profile(PROFILE_DEFAULT)                        // default: no profile
     , m_level(PRORESLEVEL_NONE)                         // default: no level
@@ -204,6 +207,8 @@ enum
     KEY_KEEP_OPT,
     // Intelligent parameters
     KEY_DESTTYPE,
+    KEY_AUDIOCODEC,
+    KEY_VIDEOCODEC,
     KEY_AUDIO_BITRATE,
     KEY_AUDIO_SAMPLERATE,
     KEY_AUDIO_CHANNELS,
@@ -247,6 +252,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     // Output type
     FUSE_OPT_KEY("--desttype=%s",                   KEY_DESTTYPE),
     FUSE_OPT_KEY("desttype=%s",                     KEY_DESTTYPE),
+    FUSE_OPT_KEY("--audiocodec=%s",                 KEY_AUDIOCODEC),
+    FUSE_OPT_KEY("audiocodec=%s",                   KEY_AUDIOCODEC),
+    FUSE_OPT_KEY("--videocodec=%s",                 KEY_VIDEOCODEC),
+    FUSE_OPT_KEY("videocodec=%s",                   KEY_VIDEOCODEC),
     FUSE_OPT_KEY("--profile=%s",                    KEY_PROFILE),
     FUSE_OPT_KEY("profile=%s",                      KEY_PROFILE),
     FUSE_OPT_KEY("--autocopy=%s",                   KEY_AUTOCOPY),
@@ -374,6 +383,46 @@ typedef struct HWACCEL                                                  /**< @br
 typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
 typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
 typedef std::map<std::string, SAMPLE_FMT, comp> SAMPLE_FMT_MAP;         /**< @brief Map command line option to SAMPLE_FMT */
+
+typedef std::map<std::string, AVCodecID, comp> AUDIOCODEC_MAP;          /**< @brief Map command line option to audio AVCodecID */
+typedef std::map<std::string, AVCodecID, comp> VIDEOCODEC_MAP;          /**< @brief Map command line option to video AVCodecID */
+
+/**
+ * @brief List of audio codecs
+ */
+static const AUDIOCODEC_MAP audiocodec_map =
+{
+    { "AAC",            AV_CODEC_ID_AAC },          // TS, MP4, MOV
+    { "AC3",            AV_CODEC_ID_AC3 },          // MP4, MOV
+    { "MP3",            AV_CODEC_ID_MP3 },          // TS, MP4, MOV
+    { "OPUS",           AV_CODEC_ID_OPUS },         // webm
+
+    // TODO: More to come..
+
+    { "VORBIS",         AV_CODEC_ID_VORBIS },       // webm TODO: Sound skips
+    { "DTS",            AV_CODEC_ID_DTS },          // TODO: invalid argument?
+    { "PCM16",          AV_CODEC_ID_PCM_S16LE },    // TODO: is this useable?
+    { "PCM24",          AV_CODEC_ID_PCM_S24LE },    // TODO: is this useable?
+    { "PCM32",          AV_CODEC_ID_PCM_S32LE },    // TODO: is this useable?
+};
+
+/**
+ * @brief List of video codecs
+ */
+static const VIDEOCODEC_MAP videocodec_map =
+{
+    { "MPEG1",          AV_CODEC_ID_MPEG1VIDEO },   // TS, MP4
+    { "MPEG2",          AV_CODEC_ID_MPEG2VIDEO },   // TS, MP4
+    { "H264",           AV_CODEC_ID_H264 },         // TS, MP4
+    { "H265",           AV_CODEC_ID_H265 },         // TS, MP4
+    { "VP8",            AV_CODEC_ID_VP8 },          // WebM
+    { "VP9",            AV_CODEC_ID_VP9 },          // WebM
+
+    // TODO: More to come..
+
+    //{ "AV1",            AV_CODEC_ID_AV1 },          // WebM   TODO: Ends with "Could not write video frame (error 'Invalid data found when processing input')."
+    //{ "VC1",            AV_CODEC_ID_VC1 },          // TODO: Could not find encoder 'vc1'
+};
 
 /**
   * List of AUTOCOPY options
@@ -520,6 +569,8 @@ static int          get_sampleformat(const std::string & arg, SAMPLE_FMT * sampl
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
+static int          get_audiocodec(const std::string & arg, AVCodecID *audiocodec);
+static int          get_videocodec(const std::string & arg, AVCodecID *videocodec);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static int          get_recodesame(const std::string & arg, RECODESAME *recode);
 static int          get_profile(const std::string & arg, PROFILE *profile);
@@ -1025,6 +1076,82 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 
             return 0;
         }
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+    return -1;
+}
+
+/**
+ * @brief Get the audio codec.
+ * @param[in] arg - One of the possible audio codecs.
+ * @param[out] audiocodec- Upon return contains selected AVCodecID enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_audiocodec(const std::string & arg, AVCodecID *audiocodec)
+{
+    *audiocodec = AV_CODEC_ID_NONE;
+
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string param(arg.substr(0, pos));
+        std::string data(arg.substr(pos + 1));
+
+        AUDIOCODEC_MAP::const_iterator it = audiocodec_map.find(data);
+
+        if (it == audiocodec_map.cend())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid videocodec option: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid autocopy options are:", audiocodec_map);
+
+            return -1;
+        }
+
+        *audiocodec = it->second;
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+    return -1;
+}
+
+/**
+ * @brief Get the video codec.
+ * @param[in] arg - One of the possible video codecs.
+ * @param[out] audiocodec- Upon return contains selected AVCodecID enum.
+ * @return Returns 0 if found; if not found returns -1.
+ */
+static int get_videocodec(const std::string & arg, AVCodecID *videocodec)
+{
+    *videocodec = AV_CODEC_ID_NONE;
+
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string param(arg.substr(0, pos));
+        std::string data(arg.substr(pos + 1));
+
+        VIDEOCODEC_MAP::const_iterator it = videocodec_map.find(data);
+
+        if (it == videocodec_map.cend())
+        {
+            std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid videocodec option: %s\n", param.c_str(), data.c_str());
+
+            list_options("Valid autocopy options are:", videocodec_map);
+
+            return -1;
+        }
+
+        *videocodec = it->second;
+
+        return 0;
     }
 
     std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
@@ -1609,6 +1736,14 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_desttype(arg, ffmpeg_format);
     }
+    case KEY_AUDIOCODEC:
+    {
+        return get_audiocodec(arg, &params.m_audiocodec);
+    }
+    case KEY_VIDEOCODEC:
+    {
+        return get_videocodec(arg, &params.m_videocodec);
+    }
     case KEY_AUTOCOPY:
     {
         return get_autocopy(arg, &params.m_autocopy);
@@ -1786,18 +1921,39 @@ static void print_params(void)
     Logging::trace(nullptr, "********* " PACKAGE_NAME " Options *********");
     Logging::trace(nullptr, "Base Path         : %1", params.m_basepath.c_str());
     Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath.c_str());
-    Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
-    Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
-    Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
+    Logging::trace(nullptr, "--------- Format ---------");
     if (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN)
     {
         Logging::trace(nullptr, "Audio File Type   : %1", ffmpeg_format[1].desttype().c_str());
+        if (ffmpeg_format[1].audio_codec_id() != AV_CODEC_ID_NONE)
+        {
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[1].audio_codec_id(), false), get_codec_name(ffmpeg_format[1].audio_codec_id(), true));
+        }
         Logging::trace(nullptr, "Video File Type   : %1", ffmpeg_format[0].desttype().c_str());
+        if (ffmpeg_format[0].audio_codec_id() != AV_CODEC_ID_NONE)
+        {
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec_id(), false), get_codec_name(ffmpeg_format[0].audio_codec_id(), true));
+        }
+        if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE)
+        {
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec_id(), false), get_codec_name(ffmpeg_format[0].video_codec_id(), true));
+        }
     }
     else
     {
         Logging::trace(nullptr, "File Type         : %1", ffmpeg_format[0].desttype().c_str());
+        if (ffmpeg_format[0].audio_codec_id() != AV_CODEC_ID_NONE)
+        {
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec_id(), false), get_codec_name(ffmpeg_format[0].audio_codec_id(), true));
+        }
+        if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE)
+        {
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec_id(), false), get_codec_name(ffmpeg_format[0].video_codec_id(), true));
+        }
     }
+    Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
+    Logging::trace(nullptr, "Auto Copy         : %1", get_autocopy_text(params.m_autocopy).c_str());
+    Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");

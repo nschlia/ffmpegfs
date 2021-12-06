@@ -1106,7 +1106,7 @@ static int get_audiocodec(const std::string & arg, AVCodecID *audiocodec)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid videocodec option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid autocopy options are:", audiocodec_map);
+            list_options("Valid audio codecs", audiocodec_map);
 
             return -1;
         }
@@ -1144,7 +1144,7 @@ static int get_videocodec(const std::string & arg, AVCodecID *videocodec)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid videocodec option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid autocopy options are:", videocodec_map);
+            list_options("Valid video codecs", audiocodec_map);
 
             return -1;
         }

@@ -8,13 +8,13 @@ Installation from repository
 
 FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
 
-On Debian 11 Bullseye you can simply do
+On Debian 11 Bullseye, you get V2.2 by simply doing
 
     apt-get install ffmpegfs
 
-For Ubuntu 20.04 and Linux distributions based on it this is
+For Ubuntu 20.04 or newer and Linux distributions based on it this is
 
-    apt install ffmpegfs
+    apt-get install ffmpegfs
 
 ### Debian Buster
 

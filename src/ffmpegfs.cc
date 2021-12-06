@@ -803,7 +803,7 @@ static int get_sampleformat(const std::string & arg, SAMPLE_FMT * sample_fmt)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid sample format option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid sample formats are:", sample_fmt_map);
+            list_options("Valid sample formats are", sample_fmt_map);
 
             return -1;
         }
@@ -1180,7 +1180,7 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid autocopy option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid autocopy options are:", autocopy_map);
+            list_options("Valid autocopy options are", autocopy_map);
 
             return -1;
         }
@@ -1226,7 +1226,7 @@ static int get_recodesame(const std::string & arg, RECODESAME *recode)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid recode option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid recode options are:", recode_map);
+            list_options("Valid recode options are", recode_map);
 
             return -1;
         }
@@ -1272,7 +1272,7 @@ static int get_profile(const std::string & arg, PROFILE *profile)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid profile: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid profiles are:", profile_map);
+            list_options("Valid profiles are", profile_map);
 
             return -1;
         }
@@ -1319,7 +1319,7 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid level: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid levels are:", level_map);
+            list_options("Valid levels are", level_map);
 
             return -1;
         }
@@ -1419,7 +1419,7 @@ static int get_hwaccel(const std::string & arg, HWACCELAPI *hwaccel_API, AVHWDev
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid hardware acceleration API: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid hardware acceleration APIs are:", hwaccel_map);
+            list_options("Valid hardware acceleration APIs are", hwaccel_map);
 
             return -1;
         }
@@ -1456,7 +1456,7 @@ static int get_codec(const std::string & codec, AVCodecID *codec_id)
     {
         std::fprintf(stderr, "INVALID PARAMETER: Unknown codec '%s'.\n", codec.c_str());
 
-        list_options("Valid hardware acceleration APIs are:", hwaccel_codec_map);
+        list_options("Valid hardware acceleration APIs are", hwaccel_codec_map);
 
         *codec_id = AV_CODEC_ID_NONE;
         return -1;

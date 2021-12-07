@@ -27,6 +27,7 @@ Supported output formats:
  * MP3 (MPEG-2 Audio Layer III)
  * WAV (Waveform Audio File Format)
  * AIFF (Audio Interchange File Format)
+ * FLAC (Free Lossless Audio Compression)
  * ALAC (Apple Lossless Audio Codec)
  * JPG (video to frameset)
  * PNG (video to frameset)
@@ -44,8 +45,7 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 *--desttype*=TYPE, *-odesttype*=TYPE::
 Select destination format. 'TYPE' can currently be:
 +
-*MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *PRORES*, *AIFF*, *ALAC*, *OPUS*, *WAV*, *JPG*,
-*PNG*, *BMP*, *TS* or *HLS*.
+*MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *PRORES*, *AIFF*, *FLAC*, *ALAC*, *OPUS*, *WAV*, *JPG*, *PNG*, *BMP*, *TS* or *HLS*.
 +
 To stream videos, *MP4*, *TS*, *HLS*, *OGG*, *WEBM* or *MOV*/*PRORES* must be selected.
 +

@@ -341,10 +341,34 @@ public:
      */
     AVCodecID           video_codec() const;
     /**
+     * @brief Check if video codec/file format combination is supported
+     * @param codec_id - Codec ID to check
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_video_codec_supported(AVCodecID codec_id) const;
+    /**
+     * @brief Create a list of supported audio codecs for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         video_codec_list() const;
+
+    /**
      * @brief Get audio codec_id
      * @return Returns audio codec_id
      */
     AVCodecID           audio_codec() const;
+    /**
+     * @brief Check if audio codec/file format combination is supported
+     * @param codec_id - Codec ID to check
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_audio_codec_supported(AVCodecID codec_id) const;
+    /**
+     * @brief Create a list of supported audio codecs for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         audio_codec_list() const;
+
     /**
      * @brief Get sample format (bit width)
      * @return Returns sample format
@@ -415,21 +439,57 @@ public:
      * @return Returns selected filetype.
      */
     FILETYPE            filetype() const;
+
     /**
      * @brief Get video codec_id
      * @return Returns video codec_id
      */
     AVCodecID           video_codec() const;
     /**
+     * @brief Check if video codec/file format combination is supported
+     * @param codec_id - Codec ID to check
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_video_codec_supported(AVCodecID codec_id) const;
+    /**
+     * @brief Create a list of supported audio codecs for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         video_codec_list() const;
+
+    /**
      * @brief Get audio codec_id
      * @return Returns audio codec_id
      */
     AVCodecID           audio_codec() const;
     /**
+     * @brief Check if audio codec/file format combination is supported
+     * @param codec_id - Codec ID to check
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_audio_codec_supported(AVCodecID codec_id) const;
+    /**
+     * @brief Create a list of supported audio codecs for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         audio_codec_list() const;
+
+    /**
      * @brief Get sample format (bit width)
      * @return Returns sample format
      */
     AVSampleFormat      sample_format() const;
+    /**
+     * @brief Check if audio codec/sample format combination is supported
+     * @return Returns true if supported, false if not.
+     */
+    bool                is_sample_fmt_supported() const;
+    /**
+     * @brief Create a list of supported sample formats for current audio codec
+     * @return Returns comma separated list of formats, or empty if not available.
+     */
+    std::string         sample_fmt_list() const;
+
     /**
      * @brief Check if this si some sort of multi file format
      * (any of the following: is_frameset() or is_hls()).
@@ -451,16 +511,6 @@ public:
      * @return true if album arts are supported or false if not
      */
     bool                albumart_supported() const;
-    /**
-     * @brief Check if audio codec/sample format combination is supported
-     * @return Returns true if supported, false if not.
-     */
-    bool                is_sample_fmt_supported() const;
-    /**
-     * @brief Create a list of supported sample formats for current audio codec
-     * @return Returns comma separated list of formats, or empty if not available.
-     */
-    std::string         sample_fmt_list() const;
 
 protected:
     const Format_Options        m_empty_options;    /**< @brief Set of empty (invalid) options as default */

@@ -380,6 +380,18 @@ LPVIRTUALFILE   find_parent(const std::string & origpath);
  */
 std::string         get_sampleformat_text(SAMPLE_FMT sample_fmt);
 /**
+ * @brief Convert AVCodecID enum for audio codec to human readable text.
+ * @param audiocodec - AVCodecID enum value to convert.
+ * @return AVCodecID as text or "INVALID" if not known.
+ */
+std::string 		get_audio_codec_text(AVCodecID audio_codec);
+/**
+ * @brief Convert AVCodecID enum for video codec to human readable text.
+ * @param videocodec - AVCodecID enum value to convert.
+ * @return AVCodecID as text or "INVALID" if not known.
+ */
+std::string 		get_video_codec_text(AVCodecID video_codec);
+/**
  * @brief Convert AUTOCOPY enum to human readable text.
  * @param[in] autocopy - AUTOCOPY enum value to convert.
  * @return AUTOCOPY enum as text or "INVALID" if not known.

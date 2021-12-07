@@ -1195,6 +1195,26 @@ static int get_autocopy(const std::string & arg, AUTOCOPY *autocopy)
     return -1;
 }
 
+std::string get_audio_codec_text(AVCodecID audio_codec)
+{
+    AUDIOCODEC_MAP::const_iterator it = search_by_value(audiocodec_map, audio_codec);
+    if (it != audiocodec_map.cend())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
+std::string get_video_codec_text(AVCodecID video_codec)
+{
+    AUDIOCODEC_MAP::const_iterator it = search_by_value(videocodec_map, video_codec);
+    if (it != videocodec_map.cend())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
 std::string get_autocopy_text(AUTOCOPY autocopy)
 {
     AUTOCOPY_MAP::const_iterator it = search_by_value(autocopy_map, autocopy);
@@ -2151,6 +2171,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Check if sample format is supported
     for (size_t n = 0; n < 2; n++)
     {
         if (ffmpeg_format[n].filetype() != FILETYPE_UNKNOWN && !ffmpeg_format[n].is_sample_fmt_supported())
@@ -2158,6 +2179,27 @@ int main(int argc, char *argv[])
             std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_sampleformat_text(params.m_sample_fmt).c_str(), ffmpeg_format[n].desttype().c_str());
             std::fprintf(stderr, "Supported formats: %s\n\n", ffmpeg_format[n].sample_fmt_list().c_str());
             return 1;
+        }
+    }
+
+    // Check if audio or video codec is supported
+    for (size_t n = 0; n < 2; n++)
+    {
+        if (ffmpeg_format[n].filetype() != FILETYPE_UNKNOWN)
+        {
+            if (params.m_audio_codec != AV_CODEC_ID_NONE && !ffmpeg_format[n].is_audio_codec_supported(params.m_audio_codec))
+            {
+                std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_audio_codec_text(params.m_audio_codec).c_str(), ffmpeg_format[n].desttype().c_str());
+                std::fprintf(stderr, "Supported formats: %s\n\n", ffmpeg_format[n].audio_codec_list().c_str());
+                return 1;
+            }
+
+            if (params.m_video_codec != AV_CODEC_ID_NONE && !ffmpeg_format[n].is_video_codec_supported(params.m_video_codec))
+            {
+                std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_video_codec_text(params.m_video_codec).c_str(), ffmpeg_format[n].desttype().c_str());
+                std::fprintf(stderr, "Supported formats: %s\n\n", ffmpeg_format[n].video_codec_list().c_str());
+                return 1;
+            }
         }
     }
 

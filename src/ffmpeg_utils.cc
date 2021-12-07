@@ -119,6 +119,44 @@ AVCodecID Format_Options::video_codec() const
     return params.m_video_codec;
 }
 
+bool Format_Options::is_video_codec_supported(AVCodecID codec_id) const
+{
+    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
+    if (it != m_format_map.cend())
+    {        
+        const CODEC_VECT & video_codec = it->second.m_video_codec;
+        for (typename CODEC_VECT::const_iterator it = video_codec.cbegin(); it != video_codec.cend(); it++)
+        {
+            if (*it == codec_id)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+std::string Format_Options::video_codec_list() const
+{
+    std::string buffer;
+    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
+    if (it != m_format_map.cend())
+    {
+        const CODEC_VECT & video_codec = it->second.m_video_codec;
+        for (typename CODEC_VECT::const_iterator it = video_codec.cbegin(); it != video_codec.cend(); )
+        {
+            buffer += get_video_codec_text(*it);
+
+            if (++it != video_codec.cend())
+            {
+                buffer += ", ";
+            }
+        }
+    }
+
+    return buffer;
+}
+
 AVCodecID Format_Options::audio_codec() const
 {
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
@@ -133,6 +171,44 @@ AVCodecID Format_Options::audio_codec() const
     }
 
     return params.m_audio_codec;
+}
+
+bool Format_Options::is_audio_codec_supported(AVCodecID codec_id) const
+{
+    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
+    if (it != m_format_map.cend())
+    {
+        const CODEC_VECT & audio_codec = it->second.m_audio_codec;
+        for (typename CODEC_VECT::const_iterator it = audio_codec.cbegin(); it != audio_codec.cend(); it++)
+        {
+            if (*it == codec_id)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+std::string Format_Options::audio_codec_list() const
+{
+    std::string buffer;
+    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
+    if (it != m_format_map.cend())
+    {
+        const CODEC_VECT & audio_codec = it->second.m_audio_codec;
+        for (typename CODEC_VECT::const_iterator it = audio_codec.cbegin(); it != audio_codec.cend();)
+        {
+            buffer += get_audio_codec_text(*it);
+
+            if (++it != audio_codec.cend())
+            {
+                buffer += ", ";
+            }
+        }
+    }
+
+    return buffer;
 }
 
 AVSampleFormat Format_Options::sample_format() const
@@ -706,9 +782,29 @@ AVCodecID FFmpegfs_Format::video_codec() const
     return m_cur_opts->video_codec();
 }
 
+bool FFmpegfs_Format::is_video_codec_supported(AVCodecID codec_id) const
+{
+    return m_cur_opts->is_video_codec_supported(codec_id);
+}
+
+std::string FFmpegfs_Format::video_codec_list() const
+{
+    return m_cur_opts->video_codec_list();
+}
+
 AVCodecID FFmpegfs_Format::audio_codec() const
 {
     return m_cur_opts->audio_codec();
+}
+
+bool FFmpegfs_Format::is_audio_codec_supported(AVCodecID codec_id) const
+{
+    return m_cur_opts->is_audio_codec_supported(codec_id);
+}
+
+std::string FFmpegfs_Format::audio_codec_list() const
+{
+    return m_cur_opts->audio_codec_list();
 }
 
 AVSampleFormat FFmpegfs_Format::sample_format() const

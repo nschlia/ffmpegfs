@@ -11,18 +11,19 @@ echo "Checking number of files is ${FILES}"
 echo "Number of files OK"
 
 echo "Checking access with full name"
-cat "${DIRNAME}"/frame_test_pal.mp4/000204.${FILEEXT} > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/000004.${FILEEXT} > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/000104.${FILEEXT} > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/000207.${FILEEXT} > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/000007.${FILEEXT} > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/000107.${FILEEXT} > /dev/null
+for i in 000204 000004 000104 000207 000007 000107
+do
+	echo ">> Checking $i.${FILEEXT}"
+	cat "${DIRNAME}"/frame_test_pal.mp4/$i.${FILEEXT} > /dev/null
+done
 echo "Access OK"
 
 echo "Checking access with regular expression"
-cat "${DIRNAME}"/frame_test_pal.mp4/00020[4-7].* > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/00000[4-7].* > /dev/null
-cat "${DIRNAME}"/frame_test_pal.mp4/00010[4-7].* > /dev/null
+for i in 00020[4-7] 00000[4-7] 00010[4-7]
+do
+	echo ">> Checking $i.*"
+	cat "${DIRNAME}"/frame_test_pal.mp4/00020[4-7].* > /dev/null
+done
 echo "Access OK"
 
 echo "Pass"

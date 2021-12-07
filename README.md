@@ -13,6 +13,10 @@ News
 
 ### Version 2.9 under development
 
+**New in in 2.9 (2021-12-XX):**
+
+**Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec. 
+
 ### Version 2.8 released
 
 **New in in 2.8 (2021-11-29):**
@@ -306,6 +310,21 @@ If destination type is TS, the following files and directories will appear:
      myfile.ogv.tracks/
 
 Tracks defined in the cue sheet will show up in the *.tracks sub directories.
+
+Select Audio and Video Codecs
+----------
+
+Some new codec combinations are now possible (the default codecs in bold):
+
+| Formats | Audio Codecs      | Video Codecs                 |
+| ------- | ----------------- | ---------------------------- |
+| MP4     | **AAC**, MP3      | **H264**, H265, MPEG1, MPEG2 |
+| WebM    | **OPUS**, VORBIS  | **VP9**, VP8, AV1            |
+| MOV     | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
+| TS, HLS | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
+
+The audio codec can be selected with --audiocodec, for  videos use --videocodec. Without these parameters, FFmpegfs will use the codecs as before (no change).
+Please note that hardware acceleration might not work, e.g., my hardware encoder supports H264 but not H265. So even though H265 creates much  smaller files it takes 10 times longer to transcode.
 
 Building A Docker Container
 ----------

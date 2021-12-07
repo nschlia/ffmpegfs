@@ -57,6 +57,38 @@ To use the smart transcoding feature, specify a video and audio file type, separ
 +
 Default: *mp4*
 
+*--audiocodec*=TYPE, *-oaudiocodec*=TYPE::
+Select audio codec. 'TYPE' depends on the destination format and can currently be:
++
+[width="100%"]
+|===================================================================================
+| *Formats* | *Audio Codecs* |
+| MP4 | **AAC**, MP3 |
+| WebM | **OPUS**, VORBIS |
+| MOV | **AAC**, AC3, MP3 |
+| TS, HLS | **AAC**, AC3, MP3 |
+|===================================================================================
++
+Other destination formats do not support other codecs than the default.
++
+Default: The default setting for the destination format, see bold codec name in table
+
+*--videocodec*=TYPE, *-ovideocodec*=TYPE::
+Select video codec. 'TYPE' depends on the destination format and can currently be:
++
+[width="100%"]
+|===================================================================================
+| *Formats* | *Video Codecs* |
+| MP4 | **H264**, H265, MPEG1, MPEG2 |
+| WebM | **VP9**, VP8, AV1 |
+| MOV | **H264**, H265, MPEG1, MPEG2 |
+| TS, HLS | **H264**, H265, MPEG1, MPEG2 |
+|===================================================================================
++
+Other destination formats do not support other codecs than the default.
++
+Default: The default setting for the destination format, see bold codec name in table
+
 *--autocopy*=OPTION, *-oautocopy*=OPTION::
 Select auto copy option, 'OPTION' can be:
 +

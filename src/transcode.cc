@@ -117,7 +117,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
+                Logging::trace(cache_entry->destname(), "Cache hit at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -288,14 +288,14 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     size_t filesize = 0;
 
-    if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec_id(), audio_bit_rate, duration, channels, sample_rate, sample_format))
+    if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec(), audio_bit_rate, duration, channels, sample_rate, sample_format))
     {
-        Logging::warning(cache_entry->destname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec_id(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->destname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec(), 0), current_format->desttype().c_str());
     }
 
-    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec_id(), video_bit_rate, duration, width, height, interleaved, framerate))
+    if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec_id(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), 0), current_format->desttype().c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = virtualfile->m_predicted_size = filesize;

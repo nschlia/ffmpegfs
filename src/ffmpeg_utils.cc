@@ -103,7 +103,7 @@ Format_Options::Format_Options(
 
 }
 
-AVCodecID Format_Options::video_codec_id() const
+AVCodecID Format_Options::video_codec() const
 {
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it == m_format_map.cend())
@@ -111,15 +111,15 @@ AVCodecID Format_Options::video_codec_id() const
         return AV_CODEC_ID_NONE;
     }
 
-    if (params.m_videocodec == AV_CODEC_ID_NONE)
+    if (params.m_video_codec == AV_CODEC_ID_NONE)
     {
-        return (it->second.m_video_codec_id[0]);    // 1st array entry is the predefined codec
+        return (it->second.m_video_codec[0]);    // 1st array entry is the predefined codec
     }
 
-    return params.m_videocodec;
+    return params.m_video_codec;
 }
 
-AVCodecID Format_Options::audio_codec_id() const
+AVCodecID Format_Options::audio_codec() const
 {
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it == m_format_map.cend())
@@ -127,12 +127,12 @@ AVCodecID Format_Options::audio_codec_id() const
         return AV_CODEC_ID_NONE;
     }
 
-    if (params.m_audiocodec == AV_CODEC_ID_NONE)
+    if (params.m_audio_codec == AV_CODEC_ID_NONE)
     {
-        return (it->second.m_audio_codec_id[0]);    // 1st array entry is the predefined codec
+        return (it->second.m_audio_codec[0]);    // 1st array entry is the predefined codec
     }
 
-    return params.m_audiocodec;
+    return params.m_audio_codec;
 }
 
 AVSampleFormat Format_Options::sample_format() const
@@ -646,7 +646,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
 
         m_desttype.empty();
         m_filetype 	= FILETYPE_UNKNOWN;
-        m_cur_opts   = &m_empty_options;
+        m_cur_opts  = &m_empty_options;
 
         return false;
     }
@@ -655,7 +655,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         // OK
         m_desttype  = desttype;
         m_filetype 	= it->first;
-        m_cur_opts   = &it->second;
+        m_cur_opts  = &it->second;
 
         return true;
     }
@@ -701,14 +701,14 @@ bool FFmpegfs_Format::albumart_supported() const
     return m_cur_opts->m_albumart_supported;
 }
 
-AVCodecID FFmpegfs_Format::video_codec_id() const
+AVCodecID FFmpegfs_Format::video_codec() const
 {
-    return m_cur_opts->video_codec_id();
+    return m_cur_opts->video_codec();
 }
 
-AVCodecID FFmpegfs_Format::audio_codec_id() const
+AVCodecID FFmpegfs_Format::audio_codec() const
 {
-    return m_cur_opts->audio_codec_id();
+    return m_cur_opts->audio_codec();
 }
 
 AVSampleFormat FFmpegfs_Format::sample_format() const

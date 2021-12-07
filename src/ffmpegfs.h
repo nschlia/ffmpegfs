@@ -176,8 +176,8 @@ extern struct FFMPEGFS_PARAMS
     std::string         m_mountpath;                /**< @brief Mount path: Files from m_mountpath will be mapped to this directory. */
 
     // Output type
-    AVCodecID           m_audiocodec;               /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
-    AVCodecID           m_videocodec;               /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
+    AVCodecID           m_audio_codec;              /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
+    AVCodecID           m_video_codec;              /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
     AUTOCOPY            m_autocopy;                 /**< @brief Copy streams if codec matches */
     RECODESAME          m_recodesame;               /**< @brief Recode to same format options */
     PROFILE             m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */

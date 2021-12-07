@@ -389,8 +389,8 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
         {
             FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
 
-            if ((ffmpegfs_format->audio_codec_id() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                    (ffmpegfs_format->video_codec_id() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+            if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                    (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
             {
                 *current_format = params.current_format(*filepath);
                 if (params.m_oldnamescheme)
@@ -1055,7 +1055,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         {
                             int res = 0;
 
-                            if (current_format->video_codec_id() != AV_CODEC_ID_NONE)
+                            if (current_format->video_codec() != AV_CODEC_ID_NONE)
                             {
                                 // Check if we have a cue sheet
                                 res = check_cuesheet(origfile, buf, filler);
@@ -1095,7 +1095,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                         throw res;
                                     }
 
-                                    if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec_id() == AV_CODEC_ID_NONE)
+                                    if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
                                     {
                                         Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
                                         flags |= VIRTUALFLAG_HIDDEN;

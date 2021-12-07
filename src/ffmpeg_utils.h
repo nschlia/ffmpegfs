@@ -295,8 +295,8 @@ struct Format_Options
       */
     typedef struct _tagFORMAT
     {
-        CODEC_VECT      m_video_codec_id;   /**< @brief AVCodec used for video encoding */
-        CODEC_VECT      m_audio_codec_id;   /**< @brief AVCodec used for audio encoding */
+        CODEC_VECT      m_video_codec;      /**< @brief AVCodec used for video encoding */
+        CODEC_VECT      m_audio_codec;      /**< @brief AVCodec used for audio encoding */
         AVSampleFormat  m_sample_format;    /**< @brief AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" */
     } FORMAT;
 
@@ -339,12 +339,12 @@ public:
      * @brief Get video codec_id
      * @return Returns video codec_id
      */
-    AVCodecID           video_codec_id() const;
+    AVCodecID           video_codec() const;
     /**
      * @brief Get audio codec_id
      * @return Returns audio codec_id
      */
-    AVCodecID           audio_codec_id() const;
+    AVCodecID           audio_codec() const;
     /**
      * @brief Get sample format (bit width)
      * @return Returns sample format
@@ -419,12 +419,12 @@ public:
      * @brief Get video codec_id
      * @return Returns video codec_id
      */
-    AVCodecID           video_codec_id() const;
+    AVCodecID           video_codec() const;
     /**
      * @brief Get audio codec_id
      * @return Returns audio codec_id
      */
-    AVCodecID           audio_codec_id() const;
+    AVCodecID           audio_codec() const;
     /**
      * @brief Get sample format (bit width)
      * @return Returns sample format

@@ -70,8 +70,8 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter
     , m_mountpath("")                                   // required parameter
 
-    , m_audiocodec(AV_CODEC_ID_NONE)                    // default: use predefined option
-    , m_videocodec(AV_CODEC_ID_NONE)                    // default: use predefined option
+    , m_audio_codec(AV_CODEC_ID_NONE)                    // default: use predefined option
+    , m_video_codec(AV_CODEC_ID_NONE)                    // default: use predefined option
 
     , m_autocopy(AUTOCOPY_OFF)                          // default: off
     , m_profile(PROFILE_DEFAULT)                        // default: no profile
@@ -153,12 +153,12 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
         else
         {
             // Smart transcoding
-            if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
+            if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (ffmpeg_format[1].audio_codec_id() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
+            else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;
@@ -1055,7 +1055,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 
             if (results.size() == 2)
             {
-                if (format[0].video_codec_id() == AV_CODEC_ID_NONE)
+                if (format[0].video_codec() == AV_CODEC_ID_NONE)
                 {
                     std::fprintf(stderr, "INVALID PARAMETER (%s): First format %s does not support video\n", param.c_str(), results[0].c_str());
                     return 1;
@@ -1067,7 +1067,7 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
                     return 1;
                 }
 
-                if (format[1].video_codec_id() != AV_CODEC_ID_NONE)
+                if (format[1].video_codec() != AV_CODEC_ID_NONE)
                 {
                     std::fprintf(stderr, "INVALID PARAMETER (%s): Second format %s should be audio only\n", param.c_str(), results[1].c_str());
                     return 1;
@@ -1144,7 +1144,7 @@ static int get_videocodec(const std::string & arg, AVCodecID *videocodec)
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid videocodec option: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid video codecs", audiocodec_map);
+            list_options("Valid video codecs", videocodec_map);
 
             return -1;
         }
@@ -1738,11 +1738,11 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_AUDIOCODEC:
     {
-        return get_audiocodec(arg, &params.m_audiocodec);
+        return get_audiocodec(arg, &params.m_audio_codec);
     }
     case KEY_VIDEOCODEC:
     {
-        return get_videocodec(arg, &params.m_videocodec);
+        return get_videocodec(arg, &params.m_video_codec);
     }
     case KEY_AUTOCOPY:
     {
@@ -1878,7 +1878,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
  */
 static bool set_defaults(void)
 {
-    if (ffmpeg_format[0].video_codec_id() == AV_CODEC_ID_PRORES)
+    if (ffmpeg_format[0].video_codec() == AV_CODEC_ID_PRORES)
     {
         if (params.m_level == PRORESLEVEL_NONE)
         {
@@ -1925,30 +1925,30 @@ static void print_params(void)
     if (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN)
     {
         Logging::trace(nullptr, "Audio File Type   : %1", ffmpeg_format[1].desttype().c_str());
-        if (ffmpeg_format[1].audio_codec_id() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[1].audio_codec_id(), false), get_codec_name(ffmpeg_format[1].audio_codec_id(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[1].audio_codec(), false), get_codec_name(ffmpeg_format[1].audio_codec(), true));
         }
         Logging::trace(nullptr, "Video File Type   : %1", ffmpeg_format[0].desttype().c_str());
-        if (ffmpeg_format[0].audio_codec_id() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[0].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec_id(), false), get_codec_name(ffmpeg_format[0].audio_codec_id(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec(), false), get_codec_name(ffmpeg_format[0].audio_codec(), true));
         }
-        if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec_id(), false), get_codec_name(ffmpeg_format[0].video_codec_id(), true));
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec(), false), get_codec_name(ffmpeg_format[0].video_codec(), true));
         }
     }
     else
     {
         Logging::trace(nullptr, "File Type         : %1", ffmpeg_format[0].desttype().c_str());
-        if (ffmpeg_format[0].audio_codec_id() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[0].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec_id(), false), get_codec_name(ffmpeg_format[0].audio_codec_id(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec(), false), get_codec_name(ffmpeg_format[0].audio_codec(), true));
         }
-        if (ffmpeg_format[0].video_codec_id() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec_id(), false), get_codec_name(ffmpeg_format[0].video_codec_id(), true));
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec(), false), get_codec_name(ffmpeg_format[0].video_codec(), true));
         }
     }
     Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
@@ -1957,7 +1957,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
-    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec_id(), true), get_codec_name(ffmpeg_format[1].audio_codec_id(), true));
+    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
     Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate).c_str());
     Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
@@ -1966,7 +1966,7 @@ static void print_params(void)
         Logging::trace(nullptr, "Sample Format     : %1", get_sampleformat_text(params.m_sample_fmt).c_str());
     }
     Logging::trace(nullptr, "--------- Video ---------");
-    Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec_id(), true));
+    Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");

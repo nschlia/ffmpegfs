@@ -451,7 +451,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     // Issue #80: Open input video codec, but only if target supports video.
     // Saves resources: no need to decode video frames if not used.
-    if (m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
+    if (m_current_format->video_codec() != AV_CODEC_ID_NONE)
     {
         // Open best match video codec
         ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
@@ -466,7 +466,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
             // We have a video stream
             // Check to see if encoder hardware acceleration is both requested and supported by codec.
             std::string hw_encoder_codec_name;
-            if (!get_hw_encoder_name(m_current_format->video_codec_id(), &hw_encoder_codec_name))
+            if (!get_hw_encoder_name(m_current_format->video_codec(), &hw_encoder_codec_name))
             {
                 // API supports hardware frame buffers
                 m_hwaccel_enable_enc_buffering = (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE);
@@ -649,7 +649,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
     else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
     {
         // Output codec must strictly match
-        if (CODECPAR(stream)->codec_id != m_current_format->audio_codec_id())
+        if (CODECPAR(stream)->codec_id != m_current_format->audio_codec())
         {
             // Different codecs - no auto copy
             return false;
@@ -678,7 +678,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     Logging::debug(destname(), "Opening output file.");
 
-    if (m_in.m_audio.m_stream_idx == INVALID_STREAM && m_current_format->video_codec_id() == AV_CODEC_ID_NONE)
+    if (m_in.m_audio.m_stream_idx == INVALID_STREAM && m_current_format->video_codec() == AV_CODEC_ID_NONE)
     {
         Logging::error(destname(), "Unable to transcode, source contains no audio stream, but target just supports audio.");
         m_virtualfile->m_flags |= VIRTUALFLAG_HIDDEN;   // Hide file from now on
@@ -944,7 +944,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
     m_have_seeked       = false;
 
-    output_codec = avcodec_find_encoder(m_current_format->video_codec_id());
+    output_codec = avcodec_find_encoder(m_current_format->video_codec());
     if (output_codec == nullptr)
     {
         Logging::error(destname(), "Codec not found");
@@ -971,7 +971,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
     {
         // No best match found, use default
-        switch (m_current_format->video_codec_id())
+        switch (m_current_format->video_codec())
         {
         case AV_CODEC_ID_MJPEG:
         {
@@ -1078,7 +1078,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         {
             if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)
             {
-                Logging::info(filename(), "Unable to use output codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec_id()));
+                Logging::info(filename(), "Unable to use output codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec()));
 
                 m_hwaccel_enc_mode              = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_enc_buffering  = false;
@@ -2316,15 +2316,15 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         m_in.m_video.m_stream_idx = INVALID_STREAM;
     }
 
-    //video_codec_id = m_out.m_format_ctx->oformat->video_codec;
+    //video_codec = m_out.m_format_ctx->oformat->video_codec;
 
-    if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->video_codec_id() != AV_CODEC_ID_NONE)
+    if (m_in.m_video.m_stream_idx != INVALID_STREAM && m_current_format->video_codec() != AV_CODEC_ID_NONE)
     {
         m_active_stream_msk     |= FFMPEGFS_VIDEO;
 
         if (!m_copy_video)
         {
-            ret = add_stream(m_current_format->video_codec_id());
+            ret = add_stream(m_current_format->video_codec());
             if (ret < 0)
             {
                 return ret;
@@ -2344,7 +2344,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             Logging::info(destname(), "Copying video stream.");
 
-            ret = add_stream_copy(m_current_format->video_codec_id(), AVMEDIA_TYPE_VIDEO);
+            ret = add_stream_copy(m_current_format->video_codec(), AVMEDIA_TYPE_VIDEO);
             if (ret < 0)
             {
                 return ret;
@@ -2352,13 +2352,13 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->audio_codec_id() != AV_CODEC_ID_NONE)
+    if (m_in.m_audio.m_stream_idx != INVALID_STREAM && m_current_format->audio_codec() != AV_CODEC_ID_NONE)
     {
         m_active_stream_msk     |= FFMPEGFS_AUDIO;
 
         if (!m_copy_audio)
         {
-            ret = add_stream(m_current_format->audio_codec_id());
+            ret = add_stream(m_current_format->audio_codec());
             if (ret < 0)
             {
                 return ret;
@@ -2368,7 +2368,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             Logging::info(destname(), "Copying audio stream.");
 
-            ret = add_stream_copy(m_current_format->audio_codec_id(), AVMEDIA_TYPE_AUDIO);
+            ret = add_stream_copy(m_current_format->audio_codec(), AVMEDIA_TYPE_AUDIO);
             if (ret < 0)
             {
                 return ret;
@@ -2404,7 +2404,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 static_cast<void *>(buffer),
                 nullptr,        // read not required
                 output_write,   // write
-                (m_current_format->audio_codec_id() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
+                (m_current_format->audio_codec() != AV_CODEC_ID_OPUS) ? seek : nullptr);          // seek
 
     if (m_out.m_format_ctx->pb == nullptr)
     {
@@ -4001,7 +4001,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
-        if (m_current_format->video_codec_id() == AV_CODEC_ID_MJPEG)
+        if (m_current_format->video_codec() == AV_CODEC_ID_MJPEG)
         {
             // The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks
             cloned_frame->pts = frame_to_pts(m_in.m_video.m_stream, ++m_fake_frame_no);
@@ -5419,9 +5419,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     {
         int channels = m_in.m_audio.m_codec_ctx->channels;
 
-        if (!audio_size(&filesize, m_current_format->audio_codec_id(), input_audio_bit_rate, duration, channels, input_sample_rate, m_cur_sample_fmt))
+        if (!audio_size(&filesize, m_current_format->audio_codec(), input_audio_bit_rate, duration, channels, input_sample_rate, m_cur_sample_fmt))
         {
-            Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec_id(), 0), m_current_format->desttype().c_str());
+            Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec(), 0), m_current_format->desttype().c_str());
         }
     }
 
@@ -5437,9 +5437,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 #else
             AVRational framerate = m_in.m_video.m_stream->codec->framerate;
 #endif
-            if (!video_size(&filesize, m_current_format->video_codec_id(), input_video_bit_rate, duration, width, height, interleaved, framerate))
+            if (!video_size(&filesize, m_current_format->video_codec(), input_video_bit_rate, duration, width, height, interleaved, framerate))
             {
-                Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec_id(), 0), m_current_format->desttype().c_str());
+                Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec(), 0), m_current_format->desttype().c_str());
             }
         }
         // else      /** @todo Feature #2260: Add picture size */

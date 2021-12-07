@@ -47,7 +47,7 @@ Select destination format. 'TYPE' can currently be:
 *MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *PRORES*, *AIFF*, *ALAC*, *OPUS*, *WAV*, *JPG*,
 *PNG*, *BMP*, *TS* or *HLS*.
 +
-To stream videos, *MP4*, *OGG*, *WEBM* or *MOV*/*PRORES* must be selected.
+To stream videos, *MP4*, *TS*, *HLS*, *OGG*, *WEBM* or *MOV*/*PRORES* must be selected.
 +
 To use HTTP Live Streaming, set *HLS*.
 +

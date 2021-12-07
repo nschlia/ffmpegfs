@@ -8,11 +8,21 @@ Installation from repository
 
 FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.
 
-On Debian 11 Bullseye, you get V2.2 by simply doing
+**On Debian 11 Bullseye, you get V2.2 by simply doing**
 
     apt-get install ffmpegfs
 
-For Ubuntu 20.04 or newer and Linux distributions based on it this is
+Newer FFmpegfs versions can be installed on Debian 11 Bullseye from Bullseye Backports and sid (which is not recommended and therefore not described here).
+
+To enable Bullseye Backports:
+
+     echo "deb http://deb.debian.org/debian bullseye-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
+    
+     sudo apt-get update
+
+To install FFmpegfs from backports run `apt-get install ffmpegfs/bullseye-backports` or`apt-get install -t bullseye-backports ffmpegfs`.
+
+**For Ubuntu 20.04 or newer and Linux distributions based on it this is**
 
     apt-get install ffmpegfs
 

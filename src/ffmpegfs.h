@@ -187,7 +187,7 @@ extern struct FFMPEGFS_PARAMS
     int                 m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */
     int                 m_audiochannels;            /**< @brief Max. number of audio channels */
     SAMPLE_FMT          m_sample_fmt;               /**< @brief Sample format */
-    std::string         m_audioextensions;          /**< @brief Comma separated lists of supplementary audio file extensions */
+    std::string         m_extensions;               /**< @brief Comma separated lists of supplementary file extensions */
     // Video
     BITRATE             m_videobitrate;             /**< @brief Output video bit rate (bits per second) */
     int                 m_videowidth;               /**< @brief Output video width */

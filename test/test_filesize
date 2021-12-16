@@ -5,7 +5,9 @@ ADDOPT=""
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 # Ensure log contains file sizes, predicted and actual
+echo "Transcoding ${DIRNAME}/raven_e.flac.${FILEEXT}"
 cat "${DIRNAME}/raven_e.flac.${FILEEXT}" > /dev/null
+echo "Transcoding ${DIRNAME}/raven_d.ogg.${FILEEXT}"
 cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];

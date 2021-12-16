@@ -379,33 +379,59 @@ static void translate_path(std::string *origpath, const char* path)
  */
 static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
 {
+	std::string ext;
+
+	if (!find_ext(&ext, *filepath) || std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
+	{
+		return false;
+	}
+
+	if (allow_list_ext(ext, params.m_audioextensions))
+	{
+		if (!params.smart_transcode())
+		{
+			*current_format = &ffmpeg_format[0];
+		}
+		else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
+		{
+			*current_format = &ffmpeg_format[1];
+		}
+
+		if (params.m_oldnamescheme)
+		{
+			// Old filename scheme, creates duplicates
+			replace_ext(filepath, (*current_format)->fileext());
+		}
+		else
+		{
+			// New name scheme
+			append_ext(filepath, (*current_format)->fileext());
+		}
+		return true;
+	}
+
     const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
 
     if (format != nullptr)
     {
-        std::string ext;
+		FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
 
-        if (!find_ext(&ext, *filepath) || !std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
+		if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+			(ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
-            FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
-
-            if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                    (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+			*current_format = params.current_format(*filepath);
+			if (params.m_oldnamescheme)
+			{
+				// Old filename scheme, creates duplicates
+				replace_ext(filepath, (*current_format)->fileext());
+			}
+			else
             {
-                *current_format = params.current_format(*filepath);
-                if (params.m_oldnamescheme)
-                {
-                    // Old filename scheme, creates duplicates
-                    replace_ext(filepath, (*current_format)->fileext());
-                }
-                else
-                {
-                    // New name scheme
-                    append_ext(filepath, (*current_format)->fileext());
-                }
-                return true;
-            }
-        }
+				// New name scheme
+				append_ext(filepath, (*current_format)->fileext());
+			}
+			return true;
+		}
     }
 
     if (current_format != nullptr)

@@ -896,6 +896,20 @@ const std::string & remove_ext(std::string *filepath)
     return *filepath;
 }
 
+bool allow_list_ext(const std::string & ext, const std::string & allowlist)
+{
+    std::vector<std::string> allowext = split(allowlist, ",");
+
+    for (size_t n = 0; n < allowext.size(); n++)
+    {
+        if (strcasecmp(ext, allowext[n]) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool find_ext(std::string * ext, const std::string & filename)
 {
     size_t found;

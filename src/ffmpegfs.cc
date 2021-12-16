@@ -83,6 +83,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_audiosamplerate(44100)                          // default: 44.1 kHz
     , m_audiochannels(2)                                // default: 2 channels
     , m_sample_fmt(SAMPLE_FMT_DONTCARE)                 // default: use source format
+    , m_audioextensions("")                             // default: ""
 
     // Video
     , m_videobitrate(2*1024*1024)                       // default: 2 MBit
@@ -213,6 +214,7 @@ enum
     KEY_AUDIO_SAMPLERATE,
     KEY_AUDIO_CHANNELS,
     KEY_AUDIO_SAMPLE_FMT,
+    KEY_AUDIO_EXTENSIONS,
     KEY_VIDEO_BITRATE,
     KEY_SEGMENT_DURATION,
     KEY_MIN_SEEK_TIME_DIFF,
@@ -274,6 +276,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("audiochannels=%s",                KEY_AUDIO_CHANNELS),
     FUSE_OPT_KEY("--audiosamplefmt=%s",             KEY_AUDIO_SAMPLE_FMT),
     FUSE_OPT_KEY("audiosamplefmt=%s",               KEY_AUDIO_SAMPLE_FMT),
+    FUSE_OPT_KEY("--audioextensions=%s",            KEY_AUDIO_EXTENSIONS),
+    FUSE_OPT_KEY("audioextensions=%s",              KEY_AUDIO_EXTENSIONS),
     // Video
     FUSE_OPT_KEY("--videobitrate=%s",               KEY_VIDEO_BITRATE),
     FUSE_OPT_KEY("videobitrate=%s",                 KEY_VIDEO_BITRATE),
@@ -1796,6 +1800,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     {
         return get_sampleformat(arg, &params.m_sample_fmt);
     }
+    case KEY_AUDIO_EXTENSIONS:
+    {
+        return get_value(arg, &params.m_audioextensions);
+    }
     case KEY_SCRIPTFILE:
     {
         return get_value(arg, &params.m_scriptfile);
@@ -1985,6 +1993,7 @@ static void print_params(void)
     {
         Logging::trace(nullptr, "Sample Format     : %1", get_sampleformat_text(params.m_sample_fmt).c_str());
     }
+    Logging::trace(nullptr, "Extensions        : %1", params.m_audioextensions.c_str());
     Logging::trace(nullptr, "--------- Video ---------");
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());

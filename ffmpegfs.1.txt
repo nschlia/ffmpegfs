@@ -57,6 +57,15 @@ To use the smart transcoding feature, specify a video and audio file type, separ
 +
 Default: *mp4*
 
+*--extensions*=LIST, *-oextensions*=LIST::
+Set list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by kommas.
++
+Example: --extensions=xxx,abc,yxz,aaa
++
+Take care to select extensions that actually can be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
++
+Default: Use default set as defined by FFmpeg.
+
 *--audiocodec*=TYPE, *-oaudiocodec*=TYPE::
 Select audio codec. 'TYPE' depends on the destination format and can currently be:
 +

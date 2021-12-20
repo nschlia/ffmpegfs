@@ -573,8 +573,8 @@ static int          get_sampleformat(const std::string & arg, SAMPLE_FMT * sampl
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
 static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
-static int          get_audiocodec(const std::string & arg, AVCodecID *audiocodec);
-static int          get_videocodec(const std::string & arg, AVCodecID *videocodec);
+static int          get_audiocodec(const std::string & arg, AVCodecID *audio_codec);
+static int          get_videocodec(const std::string & arg, AVCodecID *video_codec);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
 static int          get_recodesame(const std::string & arg, RECODESAME *recode);
 static int          get_profile(const std::string & arg, PROFILE *profile);
@@ -1090,12 +1090,12 @@ static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
 /**
  * @brief Get the audio codec.
  * @param[in] arg - One of the possible audio codecs.
- * @param[out] audiocodec- Upon return contains selected AVCodecID enum.
+ * @param[out] audio_codec - Upon return contains selected AVCodecID enum.
  * @return Returns 0 if found; if not found returns -1.
  */
-static int get_audiocodec(const std::string & arg, AVCodecID *audiocodec)
+static int get_audiocodec(const std::string & arg, AVCodecID *audio_codec)
 {
-    *audiocodec = AV_CODEC_ID_NONE;
+    *audio_codec = AV_CODEC_ID_NONE;
 
     size_t pos = arg.find('=');
 
@@ -1115,7 +1115,7 @@ static int get_audiocodec(const std::string & arg, AVCodecID *audiocodec)
             return -1;
         }
 
-        *audiocodec = it->second;
+        *audio_codec = it->second;
 
         return 0;
     }
@@ -1128,12 +1128,12 @@ static int get_audiocodec(const std::string & arg, AVCodecID *audiocodec)
 /**
  * @brief Get the video codec.
  * @param[in] arg - One of the possible video codecs.
- * @param[out] audiocodec- Upon return contains selected AVCodecID enum.
+ * @param[out] video_codec - Upon return contains selected AVCodecID enum.
  * @return Returns 0 if found; if not found returns -1.
  */
-static int get_videocodec(const std::string & arg, AVCodecID *videocodec)
+static int get_videocodec(const std::string & arg, AVCodecID *video_codec)
 {
-    *videocodec = AV_CODEC_ID_NONE;
+    *video_codec = AV_CODEC_ID_NONE;
 
     size_t pos = arg.find('=');
 
@@ -1153,7 +1153,7 @@ static int get_videocodec(const std::string & arg, AVCodecID *videocodec)
             return -1;
         }
 
-        *videocodec = it->second;
+        *video_codec = it->second;
 
         return 0;
     }

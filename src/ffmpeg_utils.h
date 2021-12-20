@@ -288,7 +288,7 @@ struct Format_Options
 {
     friend class FFmpegfs_Format;
 
-    typedef std::vector<AVCodecID>  CODEC_VECT;
+    typedef std::vector<AVCodecID>  CODEC_VECT;                /**< @brief Vector with valid codec ids for file format */
 
     /**
       * Format options: Audio/video codecs and sample format

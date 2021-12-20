@@ -62,11 +62,11 @@ Select audio codec. 'TYPE' depends on the destination format and can currently b
 +
 [width="100%"]
 |===================================================================================
-| *Formats* | *Audio Codecs* |
-| MP4 | **AAC**, MP3 |
-| WebM | **OPUS**, VORBIS |
-| MOV | **AAC**, AC3, MP3 |
-| TS, HLS | **AAC**, AC3, MP3 |
+| *Formats* | *Audio Codecs*
+| MP4 | **AAC**, MP3
+| WebM | **OPUS**, VORBIS
+| MOV | **AAC**, AC3, MP3
+| TS, HLS | **AAC**, AC3, MP3
 |===================================================================================
 +
 Other destination formats do not support other codecs than the default.
@@ -78,11 +78,11 @@ Select video codec. 'TYPE' depends on the destination format and can currently b
 +
 [width="100%"]
 |===================================================================================
-| *Formats* | *Video Codecs* |
-| MP4 | **H264**, H265, MPEG1, MPEG2 |
-| WebM | **VP9**, VP8, AV1 |
-| MOV | **H264**, H265, MPEG1, MPEG2 |
-| TS, HLS | **H264**, H265, MPEG1, MPEG2 |
+| *Formats* | *Video Codecs*
+| MP4 | **H264**, H265, MPEG1, MPEG2
+| WebM | **VP9**, VP8, AV1
+| MOV | **H264**, H265, MPEG1, MPEG2
+| TS, HLS | **H264**, H265, MPEG1, MPEG2
 |===================================================================================
 +
 Other destination formats do not support other codecs than the default.

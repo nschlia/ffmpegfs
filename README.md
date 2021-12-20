@@ -15,7 +15,7 @@ News
 
 **New in in 2.9 (2021-12-XX):**
 
-**Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec. 
+- **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
 
 ### Version 2.8 released
 

@@ -30,15 +30,20 @@ News
   Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed.
   Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).
 
-## History
-
-See [HISTORY](HISTORY.md) for details.
-
 ## Planned Features
 
 * DASH support is on my list, but the format is complicated and I currently do no have the time for that. 
 * Currently I am preparing a Windows version, but this is going to take some time.
 * *Any ideas or wishes?* Create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
+
+## History
+
+See [HISTORY](HISTORY.md) for details.
+
+Installation Instructions
+-------------------------
+
+Find a rather extensive explanation in the [INSTALL](INSTALL.md) file.
 
 About
 -----
@@ -78,12 +83,7 @@ Selecting *HLS* creates a directory with TS segments together with a M3U playlis
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
 
-Installation Instructions
--------------------------
-
-* Please read the [INSTALL](INSTALL.md) file.
-
-Supported Linux Distributions
+upported Linux Distributions
 -----------------------------
 
 Tested with:

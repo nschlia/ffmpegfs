@@ -2061,9 +2061,8 @@ int main(int argc, char *argv[])
     if (getppid() == getpgid(0))
     {
         std::printf("%s V%s\n", PACKAGE_NAME, FFMPEFS_VERSION);
-        std::printf("Copyright (C) 2006-2008 David Collett\n"
-                    "Copyright (C) 2008-2012 K. Henriksson\n"
-                    "Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)\n\n");
+        std::printf("Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)\n"
+                    "David Collett (2006-2008) and K. Henriksson (2008-2012)\n\n");
     }
 
     // Check if run under Docker

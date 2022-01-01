@@ -61,6 +61,11 @@ extern "C" {
 }
 #endif
 
+#ifdef __clang__
+// Silence this in fuse API code for clang
+#pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
+#endif
+
 #include "ffmpeg_utils.h"
 
 FFmpegfs_Format     ffmpeg_format[2];               /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */

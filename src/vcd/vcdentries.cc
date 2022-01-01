@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2013-2021 Norbert Schlia (nschlia@oblivion-software.de) @n
- * From BullysPLayer Copyright (C) 1984-2021 by Oblivion Software/Norbert Schlia
+ * @copyright Copyright (C) 2013-2022 Norbert Schlia (nschlia@oblivion-software.de) @n
+ * From BullysPLayer Copyright (C) 1984-2022 by Oblivion Software/Norbert Schlia
  */
 
 #include <string>

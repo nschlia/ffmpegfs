@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
+/*
+ * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  * @ingroup ffmpegfs
  *
  * @author Norbert Schlia (nschlia@oblivion-software.de)
- * @copyright Copyright (C) 2017-2021 Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #include "ffmpeg_transcoder.h"
@@ -435,14 +435,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #ifdef USE_LIBDVD
     if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
-        // FFmpeg API calculcates a wrong duration, so use value from IFO
+        // FFmpeg API calculates a wrong duration, so use value from IFO
         m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
-        // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
+        // FFmpeg API calculates a wrong duration, so use value from Bluray directory
         m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBBLURAY
@@ -500,14 +500,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #ifdef USE_LIBDVD
             if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
             {
-                // FFmpeg API calculcates a wrong duration, so use value from IFO
+                // FFmpeg API calculates a wrong duration, so use value from IFO
                 m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
             }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
             if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
             {
-                // FFmpeg API calculcates a wrong duration, so use value from Bluray
+                // FFmpeg API calculates a wrong duration, so use value from Bluray
                 m_in.m_video.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
             }
 #endif // USE_LIBBLURAY
@@ -543,14 +543,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #ifdef USE_LIBDVD
         if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
         {
-            // FFmpeg API calculcates a wrong duration, so use value from IFO
+            // FFmpeg API calculates a wrong duration, so use value from IFO
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
         if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
         {
-            // FFmpeg API calculcates a wrong duration, so use value from Bluray directory
+            // FFmpeg API calculates a wrong duration, so use value from Bluray directory
             m_in.m_audio.m_stream->duration = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
 #endif // USE_LIBBLURAY

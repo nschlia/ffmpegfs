@@ -1283,7 +1283,7 @@ int supports_albumart(FILETYPE filetype)
 
 FILETYPE get_filetype(const std::string & desttype)
 {
-    const std::map<std::string, FILETYPE, comp> m_filetype_map =
+    const std::map<const std::string, FILETYPE, comp> filetype_map =
     {
         { "mp3",    FILETYPE_MP3 },
         { "mp4",    FILETYPE_MP4 },
@@ -1305,7 +1305,7 @@ FILETYPE get_filetype(const std::string & desttype)
 
     try
     {
-        return (m_filetype_map.at(desttype));
+        return (filetype_map.at(desttype));
     }
     catch (const std::out_of_range& /*oor*/)
     {

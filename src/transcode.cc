@@ -1082,7 +1082,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 
 bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
 {
-    static const std::map<std::string, Logging::level, comp> level_map =
+    static const std::map<const std::string, const Logging::level, comp> level_map =
     {
         { "ERROR",      LOGERROR },
         { "WARNING",    LOGWARN },
@@ -1091,7 +1091,7 @@ bool init_logging(const std::string &logfile, const std::string & max_level, boo
         { "TRACE",      LOGTRACE },
     };
 
-    std::map<std::string, Logging::level, comp>::const_iterator it = level_map.find(max_level);
+    std::map<const std::string, const Logging::level, comp>::const_iterator it = level_map.find(max_level);
 
     if (it == level_map.cend())
     {

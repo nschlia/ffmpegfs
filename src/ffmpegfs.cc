@@ -377,10 +377,10 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-typedef std::map<std::string, AUTOCOPY, comp> AUTOCOPY_MAP;             /**< @brief Map command line option to AUTOCOPY enum */
-typedef std::map<std::string, PROFILE, comp> PROFILE_MAP;               /**< @brief Map command line option to PROFILE enum */
-typedef std::map<std::string, PRORESLEVEL, comp> LEVEL_MAP;             /**< @brief Map command line option to LEVEL enum */
-typedef std::map<std::string, RECODESAME, comp> RECODESAME_MAP;         /**< @brief Map command line option to RECODESAME enum */
+typedef std::map<const std::string, const AUTOCOPY, comp> AUTOCOPY_MAP;             /**< @brief Map command line option to AUTOCOPY enum */
+typedef std::map<const std::string, const PROFILE, comp> PROFILE_MAP;               /**< @brief Map command line option to PROFILE enum */
+typedef std::map<const std::string, const PRORESLEVEL, comp> LEVEL_MAP;             /**< @brief Map command line option to LEVEL enum */
+typedef std::map<const std::string, const RECODESAME, comp> RECODESAME_MAP;         /**< @brief Map command line option to RECODESAME enum */
 
 typedef struct HWACCEL                                                  /**< @brief Hardware acceleration device and type */
 {
@@ -389,12 +389,12 @@ typedef struct HWACCEL                                                  /**< @br
     AVHWDeviceType      m_hwaccel_device_type;                          /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
 
-typedef std::map<std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
-typedef std::map<std::string, AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
-typedef std::map<std::string, SAMPLE_FMT, comp> SAMPLE_FMT_MAP;         /**< @brief Map command line option to SAMPLE_FMT */
+typedef std::map<const std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
+typedef std::map<const std::string, const AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
+typedef std::map<const std::string, const SAMPLE_FMT, comp> SAMPLE_FMT_MAP;         /**< @brief Map command line option to SAMPLE_FMT */
 
-typedef std::map<std::string, AVCodecID, comp> AUDIOCODEC_MAP;          /**< @brief Map command line option to audio AVCodecID */
-typedef std::map<std::string, AVCodecID, comp> VIDEOCODEC_MAP;          /**< @brief Map command line option to video AVCodecID */
+typedef std::map<const std::string, const AVCodecID, comp> AUDIOCODEC_MAP;          /**< @brief Map command line option to audio AVCodecID */
+typedef std::map<const std::string, const AVCodecID, comp> VIDEOCODEC_MAP;          /**< @brief Map command line option to video AVCodecID */
 
 /**
  * @brief List of audio codecs
@@ -620,9 +620,9 @@ static void usage()
  * @return If found, retuns const_iterator to element. Returns mapOfWords.cend() if not.
  */
 template <typename T>
-static typename std::map<std::string, T, comp>::const_iterator search_by_value(const std::map<std::string, T, comp> & mapOfWords, T value)
+static typename std::map<const std::string, const T, comp>::const_iterator search_by_value(const std::map<const std::string, const T, comp> & mapOfWords, T value)
 {
-    typename std::map<std::string, T, comp>::const_iterator it = mapOfWords.cbegin();
+    typename std::map<const std::string, const T, comp>::const_iterator it = mapOfWords.cbegin();
     while (it != mapOfWords.cend())
     {
         if (it->second == value)

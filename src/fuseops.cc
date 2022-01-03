@@ -62,14 +62,14 @@
 /**
  * @brief Map source file names to virtual file objects.
  */
-typedef std::map<std::string, VIRTUALFILE> filenamemap;
+typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;
 
 static void             init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE    make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
 static void             prepare_script();
 static void             translate_path(std::string *origpath, const char* path);
 static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
-static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for);
+static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
 static int              get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int              make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int              kick_next(LPVIRTUALFILE virtualfile);
@@ -87,7 +87,7 @@ static void *           ffmpegfs_init(struct fuse_conn_info *conn);
 static void             ffmpegfs_destroy(__attribute__((unused)) void * p);
 static std::string      get_number(const char *path, uint32_t *value);
 
-static filenamemap          filenames;          /**< @brief Map files to virtual files */
+static FILENAME_MAP          filenames;          /**< @brief Map files to virtual files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
@@ -447,9 +447,9 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
  * @param[in] search_for - Prefix (path) to search for.
  * @return If found, returns const_iterator to map entry. Returns map.cend() if not found.
  */
-static filenamemap::const_iterator find_prefix(const filenamemap & map, const std::string & search_for)
+static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for)
 {
-    filenamemap::const_iterator it = map.lower_bound(search_for);
+    FILENAME_MAP::const_iterator it = map.lower_bound(search_for);
     if (it != map.cend())
     {
         const std::string & key = it->first;
@@ -471,7 +471,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
     std::string virtfile(sanitise_filepath(_virtfile));
     std::string origfile(sanitise_filepath(_origfile));
 
-    filenamemap::iterator it    = filenames.find(virtfile);
+    FILENAME_MAP::iterator it    = filenames.find(virtfile);
 
     if (it != filenames.cend())
     {
@@ -536,7 +536,7 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const st
 
 LPVIRTUALFILE find_file(const std::string & virtfile)
 {
-    filenamemap::iterator it = filenames.find(sanitise_filepath(virtfile));
+    FILENAME_MAP::iterator it = filenames.find(sanitise_filepath(virtfile));
 
     errno = 0;
 
@@ -549,7 +549,7 @@ LPVIRTUALFILE find_file(const std::string & virtfile)
 
 bool check_path(const std::string & path)
 {
-    filenamemap::const_iterator it = find_prefix(filenames, path);
+    FILENAME_MAP::const_iterator it = find_prefix(filenames, path);
 
     return (it != filenames.cend());
 }
@@ -564,7 +564,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
     int title_count = 0;
 
-    for (filenamemap::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); it++)
+    for (FILENAME_MAP::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); it++)
     {
         std::string virtfilepath    = it->first;
         LPCVIRTUALFILE virtualfile  = &it->second;
@@ -1043,7 +1043,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         {
             try
             {
-                std::map<std::string, struct stat> files;
+                std::map<const std::string, struct stat> files;
 
                 // Read directory contents
                 for (struct dirent *de = readdir(dp); de != nullptr; de = readdir(dp))
@@ -1060,7 +1060,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 }
 
                 // Process files
-                for (std::map<std::string, struct stat>::iterator it = files.begin(); it != files.end(); it++)
+                for (std::map<const std::string, struct stat>::iterator it = files.begin(); it != files.end(); it++)
                 {
                     std::string origname(it->first);
                     std::string origfile;

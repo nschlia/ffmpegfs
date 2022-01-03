@@ -5271,11 +5271,9 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
 
         // File size:
         // file duration * sample rate (HZ) * channels * bytes per sample
-        // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
-        // The real size of the list header is unkown as we don't know the contents (meta tags)
+        // We do not add the overhead for headers, as this is an estimation and not exact anyways.
         *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
-        //*filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
-        *filesize = static_cast<size_t>(700 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(600 * (*filesize) / 1000); // Estimate 40% compression rate
         break;
     }
     case AV_CODEC_ID_NONE:

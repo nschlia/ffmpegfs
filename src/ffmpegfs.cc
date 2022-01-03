@@ -640,7 +640,7 @@ static typename std::map<std::string, T, comp>::const_iterator search_by_value(c
  * @param[in] map - Map to go through.
  */
 template<typename T>
-void list_options(const char * info, const T & map)
+static void list_options(const char * info, const T & map)
 {
     std::string buffer;
     for (typename T::const_iterator it = map.cbegin(); it != map.cend();)

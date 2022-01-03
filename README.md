@@ -83,7 +83,7 @@ Selecting *HLS* creates a directory with TS segments together with a M3U playlis
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
 
-upported Linux Distributions
+Supported Linux Distributions
 -----------------------------
 
 Tested with:

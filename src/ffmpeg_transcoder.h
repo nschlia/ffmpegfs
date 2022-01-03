@@ -251,8 +251,8 @@ public:
     virtual const char *        destname() const;
     /**
      * @brief Predict audio file size. This may (better will surely) be inaccurate.
-     * @param[in] filesize - Predicted file size in bytes.
-     * @param[in] codec_id - Target codec ID
+     * @param[out] filesize - Predicted file size in bytes, including audio stream size.
+     * @param[in] codec_id - Target codec ID.
      * @param[in] bit_rate - Target bit rate.
      * @param[in] duration - File duration.
      * @param[in] channels - Number of channels in target file.
@@ -263,8 +263,8 @@ public:
     static bool                 audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate, AVSampleFormat sample_format);
     /**
      * @brief Predict video file size. This may (better will surely) be inaccurate.
-     * @param[in] filesize - Predicted file size in bytes.
-     * @param[in] codec_id - Target codec ID
+     * @param[out] filesize - Predicted file size in bytes, including video stream size.
+     * @param[in] codec_id - Target codec ID.
      * @param[in] bit_rate - Target bit rate.
      * @param[in] duration - File duration.
      * @param[in] width - Target video width.

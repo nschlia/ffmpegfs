@@ -33,9 +33,8 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-#cat "${DIRNAME}/raven_e.flac.${FILEEXT}" > /dev/null
-#cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
-cat "${DIRNAME}/snowboard.mp4.${FILEEXT}" > /dev/null
+cp "${DIRNAME}/snowboard.mp4.${FILEEXT}" /dev/null
+cp "${DIRNAME}/snowboard.mp4.${FILEEXT}" /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then

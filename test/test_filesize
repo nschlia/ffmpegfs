@@ -6,19 +6,21 @@ ADDOPT=""
 
 # Ensure log contains file sizes, predicted and actual
 echo "Transcoding ${DIRNAME}/raven_e.flac.${FILEEXT}"
-cat "${DIRNAME}/raven_e.flac.${FILEEXT}" > /dev/null
+cp "${DIRNAME}/raven_e.flac.${FILEEXT}" /dev/null
+cp "${DIRNAME}/raven_e.flac.${FILEEXT}" /dev/null
 echo "Transcoding ${DIRNAME}/raven_d.ogg.${FILEEXT}"
-cat "${DIRNAME}/raven_d.ogg.${FILEEXT}" > /dev/null
+cp "${DIRNAME}/raven_d.ogg.${FILEEXT}" /dev/null
+cp "${DIRNAME}/raven_d.ogg.${FILEEXT}" /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e.flac" 486096 494238
+    check_filesize "raven_e.flac" 485435 494238
     check_filesize "raven_d.ogg" 349440 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
     # mp3
-    check_filesize "raven_e.flac" 466981 490440
+    check_filesize "raven_e.flac" 466980 490440
     check_filesize "raven_d.ogg" 342690 343527
 elif [ "${DESTTYPE}" == "wav" ];
 then
@@ -43,7 +45,7 @@ then
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "raven_e.flac" 489113 495447
+    check_filesize "raven_e.flac" 486622 495447
     check_filesize "raven_d.ogg" 342690 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then
@@ -59,7 +61,7 @@ elif [ "${DESTTYPE}" == "alac" ];
 then
     # alac
     check_filesize "raven_e.flac" 3952038 3986427
-    check_filesize "raven_d.ogg" 3276270 3320221
+    check_filesize "raven_d.ogg" 3276205 3320221
 elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
@@ -68,8 +70,8 @@ then
 elif [ "${DESTTYPE}" == "flac" ];
 then
     # flac
-    check_filesize "raven_e.flac" 3037628 3596355
-    check_filesize "raven_d.ogg" 3021401
+    check_filesize "raven_e.flac" 3037626 3596355
+    check_filesize "raven_d.ogg"  1132052 1132062
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

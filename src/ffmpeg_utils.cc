@@ -123,7 +123,7 @@ bool Format_Options::is_video_codec_supported(AVCodecID codec_id) const
 {
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it != m_format_map.cend())
-    {        
+    {
         const CODEC_VECT & video_codec = it->second.m_video_codec;
         for (typename CODEC_VECT::const_iterator it = video_codec.cbegin(); it != video_codec.cend(); it++)
         {

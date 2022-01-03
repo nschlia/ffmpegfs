@@ -379,49 +379,49 @@ LPVIRTUALFILE   find_parent(const std::string & origpath);
  * @brief Convert SAMPLE_FMT enum to human readable text.
  * @return SAMPLE_FMT enum as text or "INVALID" if not known.
  */
-std::string         get_sampleformat_text(SAMPLE_FMT sample_fmt);
+std::string     get_sampleformat_text(SAMPLE_FMT sample_fmt);
 /**
  * @brief Convert AVCodecID enum for audio codec to human readable text.
  * @param[in] audio_codec - AVCodecID enum value to convert.
  * @return AVCodecID as text or "INVALID" if not known.
  */
-std::string 		get_audio_codec_text(AVCodecID audio_codec);
+std::string 	get_audio_codec_text(AVCodecID audio_codec);
 /**
  * @brief Convert AVCodecID enum for video codec to human readable text.
  * @param[in] video_codec - AVCodecID enum value to convert.
  * @return AVCodecID as text or "INVALID" if not known.
  */
-std::string 		get_video_codec_text(AVCodecID video_codec);
+std::string 	get_video_codec_text(AVCodecID video_codec);
 /**
  * @brief Convert AUTOCOPY enum to human readable text.
  * @param[in] autocopy - AUTOCOPY enum value to convert.
  * @return AUTOCOPY enum as text or "INVALID" if not known.
  */
-std::string 		get_autocopy_text(AUTOCOPY autocopy);
+std::string 	get_autocopy_text(AUTOCOPY autocopy);
 /**
  * @brief Convert RECODESAME enum to human readable text.
  * @param[in] recode - RECODESAME enum value to convert.
  * @return RECODESAME enum as text or "INVALID" if not known.
  */
-std::string 		get_recodesame_text(RECODESAME recode);
+std::string 	get_recodesame_text(RECODESAME recode);
 /**
  * @brief Convert PROFILE enum to human readable text.
  * @param[in] profile - PROFILE enum value to convert.
  * @return PROFILE enum as text or "INVALID" if not known.
  */
-std::string 		get_profile_text(PROFILE profile);
+std::string 	get_profile_text(PROFILE profile);
 /**
  * @brief Convert PRORESLEVEL enum to human readable text.
  * @param[in] level - PRORESLEVEL enum value to convert.
  * @return PRORESLEVEL enum as text or "INVALID" if not known.
  */
-std::string 		get_level_text(PRORESLEVEL level);
+std::string 	get_level_text(PRORESLEVEL level);
 /**
  * @brief Get the selected hardware acceleration as text.
  * @param[in] hwaccel_API - Hardware acceleration buffering API.
  * @return Hardware acceleration API as string.
  */
-std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
+std::string  	get_hwaccel_API_text(HWACCELAPI hwaccel_API);
 
 /**
  * @brief Check if codec_id and optional profile is in block list.
@@ -429,7 +429,7 @@ std::string  		get_hwaccel_API_text(HWACCELAPI hwaccel_API);
  * @param profile - Profile to check. Set to FF_PROFILE_UNKOWN to ignore.
  * @return Returns true if codec is in block list, false if not.
  */
-bool                check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
+bool            check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
 
 /**
  * @brief Wrapper to the Fuse filler function.

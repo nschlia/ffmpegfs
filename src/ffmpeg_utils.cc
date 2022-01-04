@@ -2231,6 +2231,7 @@ bool detect_docker(void)
         p = strstr(line, "/docker/");
     }
     fclose(fp);
+    std::fprintf(stderr, "%s: cgroup info\n", line);
 
     return (p != nullptr);
 }

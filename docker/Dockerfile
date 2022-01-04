@@ -10,7 +10,7 @@ RUN apt-get install -yq libdvdread[48] libdvdnav4 libbluray2
 FROM common as builder
 
 RUN apt-get install -yq gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz curl git xxd
-RUN apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet1-dev
+RUN apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
 RUN apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
 
 ARG BRANCH=master

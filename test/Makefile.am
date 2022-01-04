@@ -43,7 +43,6 @@ test_filesize_video_ts \
 test_filesize_video_webm \
 test_filesize_wav \
 test_filesize_webm \
-test_frameset \
 test_frameset_bmp \
 test_frameset_jpg \
 test_frameset_png \

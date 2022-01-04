@@ -2228,7 +2228,7 @@ bool detect_docker(void)
 
     if (fgets(line, sizeof line, fp) != nullptr)
     {
-        p = strstr(line, "/docker/");
+        p = strstr(line, "/docker");
     }
     fclose(fp);
 

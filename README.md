@@ -337,6 +337,7 @@ FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is
 Depending on the machine speed, this will take quite a while. After the command completed, the container can be started with
 
      docker run --rm \
+     	  --cgroupns host \
           --name=ffmpegfs \
           --device /dev/fuse \
           --cap-add SYS_ADMIN \

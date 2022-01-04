@@ -2217,21 +2217,9 @@ void stat_set_size(struct stat *st, size_t size)
 
 bool detect_docker(void)
 {
-    FILE *fp = fopen("/proc/self/cgroup", "r");
-
-    if (fp == nullptr)
-    {
-        return false;
-    }
-    char line[4096];
-    const char *p = nullptr;
-
-    if (fgets(line, sizeof line, fp) != nullptr)
-    {
-        p = strstr(line, "/docker/");
-    }
-    fclose(fp);
-    std::fprintf(stderr, "%s: cgroup info\n", line);
-
-    return (p != nullptr);
+    std::ifstream const in_stream("/proc/self/cgroup");
+    std::stringstream buffer;
+    buffer << in_stream.rdbuf();
+    auto const& content_as_string = buffer.str();
+    return content_as_string.find("/docker/") != std::string::npos;
 }

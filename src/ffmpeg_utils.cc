@@ -32,6 +32,7 @@
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
+#include "logging.h"
 
 #include <iostream>
 #include <libgen.h>
@@ -2217,9 +2218,18 @@ void stat_set_size(struct stat *st, size_t size)
 
 bool detect_docker(void)
 {
-    std::ifstream const in_stream("/proc/self/cgroup");
-    std::stringstream buffer;
-    buffer << in_stream.rdbuf();
-    auto const& content_as_string = buffer.str();
-    return std::string::npos != content_as_string.find("/docker");
+    auto constexpr file_name = "/proc/self/cgroup";
+    try
+    {
+        std::ifstream const in_stream(file_name);
+        std::stringstream buffer;
+        buffer << in_stream.rdbuf();
+        auto const& content_as_string = buffer.str();
+        return std::string::npos != content_as_string.find("/docker");
+    }
+    catch (std::exception const& ex)
+    {
+        Logging::warning(file_name, "Unable check if running in docker or not, exception: %1.", ex.what().c_str());
+        return false;
+    }
 }

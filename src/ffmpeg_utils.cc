@@ -2221,5 +2221,5 @@ bool detect_docker(void)
     std::stringstream buffer;
     buffer << in_stream.rdbuf();
     auto const& content_as_string = buffer.str();
-    return content_as_string.find("/docker/") != std::string::npos;
+    return std::string::npos != content_as_string.find("/docker");
 }

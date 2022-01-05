@@ -13,10 +13,12 @@ News
 
 ### Version 2.9 under development
 
-**New in in 2.9 (2021-12-XX):**
+**New in in 2.9 (2020-01-XX):**
 
 - **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
 - **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
+- **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
+- **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
 
 ### Version 2.8 released
 
@@ -332,11 +334,12 @@ Building A Docker Container
 
 FFmpegfs can run under Docker. To build a container for FFmpegfs a Dockerfile is provided. Change to the "docker" directory and run
 
-     docker build --build-arg -t nschlia/ffmpegfs .
+     docker build --build-arg BRANCH=master -t nschlia/ffmpegfs .
 
 Depending on the machine speed, this will take quite a while. After the command completed, the container can be started with
 
      docker run --rm \
+          --cgroupns host \
           --name=ffmpegfs \
           --device /dev/fuse \
           --cap-add SYS_ADMIN \

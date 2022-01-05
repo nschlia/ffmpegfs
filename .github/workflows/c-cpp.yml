@@ -31,7 +31,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: Collect test results 
+        name: Collected test results 
         path: |
            test/*.log
            test/*.trs

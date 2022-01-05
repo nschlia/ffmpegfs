@@ -83,6 +83,31 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 #define AV_ERROR_MAX_STRING_SIZE 128                    /**< @brief Max. length of a FFmpeg error string */
 #endif // AV_ERROR_MAX_STRING_SIZE
 
+typedef std::map<const std::string, const FILETYPE, comp> FILETYPE_MAP; /**< @brief Map of file type. One entry per supported type. */
+
+/**
+  * List of supported file types
+  */
+static const FILETYPE_MAP filetype_map =
+{
+    { "mp3",    FILETYPE_MP3 },
+    { "mp4",    FILETYPE_MP4 },
+    { "wav",    FILETYPE_WAV },
+    { "ogg",    FILETYPE_OGG },
+    { "webm",   FILETYPE_WEBM },
+    { "mov",    FILETYPE_MOV },
+    { "aiff",   FILETYPE_AIFF },
+    { "opus",   FILETYPE_OPUS },
+    { "prores", FILETYPE_PRORES },
+    { "alac",   FILETYPE_ALAC },
+    { "png",    FILETYPE_PNG },
+    { "jpg",    FILETYPE_JPG },
+    { "bmp",    FILETYPE_BMP },
+    { "ts",     FILETYPE_TS },
+    { "hls",    FILETYPE_HLS },
+    { "flac",   FILETYPE_FLAC },
+};
+
 Format_Options::Format_Options()
     : m_format_map{ { SAMPLE_FMT_DONTCARE, { { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, AV_SAMPLE_FMT_NONE }}}
     , m_albumart_supported(false)
@@ -1283,29 +1308,9 @@ int supports_albumart(FILETYPE filetype)
 
 FILETYPE get_filetype(const std::string & desttype)
 {
-    const std::map<const std::string, FILETYPE, comp> filetype_map =
-    {
-        { "mp3",    FILETYPE_MP3 },
-        { "mp4",    FILETYPE_MP4 },
-        { "wav",    FILETYPE_WAV },
-        { "ogg",    FILETYPE_OGG },
-        { "webm",   FILETYPE_WEBM },
-        { "mov",    FILETYPE_MOV },
-        { "aiff",   FILETYPE_AIFF },
-        { "opus",   FILETYPE_OPUS },
-        { "prores", FILETYPE_PRORES },
-        { "alac",   FILETYPE_ALAC },
-        { "png",    FILETYPE_PNG },
-        { "jpg",    FILETYPE_JPG },
-        { "bmp",    FILETYPE_BMP },
-        { "ts",     FILETYPE_TS },
-        { "hls",    FILETYPE_HLS },
-        { "flac",   FILETYPE_FLAC },
-    };
-
     try
     {
-        return (filetype_map.at(desttype));
+        return (filetype_map.at(desttype.c_str()));
     }
     catch (const std::out_of_range& /*oor*/)
     {

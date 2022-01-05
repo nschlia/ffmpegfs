@@ -104,6 +104,7 @@ DISTFILES += \
     configure.ac \
     COPYING \
     COPYING.DOC \
+    docker/Dockerfile \
     ffmpegfs.1.txt \
     INSTALL.md \
     Makefile.am \

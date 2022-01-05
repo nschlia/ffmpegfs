@@ -377,24 +377,24 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_END
 };
 
-typedef std::map<const std::string, const AUTOCOPY, comp> AUTOCOPY_MAP;             /**< @brief Map command line option to AUTOCOPY enum */
-typedef std::map<const std::string, const PROFILE, comp> PROFILE_MAP;               /**< @brief Map command line option to PROFILE enum */
-typedef std::map<const std::string, const PRORESLEVEL, comp> LEVEL_MAP;             /**< @brief Map command line option to LEVEL enum */
-typedef std::map<const std::string, const RECODESAME, comp> RECODESAME_MAP;         /**< @brief Map command line option to RECODESAME enum */
+typedef std::map<const std::string, const AUTOCOPY, comp> AUTOCOPY_MAP;         /**< @brief Map command line option to AUTOCOPY enum */
+typedef std::map<const std::string, const PROFILE, comp> PROFILE_MAP;           /**< @brief Map command line option to PROFILE enum */
+typedef std::map<const std::string, const PRORESLEVEL, comp> LEVEL_MAP;         /**< @brief Map command line option to LEVEL enum */
+typedef std::map<const std::string, const RECODESAME, comp> RECODESAME_MAP;     /**< @brief Map command line option to RECODESAME enum */
 
-typedef struct HWACCEL                                                  /**< @brief Hardware acceleration device and type */
+typedef struct HWACCEL                                                          /**< @brief Hardware acceleration device and type */
 {
-    bool                m_supported;                                    /**< @brief true if API supported, false if not */
-    HWACCELAPI          m_hwaccel_API;                                  /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
-    AVHWDeviceType      m_hwaccel_device_type;                          /**< @brief Hardware buffering type, NONE if not used */
+    bool                m_supported;                                            /**< @brief true if API supported, false if not */
+    HWACCELAPI          m_hwaccel_API;                                          /**< @brief Acceleration API, e.g VAAPI, MMAL or OMX */
+    AVHWDeviceType      m_hwaccel_device_type;                                  /**< @brief Hardware buffering type, NONE if not used */
 } HWACCEL;
 
-typedef std::map<const std::string, HWACCEL, comp> HWACCEL_MAP;               /**< @brief Map command line option to HWACCEL struct */
-typedef std::map<const std::string, const AVCodecID, comp> CODEC_MAP;               /**< @brief Map command line option to AVCodecID */
-typedef std::map<const std::string, const SAMPLE_FMT, comp> SAMPLE_FMT_MAP;         /**< @brief Map command line option to SAMPLE_FMT */
+typedef std::map<const std::string, HWACCEL, comp> HWACCEL_MAP;                 /**< @brief Map command line option to HWACCEL struct */
+typedef std::map<const std::string, const AVCodecID, comp> CODEC_MAP;           /**< @brief Map command line option to AVCodecID */
+typedef std::map<const std::string, const SAMPLE_FMT, comp> SAMPLE_FMT_MAP;     /**< @brief Map command line option to SAMPLE_FMT */
 
-typedef std::map<const std::string, const AVCodecID, comp> AUDIOCODEC_MAP;          /**< @brief Map command line option to audio AVCodecID */
-typedef std::map<const std::string, const AVCodecID, comp> VIDEOCODEC_MAP;          /**< @brief Map command line option to video AVCodecID */
+typedef std::map<const std::string, const AVCodecID, comp> AUDIOCODEC_MAP;      /**< @brief Map command line option to audio AVCodecID */
+typedef std::map<const std::string, const AVCodecID, comp> VIDEOCODEC_MAP;      /**< @brief Map command line option to video AVCodecID */
 
 /**
  * @brief List of audio codecs

@@ -614,27 +614,6 @@ static void usage()
 }
 
 /**
- * @brief Iterate through all elements in map and search for the passed element.
- * @param[in] mapOfWords - map to search.
- * @param[in] value - Search value
- * @return If found, retuns const_iterator to element. Returns mapOfWords.cend() if not.
- */
-template <typename T>
-static typename std::map<const std::string, const T, comp>::const_iterator search_by_value(const std::map<const std::string, const T, comp> & mapOfWords, T value)
-{
-    typename std::map<const std::string, const T, comp>::const_iterator it = mapOfWords.cbegin();
-    while (it != mapOfWords.cend())
-    {
-        if (it->second == value)
-        {
-            return it;
-        }
-        it++;
-    }
-    return mapOfWords.cend();
-}
-
-/**
  * @brief Iterate through all elements in map print all keys
  * @param[in] info - Informative text, will be printed before the list. May be nullptr.
  * @param[in] map - Map to go through.

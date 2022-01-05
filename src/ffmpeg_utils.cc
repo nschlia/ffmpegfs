@@ -1319,6 +1319,17 @@ FILETYPE get_filetype(const std::string & desttype)
     }
 }
 
+std::string get_filetype_text(FILETYPE filetype)
+{
+    FILETYPE_MAP::const_iterator it = search_by_value(filetype_map, filetype);
+    if (it != filetype_map.cend())
+    {
+        return it->first;
+    }
+    return "INVALID";
+}
+
+
 FILETYPE get_filetype_from_list(const std::string & desttypelist)
 {
     std::vector<std::string> desttype = split(desttypelist, ",");

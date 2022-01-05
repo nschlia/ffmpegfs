@@ -750,6 +750,12 @@ int                 supports_albumart(FILETYPE filetype);
  */
 FILETYPE            get_filetype(const std::string & desttype);
 /**
+* @brief Convert FILETYPE enum to human readable text.
+ * @param[in] filetype - FILETYPE enum value to convert.
+ * @return FILETYPE enum as text or "INVALID" if not known.
+ */
+std::string         get_filetype_text(FILETYPE filetype);
+/**
  * @brief Get the FFmpegfs filetype, desttypelist must be a comma separated list of FFmpeg's "official" short names for formats.
  * Will return the first match. Same as get_filetype, but accepts a comma separated list.
  * @param[in] desttypelist - Destination type list (MP4, WEBM etc.) separated by commas.
@@ -966,4 +972,26 @@ void                stat_set_size(struct stat *st, size_t size);
  * @return Returns true, if running under Docker, or false if not.
  */
 bool                detect_docker(void);
+
+/**
+ * @brief Iterate through all elements in map and search for the passed element.
+ * @param[in] mapOfWords - map to search.
+ * @param[in] value - Search value
+ * @return If found, retuns const_iterator to element. Returns mapOfWords.cend() if not.
+ */
+template <typename T>
+typename std::map<const std::string, const T, comp>::const_iterator search_by_value(const std::map<const std::string, const T, comp> & mapOfWords, T value)
+{
+    typename std::map<const std::string, const T, comp>::const_iterator it = mapOfWords.cbegin();
+    while (it != mapOfWords.cend())
+    {
+        if (it->second == value)
+        {
+            return it;
+        }
+        it++;
+    }
+    return mapOfWords.cend();
+}
+
 #endif

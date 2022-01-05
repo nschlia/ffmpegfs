@@ -27,15 +27,12 @@ jobs:
       run: make
     - name: make check
       run: make check
-    - name: TEST
-      run: |
-         ls -l
-         echo "${{ github.workspace }}"
-      
-    - uses: actions/upload-artifact@v2
+    - name: Archive Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
       with:
-        name: Collect "make check" artifacts 
+        name: Collect test results 
         path: |
-           ${{ github.workspace }}/test/*.log
-           ${{ github.workspace }}/test/*.trs
-           ${{ github.workspace }}/test/*.tag
+           test/*.log
+           test/*.trs
+           test/*.tag

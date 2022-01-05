@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Prerequisites
-      run: apt-get update && apt-get install -yq apt-utils fuse libfuse2 libsqlite3-0 libavcodec58 libavformat58 libswresample3 libavutil56 libswscale5 libavfilter7 libcue2 libchardet1 libdvdread[48] libdvdnav4 libbluray2 gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz curl git xxd libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev libdvdread-dev libdvdnav-dev libbluray-dev
+      run: sudo apt-get update && sudo apt-get install -yq apt-utils fuse libfuse2 libsqlite3-0 libavcodec58 libavformat58 libswresample3 libavutil56 libswscale5 libavfilter7 libcue2 libchardet1 libdvdread[48] libdvdnav4 libbluray2 gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz curl git xxd libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev libdvdread-dev libdvdnav-dev libbluray-dev
     - name: autogen.sh
       run: ./autogen.sh
     - name: configure

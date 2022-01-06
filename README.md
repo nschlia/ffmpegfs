@@ -15,7 +15,7 @@ News
 
 ### Version 2.9 under development
 
-**New in in 2.9 (2020-01-XX):**
+**New in in 2.9 (2022-01-XX):**
 
 - **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
 - **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.

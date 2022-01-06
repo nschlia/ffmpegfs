@@ -14,9 +14,29 @@ name: "CodeQL"
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+        - '**/*.md'
+        - '**/COPYING'
+        - '**/COPYING.CC0'
+        - '**/COPYING.DOC'
+        - '**/ffmpegfs.cbp'
+        - '**/ffmpegfs.depend'
+        - '**/ffmpegfs.pro'
+        - '**/NEWS'
+        - '**/TODO'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
+    paths-ignore:
+        - '**/*.md'
+        - '**/COPYING'
+        - '**/COPYING.CC0'
+        - '**/COPYING.DOC'
+        - '**/ffmpegfs.cbp'
+        - '**/ffmpegfs.depend'
+        - '**/ffmpegfs.pro'
+        - '**/NEWS'
+        - '**/TODO'
   schedule:
     - cron: '35 22 * * 4'
 

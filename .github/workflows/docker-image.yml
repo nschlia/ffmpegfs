@@ -3,8 +3,28 @@ name: Build Docker Image CI
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+        - '**/*.md'
+        - '**/COPYING'
+        - '**/COPYING.CC0'
+        - '**/COPYING.DOC'
+        - '**/ffmpegfs.cbp'
+        - '**/ffmpegfs.depend'
+        - '**/ffmpegfs.pro'
+        - '**/NEWS'
+        - '**/TODO'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+        - '**/*.md'
+        - '**/COPYING'
+        - '**/COPYING.CC0'
+        - '**/COPYING.DOC'
+        - '**/ffmpegfs.cbp'
+        - '**/ffmpegfs.depend'
+        - '**/ffmpegfs.pro'
+        - '**/NEWS'
+        - '**/TODO'
 
 jobs:
 

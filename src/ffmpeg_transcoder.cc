@@ -1247,9 +1247,9 @@ bool FFmpeg_Transcoder::get_aspect_ratio(int width, int height, const AVRational
     // Try to determine display aspect ratio
     AVRational dar;
     ::av_reduce(&dar.num, &dar.den,
-              static_cast<int64_t>(width)  * sar.num,
-              static_cast<int64_t>(height) * sar.den,
-              1024 * 1024);
+                static_cast<int64_t>(width)  * sar.num,
+                static_cast<int64_t>(height) * sar.den,
+                1024 * 1024);
 
     ar->num = ar->den = 0;
 

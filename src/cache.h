@@ -54,9 +54,9 @@
 typedef enum RESULTCODE
 {
     RESULTCODE_NONE,                            /**< @brief No result code available */
-    RESULTCODE_INCOMPLETE,                      /**< @brief Transcode finished, but incomplete */
-    RESULTCODE_FINISHED,                        /**< @brief Transcode finished successfully */
-    RESULTCODE_ERROR,                           /**< @brief Transcode finished with error */
+    RESULTCODE_FINISHED_INCOMPLETE,             /**< @brief Transcode finished, but incomplete */
+    RESULTCODE_FINISHED_SUCCESS,                /**< @brief Transcode finished successfully */
+    RESULTCODE_FINISHED_ERROR,                  /**< @brief Transcode finished with error */
 } RESULTCODE;
 typedef RESULTCODE const *LPCRESULTCODE;        /**< @brief Pointer version of RESULTCODE */
 typedef RESULTCODE *LPRESULTCODE;               /**< @brief Pointer to const version of RESULTCODE */
@@ -80,7 +80,7 @@ typedef struct CACHE_INFO
     size_t          m_encoded_filesize;         /**< @brief Actual file size after encode */
     uint32_t        m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
     uint32_t        m_segment_count;            /**< @brief Number of video segments for HLS */
-    RESULTCODE      m_finished;                 /**< @brief Result code: */
+    RESULTCODE      m_result;                   /**< @brief Result code: */
     bool            m_error;                    /**< @brief true if encode failed */
     int             m_errno;                    /**< @brief errno if encode failed */
     int             m_averror;                  /**< @brief FFmpeg error code if encode failed */

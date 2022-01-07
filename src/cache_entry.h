@@ -157,6 +157,16 @@ public:
      * @return Returns the current reference counter.
      */
     int                     ref_count() const;
+    /**
+     * @brief Increment the current reference counter.
+     * @return Returns the current reference counter.
+     */
+    int                     inc_refcount();
+    /**
+     * @brief Decrement the current reference counter.
+     * @return Returns the current reference counter.
+     */
+    int                     decr_refcount();
 
     /**
      * @brief Check if cache entry needs to be recoded
@@ -188,6 +198,27 @@ public:
      */
     unsigned int            read_count() const;
 
+    /**
+     * @brief Get if cache has been finished.
+     * @return Returns true if cache is finished, false if not.
+     */
+    bool                    is_finished() const;
+    /**
+     * @brief Get if cache has been finished, but not completely filled.
+     * @return Returns true if cache is finished, but not completely filled, false if not.
+     */
+    bool                    is_finished_incomplete() const;
+    /**
+     * @brief Get if cache has been finished and filled successfully.
+     * @return Returns true if cache is finished successfully, false if not.
+     */
+    bool                    is_finished_success() const;
+    /**
+     * @brief Get if cache has been finished and with an error.
+     * @return Returns true if cache is finished with error, false if not.
+     */
+    bool                    is_finished_error() const;
+
 protected:
     /**
      * @brief Close buffer object.
@@ -214,13 +245,13 @@ protected:
     Cache *                 m_owner;                        /**< @brief Owner cache object */
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
 
-    int                     m_ref_count;                    /**< @brief Reference counter */
+    volatile int            m_ref_count;                    /**< @brief Reference counter */
 
     LPVIRTUALFILE           m_virtualfile;                  /**< @brief Underlying virtual file object */
 
 public:
     Buffer *                m_buffer;                       /**< @brief Buffer object */
-    bool                    m_is_decoding;                  /**< @brief true while file is decoding */
+    volatile bool           m_is_decoding;                  /**< @brief true while file is decoding */
     std::recursive_mutex    m_active_mutex;                 /**< @brief Mutex while thread is active */
 
     CACHE_INFO              m_cache_info;                   /**< @brief Info about cached object */

@@ -82,7 +82,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
     size_t end = offset + len; // Cast OK: offset will never be < 0.
     bool success = true;
 
-    if (cache_entry->m_cache_info.m_finished == RESULTCODE_FINISHED || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end)
+    if (cache_entry->is_finished() || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end)
     {
         return true;
     }
@@ -93,7 +93,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
         if (cache_entry->m_is_decoding)
         {
             bool reported = false;
-            while (!(cache_entry->m_cache_info.m_finished == RESULTCODE_FINISHED || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end) && !cache_entry->m_cache_info.m_error)
+            while (!(cache_entry->is_finished() || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end) && !cache_entry->m_cache_info.m_error)
             {
                 if (fuse_interrupted())
                 {
@@ -109,7 +109,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
+                    Logging::trace(cache_entry->destname(), "Segment no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3), remaining %4.", segment_no, offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
                     reported = true;
                 }
                 sleep(0);
@@ -117,7 +117,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache hit at offset %<%11zu>1 (length %<%6u>2), remaining %3.", offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
+                Logging::trace(cache_entry->destname(), "Segment no. %1: Cache hit at offset %<%11zu>2 (length %<%6u>3), remaining %4.", segment_no, offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -149,7 +149,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transco
     cache_entry->m_cache_info.m_encoded_filesize    = cache_entry->m_buffer->buffer_watermark();
     cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
     cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
-    cache_entry->m_cache_info.m_finished            = RESULTCODE_FINISHED;
+    cache_entry->m_cache_info.m_result              = !transcoder.have_seeked() ? RESULTCODE_FINISHED_SUCCESS : RESULTCODE_FINISHED_INCOMPLETE;
     cache_entry->m_is_decoding                      = false;
     cache_entry->m_cache_info.m_errno               = 0;
     cache_entry->m_cache_info.m_averror             = 0;
@@ -372,7 +372,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
             virtualfile->m_video_frame_count    = cache_entry->m_cache_info.m_video_frame_count;
         }
 
-        if (!cache_entry->m_is_decoding && cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED)
+        if (!cache_entry->m_is_decoding && !cache_entry->is_finished_success())
         {
             if (begin_transcode)
             {
@@ -478,7 +478,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             throw false;
         }
 
-        if (cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED)
+        if (!cache_entry->is_finished_success())
         {
             switch (params.current_format(cache_entry->virtualfile())->filetype())
             {
@@ -531,9 +531,6 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                 }
             }
         }
-
-        // Set last access time
-        cache_entry->m_cache_info.m_access_time = time(nullptr);
 
         bool success = transcode_until(cache_entry, offset, len, segment_no);
 
@@ -598,9 +595,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             throw false;
         }
 
-        // Set last access time
-        cache_entry->m_cache_info.m_access_time = time(nullptr);
-
         std::vector<uint8_t> data;
 
         // Wait until decoder thread has the requested frame available
@@ -611,10 +605,15 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
+                Logging::error(nullptr, "SEEK image frame no. %1", frame_no);
                 cache_entry->m_seek_to_no = frame_no;
             }
+            else if (!offset)
+                Logging::error(nullptr, "NOSEEK image frame no. %1", frame_no);
 
-            int retries = 120; // wait 120 x 250 ms = 30 sec.
+#define GRANULARITY     250 // ms
+#define FRAME_TIMEOUT   10  // seconds
+            int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
             while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
             {
                 if (errno != EAGAIN)
@@ -648,13 +647,13 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     reported = true;
                 }
 
-                const struct timespec ts = { 0, 250 MS };
+                const struct timespec ts = { 0, GRANULARITY MS };
                 nanosleep(&ts, nullptr);
             }
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Cache hit  at offset %<%11zu>1 (length %<%6u>2).", offset, len);
+                Logging::trace(cache_entry->destname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -761,155 +760,179 @@ static void transcoder_thread(void *arg)
 
     std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
 
+    // Clear cache to remove any older remains
+    cache_entry->clear();
+
+    // Must decode the file, otherwise simply use cache
+    cache_entry->m_is_decoding  = true;
+
     try
     {
-        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
-
-        if (!cache_entry->open())
-        {
-            throw (static_cast<int>(errno));
-        }
-
-        averror = transcoder.open_input_file(cache_entry->virtualfile());
-        if (averror < 0)
-        {
-            throw (static_cast<int>(errno));
-        }
-
-        if (!cache_entry->m_cache_info.m_duration)
-        {
-            cache_entry->m_cache_info.m_duration = transcoder.duration();
-        }
-
-        if (!cache_entry->m_cache_info.m_predicted_filesize)
-        {
-            cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
-        }
-
-        if (!cache_entry->m_cache_info.m_video_frame_count)
-        {
-            cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
-        }
-
-        if (!cache_entry->m_cache_info.m_segment_count)
-        {
-            cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
-        }
-
-        if (!cache->maintenance(transcoder.predicted_filesize()))
-        {
-            throw (static_cast<int>(errno));
-        }
-
-        averror = transcoder.open_output_file(cache_entry->m_buffer);
-        if (averror < 0)
-        {
-            throw (static_cast<int>(errno));
-        }
-
-        memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
-
-        thread_data->m_initialised = true;
-
         bool unlocked = false;
-        if (!params.m_prebuffer_size || transcoder.is_frameset())
+
+        do
         {
-            // Unlock frame set from beginning
-            unlocked = true;
-            thread_data->m_lock_guard = true;
-            thread_data->m_cond.notify_all();       // signal that we are running
-        }
-        else
-        {
-            Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
-        }
+            Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
 
-        while ((cache_entry->m_cache_info.m_finished != RESULTCODE_FINISHED) && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
-        {
-            int status = 0;
-
-            if (cache_entry->ref_count() > 1)
+            if (!cache_entry->open())
             {
-                // Set last access time
-                cache_entry->update_access(false);
+                throw (static_cast<int>(errno));
             }
 
-            if (transcoder.is_frameset())
+            averror = transcoder.open_input_file(cache_entry->virtualfile());
+            if (averror < 0)
             {
-                uint32_t frame_no = cache_entry->m_seek_to_no;
-                if (frame_no)
-                {
-                    cache_entry->m_seek_to_no = 0;
-
-                    averror = transcoder.stack_seek_frame(frame_no);
-                    if (averror < 0)
-                    {
-                        throw (static_cast<int>(errno));
-                    }
-                }
-            }
-            else if (transcoder.is_hls())
-            {
-                uint32_t segment_no = cache_entry->m_seek_to_no;
-                if (segment_no)
-                {
-                    cache_entry->m_seek_to_no = 0;
-
-                    averror = transcoder.stack_seek_segment(segment_no);
-                    if (averror < 0)
-                    {
-                        throw (static_cast<int>(errno));
-                    }
-                }
+                throw (static_cast<int>(errno));
             }
 
-            averror = transcoder.process_single_fr(status);
-            if (status < 0)
+            if (!cache_entry->m_cache_info.m_duration)
             {
-                syserror = EIO;
-                success = false;
-                break;
+                cache_entry->m_cache_info.m_duration = transcoder.duration();
             }
 
-            if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
+            if (!cache_entry->m_cache_info.m_predicted_filesize)
             {
-                syserror = EIO;
-                success = false;
-                break;
+                cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
             }
 
-            if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
+            if (!cache_entry->m_cache_info.m_video_frame_count)
             {
+                cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
+            }
+
+            if (!cache_entry->m_cache_info.m_segment_count)
+            {
+                cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
+            }
+
+            if (!cache->maintenance(transcoder.predicted_filesize()))
+            {
+                throw (static_cast<int>(errno));
+            }
+
+            averror = transcoder.open_output_file(cache_entry->m_buffer);
+            if (averror < 0)
+            {
+                throw (static_cast<int>(errno));
+            }
+
+            memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
+
+            thread_data->m_initialised = true;
+
+            unlocked = false;
+            if (!params.m_prebuffer_size || transcoder.is_frameset())
+            {
+                // Unlock frame set from beginning
                 unlocked = true;
-                Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
                 thread_data->m_lock_guard = true;
                 thread_data->m_cond.notify_all();       // signal that we are running
             }
-
-            if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
+            else
             {
-                if (!unlocked && params.m_prebuffer_size)
+                Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
+            }
+
+            while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+            {
+                int status = 0;
+
+                if (cache_entry->ref_count() > 1)
+                {
+                    // Set last access time
+                    cache_entry->update_access(false);
+                }
+
+                if (transcoder.is_frameset())
+                {
+                    uint32_t frame_no = cache_entry->m_seek_to_no;
+                    if (frame_no)
+                    {
+                        cache_entry->m_seek_to_no = 0;
+
+                        averror = transcoder.stack_seek_frame(frame_no);
+                        if (averror < 0)
+                        {
+                            throw (static_cast<int>(errno));
+                        }
+                    }
+                }
+                else if (transcoder.is_hls())
+                {
+                    uint32_t segment_no = cache_entry->m_seek_to_no;
+                    if (segment_no)
+                    {
+                        cache_entry->m_seek_to_no = 0;
+
+                        averror = transcoder.stack_seek_segment(segment_no);
+                        if (averror < 0)
+                        {
+                            throw (static_cast<int>(errno));
+                        }
+                    }
+                }
+
+                averror = transcoder.process_single_fr(status);
+                if (status < 0)
+                {
+                    errno = EIO;
+                    throw (static_cast<int>(errno));
+                }
+
+                if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
+                {
+                    errno = EIO;
+                    throw (static_cast<int>(errno));
+                }
+
+                if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
                 {
                     unlocked = true;
+                    Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
                     thread_data->m_lock_guard = true;
-                    thread_data->m_cond.notify_all();  // signal that we are running
+                    thread_data->m_cond.notify_all();       // signal that we are running
                 }
 
-                Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
-
-                while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+                if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
                 {
-                    sleep(1);
-                }
+                    if (!unlocked && params.m_prebuffer_size)
+                    {
+                        unlocked = true;
+                        thread_data->m_lock_guard = true;
+                        thread_data->m_cond.notify_all();  // signal that we are running
+                    }
 
-                if (timeout)
-                {
-                    break;
-                }
+                    Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
-                Logging::info(cache_entry->destname(), "Transcoding resumed.");
+                    while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+                    {
+                        usleep(500000);
+                    }
+
+                    if (timeout)
+                    {
+                        break;
+                    }
+
+                    Logging::info(cache_entry->destname(), "Transcoding resumed.");
+                }
             }
+            if ((!cache_entry->m_seek_to_no && !cache_entry->is_finished_incomplete()) || cache_entry->is_finished_error() || timeout || thread_exit)
+            {
+                break;
+            }
+
+            // If incomplete, start over, file probably gets accessed again.
+
+            Logging::error(nullptr, "*\n\nTRANSCODE RESTART!!! SEEK TO %1\n\n*", cache_entry->m_seek_to_no);
+
+            transcoder.close();
+
+            cache_entry->m_cache_info.m_result = RESULTCODE_NONE;
+            cache_entry->decr_refcount();
+            //cache_entry->m_cache_info.m_access_time = time(nullptr);
         }
+        while (1);
 
         if (!unlocked && params.m_prebuffer_size)
         {
@@ -947,7 +970,7 @@ static void transcoder_thread(void *arg)
 
         if (!transcoder.have_seeked())
         {
-            cache_entry->m_cache_info.m_finished    = RESULTCODE_ERROR;
+            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_ERROR;
             cache_entry->m_cache_info.m_error       = true;
             cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
             cache_entry->m_cache_info.m_averror     = averror;  // Preserve averror
@@ -964,7 +987,7 @@ static void transcoder_thread(void *arg)
         else
         {
             // Must restart from scratch, but this is not an error.
-            cache_entry->m_cache_info.m_finished    = RESULTCODE_INCOMPLETE;
+            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_INCOMPLETE;
             cache_entry->m_cache_info.m_error       = false;
             cache_entry->m_cache_info.m_errno       = 0;
             cache_entry->m_cache_info.m_averror     = 0;

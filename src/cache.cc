@@ -706,26 +706,26 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     int ret;
     bool success = true;
 
-    //cache_info->m_enable_ismv        = 0;
-    cache_info->m_audiobitrate       = 0;
-    cache_info->m_audiosamplerate    = 0;
-    cache_info->m_videobitrate       = 0;
-    cache_info->m_videowidth         = 0;
-    cache_info->m_videoheight        = 0;
-    cache_info->m_deinterlace        = 0;
-    cache_info->m_duration           = 0;
-    cache_info->m_predicted_filesize = 0;
-    cache_info->m_encoded_filesize   = 0;
-    cache_info->m_video_frame_count  = 0;
-    cache_info->m_segment_count      = 0;
-    cache_info->m_finished           = RESULTCODE_NONE;
-    cache_info->m_error              = 0;
-    cache_info->m_errno              = 0;
-    cache_info->m_averror            = 0;
-    cache_info->m_creation_time      = 0;
-    cache_info->m_access_time        = 0;
-    cache_info->m_file_time          = 0;
-    cache_info->m_file_size          = 0;
+    //cache_info->m_enable_ismv         = 0;
+    cache_info->m_audiobitrate          = 0;
+    cache_info->m_audiosamplerate       = 0;
+    cache_info->m_videobitrate          = 0;
+    cache_info->m_videowidth            = 0;
+    cache_info->m_videoheight           = 0;
+    cache_info->m_deinterlace           = 0;
+    cache_info->m_duration              = 0;
+    cache_info->m_predicted_filesize    = 0;
+    cache_info->m_encoded_filesize      = 0;
+    cache_info->m_video_frame_count     = 0;
+    cache_info->m_segment_count         = 0;
+    cache_info->m_result                = RESULTCODE_NONE;
+    cache_info->m_error                 = 0;
+    cache_info->m_errno                 = 0;
+    cache_info->m_averror               = 0;
+    cache_info->m_creation_time         = 0;
+    cache_info->m_access_time           = 0;
+    cache_info->m_file_time             = 0;
+    cache_info->m_file_size             = 0;
 
     if (m_cacheidx_select_stmt == nullptr)
     {
@@ -773,7 +773,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             cache_info->m_encoded_filesize      = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 10));
             cache_info->m_video_frame_count     = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_select_stmt, 11));
             cache_info->m_segment_count         = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_select_stmt, 12));
-            cache_info->m_finished              = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_select_stmt, 13));
+            cache_info->m_result                = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_select_stmt, 13));
             cache_info->m_error                 = sqlite3_column_int(m_cacheidx_select_stmt, 14);
             cache_info->m_errno                 = sqlite3_column_int(m_cacheidx_select_stmt, 15);
             cache_info->m_averror               = sqlite3_column_int(m_cacheidx_select_stmt, 16);
@@ -851,7 +851,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         SQLBINDNUM(sqlite3_bind_int64,  12, static_cast<sqlite3_int64>(cache_info->m_encoded_filesize));
         SQLBINDNUM(sqlite3_bind_int,    13, static_cast<int32_t>(cache_info->m_video_frame_count));
         SQLBINDNUM(sqlite3_bind_int,    14, static_cast<int32_t>(cache_info->m_segment_count));
-        SQLBINDNUM(sqlite3_bind_int,    15, cache_info->m_finished);
+        SQLBINDNUM(sqlite3_bind_int,    15, cache_info->m_result);
         SQLBINDNUM(sqlite3_bind_int,    16, cache_info->m_error);
         SQLBINDNUM(sqlite3_bind_int,    17, cache_info->m_errno);
         SQLBINDNUM(sqlite3_bind_int,    18, cache_info->m_averror);

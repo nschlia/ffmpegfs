@@ -102,7 +102,7 @@ void Cache_Entry::clear(bool fetch_file_time /*= true*/)
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
     m_cache_info.m_video_frame_count    = 0;
-    m_cache_info.m_finished             = RESULTCODE_NONE;
+    m_cache_info.m_result               = RESULTCODE_NONE;
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;
     m_cache_info.m_averror              = 0;
@@ -180,7 +180,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         return true;
     }
 
-    if (m_cache_info.m_finished != RESULTCODE_INCOMPLETE && m_cache_info.m_finished != RESULTCODE_FINISHED)
+    if (!is_finished())
     {
         // If no database entry found (database is not consistent),
         // or file was not completely transcoded last time,
@@ -188,7 +188,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         erase_cache = true;
     }
 
-    Logging::trace(filename(), "Last transcode finished: %1 Erase cache: %2.", m_cache_info.m_finished, erase_cache);
+    Logging::trace(filename(), "Last transcode finished: Result %1 Erase cache: %2.", m_cache_info.m_result, erase_cache);
 
     // Store access time
     update_access(true);
@@ -302,12 +302,12 @@ bool Cache_Entry::expired() const
 
 bool Cache_Entry::suspend_timeout() const
 {
-    return (((time(nullptr) - m_cache_info.m_access_time) > params.m_max_inactive_suspend) && m_ref_count <= 1);
+    return (((time(nullptr) - m_cache_info.m_access_time) >= params.m_max_inactive_suspend) && m_ref_count <= 1);
 }
 
 bool Cache_Entry::decode_timeout() const
 {
-    return (((time(nullptr) - m_cache_info.m_access_time) > params.m_max_inactive_abort) && m_ref_count <= 1);
+    return (((time(nullptr) - m_cache_info.m_access_time) >= params.m_max_inactive_abort) && m_ref_count <= 1);
 }
 
 const std::string & Cache_Entry::filename() const
@@ -333,6 +333,16 @@ void Cache_Entry::unlock()
 int Cache_Entry::ref_count() const
 {
     return m_ref_count;
+}
+
+int Cache_Entry::inc_refcount()
+{
+    return __sync_fetch_and_add(&m_ref_count, 1);
+}
+
+int Cache_Entry::decr_refcount()
+{
+    return __sync_sub_and_fetch(&m_ref_count, 1);
 }
 
 bool Cache_Entry::outdated() const
@@ -403,3 +413,24 @@ unsigned int Cache_Entry::read_count() const
     return m_cache_info.m_access_count;
 }
 
+bool Cache_Entry::is_finished() const
+{
+    //Logging::error(nullptr, "FINISHED %1", m_cache_info.m_finished);
+
+    return (m_cache_info.m_result != RESULTCODE_NONE);
+}
+
+bool Cache_Entry::is_finished_incomplete() const
+{
+    return (m_cache_info.m_result == RESULTCODE_FINISHED_INCOMPLETE);
+}
+
+bool Cache_Entry::is_finished_success() const
+{
+    return (m_cache_info.m_result == RESULTCODE_FINISHED_SUCCESS);
+}
+
+bool Cache_Entry::is_finished_error() const
+{
+    return (m_cache_info.m_result == RESULTCODE_FINISHED_ERROR);
+}

@@ -4921,7 +4921,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         int64_t pos = (segment_no - 1) * params.m_segment_duration;
 
-                        if (m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx != INVALID_STREAM)
+                        if (m_in.m_video.m_stream_idx && m_out.m_video.m_stream_idx != INVALID_STREAM && m_in.m_video.m_stream != nullptr)
                         {
                             int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
 
@@ -4932,7 +4932,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                             ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
                         }
-                        else // if (m_out.m_audio.m_stream_idx != INVALID_STREAM)
+                        else if (m_in.m_audio.m_stream_idx && m_out.m_audio.m_stream_idx != INVALID_STREAM && m_in.m_audio.m_stream != nullptr)
                         {
                             int64_t pts = av_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
 

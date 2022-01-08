@@ -1861,7 +1861,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     std::string origpath;
     size_t locoffset = static_cast<size_t>(offset);  // Cast OK: offset can never be < 0.
     int bytes_read = 0;
-    Cache_Entry* cache_entry;
 
     Logging::trace(path, "read: Reading %1 bytes from %2.", size, locoffset);
 
@@ -1940,6 +1939,8 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     {
         if (virtualfile->m_flags & VIRTUALFLAG_FRAME)
         {
+            Cache_Entry* cache_entry;
+
             cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
             if (cache_entry == nullptr)
@@ -1964,6 +1965,8 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
         }
         else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
+            Cache_Entry* cache_entry;
+
             cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
             if (cache_entry == nullptr)

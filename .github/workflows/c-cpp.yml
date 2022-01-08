@@ -25,7 +25,6 @@ on:
         - '*ffmpegfs.pro'
         - '*NEWS'
         - '*TODO'
-
 jobs:
   build:
 

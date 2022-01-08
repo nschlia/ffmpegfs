@@ -79,6 +79,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_video_codec(AV_CODEC_ID_NONE)                    // default: use predefined option
 
     , m_autocopy(AUTOCOPY_OFF)                          // default: off
+    , m_recodesame(RECODESAME_NO)                       // default: off
     , m_profile(PROFILE_DEFAULT)                        // default: no profile
     , m_level(PRORESLEVEL_NONE)                         // default: no level
 
@@ -1539,7 +1540,7 @@ bool check_hwaccel_dec_blocked(AVCodecID codec_id, int profile)
         return false;   // Nothing blocked
     }
 
-    for (HWACCEL_BLOCKED_MAP::const_iterator it = params.m_hwaccel_dec_blocked->find(codec_id); it != params.m_hwaccel_dec_blocked->cend(); it++)
+    for (HWACCEL_BLOCKED_MAP::const_iterator it = params.m_hwaccel_dec_blocked->find(codec_id); it != params.m_hwaccel_dec_blocked->cend(); ++it)
     {
         if (it->first == codec_id && (it->second == profile || it->second == FF_PROFILE_UNKNOWN))
         {
@@ -1559,7 +1560,7 @@ std::string get_hwaccel_API_text(HWACCELAPI hwaccel_API)
         {
             return it->first;
         }
-        it++;
+        ++it;
     }
 
     return "INVALID";

@@ -173,8 +173,6 @@ int VcdEntries::scan_chapters()
 {
     FILE *      fpi = nullptr;
     std::string fullname;
-    int         last_track_no = -1;
-    int64_t     first_sync = -1;
     struct stat stbuf;
 
     if (!m_chapters.size())
@@ -184,6 +182,9 @@ int VcdEntries::scan_chapters()
 
     try
     {
+        int         last_track_no = -1;
+        int64_t     first_sync = -1;
+
         // Build list of chapters
         for (size_t chapter_no = 0; chapter_no < m_chapters.size(); chapter_no++)
         {

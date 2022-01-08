@@ -125,7 +125,7 @@ typedef struct VIRTUALFILE
         , m_predicted_size(0)
         , m_video_frame_count(0)
     {
-
+        memset(&m_st, 0, sizeof(m_st));
     }
 
     uint32_t get_segment_count() const;                             /**< @brief Number of HLS segments in set */

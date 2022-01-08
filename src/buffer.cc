@@ -423,7 +423,7 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
     int     __fd        = *fd;
 
     // Clear all variables
-    p           = nullptr;
+    *p          = nullptr;
     *filesize   = 0;
     *fd         = -1;
 
@@ -512,9 +512,9 @@ bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
     return success;
 }
 
-bool Buffer::remove_cachefile(uint32_t segment_no)
+bool Buffer::remove_cachefile(uint32_t segment_no) const
 {
-    LPCACHEINFO ci = !segment_no ? m_cur_ci : &m_ci[segment_no - 1];
+    LPCCACHEINFO ci = !segment_no ? m_cur_ci : &m_ci[segment_no - 1];
     bool success = remove_file(ci->m_cachefile);
 
     if (!ci->m_cachefile_idx.empty())

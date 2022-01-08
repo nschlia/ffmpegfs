@@ -989,7 +989,7 @@ typename std::map<const std::string, const T, comp>::const_iterator search_by_va
         {
             return it;
         }
-        it++;
+        ++it;
     }
     return mapOfWords.cend();
 }

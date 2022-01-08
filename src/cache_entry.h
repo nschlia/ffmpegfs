@@ -53,11 +53,22 @@ private:
      */
     explicit Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile);
     /**
+     * @brief Copy constructor declared deleted, should use create to get this object to maintain reference count.
+     */
+    Cache_Entry(Cache_Entry &) = delete;
+    /**
      * @brief Destroy Cache_Entry object.
      */
     virtual ~Cache_Entry();
 
 public:
+    /**
+     * @brief operator = declared deleted, should use create to get this object to maintain reference count.
+     * @param other - Assignment object
+     * @return Pointer to this
+     */
+    Cache_Entry & operator= (Cache_Entry const & other) = delete;
+
     /**
      * @brief Create a new Cache_Entry object.
      * @param[in] owner - Cache object of owner.

@@ -213,6 +213,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
 
+    memset(&m_mtime, 0, sizeof(m_mtime));
+
     // Initialise ID3v1.1 tag structure
     init_id3v1(&m_out.m_id3v1);
 }
@@ -2281,8 +2283,6 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
 
 int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 {
-    int             ret = 0;
-
     m_out.m_filetype = m_current_format->filetype();
 
     Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
@@ -2324,6 +2324,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
         if (!m_copy_video)
         {
+            int ret;
+
             ret = add_stream(m_current_format->video_codec());
             if (ret < 0)
             {
@@ -2342,6 +2344,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
         else
         {
+            int ret;
+
             Logging::info(destname(), "Copying video stream.");
 
             ret = add_stream_copy(m_current_format->video_codec(), AVMEDIA_TYPE_VIDEO);
@@ -2358,6 +2362,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
         if (!m_copy_audio)
         {
+            int ret;
+
             ret = add_stream(m_current_format->audio_codec());
             if (ret < 0)
             {
@@ -2366,6 +2372,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
         else
         {
+            int ret;
+
             Logging::info(destname(), "Copying audio stream.");
 
             ret = add_stream_copy(m_current_format->audio_codec(), AVMEDIA_TYPE_AUDIO);
@@ -2380,6 +2388,8 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     {
         for (size_t n = 0; n < m_in.m_album_art.size(); n++)
         {
+            int ret;
+
             ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx);
             if (ret < 0)
             {
@@ -2901,6 +2911,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
     ret = 0;
 
     {
+        if (data_present)
 #else
     bool again = false;
 
@@ -2940,7 +2951,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         *decoded += pkt->size;
 #endif
         // If there is decoded data, convert and store it
-        if (data_present && frame->nb_samples)
+        if (frame->nb_samples)
         {
             // Temporary storage for the converted input samples.
             uint8_t **converted_input_samples = nullptr;
@@ -3688,7 +3699,6 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
             AVPacket pkt;
 #endif // !LAVC_DEP_AV_INIT_PACKET
             AVPacket *flush_packet = nullptr;
-            int decoded = 0;
 
             if (use_flush_packet)
             {
@@ -3705,7 +3715,7 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
                 flush_packet->stream_index  = stream_index;
             }
 
-            do
+            for (int decoded = 1; decoded;)
             {
                 ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
@@ -3713,7 +3723,6 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
                     break;
                 }
             }
-            while (decoded);
 
             av_packet_unref(flush_packet);
 #if LAVC_DEP_AV_INIT_PACKET
@@ -3796,7 +3805,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     return ret;
 }
 
-int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size)
+int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size) const
 {
     int ret;
 
@@ -3903,6 +3912,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     }
 
     {
+        if (*data_present)
 #else
     *data_present = 0;
 
@@ -3936,7 +3946,6 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
         *data_present = 1;
 #endif
         // Write one audio frame from the temporary packet to the output buffer.
-        if (*data_present)
         {
             pkt->stream_index = m_out.m_audio.m_stream_idx;
 
@@ -4017,6 +4026,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         }
 
         {
+            if (*data_present)
 #else
         *data_present = 0;
 
@@ -4048,7 +4058,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             *data_present = 1;
 #endif
             // Write one video frame from the temporary packet to the output buffer.
-            if (*data_present)
             {
                 // Store current video PTS
                 if (pkt->pts != AV_NOPTS_VALUE)
@@ -4150,6 +4159,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         }
 
         {
+            if (*data_present)
 #else
         *data_present = 0;
 
@@ -4180,9 +4190,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 
             *data_present = 1;
 #endif
-
             // Write one video frame from the temporary packet to the output buffer.
-            if (*data_present)
             {
                 // Fix for issue #46: bitrate too high.
                 av_packet_rescale_ts(pkt, m_out.m_video.m_codec_ctx->time_base, m_out.m_video.m_stream->time_base);
@@ -5556,7 +5564,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
     return filesize;
 }
 
-int64_t FFmpeg_Transcoder::duration()
+int64_t FFmpeg_Transcoder::duration() const
 {
     if (m_virtualfile != nullptr)
     {
@@ -5568,7 +5576,7 @@ int64_t FFmpeg_Transcoder::duration()
     }
 }
 
-size_t FFmpeg_Transcoder::predicted_filesize()
+size_t FFmpeg_Transcoder::predicted_filesize() const
 {
     if (m_virtualfile != nullptr)
     {
@@ -5622,7 +5630,7 @@ int FFmpeg_Transcoder::encode_finish()
 
         // Get segment VIRTUALFILE object
         std::string filename(m_buffer->virtualfile()->m_destfile + "/" + make_filename(m_current_segment, params.current_format(m_buffer->virtualfile())->fileext()));
-        LPVIRTUALFILE virtualfile = find_file(filename.c_str());
+        LPVIRTUALFILE virtualfile = find_file(filename);
 
         if (virtualfile != nullptr)
         {
@@ -6050,8 +6058,6 @@ const char *FFmpeg_Transcoder::destname() const
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
-    const char * filters;
-    char args[1024];
     const AVFilter * buffer_src     = avfilter_get_by_name("buffer");
     const AVFilter * buffer_sink    = avfilter_get_by_name("buffersink");
     AVFilterInOut * outputs         = avfilter_inout_alloc();
@@ -6082,6 +6088,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         }
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
+        char args[1024];
         snprintf(args, sizeof(args), "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
                  codec_context->width, codec_context->height, pix_fmt,
                  time_base.num, time_base.den,
@@ -6148,6 +6155,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         // args "anull"     passthrough (dummy) filter for audio
 
         // https://stackoverflow.com/questions/31163120/c-applying-filter-in-ffmpeg
+        const char * filters;
         //filters = "yadif=mode=send_frame:parity=auto:deint=interlaced";
         filters = "yadif=mode=send_frame:parity=auto:deint=all";
         //filters = "yadif=0:-1:0";
@@ -6360,7 +6368,7 @@ enum AVPixelFormat FFmpeg_Transcoder::get_format_static(AVCodecContext *input_co
     return pThis->get_format(input_codec_ctx, pix_fmts);
 }
 
-enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts)
+enum AVPixelFormat FFmpeg_Transcoder::get_format(__attribute__((unused)) AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts) const
 {
     if (params.m_hwaccel_dec_device_type == AV_HWDEVICE_TYPE_NONE)
     {
@@ -6460,15 +6468,15 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodec
     }
 
     output_codec_ctx->hw_frames_ctx = av_buffer_ref(hw_new_frames_ref);
-    if (!output_codec_ctx->hw_frames_ctx)
+    if (output_codec_ctx->hw_frames_ctx == nullptr)
     {
-        Logging::error(destname(), "hwframe_ctx_set(): A hardware frame reference create failed (error '%1').", ffmpeg_geterror(AVERROR(ENOMEM)).c_str());
         ret = AVERROR(ENOMEM);
+        Logging::error(destname(), "hwframe_ctx_set(): A hardware frame reference create failed (error '%1').", ffmpeg_geterror(ret).c_str());
     }
 
     av_buffer_unref(&hw_new_frames_ref);
 
-    return 0;
+    return ret;
 }
 
 //int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodecContext *input_codec_ctx, AVBufferRef *hw_device_ctx)
@@ -6561,7 +6569,7 @@ int FFmpeg_Transcoder::hwframe_copy_from_hw(AVCodecContext * /*ctx*/, AVFrame **
     return 0;
 }
 
-int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_frame, const AVFrame * sw_frame) const
+int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, AVFrame ** hw_frame, const AVFrame * sw_frame) const
 {
     int ret;
 
@@ -6578,7 +6586,7 @@ int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *ctx, AVFrame ** hw_fra
         return ret;
     }
 
-    ret = av_hwframe_get_buffer(ctx->hw_frames_ctx, *hw_frame, 0);
+    ret = av_hwframe_get_buffer(output_codec_ctx->hw_frames_ctx, *hw_frame, 0);
     if (ret < 0)
     {
         Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());

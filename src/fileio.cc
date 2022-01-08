@@ -96,9 +96,7 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
 #endif // USE_LIBBLURAY
     default:
     {
-        return new(std::nothrow) DiskIO;    // TEST
-		errno = EINVAL;
-        return nullptr;
+        return new(std::nothrow) DiskIO;
     }
     }
 }

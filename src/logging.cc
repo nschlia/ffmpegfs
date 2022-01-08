@@ -87,12 +87,13 @@ Logging::Logger::~Logger()
 
     // Construct string containing time
     time_t now = time(nullptr);
+    struct tm buffer;
     std::string time_string(30, '\0');
     std::string loglevel;
     std::string filename;
     std::string msg;
 
-    time_string.resize(strftime(&time_string[0], time_string.size(), "%F %T", localtime(&now)));   // Mind the blank at the end
+    time_string.resize(strftime(&time_string[0], time_string.size(), "%F %T", localtime_r(&now, &buffer)));   // Mind the blank at the end
 
     loglevel = m_level_name_map.at(m_loglevel) + ":";
 

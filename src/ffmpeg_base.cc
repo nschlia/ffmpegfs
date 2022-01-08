@@ -153,12 +153,12 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     if (enc_hw_pix_fmt == AV_PIX_FMT_NONE)
     {
         // Automatic pix_fmt selection
-        int alpha = 0;
         int loss = 0;
 
         AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
         if (output_codec_ctx->codec->pix_fmts != nullptr)
         {
+            int alpha = 0;
             enc_hw_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
         }
 

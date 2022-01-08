@@ -61,12 +61,12 @@ public:
      * @brief Get type of the virtual file
      * @return Returns the type of the virtual file.
      */
-    virtual VIRTUALTYPE type() const;
+    virtual VIRTUALTYPE type() const override;
     /**
      * @brief Get the ideal buffer size.
      * @return Return the ideal buffer size.
      */
-    virtual size_t  bufsize() const;
+    virtual size_t  bufsize() const override;
 
     /**
      * @brief Open a virtual file
@@ -74,7 +74,7 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int     open(LPVIRTUALFILE virtualfile);
+    virtual int     open(LPVIRTUALFILE virtualfile) override;
     /**
      * @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
@@ -84,27 +84,27 @@ public:
      * On error, the value 0 is returned and errno is set to indicate the error. @n
      * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
      */
-    virtual size_t  read(void *data, size_t size);
+    virtual size_t  read(void *data, size_t size) override;
     /**
      * @brief Get last error.
      * @return errno value of last error.
      */
-    virtual int     error() const;
+    virtual int     error() const override;
     /**
      * @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
      * @return Returns the duration of the file, in AV_TIME_BASE fractional seconds.
      */
-    virtual int64_t duration() const;
+    virtual int64_t duration() const override;
     /**
      * @brief Get the file size.
      * @return Returns the file size.
      */
-    virtual size_t  size() const;
+    virtual size_t  size() const override;
     /**
      * @brief Get current read position.
      * @return Gets the current read position.
      */
-    virtual size_t  tell() const;
+    virtual size_t  tell() const override;
     /**
      * @brief Seek to position in file
      *
@@ -119,16 +119,16 @@ public:
      * from the beginning of the file.  @n
      * On error, the value -1 is returned and errno is set to indicate the error.
      */
-    virtual int     seek(int64_t offset, int whence);
+    virtual int     seek(int64_t offset, int whence) override;
     /**
      * @brief Check if at end of file.
      * @return Returns true if at end of file.
      */
-    virtual bool    eof() const;
+    virtual bool    eof() const override;
     /**
      * @brief Close virtual file.
      */
-    virtual void    close();
+    virtual void    close() override;
 
 private:
     /**

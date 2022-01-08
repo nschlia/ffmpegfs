@@ -147,11 +147,11 @@ std::string VcdChapter::get_filename() const
 
     if (m_is_svcd)
     {
-        snprintf(buffer, sizeof(buffer) - 1, "MPEG2/AVSEQ%02u.MPG", m_track_no - 1);
+        snprintf(buffer, sizeof(buffer) - 1, "MPEG2/AVSEQ%02i.MPG", m_track_no - 1);
     }
     else
     {
-        snprintf(buffer, sizeof(buffer) - 1, "MPEGAV/AVSEQ%02u.DAT", m_track_no - 1);
+        snprintf(buffer, sizeof(buffer) - 1, "MPEGAV/AVSEQ%02i.DAT", m_track_no - 1);
     }
     return buffer;
 }
@@ -205,6 +205,7 @@ VcdChapter & VcdChapter::operator= (VcdChapter const & other)
         m_sec       = other.m_sec;
         m_frame     = other.m_frame;
         m_start_pos = other.m_start_pos;
+        m_end_pos   = other.m_end_pos;
         m_duration  = other.m_duration;
     }
 
@@ -222,6 +223,7 @@ int VcdChapter::operator==(const VcdChapter & other) const
 int VcdChapter::operator<(const VcdChapter & other) const
 {
     int res;
+
     res = (m_track_no - other.m_track_no);
 
     if (res < 0)
@@ -265,7 +267,6 @@ int VcdChapter::operator<(const VcdChapter & other) const
         return 1;
     }
 
-    //if (res >= 0)
     return 0;
 }
 

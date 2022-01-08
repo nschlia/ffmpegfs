@@ -68,7 +68,7 @@ endif
 
 SRCS =  $(OBJS:.o=.c)
 
-#.PHONY: all distclean doxy
+#.PHONY: all distclean doxy cppcheck
 
 # If makefile changes, maybe the list of sources has changed, so update doxygens list
 doxyfile.inc: Doxyfile Makefile
@@ -115,7 +115,11 @@ clean-local: doxy-clean
 
 # Really clean up everything
 wipe-all: doxy-clean distclean
-	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in test/.deps src/Makefile.in src/config.h.in src/.deps src/vcd/.deps src/config.h.in 
+	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in test/.deps src/Makefile.in src/config.h.in src/.deps src/vcd/.deps src/config.h.in ffmpegfs.layout 
+
+# Run cppcheck
+cppcheck:
+	cppcheck --force --enable=all --inconclusive --library=posix  --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
 
 install-exec-hook:
 	@if [ -d "$(CACHEDIR)" ]; \

@@ -108,7 +108,7 @@ public:
      * @brief Get type of this virtual file.
      * @return Returns VIRTUALTYPE_BUFFER.
      */
-    virtual VIRTUALTYPE     type() const;
+    virtual VIRTUALTYPE     type() const override;
     /**
      * @brief Initialise cache
      * @param[in] erase_cache - if true delete old file before opening.
@@ -148,21 +148,21 @@ public:
      * @brief Size of this buffer.
      * @return Not applicable, returns 0.
      */
-    virtual size_t          bufsize() const;
+    virtual size_t          bufsize() const override;
 
     /** @brief Open a virtual file
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open
      * @return Upon successful completion, #open() returns 0.
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int             open(LPVIRTUALFILE virtualfile);
+    virtual int             open(LPVIRTUALFILE virtualfile) override;
     /**
      * @brief Not implemented.
      * @param[out] data - unused
      * @param[in] size - unused
      * @return Always returns 0 and errno is EPERM.
      */
-    virtual size_t          read(void *data, size_t size);
+    virtual size_t          read(void *data, size_t size) override;
     /**
     * @brief Write image data for the frame number into the Buffer
      * @param[out] data - Buffer to read data in.
@@ -178,16 +178,16 @@ public:
      * @brief Get last error.
      * @return errno value of last error.
      */
-    virtual int             error() const;
+    virtual int             error() const override;
     /** @brief Get the duration of the file, in AV_TIME_BASE fractional seconds.
      * @return Not applicable to buffer, always returns AV_NOPTS_VALUE.
      */
-    virtual int64_t         duration() const;
+    virtual int64_t         duration() const override;
     /**
      * @brief Get the value of the internal buffer size pointer.
      * @return Returns the value of the internal buffer size pointer.
      */
-    virtual size_t          size() const;
+    virtual size_t          size() const override;
     /**
      * @brief Get the value of the internal buffer size pointer.
      * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
@@ -198,7 +198,7 @@ public:
      * @brief Get the value of the internal read position pointer.
      * @return Returns the value of the internal read position pointer.
      */
-    virtual size_t          tell() const;
+    virtual size_t          tell() const override;
     /**
      * @brief Get the value of the internal read position pointer.
      * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
@@ -218,7 +218,7 @@ public:
      * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
      * from the beginning of the file.
      */
-    virtual int             seek(int64_t offset, int whence);
+    virtual int             seek(int64_t offset, int whence) override;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
@@ -238,7 +238,7 @@ public:
      * @brief Check if at end of file.
      * @return Returns true if at end of buffer.
      */
-    virtual bool            eof() const;
+    virtual bool            eof() const override;
     /**
      * @brief Check if at end of file.
      * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
@@ -248,7 +248,7 @@ public:
     /**
      * @brief Close buffer.
      */
-    virtual void            close();
+    virtual void            close() override;
     /**
      * @brief Write data to the current position into the buffer. The position pointer will be updated.
      * @param[in] data - Buffer with data to write.
@@ -346,18 +346,18 @@ public:
     bool                    is_segment_finished(uint32_t segment_no) const;
     /**
      * @brief Open cache file if not already open.
-     * @param[in] index - Index of segment file number [0..n-1].
+     * @param[in] segment_no - Index of segment file number [0..n-1].
      * @param[in] flags - CACHE_FLAG_* options
      * @return Returns true on success or file already open; false on error.
      */
-    bool                    open_file(uint32_t index, uint32_t flags);
+    bool                    open_file(uint32_t segment_no, uint32_t flags);
     /**
      * @brief Close cache file if not already closed.
-     * @param[in] index - Index of segment file number [0..n-1].
+     * @param[in] segment_no - Index of segment file number [0..n-1].
      * @param[in] flags - CACHE_FLAG_* options
      * @return Returns true on success or file already closed; false on error.
      */
-    bool                    close_file(uint32_t index, uint32_t flags);
+    bool                    close_file(uint32_t segment_no, uint32_t flags);
 
 protected:
     /**
@@ -365,7 +365,7 @@ protected:
      * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
      * @return Returns true on success; false on error.
      */
-    bool                    remove_cachefile(uint32_t segment_no = 0);
+    bool                    remove_cachefile(uint32_t segment_no = 0) const;
     /**
      * @brief Check if the cache file is open
      * @return Returns true if the cache file is open; false if not.

@@ -555,7 +555,6 @@ void DvdIO::next_cell()
 size_t DvdIO::read(void * data, size_t size)
 {
     size_t cur_output_size;
-    ssize_t maxlen;
     size_t result_len = 0;
     DSITYPE dsitype;
 
@@ -598,6 +597,7 @@ size_t DvdIO::read(void * data, size_t size)
         {
             dsi_t dsi_pack;
             unsigned int next_block;
+            ssize_t maxlen;
 
             // Read NAV packet.
             maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);

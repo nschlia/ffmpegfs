@@ -383,7 +383,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s]%s.%s",
+        snprintf(title_buf, sizeof(title_buf) - 1, "%03u. Title [%s]%s.%s",
                  title_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),
                  is_main_title ? "+" : "",
@@ -399,7 +399,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s]%s.%s",
+        snprintf(title_buf, sizeof(title_buf) - 1, "%03u. Chapter %03u [%s]%s.%s",
                  title_idx + 1,
                  chapter_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),
@@ -564,25 +564,25 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
     }
 }
 
-int check_bluray(const std::string & _path, void *buf, fuse_fill_dir_t filler)
+int check_bluray(const std::string & path, void *buf, fuse_fill_dir_t filler)
 {
-    std::string path(_path);
+    std::string _path(path);
     struct stat stbuf;
     int res = 0;
 
-    append_sep(&path);
+    append_sep(&_path);
 
-    if (stat((path + "BDMV/index.bdmv").c_str(), &stbuf) == 0)
+    if (stat((_path + "BDMV/index.bdmv").c_str(), &stbuf) == 0)
     {
-        if (!check_path(path))
+        if (!check_path(_path))
         {
-            Logging::trace(path, "Bluray detected.");
-            res = parse_bluray(path, &stbuf, buf, filler);
-            Logging::trace(path, "Found %1 titles.", res);
+            Logging::trace(_path, "Bluray detected.");
+            res = parse_bluray(_path, &stbuf, buf, filler);
+            Logging::trace(_path, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &stbuf, buf, filler);
+            res = load_path(_path, &stbuf, buf, filler);
         }
 
         add_dotdot(buf, filler, &stbuf, 0);

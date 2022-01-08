@@ -131,16 +131,14 @@ public:
     struct OUTPUTFILE : public INPUTFILE                /**< @brief Output file definition */
     {
         OUTPUTFILE() :
-            m_audio_start_time(0),
             m_audio_pts(0),
-            m_video_start_time(0),
             m_video_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
-        {}
+        {
+            memset(&m_id3v1, 0, sizeof(m_id3v1));
+        }
 
-        int64_t                 m_audio_start_time;     /**< @brief Start time of the audio stream in output audio stream time base units, may be 0 */
         int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames in output audio stream time base units  */
-        int64_t                 m_video_start_time;     /**< @brief Start time of the video stream in output video stream time base units, may be 0 */
         int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames in output video stream time base units  */
         int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
 
@@ -218,12 +216,12 @@ public:
      * @brief Get the file duration.
      * @return Returns the file in AV_TIME_BASE units.
      */
-    int64_t                     duration();
+    int64_t                     duration() const;
     /**
      * @brief Try to predict the recoded file size. This may (better will surely) be inaccurate.
      * @return Predicted file size in bytes.
      */
-    size_t                      predicted_filesize();
+    size_t                      predicted_filesize() const;
     /**
      * @brief Get the number of video frames in file.
      * @return On success, returns the number of frames; on error, returns 0 (calculation failed or no video source file).
@@ -243,12 +241,12 @@ public:
      * @brief Return source filename. Must be implemented in child class.
      * @return Returns filename.
      */
-    virtual const char *        filename() const;
+    virtual const char *        filename() const override;
     /**
      * @brief Return destination filename. Must be implemented in child class.
      * @return Returns filename.
      */
-    virtual const char *        destname() const;
+    virtual const char *        destname() const override;
     /**
      * @brief Predict audio file size. This may (better will surely) be inaccurate.
      * @param[out] filesize - Predicted file size in bytes, including audio stream size.
@@ -584,7 +582,7 @@ protected:
      * @param[in] frame_size - Size of new frame.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         init_audio_output_frame(AVFrame **frame, int frame_size);
+    int                         init_audio_output_frame(AVFrame **frame, int frame_size) const;
     /**
      * @brief Allocate memory for one picture.
      * @param[in] pix_fmt - Pixel format
@@ -838,7 +836,7 @@ protected:
      * - encoding: unused
      * - decoding: Set by user, if not set the native format will be chosen.
      */
-    enum AVPixelFormat          get_format(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts);
+    enum AVPixelFormat          get_format(AVCodecContext *input_codec_ctx, const enum AVPixelFormat *pix_fmts) const;
     /**
      * Open a device of the specified type and create an AVHWDeviceContext for it.
      *

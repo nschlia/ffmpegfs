@@ -1,0 +1,16 @@
+// Why would I change a const member function to static when it is not to be used outside the class???
+functionStatic
+// readdir_r is deprecated; use readdir(3) instead.
+// See https://man7.org/linux/man-pages/man3/readdir_r.3.html#DESCRIPTION
+readdirCalled
+// This is annoying.
+assertWithSideEffect
+unusedFunction
+unknownMacro
+
+unusedStructMember:src/vcd/vcdinfo.cc
+ctunullpointer:src/fuseops.cc
+nullPointer:src/fuseops.cc
+
+// TEMP
+knownConditionTrueFalse

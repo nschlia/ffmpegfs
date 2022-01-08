@@ -40,3 +40,7 @@ Makefile.in
 *.gcda
 gh-pages/
 mkdoxy
+/bin
+/obj
+/*.layout
+/cppcheck-cppcheck-build-dir/

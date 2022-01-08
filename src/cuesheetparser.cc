@@ -467,19 +467,19 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
     return res;
 }
 
-int check_cuesheet(const std::string & _filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)
+int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)
 {
-    std::string filename(_filename);
-    std::string trackdir(_filename);
-    std::string cuesheet(_filename);
+    std::string _filename(filename);
+    std::string trackdir(filename);
+    std::string cuesheet(filename);
     struct stat stbuf;
     int res = 0;
 
     std::string ext;
-    if (find_ext(&ext, filename) && ext == TRACKDIR)
+    if (find_ext(&ext, _filename) && ext == TRACKDIR)
     {
         remove_ext(&cuesheet);  // remove TRACKDIR extension from virtual directory
-        remove_ext(&filename);
+        remove_ext(&_filename);
     }
     else
     {
@@ -493,7 +493,7 @@ int check_cuesheet(const std::string & _filename, void *buf, fuse_fill_dir_t fil
         if (!check_path(trackdir))
         {
             // Not a virtual directory
-            res = parse_cuesheet(filename, cuesheet, &stbuf, buf, filler);
+            res = parse_cuesheet(_filename, cuesheet, &stbuf, buf, filler);
             Logging::trace(cuesheet, "Found %1 titles.", res);
         }
         else
@@ -507,7 +507,7 @@ int check_cuesheet(const std::string & _filename, void *buf, fuse_fill_dir_t fil
 
             if (virtualfile == nullptr)
             {
-                Logging::error(filename, "Failed to find virtual path: %1", trackdir.c_str());
+                Logging::error(_filename, "Failed to find virtual path: %1", trackdir.c_str());
                 errno = EIO;
                 return -errno;
             }
@@ -523,7 +523,7 @@ int check_cuesheet(const std::string & _filename, void *buf, fuse_fill_dir_t fil
     else
     {
         // No cue sheet file, check if one is embedded in media file
-        res = parse_embedded_cuesheet(filename, buf, filler, fmt_ctx);
+        res = parse_embedded_cuesheet(_filename, buf, filler, fmt_ctx);
     }
 
     return res;

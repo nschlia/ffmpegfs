@@ -86,7 +86,7 @@ public:
 
     /**
      * Construct Logging object
-	 *
+     *
      * @param[in] logfile - The name of a file to write logging output to. If empty, no output will be written.
      * @param[in] max_level - The maximum level of log output to write.
      * @param[in] to_stderr - Whether to write log output to stderr.
@@ -123,7 +123,8 @@ private:
          * @brief Construct Logger object
          */
         explicit Logger() :
-            m_loglevel(level::LOGDEBUG) {}
+            m_loglevel(level::LOGDEBUG),
+            m_logging(nullptr) {}
         /**
          * @brief Destroy Logger object
          */

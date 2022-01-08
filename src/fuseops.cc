@@ -466,12 +466,12 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
     return insert_file(type, virtfile, virtfile, stbuf, flags);
 }
 
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const std::string & _origfile, const struct stat * stbuf, int flags)
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const std::string & origfile, const struct stat * stbuf, int flags)
 {
-    std::string virtfile(sanitise_filepath(_virtfile));
-    std::string origfile(sanitise_filepath(_origfile));
+    std::string _virtfile(sanitise_filepath(virtfile));
+    std::string _origfile(sanitise_filepath(origfile));
 
-    FILENAME_MAP::iterator it    = filenames.find(virtfile);
+    FILENAME_MAP::iterator it    = filenames.find(_virtfile);
 
     if (it != filenames.cend())
     {
@@ -481,9 +481,9 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
 
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
-        virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-        virtualfile.m_destfile      = virtfile;
-        virtualfile.m_origfile      = origfile;
+        virtualfile.m_format_idx    = params.guess_format_idx(_origfile);
+        virtualfile.m_destfile      = _virtfile;
+        virtualfile.m_origfile      = _origfile;
     }
     else
     {
@@ -493,12 +493,12 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & _virtfile, const
 
         virtualfile.m_type          = type;
         virtualfile.m_flags         = flags;
-        virtualfile.m_format_idx    = params.guess_format_idx(origfile);
-        virtualfile.m_destfile      = virtfile;
-        virtualfile.m_origfile      = origfile;
+        virtualfile.m_format_idx    = params.guess_format_idx(_origfile);
+        virtualfile.m_destfile      = _virtfile;
+        virtualfile.m_origfile      = _origfile;
 
-        filenames.insert(make_pair(virtfile, virtualfile));
-        it    = filenames.find(virtfile);
+        filenames.insert(make_pair(_virtfile, virtualfile));
+        it    = filenames.find(_virtfile);
     }
 
     return &it->second;
@@ -564,7 +564,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
     int title_count = 0;
 
-    for (FILENAME_MAP::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); it++)
+    for (FILENAME_MAP::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); ++it)
     {
         std::string virtfilepath    = it->first;
         LPCVIRTUALFILE virtualfile  = &it->second;
@@ -736,18 +736,18 @@ LPVIRTUALFILE find_original(std::string * filepath)
             if (found && lstat(origfile.c_str(), &stbuf) == 0)
             {
                 // The original file exists
-                LPVIRTUALFILE virtualfile;
+                LPVIRTUALFILE virtualfile2;
 
                 if (*filepath != origfile)
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
+                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
                     *filepath = origfile;
                 }
                 else
                 {
-                    virtualfile = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                 }
-                return virtualfile;
+                return virtualfile2;
             }
             else
             {
@@ -837,7 +837,6 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
 static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     // Generate set of TS segment files and necessary M3U lists
-    LPVIRTUALFILE child_file;
     std::string master_contents;
     std::string index_0_av_contents;
 
@@ -922,6 +921,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 
         index_0_av_contents += "#EXT-X-ENDLIST\n";
 
+        LPVIRTUALFILE child_file;
         child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
         std::copy(master_contents.begin(), master_contents.end(), std::back_inserter(child_file->m_file_contents));
 
@@ -1060,7 +1060,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 }
 
                 // Process files
-                for (std::map<const std::string, struct stat>::iterator it = files.begin(); it != files.end(); it++)
+                for (std::map<const std::string, struct stat>::iterator it = files.begin(); it != files.end(); ++it)
                 {
                     std::string origname(it->first);
                     std::string origfile;
@@ -1079,15 +1079,15 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         // Check if file can be transcoded
                         if (transcoded_name(&filename, &current_format))
                         {
-                            int res = 0;
-
                             if (current_format->video_codec() != AV_CODEC_ID_NONE)
                             {
+                                int res2;
+
                                 // Check if we have a cue sheet
-                                res = check_cuesheet(origfile, buf, filler);
-                                if (res < 0)
+                                res2 = check_cuesheet(origfile, buf, filler);
+                                if (res2 < 0)
                                 {
-                                    return res;
+                                    return res2;
                                 }
                             }
                             else
@@ -1096,32 +1096,32 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                 // the input file to actually have an audio stream. If not, hide the file,
                                 // makes no sense to transcode anyway.
                                 AVFormatContext *fmt_ctx = nullptr;
-                                int res = 0;
+                                int res2 = 0;
 
                                 try
                                 {
-                                    res = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
-                                    if (res)
+                                    res2 = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
+                                    if (res2)
                                     {
-                                        Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res).c_str());
-                                        throw res;
+                                        Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res2).c_str());
+                                        throw res2;
                                     }
 
-                                    res = avformat_find_stream_info(fmt_ctx, nullptr);
-                                    if (res < 0)
+                                    res2 = avformat_find_stream_info(fmt_ctx, nullptr);
+                                    if (res2 < 0)
                                     {
-                                        Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
-                                        throw res;
+                                        Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res2).c_str());
+                                        throw res2;
                                     }
 
-                                    res = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
-                                    if (res < 0 && res != AVERROR_STREAM_NOT_FOUND)
+                                    res2 = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+                                    if (res2 < 0 && res2 != AVERROR_STREAM_NOT_FOUND)
                                     {
-                                        Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res).c_str());
-                                        throw res;
+                                        Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res2).c_str());
+                                        throw res2;
                                     }
 
-                                    if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
+                                    if (res2 == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
                                     {
                                         Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
                                         flags |= VIRTUALFLAG_HIDDEN;
@@ -1129,16 +1129,16 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                 }
                                 catch (int _res)
                                 {
-                                    res = _res;
+                                    res2 = _res;
                                 }
 
                                 if (!(flags & VIRTUALFLAG_HIDDEN))
                                 {
                                     // Check if we have a cue sheet
-                                    res = check_cuesheet(origfile, buf, filler, fmt_ctx);
-                                    if (res < 0)
+                                    res2 = check_cuesheet(origfile, buf, filler, fmt_ctx);
+                                    if (res2 < 0)
                                     {
-                                        return res;
+                                        return res2;
                                     }
                                 }
 
@@ -1220,10 +1220,10 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             // Generate set of all frames
             if (!virtualfile->m_video_frame_count)
             {
-                int res = get_source_properties(origpath, virtualfile);
-                if (res < 0)
+                int res2 = get_source_properties(origpath, virtualfile);
+                if (res2 < 0)
                 {
-                    return res;
+                    return res2;
                 }
             }
 
@@ -1236,13 +1236,13 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         }
         else if (ffmpegfs_format->is_hls())
         {
-            int res = make_hls_fileset(buf, filler, origpath, virtualfile);
-            if (res < 0)
+            int res2 = make_hls_fileset(buf, filler, origpath, virtualfile);
+            if (res2 < 0)
             {
-                return res;
+                return res2;
             }
         }
-        else if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+        else if (/*virtualfile != nullptr && */virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
         {
             // Fill in list for cue sheet
             load_path(origpath, nullptr, buf, filler);
@@ -1375,13 +1375,14 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             {
                 // If file does not exist here we can assume it's some sort of virtual file: Regular, DVD, S/VCD, cue sheet track
                 int error = -errno;
-                int res = 0;
 
                 virtualfile = find_original(&origpath);
 
                 if (virtualfile == nullptr)
                 {
                     std::string pathonly(origpath);
+                    int res = 0;
+
                     remove_filename(&pathonly);
 
 #ifdef USE_LIBVCD
@@ -1420,10 +1421,10 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                             // Generate set of all frames
                             if (!parent_file->m_video_frame_count)
                             {
-                                int res = get_source_properties(origpath, parent_file);
-                                if (res < 0)
+                                int res2 = get_source_properties(origpath, parent_file);
+                                if (res2 < 0)
                                 {
-                                    return res;
+                                    return res2;
                                 }
                             }
 
@@ -1455,10 +1456,10 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         {
                             if (!parent_file->m_video_frame_count)  //***< @todo HLS format: Do audio files source properties get checked over and over?
                             {
-                                int res = get_source_properties(origpath, parent_file);
-                                if (res < 0)
+                                int res2 = get_source_properties(origpath, parent_file);
+                                if (res2 < 0)
                                 {
-                                    return res;
+                                    return res2;
                                 }
                             }
 
@@ -1508,18 +1509,18 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 append_sep(&origpath);
 
-                int flags = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
+                int flags2 = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
                 if (ffmpeg_format[0].is_frameset())
                 {
-                    flags |= VIRTUALFLAG_FRAME;
+                    flags2 |= VIRTUALFLAG_FRAME;
                 }
                 else if (ffmpeg_format[0].is_hls())
                 {
-                    flags |= VIRTUALFLAG_HLS;
+                    flags2 |= VIRTUALFLAG_HLS;
                 }
 
-                insert_file(type, origpath, stbuf, flags);
+                insert_file(type, origpath, stbuf, flags2);
             }
             else if (S_ISREG(stbuf->st_mode))
             {
@@ -1847,18 +1848,18 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
  * @param[in] path
  * @param[in] buf
  * @param[in] size
- * @param[in] _offset
+ * @param[in] offset
  * @param[in] fi
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset, struct fuse_file_info *fi)
+static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
 {
     std::string origpath;
-    size_t offset = static_cast<size_t>(_offset);  // Cast OK: offset can never be < 0.
+    size_t locoffset = static_cast<size_t>(offset);  // Cast OK: offset can never be < 0.
     int bytes_read = 0;
     Cache_Entry* cache_entry;
 
-    Logging::trace(path, "read: Reading %1 bytes from %2.", size, offset);
+    Logging::trace(path, "read: Reading %1 bytes from %2.", size, locoffset);
 
     translate_path(&origpath, path);
 
@@ -1870,7 +1871,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
         if (fd != -1)
         {
             // If this is a real file, pass the call through.
-            bytes_read = static_cast<int>(pread(fd, buf, size, _offset));
+            bytes_read = static_cast<int>(pread(fd, buf, size, offset));
             close(fd);
             if (bytes_read >= 0)
             {
@@ -1902,21 +1903,21 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
     {
     case VIRTUALTYPE_SCRIPT:
     {
-        if (offset >= virtualfile->m_file_contents.size())
+        if (locoffset >= virtualfile->m_file_contents.size())
         {
             bytes_read = 0;
             break;
         }
 
         size_t bytes = size;
-        if (offset + bytes > virtualfile->m_file_contents.size())
+        if (locoffset + bytes > virtualfile->m_file_contents.size())
         {
-            bytes = virtualfile->m_file_contents.size() - offset;
+            bytes = virtualfile->m_file_contents.size() - locoffset;
         }
 
         if (bytes)
         {
-            memcpy(buf, &virtualfile->m_file_contents[offset], bytes);
+            memcpy(buf, &virtualfile->m_file_contents[locoffset], bytes);
         }
 
         bytes_read = static_cast<int>(bytes);
@@ -1955,7 +1956,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
                 return -errno;
             }
 
-            success = transcoder_read_frame(cache_entry, buf, offset, size, frame_no, &bytes_read, virtualfile);
+            success = transcoder_read_frame(cache_entry, buf, locoffset, size, frame_no, &bytes_read, virtualfile);
         }
         else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
@@ -1983,7 +1984,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t _offset
                 }
             }
 
-            success = transcoder_read(cache_entry, buf, offset, size, &bytes_read, segment_no);
+            success = transcoder_read(cache_entry, buf, locoffset, size, &bytes_read, segment_no);
         }
         break;
     }

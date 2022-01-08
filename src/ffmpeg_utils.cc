@@ -146,13 +146,13 @@ AVCodecID Format_Options::video_codec() const
 
 bool Format_Options::is_video_codec_supported(AVCodecID codec_id) const
 {
-    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
-    if (it != m_format_map.cend())
+    FORMAT_MAP::const_iterator it1 = m_format_map.find(params.m_sample_fmt);
+    if (it1 != m_format_map.cend())
     {
-        const CODEC_VECT & video_codec = it->second.m_video_codec;
-        for (typename CODEC_VECT::const_iterator it = video_codec.cbegin(); it != video_codec.cend(); it++)
+        const CODEC_VECT & video_codec = it1->second.m_video_codec;
+        for (typename CODEC_VECT::const_iterator it2 = video_codec.cbegin(); it2 != video_codec.cend(); ++it2)
         {
-            if (*it == codec_id)
+            if (*it2 == codec_id)
             {
                 return true;
             }
@@ -164,15 +164,15 @@ bool Format_Options::is_video_codec_supported(AVCodecID codec_id) const
 std::string Format_Options::video_codec_list() const
 {
     std::string buffer;
-    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
-    if (it != m_format_map.cend())
+    FORMAT_MAP::const_iterator it1 = m_format_map.find(params.m_sample_fmt);
+    if (it1 != m_format_map.cend())
     {
-        const CODEC_VECT & video_codec = it->second.m_video_codec;
-        for (typename CODEC_VECT::const_iterator it = video_codec.cbegin(); it != video_codec.cend(); )
+        const CODEC_VECT & video_codec = it1->second.m_video_codec;
+        for (typename CODEC_VECT::const_iterator it2 = video_codec.cbegin(); it2 != video_codec.cend(); )
         {
-            buffer += get_video_codec_text(*it);
+            buffer += get_video_codec_text(*it2);
 
-            if (++it != video_codec.cend())
+            if (++it2 != video_codec.cend())
             {
                 buffer += ", ";
             }
@@ -200,13 +200,13 @@ AVCodecID Format_Options::audio_codec() const
 
 bool Format_Options::is_audio_codec_supported(AVCodecID codec_id) const
 {
-    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
-    if (it != m_format_map.cend())
+    FORMAT_MAP::const_iterator it1 = m_format_map.find(params.m_sample_fmt);
+    if (it1 != m_format_map.cend())
     {
-        const CODEC_VECT & audio_codec = it->second.m_audio_codec;
-        for (typename CODEC_VECT::const_iterator it = audio_codec.cbegin(); it != audio_codec.cend(); it++)
+        const CODEC_VECT & audio_codec = it1->second.m_audio_codec;
+        for (typename CODEC_VECT::const_iterator it2 = audio_codec.cbegin(); it2 != audio_codec.cend(); ++it2)
         {
-            if (*it == codec_id)
+            if (*it2 == codec_id)
             {
                 return true;
             }
@@ -218,15 +218,15 @@ bool Format_Options::is_audio_codec_supported(AVCodecID codec_id) const
 std::string Format_Options::audio_codec_list() const
 {
     std::string buffer;
-    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
-    if (it != m_format_map.cend())
+    FORMAT_MAP::const_iterator it1 = m_format_map.find(params.m_sample_fmt);
+    if (it1 != m_format_map.cend())
     {
-        const CODEC_VECT & audio_codec = it->second.m_audio_codec;
-        for (typename CODEC_VECT::const_iterator it = audio_codec.cbegin(); it != audio_codec.cend();)
+        const CODEC_VECT & audio_codec = it1->second.m_audio_codec;
+        for (typename CODEC_VECT::const_iterator it2 = audio_codec.cbegin(); it2 != audio_codec.cend();)
         {
-            buffer += get_audio_codec_text(*it);
+            buffer += get_audio_codec_text(*it2);
 
-            if (++it != audio_codec.cend())
+            if (++it2 != audio_codec.cend())
             {
                 buffer += ", ";
             }
@@ -733,7 +733,8 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 };
 
 FFmpegfs_Format::FFmpegfs_Format() :
-    m_cur_opts(&m_empty_options)
+    m_cur_opts(&m_empty_options),
+    m_filetype(FILETYPE_UNKNOWN)
 {
 
 }
@@ -745,7 +746,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
     {
         // Not found/invalid desttype
 
-        m_desttype.empty();
+        m_desttype.clear();
         m_filetype 	= FILETYPE_UNKNOWN;
         m_cur_opts  = &m_empty_options;
 
@@ -1171,9 +1172,9 @@ int show_caps(int device_only)
 #if LAVF_DEP_AV_REGISTER
         void *ifmt_opaque = nullptr;
         ifmt_opaque = nullptr;
-        while ((ifmt = av_demuxer_iterate(&ifmt_opaque)))
+        while ((ifmt = av_demuxer_iterate(&ifmt_opaque)) != nullptr)
 #else
-        while ((ifmt = av_iformat_next(ifmt)))
+        while ((ifmt = av_iformat_next(ifmt)) != nullptr)
 #endif
         {
             is_dev = is_device(ifmt->priv_class);
@@ -1196,13 +1197,13 @@ int show_caps(int device_only)
             }
         }
 
-        if (!name)
+        if (name == nullptr)
         {
             break;
         }
 
         last_name = name;
-        if (!extensions)
+        if (extensions == nullptr)
         {
             continue;
         }
@@ -1210,9 +1211,9 @@ int show_caps(int device_only)
         std::printf(" %s%s %-15s %-15s %s\n",
                     decode ? "D" : " ",
                     encode ? "E" : " ",
-                    extensions != nullptr ? extensions : "-",
+                    extensions,
                     name,
-                    long_name ? long_name:" ");
+                    (long_name != nullptr)  ? long_name : " ");
     }
     return 0;
 }
@@ -1250,7 +1251,8 @@ int mktree(const std::string & path, mode_t mode)
     }
 
     std::string dir;
-    char *p = strtok (buffer, "/");
+    char *saveptr;
+    char *p = strtok_r(buffer, "/", &saveptr);
     int status = 0;
 
     while (p != nullptr)
@@ -1272,7 +1274,7 @@ int mktree(const std::string & path, mode_t mode)
 
         status = newstat;
 
-        p = strtok (nullptr, "/");
+        p = strtok_r(nullptr, "/", &saveptr);
     }
 
     delete [] buffer;
@@ -1783,9 +1785,12 @@ int is_mount(const std::string & path)
         // or, if they refer to the same file,
         // then it's probably the root directory
         // and therefore a mountpoint
-        if (file_stat.st_dev != parent_stat.st_dev ||
-                (file_stat.st_dev == parent_stat.st_dev &&
-                 file_stat.st_ino == parent_stat.st_ino))
+        // style: Redundant condition: file_stat.st_dev==parent_stat.st_dev.
+        // 'A || (!A && B)' is equivalent to 'A || B' [redundantCondition]
+        //if (file_stat.st_dev != parent_stat.st_dev ||
+        //        (file_stat.st_dev == parent_stat.st_dev &&
+        //         file_stat.st_ino == parent_stat.st_ino))
+        if (file_stat.st_dev != parent_stat.st_dev || file_stat.st_ino == parent_stat.st_ino)
         {
             // IS a mountpoint
             ret = 1;
@@ -2189,17 +2194,17 @@ int read_file(const std::string & path, std::string & result)
             result = ss.str();
 
             // Using libchardet to guess the encoding
-            std::string encoding;
-            res = get_encoding(result.c_str(), encoding);
+            std::string encoding_name;
+            res = get_encoding(result.c_str(), encoding_name);
             if (res)
             {
                 throw res;
             }
 
-            if (encoding != "UTF-8")
+            if (encoding_name != "UTF-8")
             {
                 // If not UTF-8, do the actual conversion
-                res = to_utf8(result, encoding);
+                res = to_utf8(result, encoding_name);
                 if (res)
                 {
                     throw res;

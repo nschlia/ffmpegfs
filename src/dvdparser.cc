@@ -248,7 +248,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     int pgcnum              = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgcn;
     int pgn                 = vts_ptt_srpt->title[ttnnum - 1].ptt[chapter_idx].pgn;
     const pgc_t *cur_pgc    = vts_file->vts_pgcit->pgci_srp[pgcnum - 1].pgc;
-    AVRational framerate    = { 0, 0 };
+    AVRational framerate;
     int64_t duration        = 0;
     uint64_t size           = 0;
     int interleaved         = 0;
@@ -542,25 +542,25 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     }
 }
 
-int check_dvd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
+int check_dvd(const std::string & path, void *buf, fuse_fill_dir_t filler)
 {
-    std::string path(_path);
+    std::string _path(path);
     struct stat stbuf;
     int res = 0;
 
-    append_sep(&path);
+    append_sep(&_path);
 
-    if (stat((path + "VIDEO_TS.IFO").c_str(), &stbuf) == 0 || stat((path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &stbuf) == 0)
+    if (stat((_path + "VIDEO_TS.IFO").c_str(), &stbuf) == 0 || stat((_path + "VIDEO_TS/VIDEO_TS.IFO").c_str(), &stbuf) == 0)
     {
-        if (!check_path(path))
+        if (!check_path(_path))
         {
-            Logging::trace(path, "DVD detected.");
-            res = parse_dvd(path, &stbuf, buf, filler);
-            Logging::trace(path, "Found %1 titles.", res);
+            Logging::trace(_path, "DVD detected.");
+            res = parse_dvd(_path, &stbuf, buf, filler);
+            Logging::trace(_path, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &stbuf, buf, filler);
+            res = load_path(_path, &stbuf, buf, filler);
         }
 
         add_dotdot(buf, filler, &stbuf, 0);

@@ -37,7 +37,7 @@ thread_pool::thread_pool(unsigned int num_threads)
     : m_queue_shutdown(false)
     , m_num_threads(num_threads)
     , m_cur_threads(0)
-
+    , m_threads_running(0)
 {
 }
 

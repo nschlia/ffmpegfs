@@ -160,40 +160,40 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
     }
 }
 
-int check_vcd(const std::string & _path, void *buf, fuse_fill_dir_t filler)
+int check_vcd(const std::string & path, void *buf, fuse_fill_dir_t filler)
 {
-    std::string path(_path);
+    std::string _path(path);
     struct stat stbuf;
     int res = 0;
 
-    append_sep(&path);
+    append_sep(&_path);
 
-    if (stat((path + "SVCD/INFO.SVD").c_str(), &stbuf) == 0)
+    if (stat((_path + "SVCD/INFO.SVD").c_str(), &stbuf) == 0)
     {
-        if (!check_path(path))
+        if (!check_path(_path))
         {
-            Logging::trace(path, "SVCD detected.");
-            res = parse_vcd(path, &stbuf, buf, filler);
+            Logging::trace(_path, "SVCD detected.");
+            res = parse_vcd(_path, &stbuf, buf, filler);
             Logging::trace(nullptr, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &stbuf, buf, filler);
+            res = load_path(_path, &stbuf, buf, filler);
         }
 
         add_dotdot(buf, filler, &stbuf, 0);
     }
-    else if (stat((path + "VCD/INFO.VCD").c_str(), &stbuf) == 0)
+    else if (stat((_path + "VCD/INFO.VCD").c_str(), &stbuf) == 0)
     {
-        if (!check_path(path))
+        if (!check_path(_path))
         {
-            Logging::trace(path, "VCD detected.");
-            res = parse_vcd(path, &stbuf, buf, filler);
+            Logging::trace(_path, "VCD detected.");
+            res = parse_vcd(_path, &stbuf, buf, filler);
             Logging::trace(nullptr, "Found %1 titles.", res);
         }
         else
         {
-            res = load_path(path, &stbuf, buf, filler);
+            res = load_path(_path, &stbuf, buf, filler);
         }
 
         add_dotdot(buf, filler, &stbuf, 0);

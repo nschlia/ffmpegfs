@@ -381,8 +381,6 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         {
             if (begin_transcode)
             {
-                int ret;
-
                 Logging::debug(cache_entry->filename(), "Starting decoder thread.");
 
                 // Clear cache to remove any older remains
@@ -411,7 +409,10 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 
                 if (cache_entry->m_cache_info.m_error)
                 {
+                    int ret;
+
                     Logging::trace(cache_entry->filename(), "Decoder error!");
+
                     ret = cache_entry->m_cache_info.m_errno;
                     if (!ret)
                     {
@@ -537,7 +538,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             }
         }
 
-        bool success = transcode_until(cache_entry, offset, len, segment_no);
+        success = transcode_until(cache_entry, offset, len, segment_no);
 
         if (!success)
         {
@@ -911,7 +912,8 @@ static void transcoder_thread(void *arg)
 
                     while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                     {
-                        usleep(500000);
+                        const struct timespec ts = { 0, GRANULARITY MS };
+                        nanosleep(&ts, nullptr);
                     }
 
                     if (timeout)
@@ -957,9 +959,9 @@ static void transcoder_thread(void *arg)
         }
 
         cache_entry->m_is_decoding              = false;
-        cache_entry->m_cache_info.m_error       = !success;
-        cache_entry->m_cache_info.m_errno       = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
-        cache_entry->m_cache_info.m_averror     = success ? 0 : averror;                        // Preserve averror
+        cache_entry->m_cache_info.m_error       = true;
+        cache_entry->m_cache_info.m_errno       = syserror ? syserror : EIO;        // Preserve errno
+        cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
 
         thread_data->m_lock_guard = true;
         thread_data->m_cond.notify_all();           // unlock main thread
@@ -1031,7 +1033,7 @@ static void transcoder_thread(void *arg)
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
-    Logging::level ffmpegfs_level = LOGERROR;
+    Logging::level ffmpegfs_level;
     static int print_prefix = 1;
 
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
@@ -1043,6 +1045,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
     if (line_size < 0)
     {
+        va_end(vl2);
         return;
     }
     line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));

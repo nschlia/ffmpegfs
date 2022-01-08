@@ -275,6 +275,13 @@ public:
      */
     static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
     /**
+     * @brief Predict overhead in file size. This may (better will surely) be inaccurate.
+     * @param[out] filesize - Predicted file size in bytes, including overhead.
+     * @param filetype - File type: MP3, TS etc.
+     * @return On success, returns true; on failure, returns false.
+     */
+    static bool                 total_overhead(size_t *filesize, FILETYPE filetype);
+    /**
      * @brief Closes the output file of open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
      * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
      */

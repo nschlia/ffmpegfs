@@ -298,6 +298,11 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
         Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), 0), current_format->desttype().c_str());
     }
 
+    if (!FFmpeg_Transcoder::total_overhead(&filesize, current_format->filetype()))
+    {
+        Logging::warning(cache_entry->destname(), "Unsupported file type '%1' for format %2.", get_filetype_text(current_format->filetype()).c_str(), current_format->desttype().c_str());
+    }
+
     cache_entry->m_cache_info.m_predicted_filesize = virtualfile->m_predicted_size = filesize;
 
     Logging::trace(cache_entry->destname(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
@@ -923,8 +928,6 @@ static void transcoder_thread(void *arg)
             }
 
             // If incomplete, start over, file probably gets accessed again.
-
-            Logging::error(nullptr, "*\n\nTRANSCODE RESTART!!! SEEK TO %1\n\n*", cache_entry->m_seek_to_no);
 
             transcoder.close();
 

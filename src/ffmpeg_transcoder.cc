@@ -5114,7 +5114,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
     {
         // Try to predict the size of the AAC stream (this is fairly accurate, sometimes a bit larger, sometimes a bit too small
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead (empirically determined value)
         break;
     }
     case AV_CODEC_ID_MP3:
@@ -5137,7 +5137,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_S8_PLANAR:
@@ -5148,7 +5148,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_U16LE:
@@ -5162,7 +5162,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_S16LE_PLANAR:
@@ -5174,7 +5174,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_U24LE: // U/S24 uses U/S32 storage
@@ -5192,7 +5192,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_S24LE_PLANAR:   // S24 uses S32 storage
@@ -5204,7 +5204,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_S64LE:
@@ -5216,7 +5216,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_PCM_F16LE:
@@ -5232,21 +5232,21 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // + WAV_HEADER + DATA_HEADER + (with FFMpeg always) LIST_HEADER
         // The real size of the list header is unkown as we don't know the contents (meta tags)
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) + sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
         break;
     }
     case AV_CODEC_ID_VORBIS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(900 * (*filesize) / 1000); // OGG files seem to be rather smaller than expected (empirically determined value)
         break;
     }
     case AV_CODEC_ID_OPUS:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1020 * (*filesize) / 1000); // add overhead (empirically determined value)
         break;
     }
     case AV_CODEC_ID_ALAC:
@@ -5254,18 +5254,20 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         int bytes_per_sample    = av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
 
         // File size:
-        // Apple Lossless Audio Coding promises a compression rate of 60-70%. We estimate 65 % of the original WAV size.
-        *filesize += static_cast<size_t>(duration * sample_rate * (channels > 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE) * 100 / 65;
+        // Apple Lossless Audio Coding promises a compression rate of 60-70%. The actual result ranges
+        // between 30 and over 50%, heavily depending on the input.
+        *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
+        *filesize = static_cast<size_t>(620 * (*filesize) / 1000); // Estimate 38% compression rate (empirically determined value)
         break;
     }
     case AV_CODEC_ID_AC3:
     {
         // Kbps = bits per second / 8 = Bytes per second x 60 seconds = Bytes per minute x 60 minutes = Bytes per hour
         *filesize += static_cast<size_t>(duration * output_audio_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead (empirically determined value)
         break;
     }
-    case AV_CODEC_ID_FLAC:      // TODO...
+    case AV_CODEC_ID_FLAC:
     {
         int bytes_per_sample    = av_get_bytes_per_sample(sample_format != AV_SAMPLE_FMT_NONE ? sample_format : AV_SAMPLE_FMT_S16);
 
@@ -5273,7 +5275,7 @@ bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE
         // file duration * sample rate (HZ) * channels * bytes per sample
         // We do not add the overhead for headers, as this is an estimation and not exact anyways.
         *filesize += static_cast<size_t>(duration * sample_rate * (channels >= 2 ? 2 : 1) * bytes_per_sample / AV_TIME_BASE);
-        *filesize = static_cast<size_t>(600 * (*filesize) / 1000); // Estimate 40% compression rate
+        *filesize = static_cast<size_t>(600 * (*filesize) / 1000); // Estimate 40% compression rate (empirically determined value)
         break;
     }
     case AV_CODEC_ID_NONE:
@@ -5374,6 +5376,78 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         break;
     }
     }
+    return success;
+}
+
+bool FFmpeg_Transcoder::total_overhead(size_t *filesize, FILETYPE filetype)
+{
+    bool success = true;
+
+    switch (filetype)
+    {
+    //
+    //  Audio only
+    //
+    case FILETYPE_MP3:
+    {
+        // The FFmpeg API always adds an IDv2 header, size of which is unknown and
+        // really hard to determine. So we simply add something reasonable (empirically determined value).
+        *filesize += 250000;
+        break;
+    }
+    case FILETYPE_WAV:
+    {
+        // This could actually precise, but yet the FFmpeg API always adds an IDv2 header,
+        // size of which is unknown and really hard to determine. The header is small, ~30 bytes,
+        // so we ignore that deliberatly.
+        *filesize += sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
+        break;
+    }
+    case FILETYPE_AIFF:
+    {
+        // These two "chunks" will always be there, others may be there, may be not. Their
+        // size is hard to precalculate and small (~100 bytes), so we disregard the rest.
+        *filesize += sizeof(AIFF_FORMCHUNK) + sizeof(AIFF_COMMONCHUNK);
+        break;
+    }
+    case FILETYPE_OPUS:
+    case FILETYPE_ALAC:
+    case FILETYPE_FLAC:
+    {
+        break;
+    }
+        //
+        // Video
+        //
+    case FILETYPE_TS:
+    case FILETYPE_HLS:
+    case FILETYPE_MP4:
+    case FILETYPE_OGG:
+    case FILETYPE_WEBM:
+    case FILETYPE_MOV:
+    case FILETYPE_PRORES:
+    {
+        break;
+    }
+        //
+        // Stills
+        //
+    case FILETYPE_PNG:
+    case FILETYPE_JPG:
+    case FILETYPE_BMP:
+    {
+        break;
+    }
+        //
+        // Invalid
+        //
+    case FILETYPE_UNKNOWN:
+    {
+        success = false;
+        break;
+    }
+    }
+
     return success;
 }
 

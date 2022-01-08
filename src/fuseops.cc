@@ -379,59 +379,59 @@ static void translate_path(std::string *origpath, const char* path)
  */
 static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
 {
-	std::string ext;
+    std::string ext;
 
-	if (!find_ext(&ext, *filepath) || std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
-	{
-		return false;
-	}
+    if (!find_ext(&ext, *filepath) || std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
+    {
+        return false;
+    }
 
-	if (allow_list_ext(ext, params.m_extensions))
-	{
-		if (!params.smart_transcode())
-		{
-			*current_format = &ffmpeg_format[0];
-		}
-		else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
-		{
-			*current_format = &ffmpeg_format[1];
-		}
+    if (allow_list_ext(ext, params.m_extensions))
+    {
+        if (!params.smart_transcode())
+        {
+            *current_format = &ffmpeg_format[0];
+        }
+        else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
+        {
+            *current_format = &ffmpeg_format[1];
+        }
 
-		if (params.m_oldnamescheme)
-		{
-			// Old filename scheme, creates duplicates
-			replace_ext(filepath, (*current_format)->fileext());
-		}
-		else
-		{
-			// New name scheme
-			append_ext(filepath, (*current_format)->fileext());
-		}
-		return true;
-	}
+        if (params.m_oldnamescheme)
+        {
+            // Old filename scheme, creates duplicates
+            replace_ext(filepath, (*current_format)->fileext());
+        }
+        else
+        {
+            // New name scheme
+            append_ext(filepath, (*current_format)->fileext());
+        }
+        return true;
+    }
 
     const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
 
     if (format != nullptr)
     {
-		FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
+        FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
 
-		if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-			(ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
         {
-			*current_format = params.current_format(*filepath);
-			if (params.m_oldnamescheme)
-			{
-				// Old filename scheme, creates duplicates
-				replace_ext(filepath, (*current_format)->fileext());
-			}
-			else
+            *current_format = params.current_format(*filepath);
+            if (params.m_oldnamescheme)
             {
-				// New name scheme
-				append_ext(filepath, (*current_format)->fileext());
-			}
-			return true;
-		}
+                // Old filename scheme, creates duplicates
+                replace_ext(filepath, (*current_format)->fileext());
+            }
+            else
+            {
+                // New name scheme
+                append_ext(filepath, (*current_format)->fileext());
+            }
+            return true;
+        }
     }
 
     if (current_format != nullptr)
@@ -990,9 +990,6 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
 {
     std::string origpath;
-#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
-    int res;
-#endif
 
     Logging::trace(path, "readdir");
 
@@ -1010,6 +1007,10 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     if (virtualfile == nullptr)
     {
+#if defined(USE_LIBBLURAY) || defined(USE_LIBDVD) || defined(USE_LIBVCD)
+        int res;
+#endif
+
 #ifdef USE_LIBVCD
         res = check_vcd(origpath, buf, filler);
         if (res != 0)
@@ -1732,7 +1733,6 @@ static int kick_next(LPVIRTUALFILE virtualfile)
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 {
     std::string origpath;
-    Cache_Entry* cache_entry;
 
     Logging::trace(path, "open");
 
@@ -1796,6 +1796,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
             if (parent_file != nullptr)
             {
+                Cache_Entry* cache_entry;
+
                 cache_entry = transcoder_new(parent_file, true);
                 if (cache_entry == nullptr)
                 {
@@ -1814,6 +1816,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         }
         else if (!(virtualfile->m_flags & VIRTUALFLAG_FILESET))
         {
+            Cache_Entry* cache_entry;
+
             cache_entry = transcoder_new(virtualfile, true);
             if (cache_entry == nullptr)
             {

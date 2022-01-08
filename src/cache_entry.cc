@@ -373,7 +373,7 @@ bool Cache_Entry::outdated() const
         return true;
     }
 
-    if (m_cache_info.m_deinterlace != params.m_deinterlace)
+    if (m_cache_info.m_deinterlace != (params.m_deinterlace ? true : false))
     {
         Logging::debug(filename(), "Triggering re-transcode: Selected video deinterlace changed from %1 to %2.", m_cache_info.m_deinterlace, params.m_deinterlace);
         return true;

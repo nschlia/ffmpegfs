@@ -2599,7 +2599,7 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
     return ret;
 }
 
-int FFmpeg_Transcoder::create_fake_wav_header()
+int FFmpeg_Transcoder::create_fake_wav_header() const
 {
     // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
     AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
@@ -2701,7 +2701,7 @@ int FFmpeg_Transcoder::read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const
     return 0;
 }
 
-int FFmpeg_Transcoder::create_fake_aiff_header()
+int FFmpeg_Transcoder::create_fake_aiff_header() const
 {
     // Insert fake WAV header (fill in size fields with estimated values instead of setting to -1)
     AVIOContext * output_io_context = static_cast<AVIOContext *>(m_out.m_format_ctx->pb);
@@ -4666,7 +4666,6 @@ int FFmpeg_Transcoder::flush_delayed_video()
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
-    int ret = 0;
 
     status = 0;
 
@@ -4697,6 +4696,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (m_last_seek_frame_no)
                 {
+                    int ret = 0;
+
                     // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
                     // We are unable to detect that because the pts seems correct (the one that we requested).
                     // So we position before the frame requested, and simply throw the first away.
@@ -4756,6 +4757,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
             {
+                int ret = 0;
+
                 // Decode one frame worth of audio samples, convert it to the
                 // output sample format and put it into the FIFO buffer.
 
@@ -4780,6 +4783,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (finished && av_audio_fifo_size(m_audio_fifo) > 0))
             {
+                int ret = 0;
+
                 // Take one frame worth of audio samples from the FIFO buffer,
                 // create a frame and store in audio frame FIFO.
 
@@ -4793,6 +4798,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             // Read audio frame FIFO, encode and store
             while (!m_audio_frame_fifo.empty())
             {
+                int ret = 0;
+
                 AVFrame *audio_frame = m_audio_frame_fifo.front();
                 m_audio_frame_fifo.pop();
 
@@ -4824,6 +4831,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         }
         else
         {
+            int ret = 0;
+
             // If we have no audio stream, we'll only get video data
             // or we simply copy audio and/or video frames into the packet queue
             ret = read_decode_convert_and_store(&finished);
@@ -4840,6 +4849,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
         if (!m_copy_video)
         {
+            int ret = 0;
+
             while (!m_video_frame_fifo.empty())
             {
                 AVFrame *video_frame = m_video_frame_fifo.front();
@@ -4922,6 +4933,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                     if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
                     {
+                        int ret = 0;
+
                         m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position
                         m_have_seeked   = true;                             // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
 
@@ -4996,6 +5009,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (!opened)
                 {
+                    int ret = 0;
+
                     // Process output file, already done by open_output() if file has been newly opened.
                     ret = process_output();
                     if (ret)
@@ -5008,6 +5023,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 {
                     while (!m_hls_packet_fifo.empty())
                     {
+                        int ret = 0;
                         AVPacket *pkt = m_hls_packet_fifo.front();
                         m_hls_packet_fifo.pop();
 

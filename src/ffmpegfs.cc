@@ -1645,13 +1645,14 @@ static int get_value(const std::string & arg, double *value)
  */
 static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs)
 {
-    static int n;
     (void)data;
 
     switch (key)
     {
     case FUSE_OPT_KEY_NONOPT:
     {
+        static int n;
+
         // check for basepath and bitrate parameters
         if (n == 0 && params.m_basepath.empty())
         {

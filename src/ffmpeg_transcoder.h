@@ -975,14 +975,14 @@ protected:
      * to start directly.
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         create_fake_wav_header();
+    int                         create_fake_wav_header() const;
     /**
      * @brief Create a fake AIFF header
      * Create a fake AIFF header. Inserts predicted file sizes to allow playback
      * to start directly.
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         create_fake_aiff_header();
+    int                         create_fake_aiff_header() const;
     /**
      * @brief Read AIFF chunk
      * @param[in] buffer - Cache buffer to read from

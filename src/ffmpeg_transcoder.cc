@@ -934,6 +934,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 {
     const AVCodec * output_codec        = nullptr;
     AVCodecContext *output_codec_ctx    = nullptr;
+    AVDictionary * opt                  = nullptr;
     int ret = 0;
 
     m_buffer            = buffer;
@@ -1003,10 +1004,39 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         Logging::debug(destname(), "Output pixel format: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
     }
 
+
+    switch (m_current_format->video_codec())
+    {
+    case AV_CODEC_ID_MJPEG:
+    {
+        // set -strict -1 for JPG
+        dict_set_with_check(&opt, "strict", "-1", 0);
+
+        // Allow the use of unoffical extensions
+        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
+        break;
+    }
+    case AV_CODEC_ID_PNG:
+    {
+        output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+        break;
+    }
+    case AV_CODEC_ID_BMP:
+    {
+        output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+        break;
+    }
+    default:
+    {
+        assert(false);
+        break;
+    }
+    }
+
     //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
     //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
-    ret = avcodec_open2(output_codec_ctx, output_codec, nullptr);
+    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not open image codec.");

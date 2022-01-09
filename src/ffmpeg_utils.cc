@@ -441,8 +441,8 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                 {
                     SAMPLE_FMT_DONTCARE,            // Source format decides
                     {
-                        { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },   // Video codec(s)
-                        { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },       // Audio codec(s)
+                        { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },  // Video codec(s)
+                        { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },               // Audio codec(s)
                         AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
                     }
                 }

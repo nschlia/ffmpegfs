@@ -1743,27 +1743,24 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     if (virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH))
     {
         int fd = open(origpath.c_str(), fi->flags);
-        if (fd == -1 && errno != ENOENT)
-        {
-            // File does exist, but can't be opened.
-            return -errno;
-        }
-        else
-        {
-            // Not really an error.
-            errno = 0;
-        }
-
         if (fd != -1)
         {
             close(fd);
             // File is real and can be opened.
             errno = 0;
-            return 0;
+        }
+        else
+        {
+            if (errno == ENOENT)
+            {
+                // File does not exist? We should never end up here...
+                errno = EINVAL;
+            }
+
+            // If file does exist, but can't be opened, return error.
         }
 
-        // We should never end here...
-        return -EINVAL;
+        return -errno;
     }
 
     // This is a virtual file

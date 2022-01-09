@@ -80,10 +80,12 @@ if USE_LIBSWRESAMPLE
 AM_CPPFLAGS += -DUSE_LIBSWRESAMPLE
 AM_CPPFLAGS += $(libswresample_CFLAGS)
 fpcompare_LDADD += $(libswresample_LIBS)
+metadata_LDADD += $(libswresample_LIBS)
 endif
 
 if USE_LIBAVRESAMPLE
 AM_CPPFLAGS += -DUSE_LIBAVRESAMPLE
 AM_CPPFLAGS += $(libavresample_CFLAGS)
 fpcompare_LDADD += $(libavresample_LIBS)
+metadata_LDADD += $(libavresample_LIBS)
 endif

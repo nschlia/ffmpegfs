@@ -107,7 +107,7 @@ doxy: doxyfile.inc ffmpegfs.1.htmlhelp $(SRCS)
 
 # Clean up Doxygen files
 doxy-clean:
-	rm -Rf doxyfile.inc doxygen
+	rm -Rf doxyfile.inc doxygen doxygen.log
 
 # Clean up extra stuff
 clean-local: doxy-clean

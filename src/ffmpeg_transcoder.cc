@@ -5378,12 +5378,6 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_VC1:           // TODO...
-    {
-        *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
-        break;
-    }
     case AV_CODEC_ID_THEORA:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
@@ -6820,11 +6814,11 @@ int FFmpeg_Transcoder::get_hw_vaapi_codec_name(AVCodecID codec_id, std::string *
         *codec_name = "hevc_vaapi";
         break;
     }
-    case AV_CODEC_ID_VC1:
-    {
-        *codec_name = "vc1_vaapi";
-        break;
-    }
+        //case AV_CODEC_ID_VC1:     TODO: WMV not supported
+        //{
+        //    *codec_name = "vc1_vaapi";
+        //    break;
+        //}
     case AV_CODEC_ID_VP8:
     {
         *codec_name = "vp9_vaapi";
@@ -6904,11 +6898,11 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
             * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video input codec for stream video (error '0'). @n
             * ERROR  : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video codec (error 'Unknown error occurred').
             */
-    case AV_CODEC_ID_VC1:
-    {
-        *codec_name = "vc1_mmal";
-        break;
-    }
+        //case AV_CODEC_ID_VC1:     TODO: WMV not supported
+        //{
+        //    *codec_name = "vc1_mmal";
+        //    break;
+        //}
     default:
     {
         ret = AVERROR_DECODER_NOT_FOUND;
@@ -6967,11 +6961,11 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
 //        *codec_name = "mpeg4_v4l2m2m";
 //        break;
 //    }
-//    case AV_CODEC_ID_VC1:
-//    {
-//        *codec_name = "vc1_v4l2m2m";
-//        break;
-//    }
+//    //case AV_CODEC_ID_VC1:     TODO: WMV not supported
+//    //{
+//    //    *codec_name = "vc1_v4l2m2m";
+//    //    break;
+//    //}
 //    case AV_CODEC_ID_VP8:
 //    {
 //        *codec_name = "vp8_v4l2m2m";

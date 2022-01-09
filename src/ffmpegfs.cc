@@ -431,7 +431,6 @@ static const VIDEOCODEC_MAP videocodec_map =
     // TODO: More to come..
 
     //{ "AV1",            AV_CODEC_ID_AV1 },          // WebM   TODO: Ends with "Could not write video frame (error 'Invalid data found when processing input')."
-    //{ "VC1",            AV_CODEC_ID_VC1 },          // TODO: Could not find encoder 'vc1'
 };
 
 /**
@@ -550,10 +549,8 @@ static const CODEC_MAP hwaccel_codec_map =
     { "HEVC",   AV_CODEC_ID_HEVC },
     { "MPEG2",  AV_CODEC_ID_MPEG2VIDEO },
     { "MPEG4",  AV_CODEC_ID_MPEG4 },
-    { "VC1",    AV_CODEC_ID_VC1 },
     { "VP8",    AV_CODEC_ID_VP8 },
     { "VP9",    AV_CODEC_ID_VP9 },
-    { "WMV3",   AV_CODEC_ID_WMV3 },
 };
 
 /**

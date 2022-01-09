@@ -119,7 +119,7 @@ wipe-all: doxy-clean distclean
 
 # Run cppcheck
 cppcheck:
-	cppcheck --force --enable=all --inconclusive --library=posix --error-exitcode=1 --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
+	cppcheck --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
 
 install-exec-hook:
 	@if [ -d "$(CACHEDIR)" ]; \

@@ -79,4 +79,4 @@ else
     ./configure ${CONFIGUREOPT}
 fi
 
-make -s clean all check cppcheck
+make -s clean all check

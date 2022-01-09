@@ -3,8 +3,6 @@ functionStatic
 // readdir_r is deprecated; use readdir(3) instead.
 // See https://man7.org/linux/man-pages/man3/readdir_r.3.html#DESCRIPTION
 readdirCalled
-// Not reliant
-resourceLeak
 // This is annoying.
 assertWithSideEffect
 unusedFunction

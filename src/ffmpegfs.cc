@@ -431,7 +431,6 @@ static const VIDEOCODEC_MAP videocodec_map =
     // TODO: More to come..
 
     //{ "AV1",            AV_CODEC_ID_AV1 },          // WebM   TODO: Ends with "Could not write video frame (error 'Invalid data found when processing input')."
-    //{ "VC1",            AV_CODEC_ID_VC1 },          // TODO: Could not find encoder 'vc1'
 };
 
 /**

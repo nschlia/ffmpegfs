@@ -44,7 +44,12 @@ check_filesize() {
         MAX=${MIN}
     fi
 
-    SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
+    if [ -z "$4" ]
+    then
+    	SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
+    else
+	SIZE=$(stat -c %s "${4}/${FILE}")
+    fi
     echo "File: ${FILE}"
     if [ ${MIN} -eq ${MAX} ]
     then

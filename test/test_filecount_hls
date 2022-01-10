@@ -4,11 +4,11 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "hls"
 
-DIRNAME="${DIRNAME}"/snowboard.mp4
+XDIRNAME="${DIRNAME}"/snowboard.mp4
 
 SEGMENTS=3
 
 echo "Checking number of HLS segments is ${SEGMENTS}"
-[ $(ls "${DIRNAME}"/*.ts -1 | wc -l) = ${SEGMENTS} ]
+[ $(ls "${XDIRNAME}"/*.ts -1 | wc -l) = ${SEGMENTS} ]
 
 echo "OK"

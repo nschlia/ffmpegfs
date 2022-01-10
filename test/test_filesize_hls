@@ -4,17 +4,17 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "hls"
 
-DIRNAME="${DIRNAME}"/snowboard.mp4
+XDIRNAME="${DIRNAME}"/snowboard.mp4
 
-cat "${DIRNAME}"/*.ts > /dev/null
-cp -v "${DIRNAME}/000001.ts" /dev/null
-cp -v "${DIRNAME}/000002.ts" /dev/null
-cp -v "${DIRNAME}/000003.ts" /dev/null
+cat "${XDIRNAME}"/*.ts > /dev/null
+cp -v "${XDIRNAME}/000001.ts" /dev/null
+cp -v "${XDIRNAME}/000002.ts" /dev/null
+cp -v "${XDIRNAME}/000003.ts" /dev/null
 
 echo "File sizes"
-check_filesize "000001.ts" 1478620 1566416
-check_filesize "000002.ts" 1513964 1570552
-check_filesize "000003.ts" 1193612 1248132
+check_filesize "000001.ts" 1478620 1566416 "${XDIRNAME}"
+check_filesize "000002.ts" 1513964 1570552 "${XDIRNAME}"
+check_filesize "000003.ts" 1193612 1248132 "${XDIRNAME}"
 echo "File sizes OK"
 
 echo "OK"

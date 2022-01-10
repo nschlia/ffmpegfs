@@ -4,9 +4,9 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "hls"
 
-DIRNAME="${DIRNAME}"/snowboard.mp4
+XDIRNAME="${DIRNAME}"/snowboard.mp4
 
 echo "Checking file names"
-[ "$(ls --ignore='*.ts' -w 1000 -m "${DIRNAME}")" = "hls.html, index_0_av.m3u8, master.m3u8" ]
+[ "$(ls --ignore='*.ts' -w 1000 -m "${XDIRNAME}")" = "hls.html, index_0_av.m3u8, master.m3u8" ]
 
 echo "OK"

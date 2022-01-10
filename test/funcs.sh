@@ -96,8 +96,6 @@ SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
 DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
 
-echo $0${EXTRANAME}.builtin.log ${EXTRANAME}
-
 #--disable_cache
 ( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=$0${EXTRANAME}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null || kill -USR1 $$ ) &
 while ! mount | grep -q "${DIRNAME}" ; do

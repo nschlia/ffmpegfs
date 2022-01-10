@@ -64,6 +64,8 @@ else
 	echo "Using native FFmpeg library"
 fi
 
+echo "Rebuilding configure from scratch"
+
 rm -Rf autom4te.cache config
 ./autogen.sh
 if [ ${COMPILER} = "clang" ];
@@ -79,4 +81,11 @@ else
     ./configure ${CONFIGUREOPT}
 fi
 
-make -s clean all check
+make -s clean all check cppcheck
+
+if [ -s cppcheck.log ]
+then
+	echo "Non-zero sized cppcheck.log found:"
+	cat cppcheck.log
+fi
+

@@ -3,10 +3,11 @@ functionStatic
 // readdir_r is deprecated; use readdir(3) instead.
 // See https://man7.org/linux/man-pages/man3/readdir_r.3.html#DESCRIPTION
 readdirCalled
-// This is annoying.
+// This is just annoying.
 assertWithSideEffect
 unusedFunction
 unknownMacro
+missingInclude
 
 unusedStructMember:src/vcd/vcdinfo.cc
 ctunullpointer:src/fuseops.cc

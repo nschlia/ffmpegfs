@@ -2690,10 +2690,11 @@ int FFmpeg_Transcoder::create_fake_wav_header() const
 int FFmpeg_Transcoder::read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const
 {
     AIFF_CHUNK *p = reinterpret_cast<AIFF_CHUNK*>(chunk);
+    size_t buffsize = *size;
 
     for (;;)
     {
-        if (!buffer->copy(chunk, *buffoffset, *size))
+        if (!buffer->copy(chunk, *buffoffset, buffsize))
         {
             return -1;
         }

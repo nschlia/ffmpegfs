@@ -5354,28 +5354,28 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
 
     switch (codec_id)
     {
-    case AV_CODEC_ID_MPEG1VIDEO:    // TODO...
+    case AV_CODEC_ID_MPEG1VIDEO:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1020 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_MPEG2VIDEO:    // TODO...
+    case AV_CODEC_ID_MPEG2VIDEO:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1020 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_H264:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1050 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_H265:          // TODO...
+    case AV_CODEC_ID_H265:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1100 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1250 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_THEORA:
@@ -5384,22 +5384,22 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1025 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_VP8:           // TODO...
+    case AV_CODEC_ID_VP8:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1020 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_VP9:
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        *filesize = static_cast<size_t>(1450 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_AV1:           // TODO...
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
-        *filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
+        //*filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
         break;
     }
     case AV_CODEC_ID_PRORES:
@@ -5469,6 +5469,10 @@ bool FFmpeg_Transcoder::total_overhead(size_t *filesize, FILETYPE filetype)
         //
     case FILETYPE_TS:
     case FILETYPE_HLS:
+    {
+        *filesize += 1600000;   // empirically determined value
+        break;
+    }
     case FILETYPE_MP4:
     case FILETYPE_OGG:
     case FILETYPE_WEBM:
@@ -5567,39 +5571,9 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
         // }
     }
 
-    /*
     // Support #2654: Test Code
     // add total overhead
-    switch (m_current_format->filetype())
-    {
-    case FILETYPE_MP3:
-    case FILETYPE_MP4:
-    case FILETYPE_WAV:
-    case FILETYPE_OGG:
-    case FILETYPE_WEBM:
-    case FILETYPE_MOV:
-    case FILETYPE_AIFF:
-    case FILETYPE_OPUS:
-    case FILETYPE_PRORES:
-    case FILETYPE_ALAC:
-    case FILETYPE_PNG:
-    case FILETYPE_JPG:
-    case FILETYPE_BMP:
-    {
-        break;
-    }
-    case FILETYPE_TS:
-    case FILETYPE_HLS:
-    {
-        filesize = static_cast<size_t>(1280 * (filesize) / 1000);
-        break;
-    }
-    case FILETYPE_UNKNOWN:
-    {
-        break;
-    }
-    }
-*/
+    total_overhead(&filesize, m_current_format->filetype());
 
     return filesize;
 }

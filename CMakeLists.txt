@@ -753,6 +753,16 @@ target_link_libraries(${PROJECT_NAME}
 ENABLE_TESTING()
 add_subdirectory(test)
 
+# cppcheck
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log"
+  COMMAND cppcheck --force --enable=all --inconclusive --library=posix --output-file="${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log" --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheck-suppressions.txt -I "${CMAKE_CURRENT_SOURCE_DIR}/src/" -I "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/" -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" "${CMAKE_CURRENT_SOURCE_DIR}/src/" "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  COMMENT "Running cppcheck"
+  VERBATIM
+)
+add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
+add_dependencies(${PROJECT_NAME} cppcheck)
+
 # Package
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/configure"
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/autogen.sh"

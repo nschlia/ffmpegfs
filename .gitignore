@@ -44,3 +44,14 @@ mkdoxy
 /obj
 /*.layout
 /cppcheck-cppcheck-build-dir/
+/CMakeCache.txt
+/CMakeFiles/
+/cmake_install.cmake
+/CTestTestfile.cmake
+/Testing/
+/CPackConfig.cmake
+/CPackSourceConfig.cmake
+/_CPack_Packages/
+/install_manifest.txt
+
+

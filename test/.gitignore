@@ -1,2 +1,7 @@
 metadata
 /*.tag
+/CMakeFiles/
+/CMakeLists.txt
+/CTestTestfile.cmake
+/Testing/
+/cmake_install.cmake

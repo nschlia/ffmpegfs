@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C/C++ CI (cmake)
 
 on:
   push:
@@ -38,16 +38,14 @@ jobs:
         sudo apt-get install -yq cppcheck asciidoc-base w3m libchromaprint-dev doxygen graphviz
         sudo apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
         sudo apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
-    - name: autogen.sh
-      run: ./autogen.sh
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make cppcheck
-      run: make cppcheck
+    - name: cmake config
+      run: cmake config .
+    - name: cmake build
+      run: cmake --build .
+    - name: cmake check
+      run: cmake --build . --target check
+#    - name: cmake cppcheck
+#      run: cmake --build . --target cppcheck
     - name: Archive Build Logs
       if: always()
       uses: actions/upload-artifact@v2

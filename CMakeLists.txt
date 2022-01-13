@@ -761,7 +761,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log"
   VERBATIM
 )
 add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
-add_dependencies(${PROJECT_NAME} cppcheck)
+#add_dependencies(${PROJECT_NAME} cppcheck)
 
 # Package
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/configure"

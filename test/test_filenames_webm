@@ -1,4 +1,5 @@
 #!/bin/bash
 
-./test_filenames webm
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"${__dir}/test_filenames" webm
 

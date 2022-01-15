@@ -27,7 +27,7 @@ EXTRA_DIST = INSTALL.md README.md HISTORY.md ffmpegfs.1.txt src/makehelp.sh
 
 ffmpegfs.1: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
-		-a revdate="$(shell date +'%B %Y')" -f manpage  --xsltproc-opts="-param ulink.show 1" $<
+		-a revdate="$(shell date +'%B %Y')" -f manpage -D . --xsltproc-opts="-param ulink.show 1" $<
 
 # Just for the fun of it
 # PDF help - needs FOP
@@ -41,7 +41,7 @@ help-pdf: ffmpegfs.1.pdf
 # HTML help
 ffmpegfs.1.htmlhelp: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
-		-a revdate="$(shell date +'%B %Y')" -f htmlhelp $<
+		-a revdate="$(shell date +'%B %Y')" -D "`pwd`" -f htmlhelp $<
 	@mv ffmpegfs.1.htmlhelp/index.html ffmpegfs.1.htmlhelp/manpages.html
 
 help-html: ffmpegfs.1.htmlhelp

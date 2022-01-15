@@ -2,6 +2,8 @@
 
 ADDOPT=""
 
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 VIDEO=$2
@@ -78,15 +80,14 @@ fi
 for FILE in ${FILELIST}
 do
 	TAGFILENAME=${FILE%.*}.${DESTTYPE}.tag
-	TAGFILEPATH=tags/${LIBRARY}${VERSION}/${TAGFILENAME}
-
-	TAGFILEPATH=tags/${LIBRARY}${VERSION}/${TAGFILENAME}
+	TAGFILEPATH=${__dir}/tags/${LIBRARY}${VERSION}/${TAGFILENAME}
+	TAGFILEPATH=${__dir}/tags/${LIBRARY}${VERSION}/${TAGFILENAME}
 	get_metadata "${DIRNAME}/${FILE}.${FILEEXT}" TAGS
 	echo "${TAGS}" > "${TAGFILENAME}"
 	echo "Compare file: ${TAGFILEPATH}" 
 	echo "Tags found:"
 	echo "${TAGS}"
-	cmp -c ${TAGFILEPATH} "${TAGFILENAME}"
+	cmp -c "${TAGFILEPATH}" "${TAGFILENAME}"
 	printf "*** PASS ***\n\n"
 	rm -f "${TAGFILENAME}"
 done 

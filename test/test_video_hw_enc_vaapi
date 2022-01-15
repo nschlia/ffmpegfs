@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./test_video_hw ENC vaapi
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"${__dir}/test_video_hw" ENC vaapi

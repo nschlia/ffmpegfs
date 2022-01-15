@@ -1,4 +1,5 @@
 #!/bin/bash
 
-./test_filesize_video ts
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"${__dir}/test_filesize"_video ts
 

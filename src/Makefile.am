@@ -57,8 +57,8 @@ BUILT_SOURCES = ../ffmpegfs.1.text ffmpegfshelp.h
 
 ../ffmpegfs.1.text: ../ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \
-		-a revdate="$(shell date +'%B %Y')" -f text $<
+		-a revdate="$(shell date +'%B %Y')" -D ".." -f text $<
 
 # sed in makefiles is a menace so we use a helper script
 ffmpegfshelp.h: ../ffmpegfs.1.text
-	$(AM_V_GEN)./makehelp.sh $@
+	$(srcdir)/makehelp.sh $@

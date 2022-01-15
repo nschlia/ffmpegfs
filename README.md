@@ -3,12 +3,12 @@ FFmpegfs
 
 | Branch | Compiler | Library | Build State |
 | ------------- | ------------- | ------------- | ------------- |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 10.2.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | clang 11.0.1 | FFmpeg 4.3.2-0+deb11u2 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 10.2.1   | FFmpeg 4.3.2-0+deb11u2  | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | clang 11.0.1 | FFmpeg 4.3.2-0+deb11u2  | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 9.3.0    | FFmpeg 4.2.4-1ubuntu0.1 | [![C/C++ CI](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | clang 11.0.1 | FFmpeg 4.2.4-1ubuntu0.1 | [![C/C++ CI](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 9.3.0    | FFmpeg 4.2.4-1ubuntu0.1 | [![C/C++ CI](https://github.com/nschlia/ffmpegfs/actions/workflows/cmake-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/cmake-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | | | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml)|
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |                         | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml)|
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 9.3.0    | FFmpeg 4.2.4-1ubuntu0.1 | [![Build Docker Image CI](https://github.com/nschlia/ffmpegfs/actions/workflows/docker-image.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/docker-image.yml)|
 
 

@@ -85,8 +85,10 @@ jobs:
       run: cmake --build .
     - name: cmake check
       run: cmake --build . --target check
-#    - name: cmake cppcheck
-#      run: cmake --build . --target cppcheck
+    - name: cmake doxy
+      run: cmake --build . --target doxy
+    - name: cmake cppcheck
+      run: cmake --build . --target cppcheck
     - name: Archive Build Logs
       if: always()
       uses: actions/upload-artifact@v2
@@ -95,7 +97,6 @@ jobs:
         path: |
            *.log
            config.status
-           doxyfile.inc
     - name: Archive Test Results
       if: always()
       uses: actions/upload-artifact@v2

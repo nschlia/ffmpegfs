@@ -127,12 +127,12 @@ install-exec-hook:
 		echo "$(CACHEDIR) already exists."; \
 	else \
 		echo "Creating cache in $(CACHEDIR)."; \
-		mkdir -p $(CACHEDIR); \
+		mkdir -p $(CACHEDIR) || true; \
 	fi
 
 uninstall-hook:
 	@if [ -d "$(CACHEDIR)" ]; \
 	then \
 		echo "Removing cache directory $(CACHEDIR)."; \
-		rm -Rf "$(CACHEDIR)"; \
+		rm -Rf "$(CACHEDIR)" || true; \
 	fi

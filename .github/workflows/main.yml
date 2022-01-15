@@ -1,4 +1,4 @@
-name: C/C++ CI (GNU make)
+name: C/C++ CI
 
 on:
   push:

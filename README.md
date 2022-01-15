@@ -27,6 +27,7 @@ News
 - **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
 - **Bugfix:** Fix crash when video has no audio
 - **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fix access problems with frame sets and HLS. 
+- **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhance file size prediction,
 
 ### Version 2.8 released
 

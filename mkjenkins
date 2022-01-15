@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #COMPILER=gcc
 #TOOLKIT=ffmpeg
 #FFMPEGVER=4.1
@@ -20,12 +22,14 @@ then
 	exit 0
 fi
 
-if [ -z ${CONFIGUREOPT} ];
+echo "*********************************************************************************************"
+if [ -z "${CONFIGUREOPT}" ];
 then
     	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER}"
 else
     	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} (configure ${CONFIGUREOPT})"
 fi
+echo "*********************************************************************************************"
 
 if [ ${TOOLKIT} != "native" ];
 then
@@ -42,7 +46,7 @@ then
     		exit 99
 	fi
 
-	echo "Using FFmpeg in ${FFMPEG_BUILD}"
+	echo "****** Using FFmpeg in ${FFMPEG_BUILD} ******"
 
 	# 32+64 bit
 	#export LIB32="${FFMPEG_BUILD}/lib"
@@ -61,31 +65,66 @@ then
 	export CFLAGS=-I"${FFMPEG_BUILD}/include"
 	export CPPFLAGS=-I"${FFMPEG_BUILD}/include"
 else
-	echo "Using native FFmpeg library"
+	echo "****** Using native FFmpeg library ******"
 fi
 
+echo "---------------------------------------------------------------------------------------------"
 echo "Rebuilding configure from scratch"
+echo "---------------------------------------------------------------------------------------------"
 
 rm -Rf autom4te.cache config
 ./autogen.sh
 if [ ${COMPILER} = "clang" ];
 then
-    echo "Using clang"
+    echo "****** Using clang ****** "
     CC=clang CXX=clang++ ./configure ${CONFIGUREOPT}
 elif [ ${COMPILER} = "gcc" ];
 then
-    echo "Using gcc"
+    echo "******  Using gcc ****** "
     CC=gcc  CXX="g++" ./configure ${CONFIGUREOPT}
 else
-    echo "Using default compiler"
+    echo "******  Using default compiler ****** "
     ./configure ${CONFIGUREOPT}
 fi
 
-make -s clean all check cppcheck
+echo "---------------------------------------------------------------------------------------------"
+echo "Running make clean"
+echo "---------------------------------------------------------------------------------------------"
+
+make -s clean
+
+echo "---------------------------------------------------------------------------------------------"
+echo "Running make"
+echo "---------------------------------------------------------------------------------------------"
+
+make -s
+
+#echo "---------------------------------------------------------------------------------------------"
+#echo "Running make check"
+#echo "---------------------------------------------------------------------------------------------"
+
+#make -s check    runs again with distcheck
+
+echo "---------------------------------------------------------------------------------------------"
+echo "Running make distcheck"
+echo "---------------------------------------------------------------------------------------------"
+
+make -s distcheck
+
+echo "---------------------------------------------------------------------------------------------"
+echo "Running make cppcheck"
+echo "---------------------------------------------------------------------------------------------"
+
+make -s cppcheck
+
+echo "---------------------------------------------------------------------------------------------"
 
 if [ -s cppcheck.log ]
 then
 	echo "Non-zero sized cppcheck.log found:"
 	cat cppcheck.log
 fi
+
+echo "---------------------------------------------------------------------------------------------"
+
 

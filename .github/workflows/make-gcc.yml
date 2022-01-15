@@ -1,4 +1,4 @@
-name: Clang Build (GNU make)
+name: GCC Build (GNU make)
 
 on:
   push:

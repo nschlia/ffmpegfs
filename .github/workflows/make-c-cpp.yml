@@ -26,7 +26,7 @@ on:
         - '*NEWS'
         - '*TODO'
 jobs:
-  build:
+  build-gcc:
 
     runs-on: ubuntu-latest
 
@@ -41,14 +41,14 @@ jobs:
     - name: autogen.sh
       run: ./autogen.sh
     - name: configure
-      run: ./configure
+      run: CC=gcc  CXX="g++" ./configure
     - name: make
       run: make
     - name: make check
       run: make check
     - name: make cppcheck
       run: make cppcheck
-    - name: Archive Build Logs
+    - name: Archive GCC Build Logs
       if: always()
       uses: actions/upload-artifact@v2
       with:
@@ -66,3 +66,33 @@ jobs:
            test/*.log
            test/*.trs
            test/*.tag
+
+  build-clang:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prerequisites
+      run: |
+        sudo apt-get update
+        sudo apt-get install -yq cppcheck asciidoc-base w3m libchromaprint-dev doxygen graphviz
+        sudo apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
+        sudo apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
+    - name: autogen.sh
+      run: ./autogen.sh
+    - name: configure
+      run: CC=clang CXX=clang++ ./configure
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: Archive Clang Build Logs
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: Collected build logs
+        path: |
+           *.log
+           config.status
+           doxyfile.inc

@@ -102,7 +102,7 @@ PKG_CHECK_MODULES(LIBBLURAY libbluray>=0.6.2)
 
 # Check for doxygen. If not installed, go on, but make doxy won't work.
 FIND_PACKAGE(Doxygen
-    REQUIRED dot)
+    COMPONENTS dot)
 IF (NOT DOXYGEN_FOUND)
     message( WARNING "Doxygen not found - continuing without Doxygen support. If you intend to use \"make doxy\" you should install it.")
 ENDIF (NOT DOXYGEN_FOUND)

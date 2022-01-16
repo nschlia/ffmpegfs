@@ -3307,7 +3307,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_AUDIO;
 
-                    Logging::debug(destname(), "AUDIO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+                    Logging::trace(destname(), "Buffering audio packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
                 }
 
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
@@ -3330,8 +3330,9 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
 
-                    Logging::debug(destname(), "VIDEO SKIP PACKET next %1 pos %2 %3", next_segment, pos, format_duration(pos).c_str());
+                    Logging::trace(destname(), "Buffering video packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
                 }
+
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
                 return 0;
             }

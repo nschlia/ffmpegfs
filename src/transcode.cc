@@ -109,7 +109,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Segment no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3), remaining %4.", segment_no, offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
+                    Logging::trace(cache_entry->destname(), "Segment no. %1: Cache miss at offset %2 (length %3), remaining %4.", segment_no, offset, len, format_size_ex(end - cache_entry->m_buffer->size(segment_no)).c_str());
                     reported = true;
                 }
                 sleep(0);
@@ -117,7 +117,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Segment no. %1: Cache hit at offset %<%11zu>2 (length %<%6u>3), remaining %4.", segment_no, offset, len, format_size_ex(cache_entry->m_buffer->size(segment_no) - end).c_str());
+                Logging::trace(cache_entry->destname(), "Segment no. %1: Cache hit at offset %2 (length %3), remaining %4.", segment_no, offset, len, format_size_ex(end - cache_entry->m_buffer->size(segment_no)).c_str());
             }
             success = !cache_entry->m_cache_info.m_error;
         }

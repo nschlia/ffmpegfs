@@ -20,6 +20,8 @@ Important changes in 2.9 (2022-01-XX):
 - Bugfix: Fixed crash when video had no audio.
 - Bugfix: Issue #112: Fix access problems with frame sets and HLS.
 - Enhancement: Issue #67:  Enhance file size prediction,
+- Bugfix: Syncronise screen log. Concurrent entries by separate flags created
+  garbled output.
 
 Important changes in 2.8 (2021-11-29):
 

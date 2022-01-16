@@ -62,6 +62,8 @@ namespace
 Logging* logging;
 }
 
+std::recursive_mutex Logging::m_mutex;
+
 Logging::Logging(const std::string &logfile, level max_level, bool to_stderr, bool to_syslog) :
     m_max_level(max_level),
     m_to_stderr(to_stderr),
@@ -84,6 +86,8 @@ Logging::Logger::~Logger()
     {
         return;
     }
+
+    std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Construct string containing time
     time_t now = time(nullptr);
@@ -139,7 +143,7 @@ bool Logging::GetFail() const
 const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
 {
     { LOGERROR,     LOG_ERR },
-    { LOGWARN,   LOG_WARNING },
+    { LOGWARN,      LOG_WARNING },
     { LOGINFO,      LOG_INFO },
     { LOGDEBUG,     LOG_DEBUG },
     { LOGTRACE,     LOG_DEBUG },
@@ -148,7 +152,7 @@ const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
 const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
 {
     { LOGERROR,     "ERROR  " },
-    { LOGWARN,   "WARNING" },
+    { LOGWARN,      "WARNING" },
     { LOGINFO,      "INFO   " },
     { LOGDEBUG,     "DEBUG  " },
     { LOGTRACE,     "TRACE  " },
@@ -157,7 +161,7 @@ const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
 const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map =
 {
     { LOGERROR,     COLOUR_RED },
-    { LOGWARN,   COLOUR_YELLOW },
+    { LOGWARN,      COLOUR_YELLOW },
     { LOGINFO,      COLOUR_WHITE },
     { LOGDEBUG,     COLOUR_GREEN },
     { LOGTRACE,     COLOUR_BLUE },

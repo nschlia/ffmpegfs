@@ -22,6 +22,8 @@ Important changes in 2.9 (2022-01-XX):
 - Enhancement: Issue #67:  Enhance file size prediction,
 - Bugfix: Syncronise screen log. Concurrent entries by separate flags created
   garbled output.
+- Bugfix: Avoid creating an HLS segment number which is out of bounds
+  (higher than the expected number of segments).
 
 Important changes in 2.8 (2021-11-29):
 
@@ -46,7 +48,7 @@ Important changes in 2.8 (2021-11-29):
   format will be reported as error and a list of values printed.
   Defaults to 0 (Use same as source or the predefined format of the destination
   if source format is not possible).
-  
+
 Important changes in 2.7 (2021-11-08):
 
 * Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem

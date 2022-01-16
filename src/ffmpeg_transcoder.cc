@@ -7094,6 +7094,6 @@ uint32_t FFmpeg_Transcoder::get_next_segment(int64_t pos) const
 
 bool FFmpeg_Transcoder::goto_next_segment(uint32_t next_segment) const
 {
-    return (next_segment == m_current_segment + 1);
+    return (next_segment == m_current_segment + 1 && next_segment <= m_virtualfile->get_segment_count());
 }
 

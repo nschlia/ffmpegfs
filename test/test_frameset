@@ -14,7 +14,7 @@ echo "Checking access with full name"
 for i in 000204 000004 000104 000207 000007 000107
 do
 	echo ">> Checking $i.${FILEEXT}"
-	cat "${DIRNAME}"/frame_test_pal.mp4/$i.${FILEEXT} > /dev/null
+	cp -v "${DIRNAME}"/frame_test_pal.mp4/$i.${FILEEXT} /dev/null
 done
 echo "Access OK"
 
@@ -22,7 +22,10 @@ echo "Checking access with regular expression"
 for i in 00020[4-7] 00000[4-7] 00010[4-7]
 do
 	echo ">> Checking $i.*"
-	cat "${DIRNAME}"/frame_test_pal.mp4/00020[4-7].* > /dev/null
+	for FILE in "${DIRNAME}"/frame_test_pal.mp4/00020[4-7].*
+	do
+   		cp -v $FILE /dev/null
+	done 2>/dev/null
 done
 echo "Access OK"
 

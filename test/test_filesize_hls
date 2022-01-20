@@ -6,10 +6,13 @@ ADDOPT=""
 
 XDIRNAME="${DIRNAME}"/snowboard.mp4
 
-cat "${XDIRNAME}"/*.ts > /dev/null
-cp -v "${XDIRNAME}/000001.ts" /dev/null
-cp -v "${XDIRNAME}/000002.ts" /dev/null
-cp -v "${XDIRNAME}/000003.ts" /dev/null
+#cp "${XDIRNAME}"/*.ts /dev/null
+
+for FILE in "${XDIRNAME}"/*.ts
+do
+   cp -v $FILE /dev/null
+   cp -v $FILE /dev/null
+done 2>/dev/null
 
 echo "File sizes"
 check_filesize "000001.ts" 1478620 1566416 "${XDIRNAME}"

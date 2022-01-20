@@ -778,7 +778,8 @@ add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
 #install(FILES configure ChangeLog DESTINATION .)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
-file(MAKE_DIRECTORY /var/cache/ffmpegfs/)
+#file(MAKE_DIRECTORY /var/cache/ffmpegfs/)
+install(DIRECTORY DESTINATION /var/cache/ffmpegfs/)
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "asciidoc-base automake bc libavfilter-dev libavcodec-dev libavformat-dev libavutil-dev libbluray-dev libchromaprint-dev libdvdnav-dev libdvdread-dev libfuse-dev libsqlite3-dev libswresample-dev libswscale-dev libcue-dev libchardet-dev libtool docbook-xml docbook-xsl xsltproc xxd w3m")
 
 set(CPACK_GENERATOR "TGZ;DEB")

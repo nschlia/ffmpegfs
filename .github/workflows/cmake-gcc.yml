@@ -39,7 +39,7 @@ jobs:
         sudo apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
         sudo apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
     - name: cmake config
-      run: cmake config .
+      run: cmake --config .
     - name: cmake build
       run: cmake --build .
     - name: cmake check

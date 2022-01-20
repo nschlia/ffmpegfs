@@ -5480,6 +5480,7 @@ bool FFmpeg_Transcoder::total_overhead(size_t *filesize, FILETYPE filetype)
     case FILETYPE_WEBM:
     case FILETYPE_MOV:
     case FILETYPE_PRORES:
+    case FILETYPE_MKV:
     {
         break;
     }

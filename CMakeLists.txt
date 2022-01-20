@@ -199,34 +199,34 @@ set(SOURCES
 # Header files
 set(HEADERS
     src/aiff.h
-     src/blurayio.h
-     src/blurayparser.h
-     src/buffer.h
-     src/cache_entry.h
-     src/cache.h
-     src/cache_maintenance.h
-     src/cuesheetparser.h
-     src/diskio.h
-     src/dvdio.h
-     src/dvdparser.h
-     src/ffmpeg_base.h
-     src/ffmpeg_compat.h
-     src/ffmpegfs.h
-     src/ffmpeg_profiles.h
-     src/ffmpeg_transcoder.h
-     src/ffmpeg_utils.h
-     src/fileio.h
-     src/id3v1tag.h
-     src/logging.h
-     src/transcode.h
-     src/vcdio.h
-     src/vcdparser.h
-     src/vcd/vcdchapter.h
-     src/vcd/vcdentries.h
-     src/vcd/vcdinfo.h
-     src/vcd/vcdutils.h
-     src/wave.h
-     src/thread_pool.h
+    src/blurayio.h
+    src/blurayparser.h
+    src/buffer.h
+    src/cache_entry.h
+    src/cache.h
+    src/cache_maintenance.h
+    src/cuesheetparser.h
+    src/diskio.h
+    src/dvdio.h
+    src/dvdparser.h
+    src/ffmpeg_base.h
+    src/ffmpeg_compat.h
+    src/ffmpegfs.h
+    src/ffmpeg_profiles.h
+    src/ffmpeg_transcoder.h
+    src/ffmpeg_utils.h
+    src/fileio.h
+    src/id3v1tag.h
+    src/logging.h
+    src/transcode.h
+    src/vcdio.h
+    src/vcdparser.h
+    src/vcd/vcdchapter.h
+    src/vcd/vcdentries.h
+    src/vcd/vcdinfo.h
+    src/vcd/vcdutils.h
+    src/wave.h
+    src/thread_pool.h
 )
 
 # Other files
@@ -561,122 +561,122 @@ list(APPEND SOURCES
 # The binary
 add_executable(${PROJECT_NAME} ${OPTIONS} ${SOURCES} ${HEADERS})
 set_target_properties(${PROJECT_NAME}
-  PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/src"
 )
 
 # manpages
 execute_process(COMMAND "date +'%B %Y'"
-                RESULT_VARIABLE REVDATE
+    RESULT_VARIABLE REVDATE
 )
 
 # make manpage-text
 add_custom_command(
-     COMMENT "Building text version of manpages"
-     DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f text ffmpegfs.1.txt
-     OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.text
- )
- add_custom_target(manpage-text DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.text)
- add_dependencies(${PROJECT_NAME} manpage-text)
+    COMMENT "Building text version of manpages"
+    DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f text ffmpegfs.1.txt
+    OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.text
+)
+add_custom_target(manpage-text DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.text)
+add_dependencies(${PROJECT_NAME} manpage-text)
 
 # make manpage-header
 #sed in makefiles is a menace so we use a helper script
 add_custom_command(
-     COMMENT "Building header version of manpages"
-     DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.text
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/
-     COMMAND ${CMAKE_SOURCE_DIR}/src/makehelp.sh \"${CMAKE_BINARY_DIR}/src/ffmpegfshelp.h\"
-     OUTPUT ${CMAKE_BINARY_DIR}/src/ffmpegfshelp.h
+    COMMENT "Building header version of manpages"
+    DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.text
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/
+    COMMAND ${CMAKE_SOURCE_DIR}/src/makehelp.sh \"${CMAKE_BINARY_DIR}/src/ffmpegfshelp.h\"
+    OUTPUT ${CMAKE_BINARY_DIR}/src/ffmpegfshelp.h
 )
 add_custom_target(manpage-header DEPENDS ${CMAKE_BINARY_DIR}/src/ffmpegfshelp.h)
 add_dependencies(${PROJECT_NAME} manpage-header)
 
 # make manpage
 add_custom_command(
-     COMMENT "Building manpages"
-     DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f manpage --xsltproc-opts=\"-param ulink.show 1\" ffmpegfs.1.txt
-     OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1
+    COMMENT "Building manpages"
+    DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f manpage --xsltproc-opts=\"-param ulink.show 1\" ffmpegfs.1.txt
+    OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1
 )
 add_custom_target(manpage DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1)
 add_dependencies(${PROJECT_NAME} manpage)
 
 # make help-pdf
 add_custom_command(
-     COMMENT "Building PDF help"
-     DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f pdf --fop --xsltproc-opts=\"-param ulink.show 1\" ffmpegfs.1.txt
-     OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.pdf
+    COMMENT "Building PDF help"
+    DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f pdf --fop --xsltproc-opts=\"-param ulink.show 1\" ffmpegfs.1.txt
+    OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.pdf
 )
 add_custom_target(help-pdf DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.pdf)
 #add_dependencies(${PROJECT_NAME} help-pdf)
 
 # make help-html
 add_custom_command(
-     COMMENT "Building HTML help"
-     DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f htmlhelp ffmpegfs.1.txt
-     COMMAND mv ffmpegfs.1.htmlhelp/index.html ffmpegfs.1.htmlhelp/manpages.html
-     COMMAND echo a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f htmlhelp ffmpegfs.1.txt
-     OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.htmlhelp/manpages.html
+    COMMENT "Building HTML help"
+    DEPENDS ${CMAKE_SOURCE_DIR}/ffmpegfs.1.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f htmlhelp ffmpegfs.1.txt
+    COMMAND mv ffmpegfs.1.htmlhelp/index.html ffmpegfs.1.htmlhelp/manpages.html
+    COMMAND echo a2x -a revnumber=\"${PACKAGE_VERSION}\" -a revdate=\"${REVDATE}\" -f htmlhelp ffmpegfs.1.txt
+    OUTPUT ${CMAKE_BINARY_DIR}/ffmpegfs.1.htmlhelp/manpages.html
 )
 add_custom_target(help-html DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.htmlhelp/manpages.html)
 #add_dependencies(${PROJECT_NAME} help-html)
 
 # make doxy
 add_custom_command(
-     COMMENT "Building Doxygen"
-     DEPENDS ${CMAKE_BINARY_DIR}/Doxyfile
-     DEPENDS ${CMAKE_BINARY_DIR}/doxyfile.inc
-     DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.htmlhelp/manpages.html
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     COMMAND doxygen Doxyfile
-     OUTPUT ${CMAKE_BINARY_DIR}/doxygen/html/index.html
+    COMMENT "Building Doxygen"
+    DEPENDS ${CMAKE_BINARY_DIR}/Doxyfile
+    DEPENDS ${CMAKE_BINARY_DIR}/doxyfile.inc
+    DEPENDS ${CMAKE_BINARY_DIR}/ffmpegfs.1.htmlhelp/manpages.html
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND doxygen Doxyfile
+    OUTPUT ${CMAKE_BINARY_DIR}/doxygen/html/index.html
 )
 add_custom_target(doxy DEPENDS ${CMAKE_BINARY_DIR}/doxygen/html/index.html)
 #add_dependencies(${PROJECT_NAME} doxy)
 
 # make doxyfile-inc
 add_custom_command(
-     COMMENT "Building doxyfile.inc"
-     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-     DEPENDS ${CMAKE_SOURCE_DIR}/Doxyfile
-     COMMAND @echo "PROJECT_NAME           = \"${PROJECT_DESCRIPTION}\"" > ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "OUTPUT_DIRECTORY       = doxygen" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "PREDEFINED             = USE_LIBBLURAY" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "PREDEFINED             += USE_LIBDVD" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "PREDEFINED             += USE_LIBVCD" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "INPUT                  = src test" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "FILE_PATTERNS          = *.h *.cc" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXCLUDE                = src/config.h" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXCLUDE                += src/ffmpegfshelp.h" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXCLUDE                += doxyfile.inc" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/manpages.html" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/docbook-xsl.css" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "INPUT                  += README.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "INPUT	           += INSTALL.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "INPUT                  += HISTORY.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXAMPLE_PATH           += NEWS" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXAMPLE_PATH           += TODO" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXAMPLE_PATH           += COPYING" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXAMPLE_PATH           += COPYING.DOC" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXAMPLE_PATH           += COPYING.CC0" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "RECURSIVE              = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "SOURCE_BROWSER         = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "DISTRIBUTE_GROUP_DOC   = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "REFERENCED_BY_RELATION = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "REFERENCES_RELATION    = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXTRACT_STATIC         = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "EXTRACT_PRIVATE        = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     COMMAND @echo "PROJECT_NUMBER         = ${VERSION}" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-     OUTPUT ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMENT "Building doxyfile.inc"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    DEPENDS ${CMAKE_SOURCE_DIR}/Doxyfile
+    COMMAND @echo "PROJECT_NAME           = \"${PROJECT_DESCRIPTION}\"" > ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "OUTPUT_DIRECTORY       = doxygen" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "PREDEFINED             = USE_LIBBLURAY" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "PREDEFINED             += USE_LIBDVD" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "PREDEFINED             += USE_LIBVCD" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT                  = src test" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "FILE_PATTERNS          = *.h *.cc" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXCLUDE                = src/config.h" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXCLUDE                += src/ffmpegfshelp.h" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXCLUDE                += doxyfile.inc" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/manpages.html" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/docbook-xsl.css" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT                  += README.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT	           += INSTALL.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT                  += HISTORY.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXAMPLE_PATH           += NEWS" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXAMPLE_PATH           += TODO" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXAMPLE_PATH           += COPYING" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXAMPLE_PATH           += COPYING.DOC" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXAMPLE_PATH           += COPYING.CC0" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "RECURSIVE              = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "SOURCE_BROWSER         = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "DISTRIBUTE_GROUP_DOC   = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "REFERENCED_BY_RELATION = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "REFERENCES_RELATION    = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXTRACT_STATIC         = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "EXTRACT_PRIVATE        = YES" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "PROJECT_NUMBER         = ${VERSION}" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    OUTPUT ${CMAKE_BINARY_DIR}/doxyfile.inc
 )
 add_custom_target(doxyfile-inc DEPENDS ${CMAKE_BINARY_DIR}/doxyfile.inc)
 add_dependencies(doxy doxyfile-inc)
@@ -708,24 +708,24 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 )
 
 IF (LIBDVDREAD_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC
-        -DUSE_LIBDVD=1
-    )
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -DUSE_LIBDVD=1
+)
 ENDIF (LIBDVDREAD_FOUND)
 IF (LIBBLURAY_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC
-        -DUSE_LIBBLURAY=1
-    )
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -DUSE_LIBBLURAY=1
+)
 ENDIF (LIBBLURAY_FOUND)
 IF (LIBSWRESAMPLE_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC
-        -DUSE_LIBSWRESAMPLE=1
-    )
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -DUSE_LIBSWRESAMPLE=1
+)
 ENDIF (LIBSWRESAMPLE_FOUND)
 IF (LIBAVRESAMPLE_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC
-        -DUSE_LIBAVRESAMPLE=1
-    )
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    -DUSE_LIBAVRESAMPLE=1
+)
 ENDIF (LIBAVRESAMPLE_FOUND)
 
 target_link_libraries(${PROJECT_NAME}
@@ -755,10 +755,10 @@ add_subdirectory(test)
 
 # cppcheck
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log"
-  COMMAND cppcheck --force --enable=all --inconclusive --library=posix --output-file="${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log" --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheck-suppressions.txt -I "${CMAKE_CURRENT_SOURCE_DIR}/src/" -I "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/" -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" "${CMAKE_CURRENT_SOURCE_DIR}/src/" "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/"
-  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-  COMMENT "Running cppcheck"
-  VERBATIM
+    COMMAND cppcheck --force --enable=all --inconclusive --library=posix --output-file="${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log" --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheck-suppressions.txt -I "${CMAKE_CURRENT_SOURCE_DIR}/src/" -I "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/" -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" "${CMAKE_CURRENT_SOURCE_DIR}/src/" "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "Running cppcheck"
+    VERBATIM
 )
 add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
 #add_dependencies(${PROJECT_NAME} cppcheck)

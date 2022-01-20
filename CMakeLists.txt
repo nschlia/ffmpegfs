@@ -22,7 +22,13 @@
 #   cmake --configure .
 # once, then
 #   cmake --build . --target all
-#
+# or
+#   make
+# --------------------------------------------------------------------------
+# Build source package:
+#   cmake --build . --target dist-gzip
+# or
+#   make dist-gzip
 # --------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.5)
@@ -763,3 +769,141 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log"
 add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
 #add_dependencies(${PROJECT_NAME} cppcheck)
 
+# Package
+#foreach ( file ${SOURCES} ${HEADERS} test/fpcompare.c test/metadata.c )
+#    get_filename_component( dir ${file} DIRECTORY )
+#    install( FILES ${file} DESTINATION ./${dir} )
+#endforeach()
+#install(DIRECTORY test/srcdir/ DESTINATION test/srcdir/)
+#install(FILES configure ChangeLog DESTINATION .)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+file(MAKE_DIRECTORY /var/cache/ffmpegfs/)
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "asciidoc-base automake bc libavfilter-dev libavcodec-dev libavformat-dev libavutil-dev libbluray-dev libchromaprint-dev libdvdnav-dev libdvdread-dev libfuse-dev libsqlite3-dev libswresample-dev libswscale-dev libcue-dev libchardet-dev libtool docbook-xml docbook-xsl xsltproc xxd w3m")
+
+set(CPACK_GENERATOR "TGZ;DEB")
+set(CPACK_PACKAGE_NAME          ${PROJECT_NAME})
+set(CPACK_PACKAGE_VERSION       ${PACKAGE_VERSION})
+set(CPACK_PACKAGE_VENDOR        ${PROJECT_VENDOR})
+set(CPACK_PACKAGE_CONTACT       ${PROJECT_CONTACT})
+#set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_RESOURCE_FILE_README  "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+#set(CPACK_OUTPUT_FILE_PREFIX    "${CMAKE_CURRENT_BINARY_DIR}/package")
+set(CPACK_PACKAGE_FILE_NAME     ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-install)
+
+# Source Package
+# https://jtanx.github.io/2019/08/22/cmake-dist-customisation/
+# https://cliutils.gitlab.io/modern-cmake/chapters/install/packaging.html
+# https://cmake.org/cmake/help/git-stage/module/CPack.html
+# https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
+
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/configure"
+  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/autogen.sh"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/autogen.sh"
+  COMMENT "Making configure"
+  VERBATIM
+)
+add_custom_target(configure DEPENDS configure)
+#add_dependencies(${PROJECT_NAME} configure)
+
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/ChangeLog"
+  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/changelog.sh"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/changelog.sh"
+  COMMENT "Creating ChangeLog file from git log"
+  VERBATIM
+)
+add_custom_target(changelog DEPENDS ChangeLog)
+#add_dependencies(${PROJECT_NAME} changelog)
+
+add_custom_target(dist-gzip
+    COMMAND "${CMAKE_COMMAND}"
+    --build "${CMAKE_BINARY_DIR}"
+    --target package_source
+    DEPENDS configure changelog
+    VERBATIM
+    USES_TERMINAL
+    )
+set(CPACK_SOURCE_GENERATOR          "TGZ")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME  ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION})
+#CPACK_SOURCE_STRIP_FILES  List of files in the source tree that will be stripped. Starting with CMake 2.6.0, CPACK_SOURCE_STRIP_FILES will be a boolean variable which enables stripping of all files (a list of files evaluates to TRUE in CMake, so this change is compatible).
+set(CPACK_SOURCE_INSTALLED_DIRECTORIES "${CMAKE_SOURCE_DIR};/")
+set(CPACK_SOURCE_IGNORE_FILES
+    ${CMAKE_SOURCE_DIR}/autogen.sh
+    ${CMAKE_SOURCE_DIR}/autom4te.cache
+    ${CMAKE_SOURCE_DIR}/bin
+    ${CMAKE_SOURCE_DIR}/.*build.*
+    ${CMAKE_SOURCE_DIR}/.*\.cache$
+    ${CMAKE_SOURCE_DIR}/changelog.sh
+    ${CMAKE_SOURCE_DIR}/check
+    ${CMAKE_SOURCE_DIR}/cmake
+    ${CMAKE_SOURCE_DIR}/config/
+    ${CMAKE_SOURCE_DIR}_config.yml
+    ${CMAKE_SOURCE_DIR}/COPYING.CC0
+    ${CMAKE_SOURCE_DIR}/_CPack_Packages
+    ${CMAKE_SOURCE_DIR}/cppcheck.cppcheck
+    ${CMAKE_SOURCE_DIR}/cppcheck-suppressions.txt
+    ${CMAKE_SOURCE_DIR}/dashtest
+    ${CMAKE_SOURCE_DIR}/deb HOWTO.txt
+    ${CMAKE_SOURCE_DIR}/dev$
+    ${CMAKE_SOURCE_DIR}/dev_dbg$
+    ${CMAKE_SOURCE_DIR}/dist
+    ${CMAKE_SOURCE_DIR}/DOC
+    ${CMAKE_SOURCE_DIR}/docker
+    ${CMAKE_SOURCE_DIR}/Doxyfile
+    ${CMAKE_SOURCE_DIR}/doxygen
+    ${CMAKE_SOURCE_DIR}/\\\\.DS_Store
+    ${CMAKE_SOURCE_DIR}/ffmpegfs$
+    ${CMAKE_SOURCE_DIR}/ffmpegfs.1.htmlhelp
+    ${CMAKE_SOURCE_DIR}/ffmpegfs.1.text
+    ${CMAKE_SOURCE_DIR}/ffmpegfs.cbp
+    ${CMAKE_SOURCE_DIR}/ffmpegfs.depend
+    ${CMAKE_SOURCE_DIR}/ffmpegfshelp.h
+    ${CMAKE_SOURCE_DIR}/fpcompare$
+    ${CMAKE_SOURCE_DIR}/.git
+    ${CMAKE_SOURCE_DIR}/.*\.gz
+    ${CMAKE_SOURCE_DIR}/.*\.deb
+    ${CMAKE_SOURCE_DIR}/jenkins
+    ${CMAKE_SOURCE_DIR}/lurch
+    ${CMAKE_SOURCE_DIR}/.mailmap
+    ${CMAKE_SOURCE_DIR}Makefile.in
+    ${CMAKE_SOURCE_DIR}/metadata$
+    ${CMAKE_SOURCE_DIR}/mkconf
+    ${CMAKE_SOURCE_DIR}/mkdoxy
+    ${CMAKE_SOURCE_DIR}/mkjenkins
+    ${CMAKE_SOURCE_DIR}/obj
+    ${CMAKE_SOURCE_DIR}/rep
+    ${CMAKE_SOURCE_DIR}/scripts
+    ${CMAKE_SOURCE_DIR}/sql
+    ${CMAKE_SOURCE_DIR}/src/config.h
+    ${CMAKE_SOURCE_DIR}/test/addtest$
+    ${CMAKE_SOURCE_DIR}/test/mkvid
+    ${CMAKE_SOURCE_DIR}/test/srcdir.org
+    ${CMAKE_SOURCE_DIR}/upd
+    .cmake
+    CMakeCache.txt
+    CMakeFiles
+    CMakeLists.txt
+    .deps
+    Makefile$
+    /Testing
+    )
+
+#message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
+
+#my_install_script.cmake.in:
+
+#    if(CPACK_SOURCE_INSTALLED_DIRECTORIES)
+#      file(
+#        INSTALL "@CMAKE_BINARY_DIR@/extras"
+#        DESTINATION "${CMAKE_CURRENT_BINARY_DIR}"
+#      )
+#    endif()
+
+
+#configure_file(my_install_script.cmake.in my_install_script.cmake)
+#...
+#set(CPACK_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/my_install_script.cmake")
+
+include(CPack)

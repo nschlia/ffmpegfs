@@ -33,20 +33,6 @@
  * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
-#include "ffmpegfs.h"
-#include "logging.h"
-#include "ffmpegfshelp.h"
-
-#include <sys/sysinfo.h>
-#include <sqlite3.h>
-#include <unistd.h>
-
-#include <iostream>
-
-#ifdef USE_LIBBLURAY
-#include <libbluray/bluray-version.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,6 +45,20 @@ extern "C" {
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
+#endif
+
+#include "ffmpegfs.h"
+#include "logging.h"
+#include "ffmpegfshelp.h"
+
+#include <sys/sysinfo.h>
+#include <sqlite3.h>
+#include <unistd.h>
+
+#include <iostream>
+
+#ifdef USE_LIBBLURAY
+#include <libbluray/bluray-version.h>
 #endif
 
 #ifdef __clang__

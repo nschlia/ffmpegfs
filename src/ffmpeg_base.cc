@@ -29,10 +29,6 @@
  * @copyright Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
-#include "ffmpeg_base.h"
-#include "transcode.h"
-#include "logging.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,6 +45,10 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#include "ffmpeg_base.h"
+#include "transcode.h"
+#include "logging.h"
 
 FFmpeg_Base::FFmpeg_Base()
     : m_virtualfile(nullptr)

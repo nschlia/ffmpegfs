@@ -106,6 +106,7 @@ static const FILETYPE_MAP filetype_map =
     { "ts",     FILETYPE_TS },
     { "hls",    FILETYPE_HLS },
     { "flac",   FILETYPE_FLAC },
+    { "mkv",    FILETYPE_MKV },
 };
 
 Format_Options::Format_Options()
@@ -729,7 +730,28 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
             },
             true                                    // Album arts are supported
         }
-    }
+    },
+    // -----------------------------------------------------------------------------------------------------------------------
+    // MKV
+    // -----------------------------------------------------------------------------------------------------------------------
+    {
+        FILETYPE_MKV,
+        {
+            "matroska",                             // Descriptive name of the format.
+            "mkv",                                  // File extension: Mostly, but not always, same as format.
+            {
+                {
+                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    {
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO }, // Video codec(s)
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },                                  // Audio codec(s)
+                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                    }
+                }
+            },
+            false                                   // No album arts
+        }
+    },
 };
 
 FFmpegfs_Format::FFmpegfs_Format() :

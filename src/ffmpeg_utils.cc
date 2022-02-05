@@ -29,6 +29,21 @@
  * @copyright Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include <libswscale/swscale.h>
+#include "libavutil/ffversion.h"
+#include <libavcodec/avcodec.h>
+#pragma GCC diagnostic pop
+#ifdef __cplusplus
+}
+#endif
+
 #include "ffmpeg_utils.h"
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
@@ -63,14 +78,11 @@ extern "C" {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#include <libswscale/swscale.h>
 #if LAVR_DEPRECATE
 #include <libswresample/swresample.h>
 #else
 #include <libavresample/avresample.h>
 #endif
-#include "libavutil/ffversion.h"
-#include <libavcodec/avcodec.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }

@@ -28,7 +28,7 @@ News
 - **Bugfix:** Fix crash when video has no audio
 - **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fix access problems with frame sets and HLS. 
 - **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhance file size prediction,
-- **Bugfix:** Syncronise screen log. Concurrent entries by separate flags created garbled output.
+- **Bugfix:** Syncronise screen log. Concurrent entries by separate threads produced garbled output.
 - **Bugfix:** Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).
 
 ### Version 2.8 released

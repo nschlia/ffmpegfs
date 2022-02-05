@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -110,40 +110,40 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a90bc5653dec4770b35ab9199456b5cef">~BlurayIO</a> ()</td></tr>
 <tr class="memdesc:a90bc5653dec4770b35ab9199456b5cef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free <a class="el" href="classBlurayIO.html" title="Bluray I/O class.">BlurayIO</a> object. <br /></td></tr>
 <tr class="separator:a90bc5653dec4770b35ab9199456b5cef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e9d54dc590da9d07a94c164f9f5e785"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a9e9d54dc590da9d07a94c164f9f5e785">type</a> () const</td></tr>
-<tr class="memdesc:a9e9d54dc590da9d07a94c164f9f5e785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get type of the virtual file.  <a href="classBlurayIO.html#a9e9d54dc590da9d07a94c164f9f5e785">More...</a><br /></td></tr>
-<tr class="separator:a9e9d54dc590da9d07a94c164f9f5e785"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52d2acbf954e25466b1b60e653bbbb9d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a52d2acbf954e25466b1b60e653bbbb9d">bufsize</a> () const</td></tr>
-<tr class="memdesc:a52d2acbf954e25466b1b60e653bbbb9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="classBlurayIO.html#a52d2acbf954e25466b1b60e653bbbb9d">More...</a><br /></td></tr>
-<tr class="separator:a52d2acbf954e25466b1b60e653bbbb9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc9b18b858e04f2b894aeb7084b3e595"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#acc9b18b858e04f2b894aeb7084b3e595">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>)</td></tr>
-<tr class="memdesc:acc9b18b858e04f2b894aeb7084b3e595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="classBlurayIO.html#acc9b18b858e04f2b894aeb7084b3e595">More...</a><br /></td></tr>
-<tr class="separator:acc9b18b858e04f2b894aeb7084b3e595"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa62b24280be776b0c8ec474cbec849d"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aaa62b24280be776b0c8ec474cbec849d">read</a> (void *data, size_t <a class="el" href="classBlurayIO.html#aebc5cea79f4abe02833fb2c06029e2bc">size</a>)</td></tr>
-<tr class="memdesc:aaa62b24280be776b0c8ec474cbec849d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="classBlurayIO.html#aaa62b24280be776b0c8ec474cbec849d">More...</a><br /></td></tr>
-<tr class="separator:aaa62b24280be776b0c8ec474cbec849d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b52ff28b7b6837c5b98988ec18a9a5e"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a7b52ff28b7b6837c5b98988ec18a9a5e">error</a> () const</td></tr>
-<tr class="memdesc:a7b52ff28b7b6837c5b98988ec18a9a5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error.  <a href="classBlurayIO.html#a7b52ff28b7b6837c5b98988ec18a9a5e">More...</a><br /></td></tr>
-<tr class="separator:a7b52ff28b7b6837c5b98988ec18a9a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d6dea45bf542e820f7d7da187569b26"><td class="memItemLeft" align="right" valign="top">virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a1d6dea45bf542e820f7d7da187569b26">duration</a> () const</td></tr>
-<tr class="memdesc:a1d6dea45bf542e820f7d7da187569b26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the duration of the file, in AV_TIME_BASE fractional seconds.  <a href="classBlurayIO.html#a1d6dea45bf542e820f7d7da187569b26">More...</a><br /></td></tr>
-<tr class="separator:a1d6dea45bf542e820f7d7da187569b26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebc5cea79f4abe02833fb2c06029e2bc"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aebc5cea79f4abe02833fb2c06029e2bc">size</a> () const</td></tr>
-<tr class="memdesc:aebc5cea79f4abe02833fb2c06029e2bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the file size.  <a href="classBlurayIO.html#aebc5cea79f4abe02833fb2c06029e2bc">More...</a><br /></td></tr>
-<tr class="separator:aebc5cea79f4abe02833fb2c06029e2bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc170e9c1482984e0f5a4c1ccf636c1c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#adc170e9c1482984e0f5a4c1ccf636c1c">tell</a> () const</td></tr>
-<tr class="memdesc:adc170e9c1482984e0f5a4c1ccf636c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current read position.  <a href="classBlurayIO.html#adc170e9c1482984e0f5a4c1ccf636c1c">More...</a><br /></td></tr>
-<tr class="separator:adc170e9c1482984e0f5a4c1ccf636c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2ffec976c214c0b8a964c43d30befbb"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aa2ffec976c214c0b8a964c43d30befbb">seek</a> (int64_t offset, int whence)</td></tr>
-<tr class="memdesc:aa2ffec976c214c0b8a964c43d30befbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek to position in file.  <a href="classBlurayIO.html#aa2ffec976c214c0b8a964c43d30befbb">More...</a><br /></td></tr>
-<tr class="separator:aa2ffec976c214c0b8a964c43d30befbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad25b77b3b8871d907183e58ba8b7b64d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#ad25b77b3b8871d907183e58ba8b7b64d">eof</a> () const</td></tr>
-<tr class="memdesc:ad25b77b3b8871d907183e58ba8b7b64d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if at end of file.  <a href="classBlurayIO.html#ad25b77b3b8871d907183e58ba8b7b64d">More...</a><br /></td></tr>
-<tr class="separator:ad25b77b3b8871d907183e58ba8b7b64d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad91c5271774229f4653de4fc98aca5f9"><td class="memItemLeft" align="right" valign="top"><a id="ad91c5271774229f4653de4fc98aca5f9"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#ad91c5271774229f4653de4fc98aca5f9">close</a> ()</td></tr>
-<tr class="memdesc:ad91c5271774229f4653de4fc98aca5f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. <br /></td></tr>
-<tr class="separator:ad91c5271774229f4653de4fc98aca5f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af81876da2a935393f6867c4aaf24f8b3"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#af81876da2a935393f6867c4aaf24f8b3">type</a> () const override</td></tr>
+<tr class="memdesc:af81876da2a935393f6867c4aaf24f8b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get type of the virtual file.  <a href="classBlurayIO.html#af81876da2a935393f6867c4aaf24f8b3">More...</a><br /></td></tr>
+<tr class="separator:af81876da2a935393f6867c4aaf24f8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf43d32b53a930cbc171ea2a13ed3a6c"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aaf43d32b53a930cbc171ea2a13ed3a6c">bufsize</a> () const override</td></tr>
+<tr class="memdesc:aaf43d32b53a930cbc171ea2a13ed3a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="classBlurayIO.html#aaf43d32b53a930cbc171ea2a13ed3a6c">More...</a><br /></td></tr>
+<tr class="separator:aaf43d32b53a930cbc171ea2a13ed3a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aaef823df7a6dbbd9377a947a0b6c79"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a2aaef823df7a6dbbd9377a947a0b6c79">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>) override</td></tr>
+<tr class="memdesc:a2aaef823df7a6dbbd9377a947a0b6c79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="classBlurayIO.html#a2aaef823df7a6dbbd9377a947a0b6c79">More...</a><br /></td></tr>
+<tr class="separator:a2aaef823df7a6dbbd9377a947a0b6c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa42b907e91e8b244940dc1e767452db"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aaa42b907e91e8b244940dc1e767452db">read</a> (void *data, size_t <a class="el" href="classBlurayIO.html#ac5f8b8ec6e0f0b9b88d9274913b7a4c3">size</a>) override</td></tr>
+<tr class="memdesc:aaa42b907e91e8b244940dc1e767452db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="classBlurayIO.html#aaa42b907e91e8b244940dc1e767452db">More...</a><br /></td></tr>
+<tr class="separator:aaa42b907e91e8b244940dc1e767452db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b08465a2950d72004183c2f78888854"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a4b08465a2950d72004183c2f78888854">error</a> () const override</td></tr>
+<tr class="memdesc:a4b08465a2950d72004183c2f78888854"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error.  <a href="classBlurayIO.html#a4b08465a2950d72004183c2f78888854">More...</a><br /></td></tr>
+<tr class="separator:a4b08465a2950d72004183c2f78888854"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbc6d1f6f403e01a6324fa7693a2aad7"><td class="memItemLeft" align="right" valign="top">virtual int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#adbc6d1f6f403e01a6324fa7693a2aad7">duration</a> () const override</td></tr>
+<tr class="memdesc:adbc6d1f6f403e01a6324fa7693a2aad7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the duration of the file, in AV_TIME_BASE fractional seconds.  <a href="classBlurayIO.html#adbc6d1f6f403e01a6324fa7693a2aad7">More...</a><br /></td></tr>
+<tr class="separator:adbc6d1f6f403e01a6324fa7693a2aad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5f8b8ec6e0f0b9b88d9274913b7a4c3"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#ac5f8b8ec6e0f0b9b88d9274913b7a4c3">size</a> () const override</td></tr>
+<tr class="memdesc:ac5f8b8ec6e0f0b9b88d9274913b7a4c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the file size.  <a href="classBlurayIO.html#ac5f8b8ec6e0f0b9b88d9274913b7a4c3">More...</a><br /></td></tr>
+<tr class="separator:ac5f8b8ec6e0f0b9b88d9274913b7a4c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeab2e8ea8698c323f84e09154c4b4e17"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#aeab2e8ea8698c323f84e09154c4b4e17">tell</a> () const override</td></tr>
+<tr class="memdesc:aeab2e8ea8698c323f84e09154c4b4e17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current read position.  <a href="classBlurayIO.html#aeab2e8ea8698c323f84e09154c4b4e17">More...</a><br /></td></tr>
+<tr class="separator:aeab2e8ea8698c323f84e09154c4b4e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34be8a873131fbc96dbcae1419f543af"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a34be8a873131fbc96dbcae1419f543af">seek</a> (int64_t offset, int whence) override</td></tr>
+<tr class="memdesc:a34be8a873131fbc96dbcae1419f543af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seek to position in file.  <a href="classBlurayIO.html#a34be8a873131fbc96dbcae1419f543af">More...</a><br /></td></tr>
+<tr class="separator:a34be8a873131fbc96dbcae1419f543af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acaf3f8a97679bb98c4ddea23c2d2a139"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#acaf3f8a97679bb98c4ddea23c2d2a139">eof</a> () const override</td></tr>
+<tr class="memdesc:acaf3f8a97679bb98c4ddea23c2d2a139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if at end of file.  <a href="classBlurayIO.html#acaf3f8a97679bb98c4ddea23c2d2a139">More...</a><br /></td></tr>
+<tr class="separator:acaf3f8a97679bb98c4ddea23c2d2a139"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00d24d0f6b200cdfb54628725961cdd6"><td class="memItemLeft" align="right" valign="top"><a id="a00d24d0f6b200cdfb54628725961cdd6"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a00d24d0f6b200cdfb54628725961cdd6">close</a> () override</td></tr>
+<tr class="memdesc:a00d24d0f6b200cdfb54628725961cdd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. <br /></td></tr>
+<tr class="separator:a00d24d0f6b200cdfb54628725961cdd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
 <tr class="memitem:a8b0d602c3461181e12c05f655dea5018 inherit pub_methods_classFileIO"><td class="memItemLeft" align="right" valign="top"><a id="a8b0d602c3461181e12c05f655dea5018"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO</a> ()</td></tr>
@@ -215,7 +215,7 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="separator:a93531af779cb809f16162a26053667d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="memItemLeft" align="right" valign="top"><a id="a6c5b36972e9fbbc3a23d3aaeffe2e72a"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a6c5b36972e9fbbc3a23d3aaeffe2e72a">m_data</a> [192 *1024]</td></tr>
-<tr class="memdesc:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> for <a class="el" href="classBlurayIO.html#aaa62b24280be776b0c8ec474cbec849d" title="Read data from file.">read()</a> data. <br /></td></tr>
+<tr class="memdesc:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> for <a class="el" href="classBlurayIO.html#aaa42b907e91e8b244940dc1e767452db" title="Read data from file.">read()</a> data. <br /></td></tr>
 <tr class="separator:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34be6f6e276f4f59eef2029234ee2af0"><td class="memItemLeft" align="right" valign="top"><a id="a34be6f6e276f4f59eef2029234ee2af0"></a>
 int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a34be6f6e276f4f59eef2029234ee2af0">m_duration</a></td></tr>
@@ -245,8 +245,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00048">48</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a52d2acbf954e25466b1b60e653bbbb9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52d2acbf954e25466b1b60e653bbbb9d">&#9670;&nbsp;</a></span>bufsize()</h2>
+<a id="aaf43d32b53a930cbc171ea2a13ed3a6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf43d32b53a930cbc171ea2a13ed3a6c">&#9670;&nbsp;</a></span>bufsize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -263,7 +263,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -279,8 +279,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a1d6dea45bf542e820f7d7da187569b26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d6dea45bf542e820f7d7da187569b26">&#9670;&nbsp;</a></span>duration()</h2>
+<a id="adbc6d1f6f403e01a6324fa7693a2aad7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbc6d1f6f403e01a6324fa7693a2aad7">&#9670;&nbsp;</a></span>duration()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,7 +297,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -313,8 +313,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad25b77b3b8871d907183e58ba8b7b64d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad25b77b3b8871d907183e58ba8b7b64d">&#9670;&nbsp;</a></span>eof()</h2>
+<a id="acaf3f8a97679bb98c4ddea23c2d2a139"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaf3f8a97679bb98c4ddea23c2d2a139">&#9670;&nbsp;</a></span>eof()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -331,7 +331,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -347,8 +347,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a7b52ff28b7b6837c5b98988ec18a9a5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b52ff28b7b6837c5b98988ec18a9a5e">&#9670;&nbsp;</a></span>error()</h2>
+<a id="a4b08465a2950d72004183c2f78888854"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b08465a2950d72004183c2f78888854">&#9670;&nbsp;</a></span>error()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -365,7 +365,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -381,8 +381,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="acc9b18b858e04f2b894aeb7084b3e595"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc9b18b858e04f2b894aeb7084b3e595">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a2aaef823df7a6dbbd9377a947a0b6c79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aaef823df7a6dbbd9377a947a0b6c79">&#9670;&nbsp;</a></span>open()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,7 +400,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -412,19 +412,19 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#acc9b18b858e04f2b894aeb7084b3e595" title="Open a virtual file.">open()</a> returns 0. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#a2aaef823df7a6dbbd9377a947a0b6c79" title="Open a virtual file.">open()</a> returns 0. <br  />
 On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
 <p>Implements <a class="el" href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00075">75</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00185">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00154">m_angle_idx</a>, <a class="el" href="fileio_8h_source.html#l00197">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="blurayio_8h_source.html#l00153">m_chapter_idx</a>, <a class="el" href="fileio_8h_source.html#l00196">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="blurayio_8h_source.html#l00158">m_duration</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00152">m_title_idx</a>, <a class="el" href="fileio_8h_source.html#l00194">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8cc_source.html#l00128">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00106">FileIO::set_virtualfile()</a>, <a class="el" href="fileio_8cc_source.html#l00123">FileIO::virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00231">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00154">m_angle_idx</a>, <a class="el" href="fileio_8h_source.html#l00197">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="blurayio_8h_source.html#l00153">m_chapter_idx</a>, <a class="el" href="fileio_8h_source.html#l00196">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="blurayio_8h_source.html#l00158">m_duration</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00141">VIRTUALFILE::m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00152">m_title_idx</a>, <a class="el" href="fileio_8h_source.html#l00194">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8cc_source.html#l00126">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00104">FileIO::set_virtualfile()</a>, <a class="el" href="fileio_8cc_source.html#l00121">FileIO::virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00234">Logging::warning()</a>.</p>
 
 </div>
 </div>
-<a id="aaa62b24280be776b0c8ec474cbec849d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa62b24280be776b0c8ec474cbec849d">&#9670;&nbsp;</a></span>read()</h2>
+<a id="aaa42b907e91e8b244940dc1e767452db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa42b907e91e8b244940dc1e767452db">&#9670;&nbsp;</a></span>read()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -452,7 +452,7 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -465,21 +465,21 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#aaa62b24280be776b0c8ec474cbec849d" title="Read data from file.">read()</a> returns the number of bytes read. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#aaa42b907e91e8b244940dc1e767452db" title="Read data from file.">read()</a> returns the number of bytes read. <br  />
 This may be less than size. <br  />
 On error, the value 0 is returned and errno is set to indicate the error. <br  />
-If at end of file, 0 may be returned by errno not set. <a class="el" href="classBlurayIO.html#a7b52ff28b7b6837c5b98988ec18a9a5e" title="Get last error.">error()</a> will return 0 if at EOF. </dd></dl>
+If at end of file, 0 may be returned by errno not set. <a class="el" href="classBlurayIO.html#a4b08465a2950d72004183c2f78888854" title="Get last error.">error()</a> will return 0 if at EOF. </dd></dl>
 
 <p>Implements <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00177">177</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00254">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00156">m_data</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="fileio_8cc_source.html#l00128">FileIO::path()</a>, and <a class="el" href="blurayio_8cc_source.html#l00243">size()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00156">m_data</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="fileio_8cc_source.html#l00126">FileIO::path()</a>, and <a class="el" href="blurayio_8cc_source.html#l00243">size()</a>.</p>
 
 </div>
 </div>
-<a id="aa2ffec976c214c0b8a964c43d30befbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2ffec976c214c0b8a964c43d30befbb">&#9670;&nbsp;</a></span>seek()</h2>
+<a id="a34be8a873131fbc96dbcae1419f543af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34be8a873131fbc96dbcae1419f543af">&#9670;&nbsp;</a></span>seek()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -507,7 +507,7 @@ If at end of file, 0 may be returned by errno not set. <a class="el" href="class
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -524,7 +524,7 @@ SEEK_END: The offset is set to the size of the file plus offset bytes. </td></tr
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#aa2ffec976c214c0b8a964c43d30befbb" title="Seek to position in file.">seek()</a> returns the resulting offset location as measured in bytes from the beginning of the file. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classBlurayIO.html#a34be8a873131fbc96dbcae1419f543af" title="Seek to position in file.">seek()</a> returns the resulting offset location as measured in bytes from the beginning of the file. <br  />
 On error, the value -1 is returned and errno is set to indicate the error. </dd></dl>
 
 <p>Implements <a class="el" href="classFileIO.html#a0171ca18c497a09971e22cc5c381304b">FileIO</a>.</p>
@@ -535,8 +535,8 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 </div>
 </div>
-<a id="aebc5cea79f4abe02833fb2c06029e2bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebc5cea79f4abe02833fb2c06029e2bc">&#9670;&nbsp;</a></span>size()</h2>
+<a id="ac5f8b8ec6e0f0b9b88d9274913b7a4c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5f8b8ec6e0f0b9b88d9274913b7a4c3">&#9670;&nbsp;</a></span>size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -553,7 +553,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -571,8 +571,8 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 </div>
 </div>
-<a id="adc170e9c1482984e0f5a4c1ccf636c1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc170e9c1482984e0f5a4c1ccf636c1c">&#9670;&nbsp;</a></span>tell()</h2>
+<a id="aeab2e8ea8698c323f84e09154c4b4e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeab2e8ea8698c323f84e09154c4b4e17">&#9670;&nbsp;</a></span>tell()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -589,7 +589,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -605,8 +605,8 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 </div>
 </div>
-<a id="a9e9d54dc590da9d07a94c164f9f5e785"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e9d54dc590da9d07a94c164f9f5e785">&#9670;&nbsp;</a></span>type()</h2>
+<a id="af81876da2a935393f6867c4aaf24f8b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af81876da2a935393f6867c4aaf24f8b3">&#9670;&nbsp;</a></span>type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -623,7 +623,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

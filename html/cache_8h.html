@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -187,9 +187,9 @@ typedef <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a> *&#160;</td><
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a4a32a646521d02ddc7897ffabe261429"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> { <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080">RESULTCODE_NONE</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a553411c69587f79f93b5713bd69bffa7">RESULTCODE_INCOMPLETE</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a0189668130578f3939dc5b08a52786c0">RESULTCODE_FINISHED</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429afdc736994895f046a6db5d88c4c4ca64">RESULTCODE_ERROR</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a770644d53978dad1686fc8fcb104ba0b">RESULTCODE_FINISHED_INCOMPLETE</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea">RESULTCODE_FINISHED_SUCCESS</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429ad83f042cc398d1e2fe8f53dc6fef1d88">RESULTCODE_FINISHED_ERROR</a>
  }</td></tr>
 <tr class="memdesc:a4a32a646521d02ddc7897ffabe261429"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESULTCODE of transcoding operation.  <a href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">More...</a><br /></td></tr>
 <tr class="separator:a4a32a646521d02ddc7897ffabe261429"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,7 +197,7 @@ Enumerations</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Data cache management. </p>
 <dl class="section author"><dt>Author</dt><dd>Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2021 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -217,11 +217,11 @@ Enumerations</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080"></a>RESULTCODE_NONE&#160;</td><td class="fielddoc"><p>No result code available. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a553411c69587f79f93b5713bd69bffa7"></a>RESULTCODE_INCOMPLETE&#160;</td><td class="fielddoc"><p>Transcode finished, but incomplete. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a770644d53978dad1686fc8fcb104ba0b"></a>RESULTCODE_FINISHED_INCOMPLETE&#160;</td><td class="fielddoc"><p>Transcode finished, but incomplete. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a0189668130578f3939dc5b08a52786c0"></a>RESULTCODE_FINISHED&#160;</td><td class="fielddoc"><p>Transcode finished successfully. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea"></a>RESULTCODE_FINISHED_SUCCESS&#160;</td><td class="fielddoc"><p>Transcode finished successfully. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429afdc736994895f046a6db5d88c4c4ca64"></a>RESULTCODE_ERROR&#160;</td><td class="fielddoc"><p>Transcode finished with error. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429ad83f042cc398d1e2fe8f53dc6fef1d88"></a>RESULTCODE_FINISHED_ERROR&#160;</td><td class="fielddoc"><p>Transcode finished with error. </p>
 </td></tr>
 </table>
 

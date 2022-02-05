@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -83,6 +83,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:abeff226c91e1db77e200e5f65cf850d6"><td class="memItemLeft" align="right" valign="top"><a id="abeff226c91e1db77e200e5f65cf850d6"></a>
+typedef std::vector&lt; AVCodecID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#abeff226c91e1db77e200e5f65cf850d6">CODEC_VECT</a></td></tr>
+<tr class="memdesc:abeff226c91e1db77e200e5f65cf850d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector with valid codec ids for file format. <br /></td></tr>
+<tr class="separator:abeff226c91e1db77e200e5f65cf850d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07f1b98b4f2310f7f2941c7647da8c7d"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structFormat__Options_1_1__tagFORMAT.html">Format_Options::_tagFORMAT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d">FORMAT</a></td></tr>
 <tr class="separator:a07f1b98b4f2310f7f2941c7647da8c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abaaa9bc7dd414a1ec4639490b396724c"><td class="memItemLeft" align="right" valign="top"><a id="abaaa9bc7dd414a1ec4639490b396724c"></a>
@@ -105,12 +109,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a31e845fdbfc793174812053dd7e5e0a8"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a31e845fdbfc793174812053dd7e5e0a8">fileext</a> () const</td></tr>
 <tr class="memdesc:a31e845fdbfc793174812053dd7e5e0a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get file extension.  <a href="structFormat__Options.html#a31e845fdbfc793174812053dd7e5e0a8">More...</a><br /></td></tr>
 <tr class="separator:a31e845fdbfc793174812053dd7e5e0a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a153128cfc539d37213286f055e2d1159"><td class="memItemLeft" align="right" valign="top">AVCodecID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a153128cfc539d37213286f055e2d1159">video_codec_id</a> () const</td></tr>
-<tr class="memdesc:a153128cfc539d37213286f055e2d1159"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get video codec_id.  <a href="structFormat__Options.html#a153128cfc539d37213286f055e2d1159">More...</a><br /></td></tr>
-<tr class="separator:a153128cfc539d37213286f055e2d1159"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a521cce43e64d53c575ddd89175e62be1"><td class="memItemLeft" align="right" valign="top">AVCodecID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a521cce43e64d53c575ddd89175e62be1">audio_codec_id</a> () const</td></tr>
-<tr class="memdesc:a521cce43e64d53c575ddd89175e62be1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get audio codec_id.  <a href="structFormat__Options.html#a521cce43e64d53c575ddd89175e62be1">More...</a><br /></td></tr>
-<tr class="separator:a521cce43e64d53c575ddd89175e62be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01dae695a2fd5931e0ff70e7c8fd5135"><td class="memItemLeft" align="right" valign="top">AVCodecID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a01dae695a2fd5931e0ff70e7c8fd5135">video_codec</a> () const</td></tr>
+<tr class="memdesc:a01dae695a2fd5931e0ff70e7c8fd5135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get video codec_id.  <a href="structFormat__Options.html#a01dae695a2fd5931e0ff70e7c8fd5135">More...</a><br /></td></tr>
+<tr class="separator:a01dae695a2fd5931e0ff70e7c8fd5135"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec4d2c3581b433cd25a9f43e03bfd9ee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#aec4d2c3581b433cd25a9f43e03bfd9ee">is_video_codec_supported</a> (AVCodecID codec_id) const</td></tr>
+<tr class="memdesc:aec4d2c3581b433cd25a9f43e03bfd9ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if video codec/file format combination is supported.  <a href="structFormat__Options.html#aec4d2c3581b433cd25a9f43e03bfd9ee">More...</a><br /></td></tr>
+<tr class="separator:aec4d2c3581b433cd25a9f43e03bfd9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f7bf6edf92881774e050eab8adcca36"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a5f7bf6edf92881774e050eab8adcca36">video_codec_list</a> () const</td></tr>
+<tr class="memdesc:a5f7bf6edf92881774e050eab8adcca36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a list of supported audio codecs for current audio codec.  <a href="structFormat__Options.html#a5f7bf6edf92881774e050eab8adcca36">More...</a><br /></td></tr>
+<tr class="separator:a5f7bf6edf92881774e050eab8adcca36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe3da0f99a37f9ba5ed02a0431a6b737"><td class="memItemLeft" align="right" valign="top">AVCodecID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#afe3da0f99a37f9ba5ed02a0431a6b737">audio_codec</a> () const</td></tr>
+<tr class="memdesc:afe3da0f99a37f9ba5ed02a0431a6b737"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get audio codec_id.  <a href="structFormat__Options.html#afe3da0f99a37f9ba5ed02a0431a6b737">More...</a><br /></td></tr>
+<tr class="separator:afe3da0f99a37f9ba5ed02a0431a6b737"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3b7630f563404f646e45b9f4251cefa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#ab3b7630f563404f646e45b9f4251cefa">is_audio_codec_supported</a> (AVCodecID codec_id) const</td></tr>
+<tr class="memdesc:ab3b7630f563404f646e45b9f4251cefa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if audio codec/file format combination is supported.  <a href="structFormat__Options.html#ab3b7630f563404f646e45b9f4251cefa">More...</a><br /></td></tr>
+<tr class="separator:ab3b7630f563404f646e45b9f4251cefa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0180701fdc0c4926fca4051ad205c819"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a0180701fdc0c4926fca4051ad205c819">audio_codec_list</a> () const</td></tr>
+<tr class="memdesc:a0180701fdc0c4926fca4051ad205c819"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a list of supported audio codecs for current audio codec.  <a href="structFormat__Options.html#a0180701fdc0c4926fca4051ad205c819">More...</a><br /></td></tr>
+<tr class="separator:a0180701fdc0c4926fca4051ad205c819"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6da1f4055e540b76edfa9e69edf4c8d3"><td class="memItemLeft" align="right" valign="top">AVSampleFormat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFormat__Options.html#a6da1f4055e540b76edfa9e69edf4c8d3">sample_format</a> () const</td></tr>
 <tr class="memdesc:a6da1f4055e540b76edfa9e69edf4c8d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get sample format (bit width)  <a href="structFormat__Options.html#a6da1f4055e540b76edfa9e69edf4c8d3">More...</a><br /></td></tr>
 <tr class="separator:a6da1f4055e540b76edfa9e69edf4c8d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,7 +165,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Format options: Defines file extension, codecs etc. for each format. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00287">287</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8h_source.html#l00288">288</a> of file <a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a07f1b98b4f2310f7f2941c7647da8c7d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a07f1b98b4f2310f7f2941c7647da8c7d">&#9670;&nbsp;</a></span>FORMAT</h2>
@@ -216,19 +232,19 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00092">92</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00130">130</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a521cce43e64d53c575ddd89175e62be1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a521cce43e64d53c575ddd89175e62be1">&#9670;&nbsp;</a></span>audio_codec_id()</h2>
+<a id="afe3da0f99a37f9ba5ed02a0431a6b737"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe3da0f99a37f9ba5ed02a0431a6b737">&#9670;&nbsp;</a></span>audio_codec()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">AVCodecID Format_Options::audio_codec_id </td>
+          <td class="memname">AVCodecID Format_Options::audio_codec </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -239,11 +255,37 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get audio codec_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns audio codec_id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00117">117</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00198">198</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00179">FFMPEGFS_PARAMS::m_audio_codec</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00703">FFmpegfs_Format::audio_codec_id()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00855">FFmpegfs_Format::audio_codec()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00231">audio_codec_list()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00214">is_audio_codec_supported()</a>.</p>
+
+</div>
+</div>
+<a id="a0180701fdc0c4926fca4051ad205c819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0180701fdc0c4926fca4051ad205c819">&#9670;&nbsp;</a></span>audio_codec_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Format_Options::audio_codec_list </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a list of supported audio codecs for current audio codec. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns comma separated list of formats, or empty if not available. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00231">231</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00198">audio_codec()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01186">get_audio_codec_text()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00865">FFmpegfs_Format::audio_codec_list()</a>.</p>
 
 </div>
 </div>
@@ -288,6 +330,39 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 
 </div>
 </div>
+<a id="ab3b7630f563404f646e45b9f4251cefa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3b7630f563404f646e45b9f4251cefa">&#9670;&nbsp;</a></span>is_audio_codec_supported()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Format_Options::is_audio_codec_supported </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecID&#160;</td>
+          <td class="paramname"><em>codec_id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if audio codec/file format combination is supported. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">codec_id</td><td>- Codec ID to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if supported, false if not. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00214">214</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00198">audio_codec()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00860">FFmpegfs_Format::is_audio_codec_supported()</a>.</p>
+
+</div>
+</div>
 <a id="a75eb1f83418597d09318780c04024025"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a75eb1f83418597d09318780c04024025">&#9670;&nbsp;</a></span>is_sample_fmt_supported()</h2>
 
@@ -306,11 +381,44 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Check if audio codec/sample format combination is supported. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if supported, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00139">139</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00263">263</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00713">FFmpegfs_Format::is_sample_fmt_supported()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00875">FFmpegfs_Format::is_sample_fmt_supported()</a>.</p>
+
+</div>
+</div>
+<a id="aec4d2c3581b433cd25a9f43e03bfd9ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec4d2c3581b433cd25a9f43e03bfd9ee">&#9670;&nbsp;</a></span>is_video_codec_supported()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Format_Options::is_video_codec_supported </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecID&#160;</td>
+          <td class="paramname"><em>codec_id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if video codec/file format combination is supported. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">codec_id</td><td>- Codec ID to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if supported, false if not. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00160">160</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00144">video_codec()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00845">FFmpegfs_Format::is_video_codec_supported()</a>.</p>
 
 </div>
 </div>
@@ -332,11 +440,11 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Create a list of supported sample formats for current audio codec. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns comma separated list of formats, or empty if not available. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00145">145</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">269</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00772">get_sampleformat_text()</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00811">get_sampleformat_text()</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00718">FFmpegfs_Format::sample_fmt_list()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00880">FFmpegfs_Format::sample_fmt_list()</a>.</p>
 
 </div>
 </div>
@@ -358,22 +466,22 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get sample format (bit width) </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns sample format </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00128">128</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00252">252</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00708">FFmpegfs_Format::sample_format()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00870">FFmpegfs_Format::sample_format()</a>.</p>
 
 </div>
 </div>
-<a id="a153128cfc539d37213286f055e2d1159"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a153128cfc539d37213286f055e2d1159">&#9670;&nbsp;</a></span>video_codec_id()</h2>
+<a id="a01dae695a2fd5931e0ff70e7c8fd5135"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01dae695a2fd5931e0ff70e7c8fd5135">&#9670;&nbsp;</a></span>video_codec()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">AVCodecID Format_Options::video_codec_id </td>
+          <td class="memname">AVCodecID Format_Options::video_codec </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -384,11 +492,37 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>FFmpegfs_Format</b><
 <p>Get video codec_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns video codec_id </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00106">106</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00144">144</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00372">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00186">FFMPEGFS_PARAMS::m_sample_fmt</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, <a class="el" href="ffmpegfs_8h_source.html#l00180">FFMPEGFS_PARAMS::m_video_codec</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00698">FFmpegfs_Format::video_codec_id()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00160">is_video_codec_supported()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00840">FFmpegfs_Format::video_codec()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00177">video_codec_list()</a>.</p>
+
+</div>
+</div>
+<a id="a5f7bf6edf92881774e050eab8adcca36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f7bf6edf92881774e050eab8adcca36">&#9670;&nbsp;</a></span>video_codec_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Format_Options::video_codec_list </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a list of supported audio codecs for current audio codec. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns comma separated list of formats, or empty if not available. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__utils_8cc_source.html#l00177">177</a> of file <a class="el" href="ffmpeg__utils_8cc_source.html">ffmpeg_utils.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01196">get_video_codec_text()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00399">m_format_map</a>, <a class="el" href="ffmpegfs_8h_source.html#l00189">FFMPEGFS_PARAMS::m_sample_fmt</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l00144">video_codec()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00850">FFmpegfs_Format::video_codec_list()</a>.</p>
 
 </div>
 </div>

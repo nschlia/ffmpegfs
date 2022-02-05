@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -69,7 +69,9 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structFormat__Options.html">Format_Options</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a521cce43e64d53c575ddd89175e62be1">audio_codec_id</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#afe3da0f99a37f9ba5ed02a0431a6b737">audio_codec</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="structFormat__Options.html#a0180701fdc0c4926fca4051ad205c819">audio_codec_list</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#abeff226c91e1db77e200e5f65cf850d6">CODEC_VECT</a> typedef</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>FFmpegfs_Format</b> (defined in <a class="el" href="structFormat__Options.html">Format_Options</a>)</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a31e845fdbfc793174812053dd7e5e0a8">fileext</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d">FORMAT</a> typedef</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
@@ -77,14 +79,17 @@ $(function() {
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#af093266aab2889ed77a77cb47c9f738a">format_name</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a7be6e53cd63f22c00b4f1521243bbb2b">Format_Options</a>()</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#a41715394c3a5d1e5c4598da3a1e7959c">Format_Options</a>(const std::string &amp;format_name, const std::string &amp;fileext, const FORMAT_MAP &amp;format, bool albumart_supported)</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a75eb1f83418597d09318780c04024025">is_sample_fmt_supported</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#ab3b7630f563404f646e45b9f4251cefa">is_audio_codec_supported</a>(AVCodecID codec_id) const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="structFormat__Options.html#a75eb1f83418597d09318780c04024025">is_sample_fmt_supported</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#aec4d2c3581b433cd25a9f43e03bfd9ee">is_video_codec_supported</a>(AVCodecID codec_id) const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#a6f8d984e10cab593a9c0bd7695cf8536">m_albumart_supported</a></td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#ada986bcdedc50f9f2d3072a226f71067">m_fileext</a></td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#adac295259e0eb34815f9d891bd5e285f">m_format_map</a></td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a75a271a57501e27e3597ce9d27361436">m_format_name</a></td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr><td class="entry"><a class="el" href="structFormat__Options.html#aff5f479866c62d9ac1a2bdc14a101d51">sample_fmt_list</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a6da1f4055e540b76edfa9e69edf4c8d3">sample_format</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structFormat__Options.html#a153128cfc539d37213286f055e2d1159">video_codec_id</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="structFormat__Options.html#a01dae695a2fd5931e0ff70e7c8fd5135">video_codec</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structFormat__Options.html#a5f7bf6edf92881774e050eab8adcca36">video_codec_list</a>() const</td><td class="entry"><a class="el" href="structFormat__Options.html">Format_Options</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

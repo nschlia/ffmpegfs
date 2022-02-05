@@ -3,7 +3,7 @@
 <area shape="rect" id="node2" href="$vcdio_8h.html" title="Video CD and Super Video CD I/O." alt="" coords="352,80,421,107"/>
 <area shape="rect" id="node9" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="145,80,257,107"/>
 <area shape="rect" id="node10" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="455,80,548,107"/>
-<area shape="rect" id="node18" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="992,155,1075,181"/>
+<area shape="rect" id="node18" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1037,155,1120,181"/>
 <area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class." alt="" coords="348,155,415,181"/>
 <area shape="rect" id="node4" title=" " alt="" coords="5,229,91,256"/>
 <area shape="rect" id="node5" title=" " alt="" coords="115,229,173,256"/>
@@ -17,6 +17,7 @@
 <area shape="rect" id="node15" title=" " alt="" coords="1004,229,1063,256"/>
 <area shape="rect" id="node16" title=" " alt="" coords="673,229,780,256"/>
 <area shape="rect" id="node17" title=" " alt="" coords="805,229,979,256"/>
-<area shape="rect" id="node19" title=" " alt="" coords="1186,229,1259,256"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1087,229,1161,256"/>
+<area shape="rect" id="node19" title=" " alt="" coords="1087,229,1161,256"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1185,229,1260,256"/>
+<area shape="rect" id="node21" title=" " alt="" coords="1284,229,1348,256"/>
 </map>

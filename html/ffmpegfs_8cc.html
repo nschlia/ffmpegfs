@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -80,7 +80,10 @@ $(function() {
 
 <p>FFmpeg main function and utilities implementation.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &lt;libavcodec/avcodec.h&gt;</code><br />
+<code>#include &lt;libavformat/avformat.h&gt;</code><br />
+<code>#include &lt;libavfilter/avfilter.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="logging_8h_source.html">logging.h</a>&quot;</code><br />
 <code>#include &quot;ffmpegfshelp.h&quot;</code><br />
 <code>#include &lt;sys/sysinfo.h&gt;</code><br />
@@ -88,41 +91,39 @@ $(function() {
 <code>#include &lt;unistd.h&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;libbluray/bluray-version.h&gt;</code><br />
-<code>#include &lt;libavcodec/avcodec.h&gt;</code><br />
-<code>#include &lt;libavformat/avformat.h&gt;</code><br />
-<code>#include &lt;libavfilter/avfilter.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ffmpegfs.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="ffmpegfs_8cc__incl.png" border="0" usemap="#asrc_2ffmpegfs_8cc" alt=""/></div>
 <map name="asrc_2ffmpegfs_8cc" id="asrc_2ffmpegfs_8cc">
-<area shape="rect" title="FFmpeg main function and utilities implementation." alt="" coords="1099,5,1221,32"/>
-<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="477,80,571,107"/>
-<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="579,155,695,181"/>
-<area shape="rect" title=" " alt="" coords="806,229,981,256"/>
-<area shape="rect" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="993,155,1076,181"/>
-<area shape="rect" title=" " alt="" coords="902,80,1023,107"/>
-<area shape="rect" title=" " alt="" coords="1048,80,1155,107"/>
-<area shape="rect" title=" " alt="" coords="1179,80,1258,107"/>
-<area shape="rect" title=" " alt="" coords="1283,80,1357,107"/>
-<area shape="rect" title=" " alt="" coords="1381,80,1461,107"/>
-<area shape="rect" title=" " alt="" coords="1485,80,1675,107"/>
-<area shape="rect" title=" " alt="" coords="1699,80,1861,107"/>
-<area shape="rect" title=" " alt="" coords="1886,80,2034,107"/>
-<area shape="rect" title=" " alt="" coords="493,155,555,181"/>
-<area shape="rect" title=" " alt="" coords="393,155,468,181"/>
-<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="284,155,351,181"/>
-<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="569,229,706,256"/>
-<area shape="rect" title=" " alt="" coords="355,229,413,256"/>
-<area shape="rect" title=" " alt="" coords="267,229,330,256"/>
-<area shape="rect" title=" " alt="" coords="1005,229,1064,256"/>
-<area shape="rect" title=" " alt="" coords="437,229,544,256"/>
-<area shape="rect" title=" " alt="" coords="157,229,243,256"/>
-<area shape="rect" title=" " alt="" coords="731,229,781,256"/>
-<area shape="rect" title=" " alt="" coords="5,229,133,256"/>
-<area shape="rect" title=" " alt="" coords="1187,229,1261,256"/>
-<area shape="rect" title=" " alt="" coords="1088,229,1163,256"/>
+<area shape="rect" title="FFmpeg main function and utilities implementation." alt="" coords="847,5,970,32"/>
+<area shape="rect" title=" " alt="" coords="230,80,393,107"/>
+<area shape="rect" title=" " alt="" coords="5,229,180,256"/>
+<area shape="rect" title=" " alt="" coords="756,80,904,107"/>
+<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="587,80,681,107"/>
+<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="468,155,584,181"/>
+<area shape="rect" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1038,155,1121,181"/>
+<area shape="rect" title=" " alt="" coords="928,80,1049,107"/>
+<area shape="rect" title=" " alt="" coords="1074,80,1181,107"/>
+<area shape="rect" title=" " alt="" coords="1205,80,1284,107"/>
+<area shape="rect" title=" " alt="" coords="1309,80,1383,107"/>
+<area shape="rect" title=" " alt="" coords="1407,80,1487,107"/>
+<area shape="rect" title=" " alt="" coords="1511,80,1701,107"/>
+<area shape="rect" title=" " alt="" coords="700,155,763,181"/>
+<area shape="rect" title=" " alt="" coords="787,155,862,181"/>
+<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="609,155,675,181"/>
+<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="204,229,341,256"/>
+<area shape="rect" title=" " alt="" coords="497,229,555,256"/>
+<area shape="rect" title=" " alt="" coords="580,229,643,256"/>
+<area shape="rect" title=" " alt="" coords="667,229,726,256"/>
+<area shape="rect" title=" " alt="" coords="366,229,473,256"/>
+<area shape="rect" title=" " alt="" coords="902,229,987,256"/>
+<area shape="rect" title=" " alt="" coords="1011,229,1062,256"/>
+<area shape="rect" title=" " alt="" coords="750,229,878,256"/>
+<area shape="rect" title=" " alt="" coords="1087,229,1160,256"/>
+<area shape="rect" title=" " alt="" coords="1185,229,1259,256"/>
+<area shape="rect" title=" " alt="" coords="1283,229,1347,256"/>
 </map>
 </div>
 </div>
@@ -141,37 +142,45 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a1e9cad128943578b6bf81236f6fb66d7"><td class="memItemLeft" align="right" valign="top"><a id="a1e9cad128943578b6bf81236f6fb66d7"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14">AUTOCOPY</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a1e9cad128943578b6bf81236f6fb66d7">AUTOCOPY_MAP</a></td></tr>
-<tr class="memdesc:a1e9cad128943578b6bf81236f6fb66d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to AUTOCOPY enum. <br /></td></tr>
-<tr class="separator:a1e9cad128943578b6bf81236f6fb66d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f6570ac7d0db3dc140741b7a2d575ca"><td class="memItemLeft" align="right" valign="top"><a id="a4f6570ac7d0db3dc140741b7a2d575ca"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22">PROFILE</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a4f6570ac7d0db3dc140741b7a2d575ca">PROFILE_MAP</a></td></tr>
-<tr class="memdesc:a4f6570ac7d0db3dc140741b7a2d575ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to PROFILE enum. <br /></td></tr>
-<tr class="separator:a4f6570ac7d0db3dc140741b7a2d575ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="memItemLeft" align="right" valign="top"><a id="af172b8e8afed8fa4d2fac41aa85d7b23"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfda">PRORESLEVEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#af172b8e8afed8fa4d2fac41aa85d7b23">LEVEL_MAP</a></td></tr>
-<tr class="memdesc:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to LEVEL enum. <br /></td></tr>
-<tr class="separator:af172b8e8afed8fa4d2fac41aa85d7b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa46b5fa36037b8fc5501b47ecfb9bc0a"><td class="memItemLeft" align="right" valign="top"><a id="aa46b5fa36037b8fc5501b47ecfb9bc0a"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aa">RECODESAME</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#aa46b5fa36037b8fc5501b47ecfb9bc0a">RECODESAME_MAP</a></td></tr>
-<tr class="memdesc:aa46b5fa36037b8fc5501b47ecfb9bc0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to RECODESAME enum. <br /></td></tr>
-<tr class="separator:aa46b5fa36037b8fc5501b47ecfb9bc0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46d5758f64b6d2bf1f5e1b0ce69f9a24"><td class="memItemLeft" align="right" valign="top"><a id="a46d5758f64b6d2bf1f5e1b0ce69f9a24"></a>
+typedef std::map&lt; const std::string, const <a class="el" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14">AUTOCOPY</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a46d5758f64b6d2bf1f5e1b0ce69f9a24">AUTOCOPY_MAP</a></td></tr>
+<tr class="memdesc:a46d5758f64b6d2bf1f5e1b0ce69f9a24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to AUTOCOPY enum. <br /></td></tr>
+<tr class="separator:a46d5758f64b6d2bf1f5e1b0ce69f9a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7747d076eb01f0d9d393a83621a1e7c"><td class="memItemLeft" align="right" valign="top"><a id="ac7747d076eb01f0d9d393a83621a1e7c"></a>
+typedef std::map&lt; const std::string, const <a class="el" href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22">PROFILE</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ac7747d076eb01f0d9d393a83621a1e7c">PROFILE_MAP</a></td></tr>
+<tr class="memdesc:ac7747d076eb01f0d9d393a83621a1e7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to PROFILE enum. <br /></td></tr>
+<tr class="separator:ac7747d076eb01f0d9d393a83621a1e7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70adcc7f6c68053cea8e9f96a3f8f04f"><td class="memItemLeft" align="right" valign="top"><a id="a70adcc7f6c68053cea8e9f96a3f8f04f"></a>
+typedef std::map&lt; const std::string, const <a class="el" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfda">PRORESLEVEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a70adcc7f6c68053cea8e9f96a3f8f04f">LEVEL_MAP</a></td></tr>
+<tr class="memdesc:a70adcc7f6c68053cea8e9f96a3f8f04f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to LEVEL enum. <br /></td></tr>
+<tr class="separator:a70adcc7f6c68053cea8e9f96a3f8f04f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0395aae489a932ef4adccdc45be22ea"><td class="memItemLeft" align="right" valign="top"><a id="ad0395aae489a932ef4adccdc45be22ea"></a>
+typedef std::map&lt; const std::string, const <a class="el" href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aa">RECODESAME</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ad0395aae489a932ef4adccdc45be22ea">RECODESAME_MAP</a></td></tr>
+<tr class="memdesc:ad0395aae489a932ef4adccdc45be22ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to RECODESAME enum. <br /></td></tr>
+<tr class="separator:ad0395aae489a932ef4adccdc45be22ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4c82ee6fa3c2a7e0ab32e84fd593f18"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structHWACCEL.html">HWACCEL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#af4c82ee6fa3c2a7e0ab32e84fd593f18">HWACCEL</a></td></tr>
 <tr class="memdesc:af4c82ee6fa3c2a7e0ab32e84fd593f18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hardware acceleration device and type.  <a href="ffmpegfs_8cc.html#af4c82ee6fa3c2a7e0ab32e84fd593f18">More...</a><br /></td></tr>
 <tr class="separator:af4c82ee6fa3c2a7e0ab32e84fd593f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e5efdbcc4f916eea8fec6b5a46777e3"><td class="memItemLeft" align="right" valign="top"><a id="a7e5efdbcc4f916eea8fec6b5a46777e3"></a>
-typedef std::map&lt; std::string, <a class="el" href="structHWACCEL.html">HWACCEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a7e5efdbcc4f916eea8fec6b5a46777e3">HWACCEL_MAP</a></td></tr>
-<tr class="memdesc:a7e5efdbcc4f916eea8fec6b5a46777e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to <a class="el" href="structHWACCEL.html" title="Hardware acceleration device and type.">HWACCEL</a> struct. <br /></td></tr>
-<tr class="separator:a7e5efdbcc4f916eea8fec6b5a46777e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2af5632b8f0fd18d47f50c6718131e2b"><td class="memItemLeft" align="right" valign="top"><a id="a2af5632b8f0fd18d47f50c6718131e2b"></a>
-typedef std::map&lt; std::string, AVCodecID, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a2af5632b8f0fd18d47f50c6718131e2b">CODEC_MAP</a></td></tr>
-<tr class="memdesc:a2af5632b8f0fd18d47f50c6718131e2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to AVCodecID. <br /></td></tr>
-<tr class="separator:a2af5632b8f0fd18d47f50c6718131e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74801b6c9151a649b9ba000d1d6c883b"><td class="memItemLeft" align="right" valign="top"><a id="a74801b6c9151a649b9ba000d1d6c883b"></a>
-typedef std::map&lt; std::string, <a class="el" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657">SAMPLE_FMT</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a74801b6c9151a649b9ba000d1d6c883b">SAMPLE_FMT_MAP</a></td></tr>
-<tr class="memdesc:a74801b6c9151a649b9ba000d1d6c883b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to SAMPLE_FMT. <br /></td></tr>
-<tr class="separator:a74801b6c9151a649b9ba000d1d6c883b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1784850429821a3f973bb5437a139c44"><td class="memItemLeft" align="right" valign="top"><a id="a1784850429821a3f973bb5437a139c44"></a>
+typedef std::map&lt; const std::string, <a class="el" href="structHWACCEL.html">HWACCEL</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a1784850429821a3f973bb5437a139c44">HWACCEL_MAP</a></td></tr>
+<tr class="memdesc:a1784850429821a3f973bb5437a139c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to <a class="el" href="structHWACCEL.html" title="Hardware acceleration device and type.">HWACCEL</a> struct. <br /></td></tr>
+<tr class="separator:a1784850429821a3f973bb5437a139c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4782f1c2f95ecf9978ca56aa1f89c03e"><td class="memItemLeft" align="right" valign="top"><a id="a4782f1c2f95ecf9978ca56aa1f89c03e"></a>
+typedef std::map&lt; const std::string, const AVCodecID, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a4782f1c2f95ecf9978ca56aa1f89c03e">CODEC_MAP</a></td></tr>
+<tr class="memdesc:a4782f1c2f95ecf9978ca56aa1f89c03e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to AVCodecID. <br /></td></tr>
+<tr class="separator:a4782f1c2f95ecf9978ca56aa1f89c03e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c434812e59389ffd4e5d71016585bac"><td class="memItemLeft" align="right" valign="top"><a id="a4c434812e59389ffd4e5d71016585bac"></a>
+typedef std::map&lt; const std::string, const <a class="el" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657">SAMPLE_FMT</a>, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a4c434812e59389ffd4e5d71016585bac">SAMPLE_FMT_MAP</a></td></tr>
+<tr class="memdesc:a4c434812e59389ffd4e5d71016585bac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to SAMPLE_FMT. <br /></td></tr>
+<tr class="separator:a4c434812e59389ffd4e5d71016585bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50be04749b50eb200e191a9151195488"><td class="memItemLeft" align="right" valign="top"><a id="a50be04749b50eb200e191a9151195488"></a>
+typedef std::map&lt; const std::string, const AVCodecID, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a50be04749b50eb200e191a9151195488">AUDIOCODEC_MAP</a></td></tr>
+<tr class="memdesc:a50be04749b50eb200e191a9151195488"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to audio AVCodecID. <br /></td></tr>
+<tr class="separator:a50be04749b50eb200e191a9151195488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f115500c01efb54290306637d5b3e1f"><td class="memItemLeft" align="right" valign="top"><a id="a1f115500c01efb54290306637d5b3e1f"></a>
+typedef std::map&lt; const std::string, const AVCodecID, <a class="el" href="structcomp.html">comp</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a1f115500c01efb54290306637d5b3e1f">VIDEOCODEC_MAP</a></td></tr>
+<tr class="memdesc:a1f115500c01efb54290306637d5b3e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map command line option to video AVCodecID. <br /></td></tr>
+<tr class="separator:a1f115500c01efb54290306637d5b3e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -182,41 +191,44 @@ Enumerations</h2></td></tr>
 , <b>KEY_KEEP_OPT</b>
 , <br />
 &#160;&#160;<b>KEY_DESTTYPE</b>
+, <b>KEY_AUDIOCODEC</b>
+, <b>KEY_VIDEOCODEC</b>
 , <b>KEY_AUDIO_BITRATE</b>
-, <b>KEY_AUDIO_SAMPLERATE</b>
-, <b>KEY_AUDIO_CHANNELS</b>
 , <br />
-&#160;&#160;<b>KEY_AUDIO_SAMPLE_FMT</b>
-, <b>KEY_VIDEO_BITRATE</b>
+&#160;&#160;<b>KEY_AUDIO_SAMPLERATE</b>
+, <b>KEY_AUDIO_CHANNELS</b>
+, <b>KEY_AUDIO_SAMPLE_FMT</b>
+, <b>KEY_EXTENSIONS</b>
+, <br />
+&#160;&#160;<b>KEY_VIDEO_BITRATE</b>
 , <b>KEY_SEGMENT_DURATION</b>
 , <b>KEY_MIN_SEEK_TIME_DIFF</b>
+, <b>KEY_SCRIPTFILE</b>
 , <br />
-&#160;&#160;<b>KEY_SCRIPTFILE</b>
-, <b>KEY_SCRIPTSOURCE</b>
+&#160;&#160;<b>KEY_SCRIPTSOURCE</b>
 , <b>KEY_EXPIRY_TIME</b>
 , <b>KEY_MAX_INACTIVE_SUSPEND_TIME</b>
+, <b>KEY_MAX_INACTIVE_ABORT_TIME</b>
 , <br />
-&#160;&#160;<b>KEY_MAX_INACTIVE_ABORT_TIME</b>
-, <b>KEY_PREBUFFER_SIZE</b>
+&#160;&#160;<b>KEY_PREBUFFER_SIZE</b>
 , <b>KEY_MAX_CACHE_SIZE</b>
 , <b>KEY_MIN_DISKSPACE_SIZE</b>
+, <b>KEY_CACHEPATH</b>
 , <br />
-&#160;&#160;<b>KEY_CACHEPATH</b>
-, <b>KEY_CACHE_MAINTENANCE</b>
+&#160;&#160;<b>KEY_CACHE_MAINTENANCE</b>
 , <b>KEY_AUTOCOPY</b>
 , <b>KEY_RECODESAME</b>
+, <b>KEY_PROFILE</b>
 , <br />
-&#160;&#160;<b>KEY_PROFILE</b>
-, <b>KEY_LEVEL</b>
+&#160;&#160;<b>KEY_LEVEL</b>
 , <b>KEY_LOG_MAXLEVEL</b>
 , <b>KEY_LOGFILE</b>
+, <b>KEY_HWACCEL_ENCODER_API</b>
 , <br />
-&#160;&#160;<b>KEY_HWACCEL_ENCODER_API</b>
-, <b>KEY_HWACCEL_ENCODER_DEVICE</b>
+&#160;&#160;<b>KEY_HWACCEL_ENCODER_DEVICE</b>
 , <b>KEY_HWACCEL_DECODER_API</b>
 , <b>KEY_HWACCEL_DECODER_DEVICE</b>
-, <br />
-&#160;&#160;<b>KEY_HWACCEL_DECODER_BLOCKED</b>
+, <b>KEY_HWACCEL_DECODER_BLOCKED</b>
 <br />
  }</td></tr>
 <tr class="separator:a06fc87d81c62e9abb8790b6e5713c55b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -242,6 +254,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a47cdec71e4661ee317ac825d0cf4afe2"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a47cdec71e4661ee317ac825d0cf4afe2">get_desttype</a> (const std::string &amp;arg, <a class="el" href="classFFmpegfs__Format.html">FFmpegfs_Format</a> format[2])</td></tr>
 <tr class="memdesc:a47cdec71e4661ee317ac825d0cf4afe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get destination type.  <a href="ffmpegfs_8cc.html#a47cdec71e4661ee317ac825d0cf4afe2">More...</a><br /></td></tr>
 <tr class="separator:a47cdec71e4661ee317ac825d0cf4afe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b636ba20959996b9e652586b0977bc0"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a3b636ba20959996b9e652586b0977bc0">get_audiocodec</a> (const std::string &amp;arg, AVCodecID *audio_codec)</td></tr>
+<tr class="memdesc:a3b636ba20959996b9e652586b0977bc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the audio codec.  <a href="ffmpegfs_8cc.html#a3b636ba20959996b9e652586b0977bc0">More...</a><br /></td></tr>
+<tr class="separator:a3b636ba20959996b9e652586b0977bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c67efd3d169895ff22b96780adb288"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a71c67efd3d169895ff22b96780adb288">get_videocodec</a> (const std::string &amp;arg, AVCodecID *video_codec)</td></tr>
+<tr class="memdesc:a71c67efd3d169895ff22b96780adb288"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the video codec.  <a href="ffmpegfs_8cc.html#a71c67efd3d169895ff22b96780adb288">More...</a><br /></td></tr>
+<tr class="separator:a71c67efd3d169895ff22b96780adb288"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af707c9c6364a5b0c5fd64400892560b7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#af707c9c6364a5b0c5fd64400892560b7">get_autocopy</a> (const std::string &amp;arg, <a class="el" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14">AUTOCOPY</a> *autocopy)</td></tr>
 <tr class="memdesc:af707c9c6364a5b0c5fd64400892560b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get autocopy option.  <a href="ffmpegfs_8cc.html#af707c9c6364a5b0c5fd64400892560b7">More...</a><br /></td></tr>
 <tr class="separator:af707c9c6364a5b0c5fd64400892560b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -296,17 +314,19 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a64a6014565bb3e03294ec4a952d5add0">usage</a> ()</td></tr>
 <tr class="memdesc:a64a6014565bb3e03294ec4a952d5add0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print program usage info. <br /></td></tr>
 <tr class="separator:a64a6014565bb3e03294ec4a952d5add0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49123a7697483f352aa66f4b6c0a2112"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a49123a7697483f352aa66f4b6c0a2112"><td class="memTemplItemLeft" align="right" valign="top">static std::map&lt; std::string, T, <a class="el" href="structcomp.html">comp</a> &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a49123a7697483f352aa66f4b6c0a2112">search_by_value</a> (const std::map&lt; std::string, T, <a class="el" href="structcomp.html">comp</a> &gt; &amp;mapOfWords, T value)</td></tr>
-<tr class="memdesc:a49123a7697483f352aa66f4b6c0a2112"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate through all elements in map and search for the passed element.  <a href="ffmpegfs_8cc.html#a49123a7697483f352aa66f4b6c0a2112">More...</a><br /></td></tr>
-<tr class="separator:a49123a7697483f352aa66f4b6c0a2112"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dd7ca2082aa20765d61a4b487d2302c"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a6dd7ca2082aa20765d61a4b487d2302c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a6dd7ca2082aa20765d61a4b487d2302c">list_options</a> (const char *info, const T &amp;map)</td></tr>
-<tr class="memdesc:a6dd7ca2082aa20765d61a4b487d2302c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate through all elements in map print all keys.  <a href="ffmpegfs_8cc.html#a6dd7ca2082aa20765d61a4b487d2302c">More...</a><br /></td></tr>
-<tr class="separator:a6dd7ca2082aa20765d61a4b487d2302c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac82f75627c3fa7c877b91b07debb34c7"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ac82f75627c3fa7c877b91b07debb34c7"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ac82f75627c3fa7c877b91b07debb34c7">list_options</a> (const char *info, const T &amp;map)</td></tr>
+<tr class="memdesc:ac82f75627c3fa7c877b91b07debb34c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterate through all elements in map print all keys.  <a href="ffmpegfs_8cc.html#ac82f75627c3fa7c877b91b07debb34c7">More...</a><br /></td></tr>
+<tr class="separator:ac82f75627c3fa7c877b91b07debb34c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab038a4af476f1b105215065b4c0811e5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ab038a4af476f1b105215065b4c0811e5">get_sampleformat_text</a> (<a class="el" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657">SAMPLE_FMT</a> sample_fmt)</td></tr>
 <tr class="memdesc:ab038a4af476f1b105215065b4c0811e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert SAMPLE_FMT enum to human readable text.  <a href="ffmpegfs_8cc.html#ab038a4af476f1b105215065b4c0811e5">More...</a><br /></td></tr>
 <tr class="separator:ab038a4af476f1b105215065b4c0811e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0db918e95384143927ff7c3dc46ecb1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ae0db918e95384143927ff7c3dc46ecb1">get_audio_codec_text</a> (AVCodecID audio_codec)</td></tr>
+<tr class="memdesc:ae0db918e95384143927ff7c3dc46ecb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert AVCodecID enum for audio codec to human readable text.  <a href="ffmpegfs_8cc.html#ae0db918e95384143927ff7c3dc46ecb1">More...</a><br /></td></tr>
+<tr class="separator:ae0db918e95384143927ff7c3dc46ecb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac132f6e658c3e59cf7b0233036253725"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ac132f6e658c3e59cf7b0233036253725">get_video_codec_text</a> (AVCodecID video_codec)</td></tr>
+<tr class="memdesc:ac132f6e658c3e59cf7b0233036253725"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert AVCodecID enum for video codec to human readable text.  <a href="ffmpegfs_8cc.html#ac132f6e658c3e59cf7b0233036253725">More...</a><br /></td></tr>
+<tr class="separator:ac132f6e658c3e59cf7b0233036253725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad672675334ad38806fbb34204aa53080"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#ad672675334ad38806fbb34204aa53080">get_autocopy_text</a> (<a class="el" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14">AUTOCOPY</a> autocopy)</td></tr>
 <tr class="memdesc:ad672675334ad38806fbb34204aa53080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert AUTOCOPY enum to human readable text.  <a href="ffmpegfs_8cc.html#ad672675334ad38806fbb34204aa53080">More...</a><br /></td></tr>
 <tr class="separator:ad672675334ad38806fbb34204aa53080"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -341,19 +361,25 @@ Variables</h2></td></tr>
 <tr class="separator:a3e114cb4e37c86270217dd3437265fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a760f6e5e223f36094b4ace9c609859a3"><td class="memItemLeft" align="right" valign="top">static struct fuse_opt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a760f6e5e223f36094b4ace9c609859a3">ffmpegfs_opts</a> []</td></tr>
 <tr class="separator:a760f6e5e223f36094b4ace9c609859a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f955fab7a55c8bef7b217847093ad96"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a1e9cad128943578b6bf81236f6fb66d7">AUTOCOPY_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a6f955fab7a55c8bef7b217847093ad96">autocopy_map</a></td></tr>
+<tr class="memitem:a00c09e223224e4cc36048e9d1cc65650"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a50be04749b50eb200e191a9151195488">AUDIOCODEC_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a00c09e223224e4cc36048e9d1cc65650">audiocodec_map</a></td></tr>
+<tr class="memdesc:a00c09e223224e4cc36048e9d1cc65650"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of audio codecs.  <a href="ffmpegfs_8cc.html#a00c09e223224e4cc36048e9d1cc65650">More...</a><br /></td></tr>
+<tr class="separator:a00c09e223224e4cc36048e9d1cc65650"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a106e481c04279e7d8270581647f8b970"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a1f115500c01efb54290306637d5b3e1f">VIDEOCODEC_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a106e481c04279e7d8270581647f8b970">videocodec_map</a></td></tr>
+<tr class="memdesc:a106e481c04279e7d8270581647f8b970"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of video codecs.  <a href="ffmpegfs_8cc.html#a106e481c04279e7d8270581647f8b970">More...</a><br /></td></tr>
+<tr class="separator:a106e481c04279e7d8270581647f8b970"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f955fab7a55c8bef7b217847093ad96"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a46d5758f64b6d2bf1f5e1b0ce69f9a24">AUTOCOPY_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a6f955fab7a55c8bef7b217847093ad96">autocopy_map</a></td></tr>
 <tr class="separator:a6f955fab7a55c8bef7b217847093ad96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a08594d62040ae2edaa3e6e8c2b2286"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a4f6570ac7d0db3dc140741b7a2d575ca">PROFILE_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a7a08594d62040ae2edaa3e6e8c2b2286">profile_map</a></td></tr>
+<tr class="memitem:a7a08594d62040ae2edaa3e6e8c2b2286"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#ac7747d076eb01f0d9d393a83621a1e7c">PROFILE_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a7a08594d62040ae2edaa3e6e8c2b2286">profile_map</a></td></tr>
 <tr class="separator:a7a08594d62040ae2edaa3e6e8c2b2286"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf6b0f652b4ea12df95a656394b620f6"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#af172b8e8afed8fa4d2fac41aa85d7b23">LEVEL_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a></td></tr>
+<tr class="memitem:acf6b0f652b4ea12df95a656394b620f6"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a70adcc7f6c68053cea8e9f96a3f8f04f">LEVEL_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a></td></tr>
 <tr class="separator:acf6b0f652b4ea12df95a656394b620f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd3404c8c2c0955029d762dccbf57ac3"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#aa46b5fa36037b8fc5501b47ecfb9bc0a">RECODESAME_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#acd3404c8c2c0955029d762dccbf57ac3">recode_map</a></td></tr>
+<tr class="memitem:acd3404c8c2c0955029d762dccbf57ac3"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#ad0395aae489a932ef4adccdc45be22ea">RECODESAME_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#acd3404c8c2c0955029d762dccbf57ac3">recode_map</a></td></tr>
 <tr class="separator:acd3404c8c2c0955029d762dccbf57ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27a827742798a37575decc5860bed631"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="ffmpegfs_8cc.html#a7e5efdbcc4f916eea8fec6b5a46777e3">HWACCEL_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a27a827742798a37575decc5860bed631">hwaccel_map</a></td></tr>
+<tr class="memitem:a27a827742798a37575decc5860bed631"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="ffmpegfs_8cc.html#a1784850429821a3f973bb5437a139c44">HWACCEL_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a27a827742798a37575decc5860bed631">hwaccel_map</a></td></tr>
 <tr class="separator:a27a827742798a37575decc5860bed631"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa523ec2ba31536f8fa9a4479e6362a84"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a2af5632b8f0fd18d47f50c6718131e2b">CODEC_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#aa523ec2ba31536f8fa9a4479e6362a84">hwaccel_codec_map</a></td></tr>
+<tr class="memitem:aa523ec2ba31536f8fa9a4479e6362a84"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a4782f1c2f95ecf9978ca56aa1f89c03e">CODEC_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#aa523ec2ba31536f8fa9a4479e6362a84">hwaccel_codec_map</a></td></tr>
 <tr class="separator:aa523ec2ba31536f8fa9a4479e6362a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a304c0a69afd63a57bd011ac184b4d892"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a74801b6c9151a649b9ba000d1d6c883b">SAMPLE_FMT_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a304c0a69afd63a57bd011ac184b4d892">sample_fmt_map</a></td></tr>
+<tr class="memitem:a304c0a69afd63a57bd011ac184b4d892"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="ffmpegfs_8cc.html#a4c434812e59389ffd4e5d71016585bac">SAMPLE_FMT_MAP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpegfs_8cc.html#a304c0a69afd63a57bd011ac184b4d892">sample_fmt_map</a></td></tr>
 <tr class="separator:a304c0a69afd63a57bd011ac184b4d892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -361,7 +387,7 @@ Variables</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2006-2008 David Collett <br  />
 Copyright (C) 2008-2013 K. Henriksson <br  />
-Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
+Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
@@ -398,7 +424,7 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </div><div class="memdoc">
 <p>Map FFmpegfs options to FUSE parameters </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00240">240</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00253">253</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 </div>
 </div>
@@ -457,9 +483,9 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if codec is in block list, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01400">1400</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01535">1535</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00202">FFMPEGFS_PARAMS::m_hwaccel_dec_blocked</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00206">FFMPEGFS_PARAMS::m_hwaccel_dec_blocked</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>.</p>
 
 </div>
 </div>
@@ -521,11 +547,94 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>-1 on error, 0 if arg is to be discarded, 1 if arg should be kept </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01510">1510</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01645">1645</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00723">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00095">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01590">expand_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01606">is_mount()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00176">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01688">sanitise_filepath()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00885">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00095">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01758">expand_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01774">is_mount()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00176">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01859">sanitise_filepath()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01866">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02039">main()</a>.</p>
+
+</div>
+</div>
+<a id="ae0db918e95384143927ff7c3dc46ecb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0db918e95384143927ff7c3dc46ecb1">&#9670;&nbsp;</a></span>get_audio_codec_text()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string get_audio_codec_text </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecID&#160;</td>
+          <td class="paramname"><em>audio_codec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert AVCodecID enum for audio codec to human readable text. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">audio_codec</td><td>- AVCodecID enum value to convert. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>AVCodecID as text or "INVALID" if not known. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01186">1186</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00403">audiocodec_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00231">Format_Options::audio_codec_list()</a>.</p>
+
+</div>
+</div>
+<a id="a3b636ba20959996b9e652586b0977bc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b636ba20959996b9e652586b0977bc0">&#9670;&nbsp;</a></span>get_audiocodec()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int get_audiocodec </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>arg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AVCodecID *&#160;</td>
+          <td class="paramname"><em>audio_codec</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the audio codec. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>- One of the possible audio codecs. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">audio_codec</td><td>- Upon return contains selected AVCodecID enum. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01080">1080</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00403">audiocodec_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>.</p>
 
 </div>
 </div>
@@ -573,9 +682,9 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01041">1041</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01156">1156</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00381">autocopy_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00439">autocopy_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>.</p>
 
 </div>
 </div>
@@ -604,11 +713,9 @@ Copyright (C) 2017-2021 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>AUTOCOPY enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01071">1071</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01206">1206</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00381">autocopy_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00563">search_by_value()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01780">print_params()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00439">autocopy_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
 
 </div>
 </div>
@@ -660,9 +767,9 @@ In Mbit/s: #M or #Mbps
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00618">618</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00657">657</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00164">BITRATE</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01568">reg_compare()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00164">BITRATE</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01736">reg_compare()</a>.</p>
 
 </div>
 </div>
@@ -710,11 +817,11 @@ In Mbit/s: #M or #Mbps
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1 and codec_id set to AV_CODEC_ID_NONE. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01324">1324</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01459">1459</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00487">hwaccel_codec_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00545">hwaccel_codec_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01349">get_hwaccel_dec_blocked()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01484">get_hwaccel_dec_blocked()</a>.</p>
 
 </div>
 </div>
@@ -763,9 +870,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00987">987</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01026">1026</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01679">split()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01850">split()</a>.</p>
 
 </div>
 </div>
@@ -820,9 +927,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01280">1280</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01415">1415</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00440">hwaccel_map</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00370">HWACCEL::m_hwaccel_API</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00371">HWACCEL::m_hwaccel_device_type</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00369">HWACCEL::m_supported</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00498">hwaccel_map</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00389">HWACCEL::m_hwaccel_API</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00390">HWACCEL::m_hwaccel_device_type</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00388">HWACCEL::m_supported</a>.</p>
 
 </div>
 </div>
@@ -851,11 +958,11 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Hardware acceleration API as string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01418">1418</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01553">1553</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00440">hwaccel_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00498">hwaccel_map</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01423">FFmpeg_Transcoder::add_stream()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00245">FFmpeg_Transcoder::open_input_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01467">FFmpeg_Transcoder::add_stream()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00259">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
 </div>
 </div>
@@ -903,9 +1010,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 on success; on error returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01349">1349</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01484">1484</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01324">get_codec()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01459">get_codec()</a>.</p>
 
 </div>
 </div>
@@ -953,9 +1060,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01180">1180</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01315">1315</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00413">level_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00471">level_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>.</p>
 
 </div>
 </div>
@@ -984,9 +1091,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>PRORESLEVEL enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01211">1211</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01346">1346</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00413">level_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00563">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00471">level_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
 
 </div>
 </div>
@@ -1034,9 +1141,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01133">1133</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01268">1268</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00393">profile_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00451">profile_map</a>.</p>
 
 </div>
 </div>
@@ -1065,9 +1172,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>PROFILE enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01163">1163</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01298">1298</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00393">profile_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00563">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00451">profile_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
 
 </div>
 </div>
@@ -1115,9 +1222,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01087">1087</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01222">1222</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00425">recode_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00483">recode_map</a>.</p>
 
 </div>
 </div>
@@ -1146,11 +1253,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>RECODESAME enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01117">1117</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01252">1252</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00425">recode_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00563">search_by_value()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01780">print_params()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00483">recode_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
 
 </div>
 </div>
@@ -1198,9 +1303,9 @@ Index 1: Selected audio format. </td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00738">738</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00777">777</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00583">list_options()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00271">SAMPLE_FMT_DONTCARE</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00503">sample_fmt_map</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00272">SAMPLE_FMT_DONTCARE</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00561">sample_fmt_map</a>.</p>
 
 </div>
 </div>
@@ -1223,11 +1328,11 @@ Index 1: Selected audio format. </td></tr>
 <p>Convert SAMPLE_FMT enum to human readable text. </p>
 <dl class="section return"><dt>Returns</dt><dd>SAMPLE_FMT enum as text or "INVALID" if not known. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00772">772</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00811">811</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00503">sample_fmt_map</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00563">search_by_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00561">sample_fmt_map</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00145">Format_Options::sample_fmt_list()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00269">Format_Options::sample_fmt_list()</a>.</p>
 
 </div>
 </div>
@@ -1278,9 +1383,9 @@ In kHz: #K or #KHz
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00686">686</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00725">725</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01568">reg_compare()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01736">reg_compare()</a>.</p>
 
 </div>
 </div>
@@ -1328,9 +1433,9 @@ In kHz: #K or #KHz
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if out of range returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01252">1252</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01387">1387</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01440">get_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01575">get_value()</a>.</p>
 
 </div>
 </div>
@@ -1378,9 +1483,9 @@ In kHz: #K or #KHz
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if out of range returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01227">1227</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01362">1362</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01440">get_value()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l01575">get_value()</a>.</p>
 
 </div>
 </div>
@@ -1435,9 +1540,9 @@ In TBytes: #T or #TB
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00895">895</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00934">934</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01568">reg_compare()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01736">reg_compare()</a>.</p>
 
 </div>
 </div>
@@ -1491,9 +1596,9 @@ Weeks:   #w
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00796">796</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00835">835</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01568">reg_compare()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01736">reg_compare()</a>.</p>
 
 </div>
 </div>
@@ -1541,7 +1646,7 @@ Weeks:   #w
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01486">1486</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01621">1621</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 </div>
 </div>
@@ -1589,9 +1694,9 @@ Weeks:   #w
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01440">1440</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01575">1575</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01252">get_seek_time_diff()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01227">get_segment_duration()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01387">get_seek_time_diff()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01362">get_segment_duration()</a>.</p>
 
 </div>
 </div>
@@ -1639,20 +1744,106 @@ Weeks:   #w
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01463">1463</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01598">1598</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 </div>
 </div>
-<a id="a6dd7ca2082aa20765d61a4b487d2302c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dd7ca2082aa20765d61a4b487d2302c">&#9670;&nbsp;</a></span>list_options()</h2>
+<a id="ac132f6e658c3e59cf7b0233036253725"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac132f6e658c3e59cf7b0233036253725">&#9670;&nbsp;</a></span>get_video_codec_text()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string get_video_codec_text </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecID&#160;</td>
+          <td class="paramname"><em>video_codec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert AVCodecID enum for video codec to human readable text. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">video_codec</td><td>- AVCodecID enum value to convert. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>AVCodecID as text or "INVALID" if not known. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01196">1196</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00984">search_by_value()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00422">videocodec_map</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__utils_8cc_source.html#l00177">Format_Options::video_codec_list()</a>.</p>
+
+</div>
+</div>
+<a id="a71c67efd3d169895ff22b96780adb288"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c67efd3d169895ff22b96780adb288">&#9670;&nbsp;</a></span>get_videocodec()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int get_videocodec </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>arg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AVCodecID *&#160;</td>
+          <td class="paramname"><em>video_codec</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the video codec. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>- One of the possible video codecs. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">video_codec</td><td>- Upon return contains selected AVCodecID enum. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns 0 if found; if not found returns -1. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01118">1118</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00622">list_options()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00422">videocodec_map</a>.</p>
+
+</div>
+</div>
+<a id="ac82f75627c3fa7c877b91b07debb34c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac82f75627c3fa7c877b91b07debb34c7">&#9670;&nbsp;</a></span>list_options()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void list_options </td>
+          <td class="memname">static void list_options </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>info</em>, </td>
@@ -1669,6 +1860,11 @@ template&lt;typename T &gt; </div>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Iterate through all elements in map print all keys. </p>
@@ -1680,9 +1876,9 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00583">583</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00622">622</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01041">get_autocopy()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01324">get_codec()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01280">get_hwaccel()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01180">get_level()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01133">get_profile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01087">get_recodesame()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00738">get_sampleformat()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01080">get_audiocodec()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01156">get_autocopy()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01459">get_codec()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01415">get_hwaccel()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01315">get_level()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01268">get_profile()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01222">get_recodesame()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00777">get_sampleformat()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01118">get_videocodec()</a>.</p>
 
 </div>
 </div>
@@ -1722,61 +1918,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Return value will be the errorlevel of the executable. Returns 0 on success, 1 on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01866">1866</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l02039">2039</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00723">append_sep()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01762">build_device_type_list()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02104">detect_docker()</a>, <a class="el" href="fuseops_8cc_source.html#l00095">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01590">expand_path()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00042">FFMPEFS_VERSION</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>, <a class="el" href="transcode_8cc_source.html#l01005">ffmpeg_log()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01510">ffmpegfs_opt_proc()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00245">ffmpegfs_opts</a>, <a class="el" href="fuseops_8cc_source.html#l00239">init_fuse_ops()</a>, <a class="el" href="transcode_8cc_source.html#l01083">init_logging()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00222">FFMPEGFS_PARAMS::m_cachepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00210">FFMPEGFS_PARAMS::m_debug</a>, <a class="el" href="ffmpegfs_8h_source.html#l00211">FFMPEGFS_PARAMS::m_log_maxlevel</a>, <a class="el" href="ffmpegfs_8h_source.html#l00212">FFMPEGFS_PARAMS::m_log_stderr</a>, <a class="el" href="ffmpegfs_8h_source.html#l00213">FFMPEGFS_PARAMS::m_log_syslog</a>, <a class="el" href="ffmpegfs_8h_source.html#l00214">FFMPEGFS_PARAMS::m_logfile</a>, <a class="el" href="ffmpegfs_8h_source.html#l00227">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00176">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00225">FFMPEGFS_PARAMS::m_prune_cache</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>, <a class="el" href="transcode_8cc_source.html#l00724">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00212">transcoder_init()</a>.</p>
-
-</div>
-</div>
-<a id="a49123a7697483f352aa66f4b6c0a2112"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49123a7697483f352aa66f4b6c0a2112">&#9670;&nbsp;</a></span>search_by_value()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static std::map&lt;std::string, T, <a class="el" href="structcomp.html">comp</a>&gt;::const_iterator search_by_value </td>
-          <td>(</td>
-          <td class="paramtype">const std::map&lt; std::string, T, <a class="el" href="structcomp.html">comp</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>mapOfWords</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T&#160;</td>
-          <td class="paramname"><em>value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Iterate through all elements in map and search for the passed element. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">mapOfWords</td><td>- map to search. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- Search value </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>If found, retuns const_iterator to element. Returns mapOfWords.cend() if not. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00563">563</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01071">get_autocopy_text()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01211">get_level_text()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01163">get_profile_text()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01117">get_recodesame_text()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00772">get_sampleformat_text()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00885">append_sep()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01910">build_device_type_list()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02275">detect_docker()</a>, <a class="el" href="fuseops_8cc_source.html#l00095">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01758">expand_path()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00042">FFMPEFS_VERSION</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="transcode_8cc_source.html#l01033">ffmpeg_log()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01645">ffmpegfs_opt_proc()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00258">ffmpegfs_opts</a>, <a class="el" href="fuseops_8cc_source.html#l00239">init_fuse_ops()</a>, <a class="el" href="transcode_8cc_source.html#l01112">init_logging()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00175">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00226">FFMPEGFS_PARAMS::m_cachepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00214">FFMPEGFS_PARAMS::m_debug</a>, <a class="el" href="ffmpegfs_8h_source.html#l00215">FFMPEGFS_PARAMS::m_log_maxlevel</a>, <a class="el" href="ffmpegfs_8h_source.html#l00216">FFMPEGFS_PARAMS::m_log_stderr</a>, <a class="el" href="ffmpegfs_8h_source.html#l00217">FFMPEGFS_PARAMS::m_log_syslog</a>, <a class="el" href="ffmpegfs_8h_source.html#l00218">FFMPEGFS_PARAMS::m_logfile</a>, <a class="el" href="ffmpegfs_8h_source.html#l00231">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00176">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00229">FFMPEGFS_PARAMS::m_prune_cache</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, <a class="el" href="transcode_8cc_source.html#l00729">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00212">transcoder_init()</a>.</p>
 
 </div>
 </div>
@@ -1807,13 +1951,56 @@ template&lt;typename T &gt; </div>
 <p>Set default values. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if options are OK, false if option combination is invalid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01744">1744</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01892">1892</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00066">ffmpeg_format</a>, <a class="el" href="ffmpegfs_8h_source.html#l00181">FFMPEGFS_PARAMS::m_level</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00067">params</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00236">PRORESLEVEL_NONE</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00241">PRORESLEVEL_PRORES_HQ</a>.</p>
+<p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpegfs_8h_source.html#l00184">FFMPEGFS_PARAMS::m_level</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00237">PRORESLEVEL_NONE</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00242">PRORESLEVEL_PRORES_HQ</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="a00c09e223224e4cc36048e9d1cc65650"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00c09e223224e4cc36048e9d1cc65650">&#9670;&nbsp;</a></span>audiocodec_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a50be04749b50eb200e191a9151195488">AUDIOCODEC_MAP</a> audiocodec_map</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">{</div>
+<div class="line">    { <span class="stringliteral">&quot;AAC&quot;</span>,            AV_CODEC_ID_AAC },          </div>
+<div class="line">    { <span class="stringliteral">&quot;AC3&quot;</span>,            AV_CODEC_ID_AC3 },          </div>
+<div class="line">    { <span class="stringliteral">&quot;MP3&quot;</span>,            AV_CODEC_ID_MP3 },          </div>
+<div class="line">    { <span class="stringliteral">&quot;OPUS&quot;</span>,           AV_CODEC_ID_OPUS },         </div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line"> </div>
+<div class="line">    { <span class="stringliteral">&quot;VORBIS&quot;</span>,         AV_CODEC_ID_VORBIS },       </div>
+<div class="line">    { <span class="stringliteral">&quot;DTS&quot;</span>,            AV_CODEC_ID_DTS },          </div>
+<div class="line">    { <span class="stringliteral">&quot;PCM16&quot;</span>,          AV_CODEC_ID_PCM_S16LE },    </div>
+<div class="line">    { <span class="stringliteral">&quot;PCM24&quot;</span>,          AV_CODEC_ID_PCM_S24LE },    </div>
+<div class="line">    { <span class="stringliteral">&quot;PCM32&quot;</span>,          AV_CODEC_ID_PCM_S32LE },    </div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>List of audio codecs. </p>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00403">403</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01186">get_audio_codec_text()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01080">get_audiocodec()</a>.</p>
+
+</div>
+</div>
 <a id="a6f955fab7a55c8bef7b217847093ad96"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6f955fab7a55c8bef7b217847093ad96">&#9670;&nbsp;</a></span>autocopy_map</h2>
 
@@ -1824,7 +2011,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a1e9cad128943578b6bf81236f6fb66d7">AUTOCOPY_MAP</a> autocopy_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a46d5758f64b6d2bf1f5e1b0ce69f9a24">AUTOCOPY_MAP</a> autocopy_map</td>
         </tr>
       </table>
   </td>
@@ -1841,16 +2028,16 @@ template&lt;typename T &gt; </div>
 <div class="line">    { <span class="stringliteral">&quot;STRICT&quot;</span>,         <a class="code" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d">AUTOCOPY_STRICT</a> },</div>
 <div class="line">    { <span class="stringliteral">&quot;STRICTLIMIT&quot;</span>,    <a class="code" href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9">AUTOCOPY_STRICTLIMIT</a> },</div>
 <div class="line">}</div>
-<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14a0a3ae48552dae74e70a3a04af4c57158"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a0a3ae48552dae74e70a3a04af4c57158">AUTOCOPY_OFF</a></div><div class="ttdeci">@ AUTOCOPY_OFF</div><div class="ttdoc">Never copy streams, transcode always.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00249">ffmpeg_utils.h:249</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9">AUTOCOPY_STRICTLIMIT</a></div><div class="ttdeci">@ AUTOCOPY_STRICTLIMIT</div><div class="ttdoc">Same as STRICT, only copy if target not larger, transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00253">ffmpeg_utils.h:253</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ab8874350e6c2640ac95c7de21b9914ab"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ab8874350e6c2640ac95c7de21b9914ab">AUTOCOPY_MATCHLIMIT</a></div><div class="ttdeci">@ AUTOCOPY_MATCHLIMIT</div><div class="ttdoc">Same as MATCH, only copy if target not larger transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00251">ffmpeg_utils.h:251</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ac8a90f2d6c11bc2c81c9ed2bea82250b"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ac8a90f2d6c11bc2c81c9ed2bea82250b">AUTOCOPY_MATCH</a></div><div class="ttdeci">@ AUTOCOPY_MATCH</div><div class="ttdoc">Copy stream if target supports codec.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00250">ffmpeg_utils.h:250</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d">AUTOCOPY_STRICT</a></div><div class="ttdeci">@ AUTOCOPY_STRICT</div><div class="ttdoc">Copy stream if codec matches desired target, transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00252">ffmpeg_utils.h:252</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14a0a3ae48552dae74e70a3a04af4c57158"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a0a3ae48552dae74e70a3a04af4c57158">AUTOCOPY_OFF</a></div><div class="ttdeci">@ AUTOCOPY_OFF</div><div class="ttdoc">Never copy streams, transcode always.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00250">ffmpeg_utils.h:250</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9">AUTOCOPY_STRICTLIMIT</a></div><div class="ttdeci">@ AUTOCOPY_STRICTLIMIT</div><div class="ttdoc">Same as STRICT, only copy if target not larger, transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00254">ffmpeg_utils.h:254</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ab8874350e6c2640ac95c7de21b9914ab"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ab8874350e6c2640ac95c7de21b9914ab">AUTOCOPY_MATCHLIMIT</a></div><div class="ttdeci">@ AUTOCOPY_MATCHLIMIT</div><div class="ttdoc">Same as MATCH, only copy if target not larger transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00252">ffmpeg_utils.h:252</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ac8a90f2d6c11bc2c81c9ed2bea82250b"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ac8a90f2d6c11bc2c81c9ed2bea82250b">AUTOCOPY_MATCH</a></div><div class="ttdeci">@ AUTOCOPY_MATCH</div><div class="ttdoc">Copy stream if target supports codec.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00251">ffmpeg_utils.h:251</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d">AUTOCOPY_STRICT</a></div><div class="ttdeci">@ AUTOCOPY_STRICT</div><div class="ttdoc">Copy stream if codec matches desired target, transcode otherwise.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00253">ffmpeg_utils.h:253</a></div></div>
 </div><!-- fragment --><p>List of AUTOCOPY options </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00381">381</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00439">439</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01041">get_autocopy()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01071">get_autocopy_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01156">get_autocopy()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01206">get_autocopy_text()</a>.</p>
 
 </div>
 </div>
@@ -1875,9 +2062,9 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>FUSE option descriptions </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00190">190</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00200">200</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01866">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02039">main()</a>.</p>
 
 </div>
 </div>
@@ -1891,7 +2078,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a2af5632b8f0fd18d47f50c6718131e2b">CODEC_MAP</a> hwaccel_codec_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a4782f1c2f95ecf9978ca56aa1f89c03e">CODEC_MAP</a> hwaccel_codec_map</td>
         </tr>
       </table>
   </td>
@@ -1914,9 +2101,9 @@ template&lt;typename T &gt; </div>
 <div class="line">}</div>
 </div><!-- fragment --><p>List of AUTOCOPY options </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00487">487</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00545">545</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01324">get_codec()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01459">get_codec()</a>.</p>
 
 </div>
 </div>
@@ -1930,7 +2117,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="ffmpegfs_8cc.html#a7e5efdbcc4f916eea8fec6b5a46777e3">HWACCEL_MAP</a> hwaccel_map</td>
+          <td class="memname"><a class="el" href="ffmpegfs_8cc.html#a1784850429821a3f973bb5437a139c44">HWACCEL_MAP</a> hwaccel_map</td>
         </tr>
       </table>
   </td>
@@ -1942,9 +2129,9 @@ template&lt;typename T &gt; </div>
 <p>List if hardware acceleration options. See <a href="https://trac.ffmpeg.org/wiki/HWAccelIntro">https://trac.ffmpeg.org/wiki/HWAccelIntro</a></p>
 <p>AV_HWDEVICE_TYPE_NONE will be set to the appropriate device type in <a class="el" href="ffmpegfs_8cc.html#a1cafc926531bc7fa71036ed0d05b8908" title="Build list of available device types. Builds a list of device types supported by the current FFmpeg l...">build_device_type_list()</a> by asking the FFmpeg API for the proper type. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00440">440</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00498">498</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01762">build_device_type_list()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01280">get_hwaccel()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01418">get_hwaccel_API_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01910">build_device_type_list()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01415">get_hwaccel()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01553">get_hwaccel_API_text()</a>.</p>
 
 </div>
 </div>
@@ -1958,7 +2145,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#af172b8e8afed8fa4d2fac41aa85d7b23">LEVEL_MAP</a> level_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a70adcc7f6c68053cea8e9f96a3f8f04f">LEVEL_MAP</a> level_map</td>
         </tr>
       </table>
   </td>
@@ -1975,15 +2162,15 @@ template&lt;typename T &gt; </div>
 <div class="line">    { <span class="stringliteral">&quot;STANDARD&quot;</span>,       <a class="code" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa9bb14475a74f3e74145b82b69ab81822">PRORESLEVEL_PRORES_STANDARD</a> },</div>
 <div class="line">    { <span class="stringliteral">&quot;HQ&quot;</span>,             <a class="code" href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa65331f08c5a5b76f4c9bf2aab654edfd">PRORESLEVEL_PRORES_HQ</a> },</div>
 <div class="line">}</div>
-<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa0c6314416551ff4b1edc0c2523c7b58d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa0c6314416551ff4b1edc0c2523c7b58d">PRORESLEVEL_PRORES_PROXY</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_PROXY</div><div class="ttdoc">Prores Level: PROXY.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00238">ffmpeg_utils.h:238</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa26a80e212945c31e712d2dafb7020dce"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa26a80e212945c31e712d2dafb7020dce">PRORESLEVEL_PRORES_LT</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_LT</div><div class="ttdoc">Prores Level: LT.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00239">ffmpeg_utils.h:239</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa65331f08c5a5b76f4c9bf2aab654edfd"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa65331f08c5a5b76f4c9bf2aab654edfd">PRORESLEVEL_PRORES_HQ</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_HQ</div><div class="ttdoc">Prores Level: HQ.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00241">ffmpeg_utils.h:241</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa9bb14475a74f3e74145b82b69ab81822"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa9bb14475a74f3e74145b82b69ab81822">PRORESLEVEL_PRORES_STANDARD</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_STANDARD</div><div class="ttdoc">Prores Level: STANDARD.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00240">ffmpeg_utils.h:240</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa0c6314416551ff4b1edc0c2523c7b58d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa0c6314416551ff4b1edc0c2523c7b58d">PRORESLEVEL_PRORES_PROXY</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_PROXY</div><div class="ttdoc">Prores Level: PROXY.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00239">ffmpeg_utils.h:239</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa26a80e212945c31e712d2dafb7020dce"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa26a80e212945c31e712d2dafb7020dce">PRORESLEVEL_PRORES_LT</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_LT</div><div class="ttdoc">Prores Level: LT.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00240">ffmpeg_utils.h:240</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa65331f08c5a5b76f4c9bf2aab654edfd"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa65331f08c5a5b76f4c9bf2aab654edfd">PRORESLEVEL_PRORES_HQ</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_HQ</div><div class="ttdoc">Prores Level: HQ.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00242">ffmpeg_utils.h:242</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a0c5736abf631a3d93a9768f059b6cfdaa9bb14475a74f3e74145b82b69ab81822"><div class="ttname"><a href="ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfdaa9bb14475a74f3e74145b82b69ab81822">PRORESLEVEL_PRORES_STANDARD</a></div><div class="ttdeci">@ PRORESLEVEL_PRORES_STANDARD</div><div class="ttdoc">Prores Level: STANDARD.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00241">ffmpeg_utils.h:241</a></div></div>
 </div><!-- fragment --><p>List if ProRes levels. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00413">413</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00471">471</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01180">get_level()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01211">get_level_text()</a>, and <a class="el" href="transcode_8cc_source.html#l01083">init_logging()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01315">get_level()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01346">get_level_text()</a>, and <a class="el" href="transcode_8cc_source.html#l01112">init_logging()</a>.</p>
 
 </div>
 </div>
@@ -1997,7 +2184,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a4f6570ac7d0db3dc140741b7a2d575ca">PROFILE_MAP</a> profile_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#ac7747d076eb01f0d9d393a83621a1e7c">PROFILE_MAP</a> profile_map</td>
         </tr>
       </table>
   </td>
@@ -2022,19 +2209,19 @@ template&lt;typename T &gt; </div>
 <div class="line"> </div>
 <div class="line">    </div>
 <div class="line">}</div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a23d5453b63efda21dbbe1f32eb535a9d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a23d5453b63efda21dbbe1f32eb535a9d">PROFILE_MP4_EDGE</a></div><div class="ttdeci">@ PROFILE_MP4_EDGE</div><div class="ttdoc">MS Edge.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00211">ffmpeg_utils.h:211</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a4dad8bb4999f24ff08e5cf3abc0558a2"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a4dad8bb4999f24ff08e5cf3abc0558a2">PROFILE_MP4_MAXTHON</a></div><div class="ttdeci">@ PROFILE_MP4_MAXTHON</div><div class="ttdoc">Maxthon.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00216">ffmpeg_utils.h:216</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a61f110ef2a0406bc4669ec7e3196196e"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a61f110ef2a0406bc4669ec7e3196196e">PROFILE_MP4_SAFARI</a></div><div class="ttdeci">@ PROFILE_MP4_SAFARI</div><div class="ttdoc">Apple Safari.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00214">ffmpeg_utils.h:214</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a6e0bedd26e01f4068580cc8a8219f424"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a6e0bedd26e01f4068580cc8a8219f424">PROFILE_MP4_FF</a></div><div class="ttdeci">@ PROFILE_MP4_FF</div><div class="ttdoc">Firefox.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00210">ffmpeg_utils.h:210</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a7cfc77cc40af5eef232423ad096baa02"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a7cfc77cc40af5eef232423ad096baa02">PROFILE_MP4_OPERA</a></div><div class="ttdeci">@ PROFILE_MP4_OPERA</div><div class="ttdoc">Opera.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00215">ffmpeg_utils.h:215</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a953ff06fff6750b9c52dc90e195e4e5a"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a953ff06fff6750b9c52dc90e195e4e5a">PROFILE_MP4_CHROME</a></div><div class="ttdeci">@ PROFILE_MP4_CHROME</div><div class="ttdoc">Google Chrome.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00213">ffmpeg_utils.h:213</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22aa0dcbbf14cfab4101c16f0b1d5b7b7b2"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22aa0dcbbf14cfab4101c16f0b1d5b7b7b2">PROFILE_MP4_IE</a></div><div class="ttdeci">@ PROFILE_MP4_IE</div><div class="ttdoc">MS Internet Explorer.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00212">ffmpeg_utils.h:212</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22ae418cf9b60f54144429eb55612ac5f34"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22ae418cf9b60f54144429eb55612ac5f34">PROFILE_DEFAULT</a></div><div class="ttdeci">@ PROFILE_DEFAULT</div><div class="ttdoc">No specific profile/Don't care.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00207">ffmpeg_utils.h:207</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a23d5453b63efda21dbbe1f32eb535a9d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a23d5453b63efda21dbbe1f32eb535a9d">PROFILE_MP4_EDGE</a></div><div class="ttdeci">@ PROFILE_MP4_EDGE</div><div class="ttdoc">MS Edge.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00212">ffmpeg_utils.h:212</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a4dad8bb4999f24ff08e5cf3abc0558a2"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a4dad8bb4999f24ff08e5cf3abc0558a2">PROFILE_MP4_MAXTHON</a></div><div class="ttdeci">@ PROFILE_MP4_MAXTHON</div><div class="ttdoc">Maxthon.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00217">ffmpeg_utils.h:217</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a61f110ef2a0406bc4669ec7e3196196e"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a61f110ef2a0406bc4669ec7e3196196e">PROFILE_MP4_SAFARI</a></div><div class="ttdeci">@ PROFILE_MP4_SAFARI</div><div class="ttdoc">Apple Safari.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00215">ffmpeg_utils.h:215</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a6e0bedd26e01f4068580cc8a8219f424"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a6e0bedd26e01f4068580cc8a8219f424">PROFILE_MP4_FF</a></div><div class="ttdeci">@ PROFILE_MP4_FF</div><div class="ttdoc">Firefox.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00211">ffmpeg_utils.h:211</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a7cfc77cc40af5eef232423ad096baa02"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a7cfc77cc40af5eef232423ad096baa02">PROFILE_MP4_OPERA</a></div><div class="ttdeci">@ PROFILE_MP4_OPERA</div><div class="ttdoc">Opera.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00216">ffmpeg_utils.h:216</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22a953ff06fff6750b9c52dc90e195e4e5a"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a953ff06fff6750b9c52dc90e195e4e5a">PROFILE_MP4_CHROME</a></div><div class="ttdeci">@ PROFILE_MP4_CHROME</div><div class="ttdoc">Google Chrome.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00214">ffmpeg_utils.h:214</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22aa0dcbbf14cfab4101c16f0b1d5b7b7b2"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22aa0dcbbf14cfab4101c16f0b1d5b7b7b2">PROFILE_MP4_IE</a></div><div class="ttdeci">@ PROFILE_MP4_IE</div><div class="ttdoc">MS Internet Explorer.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00213">ffmpeg_utils.h:213</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a6ce4239c2af8f4c6f9d39f22b516af22ae418cf9b60f54144429eb55612ac5f34"><div class="ttname"><a href="ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22ae418cf9b60f54144429eb55612ac5f34">PROFILE_DEFAULT</a></div><div class="ttdeci">@ PROFILE_DEFAULT</div><div class="ttdoc">No specific profile/Don't care.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00208">ffmpeg_utils.h:208</a></div></div>
 </div><!-- fragment --><p>List if MP4 profiles </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00393">393</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00451">451</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01133">get_profile()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01163">get_profile_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01268">get_profile()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01298">get_profile_text()</a>.</p>
 
 </div>
 </div>
@@ -2048,7 +2235,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#aa46b5fa36037b8fc5501b47ecfb9bc0a">RECODESAME_MAP</a> recode_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#ad0395aae489a932ef4adccdc45be22ea">RECODESAME_MAP</a> recode_map</td>
         </tr>
       </table>
   </td>
@@ -2063,13 +2250,13 @@ template&lt;typename T &gt; </div>
 <div class="line">    { <span class="stringliteral">&quot;NO&quot;</span>,             <a class="code" href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaac523bcca3e3fc15f2dff74a49cad3c6d">RECODESAME_NO</a> },</div>
 <div class="line">    { <span class="stringliteral">&quot;YES&quot;</span>,            <a class="code" href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaa4de546a67d2a86c6838d73a32e847f25">RECODESAME_YES</a> },</div>
 <div class="line">}</div>
-<div class="ttc" id="affmpeg__utils_8h_html_a159188f600c1d902a8b6bf081bc989aaa4de546a67d2a86c6838d73a32e847f25"><div class="ttname"><a href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaa4de546a67d2a86c6838d73a32e847f25">RECODESAME_YES</a></div><div class="ttdeci">@ RECODESAME_YES</div><div class="ttdoc">Always recode to same format.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00262">ffmpeg_utils.h:262</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a159188f600c1d902a8b6bf081bc989aaac523bcca3e3fc15f2dff74a49cad3c6d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaac523bcca3e3fc15f2dff74a49cad3c6d">RECODESAME_NO</a></div><div class="ttdeci">@ RECODESAME_NO</div><div class="ttdoc">Never recode to same format.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00261">ffmpeg_utils.h:261</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a159188f600c1d902a8b6bf081bc989aaa4de546a67d2a86c6838d73a32e847f25"><div class="ttname"><a href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaa4de546a67d2a86c6838d73a32e847f25">RECODESAME_YES</a></div><div class="ttdeci">@ RECODESAME_YES</div><div class="ttdoc">Always recode to same format.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00263">ffmpeg_utils.h:263</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a159188f600c1d902a8b6bf081bc989aaac523bcca3e3fc15f2dff74a49cad3c6d"><div class="ttname"><a href="ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aaac523bcca3e3fc15f2dff74a49cad3c6d">RECODESAME_NO</a></div><div class="ttdeci">@ RECODESAME_NO</div><div class="ttdoc">Never recode to same format.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00262">ffmpeg_utils.h:262</a></div></div>
 </div><!-- fragment --><p>List if recode options. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00425">425</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00483">483</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01087">get_recodesame()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01117">get_recodesame_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01222">get_recodesame()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01252">get_recodesame_text()</a>.</p>
 
 </div>
 </div>
@@ -2083,7 +2270,7 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a74801b6c9151a649b9ba000d1d6c883b">SAMPLE_FMT_MAP</a> sample_fmt_map</td>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a4c434812e59389ffd4e5d71016585bac">SAMPLE_FMT_MAP</a> sample_fmt_map</td>
         </tr>
       </table>
   </td>
@@ -2105,21 +2292,62 @@ template&lt;typename T &gt; </div>
 <div class="line">    { <span class="stringliteral">&quot;F32&quot;</span>,    <a class="code" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a58c5ceba41067ebe44ccfc0a49f4389b">SAMPLE_FMT_F32</a> },</div>
 <div class="line">    { <span class="stringliteral">&quot;F64&quot;</span>,    <a class="code" href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ae42e2d1e09ce656426c5246821a83ca6">SAMPLE_FMT_F64</a> },</div>
 <div class="line">}</div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a02c48661985cff420822c833bcde6dce"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a02c48661985cff420822c833bcde6dce">SAMPLE_FMT_16</a></div><div class="ttdeci">@ SAMPLE_FMT_16</div><div class="ttdoc">16 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00273">ffmpeg_utils.h:273</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a12f66e67f3f8a900ac6e9af462f25d5b"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a12f66e67f3f8a900ac6e9af462f25d5b">SAMPLE_FMT_24</a></div><div class="ttdeci">@ SAMPLE_FMT_24</div><div class="ttdoc">24 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00274">ffmpeg_utils.h:274</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a2c31998cb30c5fc012b8a918c768c4a4"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a2c31998cb30c5fc012b8a918c768c4a4">SAMPLE_FMT_64</a></div><div class="ttdeci">@ SAMPLE_FMT_64</div><div class="ttdoc">64 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00276">ffmpeg_utils.h:276</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a386167e74fe0214b0d7eacc117c509b8"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a386167e74fe0214b0d7eacc117c509b8">SAMPLE_FMT_F16</a></div><div class="ttdeci">@ SAMPLE_FMT_F16</div><div class="ttdoc">16 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00277">ffmpeg_utils.h:277</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a58c5ceba41067ebe44ccfc0a49f4389b"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a58c5ceba41067ebe44ccfc0a49f4389b">SAMPLE_FMT_F32</a></div><div class="ttdeci">@ SAMPLE_FMT_F32</div><div class="ttdoc">32 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00279">ffmpeg_utils.h:279</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a8ccc2217a637ba55fd20fa0f5eb3da7d"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a8ccc2217a637ba55fd20fa0f5eb3da7d">SAMPLE_FMT_F24</a></div><div class="ttdeci">@ SAMPLE_FMT_F24</div><div class="ttdoc">24 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00278">ffmpeg_utils.h:278</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ab51d5cdae8d8cf10bac421ef386bb682"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ab51d5cdae8d8cf10bac421ef386bb682">SAMPLE_FMT_8</a></div><div class="ttdeci">@ SAMPLE_FMT_8</div><div class="ttdoc">8 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00272">ffmpeg_utils.h:272</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ac39a87645a608a3a3b326dbcea2b26c7"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ac39a87645a608a3a3b326dbcea2b26c7">SAMPLE_FMT_DONTCARE</a></div><div class="ttdeci">@ SAMPLE_FMT_DONTCARE</div><div class="ttdoc">Don't care, leave to FFmpegfs to choose.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00271">ffmpeg_utils.h:271</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ae42e2d1e09ce656426c5246821a83ca6"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ae42e2d1e09ce656426c5246821a83ca6">SAMPLE_FMT_F64</a></div><div class="ttdeci">@ SAMPLE_FMT_F64</div><div class="ttdoc">64 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00281">ffmpeg_utils.h:280</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657af5b696c5d944c6f3fad8aca5dcde140d"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657af5b696c5d944c6f3fad8aca5dcde140d">SAMPLE_FMT_32</a></div><div class="ttdeci">@ SAMPLE_FMT_32</div><div class="ttdoc">32 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00275">ffmpeg_utils.h:275</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a02c48661985cff420822c833bcde6dce"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a02c48661985cff420822c833bcde6dce">SAMPLE_FMT_16</a></div><div class="ttdeci">@ SAMPLE_FMT_16</div><div class="ttdoc">16 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00274">ffmpeg_utils.h:274</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a12f66e67f3f8a900ac6e9af462f25d5b"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a12f66e67f3f8a900ac6e9af462f25d5b">SAMPLE_FMT_24</a></div><div class="ttdeci">@ SAMPLE_FMT_24</div><div class="ttdoc">24 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00275">ffmpeg_utils.h:275</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a2c31998cb30c5fc012b8a918c768c4a4"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a2c31998cb30c5fc012b8a918c768c4a4">SAMPLE_FMT_64</a></div><div class="ttdeci">@ SAMPLE_FMT_64</div><div class="ttdoc">64 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00277">ffmpeg_utils.h:277</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a386167e74fe0214b0d7eacc117c509b8"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a386167e74fe0214b0d7eacc117c509b8">SAMPLE_FMT_F16</a></div><div class="ttdeci">@ SAMPLE_FMT_F16</div><div class="ttdoc">16 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00278">ffmpeg_utils.h:278</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a58c5ceba41067ebe44ccfc0a49f4389b"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a58c5ceba41067ebe44ccfc0a49f4389b">SAMPLE_FMT_F32</a></div><div class="ttdeci">@ SAMPLE_FMT_F32</div><div class="ttdoc">32 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00280">ffmpeg_utils.h:280</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657a8ccc2217a637ba55fd20fa0f5eb3da7d"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657a8ccc2217a637ba55fd20fa0f5eb3da7d">SAMPLE_FMT_F24</a></div><div class="ttdeci">@ SAMPLE_FMT_F24</div><div class="ttdoc">24 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00279">ffmpeg_utils.h:279</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ab51d5cdae8d8cf10bac421ef386bb682"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ab51d5cdae8d8cf10bac421ef386bb682">SAMPLE_FMT_8</a></div><div class="ttdeci">@ SAMPLE_FMT_8</div><div class="ttdoc">8 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00273">ffmpeg_utils.h:273</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ac39a87645a608a3a3b326dbcea2b26c7"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ac39a87645a608a3a3b326dbcea2b26c7">SAMPLE_FMT_DONTCARE</a></div><div class="ttdeci">@ SAMPLE_FMT_DONTCARE</div><div class="ttdoc">Don't care, leave to FFmpegfs to choose.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00272">ffmpeg_utils.h:272</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657ae42e2d1e09ce656426c5246821a83ca6"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657ae42e2d1e09ce656426c5246821a83ca6">SAMPLE_FMT_F64</a></div><div class="ttdeci">@ SAMPLE_FMT_F64</div><div class="ttdoc">64 bit floating point</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00282">ffmpeg_utils.h:281</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_acdafcfc53b15956e9d95e785b37fb657af5b696c5d944c6f3fad8aca5dcde140d"><div class="ttname"><a href="ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657af5b696c5d944c6f3fad8aca5dcde140d">SAMPLE_FMT_32</a></div><div class="ttdeci">@ SAMPLE_FMT_32</div><div class="ttdoc">32 bit integer</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00276">ffmpeg_utils.h:276</a></div></div>
 </div><!-- fragment --><p>List of sample formats. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00503">503</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00561">561</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00738">get_sampleformat()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00772">get_sampleformat_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l00777">get_sampleformat()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l00811">get_sampleformat_text()</a>.</p>
+
+</div>
+</div>
+<a id="a106e481c04279e7d8270581647f8b970"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a106e481c04279e7d8270581647f8b970">&#9670;&nbsp;</a></span>videocodec_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="ffmpegfs_8cc.html#a1f115500c01efb54290306637d5b3e1f">VIDEOCODEC_MAP</a> videocodec_map</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">{</div>
+<div class="line">    { <span class="stringliteral">&quot;MPEG1&quot;</span>,          AV_CODEC_ID_MPEG1VIDEO },   </div>
+<div class="line">    { <span class="stringliteral">&quot;MPEG2&quot;</span>,          AV_CODEC_ID_MPEG2VIDEO },   </div>
+<div class="line">    { <span class="stringliteral">&quot;H264&quot;</span>,           AV_CODEC_ID_H264 },         </div>
+<div class="line">    { <span class="stringliteral">&quot;H265&quot;</span>,           AV_CODEC_ID_H265 },         </div>
+<div class="line">    { <span class="stringliteral">&quot;VP8&quot;</span>,            AV_CODEC_ID_VP8 },          </div>
+<div class="line">    { <span class="stringliteral">&quot;VP9&quot;</span>,            AV_CODEC_ID_VP9 },          </div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line"> </div>
+<div class="line">    </div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>List of video codecs. </p>
+
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00422">422</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01196">get_video_codec_text()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01118">get_videocodec()</a>.</p>
 
 </div>
 </div>

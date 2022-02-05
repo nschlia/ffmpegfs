@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -80,16 +80,18 @@ $(function() {
 <code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
 <code>#include &lt;regex&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for logging.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="logging_8h__incl.png" border="0" usemap="#asrc_2logging_8h" alt=""/></div>
 <map name="asrc_2logging_8h" id="asrc_2logging_8h">
-<area shape="rect" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="114,5,219,32"/>
+<area shape="rect" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="163,5,269,32"/>
 <area shape="rect" title=" " alt="" coords="5,80,56,107"/>
 <area shape="rect" title=" " alt="" coords="81,80,154,107"/>
 <area shape="rect" title=" " alt="" coords="179,80,253,107"/>
 <area shape="rect" title=" " alt="" coords="277,80,336,107"/>
+<area shape="rect" title=" " alt="" coords="360,80,424,107"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -158,7 +160,7 @@ constexpr <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3
 <div class="textblock"><p>Provide various log facilities to stderr, disk or syslog. </p>
 <dl class="section author"><dt>Author</dt><dd>K. Henriksson, Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017 Original author K. Henriksson <br  />
-Copyright (C) 2017-2021 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
+Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 </div></div><!-- contents -->

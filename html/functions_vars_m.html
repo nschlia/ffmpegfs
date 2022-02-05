@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.8</span>
+   &#160;<span id="projectnumber">2.9</span>
    </div>
   </td>
  </tr>
@@ -114,8 +114,9 @@ $(function() {
 <li>m_audio_bit_rate
 : <a class="el" href="structAUDIO__SETTINGS.html#ad8ceeef99dfdff8f24f3e1253a5ed930">AUDIO_SETTINGS</a>
 </li>
-<li>m_audio_codec_id
-: <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#a2cc9efbdcbef6f03f1eb75d32dd81625">Format_Options::_tagFORMAT</a>
+<li>m_audio_codec
+: <a class="el" href="structFFMPEGFS__PARAMS.html#ad31a7765f280d60239461b8d3bf021c0">FFMPEGFS_PARAMS</a>
+, <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#ae8f833d9ec08f59a99146d874dcfb40f">Format_Options::_tagFORMAT</a>
 </li>
 <li>m_audio_fifo
 : <a class="el" href="classFFmpeg__Transcoder.html#a1cdaccd3dc3b2e51a2115b1a47974545">FFmpeg_Transcoder</a>
@@ -134,7 +135,6 @@ $(function() {
 </li>
 <li>m_audio_start_time
 : <a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a395df24612dd35b649e37a040f2df0c1">FFmpeg_Transcoder::INPUTFILE</a>
-, <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a999011b7a224643702b19cb307aadee3">FFmpeg_Transcoder::OUTPUTFILE</a>
 </li>
 <li>m_audiobitrate
 : <a class="el" href="structCACHE__INFO.html#a0eadac14b90ba229448f74afb4d1ee32">CACHE_INFO</a>
@@ -452,6 +452,9 @@ $(function() {
 <li>m_extension_size
 : <a class="el" href="structWAV__HEADER__EX.html#aed4c2f3ffa72015fa4b382602c8efbd0">WAV_HEADER_EX</a>
 </li>
+<li>m_extensions
+: <a class="el" href="structFFMPEGFS__PARAMS.html#a462f644e0bd793de3aa61a162bb529c7">FFMPEGFS_PARAMS</a>
+</li>
 <li>m_fake_frame_no
 : <a class="el" href="classFFmpeg__Transcoder.html#aa3c4d9cff7c70914b9d2ec7e21d9387c">FFmpeg_Transcoder</a>
 </li>
@@ -491,9 +494,6 @@ $(function() {
 </li>
 <li>m_filter_graph
 : <a class="el" href="classFFmpeg__Transcoder.html#a6064b62f8cf785372fe5dfe8aff20de7">FFmpeg_Transcoder</a>
-</li>
-<li>m_finished
-: <a class="el" href="structCACHE__INFO.html#a73fe78d0b7a07c43715a6effea1541a8">CACHE_INFO</a>
 </li>
 <li>m_flags
 : <a class="el" href="structBuffer_1_1__tagCACHEINFO.html#ab51e35240d51b8335d997f022476a7a6">Buffer::_tagCACHEINFO</a>
@@ -601,17 +601,17 @@ $(function() {
 <li>m_hwaccel_enc_mode
 : <a class="el" href="classFFmpeg__Transcoder.html#af7115edb77371737162dcfc823f37d90">FFmpeg_Transcoder</a>
 </li>
-<li>m_ID
-: <a class="el" href="structVCDENTRIES.html#ab8ea131b127ca18d6c56a47f9378b84c">VCDENTRIES</a>
-</li>
 <li>m_id
 : <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
 </li>
 <li>m_ID
-: <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
+: <a class="el" href="structVCDENTRIES.html#ab8ea131b127ca18d6c56a47f9378b84c">VCDENTRIES</a>
 </li>
 <li>m_id
 : <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
+</li>
+<li>m_ID
+: <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
 </li>
 <li>m_id3v1
 : <a class="el" href="classCache__Entry.html#aa33524817fcebc9a0daca7864d1863ab">Cache_Entry</a>
@@ -633,7 +633,7 @@ $(function() {
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html#a0c973cfdacf9222ed65b1f3b0c5c8891">FFmpeg_Transcoder::PRORES_BITRATE::PRORES_FRAMERATE</a>
 </li>
 <li>m_is_decoding
-: <a class="el" href="classCache__Entry.html#a30448e58171cfb6d86c1a2e11f029f81">Cache_Entry</a>
+: <a class="el" href="classCache__Entry.html#a82152a7619d49142a421caa14b2295f2">Cache_Entry</a>
 </li>
 <li>m_is_eof
 : <a class="el" href="classBlurayIO.html#aecea01040adca78bbb027641e2ad28a2">BlurayIO</a>
@@ -732,6 +732,7 @@ $(function() {
 : <a class="el" href="classBuffer.html#a7c412682c4217d94c97663d197f235c0">Buffer</a>
 , <a class="el" href="classCache.html#ababe98aa1869037cd29227f8b13940d2">Cache</a>
 , <a class="el" href="classCache__Entry.html#a476057ed6c5e8ac0b3c7a7e1369b4e7b">Cache_Entry</a>
+, <a class="el" href="classLogging.html#acdd2c268fa1c03a3c2b986f04e343fb3">Logging</a>
 , <a class="el" href="structTHREAD__DATA.html#a03a0a88e17adcf0a612afa4c34facf87">THREAD_DATA</a>
 </li>
 <li>m_next_cell
@@ -859,7 +860,7 @@ $(function() {
 : <a class="el" href="structFFMPEGFS__PARAMS.html#a80f64efc71f09038dc18f84e49fb0bf4">FFMPEGFS_PARAMS</a>
 </li>
 <li>m_ref_count
-: <a class="el" href="classCache__Entry.html#ac15f85be9dd3a2315d405103c0e9bbd4">Cache_Entry</a>
+: <a class="el" href="classCache__Entry.html#af047ea26704d6a5fb85bc5628189db60">Cache_Entry</a>
 </li>
 <li>m_reserved
 : <a class="el" href="structIMAGE__FRAME.html#ac40ed49fc9ad1bf029c489ae3b5ee2eb">IMAGE_FRAME</a>
@@ -874,6 +875,9 @@ $(function() {
 <li>m_rest_size
 : <a class="el" href="classBlurayIO.html#aa2325165f38bfc0a7e575cca02c2026a">BlurayIO</a>
 , <a class="el" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">DvdIO</a>
+</li>
+<li>m_result
+: <a class="el" href="structCACHE__INFO.html#a26e2c97bfaf551fca8921ad808eb2d32">CACHE_INFO</a>
 </li>
 <li>m_riff_header
 : <a class="el" href="structWAV__HEADER.html#ace5aa956f12eb281a892aa93a7462154">WAV_HEADER</a>
@@ -1037,8 +1041,9 @@ $(function() {
 <li>m_video_bit_rate
 : <a class="el" href="structVIDEO__SETTINGS.html#a26296aeec692a04132282a67ca5658ba">VIDEO_SETTINGS</a>
 </li>
-<li>m_video_codec_id
-: <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#a98682b59f3098850a6b7eef8b37d4ce6">Format_Options::_tagFORMAT</a>
+<li>m_video_codec
+: <a class="el" href="structFFMPEGFS__PARAMS.html#aa598b57c24bd4e819a12ecb05ab6e0c7">FFMPEGFS_PARAMS</a>
+, <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#a0e047343d222d2fbb4b502909fe8f531">Format_Options::_tagFORMAT</a>
 </li>
 <li>m_video_frame_count
 : <a class="el" href="structCACHE__INFO.html#a04de9113f5377b2b286a3815c728c751">CACHE_INFO</a>
@@ -1052,7 +1057,6 @@ $(function() {
 </li>
 <li>m_video_start_time
 : <a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a00d43acf00c5ec85b8abedc28588d0e1">FFmpeg_Transcoder::INPUTFILE</a>
-, <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a46ca706de000b1a9cd935e4a88e1b167">FFmpeg_Transcoder::OUTPUTFILE</a>
 </li>
 <li>m_videobitrate
 : <a class="el" href="structCACHE__INFO.html#ae35203df2812763dd6111c07e99ca2cf">CACHE_INFO</a>

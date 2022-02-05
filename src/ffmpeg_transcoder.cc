@@ -2821,13 +2821,22 @@ int FFmpeg_Transcoder::write_output_file_header()
         return ret;
     }
 
-    if (m_current_format->filetype() == FILETYPE_WAV)
+    switch (m_current_format->filetype())
+    {
+    case FILETYPE_WAV:
     {
         ret = create_fake_wav_header();
+        break;
     }
-    else if (m_current_format->filetype() == FILETYPE_AIFF)
+    case FILETYPE_AIFF:
     {
         ret = create_fake_aiff_header();
+        break;
+    }
+    default:
+    {
+        break;
+    }
     }
 
     return ret;

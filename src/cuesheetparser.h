@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file cuesheetparser.h
  * @brief Clue sheet parser
  *
  * @ingroup ffmpegfs

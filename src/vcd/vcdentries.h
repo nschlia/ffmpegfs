@@ -15,7 +15,7 @@
  */
 
 /**
- * @file
+ * @file vcdentries.h
  * @brief S/VCD VcdEntries class
  *
  * @ingroup ffmpegfs

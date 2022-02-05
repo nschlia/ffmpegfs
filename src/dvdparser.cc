@@ -22,7 +22,7 @@
 #ifdef USE_LIBDVD
 
 /**
- * @file
+ * @file dvdparser.cc
  * @brief dvdparser class implementation
  *
  * @ingroup ffmpegfs

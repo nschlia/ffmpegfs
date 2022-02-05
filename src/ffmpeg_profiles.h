@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_profiles.h
  * @brief FFmpeg encoder profiles
  *
  * @ingroup ffmpegfs

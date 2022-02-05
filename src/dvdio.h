@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file dvdio.h
  * @brief DVD I/O
  *
  * This is only available if built with -DUSE_LIBDVD parameter.

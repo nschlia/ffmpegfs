@@ -19,6 +19,16 @@
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
 
+/**
+ * @file thread_pool.h
+ * @brief Thread pool class implementation
+ *
+ * @ingroup ffmpegfs
+ *
+ * @author Norbert Schlia (nschlia@oblivion-software.de)
+ * @copyright Copyright (C) 2019-2022 Norbert Schlia (nschlia@oblivion-software.de)
+ */
+
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 

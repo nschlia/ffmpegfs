@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file fileio.h
  * @brief FileIO class
  *
  * This class allows transparent access to files from DVD, Bluray, Video CD or

@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_base.cc
  * @brief FFmpeg_Base class implementation
  *
  * @ingroup ffmpegfs

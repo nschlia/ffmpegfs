@@ -21,7 +21,7 @@
  */
 
 /**
- * @file
+ * @file logging.cc
  * @brief Log facilities implementation
  *
  * @ingroup ffmpegfs

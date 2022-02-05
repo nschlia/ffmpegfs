@@ -25,7 +25,7 @@
 #ifdef USE_LIBVCD
 
 /**
- * @file
+ * @file vcdio.cc
  * @brief VcdIO class implementation
  *
  * @ingroup ffmpegfs

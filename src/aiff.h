@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file aiff.h
  * @brief AIFF file structures
  * http://paulbourke.net/dataformats/audio/
  *

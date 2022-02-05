@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file diskio.cc
  * @brief DiskIO class implementation
  *
  * @ingroup ffmpegfs

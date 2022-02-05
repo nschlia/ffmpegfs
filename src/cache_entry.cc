@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file cache_entry.cc
  * @brief Cache_Entry class implementation
  *
  * @ingroup ffmpegfs

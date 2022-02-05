@@ -17,7 +17,7 @@
  */
 
 /**
- * @file
+ * @file vcdchapter.cc
  * @brief S/VCD VcdChapter class implementation
  *
  * @ingroup ffmpegfs

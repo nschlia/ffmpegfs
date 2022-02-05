@@ -25,7 +25,7 @@ FFmpeg_Profiles::FFmpeg_Profiles() {}
 FFmpeg_Profiles::~FFmpeg_Profiles() {}
 
 /**
- * @file
+ * @file ffmpeg_profiles.cc
  * @brief Make audience audience specific optimisations
  * @see https://www.ffmpeg.org/ffmpeg-formats.html#mov_002c-mp4_002c-ismv
  *

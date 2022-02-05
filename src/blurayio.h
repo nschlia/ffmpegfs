@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file blurayio.h
  * @brief Bluray I/O
  *
  * This is only available if built with -DUSE_LIBBLURAY parameter.

@@ -22,7 +22,7 @@
  */
 
 /**
- * @file
+ * @file fuseops.cc
  * @brief Fuse operations implementation
  *
  * @ingroup ffmpegfs

@@ -27,7 +27,7 @@
 #pragma once
 
 /**
- * @file
+ * @file ffmpegfs.h
  * @ingroup ffmpegfs
  * @brief Main include for FFmpegfs project
  *

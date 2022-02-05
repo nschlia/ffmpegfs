@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file cache_maintenance.h
  * @brief %Cache maintenance
  *
  * Creates a POSIX timer that starts the cache maintenance in preset

@@ -22,7 +22,7 @@
  */
 
 /**
- * @file
+ * @file transcode.h
  * @brief File transcoder interface (for use with by FUSE)
  *
  * @ingroup ffmpegfs

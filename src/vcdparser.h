@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file vcdparser.h
  * @brief Video CD and Super Video CD parser
  *
  * This is only available if built with -DUSE_LIBVCD parameter.

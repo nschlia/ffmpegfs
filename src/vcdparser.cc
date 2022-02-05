@@ -22,7 +22,7 @@
 #ifdef USE_LIBVCD
 
 /**
- * @file
+ * @file vcdparser.cc
  * @brief Video/Super Video CD parser implementation
  *
  * @ingroup ffmpegfs

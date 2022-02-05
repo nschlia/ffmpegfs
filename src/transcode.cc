@@ -22,7 +22,7 @@
  */
 
 /**
- * @file
+ * @file transcode.cc
  * @brief File transcoder interface implementation
  *
  * @ingroup ffmpegfs

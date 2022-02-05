@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_base.h
  * @brief FFmpeg transcoder base
  *
  * @ingroup ffmpegfs

@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file thread_pool.cc
  * @brief Thread pool class implementation
  *
  * @ingroup ffmpegfs

@@ -21,7 +21,7 @@
  */
 
 /**
- * @file
+ * @file logging.h
  * @brief Provide various log facilities to stderr, disk or syslog
  *
  * @ingroup ffmpegfs

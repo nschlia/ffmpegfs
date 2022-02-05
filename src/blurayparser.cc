@@ -22,7 +22,7 @@
 #ifdef USE_LIBBLURAY
 
 /**
- * @file
+ * @file blurayparser.cc
  * @brief Bluray disk parser implementation
  *
  * @ingroup ffmpegfs

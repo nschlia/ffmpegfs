@@ -19,9 +19,8 @@
  * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
 
-
 /**
- * @file
+ * @file ffmpeg_transcoder.h
  * @brief FFmpeg transcoder
  *
  * @ingroup ffmpegfs
@@ -198,7 +197,7 @@ public:
      */
     int                         process_single_fr(int & status);
     /**
-     * Encode any remaining PCM data to the given Buffer. This should be called
+     * Encode any remaining PCM data to the given buffer. This should be called
      * after all input data has already been passed to encode_pcm_data().
      * @return On success returns 0; on error negative AVERROR.
      */

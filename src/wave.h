@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file wave.h
  * @brief WAVE file structures
  * https://wavefilegem.com/how_wave_files_work.html
  *

@@ -22,7 +22,7 @@
  */
 
 /**
- * @file
+ * @file ffmpegfs.cc
  * @brief FFmpeg main function and utilities implementation
  *
  * @ingroup ffmpegfs

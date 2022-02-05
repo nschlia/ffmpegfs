@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file buffer.h
  * @brief Buffer class
  *
  * @ingroup ffmpegfs

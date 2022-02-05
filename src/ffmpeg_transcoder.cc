@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_transcoder.cc
  * @brief FFmpeg_Transcoder class implementation
  *
  * @ingroup ffmpegfs

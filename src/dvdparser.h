@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file dvdparser.h
  * @brief DVD parser
  *
  * This is only available if built with -DUSE_LIBDVD parameter.

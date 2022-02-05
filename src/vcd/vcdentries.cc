@@ -17,7 +17,7 @@
  */
 
 /**
- * @file
+ * @file vcdentries.cc
  * @brief S/VCD VcdEntries class implementation
  *
  * @ingroup ffmpegfs

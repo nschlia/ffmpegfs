@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file diskio.h
  * @brief Direct disk I/O
  *
  * @ingroup ffmpegfs

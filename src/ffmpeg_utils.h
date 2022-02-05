@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_utils.h
  * @brief Various FFmpegfs utility functions
  *
  * @ingroup ffmpegfs

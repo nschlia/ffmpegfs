@@ -22,7 +22,7 @@
 #ifdef USE_LIBDVD
 
 /**
- * @file
+ * @file dvdio.cc
  * @brief DvdIO class implementation
  *
  * @ingroup ffmpegfs

@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file blurayparser.h
  * @brief Bluray parser
  *
  * This is only available if built with -DUSE_LIBBLURAY parameter.

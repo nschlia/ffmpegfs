@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file ffmpeg_compat.h
  * @brief FFmpeg API compatibility
  *
  * This file makes it possible to support FFmpeg 2.x to 4.

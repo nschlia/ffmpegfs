@@ -22,7 +22,7 @@
 #ifdef USE_LIBBLURAY
 
 /**
- * @file
+ * @file blurayio.cc
  * @brief BlurayIO class implementation
  *
  * @ingroup ffmpegfs

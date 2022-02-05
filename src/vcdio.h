@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file vcdio.h
  * @brief Video CD and Super Video CD I/O
  *
  * This is only available if built with -DUSE_LIBVCD parameter.

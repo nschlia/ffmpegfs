@@ -20,7 +20,7 @@
  */
 
 /**
- * @file
+ * @file id3v1tag.h
  * @brief %ID3v1 tag structure
  *
  * @ingroup ffmpegfs

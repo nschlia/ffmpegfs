@@ -17,7 +17,7 @@
  */
 
 /**
- * @file
+ * @file vcdutils.cc
  * @brief S/VCD utility functions implementation
  *
  * @ingroup ffmpegfs

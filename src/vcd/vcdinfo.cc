@@ -17,7 +17,7 @@
  */
 
 /**
- * @file
+ * @file vcdinfo.cc
  * @brief S/VCD VcdInfo class implementation
  *
  * @ingroup ffmpegfs

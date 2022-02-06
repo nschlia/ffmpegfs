@@ -52,3 +52,7 @@ mkdoxy
 /install_manifest.txt
 /CMakeDoxyfile.in
 /ChangeLog
+/.ninja_deps
+/.ninja_log
+/build.ninja
+

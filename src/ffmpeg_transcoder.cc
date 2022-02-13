@@ -1111,7 +1111,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     if (!m_out.m_video_pts && is_hls())
     {
         m_current_segment = 1;
-        Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
+        Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
     }
 
     while (true)
@@ -5053,7 +5053,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 m_insert_keyframe       = false;
 
-                Logging::info(destname(), "Starting HLS segment no. %1.", m_current_segment);
+                Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
 
                 if (!m_buffer->set_segment(m_current_segment))
                 {

@@ -30,6 +30,10 @@
 # or
 #   make dist-gzip
 # --------------------------------------------------------------------------
+# Install package:
+#   cmake --build . --target install
+# or
+#   make install
 
 cmake_minimum_required(VERSION 3.5)
 

@@ -34,6 +34,23 @@
 #   cmake --build . --target install
 # or
 #   make install
+# --------------------------------------------------------------------------
+# Uninstall package:
+#   cmake --build . --target uninstall
+# or
+#   make uninstall
+#
+# Note that this will only work if you kept the install_manifest.txt
+# file created during install. Sorry, but this is by design.
+#
+# What? Am I serious? Yes.
+#
+# https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#can-i-do-make-uninstall-with-cmake
+#
+# The cmake people think that a file, once installed, should stay there
+# forever. There is work around code available only which will not work if
+# install_manifest.txt does not exist.
+# --------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -695,8 +712,8 @@ add_dependencies(doxy help-html)
 # Additional headers and libraries
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src/ ${CMAKE_CURRENT_SOURCE_DIR}/src/ /usr/include/fuse/ /usr/include/chardet/)
 # Debug library
-#target_include_directories(${PROJECT_NAME} BEFORE PUBLIC $ENV{HOME}/dev/builds/ffmpeg/include)
-#target_link_directories(${PROJECT_NAME} BEFORE PUBLIC $ENV{HOME}/dev/builds/ffmpeg/lib)
+target_include_directories(${PROJECT_NAME} BEFORE PUBLIC "$ENV{HOME}/dev/builds/ffmpeg/include")
+target_link_directories(${PROJECT_NAME} BEFORE PRIVATE "$ENV{HOME}/dev/builds/ffmpeg/lib")
 
 set(FLAGS "-Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -Wall")
 
@@ -911,3 +928,15 @@ set(CPACK_SOURCE_IGNORE_FILES
 #set(CPACK_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/my_install_script.cmake")
 
 include(CPack)
+
+# make uninstall
+# uninstall target
+if(NOT TARGET uninstall)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+  add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+endif()

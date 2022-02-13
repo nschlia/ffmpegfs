@@ -924,7 +924,10 @@ static void transcoder_thread(void *arg)
                     Logging::info(cache_entry->destname(), "Transcoding resumed.");
                 }
             }
-            if ((!cache_entry->m_seek_to_no && !cache_entry->is_finished_incomplete()) || cache_entry->is_finished_error() || timeout || thread_exit)
+
+			bool restart = (cache_entry->m_seek_to_no || cache_entry->is_finished_incomplete()) ? true : false;
+
+            if (!restart || cache_entry->is_finished_error() || timeout || thread_exit)
             {
                 break;
             }

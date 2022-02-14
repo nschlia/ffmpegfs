@@ -776,171 +776,152 @@ static void transcoder_thread(void *arg)
     {
         bool unlocked = false;
 
-        do
+        Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
+
+        if (!cache_entry->open())
         {
-            Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
+            throw (static_cast<int>(errno));
+        }
 
-            if (!cache_entry->open())
+        averror = transcoder.open_input_file(cache_entry->virtualfile());
+        if (averror < 0)
+        {
+            throw (static_cast<int>(errno));
+        }
+
+        if (!cache_entry->m_cache_info.m_duration)
+        {
+            cache_entry->m_cache_info.m_duration = transcoder.duration();
+        }
+
+        if (!cache_entry->m_cache_info.m_predicted_filesize)
+        {
+            cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
+        }
+
+        if (!cache_entry->m_cache_info.m_video_frame_count)
+        {
+            cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
+        }
+
+        if (!cache_entry->m_cache_info.m_segment_count)
+        {
+            cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
+        }
+
+        if (!cache->maintenance(transcoder.predicted_filesize()))
+        {
+            throw (static_cast<int>(errno));
+        }
+
+        averror = transcoder.open_output_file(cache_entry->m_buffer);
+        if (averror < 0)
+        {
+            throw (static_cast<int>(errno));
+        }
+
+        memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
+
+        thread_data->m_initialised = true;
+
+        unlocked = false;
+        if (!params.m_prebuffer_size || transcoder.is_frameset())
+        {
+            // Unlock frame set from beginning
+            unlocked = true;
+            thread_data->m_lock_guard = true;
+            thread_data->m_cond.notify_all();       // signal that we are running
+        }
+        else
+        {
+            Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
+        }
+
+        while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+        {
+            int status = 0;
+
+            if (cache_entry->ref_count() > 1)
             {
+                // Set last access time
+                cache_entry->update_access(false);
+            }
+
+            if (transcoder.is_frameset())
+            {
+                uint32_t frame_no = cache_entry->m_seek_to_no;
+                if (frame_no)
+                {
+                    cache_entry->m_seek_to_no = 0;
+
+                    averror = transcoder.stack_seek_frame(frame_no);
+                    if (averror < 0)
+                    {
+                        throw (static_cast<int>(errno));
+                    }
+                }
+            }
+            else if (transcoder.is_hls())
+            {
+                uint32_t segment_no = cache_entry->m_seek_to_no;
+                if (segment_no)
+                {
+                    cache_entry->m_seek_to_no = 0;
+
+                    averror = transcoder.stack_seek_segment(segment_no);
+                    if (averror < 0)
+                    {
+                        throw (static_cast<int>(errno));
+                    }
+                }
+            }
+
+            averror = transcoder.process_single_fr(status);
+            if (status < 0)
+            {
+                errno = EIO;
                 throw (static_cast<int>(errno));
             }
 
-            averror = transcoder.open_input_file(cache_entry->virtualfile());
-            if (averror < 0)
+            if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
             {
+                errno = EIO;
                 throw (static_cast<int>(errno));
             }
 
-            if (!cache_entry->m_cache_info.m_duration)
+            if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
             {
-                cache_entry->m_cache_info.m_duration = transcoder.duration();
-            }
-
-            if (!cache_entry->m_cache_info.m_predicted_filesize)
-            {
-                cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
-            }
-
-            if (!cache_entry->m_cache_info.m_video_frame_count)
-            {
-                cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
-            }
-
-            if (!cache_entry->m_cache_info.m_segment_count)
-            {
-                cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
-            }
-
-            if (!cache->maintenance(transcoder.predicted_filesize()))
-            {
-                throw (static_cast<int>(errno));
-            }
-
-            averror = transcoder.open_output_file(cache_entry->m_buffer);
-            if (averror < 0)
-            {
-                throw (static_cast<int>(errno));
-            }
-
-            memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
-
-            thread_data->m_initialised = true;
-
-            unlocked = false;
-            if (!params.m_prebuffer_size || transcoder.is_frameset())
-            {
-                // Unlock frame set from beginning
                 unlocked = true;
+                Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
                 thread_data->m_lock_guard = true;
                 thread_data->m_cond.notify_all();       // signal that we are running
             }
-            else
+
+            if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
             {
-                Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
-            }
-
-            while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
-            {
-                int status = 0;
-
-                if (cache_entry->ref_count() > 1)
-                {
-                    // Set last access time
-                    cache_entry->update_access(false);
-                }
-
-                if (transcoder.is_frameset())
-                {
-                    uint32_t frame_no = cache_entry->m_seek_to_no;
-                    if (frame_no)
-                    {
-                        cache_entry->m_seek_to_no = 0;
-
-                        averror = transcoder.stack_seek_frame(frame_no);
-                        if (averror < 0)
-                        {
-                            throw (static_cast<int>(errno));
-                        }
-                    }
-                }
-                else if (transcoder.is_hls())
-                {
-                    uint32_t segment_no = cache_entry->m_seek_to_no;
-                    if (segment_no)
-                    {
-                        cache_entry->m_seek_to_no = 0;
-
-                        averror = transcoder.stack_seek_segment(segment_no);
-                        if (averror < 0)
-                        {
-                            throw (static_cast<int>(errno));
-                        }
-                    }
-                }
-
-                averror = transcoder.process_single_fr(status);
-                if (status < 0)
-                {
-                    errno = EIO;
-                    throw (static_cast<int>(errno));
-                }
-
-                if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
-                {
-                    errno = EIO;
-                    throw (static_cast<int>(errno));
-                }
-
-                if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
+                if (!unlocked && params.m_prebuffer_size)
                 {
                     unlocked = true;
-                    Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
                     thread_data->m_lock_guard = true;
-                    thread_data->m_cond.notify_all();       // signal that we are running
+                    thread_data->m_cond.notify_all();  // signal that we are running
                 }
 
-                if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
+                Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
+
+                while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
-                    if (!unlocked && params.m_prebuffer_size)
-                    {
-                        unlocked = true;
-                        thread_data->m_lock_guard = true;
-                        thread_data->m_cond.notify_all();  // signal that we are running
-                    }
-
-                    Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
-
-                    while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
-                    {
-                        const struct timespec ts = { 0, GRANULARITY MS };
-                        nanosleep(&ts, nullptr);
-                    }
-
-                    if (timeout)
-                    {
-                        break;
-                    }
-
-                    Logging::info(cache_entry->destname(), "Transcoding resumed.");
+                    const struct timespec ts = { 0, GRANULARITY MS };
+                    nanosleep(&ts, nullptr);
                 }
+
+                if (timeout)
+                {
+                    break;
+                }
+
+                Logging::info(cache_entry->destname(), "Transcoding resumed.");
             }
-
-			bool restart = (cache_entry->m_seek_to_no || cache_entry->is_finished_incomplete()) ? true : false;
-
-            if (!restart || cache_entry->is_finished_error() || timeout || thread_exit)
-            {
-                break;
-            }
-
-            // If incomplete, start over, file probably gets accessed again.
-
-            transcoder.close();
-
-            cache_entry->m_cache_info.m_result = RESULTCODE_NONE;
-            cache_entry->decr_refcount();
-            //cache_entry->m_cache_info.m_access_time = time(nullptr);
         }
-        while (1);
 
         if (!unlocked && params.m_prebuffer_size)
         {

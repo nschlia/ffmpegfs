@@ -35,13 +35,13 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e.flac" 429358 548761
-    check_filesize "raven_d.ogg" 262893 393946
+    check_filesize "raven_e.flac" 429351 548761
+    check_filesize "raven_d.ogg" 262858 393946
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
     check_filesize "raven_e.flac" 421675 548761
-    check_filesize "raven_d.ogg" 255741 393946
+    check_filesize "raven_d.ogg" 255740 393946
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov

@@ -761,7 +761,7 @@ AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType d
             if ((config->methods & method) && (config->device_type == dev_type))
             {
                 hw_pix_fmt = config->pix_fmt;
-                Logging::info(av_codec_is_decoder(codec) ? filename() : destname(), "%1 '%2' requests %3 for device type %4.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, av_get_pix_fmt_name(hw_pix_fmt), hwdevice_get_type_name(dev_type));
+                Logging::debug(av_codec_is_decoder(codec) ? filename() : destname(), "%1 '%2' requests %3 for device type %4.\n", av_codec_is_encoder(codec) ? "Encoder" : "Decoder", codec->name, av_get_pix_fmt_name(hw_pix_fmt), hwdevice_get_type_name(dev_type));
                 break;
             }
         }
@@ -873,7 +873,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                         return AVERROR(EINVAL);
                     }
 
-                    Logging::info(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
+                    Logging::debug(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
 
                     m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
                 }
@@ -1499,7 +1499,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             return AVERROR(EINVAL);
         }
 
-        Logging::info(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", output_codec->name);
+        Logging::debug(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", output_codec->name);
 
         m_hwaccel_enc_mode = HWACCELMODE_ENABLED;
     }

@@ -14,7 +14,8 @@ Important changes in 2.9 (2022-02-XX):
   Arbitrary file extensions can be defined now, e.g. using
   --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and
   so on.
-- Experimental: Issue #121: Added MKV support.  New format can be selected with --desttype=mkv.
+* Enhancement: Issue #121: Added MKV support. New format can be selected with
+  --desttype=mkv.
 - Bugfix: Issue #112: Fixed Docker detection.
 - Bugfix: Issue #110: Docker build command failed, added missing libchardet
   and allow libdvdread4 or *8 to be used, whatever available.

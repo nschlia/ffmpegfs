@@ -18,22 +18,27 @@ the supported target formats upon access.
 
 Supported output formats:
 
- * MP4 (MPEG-4)
- * WebM
- * OGG
- * MOV (QuickTime File Format)
- * Prores (a MOV container for Apple Prores video & PCM audio)
- * Opus (audio only)
- * MP3 (MPEG-2 Audio Layer III)
- * WAV (Waveform Audio File Format)
- * AIFF (Audio Interchange File Format)
- * FLAC (Free Lossless Audio Compression)
- * ALAC (Apple Lossless Audio Codec)
- * JPG (video to frameset)
- * PNG (video to frameset)
- * BMP (video to frameset)
- * TS (MPEG transport stream)
- * HLS (HTTP Live Streaming)
+[width="100%"]
+|===================================================================================
+| *Format* | *Description* | *Audio* | *Video*
+| AIFF | Audio Interchange File Format | | PCM 16 bit BE
+| ALAC | Apple Lossless Audio Codec | | ALAC
+| FLAC | Free Lossless Audio | | FLAC
+| HLS | HTTP Live Streaming | H264 | AAC
+| MOV | QuickTime File Format | H264 | AAC
+| MP3 | MPEG-2 Audio Layer III | | MP3
+| MP4 | MPEG-4 | H264 | AAC
+| OGG | | Theora | Vorbis
+| MKV | Matroska | H264 | AAC
+| Opus | | Opus |
+| ProRes | Apple ProRes | ProRes | PCM 16 bit LE
+| TS | MPEG Transport Stream | H264 | AAC
+| WAV | Waveform Audio File Format | | PCM 16 bit LE
+| WebM | | VP9 | Opus
+| BMP | Video to frameset | | BMP
+| JPG | Video to frameset | | JPEG
+| PNG | Video to frameset | | PNG
+|===================================================================================
 
 == OPTIONS ==
 
@@ -45,9 +50,9 @@ Mount IN_DIR on OUT_DIR, converting audio/video files upon access.
 *--desttype*=TYPE, *-odesttype*=TYPE::
 Select destination format. 'TYPE' can currently be:
 +
-*MP4*, *MP3*, *OGG*, *WEBM*, *MOV*, *PRORES*, *AIFF*, *FLAC*, *ALAC*, *OPUS*, *WAV*, *JPG*, *PNG*, *BMP*, *TS* or *HLS*.
+*AIFF*, *ALAC*, *BMP*, *FLAC*, *HLS*, *JPG*, *MOV*, *MP3*, *MP4*, *MKV*, *OGG*, *Opus*, *PNG*, *ProRes*, *TS*, *WAV*, *WebM*.
 +
-To stream videos, *MP4*, *TS*, *HLS*, *OGG*, *WEBM* or *MOV*/*PRORES* must be selected.
+To stream videos, *MP4*, *TS*, *HLS*, *OGG*, *WEBM*, *MKV* or *MOV*/*PRORES* must be selected.
 +
 To use HTTP Live Streaming, set *HLS*.
 +
@@ -75,6 +80,7 @@ Select audio codec. 'TYPE' depends on the destination format and can currently b
 | MP4 | **AAC**, MP3
 | WebM | **OPUS**, VORBIS
 | MOV | **AAC**, AC3, MP3
+| MKV | **AAC**, AC3, MP3
 | TS, HLS | **AAC**, AC3, MP3
 |===================================================================================
 +
@@ -91,6 +97,7 @@ Select video codec. 'TYPE' depends on the destination format and can currently b
 | MP4 | **H264**, H265, MPEG1, MPEG2
 | WebM | **VP9**, VP8, AV1
 | MOV | **H264**, H265, MPEG1, MPEG2
+| MKV | **H264**, H265, MPEG1, MPEG2
 | TS, HLS | **H264**, H265, MPEG1, MPEG2
 |===================================================================================
 +

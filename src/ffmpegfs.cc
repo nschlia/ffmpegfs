@@ -402,9 +402,9 @@ typedef std::map<const std::string, const AVCodecID, comp> VIDEOCODEC_MAP;      
  */
 static const AUDIOCODEC_MAP audiocodec_map =
 {
-    { "AAC",            AV_CODEC_ID_AAC },          // TS, MP4, MOV
-    { "AC3",            AV_CODEC_ID_AC3 },          // MP4, MOV
-    { "MP3",            AV_CODEC_ID_MP3 },          // TS, MP4, MOV
+    { "AAC",            AV_CODEC_ID_AAC },          // TS, MP4, MOV, MKV
+    { "AC3",            AV_CODEC_ID_AC3 },          // MP4, MOV, MKV
+    { "MP3",            AV_CODEC_ID_MP3 },          // TS, MP4, MOV, MKV
     { "OPUS",           AV_CODEC_ID_OPUS },         // webm
 
     // TODO: More to come..
@@ -421,10 +421,10 @@ static const AUDIOCODEC_MAP audiocodec_map =
  */
 static const VIDEOCODEC_MAP videocodec_map =
 {
-    { "MPEG1",          AV_CODEC_ID_MPEG1VIDEO },   // TS, MP4
-    { "MPEG2",          AV_CODEC_ID_MPEG2VIDEO },   // TS, MP4
-    { "H264",           AV_CODEC_ID_H264 },         // TS, MP4
-    { "H265",           AV_CODEC_ID_H265 },         // TS, MP4
+    { "MPEG1",          AV_CODEC_ID_MPEG1VIDEO },   // TS, MP4, MKV
+    { "MPEG2",          AV_CODEC_ID_MPEG2VIDEO },   // TS, MP4, MKV
+    { "H264",           AV_CODEC_ID_H264 },         // TS, MP4, MKV
+    { "H265",           AV_CODEC_ID_H265 },         // TS, MP4, MKV
     { "VP8",            AV_CODEC_ID_VP8 },          // WebM
     { "VP9",            AV_CODEC_ID_VP9 },          // WebM
 

@@ -19,18 +19,21 @@ News
 
 ### Version 2.9 under development
 
-**New in in 2.9 (2022-02-XX):**
+**New in in 2.9 (2022-02-16):**
 
-- **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
-- **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
+* **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
+* **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
 * **Feature:** [Issue #121](https://github.com/nschlia/ffmpegfs/issues/121): Added MKV support.  New format can be selected with --desttype=mkv.
-- **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
-- **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
-- **Bugfix:** Fixed crash when video has no audio
-- **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fix access problems with frame sets and HLS. 
-- **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhance file size prediction,
-- **Bugfix:** Syncronise screen log. Concurrent entries by separate threads produced garbled output.
-- **Bugfix:** Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).
+* **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
+* **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
+* **Bugfix:** Fixed crash when video had no audio.
+* **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed access problems with frame sets and HLS. 
+* **Bugfix:** Issue #119: Fixed problem that caused frame set generation to sometimes fail.
+* **Bugfix:** Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was required to have FFmpeg API accept the codec.
+* **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhanced file size prediction.
+* **Bugfix:** Need to syncronise screen log. Concurrent entries by separate threads produced garbled output.
+* **Bugfix:** Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).
+* **Bugfix:** Removed QMake support, replaced with CMake.
 
 ### Version 2.8 released
 

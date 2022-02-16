@@ -5,7 +5,7 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-Important changes in 2.9 (2022-02-XX):
+Important changes in 2.9 (2022-02-16):
 
 * Feature: Issue #97: Added options to chose different codecs. The audio codec
   can be selected with --audiocodec, for videos use --videocodec.
@@ -14,18 +14,23 @@ Important changes in 2.9 (2022-02-XX):
   Arbitrary file extensions can be defined now, e.g. using
   --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and
   so on.
-* Enhancement: Issue #121: Added MKV support. New format can be selected with
+* Feature: Issue #121: Added MKV support. New format can be selected with
   --desttype=mkv.
-- Bugfix: Issue #112: Fixed Docker detection.
-- Bugfix: Issue #110: Docker build command failed, added missing libchardet
+* Bugfix: Issue #112: Fixed Docker detection.
+* Bugfix: Issue #110: Docker build command failed, added missing libchardet
   and allow libdvdread4 or *8 to be used, whatever available.
-- Bugfix: Fixed crash when video had no audio.
-- Bugfix: Issue #112: Fix access problems with frame sets and HLS.
-- Enhancement: Issue #67:  Enhance file size prediction,
-- Bugfix: Syncronise screen log. Concurrent entries by separate flags created
-  garbled output.
-- Bugfix: Avoid creating an HLS segment number which is out of bounds
+* Bugfix: Fixed crash when video had no audio.
+* Bugfix: Issue #112: Fixed access problems with frame sets and HLS.
+* Bugfix: Issue #119: Fixed problem that caused frame set generation to
+  sometimes fail.
+* Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was
+  required to have FFmpeg API accept the codec.
+* Enhancement: Issue #67: Enhance file size prediction.
+* Bugfix: Need to syncronise screen log. Concurrent entries by separate flags
+  created garbled output.
+* Bugfix: Avoid creating an HLS segment number which is out of bounds
   (higher than the expected number of segments).
+* Enhancement: Removed QMake support, replaced with CMake.
 
 Important changes in 2.8 (2021-11-29):
 

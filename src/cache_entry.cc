@@ -415,8 +415,6 @@ unsigned int Cache_Entry::read_count() const
 
 bool Cache_Entry::is_finished() const
 {
-    //Logging::error(nullptr, "FINISHED %1", m_cache_info.m_finished);
-
     return (m_cache_info.m_result != RESULTCODE_NONE);
 }
 

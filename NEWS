@@ -32,7 +32,7 @@ Important changes in 2.9 (2022-02-16):
 * Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was
   required to have FFmpeg API accept the codec.
 * Enhancement: Issue #67: Enhance file size prediction.
-* Bugfix: Need to syncronise screen log. Concurrent entries by separate flags
+* Bugfix: Need to synchronise screen log. Concurrent entries by separate flags
   created garbled output.
 * Bugfix: Avoid creating an HLS segment number which is out of bounds
   (higher than the expected number of segments).

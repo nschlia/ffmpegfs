@@ -15,7 +15,7 @@ History
 * **Bugfix:** Issue #119: Fixed problem that caused frame set generation to sometimes fail.
 * **Bugfix:** Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was required to have FFmpeg API accept the codec.
 * **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhanced file size prediction.
-* **Bugfix:** Need to syncronise screen log. Concurrent entries by separate threads produced garbled output.
+* **Bugfix:** Need to synchronise screen log. Concurrent entries by separate threads produced garbled output.
 * **Bugfix:** Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).
 * **Bugfix:** Removed QMake support, replaced with CMake.
 

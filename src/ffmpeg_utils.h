@@ -289,16 +289,16 @@ struct Format_Options
 {
     friend class FFmpegfs_Format;
 
-    typedef std::vector<AVCodecID>  CODEC_VECT;                /**< @brief Vector with valid codec ids for file format */
+    typedef std::vector<AVCodecID>  CODEC_VECT; /**< @brief Vector with valid codec ids for file format */
 
     /**
       * Format options: Audio/video codecs and sample format
       */
     typedef struct _tagFORMAT
     {
-        CODEC_VECT      m_video_codec;      /**< @brief AVCodec used for video encoding */
-        CODEC_VECT      m_audio_codec;      /**< @brief AVCodec used for audio encoding */
-        AVSampleFormat  m_sample_format;    /**< @brief AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" */
+        CODEC_VECT      m_video_codec;          /**< @brief AVCodec used for video encoding */
+        CODEC_VECT      m_audio_codec;          /**< @brief AVCodec used for audio encoding */
+        AVSampleFormat  m_sample_format;        /**< @brief AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" */
     } FORMAT;
 
     typedef std::map<SAMPLE_FMT, const FORMAT> FORMAT_MAP;   /**< @brief Map of formats. One entry per format derivative. */

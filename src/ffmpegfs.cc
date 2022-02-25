@@ -75,8 +75,8 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter
     , m_mountpath("")                                   // required parameter
 
-    , m_audio_codec(AV_CODEC_ID_NONE)                    // default: use predefined option
-    , m_video_codec(AV_CODEC_ID_NONE)                    // default: use predefined option
+    , m_audio_codec(AV_CODEC_ID_NONE)                   // default: use predefined option
+    , m_video_codec(AV_CODEC_ID_NONE)                   // default: use predefined option
 
     , m_autocopy(AUTOCOPY_OFF)                          // default: off
     , m_recodesame(RECODESAME_NO)                       // default: off

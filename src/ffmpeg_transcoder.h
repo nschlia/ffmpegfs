@@ -60,20 +60,20 @@ struct AVAudioFifo;
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
 public:
-#define MAX_PRORES_FRAMERATE    2                                       /**< @brief Number of selectable fram rates */
+#define MAX_PRORES_FRAMERATE    2                                   /**< @brief Number of selectable fram rates */
 
     /**
      * @brief Predicted bitrates for Apple Prores, see https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf
      */
-    typedef struct PRORES_BITRATE                                       /**< @brief List of ProRes bit rates */
+    typedef struct PRORES_BITRATE                                   /**< @brief List of ProRes bit rates */
     {
-        int                     m_width;                                /**< @brief Resolution: width */
-        int                     m_height;                               /**< @brief Resolution: height */
-        struct PRORES_FRAMERATE                                         /**< @brief List of ProRes frame rates */
+        int                     m_width;                            /**< @brief Resolution: width */
+        int                     m_height;                           /**< @brief Resolution: height */
+        struct PRORES_FRAMERATE                                     /**< @brief List of ProRes frame rates */
         {
-            int                 m_framerate;                            /**< @brief Frame rate */
-            int                 m_interleaved;                          /**< @brief Format is interleaved */
-        }                       m_framerate[MAX_PRORES_FRAMERATE];      /**< @brief Array of frame rates */
+            int                 m_framerate;                        /**< @brief Frame rate */
+            int                 m_interleaved;                      /**< @brief Format is interleaved */
+        }                       m_framerate[MAX_PRORES_FRAMERATE];  /**< @brief Array of frame rates */
         /**
          * Bitrates in MB/s
          * 0: ProRes 422 Proxy
@@ -83,11 +83,11 @@ public:
          * 4: ProRes 4444 (no alpha)
          * 5: ProRes 4444 XQ (no alpha)
          */
-        int                     m_bitrate[6];                           /**< @brief Bitrate of this format */
-    } PRORES_BITRATE, *LPPRORES_BITRATE;                                /**< @brief Pointer version of PRORES_BITRATE */
-    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;                   /**< @brief Pointer to const version of PRORES_BITRATE */
+        int                     m_bitrate[6];                       /**< @brief Bitrate of this format */
+    } PRORES_BITRATE, *LPPRORES_BITRATE;                            /**< @brief Pointer version of PRORES_BITRATE */
+    typedef PRORES_BITRATE const * LPCPRORES_BITRATE;               /**< @brief Pointer to const version of PRORES_BITRATE */
 
-    struct STREAMREF                                    /**< @brief In/output stream reference data */
+    struct STREAMREF                                                /**< @brief In/output stream reference data */
     {
         STREAMREF() :
             m_codec_ctx(nullptr),
@@ -95,12 +95,12 @@ public:
             m_stream_idx(INVALID_STREAM)
         {}
 
-        AVCodecContext *        m_codec_ctx;            /**< @brief AVCodecContext for this encoder stream */
-        AVStream *              m_stream;               /**< @brief AVStream for this encoder stream */
-        int                     m_stream_idx;           /**< @brief Stream index in AVFormatContext */
+        AVCodecContext *        m_codec_ctx;                        /**< @brief AVCodecContext for this encoder stream */
+        AVStream *              m_stream;                           /**< @brief AVStream for this encoder stream */
+        int                     m_stream_idx;                       /**< @brief Stream index in AVFormatContext */
     };
 
-    struct INPUTFILE                                    /**< @brief Input file definition */
+    struct INPUTFILE                                                /**< @brief Input file definition */
     {
         INPUTFILE() :
             m_filetype(FILETYPE_UNKNOWN),
@@ -111,23 +111,23 @@ public:
             m_video_start_time(0)
         {}
 
-        FILETYPE                m_filetype;             /**< @brief File type, MP3, MP4, OPUS etc. */
-        std::string             m_filename;             /**< @brief Output filename */
+        FILETYPE                m_filetype;                         /**< @brief File type, MP3, MP4, OPUS etc. */
+        std::string             m_filename;                         /**< @brief Output filename */
 
-        AVFormatContext *       m_format_ctx;           /**< @brief Output format context */
+        AVFormatContext *       m_format_ctx;                       /**< @brief Output format context */
 
-        STREAMREF               m_audio;                /**< @brief Audio stream information */
-        STREAMREF               m_video;                /**< @brief Video stream information */
-        AVPixelFormat           m_pix_fmt;              /**< @brief Video stream pixel format */
+        STREAMREF               m_audio;                            /**< @brief Audio stream information */
+        STREAMREF               m_video;                            /**< @brief Video stream information */
+        AVPixelFormat           m_pix_fmt;                          /**< @brief Video stream pixel format */
 
-        std::vector<STREAMREF>  m_album_art;            /**< @brief Album art stream */
+        std::vector<STREAMREF>  m_album_art;                        /**< @brief Album art stream */
 
-        int64_t                 m_audio_start_time;     /**< @brief Start time of the audio stream in input audio stream time base units, may be 0 */
-        int64_t                 m_video_start_time;     /**< @brief Start time of the video stream in input video stream time base units, may be 0 */
+        int64_t                 m_audio_start_time;                 /**< @brief Start time of the audio stream in input audio stream time base units, may be 0 */
+        int64_t                 m_video_start_time;                 /**< @brief Start time of the video stream in input video stream time base units, may be 0 */
     };
 
     // Output file
-    struct OUTPUTFILE : public INPUTFILE                /**< @brief Output file definition */
+    struct OUTPUTFILE : public INPUTFILE                            /**< @brief Output file definition */
     {
         OUTPUTFILE() :
             m_audio_pts(0),
@@ -137,20 +137,20 @@ public:
             memset(&m_id3v1, 0, sizeof(m_id3v1));
         }
 
-        int64_t                 m_audio_pts;            /**< @brief Global timestamp for the audio frames in output audio stream time base units  */
-        int64_t                 m_video_pts;            /**< @brief Global timestamp for the video frames in output video stream time base units  */
-        int64_t                 m_last_mux_dts;         /**< @brief Last muxed DTS */
+        int64_t                 m_audio_pts;                        /**< @brief Global timestamp for the audio frames in output audio stream time base units  */
+        int64_t                 m_video_pts;                        /**< @brief Global timestamp for the video frames in output video stream time base units  */
+        int64_t                 m_last_mux_dts;                     /**< @brief Last muxed DTS */
 
-        ID3v1                   m_id3v1;                /**< @brief mp3 only, can be referenced at any time */
+        ID3v1                   m_id3v1;                            /**< @brief mp3 only, can be referenced at any time */
     };
 
-    typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP;     /**< @brief Map device types to pixel formats */
+    typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP; /**< @brief Map device types to pixel formats */
 
-    typedef enum HWACCELMODE                            /**< @brief Currently active hardware acceleration mode */
+    typedef enum HWACCELMODE                                        /**< @brief Currently active hardware acceleration mode */
     {
-        HWACCELMODE_NONE,                               /**< @brief Hardware acceleration not active */
-        HWACCELMODE_ENABLED,                            /**< @brief Hardware acceleration is active */
-        HWACCELMODE_FALLBACK                            /**< @brief Hardware acceleration selected, but fell back to software */
+        HWACCELMODE_NONE,                                           /**< @brief Hardware acceleration not active */
+        HWACCELMODE_ENABLED,                                        /**< @brief Hardware acceleration is active */
+        HWACCELMODE_FALLBACK                                        /**< @brief Hardware acceleration selected, but fell back to software */
 
     } HWACCELMODE;
 
@@ -994,55 +994,55 @@ protected:
     int                         read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const;
 
 private:
-    FileIO *                    m_fileio;                   /**< @brief FileIO object of input file */
-    bool                        m_close_fileio;             /**< @brief If we own the FileIO object, we may close it in the end. */
-    time_t                      m_mtime;                    /**< @brief Modified time of input file */
-    std::recursive_mutex        m_seek_to_fifo_mutex;       /**< @brief Access mutex for seek FIFO */
-    std::queue<uint32_t>        m_seek_to_fifo;             /**< @brief Stack of seek requests. Will be processed FIFO */
-    volatile uint32_t           m_last_seek_frame_no;       /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
-    bool                        m_have_seeked;              /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
-    bool                        m_skip_next_frame;          /**< @brief After seek, skip next video frame */
-    bool                        m_is_video;                 /**< @brief true if input is a video file */
+    FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */
+    bool                        m_close_fileio;                 /**< @brief If we own the FileIO object, we may close it in the end. */
+    time_t                      m_mtime;                        /**< @brief Modified time of input file */
+    std::recursive_mutex        m_seek_to_fifo_mutex;           /**< @brief Access mutex for seek FIFO */
+    std::queue<uint32_t>        m_seek_to_fifo;                 /**< @brief Stack of seek requests. Will be processed FIFO */
+    volatile uint32_t           m_last_seek_frame_no;           /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
+    bool                        m_have_seeked;                  /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
+    bool                        m_skip_next_frame;              /**< @brief After seek, skip next video frame */
+    bool                        m_is_video;                     /**< @brief true if input is a video file */
 
     // Audio conversion and buffering
-    AVSampleFormat              m_cur_sample_fmt;           /**< @brief Currently selected audio sample format */
-    int                         m_cur_sample_rate;          /**< @brief Currently selected audio sample rate */
-    uint64_t                    m_cur_channel_layout;       /**< @brief Currently selected audio channel layout */
+    AVSampleFormat              m_cur_sample_fmt;               /**< @brief Currently selected audio sample format */
+    int                         m_cur_sample_rate;              /**< @brief Currently selected audio sample rate */
+    uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
 #if LAVR_DEPRECATE
-    SwrContext *                m_audio_resample_ctx;       /**< @brief SwResample context for audio resampling */
+    SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
 #else
-    AVAudioResampleContext *    m_audio_resample_ctx;       /**< @brief AVResample context for audio resampling */
+    AVAudioResampleContext *    m_audio_resample_ctx;           /**< @brief AVResample context for audio resampling */
 #endif
-    AVAudioFifo *               m_audio_fifo;               /**< @brief Audio sample FIFO */
-    std::queue<AVFrame*>        m_audio_frame_fifo;         /**< @brief Audio frame FIFO */
+    AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
+    std::queue<AVFrame*>        m_audio_frame_fifo;             /**< @brief Audio frame FIFO */
 
     // Video conversion and buffering
-    SwsContext *                m_sws_ctx;                  /**< @brief Context for video filtering */
-    AVFilterContext *           m_buffer_sink_context;      /**< @brief Video filter sink context */
-    AVFilterContext *           m_buffer_source_context;    /**< @brief Video filter source context */
-    AVFilterGraph *             m_filter_graph;             /**< @brief Video filter graph */
-    std::queue<AVFrame*>        m_video_frame_fifo;         /**< @brief Video frame FIFO */
-    int64_t                     m_pts;                      /**< @brief Generated PTS */
-    int64_t                     m_pos;                      /**< @brief Generated position */
+    SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
+    AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
+    AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
+    AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */
+    std::queue<AVFrame*>        m_video_frame_fifo;             /**< @brief Video frame FIFO */
+    int64_t                     m_pts;                          /**< @brief Generated PTS */
+    int64_t                     m_pos;                          /**< @brief Generated position */
 
-    INPUTFILE                   m_in;                       /**< @brief Input file information */
-    OUTPUTFILE                  m_out;                      /**< @brief Output file information */
+    INPUTFILE                   m_in;                           /**< @brief Input file information */
+    OUTPUTFILE                  m_out;                          /**< @brief Output file information */
 
-    uint32_t                    m_current_segment;          /**< @brief HLS only: Segment file number currently being encoded */
-    bool                        m_insert_keyframe;          /**< @brief HLS only: Allow insertion of 1 keyframe */
+    uint32_t                    m_current_segment;              /**< @brief HLS only: Segment file number currently being encoded */
+    bool                        m_insert_keyframe;              /**< @brief HLS only: Allow insertion of 1 keyframe */
 
     // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
-    bool                        m_copy_audio;               /**< @brief If true, copy audio stream from source to target (just remux, no recode). */
-    bool                        m_copy_video;               /**< @brief If true, copy video stream from source to target (just remux, no recode). */
+    bool                        m_copy_audio;                   /**< @brief If true, copy audio stream from source to target (just remux, no recode). */
+    bool                        m_copy_video;                   /**< @brief If true, copy video stream from source to target (just remux, no recode). */
 
-    FFmpegfs_Format *           m_current_format;           /**< @brief Currently used output format(s) */
+    FFmpegfs_Format *           m_current_format;               /**< @brief Currently used output format(s) */
 
-    Buffer *                    m_buffer;                   /**< @brief Pointer to cache buffer object */
+    Buffer *                    m_buffer;                       /**< @brief Pointer to cache buffer object */
 
-    uint32_t                    m_reset_pts;                /**< @brief We have to reset audio/video pts to the new position */
-    uint32_t                    m_fake_frame_no;            /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
+    uint32_t                    m_reset_pts;                    /**< @brief We have to reset audio/video pts to the new position */
+    uint32_t                    m_fake_frame_no;                /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
 
-    static const PRORES_BITRATE m_prores_bitrate[];         /**< @brief ProRes bitrate table. Used for file size prediction. */
+    static const PRORES_BITRATE m_prores_bitrate[];             /**< @brief ProRes bitrate table. Used for file size prediction. */
 
     // Hardware acceleration
     static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */
@@ -1055,12 +1055,12 @@ private:
     AVPixelFormat               m_enc_hw_pix_fmt;               /**< @brief Requested encoder hardware pixel format */
     AVPixelFormat               m_dec_hw_pix_fmt;               /**< @brief Requested decoder hardware pixel format */
 
-#define FFMPEGFS_AUDIO      static_cast<uint32_t>(0x0001)   /**< @brief Denote an audio stream */
-#define FFMPEGFS_VIDEO      static_cast<uint32_t>(0x0002)   /**< @brief Denote a video stream */
+#define FFMPEGFS_AUDIO          static_cast<uint32_t>(0x0001)   /**< @brief Denote an audio stream */
+#define FFMPEGFS_VIDEO          static_cast<uint32_t>(0x0002)   /**< @brief Denote a video stream */
 
-    uint32_t                    m_active_stream_msk;        /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
-    uint32_t                    m_inhibit_stream_msk;       /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
-    std::queue<AVPacket*>       m_hls_packet_fifo;          /**< @brief HLS packet FIFO */
+    uint32_t                    m_active_stream_msk;            /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
+    uint32_t                    m_inhibit_stream_msk;           /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
+    std::queue<AVPacket*>       m_hls_packet_fifo;              /**< @brief HLS packet FIFO */
 };
 
 #endif // FFMPEG_TRANSCODER_H

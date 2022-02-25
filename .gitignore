@@ -55,4 +55,4 @@ mkdoxy
 /.ninja_deps
 /.ninja_log
 /build.ninja
-
+/valgrind-out.txt*

@@ -9,7 +9,7 @@ Important changes in 2.10 (2022-02-XX):
 
 * Feature:
 * Enhancement:
-* Bugfix:
+* Bugfix: Fixed memory leak in encode_audio_frame().
 
 Important changes in 2.9 (2022-02-16):
 

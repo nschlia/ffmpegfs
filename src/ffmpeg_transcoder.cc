@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -3943,7 +3943,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     AVPacket tmp_pkt;
 #endif // !LAVC_DEP_AV_INIT_PACKET
     AVPacket *pkt;
-    int ret;
+    int ret = 0;
 
 #if LAVC_DEP_AV_INIT_PACKET
     pkt = av_packet_alloc();
@@ -3952,74 +3952,77 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
     init_packet(pkt);
 #endif // !LAVC_DEP_AV_INIT_PACKET
 
-    // Encode the audio frame and store it in the temporary packet.
-    // The output audio stream encoder is used to do this.
+    try
+    {
+        // Encode the audio frame and store it in the temporary packet.
+        // The output audio stream encoder is used to do this.
 #if !LAVC_NEW_PACKET_INTERFACE
-    ret = avcodec_encode_audio2(m_out.m_audio.m_codec_ctx, pkt, frame, data_present);
+        ret = avcodec_encode_audio2(m_out.m_audio.m_codec_ctx, pkt, frame, data_present);
 
-    if (ret < 0)
-    {
-        Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_packet_unref(pkt);
-        return ret;
-    }
-
-    {
-        if (*data_present)
-#else
-    *data_present = 0;
-
-    // send the frame for encoding
-    ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
-    if (ret < 0 && ret != AVERROR_EOF)
-    {
-        Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
-        av_packet_unref(pkt);
-        return ret;
-    }
-
-    // read all the available output packets (in general there may be any number of them)
-    while (ret >= 0)
-    {
-        *data_present = 0;
-
-        ret = avcodec_receive_packet(m_out.m_audio.m_codec_ctx, pkt);
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-        {
-            av_packet_unref(pkt);
-            return ret;
-        }
-        else if (ret < 0)
+        if (ret < 0)
         {
             Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-            av_packet_unref(pkt);
-            return ret;
+            throw ret;
         }
 
-        *data_present = 1;
-#endif
-        // Write one audio frame from the temporary packet to the output buffer.
         {
-            pkt->stream_index = m_out.m_audio.m_stream_idx;
+            if (*data_present)
+#else
+        *data_present = 0;
 
-            produce_audio_dts(pkt);
+        // send the frame for encoding
+        ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
+        if (ret < 0 && ret != AVERROR_EOF)
+        {
+            Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
 
-            ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
-            if (ret < 0)
+        // read all the available output packets (in general there may be any number of them)
+        while (ret >= 0)
+        {
+            *data_present = 0;
+
+            ret = avcodec_receive_packet(m_out.m_audio.m_codec_ctx, pkt);
+            if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                av_packet_unref(pkt);
-                return ret;
+                throw ret;
+            }
+            else if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            *data_present = 1;
+#endif
+            // Write one audio frame from the temporary packet to the output buffer.
+            {
+                pkt->stream_index = m_out.m_audio.m_stream_idx;
+
+                produce_audio_dts(pkt);
+
+                ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
             }
         }
 
         av_packet_unref(pkt);
+    }
+    catch (int _ret)
+    {
+        av_packet_unref(pkt);
+        ret = _ret;
     }
 
 #if LAVC_DEP_AV_INIT_PACKET
     av_packet_free(&pkt);
 #endif // LAVC_DEP_AV_INIT_PACKET
 
-    return 0;
+    return ret;
 }
 
 int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_present)

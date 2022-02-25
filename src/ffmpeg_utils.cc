@@ -284,25 +284,40 @@ std::string Format_Options::sample_fmt_list() const
 
 const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 {
+    //{
+    //     Descriptive name of the format.
+    //     File extension: Mostly, but not always, same as format.
+    //    {
+    //        {
+    //            SAMPLE_FMT enum, or SAMPLE_FMT_DONTCARE if source format decides
+    //            {
+    //                List of video codecs
+    //                List of audio codec(s)
+    //                AVSampleFormat to be used in encoding, if AV_SAMPLE_FMT_NONE will be determined by source
+    //            }
+    //        }
+    //    },
+    //     If album arts are supported, true; false if no album arts are supported
+    //}
     // -----------------------------------------------------------------------------------------------------------------------
     // MP3
     // -----------------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP3,
         {
-            "mp3",                                  // Descriptive name of the format.
-            "mp3",                                  // File extension: Mostly, but not always, same as format.
+            "mp3",
+            "mp3",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_MP3 },        // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            true                                    // Album arts are supported
+            true
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -311,19 +326,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_MP4,
         {
-            "mp4",                                  // Descriptive name of the format.
-            "mp4",                                  // File extension: Mostly, but not always, same as format.
+            "mp4",
+            "mp4",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },     // Video codec(s)
-                        { AV_CODEC_ID_AAC, AV_CODEC_ID_MP3 },          // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -332,93 +347,93 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_WAV,
         {
-            "wav",                                  // Descriptive name of the format.
-            "wav",                                  // File extension: Mostly, but not always, same as format.
+            "wav",
+            "wav",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source file format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S16LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S16LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_8,                   // 8 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_U8 },     // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_U8 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_16,                  // 32 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S16LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S16LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_24,                  // 24 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S24LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S24LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_32,                  // 32 bit
                     {
 
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S32LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S32LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_64,                  // 64 bit
                     {
 
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S64LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S64LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_F16,                 // 16 bit float
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_F16LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_F16LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_F24,                 // 24 bit float
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_F24LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_F24LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_F32,                 // 32 bit float
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_F32LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_F32LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_F64,                 // 64 bit float
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_F64LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_F64LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -427,19 +442,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_OGG,
         {
-            "ogg",                                  // Descriptive name of the format.
-            "ogg",                                  // File extension: Mostly, but not always, same as format.
+            "ogg",
+            "ogg",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_THEORA },     // Video codec(s)
-                        { AV_CODEC_ID_VORBIS },     // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_THEORA },
+                        { AV_CODEC_ID_VORBIS },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -448,19 +463,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_WEBM,
         {
-            "webm",                                 // Descriptive name of the format.
-            "webm",                                 // File extension: Mostly, but not always, same as format.
+            "webm",
+            "webm",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },  // Video codec(s)
-                        { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },               // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },
+                        { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -469,19 +484,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_MOV,
         {
-            "mov",                                  // Descriptive name of the format.
-            "mov",                                  // File extension: Mostly, but not always, same as format.
+            "mov",
+            "mov",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },     // Video codec(s)
-                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },          // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -490,35 +505,35 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_AIFF,
         {
-            "aiff",                                 // Descriptive name of the format.
-            "aiff",                                 // File extension: Mostly, but not always, same as format.
+            "aiff",
+            "aiff",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S16BE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S16BE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_16,                  // 16 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S16BE },	// Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S16BE },
                         AV_SAMPLE_FMT_S16,          // 16 bit
                     }
                 },
                 {
                     SAMPLE_FMT_32,                  // 32 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_PCM_S32BE },	// Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_PCM_S32BE },
                         AV_SAMPLE_FMT_S32,          // 32 bit
                     }
                 },
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -527,19 +542,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_OPUS,
         {
-            "opus",                                 // Descriptive name of the format.
-            "opus",                                 // File extension: Mostly, but not always, same as format.
+            "opus",
+            "opus",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_OPUS },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_OPUS },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -548,19 +563,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_PRORES,
         {
-            "mov",                                  // Descriptive name of the format.
-            "mov",                                  // File extension: Mostly, but not always, same as format.
+            "mov",
+            "mov",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_PRORES },     // Video codec(s)
-                        { AV_CODEC_ID_PCM_S16LE },	// Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_PRORES },
+                        { AV_CODEC_ID_PCM_S16LE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -569,35 +584,35 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_ALAC,
         {
-            "m4a",                                  // Descriptive name of the format.
-            "m4a",                                  // File extension: Mostly, but not always, same as format.
+            "m4a",
+            "m4a",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_ALAC },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_ALAC },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_16,                  // 16 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_ALAC },       // Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_ALAC },
                         AV_SAMPLE_FMT_S16P,         // 16 bit planar
                     }
                 },
                 {
                     SAMPLE_FMT_24,                  // 24 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_ALAC },       // Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_ALAC },
                         AV_SAMPLE_FMT_S32P,         // 32 bit planar, creates 24 bit ALAC
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -606,19 +621,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_PNG,
         {
-            "png",                                  // Descriptive name of the format.
-            "png",                                  // File extension: Mostly, but not always, same as format.
+            "png",
+            "png",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_PNG },        // Video codec(s)
-                        { AV_CODEC_ID_NONE },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_PNG },
+                        { AV_CODEC_ID_NONE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -627,19 +642,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_JPG,
         {
-            "jpg",                                  // Descriptive name of the format.
-            "jpg",                                  // File extension: Mostly, but not always, same as format.
+            "jpg",
+            "jpg",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_MJPEG },      // Video codec(s)
-                        { AV_CODEC_ID_NONE },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_MJPEG },
+                        { AV_CODEC_ID_NONE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -648,19 +663,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_BMP,
         {
-            "bmp",                                  // Descriptive name of the format.
-            "bmp",                                  // File extension: Mostly, but not always, same as format.
+            "bmp",
+            "bmp",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_BMP },        // Video codec(s)
-                        { AV_CODEC_ID_NONE },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_BMP },
+                        { AV_CODEC_ID_NONE },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -669,19 +684,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_TS,
         {
-            "mpegts",                               // Descriptive name of the format.
-            "ts",                                   // File extension: Mostly, but not always, same as format.
+            "mpegts",
+            "ts",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },    // Video codec(s)
-                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },          // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
 
         }
     },
@@ -691,19 +706,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_HLS,
         {
-            "mpegts",                               // Descriptive name of the format.
-            "ts",                                   // File extension: Mostly, but not always, same as format.
+            "mpegts",
+            "ts",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },    // Video codec(s)
-                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },          // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -712,35 +727,35 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_FLAC,
         {
-            "flac",                                 // Descriptive name of the format.
-            "flac",                                 // File extension: Mostly, but not always, same as format.
+            "flac",
+            "flac",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_FLAC },       // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_FLAC },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 },
                 {
                     SAMPLE_FMT_16,                  // 16 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_FLAC },       // Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_FLAC },
                         AV_SAMPLE_FMT_S16,          // Use 16 bit samples
                     }
                 },
                 {
                     SAMPLE_FMT_24,                  // 24 bit
                     {
-                        { AV_CODEC_ID_NONE },       // Video codec(s)
-                        { AV_CODEC_ID_FLAC },       // Audio codec(s)
+                        { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_FLAC },
                         AV_SAMPLE_FMT_S32,          // Use 24 bit samples (yes, S32 creates 24 bit samples)
                     }
                 }
             },
-            true                                    // Album arts are supported
+            true
         }
     },
     // -----------------------------------------------------------------------------------------------------------------------
@@ -749,19 +764,19 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     {
         FILETYPE_MKV,
         {
-            "matroska",                             // Descriptive name of the format.
-            "mkv",                                  // File extension: Mostly, but not always, same as format.
+            "matroska",
+            "mkv",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,            // Source format decides
+                    SAMPLE_FMT_DONTCARE,
                     {
-                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO }, // Video codec(s)
-                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },                                  // Audio codec(s)
-                        AV_SAMPLE_FMT_NONE,         // Sample format will be determined by source
+                        { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
+                        { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        AV_SAMPLE_FMT_NONE,
                     }
                 }
             },
-            false                                   // No album arts
+            false
         }
     },
 };

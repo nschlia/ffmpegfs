@@ -992,6 +992,24 @@ protected:
      * @return Returns 0 if successful or -1 on error or end of file. Check buffer->eof().
      */
     int                         read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const;
+    /**
+     * @brief Check for audio stream
+     * @param[in] stream_index - ID of stream to check
+     * @return Returns 0 if stream is an audio stream, false if not.
+     */
+    bool                        is_audio_stream(int stream_index) const;
+    /**
+     * @brief Check for video stream
+     * @param[in] stream_index - ID of stream to check
+     * @return Returns 0 if stream is a video stream, false if not.
+     */
+    bool                        is_video_stream(int stream_index) const;
+    /**
+     * @brief Check if stream exists
+     * @param[in] stream_index - ID of stream to check
+     * @return Returns 0 if stream exists, false if not.
+     */
+    bool                        stream_exists(int stream_index) const;
 
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */

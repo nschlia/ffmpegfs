@@ -563,11 +563,11 @@ protected:
     int                         flush_frames_all(bool use_flush_packet);
     /**
      * @brief Flush the remaining frames
-     * @param[in] stream_index - Stream index to flush.
+     * @param[in] stream_idx - Stream index to flush.
      * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         flush_frames_single(int stream_index, bool use_flush_packet);
+    int                         flush_frames_single(int stream_idx, bool use_flush_packet);
     /**
      * @brief Read frame from source file, decode and store in FIFO.
      * @param[in] finished - 1 if at EOF.
@@ -994,22 +994,22 @@ protected:
     int                         read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const;
     /**
      * @brief Check for audio stream
-     * @param[in] stream_index - ID of stream to check
+     * @param[in] stream_idx - ID of stream to check
      * @return Returns 0 if stream is an audio stream, false if not.
      */
-    bool                        is_audio_stream(int stream_index) const;
+    bool                        is_audio_stream(int stream_idx) const;
     /**
      * @brief Check for video stream
-     * @param[in] stream_index - ID of stream to check
+     * @param[in] stream_idx - ID of stream to check
      * @return Returns 0 if stream is a video stream, false if not.
      */
-    bool                        is_video_stream(int stream_index) const;
+    bool                        is_video_stream(int stream_idx) const;
     /**
      * @brief Check if stream exists
-     * @param[in] stream_index - ID of stream to check
+     * @param[in] stream_idx - ID of stream to check
      * @return Returns 0 if stream exists, false if not.
      */
-    bool                        stream_exists(int stream_index) const;
+    bool                        stream_exists(int stream_idx) const;
 
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */

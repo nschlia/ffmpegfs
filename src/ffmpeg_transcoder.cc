@@ -2268,13 +2268,13 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 #endif
 
-    STREAMREF stream;
+    STREAMREF streamref;
 
-    stream.m_codec_ctx     = output_codec_ctx;
-    stream.m_stream        = output_stream;
-    stream.m_stream_idx    = output_stream->index;
+    streamref.m_codec_ctx     = output_codec_ctx;
+    streamref.m_stream        = output_stream;
+    streamref.m_stream_idx    = output_stream->index;
 
-    m_out.m_album_art.push_back(stream);
+    m_out.m_album_art.push_back(streamref);
 
     return 0;
 }
@@ -3729,19 +3729,19 @@ int FFmpeg_Transcoder::flush_frames_all(bool use_flush_packet)
     return ret;
 }
 
-int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_packet)
+int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet)
 {
     int ret = 0;
 
-    if (stream_exists(stream_index))
+    if (stream_exists(stream_idx))
     {
         int (FFmpeg_Transcoder::*decode_frame_ptr)(AVPacket *pkt, int *decoded) = nullptr;
 
-        if (!m_copy_audio && is_audio_stream(stream_index) && stream_exists(m_out.m_audio.m_stream_idx))
+        if (!m_copy_audio && is_audio_stream(stream_idx) && stream_exists(m_out.m_audio.m_stream_idx))
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_audio_frame;
         }
-        else if (!m_copy_video && is_video_stream(stream_index) && (stream_exists(m_out.m_video.m_stream_idx) || is_frameset()))
+        else if (!m_copy_video && is_video_stream(stream_idx) && (stream_exists(m_out.m_video.m_stream_idx) || is_frameset()))
         {
             decode_frame_ptr = &FFmpeg_Transcoder::decode_video_frame;
         }
@@ -3765,7 +3765,7 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_index, bool use_flush_pack
 
                 flush_packet->data          = nullptr;
                 flush_packet->size          = 0;
-                flush_packet->stream_index  = stream_index;
+                flush_packet->stream_index  = stream_idx;
             }
 
             for (int decoded = 1; decoded;)
@@ -3933,7 +3933,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
         pkt->pts = m_out.m_audio_pts;
 
         m_out.m_audio_pts += duration;
-    }	
+    }
 }
 
 int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_present)
@@ -7122,17 +7122,17 @@ bool FFmpeg_Transcoder::goto_next_segment(uint32_t next_segment) const
     return (next_segment == m_current_segment + 1 && next_segment <= m_virtualfile->get_segment_count());
 }
 
-bool FFmpeg_Transcoder::is_audio_stream(int stream_index) const
+bool FFmpeg_Transcoder::is_audio_stream(int stream_idx) const
 {
-    return (stream_exists(stream_index) && stream_index == m_in.m_audio.m_stream_idx);
+    return (stream_exists(stream_idx) && stream_idx == m_in.m_audio.m_stream_idx);
 }
 
-bool FFmpeg_Transcoder::is_video_stream(int stream_index) const
+bool FFmpeg_Transcoder::is_video_stream(int stream_idx) const
 {
-    return (stream_exists(stream_index) && stream_index == m_in.m_video.m_stream_idx);
+    return (stream_exists(stream_idx) && stream_idx == m_in.m_video.m_stream_idx);
 }
 
-bool FFmpeg_Transcoder::stream_exists(int stream_index) const
+bool FFmpeg_Transcoder::stream_exists(int stream_idx) const
 {
-    return (stream_index != INVALID_STREAM);
+    return (stream_idx != INVALID_STREAM);
 }

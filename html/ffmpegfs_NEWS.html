@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.9</span>
+   &#160;<span id="projectnumber">2.10</span>
    </div>
   </td>
  </tr>
@@ -73,7 +73,13 @@ $(function() {
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.9 (2022-01-XX):</div>
+<div class="line">Important changes in 2.10 (2022-02-XX):</div>
+<div class="line"> </div>
+<div class="line">* Feature:</div>
+<div class="line">* Enhancement:</div>
+<div class="line">* Bugfix: Fixed memory leak in encode_audio_frame().</div>
+<div class="line"> </div>
+<div class="line">Important changes in 2.9 (2022-02-16):</div>
 <div class="line"> </div>
 <div class="line">* Feature: Issue #97: Added options to chose different codecs. The audio codec</div>
 <div class="line">  can be selected with --audiocodec, for videos use --videocodec.</div>
@@ -82,16 +88,23 @@ $(function() {
 <div class="line">  Arbitrary file extensions can be defined now, e.g. using</div>
 <div class="line">  --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and</div>
 <div class="line">  so on.</div>
-<div class="line">- Bugfix: Issue #112: Fixed Docker detection.</div>
-<div class="line">- Bugfix: Issue #110: Docker build command failed, added missing libchardet</div>
+<div class="line">* Feature: Issue #121: Added MKV support. New format can be selected with</div>
+<div class="line">  --desttype=mkv.</div>
+<div class="line">* Bugfix: Issue #112: Fixed Docker detection.</div>
+<div class="line">* Bugfix: Issue #110: Docker build command failed, added missing libchardet</div>
 <div class="line">  and allow libdvdread4 or *8 to be used, whatever available.</div>
-<div class="line">- Bugfix: Fixed crash when video had no audio.</div>
-<div class="line">- Bugfix: Issue #112: Fix access problems with frame sets and HLS.</div>
-<div class="line">- Enhancement: Issue #67:  Enhance file size prediction,</div>
-<div class="line">- Bugfix: Syncronise screen log. Concurrent entries by separate flags created</div>
-<div class="line">  garbled output.</div>
-<div class="line">- Bugfix: Avoid creating an HLS segment number which is out of bounds</div>
+<div class="line">* Bugfix: Fixed crash when video had no audio.</div>
+<div class="line">* Bugfix: Issue #112: Fixed access problems with frame sets and HLS.</div>
+<div class="line">* Bugfix: Issue #119: Fixed problem that caused frame set generation to</div>
+<div class="line">  sometimes fail.</div>
+<div class="line">* Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was</div>
+<div class="line">  required to have FFmpeg API accept the codec.</div>
+<div class="line">* Enhancement: Issue #67: Enhance file size prediction.</div>
+<div class="line">* Bugfix: Need to synchronise screen log. Concurrent entries by separate flags</div>
+<div class="line">  created garbled output.</div>
+<div class="line">* Bugfix: Avoid creating an HLS segment number which is out of bounds</div>
 <div class="line">  (higher than the expected number of segments).</div>
+<div class="line">* Enhancement: Removed QMake support, replaced with CMake.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.8 (2021-11-29):</div>
 <div class="line"> </div>

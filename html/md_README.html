@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.9</span>
+   &#160;<span id="projectnumber">2.10</span>
    </div>
   </td>
  </tr>
@@ -88,29 +88,25 @@ $(function() {
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
-Version 2.9 under development</h2>
-<p><b>New in in 2.9 (2022-01-XX):</b></p>
+Version 2.10 under development</h2>
+<p><b>New in in 2.10 (2022-02-XX):</b></p>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Version 2.9 released</h2>
+<p><b>New in in 2.9 (2022-02-16):</b></p>
 <ul>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/97">Issue #97</a>: Added options to chose different codecs. The audio codec can be selected with &ndash;audiocodec, for videos use &ndash;videocodec.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/109">Issue #109</a>: Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using &ndash;extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.</li>
-<li><b>Experimental:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/121">Issue #121</a>: Added MKV support. New format can be selected with &ndash;desttype=mkv.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/121">Issue #121</a>: Added MKV support. New format can be selected with &ndash;desttype=mkv.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/112">Issue #112</a>: Fixed Docker detection.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/110">Issue #110</a>: Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.</li>
-<li><b>Bugfix:</b> Fix crash when video has no audio</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/112">Issue #112</a>: Fix access problems with frame sets and HLS.</li>
-<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/67">Issue #67</a>: Enhance file size prediction,</li>
-<li><b>Bugfix:</b> Syncronise screen log. Concurrent entries by separate threads produced garbled output.</li>
+<li><b>Bugfix:</b> Fixed crash when video had no audio.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/112">Issue #112</a>: Fixed access problems with frame sets and HLS.</li>
+<li><b>Bugfix:</b> Issue #119: Fixed problem that caused frame set generation to sometimes fail.</li>
+<li><b>Bugfix:</b> Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was required to have FFmpeg API accept the codec.</li>
+<li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/67">Issue #67</a>: Enhanced file size prediction.</li>
+<li><b>Bugfix:</b> Need to synchronise screen log. Concurrent entries by separate threads produced garbled output.</li>
 <li><b>Bugfix:</b> Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md4"></a>
-Version 2.8 released</h2>
-<p><b>New in in 2.8 (2021-11-29):</b></p>
-<ul>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/102">Issue #102</a>: Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fixed HLS problems with cache causing garbled videos and hick-ups in audio.</li>
-<li><b>Enhancement</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/103">Issue #103</a>: If requested HLS segment is less than X (adjustable) seconds away, discard seek request. Segment would be available very soon anyway, and that seek makes a re-transcode necessary. Can be set with <em>&ndash;min_seek_time_diff</em>. Defaults to 30 seconds.</li>
-<li><b>Feature</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/105">Issue #105</a>: Added Free Lossless Audio Codec (FLAC) support. Activate with <em>&ndash;desttype=FLAC</em>.</li>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/101">Issue #101</a>: Sample format for audio files can be selected via command line with <em>&ndash;audiosamplefmt</em>. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point. Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed. Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).</li>
+<li><b>Bugfix:</b> Removed QMake support, replaced with CMake.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Planned Features</h1>

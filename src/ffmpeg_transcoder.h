@@ -154,6 +154,8 @@ public:
 
     } HWACCELMODE;
 
+    typedef std::queue<AVFrame*>        FRAMEFIFO;                  /**< @brief Audio/video frame buffer */
+
 public:
     /**
      * Construct FFmpeg_Transcoder object
@@ -1032,14 +1034,14 @@ private:
     AVAudioResampleContext *    m_audio_resample_ctx;           /**< @brief AVResample context for audio resampling */
 #endif
     AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
-    std::queue<AVFrame*>        m_audio_frame_fifo;             /**< @brief Audio frame FIFO */
+    FRAMEFIFO                   m_audio_frame_fifo;             /**< @brief Audio frame FIFO */
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */
-    std::queue<AVFrame*>        m_video_frame_fifo;             /**< @brief Video frame FIFO */
+    FRAMEFIFO                   m_video_frame_fifo;             /**< @brief Video frame FIFO */
     int64_t                     m_pts;                          /**< @brief Generated PTS */
     int64_t                     m_pos;                          /**< @brief Generated position */
 

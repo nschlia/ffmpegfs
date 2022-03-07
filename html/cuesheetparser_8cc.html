@@ -124,8 +124,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1cf97a041d9387210263e35802498bc9"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#a1cf97a041d9387210263e35802498bc9">create_cuesheet_virtualfile</a> (Track *track, int titleno, const std::string &amp;filename, const std::string &amp;path, const struct stat *statbuf, int trackcount, int trackno, const std::string &amp;album, const std::string &amp;genre, const std::string &amp;date, <a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> *lastfile)</td></tr>
-<tr class="memdesc:a1cf97a041d9387210263e35802498bc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cuesheet structure Structure see <a href="https://en.wikipedia.org/wiki/Cue_sheet_(computing)">https://en.wikipedia.org/wiki/Cue_sheet_(computing)</a> <br  />
+<tr class="memitem:afaf71f7de44e483db3c9b1ce0673fd29"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#afaf71f7de44e483db3c9b1ce0673fd29">create_cuesheet_virtualfile</a> (Track *track, int titleno, const std::string &amp;filename, const std::string &amp;path, const struct stat *statbuf, int trackcount, int trackno, const std::string &amp;album, const std::string &amp;genre, const std::string &amp;date, int64_t *remainingduration, <a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> *lastfile)</td></tr>
+<tr class="memdesc:afaf71f7de44e483db3c9b1ce0673fd29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cuesheet structure Structure see <a href="https://en.wikipedia.org/wiki/Cue_sheet_(computing)">https://en.wikipedia.org/wiki/Cue_sheet_(computing)</a> <br  />
 <br  />
 Real life example: <br  />
 <br  />
@@ -176,14 +176,14 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
  PERFORMER "Subway to Sally" <br  />
  TITLE "Seemannslied" <br  />
  INDEX 01 36:53:71 <br  />
-.  <a href="cuesheetparser_8cc.html#a1cf97a041d9387210263e35802498bc9">More...</a><br /></td></tr>
-<tr class="separator:a1cf97a041d9387210263e35802498bc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12737626d04270bf1f5723278c588a76"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#a12737626d04270bf1f5723278c588a76">parse_cuesheet</a> (const std::string &amp;filename, const std::string &amp;cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
-<tr class="memdesc:a12737626d04270bf1f5723278c588a76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a cue sheet and build virtual set of files.  <a href="cuesheetparser_8cc.html#a12737626d04270bf1f5723278c588a76">More...</a><br /></td></tr>
-<tr class="separator:a12737626d04270bf1f5723278c588a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad66bb7752391c69f1cb066e847ef97e3"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#ad66bb7752391c69f1cb066e847ef97e3">parse_cuesheet</a> (const std::string &amp;filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
-<tr class="memdesc:ad66bb7752391c69f1cb066e847ef97e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">parse_cuesheet  <a href="cuesheetparser_8cc.html#ad66bb7752391c69f1cb066e847ef97e3">More...</a><br /></td></tr>
-<tr class="separator:ad66bb7752391c69f1cb066e847ef97e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+.  <a href="cuesheetparser_8cc.html#afaf71f7de44e483db3c9b1ce0673fd29">More...</a><br /></td></tr>
+<tr class="separator:afaf71f7de44e483db3c9b1ce0673fd29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e28e9f6074d4b6ac77f529f23e9993a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#a5e28e9f6074d4b6ac77f529f23e9993a">parse_cuesheet</a> (const std::string &amp;filename, const std::string &amp;cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)</td></tr>
+<tr class="memdesc:a5e28e9f6074d4b6ac77f529f23e9993a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a cue sheet and build virtual set of files.  <a href="cuesheetparser_8cc.html#a5e28e9f6074d4b6ac77f529f23e9993a">More...</a><br /></td></tr>
+<tr class="separator:a5e28e9f6074d4b6ac77f529f23e9993a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4480b70f297b07e27fb4ad430b7373f"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#aa4480b70f297b07e27fb4ad430b7373f">parse_cuesheet</a> (const std::string &amp;filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)</td></tr>
+<tr class="memdesc:aa4480b70f297b07e27fb4ad430b7373f"><td class="mdescLeft">&#160;</td><td class="mdescRight">parse_cuesheet  <a href="cuesheetparser_8cc.html#aa4480b70f297b07e27fb4ad430b7373f">More...</a><br /></td></tr>
+<tr class="separator:aa4480b70f297b07e27fb4ad430b7373f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee28ac5bd19c5b710b9a1ba7198ff42e"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8cc.html#aee28ac5bd19c5b710b9a1ba7198ff42e">parse_embedded_cuesheet</a> (const std::string &amp;filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)</td></tr>
 <tr class="memdesc:aee28ac5bd19c5b710b9a1ba7198ff42e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse embedded cue sheet, if present.  <a href="cuesheetparser_8cc.html#aee28ac5bd19c5b710b9a1ba7198ff42e">More...</a><br /></td></tr>
 <tr class="separator:aee28ac5bd19c5b710b9a1ba7198ff42e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,7 +213,7 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 <li>On sector contains 75 frames per CD specs </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00040">40</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00039">39</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
 </div>
 </div>
@@ -232,7 +232,7 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 <li>Extension of virtual tracks directory </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00043">43</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00042">42</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
 </div>
 </div>
@@ -255,7 +255,7 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 <li>Return string or empty string if val is nullptr </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00041">41</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00040">40</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
 </div>
 </div>
@@ -311,16 +311,16 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>-errno or number or titles in cue sheet </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00470">470</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00398">398</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01030">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00900">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00550">check_path()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00988">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00537">find_file()</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00277">parse_cuesheet()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00407">parse_embedded_cuesheet()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00960">remove_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00945">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01008">replace_ext()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, and <a class="el" href="cuesheetparser_8cc_source.html#l00043">TRACKDIR</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01117">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00987">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00550">check_path()</a>, <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01147">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01075">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l00537">find_file()</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00230">parse_cuesheet()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00362">parse_embedded_cuesheet()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01047">remove_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01032">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01095">replace_ext()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00042">TRACKDIR</a>, and <a class="el" href="logging_8h_source.html#l00234">Logging::warning()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01264">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00990">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
-<a id="a1cf97a041d9387210263e35802498bc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cf97a041d9387210263e35802498bc9">&#9670;&nbsp;</a></span>create_cuesheet_virtualfile()</h2>
+<a id="afaf71f7de44e483db3c9b1ce0673fd29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaf71f7de44e483db3c9b1ce0673fd29">&#9670;&nbsp;</a></span>create_cuesheet_virtualfile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,6 +387,12 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>date</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t *&#160;</td>
+          <td class="paramname"><em>remainingduration</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -472,6 +478,7 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
     <tr><td class="paramdir">[in]</td><td class="paramname">album</td><td>- Name of album. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">genre</td><td>- Album genre. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">date</td><td>- Publishing date. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">remainingduration</td><td>- Remaining duration of file in AV_TIME_BASE fractions. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">lastfile</td><td>- Pointer to last virtual file. May be nullptr if none exists. </td></tr>
   </table>
   </dd>
@@ -481,16 +488,16 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 <p>&lt;* </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>Should store the correct index (audio) in m_format_idx </dd></dl>
 <p>&lt; </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>probe original file for info </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00150">150</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00120">120</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00164">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01465">format_duration()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00040">FPS</a>, <a class="el" href="fuseops_8cc_source.html#l00507">insert_dir()</a>, <a class="el" href="fuseops_8cc_source.html#l00464">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00216">VIRTUALFILE::CUESHEET_TRACK::m_album</a>, <a class="el" href="fileio_8h_source.html#l00214">VIRTUALFILE::CUESHEET_TRACK::m_artist</a>, <a class="el" href="structVIRTUALFILE.html#afd9a0cb11263d27d5cafa241ee62a8ec">VIRTUALFILE::m_cuesheet</a>, <a class="el" href="fileio_8h_source.html#l00218">VIRTUALFILE::CUESHEET_TRACK::m_date</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00221">VIRTUALFILE::CUESHEET_TRACK::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00217">VIRTUALFILE::CUESHEET_TRACK::m_genre</a>, <a class="el" href="fileio_8h_source.html#l00143">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00220">VIRTUALFILE::CUESHEET_TRACK::m_start</a>, <a class="el" href="fileio_8h_source.html#l00215">VIRTUALFILE::CUESHEET_TRACK::m_title</a>, <a class="el" href="fileio_8h_source.html#l00213">VIRTUALFILE::CUESHEET_TRACK::m_trackno</a>, <a class="el" href="fileio_8h_source.html#l00212">VIRTUALFILE::CUESHEET_TRACK::m_tracktotal</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01726">replace_all()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02280">stat_set_size()</a>, <a class="el" href="transcode_8cc_source.html#l00246">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00273">transcoder_set_filesize()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00041">VAL_OR_EMPTY</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_CUESHEET</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00164">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01552">format_duration()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00039">FPS</a>, <a class="el" href="fuseops_8cc_source.html#l00507">insert_dir()</a>, <a class="el" href="fuseops_8cc_source.html#l00464">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00216">VIRTUALFILE::CUESHEET_TRACK::m_album</a>, <a class="el" href="fileio_8h_source.html#l00214">VIRTUALFILE::CUESHEET_TRACK::m_artist</a>, <a class="el" href="structVIRTUALFILE.html#afd9a0cb11263d27d5cafa241ee62a8ec">VIRTUALFILE::m_cuesheet</a>, <a class="el" href="fileio_8h_source.html#l00218">VIRTUALFILE::CUESHEET_TRACK::m_date</a>, <a class="el" href="fileio_8h_source.html#l00142">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00221">VIRTUALFILE::CUESHEET_TRACK::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00136">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00217">VIRTUALFILE::CUESHEET_TRACK::m_genre</a>, <a class="el" href="fileio_8h_source.html#l00143">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00220">VIRTUALFILE::CUESHEET_TRACK::m_start</a>, <a class="el" href="fileio_8h_source.html#l00215">VIRTUALFILE::CUESHEET_TRACK::m_title</a>, <a class="el" href="fileio_8h_source.html#l00213">VIRTUALFILE::CUESHEET_TRACK::m_trackno</a>, <a class="el" href="fileio_8h_source.html#l00212">VIRTUALFILE::CUESHEET_TRACK::m_tracktotal</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01813">replace_all()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02367">stat_set_size()</a>, <a class="el" href="transcode_8cc_source.html#l00246">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00273">transcoder_set_filesize()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00040">VAL_OR_EMPTY</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_CUESHEET</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00302">parse_cuesheet()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00256">parse_cuesheet()</a>.</p>
 
 </div>
 </div>
-<a id="ad66bb7752391c69f1cb066e847ef97e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad66bb7752391c69f1cb066e847ef97e3">&#9670;&nbsp;</a></span>parse_cuesheet() <span class="overload">[1/2]</span></h2>
+<a id="aa4480b70f297b07e27fb4ad430b7373f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4480b70f297b07e27fb4ad430b7373f">&#9670;&nbsp;</a></span>parse_cuesheet() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -526,7 +533,13 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">fuse_fill_dir_t&#160;</td>
-          <td class="paramname"><em>filler</em>&#160;</td>
+          <td class="paramname"><em>filler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>duration</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -549,19 +562,20 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
     <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- The buffer passed to the readdir() operation. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">duration</td><td>- Total duration of input file. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00302">302</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00256">256</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01030">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00900">append_sep()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00150">create_cuesheet_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00507">insert_dir()</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00929">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00945">remove_path()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00043">TRACKDIR</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00041">VAL_OR_EMPTY</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_CUESHEET</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01117">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00987">append_sep()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00120">create_cuesheet_virtualfile()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l00507">insert_dir()</a>, <a class="el" href="fileio_8h_source.html#l00139">VIRTUALFILE::m_st</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01016">remove_filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01032">remove_path()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00042">TRACKDIR</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00040">VAL_OR_EMPTY</a>, <a class="el" href="fileio_8h_source.html#l00112">VIRTUALFLAG_CUESHEET</a>, and <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>.</p>
 
 </div>
 </div>
-<a id="a12737626d04270bf1f5723278c588a76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12737626d04270bf1f5723278c588a76">&#9670;&nbsp;</a></span>parse_cuesheet() <span class="overload">[2/2]</span></h2>
+<a id="a5e28e9f6074d4b6ac77f529f23e9993a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e28e9f6074d4b6ac77f529f23e9993a">&#9670;&nbsp;</a></span>parse_cuesheet() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -597,7 +611,13 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">fuse_fill_dir_t&#160;</td>
-          <td class="paramname"><em>filler</em>&#160;</td>
+          <td class="paramname"><em>filler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>duration</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -620,16 +640,17 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
     <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- The buffer passed to the readdir() operation. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">duration</td><td>- Total duration of input file. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of titles in cue sheet. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00277">277</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00230">230</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l02082">read_file()</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l02169">read_file()</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00470">check_cuesheet()</a>, and <a class="el" href="cuesheetparser_8cc_source.html#l00407">parse_embedded_cuesheet()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00398">check_cuesheet()</a>, and <a class="el" href="cuesheetparser_8cc_source.html#l00362">parse_embedded_cuesheet()</a>.</p>
 
 </div>
 </div>
@@ -691,11 +712,11 @@ FILE "Subway to Sally - Nord Nord Ost.flac" WAVE <br  />
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00407">407</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00362">362</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01060">ffmpeg_geterror()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00277">parse_cuesheet()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01726">replace_all()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, and <a class="el" href="logging_8h_source.html#l00234">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="cuesheetparser_8cc_source.html#l00230">parse_cuesheet()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01813">replace_all()</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00470">check_cuesheet()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cuesheetparser_8cc_source.html#l00398">check_cuesheet()</a>.</p>
 
 </div>
 </div>

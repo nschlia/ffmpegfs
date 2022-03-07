@@ -133,9 +133,6 @@ $(function() {
 <li>m_audio_resample_ctx
 : <a class="el" href="classFFmpeg__Transcoder.html#a7ca75819f53b4c3f3b3a74f167c16cf0">FFmpeg_Transcoder</a>
 </li>
-<li>m_audio_start_time
-: <a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a395df24612dd35b649e37a040f2df0c1">FFmpeg_Transcoder::INPUTFILE</a>
-</li>
 <li>m_audiobitrate
 : <a class="el" href="structCACHE__INFO.html#a0eadac14b90ba229448f74afb4d1ee32">CACHE_INFO</a>
 , <a class="el" href="structFFMPEGFS__PARAMS.html#a781c1b783c0197537755e5c67513709c">FFMPEGFS_PARAMS</a>
@@ -606,12 +603,10 @@ $(function() {
 </li>
 <li>m_id
 : <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
+, <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_ID
 : <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
-</li>
-<li>m_id
-: <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_id3v1
 : <a class="el" href="classCache__Entry.html#aa33524817fcebc9a0daca7864d1863ab">Cache_Entry</a>
@@ -948,14 +943,29 @@ $(function() {
 , <a class="el" href="classVcdIO.html#aa6fcaea5343c6f981bff2432c286e016">VcdIO</a>
 , <a class="el" href="structVIRTUALFILE_1_1VCD__CHAPTER.html#a6d58096dab99e0e71106bc3bbbdc1b4f">VIRTUALFILE::VCD_CHAPTER</a>
 </li>
+<li>m_start_time
+: <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#ace8e38251ea42a3638761a960a279012">FFmpeg_Transcoder::STREAMREF</a>
+</li>
 <li>m_stream
 : <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#aae244dbcf9eec59780b1c78b7c081fed">FFmpeg_Transcoder::STREAMREF</a>
 </li>
 <li>m_stream_idx
 : <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#ad7dcf1c1130f5058e6f845c7e5c24aa8">FFmpeg_Transcoder::STREAMREF</a>
 </li>
+<li>m_stream_map
+: <a class="el" href="classFFmpeg__Transcoder.html#a9c09c98e8f55ca898f7e1ceed7f2eaf3">FFmpeg_Transcoder</a>
+</li>
 <li>m_sub_format_guid
 : <a class="el" href="structWAV__HEADER__EX.html#a0dec19a13eff9b5560ced3a2cdae5d23">WAV_HEADER_EX</a>
+</li>
+<li>m_subtitle
+: <a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a5689755e04ebb0f13c80b3da8898433a">FFmpeg_Transcoder::INPUTFILE</a>
+</li>
+<li>m_subtitle_codec
+: <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#ae712f6db82831d954948b50d4e55cc34">Format_Options::_tagFORMAT</a>
+</li>
+<li>m_subtitle_fifos
+: <a class="el" href="classFFmpeg__Transcoder.html#a1030849143fc032c7e33b2d28d579fc6">FFmpeg_Transcoder</a>
 </li>
 <li>m_supported
 : <a class="el" href="structHWACCEL.html#a6b65c4fd15ba6ad4609704c93daa980c">HWACCEL</a>
@@ -1020,10 +1030,10 @@ $(function() {
 : <a class="el" href="structVIRTUALFILE_1_1CUESHEET__TRACK.html#aac21e3458448b474c340f10c6b50c207">VIRTUALFILE::CUESHEET_TRACK</a>
 </li>
 <li>m_type
-: <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
-, <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
-, <a class="el" href="classVcdInfo.html#acf8cf2e64c1091a63df1aa2cea15bc62">VcdInfo</a>
+: <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
+, <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
 , <a class="el" href="structVCDINFO.html#a3c3488d8b79ae54e2d2a6fbd1a9644f3">VCDINFO</a>
+, <a class="el" href="classVcdInfo.html#acf8cf2e64c1091a63df1aa2cea15bc62">VcdInfo</a>
 , <a class="el" href="structVIRTUALFILE.html#a27038be2501f0f2a535748179cf90ec0">VIRTUALFILE</a>
 </li>
 <li>m_valid_bits_per_sample
@@ -1054,9 +1064,6 @@ $(function() {
 </li>
 <li>m_video_pts
 : <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a19ff8c025fd24f6f0b123720b90a16e2">FFmpeg_Transcoder::OUTPUTFILE</a>
-</li>
-<li>m_video_start_time
-: <a class="el" href="structFFmpeg__Transcoder_1_1INPUTFILE.html#a00d43acf00c5ec85b8abedc28588d0e1">FFmpeg_Transcoder::INPUTFILE</a>
 </li>
 <li>m_videobitrate
 : <a class="el" href="structCACHE__INFO.html#ae35203df2812763dd6111c07e99ca2cf">CACHE_INFO</a>

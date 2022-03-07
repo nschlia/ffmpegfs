@@ -11,6 +11,7 @@ Important changes in 2.10 (2022-03-XX):
   transcoded to the output files.
 * Enhancement:
 * Bugfix: Fixed memory leak in encode_audio_frame().
+* Bugfix: Issue #122: Last song was missing from cuesheet files.
 
 Important changes in 2.9 (2022-02-16):
 

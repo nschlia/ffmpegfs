@@ -722,10 +722,10 @@ set(CMAKE_C_FLAGS_MINSIZEREL "-std=c99 ${FLAGS} -DNDEBUG -Osize")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-std=c99 ${FLAGS} -DNDEBUG -O0 -g")
 set(CMAKE_C_FLAGS_RELEASE "-std=c99 ${FLAGS} -DNDEBUG -Ofast")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 ${FLAGS} -ggdb")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "-std=c++11 ${FLAGS} -DNDEBUG -Osize")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-std=c++11 ${FLAGS} -DNDEBUG -O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 ${FLAGS} -DNDEBUG -Ofast")
+set(CMAKE_CXX_FLAGS_DEBUG "-std=c++17 ${FLAGS} -ggdb")
+set(CMAKE_CXX_FLAGS_MINSIZEREL "-std=c++17 ${FLAGS} -DNDEBUG -Osize")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-std=c++17 ${FLAGS} -DNDEBUG -O0 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-std=c++17 ${FLAGS} -DNDEBUG -Ofast")
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
     -D_FILE_OFFSET_BITS=64
@@ -799,6 +799,7 @@ add_custom_target(cppcheck DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log")
 #install(FILES configure ChangeLog DESTINATION .)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 install(DIRECTORY DESTINATION /var/cache/ffmpegfs/)
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "asciidoc-base automake bc libavfilter-dev libavcodec-dev libavformat-dev libavutil-dev libbluray-dev libchromaprint-dev libdvdnav-dev libdvdread-dev libfuse-dev libsqlite3-dev libswresample-dev libswscale-dev libcue-dev libchardet-dev libtool docbook-xml docbook-xsl xsltproc xxd w3m")
 

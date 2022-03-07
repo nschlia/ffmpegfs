@@ -126,6 +126,13 @@ protected:
      */
     void                audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
+     * @brief Print info of subtitle stream to log.
+     * @param[in] out_file - true if file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to stream.
+     * @param[in] stream - Stream to show information for.
+     */
+    void                subtitle_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
+    /**
      * @brief Calls av_get_pix_fmt_name and returns a std::string with the pix format name.
      * @param[in] pix_fmt - AVPixelFormat enum to convert.
      * @return Returns a std::string with the pix format name.

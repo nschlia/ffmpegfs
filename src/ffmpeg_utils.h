@@ -298,6 +298,7 @@ struct Format_Options
     {
         CODEC_VECT      m_video_codec;          /**< @brief AVCodec used for video encoding */
         CODEC_VECT      m_audio_codec;          /**< @brief AVCodec used for audio encoding */
+        CODEC_VECT      m_subtitle_codec;       /**< @brief AVCodec used for subtitle encoding */
         AVSampleFormat  m_sample_format;        /**< @brief AVSampleFormat for audio encoding, may be AV_SAMPLE_FMT_NONE for "don't care" */
     } FORMAT;
 
@@ -385,6 +386,13 @@ public:
      * @return Returns comma separated list of formats, or empty if not available.
      */
     std::string         sample_fmt_list() const;
+
+    /**
+     * @brief Get subtitle codec_id
+     * @param[in] codec_id - Input stream codec ID
+     * @return Returns subtitle codec_id that matches the input stream codec ID, or AV_CODEC_ID_NONE of no match.
+     */
+    AVCodecID           subtitle_codec(AVCodecID codec_id) const;
 
 protected:
     /**
@@ -490,6 +498,13 @@ public:
      * @return Returns comma separated list of formats, or empty if not available.
      */
     std::string         sample_fmt_list() const;
+
+    /**
+     * @brief Get subtitle codec_id
+     * @param[in] codec_id - Input stream codec ID
+     * @return Returns subtitle codec_id that matches the input stream codec ID, or AV_CODEC_ID_NONE of no match.
+     */
+    AVCodecID           subtitle_codec(AVCodecID codec_id) const;
 
     /**
      * @brief Check if this si some sort of multi file format
@@ -994,5 +1009,13 @@ typename std::map<const std::string, const T, comp>::const_iterator search_by_va
     }
     return mapOfWords.cend();
 }
+
+/**
+ * @brief Check if subtitle codec is a text or graphical codec
+ * @param[in] codec_id - Codec to check, must be one of the subtitle codecs.
+ * @return Returns true if codec_id is a text based codec, false if it is bitmap based.
+ */
+bool is_text_codec(AVCodecID codec_id);
+
 
 #endif

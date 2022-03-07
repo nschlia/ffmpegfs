@@ -92,13 +92,17 @@ public:
         STREAMREF() :
             m_codec_ctx(nullptr),
             m_stream(nullptr),
-            m_stream_idx(INVALID_STREAM)
+            m_stream_idx(INVALID_STREAM),
+            m_start_time(0)
         {}
 
         AVCodecContext *        m_codec_ctx;                        /**< @brief AVCodecContext for this encoder stream */
         AVStream *              m_stream;                           /**< @brief AVStream for this encoder stream */
         int                     m_stream_idx;                       /**< @brief Stream index in AVFormatContext */
+        int64_t                 m_start_time;                       /**< @brief Start time of the stream in stream time base units, may be 0 */
     };
+
+    typedef std::map<int, STREAMREF> STREAMREF_MAP;                 /**< @brief Map stream index to STREAMREF */
 
     struct INPUTFILE                                                /**< @brief Input file definition */
     {
@@ -106,9 +110,7 @@ public:
             m_filetype(FILETYPE_UNKNOWN),
             m_filename("unset"),
             m_format_ctx(nullptr),
-            m_pix_fmt(AV_PIX_FMT_NONE),
-            m_audio_start_time(0),
-            m_video_start_time(0)
+            m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;                         /**< @brief File type, MP3, MP4, OPUS etc. */
@@ -119,11 +121,9 @@ public:
         STREAMREF               m_audio;                            /**< @brief Audio stream information */
         STREAMREF               m_video;                            /**< @brief Video stream information */
         AVPixelFormat           m_pix_fmt;                          /**< @brief Video stream pixel format */
+        STREAMREF_MAP           m_subtitle;                         /**< @brief Subtitle stream information */
 
         std::vector<STREAMREF>  m_album_art;                        /**< @brief Album art stream */
-
-        int64_t                 m_audio_start_time;                 /**< @brief Start time of the audio stream in input audio stream time base units, may be 0 */
-        int64_t                 m_video_start_time;                 /**< @brief Start time of the video stream in input video stream time base units, may be 0 */
     };
 
     // Output file
@@ -155,6 +155,9 @@ public:
     } HWACCELMODE;
 
     typedef std::queue<AVFrame*>        FRAMEFIFO;                  /**< @brief Audio/video frame buffer */
+    typedef std::queue<AVSubtitle*>     SUBTITLEFIFO;               /**< @brief Subtitle buffer */
+    typedef std::map<int, SUBTITLEFIFO> SUBTITLEFIFO_MAP;           /**< @brief Map stream index to SUBTITLEFIFO */
+    typedef std::map<int, int>          STREAM_MAP;                 /**< @brief Map input to output stream */
 
 public:
     /**
@@ -335,6 +338,10 @@ public:
      * @brief Flush delayed video packets, if there are any
      */
     int                         flush_delayed_video();
+    /**
+     * @brief Flush delayed subtitle packets, if there are any
+     */
+    int                         flush_delayed_subtitles();
 
 protected:
     /**
@@ -414,6 +421,13 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
     int                         add_stream(AVCodecID codec_id);
+    /**
+     * @brief Add new subtitle stream to output file.
+     * @param[in] codec_id - Codec for this stream.
+     * @param[in] input_streamref - Streamref of input stream.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref);
     /**
      * @brief Add new stream copy to output file.
      * @param[in] codec_id - Codec for this stream.
@@ -526,6 +540,13 @@ protected:
      */
     int                         decode_video_frame(AVPacket *pkt, int *decoded);
     /**
+     * @brief Decode one subtitle
+     * @param[in] pkt - Packet to decode.
+     * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         decode_subtitle(AVPacket *pkt, int *decoded);
+    /**
      * @brief Decode one frame.
      * @param[in] pkt - Packet to decode.
      * @return On success returns 0; on error negative AVERROR.
@@ -628,6 +649,14 @@ protected:
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
+    /**
+     * @brief Encode one subtitle frame to the output file.
+     * @param[in] sub - Subtitle frame to encode
+     * @param[in] out_stream_idx - Index of stream to encode to.
+     * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
+     * @return On success returns 0. On error, returns a negative AVERROR value.
+     */
+    int                         encode_subtitle(const AVSubtitle *sub, int out_stream_idx, int *data_present);
     /**
      * @brief Encode frame to image
      * @param[in] frame - Video frame to encode
@@ -775,6 +804,11 @@ protected:
      * @return Number of frames that have been purged. Function never fails.
      */
     size_t                      purge_video_frame_fifo();
+    /**
+     * @brief Purge all frames in all subtitle frame FIFOs
+     * @return Number of frames that have been purged. Function never fails.
+     */
+    size_t                      purge_subtitle_frame_fifos();
     /**
      * @brief Purge all packets in HLS FIFO buffer
      * @return Number of Packets that have been purged. Function never fails.
@@ -1007,11 +1041,32 @@ protected:
      */
     bool                        is_video_stream(int stream_idx) const;
     /**
+     * @brief Check for subtitle stream
+     * @param[in] stream_idx - ID of stream to check
+     * @return Returns 0 if stream is a subtitle stream, false if not.
+     */
+    bool                        is_subtitle_stream(int stream_idx) const;
+    /**
+     * @brief Get subtitle stream for the stream index
+     * @param stream_idx - Stream index to get subtitle stream for
+     * @return Pointer to subbtitle stream or nullptr if not found
+     */
+    STREAMREF *                 get_out_subtitle_stream(int stream_idx);
+    /**
      * @brief Check if stream exists
      * @param[in] stream_idx - ID of stream to check
      * @return Returns 0 if stream exists, false if not.
      */
     bool                        stream_exists(int stream_idx) const;
+
+    /**
+     * @brief Add entry to input stream to output stream map.
+     * @param[in] in_stream_idx - Index of input stream
+     * @param[in] out_stream_idx - Index of output stream
+     */
+    void                        add_stream_map(int in_stream_idx, int out_stream_idx);
+
+    int                         map_in_to_out_stream(int in_stream_idx) const;
 
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */
@@ -1045,8 +1100,13 @@ private:
     int64_t                     m_pts;                          /**< @brief Generated PTS */
     int64_t                     m_pos;                          /**< @brief Generated position */
 
+    // Subtitle conversion and buffering
+    SUBTITLEFIFO_MAP            m_subtitle_fifos;                /**< @brief FIFOs for all subtitle streams */
+
+    // Common things for audio/video/subtitles
     INPUTFILE                   m_in;                           /**< @brief Input file information */
     OUTPUTFILE                  m_out;                          /**< @brief Output file information */
+    STREAM_MAP                  m_stream_map;                   /**< @brief Input stream to output stream map */
 
     uint32_t                    m_current_segment;              /**< @brief HLS only: Segment file number currently being encoded */
     bool                        m_insert_keyframe;              /**< @brief HLS only: Allow insertion of 1 keyframe */
@@ -1077,6 +1137,7 @@ private:
 
 #define FFMPEGFS_AUDIO          static_cast<uint32_t>(0x0001)   /**< @brief Denote an audio stream */
 #define FFMPEGFS_VIDEO          static_cast<uint32_t>(0x0002)   /**< @brief Denote a video stream */
+#define FFMPEGFS_SUBTITLE       static_cast<uint32_t>(0x0004)   /**< @brief Denote a subtitle stream */
 
     uint32_t                    m_active_stream_msk;            /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
     uint32_t                    m_inhibit_stream_msk;           /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */

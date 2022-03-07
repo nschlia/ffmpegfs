@@ -19,7 +19,10 @@ News
 
 ### Version 2.10 under development
 
-**New in in 2.10 (2022-02-XX):**
+**New in in 2.10 (2022-03-XX):**
+
+* **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files.
+* **Bugfix:** Fixed memory leak in encode_audio_frame().
 
 ### Version 2.9 released
 
@@ -104,7 +107,7 @@ Tested with:
 | **Debian 10 Buster** | 4.1.6-1~deb10u1 |  | OK |
 | **Debian 11 Bullseye** | 4.3.2-0+deb11u2 |  | OK |
 | **Raspbian 10 Buster** | 4.1.6-1~deb10u1+rpt1 |  | OK |
-| **Raspbian 11 Bullseye** | 4.3.2-0+rpt3+deb11u2 |  | OK |
+| **Raspbian 11 Bullseye** | 4.3.2-0+rpt3+deb11u2 | Added subtitle support | OK |
 | **Ubuntu 16.04.3 LTS** | .8.11-0ubuntu0.16.04.1 |  | OK |
 | **Ubuntu 17.10** | 3.3.4-2 |  | OK |
 | **Ubuntu 20.04** | 4.2.2-1ubuntu1 |  | OK |
@@ -417,6 +420,25 @@ Apple's ProRes is a so-called intermediate format, intended for post-production 
 It is not for target audience use, and certainly not suitable for internet streaming.
 
 Also please keep in mind that when using lossy source input formats the quality will not get better, but the files can be fed into software like Final Cut Pro which only accepts a small number of input formats.
+
+Transcoding Subtitles
+---------------------
+
+Closed captions are converted to the output files, if possible. There are two general subtitle formats, text and bitmap. Subtitle transcoding is currently only possible from text to text or bitmap to bitmap. It may be relatively easy to convert text to bitmap, but not vice versa. This would require some sort of OCR and can become arbitrarily complex. That may work well for latin alphabets, but there are others. Guess what would happen with Georgian, Indian, Chinese or Arabic...
+
+| Output Format    | Subtitle Codec                                               | Format |
+| ---------------- | ------------------------------------------------------------ | ------ |
+| MP4, MOV, ProRes | MOV Text (Apple Text Media Handler)                          | Text   |
+| WebM             | WebVTT Subitles                                              | Text   |
+| TS, HLS          | DVB Subtitles                                                | Bitmap |
+| MKV              | ASS (Advanced SSA), SubRip Subtitles, Web Video Text Tracks Format (WebVTT) | Text   |
+| MKV              | DVB Subtitles                                                | Bitmap |
+
+Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec. 
+
+**TODO:**
+
+* Maybe FFmpeg could convert text to bitmap for TS/HLS if the input format is not bitmapped. 
 
 MP4 Format Profiles
 ------------------

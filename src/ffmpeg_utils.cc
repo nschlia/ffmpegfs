@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -122,7 +122,7 @@ static const FILETYPE_MAP filetype_map =
 };
 
 Format_Options::Format_Options()
-    : m_format_map{ { SAMPLE_FMT_DONTCARE, { { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, AV_SAMPLE_FMT_NONE }}}
+    : m_format_map{ { SAMPLE_FMT_DONTCARE, { { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, AV_SAMPLE_FMT_NONE }}}
     , m_albumart_supported(false)
 {
 }
@@ -146,6 +146,7 @@ AVCodecID Format_Options::video_codec() const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it == m_format_map.cend())
     {
+        // Output supports no video. End of story.
         return AV_CODEC_ID_NONE;
     }
 
@@ -200,6 +201,7 @@ AVCodecID Format_Options::audio_codec() const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it == m_format_map.cend())
     {
+        // Output supports no audio??? Well then, end of story.
         return AV_CODEC_ID_NONE;
     }
 
@@ -282,6 +284,53 @@ std::string Format_Options::sample_fmt_list() const
     return buffer;
 }
 
+AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
+{
+    FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
+    if (it == m_format_map.cend())
+    {
+        // Output supports no subtitles. End of story.
+        return AV_CODEC_ID_NONE;
+    }
+
+    // Try to find direct match, prefer same as input stream
+    for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+    {
+        // Also match AV_CODEC_ID_DVD_SUBTITLE to AV_CODEC_ID_DVB_SUBTITLE
+        if (*it2 == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && *it2 == AV_CODEC_ID_DVB_SUBTITLE))
+        {
+            return *it2;
+        }
+    }
+
+    // No direct match, try to find a text/text or bitmap/bitmap pair
+    if (is_text_codec(codec_id))
+    {
+        // Find a text based codec in the list
+        for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+        {
+            if (is_text_codec(*it2))
+            {
+                return *it2;
+            }
+        }
+    }
+    else
+    {
+        // Find a bitmap based codec in the list
+        for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+        {
+            if (!is_text_codec(*it2))
+            {
+                return *it2;
+            }
+        }
+    }
+
+    // No matching codec support
+    return AV_CODEC_ID_NONE;
+}
+
 const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 {
     //{
@@ -293,6 +342,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     //            {
     //                List of video codecs
     //                List of audio codec(s)
+    //                List of subtitle codec(s)
     //                AVSampleFormat to be used in encoding, if AV_SAMPLE_FMT_NONE will be determined by source
     //            }
     //        }
@@ -313,6 +363,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -334,6 +385,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_MOV_TEXT },   // MOV Text (Apple Text Media Handler): should be AV_CODEC_ID_WEBVTT, but we get "codec not currently supported in container"
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -355,6 +407,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -363,6 +416,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_U8 },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -371,6 +425,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -379,6 +434,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S24LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -388,6 +444,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S32LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -397,6 +454,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S64LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -405,6 +463,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F16LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -413,6 +472,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F24LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -421,6 +481,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F32LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -429,6 +490,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F64LE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -450,6 +512,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_THEORA },
                         { AV_CODEC_ID_VORBIS },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -471,6 +534,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },
                         { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },
+                        { AV_CODEC_ID_WEBVTT },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -492,6 +556,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_MOV_TEXT },   // MOV Text (Apple Text Media Handler): should be AV_CODEC_ID_WEBVTT, but we get "codec not currently supported in container"
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -513,6 +578,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16BE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -521,6 +587,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16BE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S16,          // 16 bit
                     }
                 },
@@ -529,6 +596,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S32BE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S32,          // 32 bit
                     }
                 },
@@ -550,6 +618,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_OPUS },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -571,6 +640,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_PRORES },
                         { AV_CODEC_ID_PCM_S16LE },
+                        { AV_CODEC_ID_MOV_TEXT },   // MOV Text (Apple Text Media Handler): should be AV_CODEC_ID_WEBVTT, but we get "codec not currently supported in container"
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -592,6 +662,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -600,6 +671,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S16P,         // 16 bit planar
                     }
                 },
@@ -608,6 +680,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S32P,         // 32 bit planar, creates 24 bit ALAC
                     }
                 }
@@ -628,6 +701,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     SAMPLE_FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_PNG },
+                        { AV_CODEC_ID_NONE },       // Audio codec(s)
                         { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
@@ -650,6 +724,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_MJPEG },
                         { AV_CODEC_ID_NONE },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -670,6 +745,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     SAMPLE_FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_BMP },
+                        { AV_CODEC_ID_NONE },       // Audio codec(s)
                         { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
@@ -692,6 +768,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_DVB_SUBTITLE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -714,6 +791,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_DVB_SUBTITLE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -735,6 +813,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 },
@@ -743,6 +822,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S16,          // Use 16 bit samples
                     }
                 },
@@ -751,6 +831,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
+                        { AV_CODEC_ID_NONE },
                         AV_SAMPLE_FMT_S32,          // Use 24 bit samples (yes, S32 creates 24 bit samples)
                     }
                 }
@@ -772,6 +853,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
+                        { AV_CODEC_ID_ASS, AV_CODEC_ID_SUBRIP, AV_CODEC_ID_WEBVTT, AV_CODEC_ID_DVB_SUBTITLE },
                         AV_SAMPLE_FMT_NONE,
                     }
                 }
@@ -895,6 +977,11 @@ bool FFmpegfs_Format::is_sample_fmt_supported() const
 std::string FFmpegfs_Format::sample_fmt_list() const
 {
     return m_cur_opts->sample_fmt_list();
+}
+
+AVCodecID FFmpegfs_Format::subtitle_codec(AVCodecID codec_id) const
+{
+    return m_cur_opts->subtitle_codec(codec_id);
 }
 
 const std::string & append_sep(std::string * path)
@@ -2300,4 +2387,36 @@ bool detect_docker(void)
         std::fprintf(stderr, "detect_docker(): Unable check if running in docker or not, exception: %s.", ex.what());
         return false;
     }
+}
+
+bool is_text_codec(AVCodecID codec_id)
+{
+    //AV_CODEC_ID_DVD_SUBTITLE = 0x17000,
+    //AV_CODEC_ID_DVB_SUBTITLE,
+    //AV_CODEC_ID_TEXT,  ///< raw UTF-8 text
+    //AV_CODEC_ID_XSUB,
+    //AV_CODEC_ID_SSA,
+    //AV_CODEC_ID_MOV_TEXT,
+    //AV_CODEC_ID_HDMV_PGS_SUBTITLE,
+    //AV_CODEC_ID_DVB_TELETEXT,
+    //AV_CODEC_ID_SRT,
+    //AV_CODEC_ID_MICRODVD,
+    //AV_CODEC_ID_EIA_608,
+    //AV_CODEC_ID_JACOSUB,
+    //AV_CODEC_ID_SAMI,
+    //AV_CODEC_ID_REALTEXT,
+    //AV_CODEC_ID_STL,
+    //AV_CODEC_ID_SUBVIEWER1,
+    //AV_CODEC_ID_SUBVIEWER,
+    //AV_CODEC_ID_SUBRIP,
+    //AV_CODEC_ID_WEBVTT,
+    //AV_CODEC_ID_MPL2,
+    //AV_CODEC_ID_VPLAYER,
+    //AV_CODEC_ID_PJS,
+    //AV_CODEC_ID_ASS,
+    //AV_CODEC_ID_HDMV_TEXT_SUBTITLE,
+    //AV_CODEC_ID_TTML,
+    //AV_CODEC_ID_ARIB_CAPTION,
+
+    return (codec_id != AV_CODEC_ID_DVD_SUBTITLE && codec_id != AV_CODEC_ID_DVB_SUBTITLE);
 }

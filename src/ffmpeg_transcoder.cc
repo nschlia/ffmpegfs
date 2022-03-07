@@ -578,6 +578,45 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
+    // If target supports subtitles, check to transcode subtitles
+    for (int stream_idx = 0; stream_idx < static_cast<int>(m_in.m_format_ctx->nb_streams); stream_idx++)
+    {
+        AVStream * stream = m_in.m_format_ctx->streams[stream_idx];
+
+        if (avcodec_get_type(CODECPAR(stream)->codec_id) != AVMEDIA_TYPE_SUBTITLE)
+        {
+            continue;
+        }
+
+        if (m_current_format->subtitle_codec(CODECPAR(stream)->codec_id) == AV_CODEC_ID_NONE)
+        {
+            // No match
+            continue;
+        }
+
+        AVCodecContext * codec_ctx = nullptr;
+
+        ret = open_decoder(&codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_SUBTITLE);
+        if (ret < 0)
+        {
+            Logging::error(filename(), "Failed to open subtitle codec (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+
+        codec_ctx->pkt_timebase = codec_ctx->time_base = stream->time_base;
+
+        STREAMREF input_streamref;
+
+        // We have a subtitle stream
+        input_streamref.m_codec_ctx   = codec_ctx;
+        input_streamref.m_stream      = stream;
+        input_streamref.m_stream_idx  = stream_idx;
+
+        m_in.m_subtitle.insert(std::make_pair(input_streamref.m_stream_idx, input_streamref));
+
+        subtitle_info(false, m_in.m_format_ctx, input_streamref.m_stream);
+    }
+
     // Predict size of transcoded file as exact as possible
     m_virtualfile->m_predicted_size = calculate_predicted_filesize();
 
@@ -1161,6 +1200,11 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
     }
 
+    for (STREAMREF_MAP::const_iterator it = m_out.m_subtitle.cbegin(); it != m_out.m_subtitle.cend(); ++it)
+    {
+        subtitle_info(true, m_out.m_format_ctx, it->second.m_stream);
+    }
+
     // Open for read/write
     if (!buffer->open_file(0, CACHE_FLAG_RW))
     {
@@ -1188,14 +1232,14 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
     if (m_in.m_audio.m_stream != nullptr && m_out.m_audio.m_stream != nullptr && m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
     {
-        m_in.m_audio_start_time                 = m_in.m_audio.m_stream->start_time;
-        m_out.m_audio_start_time                = av_rescale_q_rnd(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-        m_out.m_audio.m_stream->start_time      = m_out.m_audio_start_time;
+        m_in.m_audio.m_start_time               = m_in.m_audio.m_stream->start_time;
+        m_out.m_audio.m_start_time              = av_rescale_q_rnd(m_in.m_audio.m_stream->start_time, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        m_out.m_audio.m_stream->start_time      = m_out.m_audio.m_start_time;
     }
     else
     {
-        m_in.m_audio_start_time                 = 0;
-        m_out.m_audio_start_time                = 0;
+        m_in.m_audio.m_start_time               = 0;
+        m_out.m_audio.m_start_time              = 0;
         if (m_out.m_audio.m_stream)
         {
             m_out.m_audio.m_stream->start_time  = AV_NOPTS_VALUE;
@@ -1204,22 +1248,30 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
     if (m_in.m_video.m_stream != nullptr && m_out.m_video.m_stream != nullptr && m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
     {
-        m_in.m_video_start_time                 = m_in.m_video.m_stream->start_time;
-        m_out.m_video_start_time                = av_rescale_q_rnd(m_in.m_video.m_stream->start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-        m_out.m_video.m_stream->start_time      = m_out.m_video_start_time;
+        m_in.m_video.m_start_time               = m_in.m_video.m_stream->start_time;
+        m_out.m_video.m_start_time              = av_rescale_q_rnd(m_in.m_video.m_stream->start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        m_out.m_video.m_stream->start_time      = m_out.m_video.m_start_time;
     }
     else
     {
-        m_in.m_video_start_time                 = 0;
-        m_out.m_video_start_time                = 0;
+        m_in.m_video.m_start_time               = 0;
+        m_out.m_video.m_start_time              = 0;
         if (m_out.m_video.m_stream)
         {
             m_out.m_video.m_stream->start_time  = AV_NOPTS_VALUE;
         }
     }
 
-    m_out.m_audio_pts         = m_out.m_audio_start_time;
-    m_out.m_video_pts         = m_out.m_video_start_time;
+    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    {
+        STREAMREF * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(it->first));
+        it->second.m_start_time                 = it->second.m_stream->start_time;
+        out_streamref->m_start_time             = av_rescale_q_rnd(it->second.m_stream->start_time, it->second.m_stream->time_base, out_streamref->m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        out_streamref->m_stream->start_time     = out_streamref->m_start_time;
+    }
+
+    m_out.m_audio_pts         = m_out.m_audio.m_start_time;
+    m_out.m_video_pts         = m_out.m_video.m_start_time;
     m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
 
     return 0;
@@ -1700,6 +1752,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         m_out.m_audio.m_stream_idx              = output_stream->index;
         // Save output audio stream for faster reference
         m_out.m_audio.m_stream                  = output_stream;
+
+        // Update input to output stream map, this is rather boring because currently we only have a single audio stream
+        add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
         break;
     }
     case AVMEDIA_TYPE_VIDEO:
@@ -2019,6 +2074,9 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
         m_out.m_video.m_stream                  = output_stream;
+
+        // Update input to output stream map, this is rather boring because currently we only have a single video stream
+        add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
         break;
     }
     default:
@@ -2070,6 +2128,124 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     return 0;
 }
 
+int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref)
+{
+    AVCodecContext *output_codec_ctx    = nullptr;
+    AVStream *      output_stream       = nullptr;
+#if IF_DECLARED_CONST
+    const AVCodec * output_codec        = nullptr;
+#else // !IF_DECLARED_CONST
+    AVCodec * output_codec              = nullptr;
+#endif // !IF_DECLARED_CONST
+    AVDictionary *  opt                 = nullptr;
+    int ret;
+
+    // find the encoder
+    output_codec = avcodec_find_encoder(codec_id);
+
+    if (output_codec == nullptr)
+    {
+        Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
+        return AVERROR(EINVAL);
+    }
+
+    output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
+    if (output_stream == nullptr)
+    {
+        Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
+        return AVERROR(ENOMEM);
+    }
+    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
+
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+    output_codec_ctx = avcodec_alloc_context3(output_codec);
+    if (output_codec_ctx == nullptr)
+    {
+        Logging::error(destname(), "Could not alloc an encoding context.");
+        return AVERROR(ENOMEM);
+    }
+#else
+    output_codec_ctx = output_stream->codec;
+#endif
+
+    output_stream->time_base                = input_streamref.m_stream->time_base;
+    output_codec_ctx->time_base             = output_stream->time_base;
+
+    // set -strict -2 for aac (required for FFmpeg 2)
+    dict_set_with_check(&opt, "strict", "-2", 0);
+
+    // Allow the use of the experimental AAC encoder
+    output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+
+    // Set duration as hint for muxer
+    if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = av_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+    }
+    else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = av_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+    }
+
+    AVCodecContext * input_codec_ctx = input_streamref.m_codec_ctx;
+
+    if (input_codec_ctx && input_codec_ctx->subtitle_header)
+    {
+        // ASS code assumes this buffer is null terminated so add extra byte.
+        output_codec_ctx->subtitle_header = static_cast<uint8_t *>(av_mallocz(static_cast<size_t>(input_codec_ctx->subtitle_header_size + 1)));
+        if (!output_codec_ctx->subtitle_header)
+        {
+            return AVERROR(ENOMEM);
+        }
+        memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
+        output_codec_ctx->subtitle_header_size = input_codec_ctx->subtitle_header_size;
+    }
+
+    // Open the encoder for the stream to use it later.
+    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    Logging::debug(destname(), "Opened %1 output codec %2 for stream #%3.", get_media_type_string(output_codec->type), get_codec_name(codec_id, true), output_stream->index);
+
+#if FFMPEG_VERSION3 // Check for FFmpeg 3
+    ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Could not initialise stream parameters (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+#endif
+
+    // Copy language
+    AVDictionaryEntry *tag = nullptr;
+
+    tag = av_dict_get(input_streamref.m_stream->metadata, "language", nullptr, AV_DICT_IGNORE_SUFFIX);
+    if (tag != nullptr)
+    {
+        av_dict_set(&output_stream->metadata, "language", tag->value, AV_DICT_IGNORE_SUFFIX);
+    }
+
+    // Save the encoder context for easier access later.
+    STREAMREF output_streamref;
+
+    output_streamref.m_codec_ctx               = output_codec_ctx;
+    // Save the stream index
+    output_streamref.m_stream_idx              = output_stream->index;
+    // Save output audio stream for faster reference
+    output_streamref.m_stream                  = output_stream;
+
+    m_out.m_subtitle.insert(std::make_pair(output_streamref.m_stream_idx, output_streamref));
+
+    // Update input to output stream map
+    add_stream_map(input_streamref.m_stream_idx, output_streamref.m_stream_idx);
+
+    return 0;
+}
+
 int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_type)
 {
     AVStream *      output_stream       = nullptr;
@@ -2117,6 +2293,9 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         m_out.m_audio.m_stream_idx              = output_stream->index;
         // Save output audio stream for faster reference
         m_out.m_audio.m_stream                  = output_stream;
+
+        // Update input to output stream map, this is rather boring because currently we only have a single audio stream
+        add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
         break;
     }
     case AVMEDIA_TYPE_VIDEO:
@@ -2154,6 +2333,8 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         // Save output video stream for faster reference
         m_out.m_video.m_stream                  = output_stream;
 
+        // Update input to output stream map, this is rather boring because currently we only have a single video stream
+        add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
         break;
     }
     default:
@@ -2419,6 +2600,32 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             Logging::info(destname(), "Copying audio stream.");
 
             ret = add_stream_copy(m_current_format->audio_codec(), AVMEDIA_TYPE_AUDIO);
+            if (ret < 0)
+            {
+                return ret;
+            }
+        }
+    }
+
+    if (m_in.m_subtitle.size())
+    {
+        // No copy option, not worth it for a few frames
+        // Create as many subtitle streams as required
+        for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+        {
+            AVCodecID codec_id = m_current_format->subtitle_codec(CODECPAR(it->second.m_stream)->codec_id); // Get matching output codec
+
+            if (codec_id == AV_CODEC_ID_NONE)
+            {
+                // No matching output codec
+                continue;
+            }
+
+            //m_active_stream_msk     |= FFMPEGFS_SUBTITLE;
+
+            int ret;
+
+            ret = add_subtitle_stream(codec_id, it->second);
             if (ret < 0)
             {
                 return ret;
@@ -3251,7 +3458,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     frame->pts = m_pts;
                 }
 
-                int64_t video_start_time = m_out.m_video_start_time;
+                int64_t video_start_time = m_out.m_video.m_start_time;
 
                 if (m_out.m_video.m_stream != nullptr && frame->pts != AV_NOPTS_VALUE)
                 {
@@ -3307,6 +3514,61 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     return ret;
 }
 
+int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
+{
+    STREAMREF_MAP::const_iterator it = m_in.m_subtitle.find(pkt->stream_index);
+    int ret = 0;
+
+    if (it == m_in.m_subtitle.cend())
+    {
+        // Should never happen, this should never be called with anything else than subtitle packets.
+        ret = AVERROR_STREAM_NOT_FOUND;
+        Logging::error(filename(), "INTERNAL ERROR! Subtitle stream #%1 not found (error '%2').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    int data_present = 0;
+
+    AVCodecContext *codec_ctx = it->second.m_codec_ctx;
+    SUBTITLEFIFO & subtitlefifo = m_subtitle_fifos[pkt->stream_index];   // This will either return the existing SUBTITLEFIFO, or create a new one
+
+    *decoded = 0;
+
+    // Decode the audio frame stored in the temporary packet.
+    // The input audio stream decoder is used to do this.
+    // If we are at the end of the file, pass an empty packet to the decoder
+    // to flush it.
+
+    // Temporary storage of the input samples of the frame read from the file.
+    AVSubtitle *sub = new AVSubtitle;
+
+    memset(sub, 0, sizeof(AVSubtitle));
+
+    ret = avcodec_decode_subtitle2(codec_ctx, sub, &data_present, pkt);
+
+    if (ret < 0 && ret != AVERROR(EINVAL))
+    {
+        Logging::error(filename(), "Could not decode subtitle frame (error '%1').", ffmpeg_geterror(ret).c_str());
+        delete sub;
+        return ret;
+    }
+
+    *decoded = ret;
+    ret = 0;
+
+    if (data_present)
+    {
+        // If there is decoded data, store it
+        subtitlefifo.push(sub);
+    }
+    else
+    {
+        delete sub;
+    }
+
+    return ret;
+}
+
 int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 {
     if (is_hls() && pkt->pts != AV_NOPTS_VALUE)
@@ -3315,7 +3577,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         {
         case AVMEDIA_TYPE_AUDIO:
         {
-            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_audio_start_time, m_out.m_audio.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
             if (pos < 0)
             {
                 pos = 0;
@@ -3338,7 +3600,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         }
         case AVMEDIA_TYPE_VIDEO:
         {
-            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_video_start_time, m_out.m_video.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            int64_t pos = av_rescale_q_rnd(pkt->pts - m_out.m_video.m_start_time, m_out.m_video.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
             if (pos < 0)
             {
                 pos = 0;
@@ -3356,6 +3618,34 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
                 return 0;
+            }
+            break;
+        }
+        case AVMEDIA_TYPE_SUBTITLE:
+        {
+            STREAMREF * subtitle = get_out_subtitle_stream(pkt->stream_index);
+
+            if (subtitle != nullptr && subtitle->m_stream != nullptr)
+            {
+                int64_t pos = av_rescale_q_rnd(pkt->pts - subtitle->m_start_time, subtitle->m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+                if (pos < 0)
+                {
+                    pos = 0;
+                }
+                uint32_t next_segment = get_next_segment(pos);
+
+                if (goto_next_segment(next_segment))
+                {
+                    //if (!(m_inhibit_stream_msk & FFMPEGFS_SUBTITLE))
+                    //{
+                    //    m_inhibit_stream_msk |= FFMPEGFS_SUBTITLE;
+
+                    //    Logging::trace(destname(), "Buffering subtitle packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
+                    //}
+
+                    m_hls_packet_fifo.push(av_packet_clone(pkt));
+                    return 0;
+                }
             }
             break;
         }
@@ -3524,6 +3814,12 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
             ret = store_packet(pkt, AVMEDIA_TYPE_VIDEO);
         }
+    }
+    else if (is_subtitle_stream(pkt->stream_index))
+    {
+        // Decode subtitle. No copy option.
+        int decoded = 0;
+        ret = decode_subtitle(pkt, &decoded);
     }
     else
     {
@@ -4327,6 +4623,146 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     return ret;
 }
 
+int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx, int *data_present)
+{
+    STREAMREF * out_streamref = get_out_subtitle_stream(out_stream_idx);
+
+    *data_present = 0;
+
+    if (out_streamref == nullptr)
+    {
+        Logging::error(destname(), "INTERNAL ERROR! Invalid stream index #%1 passed to encode_subtitle", out_stream_idx);
+        return AVERROR(EINVAL);
+    }
+
+    // Packet used for temporary storage.
+#if !LAVC_DEP_AV_INIT_PACKET
+    AVPacket tmp_pkt;
+#endif // !LAVC_DEP_AV_INIT_PACKET
+    AVPacket *pkt;
+    int ret = 0;
+
+#if LAVC_DEP_AV_INIT_PACKET
+    pkt = av_packet_alloc();
+#else // !LAVC_DEP_AV_INIT_PACKET
+    pkt = &tmp_pkt;
+    init_packet(pkt);
+#endif // !LAVC_DEP_AV_INIT_PACKET
+
+    AVSubtitle subtmp;
+
+    // Make a local copy, we have to modify it
+    memcpy(&subtmp, sub, sizeof(AVSubtitle));
+
+    try
+    {
+        int nb;
+        int64_t pts;
+
+        if (subtmp.pts == AV_NOPTS_VALUE)
+        {
+            Logging::error(destname(), "Subtitle packets must have a pts (stream index #%1)", out_streamref->m_stream_idx);
+            throw AVERROR(EINVAL);
+        }
+
+        // Allocate a packet with 1KB buffer, hope that's sufficient
+        ret = av_new_packet(pkt, 1024 * 1024);
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Failed to allocate new packet (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+
+        // Note: DVB subtitles need one packet to draw them and one other packet to clear them
+        if (out_streamref->m_codec_ctx->codec_id == AV_CODEC_ID_DVB_SUBTITLE)
+        {
+            nb = 2;
+        }
+        else
+        {
+            nb = 1;
+        }
+
+        // shift timestamp
+        pts = subtmp.pts;
+
+        //Logging::error(nullptr, "AAA %1 %2 %3", pts, subtmp.start_display_time, subtmp.end_display_time);
+
+        //if (out_streamref->m_stream->start_time != AV_NOPTS_VALUE)
+        //{
+        //    pts -= av_rescale_q(out_streamref->m_stream->start_time, out_streamref->m_stream->time_base, av_get_time_base_q());
+        //}
+
+        //Logging::error(nullptr, "BBB %1 %2 %3", pts, subtmp.start_display_time, subtmp.end_display_time);
+
+        for (int i = 0; i < nb; i++)
+        {
+            unsigned save_num_rects     = subtmp.num_rects;
+            subtmp.pts                  = pts;
+            // start_display_time is required to be 0
+            subtmp.pts                  += av_rescale_q(subtmp.start_display_time, AVRational({ 1, 1000 }), av_get_time_base_q());
+            subtmp.end_display_time     -= subtmp.start_display_time;
+            subtmp.start_display_time   = 0;
+            if (i == 1)
+            {
+                subtmp.num_rects = 0;
+            }
+
+            // The avcodec_encode_subtitle seems to be not completely ready
+            ret = avcodec_encode_subtitle(out_streamref->m_codec_ctx, pkt->data, pkt->size, &subtmp);
+            if (i == 1)
+            {
+                subtmp.num_rects = save_num_rects;
+            }
+
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode subtitle frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            pkt->size           = ret;
+            pkt->pts            = av_rescale_q(subtmp.pts, av_get_time_base_q(), out_streamref->m_stream->time_base);
+            pkt->duration       = av_rescale_q(subtmp.end_display_time, AVRational({ 1, 1000 }), out_streamref->m_stream->time_base);
+            pkt->stream_index   = out_streamref->m_stream_idx;
+
+            if (out_streamref->m_codec_ctx->codec_id == AV_CODEC_ID_DVB_SUBTITLE)
+            {
+                // the pts correction is handled here. Maybe handling it in the codec would be better
+                if (i)
+                {
+                    pkt->pts += av_rescale_q(subtmp.end_display_time, AVRational({ 1, 1000 }), out_streamref->m_stream->time_base);
+                }
+                //else
+                //{
+                //    pkt->pts += av_rescale_q(subtmp.start_display_time, AVRational({ 1, 1000 }), out_streamref->m_stream->time_base);
+                //}
+            }
+            pkt->dts = pkt->pts;
+
+            ret = store_packet(pkt, AVMEDIA_TYPE_SUBTITLE);
+            if (ret < 0)
+            {
+                throw ret;
+            }
+
+            *data_present = 1;
+        }
+        av_packet_unref(pkt);
+    }
+    catch (int _ret)
+    {
+        av_packet_unref(pkt);
+        ret = _ret;
+    }
+
+#if LAVC_DEP_AV_INIT_PACKET
+    av_packet_free(&pkt);
+#endif // LAVC_DEP_AV_INIT_PACKET
+
+    return ret;
+}
+
 int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 {
     // Temporary storage of the output samples of the frame written to the file.
@@ -4719,6 +5155,13 @@ int FFmpeg_Transcoder::flush_delayed_video()
     return ret;
 }
 
+int FFmpeg_Transcoder::flush_delayed_subtitles()
+{
+    // TODO
+
+    return 0;
+}
+
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
@@ -4790,6 +5233,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
         }
 
+        // Encode audio
         if (!m_copy_audio && stream_exists(m_out.m_audio.m_stream_idx))
         {
             int output_frame_size;
@@ -4903,6 +5347,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
         }
 
+        // Encode video
         if (!m_copy_video)
         {
             int ret = 0;
@@ -4933,6 +5378,58 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 #endif
                 {
                     throw ret;
+                }
+            }
+
+#if LAVC_NEW_PACKET_INTERFACE
+            ret = 0;    // May be AVERROR(EAGAIN)
+#endif
+
+            // If we are at the end of the input file and have encoded
+            // all remaining samples, we can exit this loop and finish.
+
+            if (finished)
+            {
+                flush_delayed_video();
+
+                status = 1;
+            }
+        }
+
+        // Encode subtitles
+        {
+            int ret = 0;
+
+            for (SUBTITLEFIFO_MAP::iterator it = m_subtitle_fifos.begin(); it != m_subtitle_fifos.end(); ++it)
+            {
+                SUBTITLEFIFO & subtitle_fifo = it->second;
+                int out_stream_idx = map_in_to_out_stream(it->first);
+
+                if (out_stream_idx == INVALID_STREAM)
+                {
+                    Logging::error(destname(), "INTERNAL ERROR! Unable to map in subtitle stream #%1 to output stream.", it->first);
+                    throw AVERROR(EINVAL);
+                }
+
+                while (subtitle_fifo.size())
+                {
+                    AVSubtitle * subtitle = subtitle_fifo.front();
+                    subtitle_fifo.pop();
+
+                    int data_written = 0;
+                    ret = encode_subtitle(subtitle, out_stream_idx, &data_written);
+
+                    avsubtitle_free(subtitle);
+                    delete subtitle;
+
+#if !LAVC_NEW_PACKET_INTERFACE
+                    if (ret < 0)
+#else
+                    if (ret < 0 && ret != AVERROR(EAGAIN))
+#endif
+                    {
+                        throw ret;
+                    }
                 }
             }
 
@@ -5836,6 +6333,29 @@ size_t FFmpeg_Transcoder::purge_video_frame_fifo()
     return video_frames_left;
 }
 
+size_t FFmpeg_Transcoder::purge_subtitle_frame_fifos()
+{
+    size_t subtitle_frames_left  = 0;
+
+    for (SUBTITLEFIFO_MAP::iterator it = m_subtitle_fifos.begin(); it != m_subtitle_fifos.end(); ++it)
+    {
+        SUBTITLEFIFO & subtitle_fifo = it->second;
+
+        subtitle_frames_left += subtitle_fifo.size();
+
+        while (subtitle_fifo.size())
+        {
+            AVSubtitle * subtitle = subtitle_fifo.front();
+            subtitle_fifo.pop();
+
+            avsubtitle_free(subtitle);
+            delete subtitle;
+        }
+    }
+
+    return subtitle_frames_left;
+}
+
 size_t FFmpeg_Transcoder::purge_hls_fifo()
 {
     size_t hls_packets_left = m_hls_packet_fifo.size();
@@ -5857,6 +6377,7 @@ void FFmpeg_Transcoder::purge_fifos()
     int audio_samples_left      = purge_audio_fifo();
     size_t audio_frames_left    = purge_audio_frame_fifo();
     size_t video_frames_left    = purge_video_frame_fifo();
+    size_t subtitle_frames_left = purge_subtitle_frame_fifos();
     size_t hls_packets_left     = purge_hls_fifo();
 
     if (m_out.m_format_ctx != nullptr)
@@ -5886,6 +6407,11 @@ void FFmpeg_Transcoder::purge_fifos()
     if (video_frames_left)
     {
         Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
+    }
+
+    if (subtitle_frames_left)
+    {
+        Logging::warning(p, "%1 subtitle frames left in buffer and not written to target file!", subtitle_frames_left);
     }
 
     if (hls_packets_left)
@@ -6030,6 +6556,21 @@ bool FFmpeg_Transcoder::close_input_file()
             closed = true;
         }
     }
+
+    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    {
+        AVCodecContext *codec_ctx = (*it).second.m_codec_ctx;
+        if (codec_ctx != nullptr)
+        {
+#if !LAVF_DEP_AVSTREAM_CODEC
+            avcodec_close(codec_ctx);
+#else
+            avcodec_free_context(&codec_ctx);
+#endif
+            closed = true;
+        }
+    }
+    m_in.m_subtitle.clear();
 
     if (m_in.m_format_ctx != nullptr)
     {
@@ -7132,7 +7673,44 @@ bool FFmpeg_Transcoder::is_video_stream(int stream_idx) const
     return (stream_exists(stream_idx) && stream_idx == m_in.m_video.m_stream_idx);
 }
 
+bool FFmpeg_Transcoder::is_subtitle_stream(int stream_idx) const
+{
+    STREAMREF_MAP::const_iterator it = m_in.m_subtitle.find(stream_idx);
+
+    return (it != m_in.m_subtitle.cend());
+}
+
+FFmpeg_Transcoder::STREAMREF * FFmpeg_Transcoder::get_out_subtitle_stream(int stream_idx)
+{
+    STREAMREF_MAP::iterator it = m_out.m_subtitle.find(stream_idx);
+
+    if (it == m_out.m_subtitle.end())
+    {
+        return nullptr;
+    }
+
+    return &it->second;
+}
+
 bool FFmpeg_Transcoder::stream_exists(int stream_idx) const
 {
     return (stream_idx != INVALID_STREAM);
 }
+
+void FFmpeg_Transcoder::add_stream_map(int in_stream_idx, int out_stream_idx)
+{
+    m_stream_map.insert(std::make_pair(in_stream_idx, out_stream_idx));
+}
+
+int FFmpeg_Transcoder::map_in_to_out_stream(int in_stream_idx) const
+{
+    STREAM_MAP::const_iterator it = m_stream_map.find(in_stream_idx);
+
+    if (it == m_stream_map.cend())
+    {
+        return INVALID_STREAM;
+    }
+
+    return (it->second);
+}
+

@@ -268,6 +268,13 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
                    format_duration(duration).c_str());
 }
 
+void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_ctx*/, const AVStream *stream) const
+{
+    Logging::debug(out_file ? destname() : filename(), "Subtitle %1: %2",
+                   out_file ? "out" : "in",
+                   get_codec_name(CODECPAR(stream)->codec_id, false));
+}
+
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)
 {
     const char *fmt_name = av_get_pix_fmt_name(pix_fmt);

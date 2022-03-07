@@ -23,13 +23,14 @@ News
 
 * **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files.
 * **Bugfix:** Fixed memory leak in encode_audio_frame().
+* **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): Last song was missing from cuesheet files.
 
 ### Version 2.9 released
 
 **New in in 2.9 (2022-02-16):**
 
-* **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
-* **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
+* **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97): Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
+* **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109): Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
 * **Feature:** [Issue #121](https://github.com/nschlia/ffmpegfs/issues/121): Added MKV support.  New format can be selected with --desttype=mkv.
 * **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
 * **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.

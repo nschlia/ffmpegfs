@@ -52,28 +52,6 @@
 #include <vector>
 #include <regex>
 
-// Support for libavresample has finally been removed from FFmpeg API
-// as of 14.04.2021, see this commit:
-//
-// commit 420cedd49745b284c35d97b936b71ff79b43bdf7
-// Author: Andreas Rheinhardt <andreas.rheinhardt@outlook.com>
-// Date:   Wed Apr 14 04:33:24 2021 +0200
-//
-//     libavresample: Remove deprecated library
-//
-//     Deprecated in c29038f3041a4080342b2e333c1967d136749c0f.
-//     The resample filter based upon this library has been removed as well.
-
-#if !defined(USE_LIBSWRESAMPLE) && !defined(USE_LIBAVRESAMPLE)
-#error "Must have either libswresample (preferred choice for FFMpeg) or libavresample (with libav)."
-#endif
-
-#ifdef USE_LIBSWRESAMPLE
-#define LAVR_DEPRECATE                      1   /**< @brief Prefer libswresample */
-#else
-#define LAVR_DEPRECATE                      0   /**< @brief Prefer libavresample (for Libav libswresample is not available) */
-#endif
-
 #ifndef PATH_MAX
 #include <linux/limits.h>
 #endif

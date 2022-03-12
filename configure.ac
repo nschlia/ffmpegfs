@@ -105,68 +105,44 @@ AS_IF([test "$HAVE_W3M" == "yes"], [], AC_MSG_ERROR([Missing w3m. Please install
 
 dnl FFMPEG support checks
 
-# Tested with...
+# FFmpeg 4.1.8 "al-Khwarizmi"
 #
-# libavutil      55. 34.101		54.3.0 (required)
-# libavcodec     57. 64.101		56.1.0 (required)
-# libavformat    57. 56.101		56.1.0 (required)
-# libavdevice    57.  6.100
-# libavfilter     6. 82.100     5.40.0 (required)
-# libavresample   3.  5.  0		2.1.0 (optional)
-# libswscale      4.  2.100		3.0.0 (required)
-# libswresample   2.  3.100     1.0.0 (optional)
-# libpostproc    54.  5.10
+# This version is packaged with Debian Buster. This is the lowest version
+# we support.
 #
-# Either libswresample or libavresample must be present.
+# 4.1.8 was released on 2021-10-17. It is the latest stable FFmpeg release
+# from the 4.1 release branch, which was cut from master on 2018-11-02.
+#
+# It includes the following library versions:
+#
+# libavutil      56. 22.100
+# libavcodec     58. 35.100
+# libavformat    58. 20.100
+# libavdevice    58.  5.100 (not used)
+# libavfilter     7. 40.101
+# libswscale      5.  3.100
+# libswresample   3.  3.100
+# libpostproc    55.  3.100 (not used)
 #
 # May work with older versions but this is not guaranteed.
 
-PKG_CHECK_MODULES([libavutil], [libavutil >= 54.3.0],
-    [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 56.1.0],
-        [PKG_CHECK_MODULES([libavformat], [libavformat >= 56.1.0],
-            [PKG_CHECK_MODULES([libswscale], [libswscale >= 3.0.0],
-                [PKG_CHECK_MODULES([libavfilter], [libavfilter >= 5.40.0],
-                    [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
+PKG_CHECK_MODULES([libavutil], [libavutil >= 56.22.100],
+    [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 58.35.100],
+        [PKG_CHECK_MODULES([libavformat], [libavformat >= 58.20.100],
+            [PKG_CHECK_MODULES([libavfilter], [libavfilter >= 7.40.101],
+                [PKG_CHECK_MODULES([libswscale], [libswscale >= 5.3.100],
+                    [PKG_CHECK_MODULES([libswresample], [libswresample >= 3.3.100],
+                        [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
+                    )
+                    ]
                 )
                 ]
             )
-			]
+            ]
         )
-		]
-	)
-	]
-)
-
-dnl Check for libswresample
-AC_ARG_WITH([libswresample],
-  [AS_HELP_STRING([--with-libswresample],
-    [support using libswresample @<:@default=check@:>@])],
-  [],
-  [with_libswresample=check])
-AS_CASE(["$with_libswresample"],
-  [yes], [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1])],
-  [no], [],
-  [PKG_CHECK_MODULES([libswresample], [libswresample >= 1.0.0], [HAVE_LIBSWRESAMPLE=1], [HAVE_LIBSWRESAMPLE=0])])
-AM_CONDITIONAL([USE_LIBSWRESAMPLE], [test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1])
-AS_IF([test "0$HAVE_LIBSWRESAMPLE" -eq 1], [with_libavresample=no])
-
-dnl Check for libavresample
-AC_ARG_WITH([libavresample],
-  [AS_HELP_STRING([--with-libavresample],
-    [support using libavresample @<:@default=check@:>@])],
-  [],
-  [with_libavresample=check])
-AS_CASE(["$with_libavresample"],
-  [yes], [PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0], [HAVE_LIBAVRESAMPLE=1])],
-  [no], [],
-  [PKG_CHECK_MODULES([libavresample], [libavresample >= 2.1.0], [HAVE_LIBAVRESAMPLE=1], [HAVE_LIBAVRESAMPLE=0])])
-AM_CONDITIONAL([USE_LIBAVRESAMPLE], [test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1])
-
-# Error checks
-AS_IF([test "$with_libswresample" != "no" -a "0$HAVE_LIBSWRESAMPLE" -eq 1], [],
-    AS_IF([test "$with_libavresample" != "no" -a "0$HAVE_LIBAVRESAMPLE" -eq 1], [],
-        AC_MSG_ERROR([Either libswresample or libavresample must be present and enabled. Please make sure its development modules are installed. Do not use --without-libswresample and --without-libavresample at once.])
+        ]
     )
+    ]
 )
 
 # Optional libraries

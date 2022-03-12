@@ -25,14 +25,8 @@
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
 
-#ifdef USE_LIBSWRESAMPLE
 #include <libswresample/swresample.h>
-#elif USE_LIBAVRESAMPLE
-#warning "Falling back to libavresample which is deprecated."
-#include <libavresample/avresample.h>
-#else
-#error "Must have either libavresample or libswresample!"
-#endif
+
 // For LIBAVFILTER_VERSION_INT
 #include <libavfilter/avfilter.h>
 
@@ -56,11 +50,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 #endif
     AVStream *stream = NULL;
     AVFrame *frame = NULL;
-#ifdef USE_LIBSWRESAMPLE
     SwrContext *swr_ctx = NULL;
-#else // USE_LIBSAVRESAMPLE
-    AVAudioResampleContext *avresample_ctx = NULL;
-#endif
 #if LAVF_DEP_AVSTREAM_CODEC
     int max_dst_nb_samples = 0;
     uint8_t *dst_data = NULL ;
@@ -124,7 +114,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     }
 
     if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
-#ifdef USE_LIBSWRESAMPLE
         swr_ctx = swr_alloc_set_opts(NULL,
                                      (int64_t)codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
                                      (int64_t)codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
@@ -137,26 +126,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
             fprintf(stderr, "ERROR: couldn't initialize the audio resampler\n");
             goto done;
         }
-#else // USE_LIBSAVRESAMPLE
-        avresample_ctx = avresample_alloc_context();
-        if (!avresample_ctx) {
-            fprintf(stderr, "ERROR: couldn't allocate audio resampler\n");
-            goto done;
-        }
-
-        av_opt_set_int(avresample_ctx, "in_channel_layout", (int)codec_ctx->channel_layout, 0);
-        av_opt_set_int(avresample_ctx, "out_channel_layout", (int)codec_ctx->channel_layout, 0);
-        av_opt_set_int(avresample_ctx, "in_sample_rate", codec_ctx->sample_rate, 0);
-        av_opt_set_int(avresample_ctx, "out_sample_rate", codec_ctx->sample_rate, 0);
-        av_opt_set_int(avresample_ctx, "in_sample_fmt", codec_ctx->sample_fmt, 0);
-        av_opt_set_int(avresample_ctx, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-
-
-        if (avresample_open(avresample_ctx) < 0) {
-            fprintf(stderr, "ERROR: couldn't initialize the audio resampler\n");
-            goto done;
-        }
-#endif
     }
 
     *duration = (int)(stream->time_base.num * stream->duration / stream->time_base.den);
@@ -189,11 +158,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                     fprintf(stderr, "WARNING: error decoding audio\n");
                     break;
                 }
-#ifdef USE_LIBSWRESAMPLE
                 if (swr_ctx) {
-#else // USE_LIBSAVRESAMPLE
-                if (avresample_ctx) {
-#endif
                     if (frame->nb_samples > max_dst_nb_samples) {
                         max_dst_nb_samples = frame->nb_samples;
                         av_freep(&dst_data);
@@ -204,18 +169,12 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                             goto done;
                         }
                     }
-#ifdef USE_LIBSWRESAMPLE
+
                     if (swr_convert(swr_ctx, &dst_data, frame->nb_samples,
                                     (const uint8_t**)frame->data, frame->nb_samples) < 0) {
                         fprintf(stderr, "ERROR: couldn't convert the audio\n");
                         goto done;
                     }
-#else // USE_LIBSAVRESAMPLE
-                    if (avresample_convert(avresample_ctx, &dst_data, 0, frame->nb_samples, (uint8_t**)frame->data, 0, frame->nb_samples) < 0) {
-                        fprintf(stderr, "ERROR: couldn't convert the audio\n");
-                        goto done;
-                    }
-#endif
                     samples = (int16_t*)dst_data;
                 } else {
                     samples = (int16_t*)frame->data[0];
@@ -245,7 +204,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 
             if (got_frame) {
                 data = frame->data;
-#ifdef USE_LIBSWRESAMPLE
+
                 if (swr_ctx) {
                     if (frame->nb_samples > max_dst_nb_samples) {
                         av_freep(&dst_data[0]);
@@ -261,24 +220,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                     }
                     data = dst_data;
                 }
-#else // USE_LIBSAVRESAMPLE
-                if (avresample_ctx) {
-                    if (frame->nb_samples > max_dst_nb_samples) {
-                        av_freep(&dst_data[0]);
-                        if (av_samples_alloc(dst_data, &dst_linsize, codec_ctx->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1) < 0) {
-                            fprintf(stderr, "ERROR: couldn't allocate audio converter buffer\n");
-                            goto done;
-                        }
-                        max_dst_nb_samples = frame->nb_samples;
-                    }
-
-                    if (avresample_convert(avresample_ctx, dst_data, 0, frame->nb_samples, (const uint8_t **)frame->data, 0, frame->nb_samples) < 0) {
-                        fprintf(stderr, "ERROR: couldn't convert the audio\n");
-                        goto done;
-                    }
-                    data = dst_data;
-                }
-#endif
 
                 length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
                 if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
@@ -321,16 +262,11 @@ done:
     if (dst_data) {
         av_freep(&dst_data);
     }
-#ifdef USE_LIBSWRESAMPLE
+
     if (swr_ctx) {
         swr_free(&swr_ctx);
     }
-#else // USE_LIBSAVRESAMPLE
-    if (avresample_ctx) {
-        avresample_close(avresample_ctx);
-        avresample_free(&avresample_ctx);
-    }
-#endif
+
     if (codec_ctx_opened) {
         avcodec_close(codec_ctx);
     }

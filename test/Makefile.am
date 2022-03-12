@@ -69,23 +69,9 @@ EXTRA_DIST += $(wildcard tags/*)
 
 CLEANFILES = $(patsubst %,%.builtin.log,$(TESTS))
 
-AM_CPPFLAGS=-Ofast
+AM_CPPFLAGS=-Ofast $(libswresample_CFLAGS)
 check_PROGRAMS = fpcompare metadata
 fpcompare_SOURCES = fpcompare.c
-fpcompare_LDADD = -lchromaprint -lavcodec -lavformat -lavutil
+fpcompare_LDADD = -lchromaprint -lavcodec -lavformat -lavutil $(libswresample_LIBS)
 metadata_SOURCES = metadata.c
-metadata_LDADD =  -lavcodec -lavformat -lavutil
-
-if USE_LIBSWRESAMPLE
-AM_CPPFLAGS += -DUSE_LIBSWRESAMPLE
-AM_CPPFLAGS += $(libswresample_CFLAGS)
-fpcompare_LDADD += $(libswresample_LIBS)
-metadata_LDADD += $(libswresample_LIBS)
-endif
-
-if USE_LIBAVRESAMPLE
-AM_CPPFLAGS += -DUSE_LIBAVRESAMPLE
-AM_CPPFLAGS += $(libavresample_CFLAGS)
-fpcompare_LDADD += $(libavresample_LIBS)
-metadata_LDADD += $(libavresample_LIBS)
-endif
+metadata_LDADD =  -lavcodec -lavformat -lavutil $(libswresample_LIBS)

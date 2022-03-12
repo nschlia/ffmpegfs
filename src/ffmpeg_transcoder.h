@@ -44,11 +44,7 @@
 #include <mutex>
 
 class Buffer;
-#if LAVR_DEPRECATE
 struct SwrContext;
-#else
-struct AVAudioResampleContext;
-#endif
 struct SwsContext;
 struct AVFilterContext;
 struct AVFilterGraph;
@@ -1088,11 +1084,7 @@ private:
     AVSampleFormat              m_cur_sample_fmt;               /**< @brief Currently selected audio sample format */
     int                         m_cur_sample_rate;              /**< @brief Currently selected audio sample rate */
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
-#if LAVR_DEPRECATE
     SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
-#else
-    AVAudioResampleContext *    m_audio_resample_ctx;           /**< @brief AVResample context for audio resampling */
-#endif
     AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
     FRAMEFIFO                   m_audio_frame_fifo;             /**< @brief Audio frame FIFO */
 
@@ -1106,7 +1098,7 @@ private:
     int64_t                     m_pos;                          /**< @brief Generated position */
 
     // Subtitle conversion and buffering
-    SUBTITLEFIFO_MAP            m_subtitle_fifos;                /**< @brief FIFOs for all subtitle streams */
+    SUBTITLEFIFO_MAP            m_subtitle_fifos;               /**< @brief FIFOs for all subtitle streams */
 
     // Common things for audio/video/subtitles
     INPUTFILE                   m_in;                           /**< @brief Input file information */

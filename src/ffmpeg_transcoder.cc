@@ -66,11 +66,7 @@ extern "C" {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#if LAVR_DEPRECATE
 #include <libswresample/swresample.h>
-#else
-#include <libavresample/avresample.h>
-#endif
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
@@ -2719,7 +2715,6 @@ int FFmpeg_Transcoder::init_resampler()
 
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
-#if LAVR_DEPRECATE
         m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
                                                   static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
                                                   m_out.m_audio.m_codec_ctx->sample_fmt,
@@ -2743,37 +2738,6 @@ int FFmpeg_Transcoder::init_resampler()
             m_audio_resample_ctx = nullptr;
             return ret;
         }
-#else
-        // Create a resampler context for the conversion.
-        m_audio_resample_ctx = avresample_alloc_context();
-        if (m_audio_resample_ctx == nullptr)
-        {
-            Logging::error(destname(), "Could not allocate resample context.");
-            return AVERROR(ENOMEM);
-        }
-
-        // Set the conversion parameters.
-        // Default channel layouts based on the number of channels
-        // are assumed for simplicity (they are sometimes not detected
-        // properly by the demuxer and/or decoder).
-
-        av_opt_set_int(m_audio_resample_ctx, "in_channel_layout", av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels), 0);
-        av_opt_set_int(m_audio_resample_ctx, "out_channel_layout", av_get_default_channel_layout(m_out.m_audio.m_codec_ctx->channels), 0);
-        av_opt_set_int(m_audio_resample_ctx, "in_sample_rate", m_in.m_audio.m_codec_ctx->sample_rate, 0);
-        av_opt_set_int(m_audio_resample_ctx, "out_sample_rate", m_out.m_audio.m_codec_ctx->sample_rate, 0);
-        av_opt_set_int(m_audio_resample_ctx, "in_sample_fmt", m_in.m_audio.m_codec_ctx->sample_fmt, 0);
-        av_opt_set_int(m_audio_resample_ctx, "out_sample_fmt", m_out.m_audio.m_codec_ctx->sample_fmt, 0);
-
-        // Open the resampler with the specified parameters.
-        ret = avresample_open(m_audio_resample_ctx);
-        if (ret < 0)
-        {
-            Logging::error(destname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret).c_str());
-            avresample_free(&m_audio_resample_ctx);
-            m_audio_resample_ctx = nullptr;
-            return ret;
-        }
-#endif
     }
     return 0;
 }
@@ -3224,11 +3188,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
                     throw ret;
                 }
 
-#if LAVR_DEPRECATE
                 nb_output_samples = (m_audio_resample_ctx != nullptr) ? swr_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
-#else
-                nb_output_samples = (m_audio_resample_ctx != nullptr) ? avresample_get_out_samples(m_audio_resample_ctx, frame->nb_samples) : frame->nb_samples;
-#endif
 
                 // Store audio frame
                 // Initialise the temporary storage for the converted input samples.
@@ -3882,7 +3842,6 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     return 0;
 }
 
-#if LAVR_DEPRECATE
 int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples)
 {
     if (m_audio_resample_ctx != nullptr)
@@ -3921,51 +3880,6 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
     }
     return 0;
 }
-#else
-int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, const int in_samples, uint8_t **converted_data, int *out_samples)
-{
-    if (m_audio_resample_ctx != nullptr)
-    {
-        int ret;
-
-        // Convert the samples using the resampler.
-        ret = avresample_convert(m_audio_resample_ctx, converted_data, 0, *out_samples, input_data, 0, in_samples);
-        if (ret < 0)
-        {
-            Logging::error(destname(), "Could not convert input samples (error '%1').", ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-
-        *out_samples = ret;
-
-        // Perform a sanity check so that the number of converted samples is
-        // not greater than the number of samples to be converted.
-        // If the sample rates differ, this case has to be handled differently
-
-        if (avresample_available(m_audio_resample_ctx))
-        {
-            Logging::error(destname(), "Converted samples left over.");
-            return AVERROR_EXIT;
-        }
-    }
-    else
-    {
-        // No resampling, just copy samples
-        if (!av_sample_fmt_is_planar(m_in.m_audio.m_codec_ctx->sample_fmt))
-        {
-            memcpy(converted_data[0], input_data[0], in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * m_in.m_audio.m_codec_ctx->channels);
-        }
-        else
-        {
-            for (int n = 0; n < m_in.m_audio.m_codec_ctx->channels; n++)
-            {
-                memcpy(converted_data[n], input_data[n], in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
-            }
-        }
-    }
-    return 0;
-}
-#endif
 
 int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size)
 {
@@ -6275,12 +6189,7 @@ bool FFmpeg_Transcoder::close_resample()
 {
     if (m_audio_resample_ctx)
     {
-#if LAVR_DEPRECATE
         swr_free(&m_audio_resample_ctx);
-#else
-        avresample_close(m_audio_resample_ctx);
-        avresample_free(&m_audio_resample_ctx);
-#endif
         m_audio_resample_ctx = nullptr;
         return true;
     }

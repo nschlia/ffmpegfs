@@ -118,16 +118,6 @@ target_compile_definitions(fpcompare PUBLIC
     -DHAVE_CONFIG_H
     -D_GNU_SOURCE
 )
-IF (LIBSWRESAMPLE_FOUND)
-    target_compile_definitions(fpcompare PUBLIC
-        -DUSE_LIBSWRESAMPLE=1
-    )
-ENDIF (LIBSWRESAMPLE_FOUND)
-IF (LIBAVRESAMPLE_FOUND)
-    target_compile_definitions(fpcompare PUBLIC
-        -DUSE_LIBAVRESAMPLE=1
-    )
-ENDIF (LIBAVRESAMPLE_FOUND)
 add_dependencies(check fpcompare)
 
 # Build metadata extractor required by tests

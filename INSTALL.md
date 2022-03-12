@@ -56,25 +56,21 @@ FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following librar
 * fuse (>= 2.6.0)
 * sqlite3 (>= 3.7.13)
 
-* libavutil      (>= 54.3.0)
-* libavcodec     (>= 56.1.0)
-* libavformat    (>= 56.1.0)
-* libavfilter    (>= 5.40.0)
-* libswscale     (>= 3.0.0)
-
-One of these is required, preferably libswresample as libavresample is deprecated. It will be removed some day from FFmpeg API.
-
-* libswresample  (>= 1.0.0)
-* libavresample  (>= 2.1.0)
+* libavutil (>= 56.22.100)
+* libavcodec (>= 58.35.100)
+* libavformat (>= 58.20.100)
+* libavfilter (>= 7.40.101)
+* libswscale (>= 5.3.100)
+* libswresample (>= 3.3.100)
 
 For optional DVD support you need the following libraries
 
-* libdvdread      (>= 5.0.0)
-* libdvdnav       (>= 5.0.0)
+* libdvdread (>= 5.0.0)
+* libdvdnav (>= 5.0.0)
 
 For optional Bluray support you need the following library
 
-* libbluray       (>= 0.6.2)
+* libbluray (>= 0.6.2)
 
 The commands to install just the first prerequisites follow.
 

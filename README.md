@@ -24,6 +24,8 @@ News
 * **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files.
 * **Bugfix:** Fixed memory leak in encode_audio_frame().
 * **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): Last song was missing from cuesheet files.
+* Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
+* Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
 
 ### Version 2.9 released
 

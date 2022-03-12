@@ -78,11 +78,7 @@ extern "C" {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#if LAVR_DEPRECATE
 #include <libswresample/swresample.h>
-#else
-#include <libavresample/avresample.h>
-#endif
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
@@ -1237,11 +1233,7 @@ std::string ffmpeg_libinfo()
     info += PRINT_LIB_INFO(avformat,    AVFORMAT);
     // info += PRINT_LIB_INFO(avdevice,    AVDEVICE);
     // info += PRINT_LIB_INFO(avfilter,    AVFILTER);
-#if LAVR_DEPRECATE
     info += PRINT_LIB_INFO(swresample,  SWRESAMPLE);
-#else
-    info += PRINT_LIB_INFO(avresample,  AVRESAMPLE);
-#endif
     info += PRINT_LIB_INFO(swscale,     SWSCALE);
     // info += PRINT_LIB_INFO(postproc,    POSTPROC);
 

@@ -1275,13 +1275,9 @@ int show_caps(int device_only)
         const char *long_name = nullptr;
         const char *extensions = nullptr;
 
-#if LAVF_DEP_AV_REGISTER
         void *ofmt_opaque = nullptr;
         ofmt_opaque = nullptr;
         while ((ofmt = av_muxer_iterate(&ofmt_opaque)))
-#else
-        while ((ofmt = av_oformat_next(ofmt)))
-#endif
         {
             is_dev = is_device(ofmt->priv_class);
             if (!is_dev && device_only)
@@ -1297,13 +1293,10 @@ int show_caps(int device_only)
                 encode      = 1;
             }
         }
-#if LAVF_DEP_AV_REGISTER
+
         void *ifmt_opaque = nullptr;
         ifmt_opaque = nullptr;
         while ((ifmt = av_demuxer_iterate(&ifmt_opaque)) != nullptr)
-#else
-        while ((ifmt = av_iformat_next(ifmt)) != nullptr)
-#endif
         {
             is_dev = is_device(ifmt->priv_class);
             if (!is_dev && device_only)
@@ -1714,7 +1707,6 @@ int print_stream_info(const AVStream* stream)
 {
     int ret = 0;
 
-#if LAVF_DEP_AVSTREAM_CODEC
     AVCodecContext *avctx = avcodec_alloc_context3(nullptr);
     if (avctx == nullptr)
     {
@@ -1735,9 +1727,6 @@ int print_stream_info(const AVStream* stream)
     //            avctx->qmax         = output_stream->codec->qmax;
     //            avctx->coded_width  = output_stream->codec->coded_width;
     //            avctx->coded_height = output_stream->codec->coded_height;
-#else
-    AVCodecContext *avctx = stream->codec;
-#endif
     int fps = stream->avg_frame_rate.den && stream->avg_frame_rate.num;
     int tbr = stream->r_frame_rate.den && stream->r_frame_rate.num;
     int tbn = stream->time_base.den && stream->time_base.num;
@@ -1752,9 +1741,7 @@ int print_stream_info(const AVStream* stream)
     if (tbc)
         print_fps(1 / av_q2d(avctx->time_base), "codec timebase (tbc)");
 
-#if LAVF_DEP_AVSTREAM_CODEC
     avcodec_free_context(&avctx);
-#endif
 
     return ret;
 }

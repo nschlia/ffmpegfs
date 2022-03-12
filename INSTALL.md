@@ -52,9 +52,10 @@ Building FFmpegfs yourself
 FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following libraries:
 
 * gcc and g++ compilers
-
 * fuse (>= 2.6.0)
 * sqlite3 (>= 3.7.13)
+
+FFmpeg 4.1.8 "al-Khwarizmi" or newer:
 
 * libavutil (>= 56.22.100)
 * libavcodec (>= 58.35.100)

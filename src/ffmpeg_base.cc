@@ -138,10 +138,6 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     // tbc
     output_codec_ctx->time_base                 = time_base_tbc;
 
-#if !LAVF_DEP_AVSTREAM_CODEC
-    output_stream->codec->time_base             = time_base_tbc;
-#endif
-
     // tbr
     // output_stream->r_frame_rate              = m_in.m_pVideo_stream->r_frame_rate;
     output_stream->r_frame_rate                 = framerate;
@@ -245,8 +241,8 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
 
     Logging::debug(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
                    out_file ? "out" : "in",
-                   get_codec_name(CODECPAR(stream)->codec_id, false),
-                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
+                   get_codec_name(stream->codecpar->codec_id, false),
+                   format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
                    format_duration(duration).c_str());
 }
 
@@ -261,10 +257,10 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
     Logging::debug(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
                    out_file ? "out" : "in",
-                   get_codec_name(CODECPAR(stream)->codec_id, false),
-                   format_bitrate((CODECPAR(stream)->bit_rate != 0) ? CODECPAR(stream)->bit_rate : format_ctx->bit_rate).c_str(),
-                   CODECPAR(stream)->channels,
-                   format_samplerate(CODECPAR(stream)->sample_rate).c_str(),
+                   get_codec_name(stream->codecpar->codec_id, false),
+                   format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
+                   stream->codecpar->channels,
+                   format_samplerate(stream->codecpar->sample_rate).c_str(),
                    format_duration(duration).c_str());
 }
 
@@ -272,7 +268,7 @@ void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_
 {
     Logging::debug(out_file ? destname() : filename(), "Subtitle %1: %2",
                    out_file ? "out" : "in",
-                   get_codec_name(CODECPAR(stream)->codec_id, false));
+                   get_codec_name(stream->codecpar->codec_id, false));
 }
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)

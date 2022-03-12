@@ -32,9 +32,6 @@
 
 #include <chromaprint.h>
 
-#define LAVC_NEW_PACKET_INTERFACE           (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 37, 0))
-#define LAVF_DEP_AVSTREAM_CODEC             (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 33, 0))
-
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -51,18 +48,10 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     AVStream *stream = NULL;
     AVFrame *frame = NULL;
     SwrContext *swr_ctx = NULL;
-#if LAVF_DEP_AVSTREAM_CODEC
     int max_dst_nb_samples = 0;
     uint8_t *dst_data = NULL ;
     AVPacket packet;
     int16_t* samples;
-#else
-    int got_frame, consumed;
-    int max_dst_nb_samples = 0, dst_linsize = 0;
-    uint8_t *dst_data[1] = { NULL };
-    uint8_t **data;
-    AVPacket packet;
-#endif
 
     if (!strcmp(file_name, "-")) {
         file_name = "pipe:0";
@@ -86,7 +75,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 
     stream = format_ctx->streams[stream_index];
 
-#if LAVF_DEP_AVSTREAM_CODEC
     codec_ctx = avcodec_alloc_context3(codec);
     if (!codec_ctx) {
         fprintf(stderr, "ERROR: couldn't allocate codec context\n");
@@ -97,9 +85,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
         fprintf(stderr, "ERROR: couldn't populate codex context\n");
         goto done;
     }
-#else
-    codec_ctx = stream->codec;
-#endif
+
     codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
     if (avcodec_open2(codec_ctx, codec, NULL) < 0) {
@@ -132,11 +118,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 
     remaining = max_length * codec_ctx->channels * codec_ctx->sample_rate;
     chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, codec_ctx->channels);
-//#if LAVF_DEP_AVSTREAM_CODEC
     frame = av_frame_alloc();
-//#else
-//    frame = avcodec_alloc_frame();
-//#endif
 
     while (1) {
         if (av_read_frame(format_ctx, &packet) < 0) {
@@ -144,7 +126,6 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
         }
 
         if (packet.stream_index == stream_index) {
-#if LAVC_NEW_PACKET_INTERFACE
             if (avcodec_send_packet(codec_ctx, &packet) < 0) {
                 fprintf(stderr, "WARNING: error sending audio data\n");
                 continue;
@@ -192,55 +173,9 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                     }
                 }
             }
-#else
-            //avcodec_get_frame_defaults(frame);
-
-            got_frame = 0;
-            consumed = avcodec_decode_audio4(codec_ctx, frame, &got_frame, &packet);
-            if (consumed < 0) {
-                fprintf(stderr, "WARNING: error decoding audio\n");
-                continue;
-            }
-
-            if (got_frame) {
-                data = frame->data;
-
-                if (swr_ctx) {
-                    if (frame->nb_samples > max_dst_nb_samples) {
-                        av_freep(&dst_data[0]);
-                        if (av_samples_alloc(dst_data, &dst_linsize, codec_ctx->channels, frame->nb_samples, AV_SAMPLE_FMT_S16, 1) < 0) {
-                            fprintf(stderr, "ERROR: couldn't allocate audio converter buffer\n");
-                            goto done;
-                        }
-                        max_dst_nb_samples = frame->nb_samples;
-                    }
-                    if (swr_convert(swr_ctx, dst_data, frame->nb_samples, (const uint8_t **)frame->data, frame->nb_samples) < 0) {
-                        fprintf(stderr, "ERROR: couldn't convert the audio\n");
-                        goto done;
-                    }
-                    data = dst_data;
-                }
-
-                length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
-                if (!chromaprint_feed(chromaprint_ctx, data[0], length)) {
-                    goto done;
-                }
-
-                if (max_length) {
-                    remaining -= length;
-                    if (remaining <= 0) {
-                        goto finish;
-                    }
-                }
-            }
-#endif
         }
 
-#if LAVF_DEP_AVSTREAM_CODEC
         av_packet_unref(&packet);
-#else
-        av_free_packet(&packet);
-#endif
     }
 
 finish:
@@ -253,11 +188,7 @@ finish:
 
 done:
     if (frame) {
-//#if LAVF_DEP_AVSTREAM_CODEC
         av_frame_unref(frame);
-//#else
-//        avcodec_free_frame(&frame);
-//#endif
     }
     if (dst_data) {
         av_freep(&dst_data);
@@ -273,11 +204,9 @@ done:
     if (format_ctx) {
         avformat_close_input(&format_ctx);
     }
-#if LAVF_DEP_AVSTREAM_CODEC
     if (codec_ctx) {
         avcodec_free_context(&codec_ctx);
     }
-#endif
     return ok;
 }
 

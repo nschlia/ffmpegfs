@@ -142,13 +142,6 @@ const char *get_media_type_string(enum AVMediaType media_type);
 #define BITRATE int                                                                 /**< @brief For FFmpeg bit rate is an int. */
 #endif
 
-// Make access possible over codecpar if available
-#if LAVF_DEP_AVSTREAM_CODEC
-#define CODECPAR(s)     ((s)->codecpar)                                             /**< @brief Map to codecpar */
-#else
-#define CODECPAR(s)     ((s)->codec)                                                /**< @brief Map to codec */
-#endif
-
 #define STRINGIFY(x) #x                                                             /**< @brief Stringification helper for STRINGIFY. Not to be used separately. */
 #define TOSTRING(x) STRINGIFY(x)                                                    /**< @brief Convert a macro argument into a string constant */
 /**

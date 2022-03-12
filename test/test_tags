@@ -22,15 +22,13 @@ get_metadata() {
         outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I' | sed -r '/^vendor_id=.*$/Id'`
 }
 
-# Detect FFmpeg or Libav version
+# Detect FFmpeg version
 # FFmpeg versions prior to 3.2.x store a title in the file and the encoder version, nothing else...
 FFMPEGVERSION=`./metadata -v | sed -n 's/^FFmpeg[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
-LIBAVVERSION=`./metadata -v | sed -n 's/^Libav[^0-9]\([0-9]*\.[0-9]*\).*$/\1/p' | head -n 1`
 
 if [ -z "${FFMPEGVERSION}" ] && [ -z "${LIBAVVERSION}" ];
 then
 	FFMPEGVERSION=`./metadata -v | sed -n 's/^FFmpeg \(.*\)$/\1/p' | head -n 1`
-	LIBAVVERSION=`./metadata -v | sed -n 's/^Libav \(.*\)$/\1/p' | head -n 1`
 fi
 
 if [ ! -z "${FFMPEGVERSION}" ];
@@ -51,20 +49,7 @@ then
         elif (( $(echo "${FFMPEGVERSION} >= 4.0" | bc -l) )); then
                 echo "FFmpeg > 4.0"
                 VERSION=4.0
-        elif (( $(echo "${FFMPEGVERSION} > 3.2" | bc -l) )); then
-                echo "FFmpeg > 3.2.x"
-		VERSION=3.2+
-        else
-        	echo "FFmpeg <= 3.2.x"
-		VERSION=3.2-
         fi
-elif [ ! -z "${LIBAVVERSION}" ];
-then
-	echo "Libav version is ${LIBAVVERSION}"
-
-	# Using Libav, no known version differences
-	LIBRARY=libav
-	VERSION=
 else
 	echo "Internal error: FFmpeg/Libav version unknown."
 	exit 99

@@ -2055,17 +2055,6 @@ int main(int argc, char *argv[])
 
     init_fuse_ops();
 
-    // Configure FFmpeg
-#if !LAVC_DEP_AV_CODEC_REGISTER
-    // register all the codecs
-    avcodec_register_all();
-#endif // !LAVC_DEP_AV_CODEC_REGISTER
-#if !LAVF_DEP_AV_REGISTER
-    av_register_all();
-#endif // !LAVF_DEP_AV_REGISTER
-#if !LAVC_DEP_AV_FILTER_REGISTER
-    avfilter_register_all();
-#endif // LAVC_DEP_AV_FILTER_REGISTER
     // Redirect FFmpeg logs
     av_log_set_callback(ffmpeg_log);
 

@@ -615,7 +615,6 @@ protected:
      * @param[in] pkt - Packet to add dts/pts to.
      */
     void                        produce_audio_dts(AVPacket * pkt);
-#if LAVC_NEW_PACKET_INTERFACE
     /**
      * This does not quite work like avcodec_decode_audio4/avcodec_decode_video2.
      * There is the following difference: if you got a frame, you must call
@@ -624,7 +623,6 @@ protected:
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
-#endif
     /**
      * @brief Load one audio frame from the FIFO buffer and store in frame buffer.
      * @param[in] frame_size - Size of frame.

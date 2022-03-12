@@ -49,7 +49,11 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     int ok = 0, remaining, length, codec_ctx_opened = 0, stream_index;
     AVFormatContext *format_ctx = NULL;
     AVCodecContext *codec_ctx = NULL;
+#if (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 0, 0))
     const AVCodec *codec = NULL;
+#else
+    AVCodec *codec = NULL;
+#endif
     AVStream *stream = NULL;
     AVFrame *frame = NULL;
 #ifdef USE_LIBSWRESAMPLE

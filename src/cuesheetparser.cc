@@ -224,6 +224,7 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] duration - Total duration of input file.
  * @return On success, returns number of titles in cue sheet. On error, returns -errno.
  */
 static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)
@@ -249,6 +250,7 @@ static int parse_cuesheet(const std::string & filename, const std::string & cues
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] duration - Total duration of input file.
  * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
  */
 static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)

@@ -1066,6 +1066,11 @@ protected:
      */
     void                        add_stream_map(int in_stream_idx, int out_stream_idx);
 
+    /**
+     * @brief Map input stream index to output stream index
+     * @param[in] in_stream_idx - Index of input stream
+     * @return Returns output stream index or INVALID_STREAM if no match
+     */
     int                         map_in_to_out_stream(int in_stream_idx) const;
 
 private:

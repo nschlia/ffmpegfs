@@ -298,35 +298,6 @@ list(APPEND SOURCES
     test/tags/ffmpeg4.2/raven_d.mov.tag
     test/tags/ffmpeg4.2/raven_d.ogg.tag
     test/tags/ffmpeg4.2/obama.ts.tag
-    test/tags/libav/raven_e.opus.tag
-    test/tags/libav/raven_d.prores.tag
-    test/tags/libav/raven_e.mp3.tag
-    test/tags/libav/raven_d.ts.tag
-    test/tags/libav/raven_e.webm.tag
-    test/tags/libav/snowboard.webm.tag
-    test/tags/libav/raven_d.wav.tag
-    test/tags/libav/raven_e.ogg.tag
-    test/tags/libav/snowboard.prores.tag
-    test/tags/libav/snowboard.mp4.tag
-    test/tags/libav/raven_e.mp4.tag
-    test/tags/libav/raven_e.ts.tag
-    test/tags/libav/raven.ts.tag
-    test/tags/libav/raven_d.aiff.tag
-    test/tags/libav/raven_e.aiff.tag
-    test/tags/libav/raven_e.mov.tag
-    test/tags/libav/raven_d.opus.tag
-    test/tags/libav/raven_d.mp3.tag
-    test/tags/libav/raven_d.webm.tag
-    test/tags/libav/snowboard.ts.tag
-    test/tags/libav/snowboard.mov.tag
-    test/tags/libav/raven_e.wav.tag
-    test/tags/libav/raven_e.prores.tag
-    test/tags/libav/raven_d.mp4.tag
-    test/tags/libav/raven_d.alac.tag
-    test/tags/libav/raven_e.alac.tag
-    test/tags/libav/raven_d.mov.tag
-    test/tags/libav/raven_d.ogg.tag
-    test/tags/libav/obama.ts.tag
     test/tags/ffmpegN/raven_e.opus.tag
     test/tags/ffmpegN/raven_d.prores.tag
     test/tags/ffmpegN/raven_e.mp3.tag
@@ -358,68 +329,6 @@ list(APPEND SOURCES
     test/tags/ffmpegN/raven_d.mov.tag
     test/tags/ffmpegN/raven_d.ogg.tag
     test/tags/ffmpegN/obama.ts.tag
-    test/tags/ffmpeg3.2+/raven_e.opus.tag
-    test/tags/ffmpeg3.2+/raven_d.prores.tag
-    test/tags/ffmpeg3.2+/raven_e.mp3.tag
-    test/tags/ffmpeg3.2+/raven_d.ts.tag
-    test/tags/ffmpeg3.2+/raven_e.webm.tag
-    test/tags/ffmpeg3.2+/snowboard.webm.tag
-    test/tags/ffmpeg3.2+/raven_d.wav.tag
-    test/tags/ffmpeg3.2+/raven_e.ogg.tag
-    test/tags/ffmpeg3.2+/snowboard.prores.tag
-    test/tags/ffmpeg3.2+/raven_e.flac.tag
-    test/tags/ffmpeg3.2+/snowboard.mp4.tag
-    test/tags/ffmpeg3.2+/raven_e.mp4.tag
-    test/tags/ffmpeg3.2+/raven_e.ts.tag
-    test/tags/ffmpeg3.2+/raven.ts.tag
-    test/tags/ffmpeg3.2+/raven_d.aiff.tag
-    test/tags/ffmpeg3.2+/raven_d.flac.tag
-    test/tags/ffmpeg3.2+/raven_e.aiff.tag
-    test/tags/ffmpeg3.2+/raven_e.mov.tag
-    test/tags/ffmpeg3.2+/raven_d.opus.tag
-    test/tags/ffmpeg3.2+/raven_d.mp3.tag
-    test/tags/ffmpeg3.2+/raven_d.webm.tag
-    test/tags/ffmpeg3.2+/snowboard.ts.tag
-    test/tags/ffmpeg3.2+/snowboard.mov.tag
-    test/tags/ffmpeg3.2+/raven_e.wav.tag
-    test/tags/ffmpeg3.2+/raven_e.prores.tag
-    test/tags/ffmpeg3.2+/raven_d.mp4.tag
-    test/tags/ffmpeg3.2+/raven_d.alac.tag
-    test/tags/ffmpeg3.2+/raven_e.alac.tag
-    test/tags/ffmpeg3.2+/raven_d.mov.tag
-    test/tags/ffmpeg3.2+/raven_d.ogg.tag
-    test/tags/ffmpeg3.2+/obama.ts.tag
-    test/tags/ffmpeg3.2-/raven_e.opus.tag
-    test/tags/ffmpeg3.2-/raven_d.prores.tag
-    test/tags/ffmpeg3.2-/raven_e.mp3.tag
-    test/tags/ffmpeg3.2-/raven_d.ts.tag
-    test/tags/ffmpeg3.2-/raven_e.webm.tag
-    test/tags/ffmpeg3.2-/snowboard.webm.tag
-    test/tags/ffmpeg3.2-/raven_d.wav.tag
-    test/tags/ffmpeg3.2-/raven_e.ogg.tag
-    test/tags/ffmpeg3.2-/snowboard.prores.tag
-    test/tags/ffmpeg3.2-/raven_e.flac.tag
-    test/tags/ffmpeg3.2-/snowboard.mp4.tag
-    test/tags/ffmpeg3.2-/raven_e.mp4.tag
-    test/tags/ffmpeg3.2-/raven_e.ts.tag
-    test/tags/ffmpeg3.2-/raven.ts.tag
-    test/tags/ffmpeg3.2-/raven_d.aiff.tag
-    test/tags/ffmpeg3.2-/raven_d.flac.tag
-    test/tags/ffmpeg3.2-/raven_e.aiff.tag
-    test/tags/ffmpeg3.2-/raven_e.mov.tag
-    test/tags/ffmpeg3.2-/raven_d.opus.tag
-    test/tags/ffmpeg3.2-/raven_d.mp3.tag
-    test/tags/ffmpeg3.2-/raven_d.webm.tag
-    test/tags/ffmpeg3.2-/snowboard.ts.tag
-    test/tags/ffmpeg3.2-/snowboard.mov.tag
-    test/tags/ffmpeg3.2-/raven_e.wav.tag
-    test/tags/ffmpeg3.2-/raven_e.prores.tag
-    test/tags/ffmpeg3.2-/raven_d.mp4.tag
-    test/tags/ffmpeg3.2-/raven_d.alac.tag
-    test/tags/ffmpeg3.2-/raven_e.alac.tag
-    test/tags/ffmpeg3.2-/raven_d.mov.tag
-    test/tags/ffmpeg3.2-/raven_d.ogg.tag
-    test/tags/ffmpeg3.2-/obama.ts.tag
     test/tags/ffmpeg4.0/raven_e.opus.tag
     test/tags/ffmpeg4.0/raven_d.prores.tag
     test/tags/ffmpeg4.0/raven_e.mp3.tag

@@ -47,7 +47,7 @@ class FFmpeg_Base
 {
 public:
     /**
-     * @brief Construct FFmpeg_Base oject.
+     * @brief Construct FFmpeg_Base object.
      */
     explicit FFmpeg_Base();
     /**

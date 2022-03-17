@@ -5098,8 +5098,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 }
             }
 
-            ret = 0;    // May be AVERROR(EAGAIN)
-
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.
 
@@ -5143,8 +5141,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     }
                 }
             }
-
-            ret = 0;    // May be AVERROR(EAGAIN)
 
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.

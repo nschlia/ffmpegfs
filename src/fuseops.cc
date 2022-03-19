@@ -1275,7 +1275,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     flags = (virtualfile != nullptr) ? virtualfile->m_flags : VIRTUALFLAG_NONE;
 
-    if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_HIDDEN)
+    if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
     {
         errno = ENOENT;
         return -errno;
@@ -1320,7 +1320,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
             return 0;
         }
     }
-    else if (flags & VIRTUALFLAG_PASSTHROUGH && lstat(origpath.c_str(), stbuf) == 0)
+    else if ((flags & VIRTUALFLAG_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
     {
         // File physically exists and is marked as passthrough
         Logging::debug(origpath, "getattr: File not recoded because --recodesame=NO.");
@@ -1589,13 +1589,13 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
-    if (virtualfile != nullptr && virtualfile->m_flags & VIRTUALFLAG_HIDDEN)
+    if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
     {
         errno = ENOENT;
         return -errno;
     }
 
-    if ((virtualfile == nullptr || virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH) && lstat(origpath.c_str(), stbuf) == 0)
+    if ((virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH)) && lstat(origpath.c_str(), stbuf) == 0)
     {
         // passthrough for regular files
         errno = 0;

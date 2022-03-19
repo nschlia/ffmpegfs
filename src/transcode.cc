@@ -611,11 +611,8 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
-                Logging::error(nullptr, "SEEK image frame no. %1", frame_no);
                 cache_entry->m_seek_to_no = frame_no;
             }
-            else if (!offset)
-                Logging::error(nullptr, "NOSEEK image frame no. %1", frame_no);
 
 #define GRANULARITY     250 // ms
 #define FRAME_TIMEOUT   10  // seconds

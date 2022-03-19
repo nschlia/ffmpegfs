@@ -4346,7 +4346,10 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        if (pkt != nullptr)
+        {
+            av_packet_unref(pkt);
+        }
         ret = _ret;
     }
 

@@ -155,6 +155,8 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
              ffmpeg_format[0].fileext().c_str());                     ///<* @todo Should use the correct index (audio) here
 
     std::string virtfilename(title_buf);
+    // Filenames can't contain '/' in POSIX etc.
+    std::replace(virtfilename.begin(), virtfilename.end(), '/', '-');
 
     LPVIRTUALFILE virtualfile = nullptr;
     if (!ffmpeg_format[0].is_multiformat())

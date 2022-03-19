@@ -56,3 +56,7 @@ mkdoxy
 /.ninja_log
 /build.ninja
 /valgrind-out.txt*
+# Eclipse Project
+/.cproject
+/.settings
+

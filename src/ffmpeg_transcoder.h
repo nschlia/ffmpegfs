@@ -150,10 +150,10 @@ public:
 
     } HWACCELMODE;
 
-    typedef std::queue<AVFrame*>        FRAMEFIFO;                  /**< @brief Audio/video frame buffer */
-    typedef std::queue<AVSubtitle*>     SUBTITLEFIFO;               /**< @brief Subtitle buffer */
-    typedef std::map<int, SUBTITLEFIFO> SUBTITLEFIFO_MAP;           /**< @brief Map stream index to SUBTITLEFIFO */
-    typedef std::map<int, int>          STREAM_MAP;                 /**< @brief Map input to output stream */
+    typedef std::map<int64_t, AVFrame*>     FRAMEFIFO;              /**< @brief Audio/video frame buffer */
+    typedef std::map<int64_t, AVSubtitle*>  SUBTITLEFIFO;           /**< @brief Subtitle buffer */
+    typedef std::map<int, SUBTITLEFIFO>     SUBTITLEFIFO_MAP;       /**< @brief Map stream index to SUBTITLEFIFO */
+    typedef std::map<int, int>              STREAM_MAP;             /**< @brief Map input to output stream */
 
 public:
     /**

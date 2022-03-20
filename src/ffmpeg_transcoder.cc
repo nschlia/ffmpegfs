@@ -3333,9 +3333,13 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         frame->pict_type    = AV_PICTURE_TYPE_I;
                         m_insert_keyframe   = true;
                     }
-                }
 
-                m_video_frame_fifo.push(frame);
+                    m_video_frame_fifo.insert(std::make_pair(pos, frame));
+                }
+                else
+                {
+                    m_video_frame_fifo.insert(std::make_pair(0, frame));
+                }
             }
             else
             {
@@ -3393,7 +3397,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     if (data_present)
     {
         // If there is decoded data, store it
-        subtitlefifo.push(sub);
+        subtitlefifo.insert(std::make_pair(sub->pts, sub)); // sub->pts is already in AV_TIME_BASE
     }
     else
     {
@@ -4569,7 +4573,8 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
         m_out.m_audio_pts += duration;
     }
 
-    m_audio_frame_fifo.push(output_frame);
+    int64_t pos = av_rescale_q_rnd(output_frame->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+    m_audio_frame_fifo.insert(std::make_pair(pos, output_frame));
 
     return ret;
 }
@@ -5024,12 +5029,10 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
 
             // Read audio frame FIFO, encode and store
-            while (!m_audio_frame_fifo.empty())
+            for (FRAMEFIFO::const_iterator it = m_audio_frame_fifo.cbegin(); it != m_audio_frame_fifo.cend(); ++it)
             {
                 int ret = 0;
-
-                AVFrame *audio_frame = m_audio_frame_fifo.front();
-                m_audio_frame_fifo.pop();
+                AVFrame *audio_frame = it->second;
 
                 int data_written;
                 // Encode one frame worth of audio samples.
@@ -5042,6 +5045,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     throw ret;
                 }
             }
+
+            m_audio_frame_fifo.clear();
 
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.
@@ -5076,10 +5081,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         {
             int ret = 0;
 
-            while (!m_video_frame_fifo.empty())
+            for (FRAMEFIFO::const_iterator it = m_video_frame_fifo.cbegin(); it != m_video_frame_fifo.cend(); ++it)
             {
-                AVFrame *video_frame = m_video_frame_fifo.front();
-                m_video_frame_fifo.pop();
+                AVFrame *video_frame = it->second;
 
                 // Encode one video frame.
                 if (!is_frameset())
@@ -5100,6 +5104,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     throw ret;
                 }
             }
+
+            m_video_frame_fifo.clear();
 
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.
@@ -5127,10 +5133,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     throw AVERROR(EINVAL);
                 }
 
-                while (subtitle_fifo.size())
+                for (SUBTITLEFIFO::const_iterator it = subtitle_fifo.cbegin(); it != subtitle_fifo.cend(); ++it)
                 {
-                    AVSubtitle * subtitle = subtitle_fifo.front();
-                    subtitle_fifo.pop();
+                    AVSubtitle *subtitle = it->second;
 
                     int data_written = 0;
                     ret = encode_subtitle(subtitle, out_stream_idx, &data_written);
@@ -5143,6 +5148,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         throw ret;
                     }
                 }
+
+                subtitle_fifo.clear();
             }
 
             // If we are at the end of the input file and have encoded
@@ -6007,13 +6014,14 @@ size_t FFmpeg_Transcoder::purge_audio_frame_fifo()
 {
     size_t audio_frames_left  = m_audio_frame_fifo.size();
 
-    while (m_audio_frame_fifo.size())
+    for (FRAMEFIFO::const_iterator it = m_audio_frame_fifo.begin(); it != m_audio_frame_fifo.end(); ++it)
     {
-        AVFrame *audio_frame = m_audio_frame_fifo.front();
-        m_audio_frame_fifo.pop();
+        AVFrame *audio_frame = it->second;
 
         av_frame_free(&audio_frame);
     }
+
+    m_audio_frame_fifo.clear();
 
     return audio_frames_left;
 }
@@ -6022,13 +6030,14 @@ size_t FFmpeg_Transcoder::purge_video_frame_fifo()
 {
     size_t video_frames_left = m_video_frame_fifo.size();
 
-    while (m_video_frame_fifo.size())
+    for (FRAMEFIFO::const_iterator it = m_video_frame_fifo.begin(); it != m_video_frame_fifo.end(); ++it)
     {
-        AVFrame *video_frame = m_video_frame_fifo.front();
-        m_video_frame_fifo.pop();
+        AVFrame *video_frame = it->second;
 
         av_frame_free(&video_frame);
     }
+
+    m_video_frame_fifo.clear();
 
     return video_frames_left;
 }
@@ -6043,14 +6052,15 @@ size_t FFmpeg_Transcoder::purge_subtitle_frame_fifos()
 
         subtitle_frames_left += subtitle_fifo.size();
 
-        while (subtitle_fifo.size())
+        for (SUBTITLEFIFO::const_iterator it = subtitle_fifo.begin(); it != subtitle_fifo.end(); ++it)
         {
-            AVSubtitle * subtitle = subtitle_fifo.front();
-            subtitle_fifo.pop();
+            AVSubtitle *subtitle = it->second;
 
             avsubtitle_free(subtitle);
             delete subtitle;
         }
+
+        subtitle_fifo.clear();
     }
 
     return subtitle_frames_left;

@@ -45,8 +45,10 @@
 #include <unistd.h>
 #include <atomic>
 
-/** @brief 1 millisecond = 1,000,000 Nanoseconds */
-#define MS  *1000000L
+
+#define MS              *1000000L   /**< @brief 1 millisecond = 1,000,000 Nanoseconds */
+#define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is avaiable */
+#define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is avaiable */
 
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread
@@ -614,8 +616,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 cache_entry->m_seek_to_no = frame_no;
             }
 
-#define GRANULARITY     250 // ms
-#define FRAME_TIMEOUT   10  // seconds
             int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
             while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
             {

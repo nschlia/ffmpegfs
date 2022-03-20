@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['max_5fprores_5fframerate_2520',['MAX_PRORES_FRAMERATE',['../ffmpeg__transcoder_8h.html#a23a169dcafbfb923cc55a919ba9ef022',1,'ffmpeg_transcoder.h']]],
-  ['ms_2521',['MS',['../transcode_8cc.html#ab9e061e05d689a5769936b213022102f',1,'transcode.cc']]]
+  ['lavc_5fdep_5fav_5finit_5fpacket_2524',['LAVC_DEP_AV_INIT_PACKET',['../ffmpeg__compat_8h.html#a2f316a56dc8cae3fddabfa478c424f0a',1,'ffmpeg_compat.h']]]
 ];

@@ -49,6 +49,8 @@ struct SwsContext;
 struct AVFilterContext;
 struct AVFilterGraph;
 struct AVAudioFifo;
+struct AVCodecContext;
+struct AVSubtitle;
 
 /**
  * @brief The #FFmpeg_Transcoder class
@@ -1081,7 +1083,11 @@ private:
     // Audio conversion and buffering
     AVSampleFormat              m_cur_sample_fmt;               /**< @brief Currently selected audio sample format */
     int                         m_cur_sample_rate;              /**< @brief Currently selected audio sample rate */
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    AVChannelLayout             m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
     AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
     FRAMEFIFO                   m_audio_frame_fifo;             /**< @brief Audio frame FIFO */

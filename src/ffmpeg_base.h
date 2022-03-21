@@ -39,6 +39,7 @@
 #define INVALID_STREAM  -1              /**< @brief Denote an invalid stream */
 
 struct VIRTUALFILE;
+struct AVCodecContext;
 
 /**
  * @brief The #FFmpeg_Base class
@@ -144,6 +145,14 @@ protected:
      * @return Returns a std::string with the format name.
      */
     static std::string  get_sample_fmt_name(AVSampleFormat sample_fmt);
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    /**
+     * @brief Calls av_channel_layout_describe and returns a std::string with the channel layout.
+     * @param[in] ch_layout - Channel layout
+     * @return Returns a std::string with the channel layout.
+     */
+    static std::string get_channel_layout_name(const AVChannelLayout * ch_layout);
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     /**
      * @brief Calls av_get_channel_layout_string and returns a std::string with the channel layout.
      * @param[in] nb_channels - Number of channels.
@@ -151,6 +160,7 @@ protected:
      * @return Returns a std::string with the channel layout.
      */
     static std::string  get_channel_layout_name(int nb_channels, uint64_t channel_layout);
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
     /**
      * @brief Return source filename. Must be implemented in child class.
@@ -176,8 +186,42 @@ protected:
      * @return Returns PTS of frame in stream's time_base units.
      */
     int64_t             frame_to_pts(AVStream* stream, uint32_t frame_no) const;
+    /**
+     * @brief Get number of channels from AVCodecParameters
+     * @param[in] codecpar - AVCodecParameters to check
+     * @return Returns number of channels
+     */
+    int                 get_channels(const AVCodecParameters *codecpar) const;
+    /**
+     * @brief Set number of channels from AVCodecParameters
+     * @param[inout] codecpar_out - AVCodecParameters to set
+     * @param[in] codecpar_in - AVCodecParameters to get channels from
+     * @param channels
+     */
+    void                set_channels(AVCodecParameters *codecpar_out, const AVCodecParameters *codecpar_in) const;
+    /**
+     * @brief Get number of channels from AVCodecContext
+     * @param[in] codecpar - AVCodecContext to check
+     * @return Returns number of channels
+     */
+    int                 get_channels(const AVCodecContext *codec_ctx) const;
+    /**
+     * @brief Set number of channels from AVCodecContext
+     * @param[inout] codec_ctx - AVCodecContext to set
+     * @param channels
+     */
+    void                set_channels(AVCodecContext *codec_ctx_out, const AVCodecContext *codec_ctx_in) const;
+    /**
+     * @brief Set number of channels from AVCodecContext
+     * @param[inout] codec_ctx_out - AVCodecContext to set
+     * @param[in] channels - Number of channels to set
+     * @param channels
+     */
+    void                set_channels(AVCodecContext *codec_ctx_out, int channels) const;
+
 protected:
     VIRTUALFILE * m_virtualfile;            /**< @brief Underlying virtual file object */
 };
 
 #endif // FFMPEG_BASE_H
+

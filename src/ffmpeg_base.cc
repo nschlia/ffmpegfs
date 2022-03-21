@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -259,7 +259,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
                    out_file ? "out" : "in",
                    get_codec_name(stream->codecpar->codec_id, false),
                    format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
-                   stream->codecpar->channels,
+                   get_channels(stream->codecpar),
                    format_samplerate(stream->codecpar->sample_rate).c_str(),
                    format_duration(duration).c_str());
 }
@@ -282,12 +282,21 @@ std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt)
     return av_get_sample_fmt_name(sample_fmt);
 }
 
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+std::string FFmpeg_Base::get_channel_layout_name(const AVChannelLayout * ch_layout)
+{
+    char buffer[1024];
+    av_channel_layout_describe(ch_layout, buffer, sizeof(buffer) - 1);
+    return buffer;
+}
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout)
 {
     char buffer[1024];
     av_get_channel_layout_string(buffer, sizeof(buffer) - 1, nb_channels, channel_layout);
     return buffer;
 }
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
 uint32_t FFmpeg_Base::pts_to_frame(AVStream* stream, int64_t pts) const
 {
@@ -305,4 +314,49 @@ int64_t FFmpeg_Base::frame_to_pts(AVStream* stream, uint32_t frame_no) const
     int64_t start_time = (stream->start_time != AV_NOPTS_VALUE) ? stream->start_time : 0;
     AVRational factor = av_mul_q(stream->r_frame_rate, stream->time_base);
     return static_cast<uint32_t>(av_rescale(frame_no - 1, factor.den, factor.num) + start_time);
+}
+
+int FFmpeg_Base::get_channels(const AVCodecParameters *codecpar) const
+{
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    return codecpar->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    return codecpar->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+}
+
+void FFmpeg_Base::set_channels(AVCodecParameters *codecpar_out, const AVCodecParameters *codecpar_in) const
+{
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codecpar_out->ch_layout.nb_channels = codecpar_in->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codecpar_out->channels = codecpar_in->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+}
+
+int FFmpeg_Base::get_channels(const AVCodecContext *codec_ctx) const
+{
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    return codec_ctx->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    return codec_ctx->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+}
+
+void FFmpeg_Base::set_channels(AVCodecContext *codec_ctx_out, const AVCodecContext *codec_ctx_in) const
+{
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codec_ctx_out->ch_layout.nb_channels= codec_ctx_in->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codec_ctx_out->channels = codec_ctx_in->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+}
+
+void FFmpeg_Base::set_channels(AVCodecContext *codec_ctx_out, int channels) const
+{
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codec_ctx_out->ch_layout.nb_channels = channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    codec_ctx_out->channels = channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 }

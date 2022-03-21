@@ -190,7 +190,9 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
+    #if !LAVU_DEP_OLD_CHANNEL_LAYOUT
     , m_cur_channel_layout(0)
+    #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     , m_audio_resample_ctx(nullptr)
     , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
@@ -222,6 +224,10 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
 
     memset(&m_mtime, 0, sizeof(m_mtime));
+
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    av_channel_layout_default(&m_cur_channel_layout, 2);
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
     // Initialise ID3v1.1 tag structure
     init_id3v1(&m_out.m_id3v1);
@@ -1578,19 +1584,24 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
-        if (params.m_audiochannels > 0 && m_in.m_audio.m_codec_ctx->channels > params.m_audiochannels)
+        if (params.m_audiochannels > 0 && get_channels(m_in.m_audio.m_codec_ctx) > params.m_audiochannels)
         {
             Logging::trace(destname(), "Limiting audio channels from %1 to %2.",
-                           m_in.m_audio.m_codec_ctx->channels,
+                           get_channels(m_in.m_audio.m_codec_ctx),
                            params.m_audiochannels);
-            output_codec_ctx->channels         = params.m_audiochannels;
+            set_channels(output_codec_ctx, params.m_audiochannels);
         }
         else
         {
-            output_codec_ctx->channels          = m_in.m_audio.m_codec_ctx->channels;
+            set_channels(output_codec_ctx, m_in.m_audio.m_codec_ctx);
         }
 
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+        av_channel_layout_default(&output_codec_ctx->ch_layout, output_codec_ctx->ch_layout.nb_channels);
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
         output_codec_ctx->channel_layout        = static_cast<uint64_t>(av_get_default_channel_layout(output_codec_ctx->channels));
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+
         output_codec_ctx->sample_rate           = m_in.m_audio.m_codec_ctx->sample_rate;
         orig_sample_rate                        = m_in.m_audio.m_codec_ctx->sample_rate;
         if (get_output_sample_rate(m_in.m_audio.m_stream->codecpar->sample_rate, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
@@ -2607,6 +2618,12 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 int FFmpeg_Transcoder::init_resampler()
 {
     // Fail save: if channel layout not known assume mono or stereo
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    if (!m_in.m_audio.m_codec_ctx->ch_layout.nb_channels)
+    {
+        av_channel_layout_default(&m_in.m_audio.m_codec_ctx->ch_layout, 2);
+    }
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     if (!m_in.m_audio.m_codec_ctx->channel_layout)
     {
         m_in.m_audio.m_codec_ctx->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(m_in.m_audio.m_codec_ctx->channels));
@@ -2615,25 +2632,49 @@ int FFmpeg_Transcoder::init_resampler()
     {
         m_in.m_audio.m_codec_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
     }
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+
+
     // Only initialise the resampler if it is necessary, i.e.,
     // if and only if the sample formats differ.
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    if (m_in.m_audio.m_codec_ctx->sample_fmt == m_out.m_audio.m_codec_ctx->sample_fmt &&
+            m_in.m_audio.m_codec_ctx->sample_rate == m_out.m_audio.m_codec_ctx->sample_rate &&
+            !av_channel_layout_compare(&m_in.m_audio.m_codec_ctx->ch_layout, &m_out.m_audio.m_codec_ctx->ch_layout))
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     if (m_in.m_audio.m_codec_ctx->sample_fmt == m_out.m_audio.m_codec_ctx->sample_fmt &&
             m_in.m_audio.m_codec_ctx->sample_rate == m_out.m_audio.m_codec_ctx->sample_rate &&
             m_in.m_audio.m_codec_ctx->channel_layout == m_out.m_audio.m_codec_ctx->channel_layout)
-
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     {
         // Formats are same
         close_resample();
         return 0;
     }
 
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    if (m_audio_resample_ctx == nullptr ||
+            m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
+            m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
+            !av_channel_layout_compare(&m_cur_channel_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     if (m_audio_resample_ctx == nullptr ||
             m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
             m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
             m_cur_channel_layout != m_in.m_audio.m_codec_ctx->channel_layout)
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     {
         int ret;
 
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+        Logging::debug(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
+                       get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                       get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
+                       format_samplerate(m_in.m_audio.m_codec_ctx->sample_rate).c_str(),
+                       format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate).c_str(),
+                       get_channel_layout_name(&m_in.m_audio.m_codec_ctx->ch_layout).c_str(),
+                       get_channel_layout_name(&m_out.m_audio.m_codec_ctx->ch_layout).c_str());
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
         Logging::debug(destname(), "Creating audio resampler: %1 -> %2 / %3 -> %4 / %5 -> %6.",
                        get_sample_fmt_name(m_in.m_audio.m_codec_ctx->sample_fmt).c_str(),
                        get_sample_fmt_name(m_out.m_audio.m_codec_ctx->sample_fmt).c_str(),
@@ -2641,15 +2682,35 @@ int FFmpeg_Transcoder::init_resampler()
                        format_samplerate(m_out.m_audio.m_codec_ctx->sample_rate).c_str(),
                        get_channel_layout_name(m_in.m_audio.m_codec_ctx->channels, m_in.m_audio.m_codec_ctx->channel_layout).c_str(),
                        get_channel_layout_name(m_out.m_audio.m_codec_ctx->channels, m_out.m_audio.m_codec_ctx->channel_layout).c_str());
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
         close_resample();
 
         m_cur_sample_fmt        = m_in.m_audio.m_codec_ctx->sample_fmt;
         m_cur_sample_rate       = m_in.m_audio.m_codec_ctx->sample_rate;
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+        av_channel_layout_copy(&m_cur_channel_layout, &m_in.m_audio.m_codec_ctx->ch_layout);
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
         m_cur_channel_layout    = m_in.m_audio.m_codec_ctx->channel_layout;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
+#if SWR_DEP_ALLOC_SET_OPTS
+        ret = swr_alloc_set_opts2(&m_audio_resample_ctx,
+                                  &m_out.m_audio.m_codec_ctx->ch_layout,
+                                  m_out.m_audio.m_codec_ctx->sample_fmt,
+                                  m_out.m_audio.m_codec_ctx->sample_rate,
+                                  &m_in.m_audio.m_codec_ctx->ch_layout,
+                                  m_in.m_audio.m_codec_ctx->sample_fmt,
+                                  m_in.m_audio.m_codec_ctx->sample_rate,
+                                  0, nullptr);
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not allocate resample context (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+#else
         m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
                                                   static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
                                                   m_out.m_audio.m_codec_ctx->sample_fmt,
@@ -2663,6 +2724,7 @@ int FFmpeg_Transcoder::init_resampler()
             Logging::error(destname(), "Could not allocate resample context.");
             return AVERROR(ENOMEM);
         }
+#endif
 
         // Open the resampler with the specified parameters.
         ret = swr_init(m_audio_resample_ctx);
@@ -2680,7 +2742,7 @@ int FFmpeg_Transcoder::init_resampler()
 int FFmpeg_Transcoder::init_fifo()
 {
     // Create the FIFO buffer based on the specified output sample format.
-    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, m_out.m_audio.m_codec_ctx->channels, 1);
+    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx), 1);
     if (m_audio_fifo == nullptr)
     {
         Logging::error(destname(), "Could not allocate FIFO.");
@@ -3686,7 +3748,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Each pointer will later point to the audio samples of the corresponding
     // channels (although it may be nullptr for interleaved formats).
 
-    *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(m_out.m_audio.m_codec_ctx->channels), sizeof(**converted_input_samples)));
+    *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(get_channels(m_out.m_audio.m_codec_ctx)), sizeof(**converted_input_samples)));
 
     if (*converted_input_samples == nullptr)
     {
@@ -3697,7 +3759,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Allocate memory for the samples of all channels in one consecutive
     // block for convenience.
     ret = av_samples_alloc(*converted_input_samples, nullptr,
-                           m_out.m_audio.m_codec_ctx->channels,
+                           get_channels(m_out.m_audio.m_codec_ctx),
                            frame_size,
                            m_out.m_audio.m_codec_ctx->sample_fmt, 0);
     if (ret < 0)
@@ -3734,13 +3796,13 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
         if (!av_sample_fmt_is_planar(m_out.m_audio.m_codec_ctx->sample_fmt))
         {
             // Interleaved format
-            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * m_in.m_audio.m_codec_ctx->channels));
+            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx)));
         }
         else
         {
             // Planar format
             size_t samples = static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
-            for (int n = 0; n < m_out.m_audio.m_codec_ctx->channels; n++)
+            for (int n = 0; n < get_channels(m_out.m_audio.m_codec_ctx); n++)
             {
                 memcpy(converted_data[n], input_data[n], samples);
             }
@@ -3954,7 +4016,17 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size) 
     // are assumed for simplicity.
 
     (*frame)->nb_samples        = frame_size;
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    ret = av_channel_layout_copy(&(*frame)->ch_layout, &m_out.m_audio.m_codec_ctx->ch_layout);
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Unable to copy channel layout (error '%1').", ffmpeg_geterror(ret).c_str());
+        av_frame_free(frame);
+        return ret;
+    }
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     (*frame)->channel_layout    = m_out.m_audio.m_codec_ctx->channel_layout;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     (*frame)->format            = m_out.m_audio.m_codec_ctx->sample_fmt;
     (*frame)->sample_rate       = m_out.m_audio.m_codec_ctx->sample_rate;
 
@@ -5780,7 +5852,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
     if (input_audio_bit_rate)
     {
-        int channels = m_in.m_audio.m_codec_ctx->channels;
+        int channels = get_channels(m_in.m_audio.m_codec_ctx);
 
         if (!audio_size(&filesize, m_current_format->audio_codec(), input_audio_bit_rate, duration, channels, input_sample_rate, m_cur_sample_fmt))
         {

@@ -79,7 +79,7 @@
  * 2021-04-27 - 8b3e6ce5f4 - lavd 59.0.100 - avdevice.h
  *   The av_*_device_next API functions now accept and return
  *   pointers to const AVInputFormat resp. AVOutputFormat.
-
+ *
  * 2021-04-27 - d7e0d428fa - lavd 59.0.100 - avdevice.h
  *   avdevice_list_input_sources and avdevice_list_output_sinks now accept
  *   pointers to const AVInputFormat resp. const AVOutputFormat.
@@ -107,5 +107,18 @@
  *   av_probe_input_format2() and av_probe_input_format3().
 */
 #define IF_DECLARED_CONST                   (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 0, 0))
+/**
+  * 2022-03-15 - cdba98bb80 - lavu 57.24.100 - channel_layout.h frame.h opt.h
+  * Add new channel layout API based on the AVChannelLayout struct.
+  * Add support for Ambisonic audio.
+  * Deprecate previous channel layout API based on uint64 bitmasks.
+*/
+#define LAVU_DEP_OLD_CHANNEL_LAYOUT         (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 24, 0))
+/**
+  * 2022-03-15 - cdba98bb80 - swr 4.5.100 - swresample.h
+  * Add swr_alloc_set_opts2() and swr_build_matrix2().
+  * Deprecate swr_alloc_set_opts() and swr_build_matrix().
+*/
+#define SWR_DEP_ALLOC_SET_OPTS              (LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT(4, 5, 0))
 
 #endif // FFMPEG_COMPAT_H

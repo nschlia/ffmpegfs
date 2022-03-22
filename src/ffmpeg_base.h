@@ -194,26 +194,24 @@ protected:
      * @brief Set number of channels from AVCodecParameters
      * @param[inout] codecpar_out - AVCodecParameters to set
      * @param[in] codecpar_in - AVCodecParameters to get channels from
-     * @param channels
      */
     void                set_channels(AVCodecParameters *codecpar_out, const AVCodecParameters *codecpar_in) const;
     /**
      * @brief Get number of channels from AVCodecContext
-     * @param[in] codecpar - AVCodecContext to check
+     * @param[in] codec_ctx - AVCodecContext to check
      * @return Returns number of channels
      */
     int                 get_channels(const AVCodecContext *codec_ctx) const;
     /**
      * @brief Set number of channels from AVCodecContext
-     * @param[inout] codec_ctx - AVCodecContext to set
-     * @param channels
+     * @param[inout] codec_ctx_out - AVCodecContext to set channels for
+     * @param[in] codec_ctx_in - AVCodecContext to copy channels from
      */
     void                set_channels(AVCodecContext *codec_ctx_out, const AVCodecContext *codec_ctx_in) const;
     /**
      * @brief Set number of channels from AVCodecContext
      * @param[inout] codec_ctx_out - AVCodecContext to set
      * @param[in] channels - Number of channels to set
-     * @param channels
      */
     void                set_channels(AVCodecContext *codec_ctx_out, int channels) const;
 

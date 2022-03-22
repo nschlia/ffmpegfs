@@ -122,6 +122,10 @@ Macros</h2></td></tr>
 <tr class="separator:a2f316a56dc8cae3fddabfa478c424f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1f9296f823825cb17205d59fd6dcb5d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__compat_8h.html#aa1f9296f823825cb17205d59fd6dcb5d">IF_DECLARED_CONST</a>&#160;&#160;&#160;(LIBAVCODEC_VERSION_INT &gt;= AV_VERSION_INT(59, 0, 0))</td></tr>
 <tr class="separator:aa1f9296f823825cb17205d59fd6dcb5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afea7ecac7e819ef6fb0cac5f19df9867"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__compat_8h.html#afea7ecac7e819ef6fb0cac5f19df9867">LAVU_DEP_OLD_CHANNEL_LAYOUT</a>&#160;&#160;&#160;(LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(57, 24, 0))</td></tr>
+<tr class="separator:afea7ecac7e819ef6fb0cac5f19df9867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50e86f07bdf5a2b364fda58881d8158c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ffmpeg__compat_8h.html#a50e86f07bdf5a2b364fda58881d8158c">SWR_DEP_ALLOC_SET_OPTS</a>&#160;&#160;&#160;(LIBSWRESAMPLE_VERSION_INT &gt;= AV_VERSION_INT(4, 5, 0))</td></tr>
+<tr class="separator:a50e86f07bdf5a2b364fda58881d8158c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>FFmpeg API compatibility. </p>
@@ -173,6 +177,40 @@ Macros</h2></td></tr>
 <p>see av_packet_alloc see av_packet_ref see av_packet_unref </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__compat_8h_source.html#l00071">71</a> of file <a class="el" href="ffmpeg__compat_8h_source.html">ffmpeg_compat.h</a>.</p>
+
+</div>
+</div>
+<a id="afea7ecac7e819ef6fb0cac5f19df9867"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afea7ecac7e819ef6fb0cac5f19df9867">&#9670;&nbsp;</a></span>LAVU_DEP_OLD_CHANNEL_LAYOUT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAVU_DEP_OLD_CHANNEL_LAYOUT&#160;&#160;&#160;(LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(57, 24, 0))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>2022-03-15 - cdba98bb80 - lavu 57.24.100 - channel_layout.h frame.h opt.h Add new channel layout API based on the AVChannelLayout struct. Add support for Ambisonic audio. Deprecate previous channel layout API based on uint64 bitmasks. </p>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__compat_8h_source.html#l00116">116</a> of file <a class="el" href="ffmpeg__compat_8h_source.html">ffmpeg_compat.h</a>.</p>
+
+</div>
+</div>
+<a id="a50e86f07bdf5a2b364fda58881d8158c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50e86f07bdf5a2b364fda58881d8158c">&#9670;&nbsp;</a></span>SWR_DEP_ALLOC_SET_OPTS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SWR_DEP_ALLOC_SET_OPTS&#160;&#160;&#160;(LIBSWRESAMPLE_VERSION_INT &gt;= AV_VERSION_INT(4, 5, 0))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>2022-03-15 - cdba98bb80 - swr 4.5.100 - swresample.h Add swr_alloc_set_opts2() and swr_build_matrix2(). Deprecate swr_alloc_set_opts() and swr_build_matrix(). </p>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__compat_8h_source.html#l00122">122</a> of file <a class="el" href="ffmpeg__compat_8h_source.html">ffmpeg_compat.h</a>.</p>
 
 </div>
 </div>

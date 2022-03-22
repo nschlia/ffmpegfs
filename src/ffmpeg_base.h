@@ -65,12 +65,10 @@ protected:
     void                init_packet(AVPacket *pkt) const;
 #endif // !LAVC_DEP_AV_INIT_PACKET
     /**
-     * @brief Initialise one frame for reading from the input file
-     * @param[out] frame - Newly allocated frame.
-     * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @return On success returns 0; on error negative AVERROR.
+     * @brief Allocate a subtitle
+     * @return Returns a newly allocated AVSubtitle field, or nullptr if out of memory.
      */
-    int                 init_frame(AVFrame **frame, const char *filename = nullptr) const;
+    AVSubtitle*         alloc_subtitle() const;
     /**
      * @brief Set up video stream
      * @param[in] output_codec_ctx - Output codec context.

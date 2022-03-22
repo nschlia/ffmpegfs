@@ -3009,31 +3009,23 @@ int FFmpeg_Transcoder::write_output_file_header()
     return ret;
 }
 
-AVFrame *FFmpeg_Transcoder::alloc_picture(AVPixelFormat pix_fmt, int width, int height)
+int FFmpeg_Transcoder::alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height)
 {
-    AVFrame *picture;
     int ret;
 
-    ret = init_frame(&picture, filename());
-    if (ret < 0)
-    {
-        return nullptr;
-    }
-
-    picture->format = pix_fmt;
-    picture->width  = width;
-    picture->height = height;
+    frame->format = pix_fmt;
+    frame->width  = width;
+    frame->height = height;
 
     // allocate the buffers for the frame data
-    ret = av_frame_get_buffer(picture, 32);
+    ret = av_frame_get_buffer(frame, 32);
     if (ret < 0)
     {
         Logging::error(destname(), "Could not allocate frame data (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_frame_free(&picture);
-        return nullptr;
+        return ret;
     }
 
-    return picture;
+    return 0;
 }
 
 int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
@@ -3110,20 +3102,18 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
     // read all the output frames (in general there may be any number of them)
     while (ret >= 0)
     {
-        AVFrame *frame = nullptr;
+        FFmpeg_Frame frame;
 
-        // Initialise temporary storage for one input frame.
-        ret = init_frame(&frame, filename());
+        ret = frame.res();
         if (ret < 0)
         {
-            return ret;
+            Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            break;
         }
 
         ret = decode(m_in.m_audio.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
         if (!data_present)
         {
-            // unused frame
-            av_frame_free(&frame);
             break;
         }
 
@@ -3131,8 +3121,6 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
         {
             // Anything else is an error, report it!
             Logging::error(filename(), "Could not decode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-            // unused frame
-            av_frame_free(&frame);
             break;
         }
 
@@ -3193,7 +3181,6 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
                 av_free(converted_input_samples);
             }
         }
-        av_frame_free(&frame);
     }
     return ret;
 }
@@ -3226,20 +3213,18 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     // read all the output frames (in general there may be any number of them)
     while (ret >= 0)
     {
-        AVFrame *frame = nullptr;
+        FFmpeg_Frame frame;
 
-        // Initialise temporary storage for one input frame.
-        ret = init_frame(&frame, filename());
+        ret = frame.res();
         if (ret < 0)
         {
-            return ret;
+            Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            break;
         }
 
         ret = decode(m_in.m_video.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
         if (!data_present)
         {
-            // unused frame
-            av_frame_free(&frame);
             break;
         }
 
@@ -3247,35 +3232,28 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         {
             // Anything else is an error, report it!
             Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-            // unused frame
-            av_frame_free(&frame);
             break;
         }
 
         if (m_hwaccel_enable_dec_buffering && frame != nullptr)
         {
-            AVFrame *sw_frame;
+            FFmpeg_Frame sw_frame;
+
+            ret = sw_frame.res();
+            if (ret < 0)
+            {
+                Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
 
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
             //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx, &sw_frame, frame);
 
-            ret = init_frame(&sw_frame, destname());
-            if (ret < 0)
-            {
-                // unused frame
-                av_frame_free(&frame);
-                break;
-            }
-
             // retrieve data from GPU to CPU
             ret = av_hwframe_transfer_data(sw_frame, frame, 0); // hwframe_copy_from_hw
-            // Free unused frame
-            av_frame_free(&frame);
             if (ret < 0)
             {
                 Logging::error(filename(), "Error transferring the data to system memory (error '%1').", ffmpeg_geterror(ret).c_str());
-                // unused frame
-                av_frame_free(&sw_frame);
                 break;
             }
             frame = sw_frame;
@@ -3311,22 +3289,29 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         {
             if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
             {
-                frame = send_filters(frame, ret);
+                ret = send_filters(&frame, ret);
                 if (ret)
                 {
-                    av_frame_free(&frame);
                     return ret;
                 }
 
                 if (m_sws_ctx != nullptr)
                 {
+                    FFmpeg_Frame tmp_frame;
+
+                    ret = tmp_frame.res();
+                    if (ret < 0)
+                    {
+                        Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+
                     AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
 
-                    AVFrame * tmp_frame = alloc_picture(m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
-                    if (tmp_frame == nullptr)
+                    ret = alloc_picture(tmp_frame, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+                    if (ret < 0)
                     {
-                        av_frame_free(&frame);
-                        return AVERROR(ENOMEM);
+                        return ret;
                     }
 
                     sws_scale(m_sws_ctx,
@@ -3334,10 +3319,8 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                               0, frame->height,
                               tmp_frame->data, tmp_frame->linesize);
 
-                    tmp_frame->pts = frame->pts;
-                    tmp_frame->best_effort_timestamp = frame->best_effort_timestamp;
-
-                    av_frame_free(&frame);
+                    tmp_frame->pts                      = frame->pts;
+                    tmp_frame->best_effort_timestamp    = frame->best_effort_timestamp;
 
                     frame = tmp_frame;
                 }
@@ -3403,11 +3386,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     m_video_frame_fifo.insert(std::make_pair(0, frame));
                 }
             }
-            else
-            {
-                // unused frame
-                av_frame_free(&frame);
-            }
         }
     }
 
@@ -3440,30 +3418,30 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     // to flush it.
 
     // Temporary storage of the input samples of the frame read from the file.
-    AVSubtitle *sub = new AVSubtitle;
+    AVSubtitle *subtitle = alloc_subtitle();
 
-    memset(sub, 0, sizeof(AVSubtitle));
-
-    ret = avcodec_decode_subtitle2(codec_ctx, sub, &data_present, pkt);
+    ret = avcodec_decode_subtitle2(codec_ctx, subtitle, &data_present, pkt);
 
     if (ret < 0 && ret != AVERROR(EINVAL))
     {
         Logging::error(filename(), "Could not decode subtitle frame (error '%1').", ffmpeg_geterror(ret).c_str());
-        delete sub;
-        return ret;
+        data_present = 0;
     }
-
-    *decoded = ret;
-    ret = 0;
+    else
+    {
+        *decoded = ret;
+        ret = 0;
+    }
 
     if (data_present)
     {
         // If there is decoded data, store it
-        subtitlefifo.insert(std::make_pair(sub->pts, sub)); // sub->pts is already in AV_TIME_BASE
+        subtitlefifo.insert(std::make_pair(subtitle->pts, subtitle)); // sub->pts is already in AV_TIME_BASE
     }
     else
     {
-        delete sub;
+        avsubtitle_free(subtitle);
+        av_free(subtitle);
     }
 
     return ret;
@@ -3997,16 +3975,9 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     return ret;
 }
 
-int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size) const
+int FFmpeg_Transcoder::init_audio_output_frame(AVFrame *frame, int frame_size) const
 {
     int ret;
-
-    // Create a new frame to store the audio samples.
-    ret = init_frame(frame, destname());
-    if (ret < 0)
-    {
-        return AVERROR_EXIT;
-    }
 
     //
     // Set the frame's parameters, especially its size and format.
@@ -4015,30 +3986,28 @@ int FFmpeg_Transcoder::init_audio_output_frame(AVFrame **frame, int frame_size) 
     // Default channel layouts based on the number of channels
     // are assumed for simplicity.
 
-    (*frame)->nb_samples        = frame_size;
+    frame->nb_samples        = frame_size;
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-    ret = av_channel_layout_copy(&(*frame)->ch_layout, &m_out.m_audio.m_codec_ctx->ch_layout);
+    ret = av_channel_layout_copy(&frame->ch_layout, &m_out.m_audio.m_codec_ctx->ch_layout);
     if (ret < 0)
     {
         Logging::error(destname(), "Unable to copy channel layout (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_frame_free(frame);
         return ret;
     }
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    (*frame)->channel_layout    = m_out.m_audio.m_codec_ctx->channel_layout;
+    frame->channel_layout    = m_out.m_audio.m_codec_ctx->channel_layout;
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    (*frame)->format            = m_out.m_audio.m_codec_ctx->sample_fmt;
-    (*frame)->sample_rate       = m_out.m_audio.m_codec_ctx->sample_rate;
+    frame->format            = m_out.m_audio.m_codec_ctx->sample_fmt;
+    frame->sample_rate       = m_out.m_audio.m_codec_ctx->sample_rate;
 
     // Allocate the samples of the created frame. This call will make
     // sure that the audio frame can hold as many samples as specified.
     // 29.05.2021: Let API decide about alignment. Should be properly set for the current CPU.
 
-    ret = av_frame_get_buffer(*frame, 0);
+    ret = av_frame_get_buffer(frame, 0);
     if (ret < 0)
     {
         Logging::error(destname(), "Could allocate output frame samples (error '%1').", ffmpeg_geterror(ret).c_str());
-        av_frame_free(frame);
         return ret;
     }
 
@@ -4191,10 +4160,19 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
     AVPacket tmp_pkt;
 #endif // !LAVC_DEP_AV_INIT_PACKET
     AVPacket *pkt = nullptr;
-    AVFrame *cloned_frame = av_frame_clone(frame);  // Clone frame. Does not copy data but references it, only the properties are copied. Not a big memory impact.
     int ret = 0;
+
     try
     {
+        FFmpeg_Frame cloned_frame(frame);  // Clone frame. Does not copy data but references it, only the properties are copied. Not a big memory impact.
+
+        ret = cloned_frame.res();
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+
 #if LAVC_DEP_AV_INIT_PACKET
         pkt = av_packet_alloc();
 #else // !LAVC_DEP_AV_INIT_PACKET
@@ -4255,13 +4233,11 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
-            av_frame_free(&cloned_frame);
             av_packet_unref(pkt);
         }
     }
     catch (int _ret)
     {
-        av_frame_free(&cloned_frame);
         av_packet_unref(pkt);
         ret = _ret;
     }
@@ -4302,21 +4278,36 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 #if !LAVC_DEP_AV_INIT_PACKET
     AVPacket tmp_pkt;
 #endif // !LAVC_DEP_AV_INIT_PACKET
+    FFmpeg_Frame *hw_frame = nullptr;
     AVPacket *pkt = nullptr;
-    AVFrame *hw_frame = nullptr;
     int ret = 0;
 
     try
     {
         if (m_hwaccel_enable_enc_buffering && frame != nullptr)
         {
+            hw_frame = new FFmpeg_Frame;
+            if (hw_frame == nullptr)
+            {
+                ret = AVERROR(ENOMEM);
+                Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+
+            ret = hw_frame->res();
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", av_rescale_q(frame->pts, m_in.m_video.m_stream->time_base, av_get_time_base_q()), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+
             // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
-            ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, &hw_frame, frame);
+            ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, hw_frame, frame);
             if (ret < 0)
             {
                 throw ret;
             }
-            frame = hw_frame;
+            frame = *hw_frame;  // Copy, not clone!
         }
 
 #if LAVC_DEP_AV_INIT_PACKET
@@ -4429,11 +4420,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         ret = _ret;
     }
 
-    // If we copied the frame from RAM to hardware we need to free the hardware frame
-    if (hw_frame != nullptr)
-    {
-        av_frame_free(&hw_frame);
-    }
+    delete hw_frame;
 
 #if LAVC_DEP_AV_INIT_PACKET
     av_packet_free(&pkt);
@@ -4585,8 +4572,15 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 {
     // Temporary storage of the output samples of the frame written to the file.
-    AVFrame *output_frame;
+    FFmpeg_Frame output_frame;
     int ret = 0;
+
+    ret = output_frame.res();
+    if (ret < 0)
+    {
+        Logging::error(destname(), "Could not read data from FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
 
     // Use the maximum number of possible samples per frame.
     // If there is less than the maximum possible frame size in the FIFO
@@ -4595,7 +4589,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);
 
     // Initialise temporary storage for one output frame.
-    ret = init_audio_output_frame(&output_frame, frame_size);
+    ret = init_audio_output_frame(output_frame, frame_size);
     if (ret < 0)
     {
         return ret;
@@ -4616,7 +4610,6 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
             Logging::error(destname(), "Could not read data from FIFO.");
             ret = AVERROR_EXIT;
         }
-        av_frame_free(&output_frame);
         return ret;
     }
 
@@ -5104,13 +5097,10 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             for (FRAMEFIFO::const_iterator it = m_audio_frame_fifo.cbegin(); it != m_audio_frame_fifo.cend(); ++it)
             {
                 int ret = 0;
-                AVFrame *audio_frame = it->second;
-
                 int data_written;
-                // Encode one frame worth of audio samples.
-                ret = encode_audio_frame(audio_frame, &data_written);
 
-                av_frame_free(&audio_frame);
+                // Encode one frame worth of audio samples.
+                ret = encode_audio_frame(it->second, &data_written);
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
@@ -5155,21 +5145,17 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             for (FRAMEFIFO::const_iterator it = m_video_frame_fifo.cbegin(); it != m_video_frame_fifo.cend(); ++it)
             {
-                AVFrame *video_frame = it->second;
-
                 // Encode one video frame.
                 if (!is_frameset())
                 {
                     int data_written = 0;
-                    ret = encode_video_frame(video_frame, &data_written);
+                    ret = encode_video_frame(it->second, &data_written);
                 }
                 else
                 {
                     int data_written = 0;
-                    ret = encode_image_frame(video_frame, &data_written);
+                    ret = encode_image_frame(it->second, &data_written);
                 }
-
-                av_frame_free(&video_frame);
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
@@ -5213,7 +5199,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     ret = encode_subtitle(subtitle, out_stream_idx, &data_written);
 
                     avsubtitle_free(subtitle);
-                    delete subtitle;
+                    av_free(subtitle);
 
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
@@ -6086,13 +6072,6 @@ size_t FFmpeg_Transcoder::purge_audio_frame_fifo()
 {
     size_t audio_frames_left  = m_audio_frame_fifo.size();
 
-    for (FRAMEFIFO::const_iterator it = m_audio_frame_fifo.begin(); it != m_audio_frame_fifo.end(); ++it)
-    {
-        AVFrame *audio_frame = it->second;
-
-        av_frame_free(&audio_frame);
-    }
-
     m_audio_frame_fifo.clear();
 
     return audio_frames_left;
@@ -6101,13 +6080,6 @@ size_t FFmpeg_Transcoder::purge_audio_frame_fifo()
 size_t FFmpeg_Transcoder::purge_video_frame_fifo()
 {
     size_t video_frames_left = m_video_frame_fifo.size();
-
-    for (FRAMEFIFO::const_iterator it = m_video_frame_fifo.begin(); it != m_video_frame_fifo.end(); ++it)
-    {
-        AVFrame *video_frame = it->second;
-
-        av_frame_free(&video_frame);
-    }
 
     m_video_frame_fifo.clear();
 
@@ -6129,7 +6101,7 @@ size_t FFmpeg_Transcoder::purge_subtitle_frame_fifos()
             AVSubtitle *subtitle = it->second;
 
             avsubtitle_free(subtitle);
-            delete subtitle;
+            av_free(subtitle);
         }
 
         subtitle_fifo.clear();
@@ -6518,31 +6490,28 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
     return ret;
 }
 
-AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
+int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
 {
-    AVFrame *tgtframe = srcframe;
-
     ret = 0;
 
     if (m_buffer_source_context != nullptr /*&& srcframe->interlaced_frame*/)
     {
         try
         {
-            AVFrame * filterframe   = nullptr;
+            FFmpeg_Frame filterframe;
 
-            //pFrame->pts = av_frame_get_best_effort_timestamp(pFrame);
-            // push the decoded frame into the filtergraph
-
-            if ((ret = av_buffersrc_add_frame_flags(m_buffer_source_context, srcframe, AV_BUFFERSRC_FLAG_KEEP_REF)) < 0)
-            {
-                Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
-                throw ret;
-            }
-
-            ret = init_frame(&filterframe, destname());
+            ret = filterframe.res();
             if (ret < 0)
             {
                 Logging::error(destname(), "Unable to allocate filter frame (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+
+            // push the decoded frame into the filtergraph
+            ret = av_buffersrc_add_frame_flags(m_buffer_source_context, *srcframe, AV_BUFFERSRC_FLAG_KEEP_REF);
+            if (ret < 0)
+            {
+                Logging::warning(destname(), "Error while feeding the frame to filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
                 throw ret;
             }
 
@@ -6551,24 +6520,20 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 // Not an error, go on
-                av_frame_free(&filterframe);
                 ret = 0;
             }
             else if (ret < 0)
             {
                 Logging::error(destname(), "Error while getting frame from filtergraph (error '%1').", ffmpeg_geterror(ret).c_str());
-                av_frame_free(&filterframe);
                 throw ret;
             }
             else
             {
                 // All OK; copy filtered frame and unref original
-                tgtframe = filterframe;
+                filterframe->pts                   = (*srcframe)->pts;
+                filterframe->best_effort_timestamp = (*srcframe)->best_effort_timestamp;
 
-                tgtframe->pts = srcframe->pts;
-                tgtframe->best_effort_timestamp = srcframe->best_effort_timestamp;
-
-                av_frame_free(&srcframe);
+                *srcframe = filterframe;
             }
         }
         catch (int _ret)
@@ -6577,7 +6542,7 @@ AVFrame *FFmpeg_Transcoder::send_filters(AVFrame * srcframe, int & ret)
         }
     }
 
-    return tgtframe;
+    return ret;
 }
 
 // free
@@ -6857,68 +6822,56 @@ int FFmpeg_Transcoder::hwframe_ctx_set(AVCodecContext *output_codec_ctx, AVCodec
 //    return 0;
 //}
 
-int FFmpeg_Transcoder::hwframe_copy_from_hw(AVCodecContext * /*ctx*/, AVFrame ** sw_frame, const AVFrame * hw_frame) const
+int FFmpeg_Transcoder::hwframe_copy_from_hw(AVCodecContext * /*ctx*/, FFmpeg_Frame *sw_frame, const AVFrame * hw_frame) const
 {
     int ret;
-
-    ret = init_frame(sw_frame, destname());
-    if (ret < 0)
-    {
-        return ret;
-    }
 
     ret = av_frame_copy_props(*sw_frame, hw_frame);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_from_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(filename(), "Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_transfer_data(*sw_frame, hw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_from_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(filename(), "Error while transferring frame data from surface (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     return 0;
 }
 
-int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, AVFrame ** hw_frame, const AVFrame * sw_frame) const
+int FFmpeg_Transcoder::hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, FFmpeg_Frame *hw_frame, const AVFrame * sw_frame) const
 {
     int ret;
-
-    ret = init_frame(hw_frame, destname());
-    if (ret < 0)
-    {
-        return ret;
-    }
 
     ret = av_frame_copy_props(*hw_frame, sw_frame);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to copy frame properties (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_get_buffer(output_codec_ctx->hw_frames_ctx, *hw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     if ((*hw_frame)->hw_frames_ctx == nullptr)
     {
         ret = AVERROR(ENOMEM);
-        Logging::error(destname(), "hwframe_copy_to_hw(): Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Failed to copy frame buffers to hardware memory (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     ret = av_hwframe_transfer_data(*hw_frame, sw_frame, 0);
     if (ret < 0)
     {
-        Logging::error(destname(), "hwframe_copy_to_hw(): Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Error while transferring frame data to surface (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 

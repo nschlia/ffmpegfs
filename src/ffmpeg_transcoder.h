@@ -35,6 +35,7 @@
 #pragma once
 
 #include "ffmpeg_base.h"
+#include "ffmpeg_frame.h"
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
 #include "fileio.h"
@@ -152,7 +153,7 @@ public:
 
     } HWACCELMODE;
 
-    typedef std::map<int64_t, AVFrame*>     FRAMEFIFO;              /**< @brief Audio/video frame buffer */
+    typedef std::map<int64_t, FFmpeg_Frame> FRAMEFIFO;              /**< @brief Audio/video frame buffer */
     typedef std::map<int64_t, AVSubtitle*>  SUBTITLEFIFO;           /**< @brief Subtitle buffer */
     typedef std::map<int, SUBTITLEFIFO>     SUBTITLEFIFO_MAP;       /**< @brief Map stream index to SUBTITLEFIFO */
     typedef std::map<int, int>              STREAM_MAP;             /**< @brief Map input to output stream */
@@ -598,19 +599,20 @@ protected:
     /**
      * @brief Initialise one input frame for writing to the output file.
      * The frame will be exactly frame_size samples large.
-     * @param[out] frame - Newly initialised frame.
+     * @param[in] frame - Newly initialised frame.
      * @param[in] frame_size - Size of new frame.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         init_audio_output_frame(AVFrame **frame, int frame_size) const;
+    int                         init_audio_output_frame(AVFrame *frame, int frame_size) const;
     /**
      * @brief Allocate memory for one picture.
+     * @param[in] frame - Frame to prepare
      * @param[in] pix_fmt - Pixel format
      * @param[in] width - Picture width
      * @param[in] height - Picture height
-     * @return On success returns new AVFrame or nullptr on error
+     * @return On success returns 0; on error negative AVERROR.
      */
-    AVFrame *                   alloc_picture(AVPixelFormat pix_fmt, int width, int height);
+    int                         alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height);
     /**
      * @brief Produce audio dts/pts. This is required because the target codec usually has a different
      * frame size than the source, so the number of packets will not match 1:1.
@@ -754,11 +756,11 @@ protected:
     int                         init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
     /**
      * @brief Send video frame to the filters.
-     * @param[in] srcframe - Input video frame.
+     * @param[inout] srcframe - On input video frame to process, on output video frame that was filtered.
      * @param[in] ret - 0 if OK, or negative AVERROR value.
-     * @return Pointer to video frame. May be a simple pointer copy of srcframe.
+     * @return Returns 0 if OK, or negative AVERROR value.
      */
-    AVFrame *                   send_filters(AVFrame *srcframe, int &ret);
+    int                         send_filters(FFmpeg_Frame * srcframe, int &ret);
     /**
      * @brief Free filter sinks.
      */
@@ -915,19 +917,19 @@ protected:
     /**
      * Copy data hardware surface to software.
      * @param[in] output_codec_ctx - Codec context
-     * @param[out] sw_frame - AVFrame to copy data to
+     * @param[inout] sw_frame - AVFrame to copy data to
      * @param[in] hw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_from_hw(AVCodecContext *output_codec_ctx, AVFrame ** sw_frame, const AVFrame *hw_frame) const;
+    int                         hwframe_copy_from_hw(AVCodecContext *output_codec_ctx, FFmpeg_Frame *sw_frame, const AVFrame *hw_frame) const;
     /**
      * Copy data software to a hardware surface.
      * @param[in] output_codec_ctx - Codec context
-     * @param[out] hw_frame - AVFrame to copy data to
+     * @param[inout] hw_frame - AVFrame to copy data to
      * @param[in] sw_frame - AVFrame to copy data from
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, AVFrame ** hw_frame, const AVFrame *sw_frame) const;
+    int                         hwframe_copy_to_hw(AVCodecContext *output_codec_ctx, FFmpeg_Frame *hw_frame, const AVFrame *sw_frame) const;
     /**
      * @brief Get the hardware codec name as string. This is required, because e.g.
      * the name for the software codec is libx264, but for hardware it is h264_vaapi

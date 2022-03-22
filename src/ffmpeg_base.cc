@@ -50,6 +50,7 @@ extern "C" {
 #include "transcode.h"
 #include "logging.h"
 
+
 FFmpeg_Base::FFmpeg_Base()
     : m_virtualfile(nullptr)
 {
@@ -69,15 +70,9 @@ void FFmpeg_Base::init_packet(AVPacket *pkt) const
 }
 #endif // !LAVC_DEP_AV_INIT_PACKET
 
-int FFmpeg_Base::init_frame(AVFrame **frame, const char *filename) const
+AVSubtitle* FFmpeg_Base::alloc_subtitle() const
 {
-    *frame = av_frame_alloc();
-    if (*frame == nullptr)
-    {
-        Logging::error(filename, "Could not allocate frame.");
-        return AVERROR(ENOMEM);
-    }
-    return 0;
+    return reinterpret_cast<AVSubtitle *>(av_mallocz(sizeof(AVSubtitle)));
 }
 
 void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat  enc_hw_pix_fmt) const

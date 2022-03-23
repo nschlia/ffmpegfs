@@ -368,7 +368,7 @@ protected:
      * @param[out] avctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] input_codec - Decoder codec to open, may be nullptr. Will open a matching codec automatically.
-     * @param[in] type - Type of media: audio or video.
+     * @param[in] mediatype - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
 #if IF_DECLARED_CONST

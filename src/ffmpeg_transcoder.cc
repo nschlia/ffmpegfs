@@ -811,9 +811,9 @@ AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType d
 }
 
 #if IF_DECLARED_CONST
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType type)
+int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype)
 #else // !IF_DECLARED_CONST
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type)
+int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype)
 #endif // !IF_DECLARED_CONST
 {
     while (true)
@@ -848,7 +848,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         if (params.m_hwaccel_dec_API != HWACCELAPI_NONE)
         {
-            if (type == AVMEDIA_TYPE_VIDEO)
+            if (mediatype == AVMEDIA_TYPE_VIDEO)
             {
                 if (check_hwaccel_dec_blocked(input_stream->codecpar->codec_id, input_stream->codecpar->profile))
                 {
@@ -858,7 +858,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                 }
             }
 
-            if (type == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
+            if (mediatype == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
             {
                 // Decide whether to use a hardware decoder
                 // Check to see if decoder hardware acceleration is both requested and supported by codec.
@@ -931,7 +931,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
             if (input_codec == nullptr)
             {
-                Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(type), avcodec_get_name(codec_id));
+                Logging::error(filename(), "Failed to find %1 input codec '%2'.", get_media_type_string(mediatype), avcodec_get_name(codec_id));
                 return AVERROR(EINVAL);
             }
         }
@@ -948,7 +948,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         {
             if (m_hwaccel_dec_mode == HWACCELMODE_ENABLED)
             {
-                Logging::info(filename(), "Unable to use %1 input codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(type), avcodec_get_name(codec_id));
+                Logging::info(filename(), "Unable to use %1 input codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(mediatype), avcodec_get_name(codec_id));
 
                 m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
                 m_hwaccel_enable_dec_buffering  = false;
@@ -965,7 +965,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                 continue;
             }
 
-            Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(type), input_stream->index, ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "Failed to open %1 input codec for stream #%1 (error '%2').", get_media_type_string(mediatype), input_stream->index, ffmpeg_geterror(ret).c_str());
             return ret;
         }
 

@@ -96,9 +96,9 @@
   *     INDEX 01 36:53:71 @n
   */
 
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile);
-static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration);
-static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration);
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int channels, int sample_rate, int64_t *remainingduration, LPVIRTUALFILE *lastfile);
+static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx);
+static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx);
 static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx);
 
 /**
@@ -113,11 +113,13 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
  * @param[in] album - Name of album.
  * @param[in] genre - Album genre.
  * @param[in] date - Publishing date.
+ * @param[in] channels - Number of audio channels in input file.
+ * @param[in] sample_rate - Audio sample rate in input file.
  * @param[inout] remainingduration - Remaining duration of file in AV_TIME_BASE fractions.
  * @param[in] lastfile - Pointer to last virtual file. May be nullptr if none exists.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile)
+static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::string & filename, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int channels, int sample_rate, int64_t *remainingduration, LPVIRTUALFILE *lastfile)
 {
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
@@ -185,10 +187,6 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         BITRATE video_bit_rate  = 0;	///< @todo probe original file for info
         BITRATE audio_bit_rate  = 0;
 
-        int channels            = 0;
-        int sample_rate         = 0;
-        //int audio               = 0;
-
         int width               = 0;
         int height              = 0;
         AVRational framerate    = { 0, 0 };
@@ -218,7 +216,6 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
     return true;
 }
 
-
 /**
  * @brief Parse a cue sheet and build virtual set of files
  * @param[in] filename - Name of media file
@@ -226,10 +223,10 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @param[in] duration - Total duration of input file.
+ * @param[in] fmt_ctx - Format context, used to get file properties.
  * @return On success, returns number of titles in cue sheet. On error, returns -errno.
  */
-static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)
+static int parse_cuesheet(const std::string & filename, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)
 {
     // Check for cue sheet
     std::string text;
@@ -242,7 +239,7 @@ static int parse_cuesheet(const std::string & filename, const std::string & cues
     // Found cue sheet
     Logging::trace(cuesheet, "Found cue sheet.");
 
-    return parse_cuesheet(filename, cue_parse_string(text.c_str()), statbuf, buf, filler, duration);
+    return parse_cuesheet(filename, cue_parse_string(text.c_str()), statbuf, buf, filler, fmt_ctx);
 }
 
 /**
@@ -252,10 +249,10 @@ static int parse_cuesheet(const std::string & filename, const std::string & cues
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @param[in] duration - Total duration of input file.
+ * @param[in] fmt_ctx - Format context, used to get file properties.
  * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
  */
-static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, int64_t duration)
+static int parse_cuesheet(const std::string & filename, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)
 {
     int res = 0;
 
@@ -280,8 +277,6 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
             Logging::error(filename, "Unable to get cd text from cue sheet.");
             throw AVERROR(EIO);
         }
-
-        ///<* @todo Probe source file here? -> sample rate, channels etc.
 
         std::string performer  = VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cdtext));
         std::string album      = VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cdtext));
@@ -320,7 +315,26 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
             remove_filename(&path);
 
             LPVIRTUALFILE lastfile = nullptr;
-            int64_t remainingduration = duration;
+            int64_t remainingduration = fmt_ctx->duration;
+            int channels = 0;
+            int samplerate = 0;
+
+            {
+                for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
+                {
+                    if (fmt_ctx->streams[streamno]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
+                    {
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+                        channels    = fmt_ctx->streams[streamno]->codecpar->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+                        channels    = fmt_ctx->streams[streamno]->codecpar->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+                        samplerate  = fmt_ctx->streams[streamno]->codecpar->sample_rate;
+                        break;
+                    }
+                }
+            }
+
             for (int trackno = 1; trackno <= trackcount; trackno++)
             {
                 Track *track = cd_get_track(cd, trackno);
@@ -331,7 +345,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
                     throw -errno;
                 }
 
-                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date, &remainingduration, &lastfile))
+                if (!create_cuesheet_virtualfile(track, trackno, filename, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date, channels, samplerate, &remainingduration, &lastfile))
                 {
                     throw -errno;
                 }
@@ -358,7 +372,7 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
  * @param[in] filename - Name of media file
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @param[in] fmt_ctx - Format context, if not NULL may be used to read embedded cue sheets.
+ * @param[in] fmt_ctx - Format context, used to read embedded cue sheets and to get file properties.
  * @return On success, returns number of titles in cue sheet or 0 if not found. On error, returns -errno.
  */
 static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler, AVFormatContext *fmt_ctx)
@@ -386,7 +400,7 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
             result += "\r\n";   // cue_parse_string() reports syntax error if string does not end with newline
             result = replace_all(result, "\r\n", "\n"); // Convert all to unix
 
-            res = parse_cuesheet(filename, cue_parse_string(result.c_str()), &stbuf, buf, filler, fmt_ctx->duration);
+            res = parse_cuesheet(filename, cue_parse_string(result.c_str()), &stbuf, buf, filler, fmt_ctx);
         }
     }
     catch (int _res)
@@ -418,7 +432,6 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
     }
     replace_ext(&cuesheet, "cue");
 
-
     AVFormatContext *_fmt_ctx = nullptr;
     try
     {
@@ -431,7 +444,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
         if (fmt_ctx == nullptr)
         {
             // If no format context was passed, we'll have to create a new one
-            Logging::debug(_filename, "Created new format context and check for cue sheet");
+            Logging::debug(_filename, "Creating new format context and checking for cue sheet");
             res = avformat_open_input(&_fmt_ctx, _filename.c_str(), nullptr, nullptr);
             if (res)
             {
@@ -456,7 +469,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
             if (!check_path(trackdir))
             {
                 // Not a virtual directory
-                res = parse_cuesheet(_filename, cuesheet, &stbuf, buf, filler, fmt_ctx->duration);
+                res = parse_cuesheet(_filename, cuesheet, &stbuf, buf, filler, fmt_ctx);
                 Logging::trace(cuesheet, "Found %1 titles.", res);
             }
             else

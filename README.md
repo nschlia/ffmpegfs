@@ -25,6 +25,7 @@ News
 * **Bugfix:** Fixed memory leak in encode_audio_frame().
 * **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): Last song was missing from cuesheet files.
 * **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
+* **Bugfix:** Duration was not saved in cache SQLite database.
 * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
 * Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
 * Deprecate previous channel layout API based on uint64 bitmasks.

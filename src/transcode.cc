@@ -324,6 +324,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
             cache_entry->m_cache_info.m_predicted_filesize  = transcoder.predicted_filesize();
             cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
             cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
+            cache_entry->m_cache_info.m_duration            = transcoder.duration();
         }
 
         Logging::trace(transcoder.filename(), "Predicted transcoded size of %1.", format_size_ex(transcoder.predicted_filesize()).c_str());
@@ -804,6 +805,11 @@ static void transcoder_thread(void *arg)
         if (!cache_entry->m_cache_info.m_segment_count)
         {
             cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
+        }
+
+        if (!cache_entry->m_cache_info.m_duration)
+        {
+            cache_entry->m_cache_info.m_duration        = transcoder.duration();
         }
 
         if (!cache->maintenance(transcoder.predicted_filesize()))

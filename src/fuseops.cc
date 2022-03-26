@@ -567,10 +567,10 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
     int title_count = 0;
 
-    for (FILENAME_MAP::const_iterator it = filenames.lower_bound(path); it != filenames.cend(); ++it)
+    for (FILENAME_MAP::iterator it = filenames.lower_bound(path); it != filenames.end(); ++it)
     {
         std::string virtfilepath    = it->first;
-        LPCVIRTUALFILE virtualfile  = &it->second;
+        LPVIRTUALFILE virtualfile   = &it->second;
 
         if (
         #ifdef USE_LIBVCD
@@ -603,15 +603,31 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
             title_count++;
 
-            if (statbuf == nullptr)
+            std::string cachefile;
+
+            Buffer::make_cachefile_name(cachefile, virtualfile->m_destfile, params.current_format(virtualfile)->fileext(), false);
+
+            struct stat stbuf2;
+            if (!lstat(cachefile.c_str(), &stbuf2))
             {
+                // Cache file exists, use cache file size here
+
+                stat_set_size(&virtualfile->m_st, static_cast<size_t>(stbuf2.st_size));
+
                 memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
             }
             else
             {
-                memcpy(&stbuf, statbuf, sizeof(struct stat));
+                if (statbuf == nullptr)
+                {
+                    memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+                }
+                else
+                {
+                    memcpy(&stbuf, statbuf, sizeof(struct stat));
 
-                stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+                    stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+                }
             }
 
             if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))

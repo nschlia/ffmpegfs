@@ -69,6 +69,8 @@ extern "C" {
 }
 #endif
 
+#define INVALID_STREAM  -1              /**< @brief Denote an invalid stream */
+
 #ifndef LIBAVUTIL_VERSION_MICRO
 #error "LIBAVUTIL_VERSION_MICRO not defined. Missing include header?"
 #endif
@@ -988,5 +990,13 @@ typename std::map<const std::string, const T, comp>::const_iterator search_by_va
  */
 bool is_text_codec(AVCodecID codec_id);
 
+/**
+ * @brief Get first audio stream
+ * @param[in] fmt_ctx - Format context of file
+ * @param[out] channels - Number of audio channels in stream
+ * @param[out] samplerate - Audio sample rate of stream
+ * @return Returns stream number (value greater or equal zero) or negative errno value
+ */
+int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
 
 #endif

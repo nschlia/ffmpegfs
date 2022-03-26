@@ -319,20 +319,13 @@ static int parse_cuesheet(const std::string & filename, Cd *cd, const struct sta
             int channels = 0;
             int samplerate = 0;
 
+            int ret = get_audio_props(fmt_ctx, &channels, &samplerate);
+            if (ret < 0)
             {
-                for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
-                {
-                    if (fmt_ctx->streams[streamno]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
-                    {
-#if LAVU_DEP_OLD_CHANNEL_LAYOUT
-                        channels    = fmt_ctx->streams[streamno]->codecpar->ch_layout.nb_channels;
-#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-                        channels    = fmt_ctx->streams[streamno]->codecpar->channels;
-#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-                        samplerate  = fmt_ctx->streams[streamno]->codecpar->sample_rate;
-                        break;
-                    }
-                }
+                Logging::error(filename, "Could not find audio stream in input file (error '%1').", ffmpeg_geterror(ret).c_str());
+
+                errno = EIO;
+                throw -errno;
             }
 
             for (int trackno = 1; trackno <= trackcount; trackno++)

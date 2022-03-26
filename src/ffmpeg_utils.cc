@@ -2399,3 +2399,24 @@ bool is_text_codec(AVCodecID codec_id)
 
     return (codec_id != AV_CODEC_ID_DVD_SUBTITLE && codec_id != AV_CODEC_ID_DVB_SUBTITLE);
 }
+
+int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate)
+{
+    int ret;
+
+    ret = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, INVALID_STREAM, INVALID_STREAM, nullptr, 0);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+    *channels    = fmt_ctx->streams[ret]->codecpar->ch_layout.nb_channels;
+#else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    *channels    = fmt_ctx->streams[ret]->codecpar->channels;
+#endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    *samplerate  = fmt_ctx->streams[ret]->codecpar->sample_rate;
+
+    return ret;
+}
+

@@ -36,8 +36,6 @@
 
 #include "ffmpeg_utils.h"
 
-#define INVALID_STREAM  -1              /**< @brief Denote an invalid stream */
-
 struct VIRTUALFILE;
 struct AVCodecContext;
 

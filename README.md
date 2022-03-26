@@ -27,6 +27,8 @@ News
 * **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
 * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
 * Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
+* Deprecate previous channel layout API based on uint64 bitmasks.
+* Deprecate swr_alloc_set_opts() and swr_build_matrix().
 
 ### Version 2.9 released
 

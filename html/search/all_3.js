@@ -73,7 +73,7 @@ var searchData=
   ['create_143',['create',['../classCache__Entry.html#a244a1e808f456066c9348aa66425feb8',1,'Cache_Entry']]],
   ['create_5faudio_5fframe_144',['create_audio_frame',['../classFFmpeg__Transcoder.html#a9e1b9748cf1e7d04dfebd847f6351ab0',1,'FFmpeg_Transcoder']]],
   ['create_5fbluray_5fvirtualfile_145',['create_bluray_virtualfile',['../blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e',1,'blurayparser.cc']]],
-  ['create_5fcuesheet_5fvirtualfile_146',['create_cuesheet_virtualfile',['../cuesheetparser_8cc.html#afaf71f7de44e483db3c9b1ce0673fd29',1,'cuesheetparser.cc']]],
+  ['create_5fcuesheet_5fvirtualfile_146',['create_cuesheet_virtualfile',['../cuesheetparser_8cc.html#a9ed33273bf37c8a66249302bd6e3e3bc',1,'cuesheetparser.cc']]],
   ['create_5fdvd_5fvirtualfile_147',['create_dvd_virtualfile',['../dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931',1,'dvdparser.cc']]],
   ['create_5fentry_148',['create_entry',['../classCache.html#ad4e6eacbc36ecd967fa1d492ec6836a0',1,'Cache']]],
   ['create_5ffake_5faiff_5fheader_149',['create_fake_aiff_header',['../classFFmpeg__Transcoder.html#a76260344c9be1c9e617ca6aedb3e0926',1,'FFmpeg_Transcoder']]],

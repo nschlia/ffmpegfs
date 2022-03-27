@@ -80,12 +80,14 @@ $(function() {
 <div class="line">* Enhancement:</div>
 <div class="line">* Bugfix: Fixed memory leak in encode_audio_frame().</div>
 <div class="line">* Bugfix: Issue #122: Last song was missing from cuesheet files.</div>
+<div class="line">* Bugfix: Issue #129: Files remained zero size when previously transcoded.</div>
+<div class="line">* Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but are</div>
+<div class="line">  correct when data is read.</div>
+<div class="line">* Bugfix: Duration was not saved in cache SQLite database.</div>
 <div class="line">* Lowest supported FFmpeg API version raised to 4.1.8 &quot;al-Khwarizmi&quot;.</div>
 <div class="line">* Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</div>
 <div class="line">* Deprecate previous channel layout API based on uint64 bitmasks.</div>
-<div class="line">  2022-03-15 - lavu 57.24.100</div>
 <div class="line">* Deprecate swr_alloc_set_opts() and swr_build_matrix().</div>
-<div class="line">  2022-03-15 - swr 4.5.100</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.9 (2022-02-16):</div>
 <div class="line"> </div>

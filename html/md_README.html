@@ -94,8 +94,13 @@ Version 2.10 under development</h2>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/120">Issue #120</a>: Added subtitle support. Subtitle streams can now also be transcoded to the output files.</li>
 <li><b>Bugfix:</b> Fixed memory leak in encode_audio_frame().</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/122">Issue #122</a>: Last song was missing from cuesheet files.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/129">Issue #129</a>: Files remained zero size when previously transcoded.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/130">Issue #130</a>: Fix file sizes can be incorrectly reported by ls but are correct when data is read.</li>
+<li><b>Bugfix:</b> Duration was not saved in cache SQLite database.</li>
 <li>Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".</li>
 <li>Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</li>
+<li>Deprecate previous channel layout API based on uint64 bitmasks.</li>
+<li>Deprecate swr_alloc_set_opts() and swr_build_matrix().</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.9 released</h2>

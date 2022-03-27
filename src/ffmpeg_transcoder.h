@@ -372,9 +372,9 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
 #if IF_DECLARED_CONST
-    int                         open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType type);
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype);
 #else // !IF_DECLARED_CONST
-    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType type);
+    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype);
 #endif // !IF_DECLARED_CONST
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.

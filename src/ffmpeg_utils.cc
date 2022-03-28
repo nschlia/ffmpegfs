@@ -2397,7 +2397,7 @@ bool is_text_codec(AVCodecID codec_id)
     //AV_CODEC_ID_TTML,
     //AV_CODEC_ID_ARIB_CAPTION,
 
-    return (codec_id != AV_CODEC_ID_DVD_SUBTITLE && codec_id != AV_CODEC_ID_DVB_SUBTITLE);
+    return (codec_id != AV_CODEC_ID_DVD_SUBTITLE && codec_id != AV_CODEC_ID_DVB_SUBTITLE && codec_id != AV_CODEC_ID_HDMV_PGS_SUBTITLE);
 }
 
 int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate)

@@ -5104,6 +5104,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
+                    // Erase from map what's been processed so far
+                    m_audio_frame_fifo.erase(m_audio_frame_fifo.begin(), ++it);
                     throw ret;
                 }
             }
@@ -5159,6 +5161,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
+                    // Erase from map what's been processed so far
+                    m_video_frame_fifo.erase(m_video_frame_fifo.begin(), ++it);
                     throw ret;
                 }
             }
@@ -5203,6 +5207,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
+                        // Erase from map what's been processed so far
+                        subtitle_fifo.erase(subtitle_fifo.begin(), ++it);
                         throw ret;
                     }
                 }

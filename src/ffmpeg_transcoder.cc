@@ -853,7 +853,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
                 if (check_hwaccel_dec_blocked(input_stream->codecpar->codec_id, input_stream->codecpar->profile))
                 {
                     const char *profile = ::avcodec_profile_name(codec_id, input_stream->codecpar->profile);
-                    Logging::info(filename(), "Codec '%1' %2 is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id, false), profile != nullptr ? profile : "Profile unknown");
+                    Logging::info(filename(), "Codec '%1' profile '%2' is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id, false), profile != nullptr ? profile : "unknown");
                     m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
                 }
             }
@@ -5104,6 +5104,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
+                    // Erase from map what's been processed so far
+                    m_audio_frame_fifo.erase(m_audio_frame_fifo.begin(), ++it);
                     throw ret;
                 }
             }
@@ -5159,6 +5161,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
+                    // Erase from map what's been processed so far
+                    m_video_frame_fifo.erase(m_video_frame_fifo.begin(), ++it);
                     throw ret;
                 }
             }
@@ -5203,6 +5207,8 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
+                        // Erase from map what's been processed so far
+                        subtitle_fifo.erase(subtitle_fifo.begin(), ++it);
                         throw ret;
                     }
                 }

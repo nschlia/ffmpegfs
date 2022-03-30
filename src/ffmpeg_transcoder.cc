@@ -4501,6 +4501,12 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
         {
             unsigned save_num_rects     = subtmp.num_rects;
             subtmp.pts                  = pts;
+            // Some decoders may return end_display_time as UINT32_MAX, this causes strange results.
+            if (subtmp.end_display_time == UINT32_MAX)
+            {
+                subtmp.end_display_time = 0;
+            }
+
             // start_display_time is required to be 0
             subtmp.pts                  += av_rescale_q(subtmp.start_display_time, AVRational({ 1, 1000 }), av_get_time_base_q());
             subtmp.end_display_time     -= subtmp.start_display_time;

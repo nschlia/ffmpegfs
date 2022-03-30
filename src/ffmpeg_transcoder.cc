@@ -592,7 +592,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
         if (m_current_format->subtitle_codec(stream->codecpar->codec_id) == AV_CODEC_ID_NONE)
         {
-            // No match
+            // No match, no support for this type of subtitle
             continue;
         }
 
@@ -4492,14 +4492,10 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
         // shift timestamp
         pts = subtmp.pts;
 
-        //Logging::error(nullptr, "AAA %1 %2 %3", pts, subtmp.start_display_time, subtmp.end_display_time);
-
         //if (out_streamref->m_stream->start_time != AV_NOPTS_VALUE)
         //{
         //    pts -= av_rescale_q(out_streamref->m_stream->start_time, out_streamref->m_stream->time_base, av_get_time_base_q());
         //}
-
-        //Logging::error(nullptr, "BBB %1 %2 %3", pts, subtmp.start_display_time, subtmp.end_display_time);
 
         for (int i = 0; i < nb; i++)
         {
@@ -4539,10 +4535,6 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
                 {
                     pkt->pts += av_rescale_q(subtmp.end_display_time, AVRational({ 1, 1000 }), out_streamref->m_stream->time_base);
                 }
-                //else
-                //{
-                //    pkt->pts += av_rescale_q(subtmp.start_display_time, AVRational({ 1, 1000 }), out_streamref->m_stream->time_base);
-                //}
             }
             pkt->dts = pkt->pts;
 

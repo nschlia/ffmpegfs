@@ -465,10 +465,75 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_virtualfile->m_duration = m_in.m_format_ctx->duration;
 
+    ret = open_bestmatch_video();
+    if (ret < 0)
+    {
+        // Already logged
+        return ret;
+    }
+
+    ret = open_bestmatch_audio();
+    if (ret < 0)
+    {
+        // Already logged
+        return ret;
+    }
+
+    if (!stream_exists(m_in.m_audio.m_stream_idx) && !stream_exists(m_in.m_video.m_stream_idx))
+    {
+        Logging::error(filename(), "File contains neither a video nor an audio stream.");
+        return AVERROR(EINVAL);
+    }
+
+    ret = open_subtitles();
+    if (ret < 0)
+    {
+        // Already logged
+        return ret;
+    }
+
+    // Predict size of transcoded file as exact as possible
+    m_virtualfile->m_predicted_size = calculate_predicted_filesize();
+
+    // Calculate number or video frames in file based on duration and frame rate
+    if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
+    {
+        // Number of frames: should be quite accurate
+        m_virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
+    }
+
+    // Make sure this is set, although should already have happened
+    m_virtualfile->m_format_idx = params.guess_format_idx(filename());
+
+    ret = open_albumarts();
+    if (ret < 0)
+    {
+        // Already logged
+        return ret;
+    }
+
+    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+    {
+        // Position to start of cue sheet track
+        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
+        if (ret < 0)
+        {
+            Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+    }
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_bestmatch_video()
+{
     // Issue #80: Open input video codec, but only if target supports video.
     // Saves resources: no need to decode video frames if not used.
     if (m_current_format->video_codec() != AV_CODEC_ID_NONE)
     {
+        int ret;
+
         // Open best match video codec
         ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
         if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
@@ -542,6 +607,12 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #endif
         }
     }
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_bestmatch_audio()
+{
+    int ret;
 
     // Open best match audio codec
     ret = open_bestmatch_decoder(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
@@ -573,13 +644,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
         audio_info(false, m_in.m_format_ctx, m_in.m_audio.m_stream);
     }
+    return 0;
+}
 
-    if (!stream_exists(m_in.m_audio.m_stream_idx) && !stream_exists(m_in.m_video.m_stream_idx))
-    {
-        Logging::error(filename(), "File contains neither a video nor an audio stream.");
-        return AVERROR(EINVAL);
-    }
-
+int FFmpeg_Transcoder::open_subtitles()
+{
     // If target supports subtitles, check to transcode subtitles
     for (int stream_idx = 0; stream_idx < static_cast<int>(m_in.m_format_ctx->nb_streams); stream_idx++)
     {
@@ -597,6 +666,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         }
 
         AVCodecContext * codec_ctx = nullptr;
+        int ret;
 
         ret = open_decoder(&codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_SUBTITLE);
         if (ret < 0)
@@ -618,20 +688,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
         subtitle_info(false, m_in.m_format_ctx, input_streamref.m_stream);
     }
+    return 0;
+}
 
-    // Predict size of transcoded file as exact as possible
-    m_virtualfile->m_predicted_size = calculate_predicted_filesize();
-
-    // Calculate number or video frames in file based on duration and frame rate
-    if (m_in.m_video.m_stream != nullptr && m_in.m_video.m_stream->avg_frame_rate.den)
-    {
-        // Number of frames: should be quite accurate
-        m_virtualfile->m_video_frame_count = static_cast<uint32_t>(av_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
-    }
-
-    // Make sure this is set, although should already have happened
-    m_virtualfile->m_format_idx = params.guess_format_idx(filename());
-
+int FFmpeg_Transcoder::open_albumarts()
+{
     // Open album art streams if present and supported by both source and target
     if (!params.m_noalbumarts && m_in.m_audio.m_stream != nullptr)
     {
@@ -643,6 +704,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
             {
                 STREAMREF streamref;
                 AVCodecContext * input_codec_ctx;
+                int ret;
 
                 Logging::trace(filename(), "Found album art");
 
@@ -661,18 +723,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
             }
         }
     }
-
-    if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
-    {
-        // Position to start of cue sheet track
-        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
-        if (ret < 0)
-        {
-            Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-    }
-
     return 0;
 }
 
@@ -3693,18 +3743,29 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else
     {
-        for (size_t n = 0; n < m_in.m_album_art.size() && n < m_out.m_album_art.size(); n++)
+        switch (m_in.m_format_ctx->streams[pkt->stream_index]->codecpar->codec_type)
         {
-            AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
-
-            // AV_DISPOSITION_ATTACHED_PIC streams already processed in process_albumarts()
-            if (pkt->stream_index == input_stream->index && !(input_stream->disposition & AV_DISPOSITION_ATTACHED_PIC))
+        case AVMEDIA_TYPE_VIDEO:
+        {
+            for (size_t n = 0; n < m_in.m_album_art.size() && n < m_out.m_album_art.size(); n++)
             {
-                AVStream *output_stream = m_out.m_album_art.at(n).m_stream;
+                AVStream *input_stream = m_in.m_album_art.at(n).m_stream;
 
-                ret = add_albumart_frame(output_stream, pkt);
-                break;
+                // AV_DISPOSITION_ATTACHED_PIC streams already processed in process_albumarts()
+                if (pkt->stream_index == input_stream->index && !(input_stream->disposition & AV_DISPOSITION_ATTACHED_PIC))
+                {
+                    AVStream *output_stream = m_out.m_album_art.at(n).m_stream;
+
+                    ret = add_albumart_frame(output_stream, pkt);
+                    break;
+                }
             }
+            break;
+        }
+        default:
+        {
+            break;
+        }
         }
     }
 

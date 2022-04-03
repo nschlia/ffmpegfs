@@ -352,6 +352,30 @@ protected:
      */
     int                         open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type);
     /**
+     * @brief Open the best match video stream, if present in input file.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int open_bestmatch_video();
+    /**
+     * @brief Open the best match audio stream.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int open_bestmatch_audio();
+    /**
+     * @brief Open all subtitles streams, if present in input file
+     * and if supported by output file. The input and output codec
+     * type must also match: Can only transcode bitmap subtitles
+     * into bitmap subtitles or text to text.
+     * @todo Add text to bitmap conversion.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int open_subtitles();
+    /**
+     * @brief open_albumarts
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int open_albumarts();
+    /**
      * @brief Determine the hardware pixel format for the codec, if applicable.
      * @param codec - Input codec used
      * @param dev_type - Hardware device type

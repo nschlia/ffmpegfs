@@ -2151,7 +2151,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not alloc an encoding context.");
+        Logging::error(destname(), "Could not alloc an encoding context for encoder '%1'.", avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
 
@@ -2176,16 +2176,19 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
 
     AVCodecContext * input_codec_ctx = input_streamref.m_codec_ctx;
 
-    if (input_codec_ctx && input_codec_ctx->subtitle_header)
+    if (input_codec_ctx != nullptr)
     {
-        // ASS code assumes this buffer is null terminated so add extra byte.
-        output_codec_ctx->subtitle_header = static_cast<uint8_t *>(av_mallocz(static_cast<size_t>(input_codec_ctx->subtitle_header_size + 1)));
-        if (!output_codec_ctx->subtitle_header)
+        if (input_codec_ctx->subtitle_header != nullptr)
         {
-            return AVERROR(ENOMEM);
+            // ASS code assumes this buffer is null terminated so add extra byte.
+            output_codec_ctx->subtitle_header = static_cast<uint8_t *>(av_mallocz(static_cast<size_t>(input_codec_ctx->subtitle_header_size + 1)));
+            if (output_codec_ctx->subtitle_header == nullptr)
+            {
+                return AVERROR(ENOMEM);
+            }
+            memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
+            output_codec_ctx->subtitle_header_size = input_codec_ctx->subtitle_header_size;
         }
-        memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
-        output_codec_ctx->subtitle_header_size = input_codec_ctx->subtitle_header_size;
     }
 
     // Open the encoder for the stream to use it later.

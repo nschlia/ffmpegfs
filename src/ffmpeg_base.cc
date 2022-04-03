@@ -234,8 +234,9 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
-    Logging::debug(out_file ? destname() : filename(), "Video %1: %2@%3 [%4]",
+    Logging::debug(out_file ? destname() : filename(), "Video %1 #%2: %3@%4 [%5]",
                    out_file ? "out" : "in",
+                   stream->index,
                    get_codec_name(stream->codecpar->codec_id, false),
                    format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
                    format_duration(duration).c_str());
@@ -250,8 +251,9 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
         duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
     }
 
-    Logging::debug(out_file ? destname() : filename(), "Audio %1: %2@%3 %4 Channels %5 [%6]",
+    Logging::debug(out_file ? destname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
                    out_file ? "out" : "in",
+                   stream->index,
                    get_codec_name(stream->codecpar->codec_id, false),
                    format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
                    get_channels(stream->codecpar),
@@ -261,8 +263,9 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
 void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_ctx*/, const AVStream *stream) const
 {
-    Logging::debug(out_file ? destname() : filename(), "Subtitle %1: %2",
+    Logging::debug(out_file ? destname() : filename(), "Subtitle %1 #%2: %3",
                    out_file ? "out" : "in",
+                   stream->index,
                    get_codec_name(stream->codecpar->codec_id, false));
 }
 

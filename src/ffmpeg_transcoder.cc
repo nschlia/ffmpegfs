@@ -2143,7 +2143,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
     if (output_stream == nullptr)
     {
-        Logging::error(destname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
+        Logging::error(destname(), "Could not allocate stream for encoder '%1'.", avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
     output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);

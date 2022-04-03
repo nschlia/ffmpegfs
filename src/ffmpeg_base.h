@@ -181,7 +181,7 @@ protected:
      * @param[in] frame_no - Number of frame.
      * @return Returns PTS of frame in stream's time_base units.
      */
-    int64_t             frame_to_pts(AVStream* stream, uint32_t frame_no) const;
+    int64_t              frame_to_pts(AVStream* stream, uint32_t frame_no) const;
     /**
      * @brief Get number of channels from AVCodecParameters
      * @param[in] codecpar - AVCodecParameters to check
@@ -214,7 +214,7 @@ protected:
     void                set_channels(AVCodecContext *codec_ctx_out, int channels) const;
 
 protected:
-    VIRTUALFILE * m_virtualfile;            /**< @brief Underlying virtual file object */
+    VIRTUALFILE *       m_virtualfile;            /**< @brief Underlying virtual file object */
 };
 
 #endif // FFMPEG_BASE_H

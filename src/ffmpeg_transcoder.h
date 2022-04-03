@@ -1053,19 +1053,19 @@ protected:
     /**
      * @brief Check for audio stream
      * @param[in] stream_idx - ID of stream to check
-     * @return Returns 0 if stream is an audio stream, false if not.
+     * @return Returns true if stream is an audio stream, false if not.
      */
     bool                        is_audio_stream(int stream_idx) const;
     /**
      * @brief Check for video stream
      * @param[in] stream_idx - ID of stream to check
-     * @return Returns 0 if stream is a video stream, false if not.
+     * @return Returns true if stream is a video stream, false if not.
      */
     bool                        is_video_stream(int stream_idx) const;
     /**
      * @brief Check for subtitle stream
      * @param[in] stream_idx - ID of stream to check
-     * @return Returns 0 if stream is a subtitle stream, false if not.
+     * @return Returns true if stream is a subtitle stream, false if not.
      */
     bool                        is_subtitle_stream(int stream_idx) const;
     /**

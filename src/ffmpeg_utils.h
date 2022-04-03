@@ -690,7 +690,7 @@ std::string         replace_all(std::string str, const std::string& from, const 
  * @param[in] args - Arguments.
  * @return Returns the formatted string.
  */
-template<typename ... Args> std::string string_format(const std::string& format, Args ... args);
+template<typename ... Args> std::string strsprintf(const std::string& format, Args ... args);
 /**
  * @brief strcasecmp() equivalent for std::string.
  * @param[in] s1 - std:string #1

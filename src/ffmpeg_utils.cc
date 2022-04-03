@@ -1207,7 +1207,7 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 
     if (lib_exists)
     {
-        string_format(info,
+        strsprintf(info,
                       "lib%-17s: %d.%d.%d\n",
                       libname,
                       version_minor,
@@ -1488,7 +1488,7 @@ std::string format_number(int64_t value)
         return "unset";
     }
 
-    return string_format("%" PRId64, value);
+    return strsprintf("%" PRId64, value);
 }
 
 std::string format_bitrate(BITRATE value)
@@ -1500,15 +1500,15 @@ std::string format_bitrate(BITRATE value)
 
     if (value > 1000000)
     {
-        return string_format("%.2f Mbps", static_cast<double>(value) / 1000000);
+        return strsprintf("%.2f Mbps", static_cast<double>(value) / 1000000);
     }
     else if (value > 1000)
     {
-        return string_format("%.1f kbps", static_cast<double>(value) / 1000);
+        return strsprintf("%.1f kbps", static_cast<double>(value) / 1000);
     }
     else
     {
-        return string_format("%" PRId64 " bps", value);
+        return strsprintf("%" PRId64 " bps", value);
     }
 }
 
@@ -1521,11 +1521,11 @@ std::string format_samplerate(int value)
 
     if (value < 1000)
     {
-        return string_format("%u Hz", value);
+        return strsprintf("%u Hz", value);
     }
     else
     {
-        return string_format("%.3f kHz", static_cast<double>(value) / 1000);
+        return strsprintf("%.3f kHz", static_cast<double>(value) / 1000);
     }
 }
 
@@ -1546,14 +1546,14 @@ std::string format_duration(int64_t value, uint32_t fracs /*= 3*/)
 
     if (hours)
     {
-        buffer = string_format("%02u:", hours);
+        buffer = strsprintf("%02u:", hours);
     }
 
-    buffer += string_format("%02u:%02u", mins, secs);
+    buffer += strsprintf("%02u:%02u", mins, secs);
     if (fracs)
     {
         unsigned decimals    = static_cast<unsigned>(value % AV_TIME_BASE);
-        buffer += string_format(".%0*u", sizeof(X(AV_TIME_BASE)) - 2, decimals).substr(0, fracs + 1);
+        buffer += strsprintf(".%0*u", sizeof(X(AV_TIME_BASE)) - 2, decimals).substr(0, fracs + 1);
     }
     return buffer;
 }
@@ -1589,23 +1589,23 @@ std::string format_time(time_t value)
 
     if (weeks)
     {
-        buffer = string_format("%iw ", weeks);
+        buffer = strsprintf("%iw ", weeks);
     }
     if (days)
     {
-        buffer += string_format("%id ", days);
+        buffer += strsprintf("%id ", days);
     }
     if (hours)
     {
-        buffer += string_format("%ih ", hours);
+        buffer += strsprintf("%ih ", hours);
     }
     if (mins)
     {
-        buffer += string_format("%im ", mins);
+        buffer += strsprintf("%im ", mins);
     }
     if (secs)
     {
-        buffer += string_format("%is ", secs);
+        buffer += strsprintf("%is ", secs);
     }
     return buffer;
 }
@@ -1624,29 +1624,29 @@ std::string format_size(uint64_t value)
 
     if (value > 1024*1024*1024*1024LL)
     {
-        return string_format("%.3f TB", static_cast<double>(value) / (1024*1024*1024*1024LL));
+        return strsprintf("%.3f TB", static_cast<double>(value) / (1024*1024*1024*1024LL));
     }
     else if (value > 1024*1024*1024)
     {
-        return string_format("%.2f GB", static_cast<double>(value) / (1024*1024*1024));
+        return strsprintf("%.2f GB", static_cast<double>(value) / (1024*1024*1024));
     }
     else if (value > 1024*1024)
     {
-        return string_format("%.1f MB", static_cast<double>(value) / (1024*1024));
+        return strsprintf("%.1f MB", static_cast<double>(value) / (1024*1024));
     }
     else if (value > 1024)
     {
-        return string_format("%.1f KB", static_cast<double>(value) / (1024));
+        return strsprintf("%.1f KB", static_cast<double>(value) / (1024));
     }
     else
     {
-        return string_format("%" PRIu64 " bytes", value);
+        return strsprintf("%" PRIu64 " bytes", value);
     }
 }
 
 std::string format_size_ex(uint64_t value)
 {
-    return format_size(value) + string_format(" (%" PRIu64 " bytes)", value);
+    return format_size(value) + strsprintf(" (%" PRIu64 " bytes)", value);
 }
 
 std::string format_result_size(size_t size_resulting, size_t size_predicted)
@@ -1668,12 +1668,12 @@ std::string format_result_size_ex(size_t size_resulting, size_t size_predicted)
     if (size_resulting >= size_predicted)
     {
         size_t value = size_resulting - size_predicted;
-        return format_size(value) + string_format(" (%zu bytes)", value);
+        return format_size(value) + strsprintf(" (%zu bytes)", value);
     }
     else
     {
         size_t value = size_predicted - size_resulting;
-        return "-" + format_size(value) + string_format(" (-%zu bytes)", value);
+        return "-" + format_size(value) + strsprintf(" (-%zu bytes)", value);
     }
 }
 
@@ -1804,7 +1804,7 @@ int strcasecmp(const std::string & s1, const std::string & s2)
 }
 
 template<typename ... Args>
-std::string string_format(const std::string& format, Args ... args)
+std::string strsprintf(const std::string& format, Args ... args)
 {
     size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...) + 1); // Extra space for '\0'
     std::unique_ptr<char[]> buf(new(std::nothrow) char[size]);
@@ -2029,7 +2029,7 @@ bool check_ignore(size_t size, size_t offset)
 
 std::string make_filename(uint32_t file_no, const std::string & fileext)
 {
-    return string_format("%06u.%s", file_no, fileext.c_str());
+    return strsprintf("%06u.%s", file_no, fileext.c_str());
 }
 
 bool file_exists(const std::string & filename)

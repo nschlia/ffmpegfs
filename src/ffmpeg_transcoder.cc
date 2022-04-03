@@ -2619,27 +2619,14 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (m_in.m_subtitle.size())
     {
+        int ret;
+
         // No copy option, not worth it for a few frames
         // Create as many subtitle streams as required
-        for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+        ret = add_subtitle_streams();
+        if (ret < 0)
         {
-            AVCodecID codec_id = m_current_format->subtitle_codec(it->second.m_stream->codecpar->codec_id); // Get matching output codec
-
-            if (codec_id == AV_CODEC_ID_NONE)
-            {
-                // No matching output codec
-                continue;
-            }
-
-            //m_active_stream_msk     |= FFMPEGFS_SUBTITLE;
-
-            int ret;
-
-            ret = add_subtitle_stream(codec_id, it->second);
-            if (ret < 0)
-            {
-                return ret;
-            }
+            return ret;
         }
     }
 
@@ -2681,6 +2668,38 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         return AVERROR(ENOMEM);
     }
 
+    return 0;
+}
+
+int FFmpeg_Transcoder::add_subtitle_streams()
+{
+    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    {
+        AVCodecID codec_id = m_current_format->subtitle_codec(it->second.m_stream->codecpar->codec_id); // Get matching output codec
+
+        if (codec_id == AV_CODEC_ID_NONE)
+        {
+            // No matching output codec
+            continue;
+        }
+
+        if (map_in_to_out_stream(it->second.m_stream_idx) != INVALID_STREAM)
+        {
+            //fprintf(stderr, "EXISTS %i\n", it->second.m_stream_idx);
+            // Already existing
+            continue;
+        }
+
+        //m_active_stream_msk     |= FFMPEGFS_SUBTITLE;
+
+        int ret;
+
+        ret = add_subtitle_stream(codec_id, it->second);
+        if (ret < 0)
+        {
+            return ret;
+        }
+    }
     return 0;
 }
 

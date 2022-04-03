@@ -1095,6 +1095,13 @@ protected:
      */
     int                         map_in_to_out_stream(int in_stream_idx) const;
 
+    /**
+     * @brief Add all subtitle streams. Already existing streams are not
+     * added again.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         add_subtitle_streams();
+
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */
     bool                        m_close_fileio;                 /**< @brief If we own the FileIO object, we may close it in the end. */

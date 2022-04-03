@@ -2239,6 +2239,22 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
             memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
             output_codec_ctx->subtitle_header_size = input_codec_ctx->subtitle_header_size;
         }
+        else if (output_codec_ctx->codec_id == AV_CODEC_ID_WEBVTT || output_codec_ctx->codec_id == AV_CODEC_ID_SUBRIP)
+        {
+            // If source had no header, we create a default one
+            ret = get_script_info(output_codec_ctx,
+                                  ASS_DEFAULT_PLAYRESX, ASS_DEFAULT_PLAYRESY,
+                                  ASS_DEFAULT_FONT, ASS_DEFAULT_FONT_SIZE, ASS_DEFAULT_COLOUR, ASS_DEFAULT_COLOUR,
+                                  ASS_DEFAULT_BACK_COLOUR, ASS_DEFAULT_BACK_COLOUR,
+                                  ASS_DEFAULT_BOLD, ASS_DEFAULT_ITALIC, ASS_DEFAULT_UNDERLINE,
+                                  ASS_DEFAULT_BORDERSTYLE, ASS_DEFAULT_ALIGNMENT);
+
+            if (ret)
+            {
+                Logging::error(destname(), "Could not create ASS script info for encoder '%1'.", avcodec_get_name(codec_id));
+                return ret;
+            }
+        }
     }
 
     // Open the encoder for the stream to use it later.

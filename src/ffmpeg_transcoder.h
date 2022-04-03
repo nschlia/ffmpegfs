@@ -355,12 +355,12 @@ protected:
      * @brief Open the best match video stream, if present in input file.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int open_bestmatch_video();
+    int                         open_bestmatch_video();
     /**
      * @brief Open the best match audio stream.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int open_bestmatch_audio();
+    int                         open_bestmatch_audio();
     /**
      * @brief Open all subtitles streams, if present in input file
      * and if supported by output file. The input and output codec
@@ -374,7 +374,7 @@ protected:
      * @brief open_albumarts
      * @return On success returns 0; on error negative AVERROR.
      */
-    int open_albumarts();
+    int                         open_albumarts();
     /**
      * @brief Determine the hardware pixel format for the codec, if applicable.
      * @param codec - Input codec used

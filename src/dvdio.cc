@@ -196,7 +196,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
     m_dvd_title = DVDOpenFile(m_dvd, tt_srpt->title[m_title_idx].title_set_nr, DVD_READ_TITLE_VOBS);
     if (m_dvd_title == nullptr)
     {
-        Logging::error(path(), "Can't open title VOBS (VTS_%<%02d>1_1.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
+        Logging::error(path(), "Can't open title VOBS (VTS_%<%02d>1_X.VOB).", tt_srpt->title[m_title_idx].title_set_nr);
         ifoClose(m_vts_file);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);

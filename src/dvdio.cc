@@ -558,13 +558,16 @@ size_t DvdIO::read(void * data, size_t size)
     size_t result_len = 0;
     DSITYPE dsitype;
 
-    if (data != nullptr && m_rest_size)
+    if (m_rest_size)
     {
         size_t rest_size = m_rest_size;
 
         assert(rest_size < size);
 
-        memcpy(data, &m_data[m_rest_pos], rest_size);
+        if (data != nullptr)
+        {
+            memcpy(data, &m_data[m_rest_pos], rest_size);
+        }
 
         m_rest_size = m_rest_pos = 0;
 

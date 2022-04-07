@@ -292,18 +292,18 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
     // avioflags direct: Reduce buffering.
-    //ret = av_dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
+    //ret = dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
     //if (ret < 0)
     //{
     //    return ret;
     //}
 
     // analyzeduration: Defaults to 5,000,000 microseconds = 5 seconds.
-    //ret = av_dict_set_with_check(&opt, "analyzeduration", "5000000", 0);    // <<== honored
-    //if (ret < 0)
-    //{
-    //    return ret;
-    //}
+    ret = dict_set_with_check(&opt, "analyzeduration", "15000000", 0);    // <<== honored
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     // probesize: 5000000 by default.
     ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;

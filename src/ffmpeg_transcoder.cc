@@ -2685,7 +2685,6 @@ int FFmpeg_Transcoder::add_subtitle_streams()
 
         if (map_in_to_out_stream(it->second.m_stream_idx) != INVALID_STREAM)
         {
-            //fprintf(stderr, "EXISTS %i\n", it->second.m_stream_idx);
             // Already existing
             continue;
         }

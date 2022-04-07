@@ -1857,7 +1857,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
 
-        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9)
+        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE_MKV)
         {
             output_codec_ctx->sample_aspect_ratio           = sample_aspect_ratio;
             output_stream->codecpar->sample_aspect_ratio    = sample_aspect_ratio;
@@ -1865,7 +1865,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         else
         {
-            // WebM does not respect the aspect ratio and always uses 1:1 so we need to rescale "manually".
+            // WebM and MKV do not respect the aspect ratio and always use 1:1 so we need to rescale "manually".
             /**
              * @todo FFmpeg actually *can* transcode while presevering the SAR.
              * FFmpegfs rescales to fix that problem.

@@ -124,6 +124,11 @@ typedef struct VIRTUALFILE
         , m_duration(0)
         , m_predicted_size(0)
         , m_video_frame_count(0)
+        , m_channels(0)
+        , m_sample_rate(0)
+        , m_width(0)
+        , m_height(0)
+        , m_framerate{ 0, 0 }
     {
         memset(&m_st, 0, sizeof(m_st));
     }
@@ -222,6 +227,14 @@ typedef struct VIRTUALFILE
 
         VIRTUALFILE*        m_nextfile;                             /**< @brief Next (probable) file to be played. Used for cuesheet lists. */
     }                       m_cuesheet;                             /**< @brief Cue sheet data for track */
+
+    // These may be filled in for DVD/Bluray
+    int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Bluray directory */
+    int                     m_sample_rate;                          /**< @brief Audio sample rate - filled in for DVD/Bluray directory */
+
+    int                     m_width;                                /**< @brief Video width - filled in for DVD/Bluray directory */
+    int                     m_height;                               /**< @brief Video height - filled in for DVD/Bluray directory */
+    AVRational              m_framerate;                            /**< @brief Video frame rate - filled in for DVD/Bluray directory */
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

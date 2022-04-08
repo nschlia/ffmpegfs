@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,11 +44,12 @@ extern "C" {
 #include <libavutil/rational.h>
 }
 
-static void stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved);
-static int parse_find_best_audio_stream();
-static int parse_find_best_video_stream();
+static bool audio_stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate);
+static bool video_stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, int *interleaved);
+static int  parse_find_best_audio_stream();
+static int  parse_find_best_video_stream();
 static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx);
-static int parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
+static int  parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 /**
  * @brief Get information about Bluray stream
@@ -56,14 +57,144 @@ static int parse_bluray(const std::string & path, const struct stat *statbuf, vo
  * @param[in] ss - BLURAY_STREAM_INFO object.
  * @param[out] channels - Number of audio channels in stream.
  * @param[out] sample_rate - Sample rate of stream.
- * @param[out] audio - 1: stream contains audio, 0: no audio
+ * @return Returns true if stream has video, false if not.
+ */
+static bool audio_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate)
+{
+    bool audio = false;
+
+    switch (ss->coding_type)
+    {
+    // Video
+    case 0x01:
+    case 0x02:
+    case 0xea:
+    case 0x1b:
+    case 0x24:
+    {
+        break;
+    }
+        // Audio
+    case 0x03:
+    case 0x04:
+    case 0x80:
+    case 0x81:
+    case 0x82:
+    case 0x83:
+    case 0x84:
+    case 0x85:
+    case 0x86:
+    case 0xa1:
+    case 0xa2:
+    {
+        switch (ss->format)
+        {
+        case BLURAY_AUDIO_FORMAT_MONO:
+        {
+            *channels = 1;  // Mono
+            break;
+        }
+        case BLURAY_AUDIO_FORMAT_STEREO:
+        {
+            *channels = 2;  // Stereo
+            break;
+        }
+        case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+        {
+            *channels = 2;  // Multi Channel
+            break;
+        }
+        case BLURAY_AUDIO_FORMAT_COMBO:
+        {
+            *channels = 2;  // Stereo ac3/dts
+            break;
+        }
+        default:
+        {
+            Logging::error(path, "Unknown number of audio channels %1. Assuming 2 channel/stereo - may be totally wrong.", ss->format);
+            *channels = 2;  // Stereo
+            break;
+        }
+        }
+
+        switch (ss->rate)
+        {
+        case BLURAY_AUDIO_RATE_48:
+        {
+            *sample_rate = 48000;
+            break;
+        }
+        case BLURAY_AUDIO_RATE_96:
+        {
+            *sample_rate = 96000;
+            break;
+        }
+        case BLURAY_AUDIO_RATE_192:
+        {
+            *sample_rate = 192000;
+            break;
+        }
+            // 48 or 96 ac3/dts
+            // 192 mpl/dts-hd
+        case BLURAY_AUDIO_RATE_192_COMBO:
+        {
+            // *sample_rate = "48/192 Khz";
+            break;
+        }
+            // 48 ac3/dts
+            // 96 mpl/dts-hd
+        case BLURAY_AUDIO_RATE_96_COMBO:
+        {
+            // *sample_rate = "48/96 Khz";
+            break;
+        }
+        default:
+        {
+            Logging::error(path, "Unknown audio sample rate %1. Assuming 48 kHz - may be totally wrong.", ss->rate);
+            *sample_rate = 48000;
+            break;
+        }
+        }
+
+        audio = true;
+        break;
+    }
+    case 0x90:
+    case 0x91:
+    {
+        // Language     ss->lang
+        break;
+    }
+    case 0x92:
+    {
+        // Char Code    ss->char_code);
+        // Language     ss->lang);
+        break;
+    }
+    default:
+    {
+        Logging::error(path, "Unrecognised coding type %<%02x>1", ss->coding_type);
+        break;
+    }
+    }
+
+    return audio;
+}
+
+/**
+ * @brief Get information about Bluray stream
+ * @param[in] path - Path to Bluray disk.
+ * @param[in] ss - BLURAY_STREAM_INFO object.
  * @param[out] width - Width of video stream.
  * @param[out] height - Height of video stream.
  * @param[out] framerate - Frame rate of video stream.
  * @param[out] interleaved - 1: video stream is interleaved, 0: video stream is not interleaved.
+ * @return Returns true if stream has video, false if not.
  */
-static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate, int *audio, int *width, int *height, AVRational *framerate, int *interleaved)
+static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, int *interleaved)
 {
+    bool video = false;
+
     switch (ss->coding_type)
     {
     // Video
@@ -220,6 +351,7 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         }
         }
 
+        video = true;
         break;
     }
         // Audio
@@ -235,76 +367,6 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
     case 0xa1:
     case 0xa2:
     {
-        switch (ss->format)
-        {
-        case BLURAY_AUDIO_FORMAT_MONO:
-        {
-            *channels = 1;  // Mono
-            break;
-        }
-        case BLURAY_AUDIO_FORMAT_STEREO:
-        {
-            *channels = 2;  // Stereo
-            break;
-        }
-        case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
-        {
-            *channels = 2;  // Multi Channel
-            break;
-        }
-        case BLURAY_AUDIO_FORMAT_COMBO:
-        {
-            *channels = 2;  // Stereo ac3/dts
-            break;
-        }
-        default:
-        {
-            Logging::error(path, "Unknown number of audio channels %1. Assuming 2 channel/stereo - may be totally wrong.", ss->format);
-            *channels = 2;  // Stereo
-            break;
-        }
-        }
-
-        switch (ss->rate)
-        {
-        case BLURAY_AUDIO_RATE_48:
-        {
-            *sample_rate = 48000;
-            break;
-        }
-        case BLURAY_AUDIO_RATE_96:
-        {
-            *sample_rate = 96000;
-            break;
-        }
-        case BLURAY_AUDIO_RATE_192:
-        {
-            *sample_rate = 192000;
-            break;
-        }
-            // 48 or 96 ac3/dts
-            // 192 mpl/dts-hd
-        case BLURAY_AUDIO_RATE_192_COMBO:
-        {
-            // *sample_rate = "48/192 Khz";
-            break;
-        }
-            // 48 ac3/dts
-            // 96 mpl/dts-hd
-        case BLURAY_AUDIO_RATE_96_COMBO:
-        {
-            // *sample_rate = "48/96 Khz";
-            break;
-        }
-        default:
-        {
-            Logging::error(path, "Unknown audio sample rate %1. Assuming 48 kHz - may be totally wrong.", ss->rate);
-            *sample_rate = 48000;
-            break;
-        }
-        }
-
-        *audio = 1;
         break;
     }
     case 0x90:
@@ -325,6 +387,8 @@ static void stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *c
         break;
     }
     }
+
+    return video;
 }
 
 /**
@@ -446,13 +510,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         BITRATE video_bit_rate  = 29*1024*1024; // In case the real bitrate cannot be calculated later, assume 20 Mbit video bitrate
         BITRATE audio_bit_rate  = 256*1024;     // In case the real bitrate cannot be calculated later, assume 256 kBit audio bitrate
 
-        int channels            = 0;
-        int sample_rate         = 0;
-        int audio               = 0;
+        bool audio              = false;
 
-        int width               = 0;
-        int height              = 0;
-        AVRational framerate    = { 0, 0 };
         int interleaved         = 0;
 
         if (!bd_select_title(bd, title_idx))
@@ -479,22 +538,22 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         // Get details
         if (clip->audio_stream_count)
         {
-            stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+            audio_stream_info(path, &clip->audio_streams[parse_find_best_audio_stream()], &virtualfile->m_channels, &virtualfile->m_sample_rate);
         }
         if (clip->video_stream_count)
         {
-            stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &channels, &sample_rate, &audio, &width, &height, &framerate, &interleaved);
+            audio = video_stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &virtualfile->m_width, &virtualfile->m_height, &virtualfile->m_framerate, &interleaved);
         }
 
-        Logging::trace(virtualfile->m_destfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), width, height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
-        if (audio > -1)
+        Logging::trace(virtualfile->m_destfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), virtualfile->m_width, virtualfile->m_height, av_q2d(virtualfile->m_framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+        if (audio)
         {
-            Logging::trace(virtualfile->m_destfile, "Audio %1 channels %2", channels, format_samplerate(sample_rate).c_str());
+            Logging::trace(virtualfile->m_destfile, "Audio %1 channels %2", virtualfile->m_channels, format_samplerate(virtualfile->m_sample_rate).c_str());
         }
 
-        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, channels, sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, width, height, interleaved, framerate);
+        transcoder_set_filesize(virtualfile, duration, audio_bit_rate, virtualfile->m_channels, virtualfile->m_sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, virtualfile->m_width, virtualfile->m_height, interleaved, virtualfile->m_framerate);
 
-        virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));
+        virtualfile->m_video_frame_count    = static_cast<uint32_t>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(virtualfile->m_framerate)));
         virtualfile->m_predicted_size       = static_cast<size_t>(size);
     }
 

@@ -394,9 +394,17 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
 
             Logging::trace(virtualfile->m_destfile, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_settings.m_video_bit_rate).c_str(), video_settings.m_width, video_settings.m_height, av_q2d(framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+
+            virtualfile->m_width        = video_settings.m_width;
+            virtualfile->m_height       = video_settings.m_height;
+            virtualfile->m_framerate    = framerate;
+
             if (audio_stream > -1)
             {
                 Logging::trace(virtualfile->m_destfile, "Audio Channels %1 Sample Rate %2", audio_settings.m_channels, audio_settings.m_sample_rate);
+
+                virtualfile->m_channels     = audio_settings.m_channels;
+                virtualfile->m_sample_rate  = audio_settings.m_sample_rate;
             }
 
             transcoder_set_filesize(virtualfile, duration, audio_settings.m_audio_bit_rate, audio_settings.m_channels, audio_settings.m_sample_rate, AV_SAMPLE_FMT_NONE, video_bit_rate, video_settings.m_width, video_settings.m_height, interleaved, framerate);

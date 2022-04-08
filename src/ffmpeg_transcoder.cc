@@ -472,6 +472,37 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return ret;
     }
 
+#ifdef USE_LIBDVD
+    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+    {
+        // FFmpeg API sometimes cannot detect video size or frame rate, so use value from IFO
+        if (!m_in.m_video.m_codec_ctx->width || !m_in.m_video.m_stream->codecpar->height)
+        {
+            m_in.m_video.m_codec_ctx->width = m_in.m_video.m_stream->codecpar->width = m_virtualfile->m_width;
+            m_in.m_video.m_codec_ctx->height = m_in.m_video.m_stream->codecpar->height = m_virtualfile->m_height;
+        }
+        if (!m_in.m_video.m_stream->avg_frame_rate.den)
+        {
+            m_in.m_video.m_stream->avg_frame_rate = m_virtualfile->m_framerate;
+        }
+    }
+#endif // USE_LIBDVD
+#ifdef USE_LIBBLURAY
+    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    {
+        // FFmpeg API sometimes cannot detect video size or frame rate, so use value from Bluray directory
+        if (!m_in.m_video.m_codec_ctx->width || !m_in.m_video.m_stream->codecpar->height)
+        {
+            m_in.m_video.m_codec_ctx->width = m_in.m_video.m_stream->codecpar->width = m_virtualfile->m_width;
+            m_in.m_video.m_codec_ctx->height = m_in.m_video.m_stream->codecpar->height = m_virtualfile->m_height;
+        }
+        if (!m_in.m_video.m_stream->avg_frame_rate.den)
+        {
+            m_in.m_video.m_stream->avg_frame_rate = m_virtualfile->m_framerate;
+        }
+    }
+#endif // USE_LIBBLURAY
+
     ret = open_bestmatch_audio();
     if (ret < 0)
     {

@@ -16,7 +16,7 @@ Important changes in 2.10 (2022-03-XX):
 * Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but are
   correct when data is read.
 * Bugfix: Duration was not saved in cache SQLite database.
-* Bugfix: Sometimes video parameters for some Bluray or DVD chapters cannot be
+* Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD chapters cannot be
   detected by FFmpeg API. Transcode then failes - fixed by using data from the
   Bluray directory or DVD IFO instead.
 * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".

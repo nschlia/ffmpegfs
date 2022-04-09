@@ -1264,7 +1264,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         if (m_out.m_audio.m_codec_ctx != nullptr)
         {
             // If not just copying the stream, initialise the FIFO buffer to store audio samples to be encoded.
-            ret = init_fifo();
+            ret = init_audio_fifo();
             if (ret)
             {
                 return ret;
@@ -2858,7 +2858,7 @@ int FFmpeg_Transcoder::init_resampler()
     return 0;
 }
 
-int FFmpeg_Transcoder::init_fifo()
+int FFmpeg_Transcoder::init_audio_fifo()
 {
     // Create the FIFO buffer based on the specified output sample format.
     m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx), 1);
@@ -3498,11 +3498,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         m_insert_keyframe   = true;
                     }
 
-                    m_video_frame_fifo.insert(std::make_pair(pos, frame));
+                    m_video_frame_map.insert(std::make_pair(pos, frame));
                 }
                 else
                 {
-                    m_video_frame_fifo.insert(std::make_pair(0, frame));
+                    m_video_frame_map.insert(std::make_pair(0, frame));
                 }
             }
         }
@@ -3527,7 +3527,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     int data_present = 0;
 
     AVCodecContext *codec_ctx = it->second.m_codec_ctx;
-    SUBTITLEFIFO & subtitlefifo = m_subtitle_fifos[pkt->stream_index];   // This will either return the existing SUBTITLEFIFO, or create a new one
+    SUBTITLE_MAP & subtitlefifo = m_subtitle_maps[pkt->stream_index];   // This will either return the existing SUBTITLEFIFO, or create a new one
 
     *decoded = 0;
 
@@ -4767,7 +4767,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     }
 
     int64_t pos = av_rescale_q_rnd(output_frame->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-    m_audio_frame_fifo.insert(std::make_pair(pos, output_frame));
+    m_audio_frame_map.insert(std::make_pair(pos, output_frame));
 
     return ret;
 }
@@ -5222,7 +5222,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
 
             // Read audio frame FIFO, encode and store
-            for (FRAMEFIFO::const_iterator it = m_audio_frame_fifo.cbegin(); it != m_audio_frame_fifo.cend(); ++it)
+            for (FRAME_MAP::const_iterator it = m_audio_frame_map.cbegin(); it != m_audio_frame_map.cend(); ++it)
             {
                 int ret = 0;
                 int data_written;
@@ -5233,12 +5233,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     // Erase from map what's been processed so far
-                    m_audio_frame_fifo.erase(m_audio_frame_fifo.begin(), ++it);
+                    m_audio_frame_map.erase(m_audio_frame_map.begin(), ++it);
                     throw ret;
                 }
             }
 
-            m_audio_frame_fifo.clear();
+            m_audio_frame_map.clear();
 
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.
@@ -5273,7 +5273,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         {
             int ret = 0;
 
-            for (FRAMEFIFO::const_iterator it = m_video_frame_fifo.cbegin(); it != m_video_frame_fifo.cend(); ++it)
+            for (FRAME_MAP::const_iterator it = m_video_frame_map.cbegin(); it != m_video_frame_map.cend(); ++it)
             {
                 // Encode one video frame.
                 if (!is_frameset())
@@ -5290,12 +5290,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     // Erase from map what's been processed so far
-                    m_video_frame_fifo.erase(m_video_frame_fifo.begin(), ++it);
+                    m_video_frame_map.erase(m_video_frame_map.begin(), ++it);
                     throw ret;
                 }
             }
 
-            m_video_frame_fifo.clear();
+            m_video_frame_map.clear();
 
             // If we are at the end of the input file and have encoded
             // all remaining samples, we can exit this loop and finish.
@@ -5312,9 +5312,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         {
             int ret = 0;
 
-            for (SUBTITLEFIFO_MAP::iterator it = m_subtitle_fifos.begin(); it != m_subtitle_fifos.end(); ++it)
+            for (SUBTITLESTREAM_MAP::iterator it = m_subtitle_maps.begin(); it != m_subtitle_maps.end(); ++it)
             {
-                SUBTITLEFIFO & subtitle_fifo = it->second;
+                SUBTITLE_MAP & subtitle_map = it->second;
                 int out_stream_idx = map_in_to_out_stream(it->first);
 
                 if (out_stream_idx == INVALID_STREAM)
@@ -5323,7 +5323,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     throw AVERROR(EINVAL);
                 }
 
-                for (SUBTITLEFIFO::const_iterator it = subtitle_fifo.cbegin(); it != subtitle_fifo.cend(); ++it)
+                for (SUBTITLE_MAP::const_iterator it = subtitle_map.cbegin(); it != subtitle_map.cend(); ++it)
                 {
                     AVSubtitle *subtitle = it->second;
 
@@ -5336,12 +5336,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
                         // Erase from map what's been processed so far
-                        subtitle_fifo.erase(subtitle_fifo.begin(), ++it);
+                        subtitle_map.erase(subtitle_map.begin(), ++it);
                         throw ret;
                     }
                 }
 
-                subtitle_fifo.clear();
+                subtitle_map.clear();
             }
 
             // If we are at the end of the input file and have encoded
@@ -6202,35 +6202,35 @@ int FFmpeg_Transcoder::purge_audio_fifo()
     return audio_samples_left;
 }
 
-size_t FFmpeg_Transcoder::purge_audio_frame_fifo()
+size_t FFmpeg_Transcoder::purge_audio_frame_map()
 {
-    size_t audio_frames_left  = m_audio_frame_fifo.size();
+    size_t audio_frames_left  = m_audio_frame_map.size();
 
-    m_audio_frame_fifo.clear();
+    m_audio_frame_map.clear();
 
     return audio_frames_left;
 }
 
-size_t FFmpeg_Transcoder::purge_video_frame_fifo()
+size_t FFmpeg_Transcoder::purge_video_frame_map()
 {
-    size_t video_frames_left = m_video_frame_fifo.size();
+    size_t video_frames_left = m_video_frame_map.size();
 
-    m_video_frame_fifo.clear();
+    m_video_frame_map.clear();
 
     return video_frames_left;
 }
 
-size_t FFmpeg_Transcoder::purge_subtitle_frame_fifos()
+size_t FFmpeg_Transcoder::purge_subtitle_frame_maps()
 {
     size_t subtitle_frames_left  = 0;
 
-    for (SUBTITLEFIFO_MAP::iterator it = m_subtitle_fifos.begin(); it != m_subtitle_fifos.end(); ++it)
+    for (SUBTITLESTREAM_MAP::iterator it = m_subtitle_maps.begin(); it != m_subtitle_maps.end(); ++it)
     {
-        SUBTITLEFIFO & subtitle_fifo = it->second;
+        SUBTITLE_MAP & subtitle_map = it->second;
 
-        subtitle_frames_left += subtitle_fifo.size();
+        subtitle_frames_left += subtitle_map.size();
 
-        for (SUBTITLEFIFO::const_iterator it = subtitle_fifo.begin(); it != subtitle_fifo.end(); ++it)
+        for (SUBTITLE_MAP::const_iterator it = subtitle_map.begin(); it != subtitle_map.end(); ++it)
         {
             AVSubtitle *subtitle = it->second;
 
@@ -6238,7 +6238,7 @@ size_t FFmpeg_Transcoder::purge_subtitle_frame_fifos()
             av_free(subtitle);
         }
 
-        subtitle_fifo.clear();
+        subtitle_map.clear();
     }
 
     return subtitle_frames_left;
@@ -6259,13 +6259,13 @@ size_t FFmpeg_Transcoder::purge_hls_fifo()
     return hls_packets_left;
 }
 
-void FFmpeg_Transcoder::purge_fifos()
+void FFmpeg_Transcoder::purge()
 {
     std::string outfile;
     int audio_samples_left      = purge_audio_fifo();
-    size_t audio_frames_left    = purge_audio_frame_fifo();
-    size_t video_frames_left    = purge_video_frame_fifo();
-    size_t subtitle_frames_left = purge_subtitle_frame_fifos();
+    size_t audio_frames_left    = purge_audio_frame_map();
+    size_t video_frames_left    = purge_video_frame_map();
+    size_t subtitle_frames_left = purge_subtitle_frame_maps();
     size_t hls_packets_left     = purge_hls_fifo();
 
     if (m_out.m_format_ctx != nullptr)
@@ -6307,7 +6307,7 @@ bool FFmpeg_Transcoder::close_output_file()
 {
     bool closed = false;
 
-    purge_fifos();
+    purge();
 
     if (close_resample())
     {

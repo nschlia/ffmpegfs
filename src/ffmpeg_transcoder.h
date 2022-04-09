@@ -153,9 +153,9 @@ public:
 
     } HWACCELMODE;
 
-    typedef std::map<int64_t, FFmpeg_Frame> FRAMEFIFO;              /**< @brief Audio/video frame buffer */
-    typedef std::map<int64_t, AVSubtitle*>  SUBTITLEFIFO;           /**< @brief Subtitle buffer */
-    typedef std::map<int, SUBTITLEFIFO>     SUBTITLEFIFO_MAP;       /**< @brief Map stream index to SUBTITLEFIFO */
+    typedef std::map<int64_t, FFmpeg_Frame> FRAME_MAP;              /**< @brief Audio/video frame buffer */
+    typedef std::map<int64_t, AVSubtitle*>  SUBTITLE_MAP;           /**< @brief Subtitle buffer */
+    typedef std::map<int, SUBTITLE_MAP>     SUBTITLESTREAM_MAP;     /**< @brief Map stream index to SUBTITLE_MAP */
     typedef std::map<int, int>              STREAM_MAP;             /**< @brief Map input to output stream */
 
 public:
@@ -521,7 +521,7 @@ protected:
      * @brief Initialise a FIFO buffer for the audio samples to be encoded.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         init_fifo();
+    int                         init_audio_fifo();
     /**
      * @brief Update format options
      * @param[in] dict - Dictionary to update.
@@ -820,26 +820,26 @@ protected:
      * @brief Purge all frames in audio FIFO
      * @return Number of frames that have been purged. Function never fails.
      */
-    size_t                      purge_audio_frame_fifo();
+    size_t                      purge_audio_frame_map();
     /**
      * @brief Purge all frames in video FIFO
      * @return Number of frames that have been purged. Function never fails.
      */
-    size_t                      purge_video_frame_fifo();
+    size_t                      purge_video_frame_map();
     /**
      * @brief Purge all frames in all subtitle frame FIFOs
      * @return Number of frames that have been purged. Function never fails.
      */
-    size_t                      purge_subtitle_frame_fifos();
+    size_t                      purge_subtitle_frame_maps();
     /**
      * @brief Purge all packets in HLS FIFO buffer
      * @return Number of Packets that have been purged. Function never fails.
      */
     size_t                      purge_hls_fifo();
     /**
-     * @brief Purge FIFO buffers and report lost packets/frames/samples.
+     * @brief Purge FIFO and map buffers and report lost packets/frames/samples.
      */
-    void                        purge_fifos();
+    void                        purge();
     /**
      * @brief Actually perform seek for frame.
      * This function ensures that it is positioned at a key frame, so the resulting position may be different from the requested.
@@ -1123,19 +1123,19 @@ private:
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
     AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
-    FRAMEFIFO                   m_audio_frame_fifo;             /**< @brief Audio frame FIFO */
+    FRAME_MAP                   m_audio_frame_map;              /**< @brief Audio frame map */
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */
-    FRAMEFIFO                   m_video_frame_fifo;             /**< @brief Video frame FIFO */
+    FRAME_MAP                   m_video_frame_map;              /**< @brief Video frame map */
     int64_t                     m_pts;                          /**< @brief Generated PTS */
     int64_t                     m_pos;                          /**< @brief Generated position */
 
     // Subtitle conversion and buffering
-    SUBTITLEFIFO_MAP            m_subtitle_fifos;               /**< @brief FIFOs for all subtitle streams */
+    SUBTITLESTREAM_MAP          m_subtitle_maps;               /**< @brief Maps for all subtitle streams */
 
     // Common things for audio/video/subtitles
     INPUTFILE                   m_in;                           /**< @brief Input file information */

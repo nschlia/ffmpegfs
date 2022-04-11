@@ -217,40 +217,40 @@ protected:
 #define ASS_DEFAULT_PLAYRESY    288         /**< @brief Default Y resolution */
 #define ASS_DEFAULT_FONT        "Arial"     /**< @brief Default font name */
 #define ASS_DEFAULT_FONT_SIZE   16          /**< @brief Default font size */
-/**
- * @brief Default foreground colour: white
- * Colour values are expressed in hexadecimal BGR format
- * as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
- * Transparency (alpha) can be expressed as &HAA&.
- *
- * Note that in the alpha channel, 00 is opaque and FF is transparent.
- */
+    /**
+     * @brief Default foreground colour: white
+     * Colour values are expressed in hexadecimal BGR format
+     * as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
+     * Transparency (alpha) can be expressed as &HAA&.
+     *
+     * Note that in the alpha channel, 00 is opaque and FF is transparent.
+     */
 #define ASS_DEFAULT_COLOUR      0xffffff
 #define ASS_DEFAULT_BACK_COLOUR 0           /**< @brief Default background colour */
 #define ASS_DEFAULT_BOLD        0           /**< @brief Default no bold font */
 #define ASS_DEFAULT_ITALIC      0           /**< @brief Default no italics */
 #define ASS_DEFAULT_UNDERLINE   0           /**< @brief Default no underline */
-/**
- *  @brief Default alignment: bottom centre
- *  Alignment values are based on the numeric keypad.
- *  1 - bottom left,
- *  2 - bottom centre,
- *  3 - bottom right,
- *  4 - center left,
- *  5 - center centre,
- *  6 - center right,
- *  7 - top left,
- *  8 - top center,
- *  9 - top right.
- *  In addition to determining the position of the subtitle,
- *  this also determines the alignment of the text itself.
- */
+    /**
+     *  @brief Default alignment: bottom centre
+     *  Alignment values are based on the numeric keypad.
+     *  1 - bottom left,
+     *  2 - bottom centre,
+     *  3 - bottom right,
+     *  4 - center left,
+     *  5 - center centre,
+     *  6 - center right,
+     *  7 - top left,
+     *  8 - top center,
+     *  9 - top right.
+     *  In addition to determining the position of the subtitle,
+     *  this also determines the alignment of the text itself.
+     */
 #define ASS_DEFAULT_ALIGNMENT   2
-/**
- *  @brief Default border style: outline with shadow
- *  1 - Outline with shadow,
- *  3 - Rendered with an opaque box.
- */
+    /**
+     *  @brief Default border style: outline with shadow
+     *  1 - Outline with shadow,
+     *  3 - Rendered with an opaque box.
+     */
 #define ASS_DEFAULT_BORDERSTYLE 1
 
     /**

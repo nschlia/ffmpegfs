@@ -153,10 +153,10 @@ public:
 
     } HWACCELMODE;
 
-    typedef std::map<int64_t, FFmpeg_Frame> FRAME_MAP;              /**< @brief Audio/video frame buffer */
-    typedef std::map<int64_t, AVSubtitle*>  SUBTITLE_MAP;           /**< @brief Subtitle buffer */
-    typedef std::map<int, SUBTITLE_MAP>     SUBTITLESTREAM_MAP;     /**< @brief Map stream index to SUBTITLE_MAP */
-    typedef std::map<int, int>              STREAM_MAP;             /**< @brief Map input to output stream */
+    typedef std::map<int64_t, FFmpeg_Frame>     FRAME_MAP;          /**< @brief Audio/video frame buffer */
+    typedef std::map<int64_t, AVSubtitle*>  SUBTITLE_MAP;           	/**< @brief Subtitle buffer */
+    typedef std::map<int, SUBTITLE_MAP>         SUBTITLESTREAM_MAP; /**< @brief Map stream index to SUBTITLE_MAP */
+    typedef std::map<int, int>                  STREAM_MAP;         /**< @brief Map input to output stream */
 
 public:
     /**

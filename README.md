@@ -438,9 +438,9 @@ Closed captions are converted to the output files, if possible. There are two ge
 | Output Format    | Subtitle Codec                                               | Format |
 | ---------------- | ------------------------------------------------------------ | ------ |
 | MP4, MOV, ProRes | MOV Text (Apple Text Media Handler)                          | Text   |
-| WebM             | WebVTT Subitles                                              | Text   |
+| WebM             | WebVTT Subtitles (Web Video Text Tracks Format)              | Text   |
 | TS, HLS          | DVB Subtitles                                                | Bitmap |
-| MKV              | ASS (Advanced SSA), SubRip Subtitles, Web Video Text Tracks Format (WebVTT) | Text   |
+| MKV              | ASS (Advanced SSA), SubRip Subtitles, WebVTT Subtitles       | Text   |
 | MKV              | DVB Subtitles                                                | Bitmap |
 
 Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec. 

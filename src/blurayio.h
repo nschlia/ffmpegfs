@@ -82,7 +82,7 @@ public:
      * @return Upon successful completion, #read() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
-     * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
+     * If at end of file, 0 may be returned but errno not set. error() will return 0 if at EOF.
      */
     virtual size_t  read(void *data, size_t size) override;
     /**

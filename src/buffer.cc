@@ -247,7 +247,12 @@ bool Buffer::init(bool erase_cache)
         // Index only required for frame sets and there is only one.
         if (!m_ci[0].m_cachefile_idx.empty())
         {
-            assert(virtualfile()->m_video_frame_count > 0);
+            if (virtualfile()->m_video_frame_count == 0)
+            {
+                errno = EINVAL;
+                Logging::error(m_ci[0].m_cachefile, "INTERNAL ERROR! Frame count is zero (%1) %2", errno, strerror(errno));
+                throw false;
+            }
             assert(sizeof(IMAGE_FRAME) == 32);
 
             size_t filesize     = 0;
@@ -795,7 +800,6 @@ size_t Buffer::tell(uint32_t segment_no) const
 
     if (ci == nullptr)
     {
-        assert(false);
         errno = EBADF;
         return 0;
     }

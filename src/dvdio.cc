@@ -562,7 +562,11 @@ size_t DvdIO::read(void * data, size_t size)
     {
         size_t rest_size = m_rest_size;
 
-        assert(rest_size < size);
+        if (m_rest_size > size)
+        {
+            errno = EINVAL;
+            return 0;
+        }
 
         if (data != nullptr)
         {

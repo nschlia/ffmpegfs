@@ -6827,7 +6827,13 @@ int FFmpeg_Transcoder::hwdevice_ctx_create(AVBufferRef ** hwaccel_enc_device_ctx
 
 int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx)
 {
-    assert(m_hwaccel_dec_device_ctx != nullptr);
+    if (m_hwaccel_dec_device_ctx == nullptr)
+    {
+        int ret = AVERROR(EINVAL);
+        Logging::error(destname(), "INTERNAL ERROR! HW decoder device context is NULL (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
     input_codec_ctx->hw_device_ctx = av_buffer_ref(m_hwaccel_dec_device_ctx);
     if (input_codec_ctx->hw_device_ctx == nullptr)
     {

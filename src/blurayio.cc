@@ -182,7 +182,11 @@ size_t BlurayIO::read(void * data, size_t size)
     {
         result_len = m_rest_size;
 
-        assert(m_rest_size < size);
+        if (m_rest_size > size)
+        {
+            errno = EINVAL;
+            return 0;
+        }
 
         memcpy(data, &m_data[m_rest_pos], m_rest_size);
 

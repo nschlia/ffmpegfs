@@ -6348,6 +6348,18 @@ bool FFmpeg_Transcoder::close_output_file()
         }
     }
 
+    for (STREAMREF_MAP::iterator it = m_out.m_subtitle.begin(); it != m_out.m_subtitle.end(); ++it)
+    {
+        AVCodecContext *codec_ctx = (*it).second.m_codec_ctx;
+        if (codec_ctx != nullptr)
+        {
+            avcodec_free_context(&codec_ctx);
+
+            closed = true;
+        }
+    }
+    m_out.m_subtitle.clear();
+
     if (m_out.m_format_ctx != nullptr)
     {
         if (m_out.m_format_ctx->pb != nullptr)

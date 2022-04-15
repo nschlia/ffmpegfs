@@ -235,7 +235,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
 
 FFmpeg_Transcoder::~FFmpeg_Transcoder()
 {
-    // Close fifo and resample context
+    // Close files and resample context
     close();
 
     Logging::trace(nullptr, "FFmpeg trancoder object destroyed.");
@@ -1263,7 +1263,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
         if (m_out.m_audio.m_codec_ctx != nullptr)
         {
-            // If not just copying the stream, initialise the FIFO buffer to store audio samples to be encoded.
+            // If not just copying the stream, initialise the audio FIFO buffer to store audio samples to be encoded.
             ret = init_audio_fifo();
             if (ret)
             {
@@ -2860,11 +2860,11 @@ int FFmpeg_Transcoder::init_resampler()
 
 int FFmpeg_Transcoder::init_audio_fifo()
 {
-    // Create the FIFO buffer based on the specified output sample format.
+    // Create the audio FIFO buffer based on the specified output sample format.
     m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx), 1);
     if (m_audio_fifo == nullptr)
     {
-        Logging::error(destname(), "Could not allocate FIFO.");
+        Logging::error(destname(), "Could not allocate audio FIFO.");
         return AVERROR(ENOMEM);
     }
     return 0;
@@ -3281,7 +3281,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
                     throw ret;
                 }
 
-                // Add the converted input samples to the FIFO buffer for later processing.
+                // Add the converted input samples to the audio FIFO buffer for later processing.
                 ret = add_samples_to_fifo(converted_input_samples, nb_output_samples);
                 if (ret < 0)
                 {
@@ -3923,27 +3923,27 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
 {
     int ret;
 
-    // Make the FIFO as large as it needs to be to hold both,
+    // Make the audio FIFO as large as it needs to be to hold both,
     // the old and the new samples.
 
     ret = av_audio_fifo_realloc(m_audio_fifo, av_audio_fifo_size(m_audio_fifo) + frame_size);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not reallocate FIFO.");
+        Logging::error(destname(), "Could not reallocate audio FIFO.");
         return ret;
     }
 
-    // Store the new samples in the FIFO buffer.
+    // Store the new samples in the audio FIFO buffer.
     ret = av_audio_fifo_write(m_audio_fifo, reinterpret_cast<void **>(converted_input_samples), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not write data to FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not write data to audio FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         }
         else
         {
-            Logging::error(destname(), "Could not write data to FIFO.");
+            Logging::error(destname(), "Could not write data to audio FIFO.");
         }
         return AVERROR_EXIT;
     }
@@ -4706,12 +4706,12 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     ret = output_frame.res();
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not read data from FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not read data from audio FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
     // Use the maximum number of possible samples per frame.
-    // If there is less than the maximum possible frame size in the FIFO
+    // If there is less than the maximum possible frame size in the audio FIFO
     // buffer use this number. Otherwise, use the maximum possible frame size
 
     frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);

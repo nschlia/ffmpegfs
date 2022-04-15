@@ -817,7 +817,7 @@ protected:
      */
     int                         purge_audio_fifo();
     /**
-     * @brief Purge all frames in audio FIFO
+     * @brief Purge all frames in buffer
      * @return Number of frames that have been purged. Function never fails.
      */
     size_t                      purge_audio_frame_map();

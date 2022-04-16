@@ -227,46 +227,70 @@ int FFmpeg_Base::opt_set_with_check(void *obj, const char *key, const char *valu
 
 void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
-    int64_t duration = AV_NOPTS_VALUE;
-
-    if (stream->duration != AV_NOPTS_VALUE)
+    if (stream != nullptr && stream->codecpar != nullptr)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-    }
+        int64_t duration = AV_NOPTS_VALUE;
 
-    Logging::debug(out_file ? destname() : filename(), "Video %1 #%2: %3@%4 [%5]",
-                   out_file ? "out" : "in",
-                   stream->index,
-                   get_codec_name(stream->codecpar->codec_id, false),
-                   format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
-                   format_duration(duration).c_str());
+        if (stream->duration != AV_NOPTS_VALUE)
+        {
+            duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        }
+
+        Logging::debug(out_file ? destname() : filename(), "Video %1 #%2: %3@%4 [%5]",
+                       out_file ? "out" : "in",
+                       stream->index,
+                       get_codec_name(stream->codecpar->codec_id, false),
+                       format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
+                       format_duration(duration).c_str());
+    }
+    else
+    {
+        Logging::debug(out_file ? destname() : filename(), "Video %1: invalid stream",
+                       out_file ? "out" : "in");
+    }
 }
 
 void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const
 {
-    int64_t duration = AV_NOPTS_VALUE;
-
-    if (stream->duration != AV_NOPTS_VALUE)
+    if (stream != nullptr && stream->codecpar != nullptr)
     {
-        duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-    }
+        int64_t duration = AV_NOPTS_VALUE;
 
-    Logging::debug(out_file ? destname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
-                   out_file ? "out" : "in",
-                   stream->index,
-                   get_codec_name(stream->codecpar->codec_id, false),
-                   format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
-                   get_channels(stream->codecpar),
-                   format_samplerate(stream->codecpar->sample_rate).c_str(),
-                   format_duration(duration).c_str());
+        if (stream->duration != AV_NOPTS_VALUE)
+        {
+            duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+        }
+
+        Logging::debug(out_file ? destname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
+                       out_file ? "out" : "in",
+                       stream->index,
+                       get_codec_name(stream->codecpar->codec_id, false),
+                       format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
+                       get_channels(stream->codecpar),
+                       format_samplerate(stream->codecpar->sample_rate).c_str(),
+                       format_duration(duration).c_str());
+    }
+    else
+    {
+        Logging::debug(out_file ? destname() : filename(), "Audio %1: invalid stream",
+                       out_file ? "out" : "in");
+    }
 }
 
 void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_ctx*/, const AVStream *stream) const
 {
-    Logging::debug(out_file ? destname() : filename(), "Subtitle %1 #%2: %3",
-                   out_file ? "out" : "in",
-                   stream->index,
-                   get_codec_name(stream->codecpar->codec_id, false));
+    if (stream != nullptr && stream->codecpar != nullptr)
+    {
+        Logging::debug(out_file ? destname() : filename(), "Subtitle %1 #%2: %3",
+                       out_file ? "out" : "in",
+                       stream->index,
+                       get_codec_name(stream->codecpar->codec_id, false));
+    }
+    else
+    {
+        Logging::debug(out_file ? destname() : filename(), "Subtitle %1: invalid stream",
+                       out_file ? "out" : "in");
+    }
 }
 
 std::string FFmpeg_Base::get_pix_fmt_name(enum AVPixelFormat pix_fmt)

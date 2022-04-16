@@ -1342,9 +1342,12 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
     {
         STREAMREF * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(it->first));
-        it->second.m_start_time                 = it->second.m_stream->start_time;
-        out_streamref->m_start_time             = av_rescale_q_rnd(it->second.m_stream->start_time, it->second.m_stream->time_base, out_streamref->m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
-        out_streamref->m_stream->start_time     = out_streamref->m_start_time;
+        if (out_streamref != nullptr)
+        {
+            it->second.m_start_time                 = it->second.m_stream->start_time;
+            out_streamref->m_start_time             = av_rescale_q_rnd(it->second.m_stream->start_time, it->second.m_stream->time_base, out_streamref->m_stream->time_base, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            out_streamref->m_stream->start_time     = out_streamref->m_start_time;
+        }
     }
 
     m_out.m_audio_pts         = m_out.m_audio.m_start_time;

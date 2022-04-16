@@ -258,7 +258,7 @@ $(function() {
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a> = DVDOpenFile(<a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a>, tt_srpt-&gt;title[<a class="code" href="classDvdIO.html#a550234d78b75d3946d23ff68f668da68">m_title_idx</a>].title_set_nr, DVD_READ_TITLE_VOBS);</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a> == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Can&#39;t open title VOBS (VTS_%&lt;%02d&gt;1_1.VOB).&quot;</span>, tt_srpt-&gt;title[<a class="code" href="classDvdIO.html#a550234d78b75d3946d23ff68f668da68">m_title_idx</a>].title_set_nr);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Can&#39;t open title VOBS (VTS_%&lt;%02d&gt;1_X.VOB).&quot;</span>, tt_srpt-&gt;title[<a class="code" href="classDvdIO.html#a550234d78b75d3946d23ff68f668da68">m_title_idx</a>].title_set_nr);</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        ifoClose(<a class="code" href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">m_vts_file</a>);</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        ifoClose(<a class="code" href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">m_vmg_file</a>);</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        DVDClose(<a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a>);</div>
@@ -618,317 +618,324 @@ $(function() {
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;    <span class="keywordtype">size_t</span> result_len = 0;</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;    <a class="code" href="classDvdIO.html#a67e523c39d9270988f2cbc1955335577">DSITYPE</a> dsitype;</div>
 <div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160; </div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    <span class="keywordflow">if</span> (data != <span class="keyword">nullptr</span> &amp;&amp; <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a>)</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a>)</div>
 <div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;    {</div>
 <div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;        <span class="keywordtype">size_t</span> rest_size = <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a>;</div>
 <div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160; </div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        assert(rest_size &lt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>);</div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160; </div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        memcpy(data, &amp;<a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>[<a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a>], rest_size);</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160; </div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a> = <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a> = 0;</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a> &gt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>)</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;        {</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;            errno = EINVAL;</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;            <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        }</div>
 <div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160; </div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;        <span class="keywordflow">return</span> rest_size;</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;    }</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160; </div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;    <span class="comment">// Playback by cell in this pgc, starting at the cell for our chapter.</span></div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    <span class="comment">//while (next_cell &lt; last_cell)</span></div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;    {</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a>)</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;        {</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;            <a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;        <span class="keywordflow">if</span> (data != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        {</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;            memcpy(data, &amp;<a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>[<a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a>], rest_size);</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        }</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160; </div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a> = <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a> = 0;</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160; </div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;        <span class="keywordflow">return</span> rest_size;</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;    }</div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160; </div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;            <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> = <a class="code" href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">m_next_cell</a>;</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160; </div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;            <a class="code" href="classDvdIO.html#a63ca4b24ab86eba257b3c40d678221d1">next_cell</a>();</div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160; </div>
-<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> = <a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].first_sector;</div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;        }</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;    <span class="comment">// Playback by cell in this pgc, starting at the cell for our chapter.</span></div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    <span class="comment">//while (next_cell &lt; last_cell)</span></div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;    {</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a>)</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;        {</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;            <a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160; </div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> &gt;= <a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].last_sector)</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        {</div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;            <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;            <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        }</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160; </div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;        <span class="comment">// We loop until we&#39;re out of this cell.</span></div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        <span class="comment">//for(cur_pack = cur_pgc-&gt;cell_playback[cur_cell].first_sector;</span></div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        <span class="comment">//     cur_pack &lt; cur_pgc-&gt;cell_playback[cur_cell].last_sector;)</span></div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;        {</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;            dsi_t dsi_pack;</div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> next_block;</div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;            ssize_t maxlen;</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160; </div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;            <span class="comment">// Read NAV packet.</span></div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;            maxlen = DVDReadBlocks(<a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>), 1, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;            <span class="keywordflow">if</span> (maxlen != 1)</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;            {</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed for block at %1&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;            }</div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160; </div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">is_nav_pack</a>(<a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>))</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;            <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> = <a class="code" href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">m_next_cell</a>;</div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160; </div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;            <a class="code" href="classDvdIO.html#a63ca4b24ab86eba257b3c40d678221d1">next_cell</a>();</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160; </div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> = <a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].first_sector;</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;        }</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160; </div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> &gt;= <a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].last_sector)</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        {</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;            <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;            <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;        }</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;        <span class="comment">// We loop until we&#39;re out of this cell.</span></div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;        <span class="comment">//for(cur_pack = cur_pgc-&gt;cell_playback[cur_cell].first_sector;</span></div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;        <span class="comment">//     cur_pack &lt; cur_pgc-&gt;cell_playback[cur_cell].last_sector;)</span></div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;        {</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;            dsi_t dsi_pack;</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;            <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> next_block;</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;            ssize_t maxlen;</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160; </div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;            <span class="comment">// Read NAV packet.</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;            maxlen = DVDReadBlocks(<a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>), 1, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;            <span class="keywordflow">if</span> (maxlen != 1)</div>
 <div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;            {</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;                <a class="code" href="classLogging.html#a98afac829a940d2861781fed5d897a7c">Logging::warning</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Block at %1 is probably not a NAV packet. Transcode may fail.&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;            }</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160; </div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            <span class="comment">// Parse the contained dsi packet.</span></div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;            dsitype = <a class="code" href="classDvdIO.html#a3754a9fa6d94fd99c6d464ee72f0adf7">handle_DSI</a>(&amp;dsi_pack, &amp;cur_output_size, &amp;next_block, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> != dsi_pack.dsi_gi.nv_pck_lbn)</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed for block at %1&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            }</div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160; </div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;            <span class="keywordflow">if</span> (!<a class="code" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">is_nav_pack</a>(<a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>))</div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;            {</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;            }</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160; </div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            <span class="keywordflow">if</span> (cur_output_size &gt;= 1024)</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;                <a class="code" href="classLogging.html#a98afac829a940d2861781fed5d897a7c">Logging::warning</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Block at %1 is probably not a NAV packet. Transcode may fail.&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;            }</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160; </div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;            <span class="comment">// Parse the contained dsi packet.</span></div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;            dsitype = <a class="code" href="classDvdIO.html#a3754a9fa6d94fd99c6d464ee72f0adf7">handle_DSI</a>(&amp;dsi_pack, &amp;cur_output_size, &amp;next_block, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> != dsi_pack.dsi_gi.nv_pck_lbn)</div>
 <div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;            {</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed at %1 because current output size %2 &gt;= 1024&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>, cur_output_size);</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;                <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            }</div>
 <div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160; </div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>++;</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160; </div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;            <span class="comment">// Read in and output cur_output_size packs.</span></div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;            maxlen = DVDReadBlocks(<a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>), cur_output_size, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160; </div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            <span class="keywordflow">if</span> (maxlen != <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(cur_output_size))</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;            {</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed for %1 blocks at %2&quot;</span>, cur_output_size, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;                <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            }</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;            <span class="keywordflow">if</span> (cur_output_size &gt;= 1024)</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;            {</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed at %1 because current output size %2 &gt;= 1024&quot;</span>, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>, cur_output_size);</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            }</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160; </div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>++;</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160; </div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;            <span class="comment">// Read in and output cur_output_size packs.</span></div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            maxlen = DVDReadBlocks(<a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(<a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>), cur_output_size, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>);</div>
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160; </div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordtype">size_t</span> netsize = cur_output_size * DVD_VIDEO_LB_LEN;</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160; </div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            netsize = <a class="code" href="classDvdIO.html#af30e37799e6ebc4f21ce99a4e024d791">demux_pes</a>(<a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>, netsize);</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160; </div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            <span class="keywordflow">if</span> (data != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            {</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;                <span class="keywordflow">if</span> (netsize &gt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>)</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                {</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                    result_len = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160; </div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                    memcpy(data, <a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, result_len);</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160; </div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                    <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a> = netsize - <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                    <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a> = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                }</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;                {</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                    result_len = netsize;</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordflow">if</span> (maxlen != <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(cur_output_size))</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;            {</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">path</a>(), <span class="stringliteral">&quot;Read failed for %1 blocks at %2&quot;</span>, cur_output_size, <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a>);</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a> = EIO;</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;                <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            }</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;            <span class="keywordtype">size_t</span> netsize = cur_output_size * DVD_VIDEO_LB_LEN;</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160; </div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            netsize = <a class="code" href="classDvdIO.html#af30e37799e6ebc4f21ce99a4e024d791">demux_pes</a>(<a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, <a class="code" href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">m_buffer</a>, netsize);</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160; </div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            <span class="keywordflow">if</span> (data != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            {</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                <span class="keywordflow">if</span> (netsize &gt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>)</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                {</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;                    result_len = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160; </div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                    memcpy(data, <a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, result_len);</div>
 <div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160; </div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                    memcpy(data, <a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, result_len);</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                }</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;            }</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;            {</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                <span class="keywordflow">if</span> (netsize &gt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>)</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;                {</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;                    result_len = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;                    <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a> = netsize - <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                    <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a> = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                }</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;                {</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;                    result_len = netsize;</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160; </div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;                    memcpy(data, <a class="code" href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">m_data</a>, result_len);</div>
 <div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                }</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                {</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                    result_len = netsize;</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;                }</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;            }</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160; </div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> = next_block;</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;        }</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160; </div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        <span class="comment">//break;</span></div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    }</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160; </div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    <span class="comment">// DSITYPE_EOF_TITLE - end of title</span></div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    <span class="comment">// DSITYPE_EOF_CHAPTER - end of chapter</span></div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    <span class="keywordflow">if</span> ((dsitype != <a class="code" href="classDvdIO.html#a67e523c39d9270988f2cbc1955335577a8fbb498376479712618aa936a8abd8c6">DSITYPE_CONTINUE</a> &amp;&amp; !<a class="code" href="classDvdIO.html#a2f687ac7fcf761486771424f016b8fff">m_full_title</a>) ||   <span class="comment">// Stop at end of chapter/title</span></div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;            (dsitype == <a class="code" href="classDvdIO.html#a67e523c39d9270988f2cbc1955335577a7ea3e954f638d9079e0a034824e14c37">DSITYPE_EOF_TITLE</a>))                 <span class="comment">// Stop at end of title</span></div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    {</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    }</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160; </div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;    <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a> += result_len;</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160; </div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    <span class="keywordflow">return</span> result_len;</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;}</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160; </div>
-<div class="line"><a name="l00697"></a><span class="lineno"><a class="line" href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">  697</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">DvdIO::error</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a>;</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;}</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160; </div>
-<div class="line"><a name="l00702"></a><span class="lineno"><a class="line" href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">  702</a></span>&#160;int64_t <a class="code" href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">DvdIO::duration</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a64ec04044d0be4c68a0d513043de34be">m_duration</a>;</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;}</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160; </div>
-<div class="line"><a name="l00707"></a><span class="lineno"><a class="line" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">  707</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">DvdIO::size</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a32bca4435a3b022a79e500658e93233f">m_size</a>;</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;}</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160; </div>
-<div class="line"><a name="l00712"></a><span class="lineno"><a class="line" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">  712</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">DvdIO::tell</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a>;</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;}</div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160; </div>
-<div class="line"><a name="l00717"></a><span class="lineno"><a class="line" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">  717</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">DvdIO::rewind</a>()</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;{</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;    <a class="code" href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">m_next_cell</a>         = <a class="code" href="classDvdIO.html#aedc95db3bcfa9f5451120944f5b9f458">m_start_cell</a>;</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>          = <a class="code" href="classDvdIO.html#aedc95db3bcfa9f5451120944f5b9f458">m_start_cell</a>;</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160; </div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a>    = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a>            = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a>             = 0;</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a>         = 0;</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a>          = 0;</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a>           = 0;</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;}</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160; </div>
-<div class="line"><a name="l00730"></a><span class="lineno"><a class="line" href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">  730</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">DvdIO::seek</a>(int64_t offset, <span class="keywordtype">int</span> whence)</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;{</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    errno = 0;</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160; </div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    <span class="keywordflow">if</span> (whence == SEEK_SET &amp;&amp; !offset)</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    {</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;        <span class="comment">// Only rewind (seek(0, SEEK_SET) is implemented yet</span></div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">rewind</a>();</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    }</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    <span class="keywordtype">size_t</span> cur_pos = <a class="code" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">tell</a>();</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    <span class="keywordtype">size_t</span> abs_offset = 0;</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160; </div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;    <span class="keywordflow">switch</span> (whence)</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    {</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;    <span class="keywordflow">case</span> SEEK_SET:</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        assert(offset &gt;= 0);</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;        abs_offset = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(offset);</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;    <span class="keywordflow">case</span> SEEK_CUR:</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;        abs_offset += cur_pos;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordflow">case</span> SEEK_END:</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;            }</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;            {</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;                <span class="keywordflow">if</span> (netsize &gt; <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>)</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;                {</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;                    result_len = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>;</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;                }</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;                {</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;                    result_len = netsize;</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;                }</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            }</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160; </div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;            <a class="code" href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">m_cur_block</a> = next_block;</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        }</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160; </div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;        <span class="comment">//break;</span></div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    }</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160; </div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    <span class="comment">// DSITYPE_EOF_TITLE - end of title</span></div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;    <span class="comment">// DSITYPE_EOF_CHAPTER - end of chapter</span></div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="keywordflow">if</span> ((dsitype != <a class="code" href="classDvdIO.html#a67e523c39d9270988f2cbc1955335577a8fbb498376479712618aa936a8abd8c6">DSITYPE_CONTINUE</a> &amp;&amp; !<a class="code" href="classDvdIO.html#a2f687ac7fcf761486771424f016b8fff">m_full_title</a>) ||   <span class="comment">// Stop at end of chapter/title</span></div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;            (dsitype == <a class="code" href="classDvdIO.html#a67e523c39d9270988f2cbc1955335577a7ea3e954f638d9079e0a034824e14c37">DSITYPE_EOF_TITLE</a>))                 <span class="comment">// Stop at end of title</span></div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;    {</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;        <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    }</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160; </div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;    <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a> += result_len;</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160; </div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;    <span class="keywordflow">return</span> result_len;</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;}</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160; </div>
+<div class="line"><a name="l00704"></a><span class="lineno"><a class="line" href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">  704</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">DvdIO::error</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a>;</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;}</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
+<div class="line"><a name="l00709"></a><span class="lineno"><a class="line" href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">  709</a></span>&#160;int64_t <a class="code" href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">DvdIO::duration</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a64ec04044d0be4c68a0d513043de34be">m_duration</a>;</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;}</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160; </div>
+<div class="line"><a name="l00714"></a><span class="lineno"><a class="line" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">  714</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">DvdIO::size</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a32bca4435a3b022a79e500658e93233f">m_size</a>;</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;}</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160; </div>
+<div class="line"><a name="l00719"></a><span class="lineno"><a class="line" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">  719</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">DvdIO::tell</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a>;</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;}</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160; </div>
+<div class="line"><a name="l00724"></a><span class="lineno"><a class="line" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">  724</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">DvdIO::rewind</a>()</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;{</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    <a class="code" href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">m_next_cell</a>         = <a class="code" href="classDvdIO.html#aedc95db3bcfa9f5451120944f5b9f458">m_start_cell</a>;</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>          = <a class="code" href="classDvdIO.html#aedc95db3bcfa9f5451120944f5b9f458">m_start_cell</a>;</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160; </div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;    <a class="code" href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">m_goto_next_cell</a>    = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;    <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a>            = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;    <a class="code" href="classDvdIO.html#a21030314cf551af2b996399e52a0f6ea">m_errno</a>             = 0;</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    <a class="code" href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">m_rest_size</a>         = 0;</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;    <a class="code" href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">m_rest_pos</a>          = 0;</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    <a class="code" href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">m_cur_pos</a>           = 0;</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;}</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160; </div>
+<div class="line"><a name="l00737"></a><span class="lineno"><a class="line" href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">  737</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">DvdIO::seek</a>(int64_t offset, <span class="keywordtype">int</span> whence)</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;{</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    errno = 0;</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160; </div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    <span class="keywordflow">if</span> (whence == SEEK_SET &amp;&amp; !offset)</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    {</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;        <span class="comment">// Only rewind (seek(0, SEEK_SET) is implemented yet</span></div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;        <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">rewind</a>();</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;    }</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;    <span class="keywordtype">size_t</span> cur_pos = <a class="code" href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">tell</a>();</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;    <span class="keywordtype">size_t</span> abs_offset = 0;</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160; </div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    <span class="keywordflow">switch</span> (whence)</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    {</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordflow">case</span> SEEK_SET:</div>
 <div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;        assert(offset &gt;= 0);</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;        abs_offset = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>() - abs_offset;</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;        abs_offset = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(offset);</div>
 <div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        errno = EINVAL;</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;        <span class="keywordflow">return</span> (EOF);</div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    }</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160; </div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <span class="keywordflow">if</span> (cur_pos == abs_offset)</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    {</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;        <span class="comment">// Already at right position</span></div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(abs_offset);</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;    }</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160; </div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    <span class="keywordflow">if</span> (cur_pos &gt; abs_offset)</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    {</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;        <span class="comment">// Need to start from beginning to find byte position</span></div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;        <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">rewind</a>();</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;        cur_pos = 0;</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordflow">case</span> SEEK_CUR:</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        abs_offset += cur_pos;</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    <span class="keywordflow">case</span> SEEK_END:</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;        assert(offset &gt;= 0);</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;        abs_offset = <a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a>() - abs_offset;</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;    <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;        errno = EINVAL;</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;        <span class="keywordflow">return</span> (EOF);</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    }</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160; </div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    <span class="keywordflow">if</span> (cur_pos == abs_offset)</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    {</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;        <span class="comment">// Already at right position</span></div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(abs_offset);</div>
 <div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    }</div>
 <div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160; </div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    <span class="keywordtype">size_t</span> total_read = 0;</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    <span class="keywordtype">size_t</span> bytes_read;</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    <span class="keywordflow">while</span> ((bytes_read = <a class="code" href="classDvdIO.html#a4cab1ed59302fbd4ec77f4f33ecc7a1d">read</a>(<span class="keyword">nullptr</span>, abs_offset - total_read - cur_pos)) != 0 &amp;&amp; total_read &lt; abs_offset &amp;&amp; !<a class="code" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">eof</a>())</div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    {</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;        total_read += bytes_read;</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    <span class="keywordflow">if</span> (cur_pos &gt; abs_offset)</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    {</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;        <span class="comment">// Need to start from beginning to find byte position</span></div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;        <a class="code" href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">rewind</a>();</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;        cur_pos = 0;</div>
 <div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;    }</div>
 <div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;    <span class="keywordflow">if</span> (total_read)</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    {</div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(cur_pos + total_read);</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    }</div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160; </div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;    errno = EPERM;</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;    <span class="keywordflow">return</span> (EOF);</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;}</div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160; </div>
-<div class="line"><a name="l00790"></a><span class="lineno"><a class="line" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">  790</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">DvdIO::eof</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a>;</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;}</div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160; </div>
-<div class="line"><a name="l00795"></a><span class="lineno"><a class="line" href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">  795</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">DvdIO::close</a>()</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;{</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    <a class="code" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">_close</a>();</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;}</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160; </div>
-<div class="line"><a name="l00800"></a><span class="lineno"><a class="line" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">  800</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">DvdIO::_close</a>()</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;{</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    ifo_handle_t *  vts_file = <a class="code" href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">m_vts_file</a>;</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;    <span class="keywordflow">if</span> (vts_file != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    {</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;        <a class="code" href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">m_vts_file</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;        ifoClose(vts_file);</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;    }</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;    ifo_handle_t *  vmg_file  = <a class="code" href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">m_vmg_file</a>;</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;    <span class="keywordflow">if</span> (vmg_file != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;    {</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;        <a class="code" href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">m_vmg_file</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;        ifoClose(vmg_file);</div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;    }</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;    dvd_file_t *    dvd_title = <a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>;</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    <span class="keywordflow">if</span> (dvd_title != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    {</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;        <a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        DVDCloseFile(dvd_title);</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;    }</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    dvd_reader_t *  dvd = <a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a>;</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;    <span class="keywordflow">if</span> (dvd != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;    {</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;        <a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        DVDClose(dvd);</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;    }</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;}</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160; </div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;<span class="comment">// Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)</span></div>
-<div class="line"><a name="l00829"></a><span class="lineno"><a class="line" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">  829</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">DvdIO::is_nav_pack</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *buffer)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;    <span class="comment">/*</span></div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;<span class="comment">     * The NAV Pack is comprised of the PCI Packet and DSI Packet, both</span></div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;<span class="comment">     * of these start at known offsets and start with a special identifier.</span></div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;<span class="comment">     *</span></div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;<span class="comment">     * NAV = {</span></div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;<span class="comment">     *  PCI = { 00 00 01 bf  # private stream header</span></div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;<span class="comment">     *          ?? ??        # length</span></div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;<span class="comment">     *          00           # substream</span></div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;<span class="comment">     *          ...</span></div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;<span class="comment">     *        }</span></div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;<span class="comment">     *  DSI = { 00 00 01 bf  # private stream header</span></div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;<span class="comment">     *          ?? ??        # length</span></div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;<span class="comment">     *          01           # substream</span></div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;<span class="comment">     *          ...</span></div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;<span class="comment">     *        }</span></div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;<span class="comment">     *</span></div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;<span class="comment">     * The PCI starts at offset 0x26 into the sector, and the DSI starts at 0x400</span></div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;<span class="comment">     *</span></div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="comment">     * This information from: http://dvd.sourceforge.net/dvdinfo/</span></div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;<span class="comment">     */</span></div>
-<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;    <span class="keywordflow">if</span> ((buffer[0x26] == 0x00 &amp;&amp;      <span class="comment">// PCI</span></div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;         buffer[0x27] == 0x00 &amp;&amp;</div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;         buffer[0x28] == 0x01 &amp;&amp;</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;         buffer[0x29] == 0xbf &amp;&amp;</div>
-<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;         buffer[0x2c] == 0x00) &amp;&amp;</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;            (buffer[0x400] == 0x00 &amp;&amp;     <span class="comment">// DSI</span></div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;             buffer[0x401] == 0x00 &amp;&amp;</div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;             buffer[0x402] == 0x01 &amp;&amp;</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;             buffer[0x403] == 0xbf &amp;&amp;</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;             buffer[0x406] == 0x01))</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    {</div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;        <span class="keywordflow">return</span> (1);</div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;    }</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    {</div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;        <span class="keywordflow">return</span> (0);</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;    }</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;}</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160; </div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160; </div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;    <span class="keywordtype">size_t</span> total_read = 0;</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;    <span class="keywordtype">size_t</span> bytes_read;</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;    <span class="keywordflow">while</span> ((bytes_read = <a class="code" href="classDvdIO.html#a4cab1ed59302fbd4ec77f4f33ecc7a1d">read</a>(<span class="keyword">nullptr</span>, abs_offset - total_read - cur_pos)) != 0 &amp;&amp; total_read &lt; abs_offset &amp;&amp; !<a class="code" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">eof</a>())</div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;    {</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;        total_read += bytes_read;</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;    }</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160; </div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    <span class="keywordflow">if</span> (total_read)</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;    {</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(cur_pos + total_read);</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    }</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160; </div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;    errno = EPERM;</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;    <span class="keywordflow">return</span> (EOF);</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;}</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160; </div>
+<div class="line"><a name="l00797"></a><span class="lineno"><a class="line" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">  797</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">DvdIO::eof</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">m_is_eof</a>;</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;}</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160; </div>
+<div class="line"><a name="l00802"></a><span class="lineno"><a class="line" href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">  802</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">DvdIO::close</a>()</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;{</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    <a class="code" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">_close</a>();</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;}</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160; </div>
+<div class="line"><a name="l00807"></a><span class="lineno"><a class="line" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">  807</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">DvdIO::_close</a>()</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;{</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;    ifo_handle_t *  vts_file = <a class="code" href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">m_vts_file</a>;</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;    <span class="keywordflow">if</span> (vts_file != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;    {</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;        <a class="code" href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">m_vts_file</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;        ifoClose(vts_file);</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;    }</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    ifo_handle_t *  vmg_file  = <a class="code" href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">m_vmg_file</a>;</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    <span class="keywordflow">if</span> (vmg_file != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    {</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        <a class="code" href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">m_vmg_file</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        ifoClose(vmg_file);</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    }</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;    dvd_file_t *    dvd_title = <a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a>;</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;    <span class="keywordflow">if</span> (dvd_title != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;    {</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        <a class="code" href="classDvdIO.html#aac28ba82e331a3ec7bc5d73712237022">m_dvd_title</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;        DVDCloseFile(dvd_title);</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;    }</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;    dvd_reader_t *  dvd = <a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a>;</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;    <span class="keywordflow">if</span> (dvd != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;    {</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;        <a class="code" href="classDvdIO.html#aa246331571a52cfbcba4cb8349a8601b">m_dvd</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;        DVDClose(dvd);</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;    }</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;}</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160; </div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;<span class="comment">// Code nicked from Handbrake (https://github.com/HandBrake/HandBrake/blob/master/libhb/dvd.c)</span></div>
+<div class="line"><a name="l00836"></a><span class="lineno"><a class="line" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">  836</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">DvdIO::is_nav_pack</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *buffer)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;    <span class="comment">/*</span></div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;<span class="comment">     * The NAV Pack is comprised of the PCI Packet and DSI Packet, both</span></div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;<span class="comment">     * of these start at known offsets and start with a special identifier.</span></div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;<span class="comment">     *</span></div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;<span class="comment">     * NAV = {</span></div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;<span class="comment">     *  PCI = { 00 00 01 bf  # private stream header</span></div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;<span class="comment">     *          ?? ??        # length</span></div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;<span class="comment">     *          00           # substream</span></div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;<span class="comment">     *          ...</span></div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;<span class="comment">     *        }</span></div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;<span class="comment">     *  DSI = { 00 00 01 bf  # private stream header</span></div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;<span class="comment">     *          ?? ??        # length</span></div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;<span class="comment">     *          01           # substream</span></div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;<span class="comment">     *          ...</span></div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;<span class="comment">     *        }</span></div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;<span class="comment">     *</span></div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;<span class="comment">     * The PCI starts at offset 0x26 into the sector, and the DSI starts at 0x400</span></div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;<span class="comment">     *</span></div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;<span class="comment">     * This information from: http://dvd.sourceforge.net/dvdinfo/</span></div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;<span class="comment">     */</span></div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;    <span class="keywordflow">if</span> ((buffer[0x26] == 0x00 &amp;&amp;      <span class="comment">// PCI</span></div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;         buffer[0x27] == 0x00 &amp;&amp;</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;         buffer[0x28] == 0x01 &amp;&amp;</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;         buffer[0x29] == 0xbf &amp;&amp;</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;         buffer[0x2c] == 0x00) &amp;&amp;</div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;            (buffer[0x400] == 0x00 &amp;&amp;     <span class="comment">// DSI</span></div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;             buffer[0x401] == 0x00 &amp;&amp;</div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;             buffer[0x402] == 0x01 &amp;&amp;</div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;             buffer[0x403] == 0xbf &amp;&amp;</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;             buffer[0x406] == 0x01))</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    {</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;        <span class="keywordflow">return</span> (1);</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    }</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;    {</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;        <span class="keywordflow">return</span> (0);</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;    }</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;}</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160; </div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160; </div>
 <div class="ttc" id="aclassDvdIO_html_a04021292896f5a0248c4f00b658671f6"><div class="ttname"><a href="classDvdIO.html#a04021292896f5a0248c4f00b658671f6">DvdIO::m_data</a></div><div class="ttdeci">unsigned char m_data[1024 *DVD_VIDEO_LB_LEN]</div><div class="ttdoc">Buffer for read() data.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00225">dvdio.h:225</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a05fee3172450d500b45203794c19b0da"><div class="ttname"><a href="classDvdIO.html#a05fee3172450d500b45203794c19b0da">DvdIO::m_is_eof</a></div><div class="ttdeci">bool m_is_eof</div><div class="ttdoc">true if at &quot;end of file&quot;, i.e, end of chapter or title</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00214">dvdio.h:214</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a11553721c3006f700165ac018e94b523"><div class="ttname"><a href="classDvdIO.html#a11553721c3006f700165ac018e94b523">DvdIO::get_packet_size</a></div><div class="ttdeci">bool get_packet_size(const uint8_t *p, size_t peek, size_t *size) const</div><div class="ttdoc">return the size of the next packet</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00239">dvdio.cc:239</a></div></div>
@@ -937,13 +944,13 @@ $(function() {
 <div class="ttc" id="aclassDvdIO_html_a230d7ff97eb5b444bbf6da46906838e0"><div class="ttname"><a href="classDvdIO.html#a230d7ff97eb5b444bbf6da46906838e0">DvdIO::type</a></div><div class="ttdeci">virtual VIRTUALTYPE type() const override</div><div class="ttdoc">Get type of the virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00078">dvdio.cc:78</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a2c22556f12e6a7d350f003bee84e3f46"><div class="ttname"><a href="classDvdIO.html#a2c22556f12e6a7d350f003bee84e3f46">DvdIO::m_goto_next_cell</a></div><div class="ttdeci">bool m_goto_next_cell</div><div class="ttdoc">If logc needs to go to next cell before next read.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00212">dvdio.h:212</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a2f687ac7fcf761486771424f016b8fff"><div class="ttname"><a href="classDvdIO.html#a2f687ac7fcf761486771424f016b8fff">DvdIO::m_full_title</a></div><div class="ttdeci">bool m_full_title</div><div class="ttdoc">If true, ignore m_chapter_no and provide full track.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00220">dvdio.h:220</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a30735642fa6c2b10525124d22c959d03"><div class="ttname"><a href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">DvdIO::rewind</a></div><div class="ttdeci">void rewind()</div><div class="ttdoc">Rewind to start of stream.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00717">dvdio.cc:717</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a314542fb8e64a38b8b5b741116a035d7"><div class="ttname"><a href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">DvdIO::seek</a></div><div class="ttdeci">virtual int seek(int64_t offset, int whence) override</div><div class="ttdoc">Seek to position in file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00730">dvdio.cc:730</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a3296f250a1cb328ed717bf1d4d094c7f"><div class="ttname"><a href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">DvdIO::size</a></div><div class="ttdeci">virtual size_t size() const override</div><div class="ttdoc">Get the file size.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00707">dvdio.cc:707</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a30735642fa6c2b10525124d22c959d03"><div class="ttname"><a href="classDvdIO.html#a30735642fa6c2b10525124d22c959d03">DvdIO::rewind</a></div><div class="ttdeci">void rewind()</div><div class="ttdoc">Rewind to start of stream.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00724">dvdio.cc:724</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a314542fb8e64a38b8b5b741116a035d7"><div class="ttname"><a href="classDvdIO.html#a314542fb8e64a38b8b5b741116a035d7">DvdIO::seek</a></div><div class="ttdeci">virtual int seek(int64_t offset, int whence) override</div><div class="ttdoc">Seek to position in file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00737">dvdio.cc:737</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a3296f250a1cb328ed717bf1d4d094c7f"><div class="ttname"><a href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">DvdIO::size</a></div><div class="ttdeci">virtual size_t size() const override</div><div class="ttdoc">Get the file size.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00714">dvdio.cc:714</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a32bca4435a3b022a79e500658e93233f"><div class="ttname"><a href="classDvdIO.html#a32bca4435a3b022a79e500658e93233f">DvdIO::m_size</a></div><div class="ttdeci">size_t m_size</div><div class="ttdoc">Size of virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00229">dvdio.h:229</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a3754a9fa6d94fd99c6d464ee72f0adf7"><div class="ttname"><a href="classDvdIO.html#a3754a9fa6d94fd99c6d464ee72f0adf7">DvdIO::handle_DSI</a></div><div class="ttdeci">DSITYPE handle_DSI(void *_dsi_pack, size_t *cur_output_size, unsigned int *next_block, uint8_t *data)</div><div class="ttdoc">Handle DSI (Data Search Information) packet.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00442">dvdio.cc:442</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a3b1e437f70dd0b34ed812db68489cc99"><div class="ttname"><a href="classDvdIO.html#a3b1e437f70dd0b34ed812db68489cc99">DvdIO::m_vmg_file</a></div><div class="ttdeci">ifo_handle_t * m_vmg_file</div><div class="ttdoc">DVD video manager handle.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00205">dvdio.h:205</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a3d7124ba29e53c79d60d98f0b9cfaaf4"><div class="ttname"><a href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">DvdIO::is_nav_pack</a></div><div class="ttdeci">bool is_nav_pack(const unsigned char *buffer) const</div><div class="ttdoc">Do a rough check if this is really a navigation packet.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00829">dvdio.cc:829</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a3d7124ba29e53c79d60d98f0b9cfaaf4"><div class="ttname"><a href="classDvdIO.html#a3d7124ba29e53c79d60d98f0b9cfaaf4">DvdIO::is_nav_pack</a></div><div class="ttdeci">bool is_nav_pack(const unsigned char *buffer) const</div><div class="ttdoc">Do a rough check if this is really a navigation packet.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00836">dvdio.cc:836</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a4cab1ed59302fbd4ec77f4f33ecc7a1d"><div class="ttname"><a href="classDvdIO.html#a4cab1ed59302fbd4ec77f4f33ecc7a1d">DvdIO::read</a></div><div class="ttdeci">virtual size_t read(void *data, size_t size) override</div><div class="ttdoc">Read data from file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00555">dvdio.cc:555</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a4e61bb32c7472f50eb4c56369b1b3e7e"><div class="ttname"><a href="classDvdIO.html#a4e61bb32c7472f50eb4c56369b1b3e7e">DvdIO::m_rest_size</a></div><div class="ttdeci">size_t m_rest_size</div><div class="ttdoc">Rest bytes in buffer.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00216">dvdio.h:216</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a550234d78b75d3946d23ff68f668da68"><div class="ttname"><a href="classDvdIO.html#a550234d78b75d3946d23ff68f668da68">DvdIO::m_title_idx</a></div><div class="ttdeci">int m_title_idx</div><div class="ttdoc">Track index (track number - 1)</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00221">dvdio.h:221</a></div></div>
@@ -957,9 +964,9 @@ $(function() {
 <div class="ttc" id="aclassDvdIO_html_a68c8399a49e49bd5f5641132d290843f"><div class="ttname"><a href="classDvdIO.html#a68c8399a49e49bd5f5641132d290843f">DvdIO::DvdIO</a></div><div class="ttdeci">DvdIO()</div><div class="ttdoc">Create DvdIO object.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00045">dvdio.cc:45</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a6cbaae9cae07aaad4de7d86d4e0ec824"><div class="ttname"><a href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">DvdIO::m_next_cell</a></div><div class="ttdeci">int m_next_cell</div><div class="ttdoc">Next cell to be processed.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00211">dvdio.h:211</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a746849aacce7199a33c67ccbd228e782"><div class="ttname"><a href="classDvdIO.html#a746849aacce7199a33c67ccbd228e782">DvdIO::get_pes_id</a></div><div class="ttdeci">int get_pes_id(const uint8_t *buffer, size_t size) const</div><div class="ttdoc">return the id of a Packetized Elementary Stream (PES) (should be valid)</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00287">dvdio.cc:287</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a89ab0e9f200e512a844a650bb77e37dd"><div class="ttname"><a href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">DvdIO::eof</a></div><div class="ttdeci">virtual bool eof() const override</div><div class="ttdoc">Check if at end of file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00790">dvdio.cc:790</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a91855bc3d20c385c13a638b81a8ff695"><div class="ttname"><a href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">DvdIO::close</a></div><div class="ttdeci">virtual void close() override</div><div class="ttdoc">Close virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00795">dvdio.cc:795</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_a91f12f698863e9b569c7f433623ff545"><div class="ttname"><a href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">DvdIO::error</a></div><div class="ttdeci">virtual int error() const override</div><div class="ttdoc">Get last error.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00697">dvdio.cc:697</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a89ab0e9f200e512a844a650bb77e37dd"><div class="ttname"><a href="classDvdIO.html#a89ab0e9f200e512a844a650bb77e37dd">DvdIO::eof</a></div><div class="ttdeci">virtual bool eof() const override</div><div class="ttdoc">Check if at end of file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00797">dvdio.cc:797</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a91855bc3d20c385c13a638b81a8ff695"><div class="ttname"><a href="classDvdIO.html#a91855bc3d20c385c13a638b81a8ff695">DvdIO::close</a></div><div class="ttdeci">virtual void close() override</div><div class="ttdoc">Close virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00802">dvdio.cc:802</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_a91f12f698863e9b569c7f433623ff545"><div class="ttname"><a href="classDvdIO.html#a91f12f698863e9b569c7f433623ff545">DvdIO::error</a></div><div class="ttdeci">virtual int error() const override</div><div class="ttdoc">Get last error.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00704">dvdio.cc:704</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a959fec99e47736e7fdb93949530bec2f"><div class="ttname"><a href="classDvdIO.html#a959fec99e47736e7fdb93949530bec2f">DvdIO::m_chapter_idx</a></div><div class="ttdeci">int m_chapter_idx</div><div class="ttdoc">Chapter index (chapter number - 1)</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00222">dvdio.h:222</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a9a82d58c3d22f2339914020b20454491"><div class="ttname"><a href="classDvdIO.html#a9a82d58c3d22f2339914020b20454491">DvdIO::m_cur_pos</a></div><div class="ttdeci">size_t m_cur_pos</div><div class="ttdoc">Current position in virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00218">dvdio.h:218</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_a9c0cfdec3aa2c3ade6fbf3a16248599d"><div class="ttname"><a href="classDvdIO.html#a9c0cfdec3aa2c3ade6fbf3a16248599d">DvdIO::m_vts_file</a></div><div class="ttdeci">ifo_handle_t * m_vts_file</div><div class="ttdoc">DVD video title stream handle.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00206">dvdio.h:206</a></div></div>
@@ -970,14 +977,14 @@ $(function() {
 <div class="ttc" id="aclassDvdIO_html_ab7c00ddd49cb420515e5da8ca23d060c"><div class="ttname"><a href="classDvdIO.html#ab7c00ddd49cb420515e5da8ca23d060c">DvdIO::open</a></div><div class="ttdeci">virtual int open(LPVIRTUALFILE virtualfile) override</div><div class="ttdoc">Open a virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00088">dvdio.cc:88</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_aba1fb48ad566ccfba45fd348907867cf"><div class="ttname"><a href="classDvdIO.html#aba1fb48ad566ccfba45fd348907867cf">DvdIO::m_buffer</a></div><div class="ttdeci">unsigned char m_buffer[1024 *DVD_VIDEO_LB_LEN]</div><div class="ttdoc">Buffer for data extracted from VOB file.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00226">dvdio.h:226</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_abd7cfdf775b01360d0fe470980819fe9"><div class="ttname"><a href="classDvdIO.html#abd7cfdf775b01360d0fe470980819fe9">DvdIO::m_angle_idx</a></div><div class="ttdeci">int m_angle_idx</div><div class="ttdoc">Selected angle index (angle number -1)</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00223">dvdio.h:223</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_ad3fc4c4d3996d262405a8253fc591be4"><div class="ttname"><a href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">DvdIO::_close</a></div><div class="ttdeci">void _close()</div><div class="ttdoc">Close virtual file. Non-virtual version to be safely called from constructor/destructor.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00800">dvdio.cc:800</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_ad3fc4c4d3996d262405a8253fc591be4"><div class="ttname"><a href="classDvdIO.html#ad3fc4c4d3996d262405a8253fc591be4">DvdIO::_close</a></div><div class="ttdeci">void _close()</div><div class="ttdoc">Close virtual file. Non-virtual version to be safely called from constructor/destructor.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00807">dvdio.cc:807</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_ad40e41b73acd21450657bbe0ebbdf2cc"><div class="ttname"><a href="classDvdIO.html#ad40e41b73acd21450657bbe0ebbdf2cc">DvdIO::m_rest_pos</a></div><div class="ttdeci">size_t m_rest_pos</div><div class="ttdoc">Position in buffer.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00217">dvdio.h:217</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_ad6d4339e826e4990e7148b123f6a8eeb"><div class="ttname"><a href="classDvdIO.html#ad6d4339e826e4990e7148b123f6a8eeb">DvdIO::m_cur_block</a></div><div class="ttdeci">unsigned int m_cur_block</div><div class="ttdoc">Current processing block.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00213">dvdio.h:213</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_aeb4752eee99e969ba14d7e48a35f4c35"><div class="ttname"><a href="classDvdIO.html#aeb4752eee99e969ba14d7e48a35f4c35">DvdIO::m_end_cell</a></div><div class="ttdeci">int m_end_cell</div><div class="ttdoc">End cell (of title)</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00209">dvdio.h:209</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_aedc95db3bcfa9f5451120944f5b9f458"><div class="ttname"><a href="classDvdIO.html#aedc95db3bcfa9f5451120944f5b9f458">DvdIO::m_start_cell</a></div><div class="ttdeci">int m_start_cell</div><div class="ttdoc">Start cell.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00208">dvdio.h:208</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_aef93a45e0e9df880ca818d2b55fae5b6"><div class="ttname"><a href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">DvdIO::tell</a></div><div class="ttdeci">virtual size_t tell() const override</div><div class="ttdoc">Get current read position.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00712">dvdio.cc:712</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_aef93a45e0e9df880ca818d2b55fae5b6"><div class="ttname"><a href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">DvdIO::tell</a></div><div class="ttdeci">virtual size_t tell() const override</div><div class="ttdoc">Get current read position.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00719">dvdio.cc:719</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_af30e37799e6ebc4f21ce99a4e024d791"><div class="ttname"><a href="classDvdIO.html#af30e37799e6ebc4f21ce99a4e024d791">DvdIO::demux_pes</a></div><div class="ttdeci">size_t demux_pes(uint8_t *out, const uint8_t *in, size_t len) const</div><div class="ttdoc">Extract only the interesting portion of the VOB input stream.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00391">dvdio.cc:391</a></div></div>
-<div class="ttc" id="aclassDvdIO_html_af42be3bf2ae7ce4eddee6ae3363e69d0"><div class="ttname"><a href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">DvdIO::duration</a></div><div class="ttdeci">virtual int64_t duration() const override</div><div class="ttdoc">Get the duration of the file, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00702">dvdio.cc:702</a></div></div>
+<div class="ttc" id="aclassDvdIO_html_af42be3bf2ae7ce4eddee6ae3363e69d0"><div class="ttname"><a href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">DvdIO::duration</a></div><div class="ttdeci">virtual int64_t duration() const override</div><div class="ttdoc">Get the duration of the file, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00709">dvdio.cc:709</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a175ab839cce4af8b15749e31fd596e00"><div class="ttname"><a href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a></div><div class="ttdeci">const std::string &amp; path() const</div><div class="ttdoc">Path to source file (without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00126">fileio.cc:126</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00121">fileio.cc:121</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00104">fileio.cc:104</a></div></div>
@@ -1000,13 +1007,13 @@ $(function() {
 <div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a></div><div class="ttdeci">VIRTUALTYPE</div><div class="ttdoc">Virtual file types enum.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00086">fileio.h:87</a></div></div>
 <div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a></div><div class="ttdeci">@ VIRTUALTYPE_DVD</div><div class="ttdoc">DVD file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00095">fileio.h:95</a></div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Provide various log facilities to stderr, disk or syslog.</div></div>
-<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a34673f4d13803fb94cfc543f1492ab68"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a34673f4d13803fb94cfc543f1492ab68">VIRTUALFILE::DVD_CHAPTER::m_angle_no</a></div><div class="ttdeci">int m_angle_no</div><div class="ttdoc">Selected angle number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00179">fileio.h:179</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a670aac95cacea3d6754548f2aff7f522"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a670aac95cacea3d6754548f2aff7f522">VIRTUALFILE::DVD_CHAPTER::m_title_no</a></div><div class="ttdeci">int m_title_no</div><div class="ttdoc">Track number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00177">fileio.h:177</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a85529e76ca0fefb61687830772560717"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a85529e76ca0fefb61687830772560717">VIRTUALFILE::DVD_CHAPTER::m_chapter_no</a></div><div class="ttdeci">int m_chapter_no</div><div class="ttdoc">Chapter number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00178">fileio.h:178</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a34673f4d13803fb94cfc543f1492ab68"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a34673f4d13803fb94cfc543f1492ab68">VIRTUALFILE::DVD_CHAPTER::m_angle_no</a></div><div class="ttdeci">int m_angle_no</div><div class="ttdoc">Selected angle number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00184">fileio.h:184</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a670aac95cacea3d6754548f2aff7f522"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a670aac95cacea3d6754548f2aff7f522">VIRTUALFILE::DVD_CHAPTER::m_title_no</a></div><div class="ttdeci">int m_title_no</div><div class="ttdoc">Track number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00182">fileio.h:182</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_1_1DVD__CHAPTER_html_a85529e76ca0fefb61687830772560717"><div class="ttname"><a href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a85529e76ca0fefb61687830772560717">VIRTUALFILE::DVD_CHAPTER::m_chapter_no</a></div><div class="ttdeci">int m_chapter_no</div><div class="ttdoc">Chapter number (1...n)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00183">fileio.h:183</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html"><div class="ttname"><a href="structVIRTUALFILE.html">VIRTUALFILE</a></div><div class="ttdoc">Virtual file definition.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00117">fileio.h:118</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a13ea53dfe484496bc27060e71d249b6b"><div class="ttname"><a href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">VIRTUALFILE::m_dvd</a></div><div class="ttdeci">struct VIRTUALFILE::DVD_CHAPTER m_dvd</div><div class="ttdoc">DVD title/chapter info.</div></div>
-<div class="ttc" id="astructVIRTUALFILE_html_a1b5e15926751c4334777d0062fc0934a"><div class="ttname"><a href="structVIRTUALFILE.html#a1b5e15926751c4334777d0062fc0934a">VIRTUALFILE::m_full_title</a></div><div class="ttdeci">bool m_full_title</div><div class="ttdoc">If true, ignore m_chapter_no and provide full track.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00141">fileio.h:141</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_html_afd8b2f75b21fafbdd6d593a3723343a4"><div class="ttname"><a href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">VIRTUALFILE::m_duration</a></div><div class="ttdeci">int64_t m_duration</div><div class="ttdoc">Track/chapter duration, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00142">fileio.h:142</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html_a1b5e15926751c4334777d0062fc0934a"><div class="ttname"><a href="structVIRTUALFILE.html#a1b5e15926751c4334777d0062fc0934a">VIRTUALFILE::m_full_title</a></div><div class="ttdeci">bool m_full_title</div><div class="ttdoc">If true, ignore m_chapter_no and provide full track.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00146">fileio.h:146</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html_afd8b2f75b21fafbdd6d593a3723343a4"><div class="ttname"><a href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">VIRTUALFILE::m_duration</a></div><div class="ttdeci">int64_t m_duration</div><div class="ttdoc">Track/chapter duration, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00147">fileio.h:147</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

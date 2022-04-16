@@ -84,6 +84,9 @@ $(function() {
 <div class="line">* Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but are</div>
 <div class="line">  correct when data is read.</div>
 <div class="line">* Bugfix: Duration was not saved in cache SQLite database.</div>
+<div class="line">* Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD chapters cannot be</div>
+<div class="line">  detected by FFmpeg API. Transcode then failes - fixed by using data from the</div>
+<div class="line">  Bluray directory or DVD IFO instead.</div>
 <div class="line">* Lowest supported FFmpeg API version raised to 4.1.8 &quot;al-Khwarizmi&quot;.</div>
 <div class="line">* Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</div>
 <div class="line">* Deprecate previous channel layout API based on uint64 bitmasks.</div>

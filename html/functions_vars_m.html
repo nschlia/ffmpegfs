@@ -124,8 +124,8 @@ $(function() {
 <li>m_audio_format
 : <a class="el" href="structWAV__HEADER.html#ae7d5f03b840ce9e4c6559b364f18beb5">WAV_HEADER</a>
 </li>
-<li>m_audio_frame_fifo
-: <a class="el" href="classFFmpeg__Transcoder.html#ac1074921a4e22e4a4cecc47c8fe60666">FFmpeg_Transcoder</a>
+<li>m_audio_frame_map
+: <a class="el" href="classFFmpeg__Transcoder.html#aaa53811ceb9f3f3016a13e935f3cbf4e">FFmpeg_Transcoder</a>
 </li>
 <li>m_audio_pts
 : <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a9082195dfabab46a97850e09f9d2a04e">FFmpeg_Transcoder::OUTPUTFILE</a>
@@ -243,6 +243,7 @@ $(function() {
 </li>
 <li>m_channels
 : <a class="el" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">AUDIO_SETTINGS</a>
+, <a class="el" href="structVIRTUALFILE.html#a555fd3516f41df2635b7593d823361b0">VIRTUALFILE</a>
 </li>
 <li>m_chapter
 : <a class="el" href="structVCDENTRIES.html#a1fd2ea66c15b955e55448a868e074c80">VCDENTRIES</a>
@@ -530,6 +531,7 @@ $(function() {
 <li>m_framerate
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#a200cba6f42f1c01121a72d0675fa0b07">FFmpeg_Transcoder::PRORES_BITRATE</a>
 , <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html#ae490046dd49e79c5df9520b5e8459042">FFmpeg_Transcoder::PRORES_BITRATE::PRORES_FRAMERATE</a>
+, <a class="el" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">VIRTUALFILE</a>
 </li>
 <li>m_full_title
 : <a class="el" href="classBlurayIO.html#a9918aa74b914702f5f077df72f1e7a3f">BlurayIO</a>
@@ -550,6 +552,7 @@ $(function() {
 <li>m_height
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#ab3d6b36fc5c3fb6f3f77c36ab38e7064">FFmpeg_Transcoder::PRORES_BITRATE</a>
 , <a class="el" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">VIDEO_SETTINGS</a>
+, <a class="el" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">VIRTUALFILE</a>
 </li>
 <li>m_hls_packet_fifo
 : <a class="el" href="classFFmpeg__Transcoder.html#a4b39ca2c75cd848dce0674a20fdcdd86">FFmpeg_Transcoder</a>
@@ -894,6 +897,7 @@ $(function() {
 </li>
 <li>m_sample_rate
 : <a class="el" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">AUDIO_SETTINGS</a>
+, <a class="el" href="structVIRTUALFILE.html#a0241541a5d6e2728c5e5a43ed7c4e0e8">VIRTUALFILE</a>
 , <a class="el" href="structWAV__HEADER.html#a47556ecf7a6c5f86c3a43eb458857dd1">WAV_HEADER</a>
 </li>
 <li>m_sampleSize
@@ -970,8 +974,8 @@ $(function() {
 <li>m_subtitle_codec
 : <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#ae712f6db82831d954948b50d4e55cc34">Format_Options::_tagFORMAT</a>
 </li>
-<li>m_subtitle_fifos
-: <a class="el" href="classFFmpeg__Transcoder.html#a1030849143fc032c7e33b2d28d579fc6">FFmpeg_Transcoder</a>
+<li>m_subtitle_maps
+: <a class="el" href="classFFmpeg__Transcoder.html#a3175822f2719b13415ec0de80d076fcb">FFmpeg_Transcoder</a>
 </li>
 <li>m_supported
 : <a class="el" href="structHWACCEL.html#a6b65c4fd15ba6ad4609704c93daa980c">HWACCEL</a>
@@ -1024,8 +1028,8 @@ $(function() {
 : <a class="el" href="classLogging.html#afe8ac8d94de71eecf43214b1380b32c0">Logging</a>
 </li>
 <li>m_track_no
-: <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
-, <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
+: <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
+, <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
 , <a class="el" href="classVcdIO.html#a75035ab02e01021aaa322f8e523f3c2e">VcdIO</a>
 , <a class="el" href="structVIRTUALFILE_1_1VCD__CHAPTER.html#ae6f9b5b821d631cfc547cec1f0134a5f">VIRTUALFILE::VCD_CHAPTER</a>
 </li>
@@ -1065,8 +1069,8 @@ $(function() {
 : <a class="el" href="structCACHE__INFO.html#a04de9113f5377b2b286a3815c728c751">CACHE_INFO</a>
 , <a class="el" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">VIRTUALFILE</a>
 </li>
-<li>m_video_frame_fifo
-: <a class="el" href="classFFmpeg__Transcoder.html#a0165f881eb2a5f81c4c76b1ce43ad041">FFmpeg_Transcoder</a>
+<li>m_video_frame_map
+: <a class="el" href="classFFmpeg__Transcoder.html#ac9ee651a7dfacf51857e9037b63522a7">FFmpeg_Transcoder</a>
 </li>
 <li>m_video_pts
 : <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a19ff8c025fd24f6f0b123720b90a16e2">FFmpeg_Transcoder::OUTPUTFILE</a>
@@ -1103,6 +1107,7 @@ $(function() {
 <li>m_width
 : <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#ae8a4795532c83f3f53a926ecb770034f">FFmpeg_Transcoder::PRORES_BITRATE</a>
 , <a class="el" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">VIDEO_SETTINGS</a>
+, <a class="el" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">VIRTUALFILE</a>
 </li>
 <li>m_win_smb_fix
 : <a class="el" href="structFFMPEGFS__PARAMS.html#af38199c20c5e908b44d1dec8ddfc29b2">FFMPEGFS_PARAMS</a>

@@ -2535,7 +2535,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
         return ret;
     }
 
-    Logging::trace(destname(), "Adding album art stream #%u.", output_stream->index);
+    Logging::trace(destname(), "Adding album art stream #%1.", output_stream->index);
 
     tmp_pkt->stream_index = output_stream->index;
     tmp_pkt->flags |= AV_PKT_FLAG_KEY;  // Contains a single frame, make sure it's a key frame

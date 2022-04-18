@@ -17,7 +17,7 @@ done 2>/dev/null
 echo "File sizes"
 check_filesize "000001.ts" 1478620 1566416 "${XDIRNAME}"
 check_filesize "000002.ts" 1513964 1570552 "${XDIRNAME}"
-check_filesize "000003.ts" 1193612 1248132 "${XDIRNAME}"
+check_filesize "000003.ts" 1193612 1277084 "${XDIRNAME}"
 echo "File sizes OK"
 
 echo "OK"

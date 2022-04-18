@@ -598,7 +598,7 @@ std::string         ffmpeg_geterror(int errnum);
  * @param[in] timebase_out - Output timebase, defaults to AV_TIMEBASE if unset.
  * @return Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE.
  */
-int64_t             ffmpeg_rescale_q(int64_t pts, const AVRational & timebase_in, const AVRational & timebase_out = av_get_time_base_q());
+int64_t             ffmpeg_rescale_q(int64_t ts, const AVRational & timebase_in, const AVRational & timebase_out = av_get_time_base_q());
 /**
  * @brief Convert a FFmpeg time from in timebase to out timebase with rounding.
  *

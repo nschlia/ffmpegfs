@@ -3623,13 +3623,6 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 
                 if (goto_next_segment(next_segment))
                 {
-                    //if (!(m_inhibit_stream_msk & FFMPEGFS_SUBTITLE))
-                    //{
-                    //    m_inhibit_stream_msk |= FFMPEGFS_SUBTITLE;
-
-                    //    Logging::trace(destname(), "Buffering subtitle packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
-                    //}
-
                     m_hls_packet_fifo.push(av_packet_clone(pkt));
                     return 0;
                 }
@@ -3781,6 +3774,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         }
         else
         {
+            // Simply copy packet without recoding
             pkt->stream_index   = m_out.m_video.m_stream_idx;
             av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
             pkt->pos            = -1;
@@ -3790,12 +3784,13 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
     }
     else if (is_subtitle_stream(pkt->stream_index))
     {
-        // Decode subtitle. No copy option.
+        // Decode subtitle. No copy option available.
         int decoded = 0;
         ret = decode_subtitle(pkt, &decoded);
     }
     else
     {
+        // Finally process album arts
         switch (m_in.m_format_ctx->streams[pkt->stream_index]->codecpar->codec_type)
         {
         case AVMEDIA_TYPE_VIDEO:
@@ -4754,6 +4749,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     }
 
     int64_t pos = ffmpeg_rescale_q_rnd(output_frame->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base);
+
     m_audio_frame_map.insert(std::make_pair(pos, output_frame));
 
     return ret;

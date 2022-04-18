@@ -194,6 +194,7 @@ set(SOURCES
     src/dvdio.cc
     src/dvdparser.cc
     src/ffmpeg_frame.cc
+    src/ffmpeg_subtitle.cc
     src/ffmpeg_base.cc
     src/ffmpegfs.cc
     src/ffmpeg_profiles.cc
@@ -226,6 +227,7 @@ set(HEADERS
     src/dvdio.h
     src/dvdparser.h
     src/ffmpeg_frame.h
+    src/ffmpeg_subtitle.h
     src/ffmpeg_base.h
     src/ffmpeg_compat.h
     src/ffmpegfs.h

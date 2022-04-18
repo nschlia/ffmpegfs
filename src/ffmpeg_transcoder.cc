@@ -3211,7 +3211,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
     // read all the output frames (in general there may be any number of them)
     while (ret >= 0)
     {
-        FFmpeg_Frame frame;
+        FFmpeg_Frame frame(m_out.m_audio.m_stream_idx);
 
         ret = frame.res();
         if (ret < 0)
@@ -3322,7 +3322,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
     // read all the output frames (in general there may be any number of them)
     while (ret >= 0)
     {
-        FFmpeg_Frame frame;
+        FFmpeg_Frame frame(m_out.m_video.m_stream_idx);
 
         ret = frame.res();
         if (ret < 0)
@@ -3346,7 +3346,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (m_hwaccel_enable_dec_buffering && frame != nullptr)
         {
-            FFmpeg_Frame sw_frame;
+            FFmpeg_Frame sw_frame(m_out.m_video.m_stream_idx);
 
             ret = sw_frame.res();
             if (ret < 0)
@@ -3406,7 +3406,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                 if (m_sws_ctx != nullptr)
                 {
-                    FFmpeg_Frame tmp_frame;
+                    FFmpeg_Frame tmp_frame(m_out.m_video.m_stream_idx);
 
                     ret = tmp_frame.res();
                     if (ret < 0)
@@ -3488,11 +3488,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         m_insert_keyframe   = true;
                     }
 
-                    m_video_frame_map.insert(std::make_pair(pos, frame));
+                    m_frame_map.insert(std::make_pair(pos, frame));
                 }
                 else
                 {
-                    m_video_frame_map.insert(std::make_pair(0, frame));
+                    m_frame_map.insert(std::make_pair(0, frame));
                 }
             }
         }
@@ -3517,7 +3517,6 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     int data_present = 0;
 
     AVCodecContext *codec_ctx = it->second.m_codec_ctx;
-    SUBTITLE_MAP & subtitlefifo = m_subtitle_maps[pkt->stream_index];   // This will either return the existing SUBTITLEFIFO, or create a new one
 
     *decoded = 0;
 
@@ -3527,7 +3526,23 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     // to flush it.
 
     // Temporary storage of the input samples of the frame read from the file.
-    AVSubtitle *subtitle = alloc_subtitle();
+
+    int out_stream_idx = map_in_to_out_stream(it->first);
+
+    if (out_stream_idx == INVALID_STREAM)
+    {
+        Logging::error(destname(), "INTERNAL ERROR! Unable to map in subtitle stream #%1 to output stream.", it->first);
+        throw AVERROR(EINVAL);
+    }
+
+    FFmpeg_Subtitle subtitle(out_stream_idx);
+
+    ret = subtitle.res();
+    if (ret < 0)
+    {
+        Logging::error(filename(), "Could not decode subtitle (error '%1').", ffmpeg_geterror(ret).c_str());
+        throw ret;
+    }
 
     ret = avcodec_decode_subtitle2(codec_ctx, subtitle, &data_present, pkt);
 
@@ -3545,12 +3560,8 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     if (data_present)
     {
         // If there is decoded data, store it
-        subtitlefifo.insert(std::make_pair(subtitle->pts, subtitle)); // sub->pts is already in AV_TIME_BASE
-    }
-    else
-    {
-        avsubtitle_free(subtitle);
-        av_free(subtitle);
+        // sub->pts is already in AV_TIME_BASE
+        m_frame_map.insert(std::make_pair(subtitle->pts, subtitle));
     }
 
     return ret;
@@ -4398,7 +4409,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     {
         if (m_hwaccel_enable_enc_buffering && frame != nullptr)
         {
-            hw_frame = new FFmpeg_Frame;
+            hw_frame = new FFmpeg_Frame(m_out.m_video.m_stream_idx);
             if (hw_frame == nullptr)
             {
                 ret = AVERROR(ENOMEM);
@@ -4682,7 +4693,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 {
     // Temporary storage of the output samples of the frame written to the file.
-    FFmpeg_Frame output_frame;
+    FFmpeg_Frame output_frame(m_out.m_audio.m_stream_idx);
     int ret = 0;
 
     ret = output_frame.res();
@@ -4750,7 +4761,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 
     int64_t pos = ffmpeg_rescale_q_rnd(output_frame->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base);
 
-    m_audio_frame_map.insert(std::make_pair(pos, output_frame));
+    m_frame_map.insert(std::make_pair(pos, output_frame));
 
     return ret;
 }
@@ -5071,6 +5082,70 @@ int FFmpeg_Transcoder::flush_delayed_subtitles()
     return 0;
 }
 
+int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
+{
+    int output_frame_size;
+
+    if (m_out.m_audio.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+    {
+        // Encode supports variable frame size, use an arbitrary value
+        output_frame_size =  10000;
+    }
+    else
+    {
+        // Use the encoder's desired frame size for processing.
+        output_frame_size = m_out.m_audio.m_codec_ctx->frame_size;
+    }
+
+    // Make sure that there is one frame worth of samples in the audio FIFO
+    // buffer so that the encoder can do its work.
+    // Since the decoder's and the encoder's frame size may differ, we
+    // need to FIFO buffer to store as many frames worth of input samples
+    // that they make up at least one frame worth of output samples.
+
+    while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
+    {
+        int ret = 0;
+
+        // Decode one frame worth of audio samples, convert it to the
+        // output sample format and put it into the audio FIFO buffer.
+
+        ret = read_decode_convert_and_store(finished);
+        if (ret < 0)
+        {
+            return ret;
+        }
+
+        // If we are at the end of the input file, we continue
+        // encoding the remaining audio samples to the output file.
+
+        if (*finished)
+        {
+            break;
+        }
+    }
+
+    // If we have enough samples for the encoder, we encode them.
+    // At the end of the file, we pass the remaining samples to
+    // the encoder.
+
+    while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (*finished && av_audio_fifo_size(m_audio_fifo) > 0))
+    {
+        int ret = 0;
+
+        // Take one frame worth of audio samples from the audio FIFO buffer,
+        // create a frame and store in audio frame buffer.
+
+        ret = create_audio_frame(output_frame_size);
+        if (ret < 0)
+        {
+            return ret;
+        }
+    }
+
+    return 0;
+}
+
 int FFmpeg_Transcoder::process_single_fr(int &status)
 {
     int finished = 0;
@@ -5081,156 +5156,31 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
     {
         if (m_in.m_video.m_stream != nullptr && is_frameset())
         {
+            int ret = 0;
+
             // Direct access handling for frame sets: seek to frame if requested.
-            if (!m_last_seek_frame_no)
+            ret = seek_frame();
+            if (ret == AVERROR_EOF)
             {
-                // No current seek frame, check if new seek frame was stacked.
-                {
-                    std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+                status = 1; // Report EOF, but return no error
+                throw 0;
+            }
 
-                    while (!m_seek_to_fifo.empty())
-                    {
-                        uint32_t frame_no = m_seek_to_fifo.front();
-                        m_seek_to_fifo.pop();
-
-                        if (!m_buffer->have_frame(frame_no))
-                        {
-                            // Frame not yet decoded, so skip to it.
-                            m_last_seek_frame_no = frame_no;
-                            break;
-                        }
-                    }
-                }
-
-                if (m_last_seek_frame_no)
-                {
-                    int ret = 0;
-
-                    // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
-                    // We are unable to detect that because the pts seems correct (the one that we requested).
-                    // So we position before the frame requested, and simply throw the first away.
-
-                    //#define PRESCAN_FRAMES  3
-#ifdef PRESCAN_FRAMES
-                    int64_t seek_frame_no = m_last_seek_frame_noX;
-                    if (seek_frame_no > PRESCAN_FRAMES)
-                    {
-                        seek_frame_no -= PRESCAN_FRAMES;
-                        //m_skip_next_frame = true; /**< @todo Take deinterlace into account */
-                    }
-                    else
-                    {
-                        seek_frame_no = 1;
-                    }
-
-                    ret = skip_decoded_frames(seek_frame_no, true);
-#else
-                    ret = skip_decoded_frames(m_last_seek_frame_no, true);
-#endif
-
-                    if (ret == AVERROR_EOF)
-                    {
-                        status = 1;
-                        return 0;
-                    }
-
-                    if (ret < 0)
-                    {
-                        throw ret;
-                    }
-                }
+            if (ret < 0)
+            {
+                throw ret;
             }
         }
 
-        // Encode audio
         if (!m_copy_audio && stream_exists(m_out.m_audio.m_stream_idx))
         {
-            int output_frame_size;
+            int ret = 0;
 
-            if (m_out.m_audio.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+            // Copy audio FIFO into frame buffer
+            ret = copy_audio_to_frame_buffer(&finished);
+            if (ret < 0)
             {
-                // Encode supports variable frame size, use an arbitrary value
-                output_frame_size =  10000;
-            }
-            else
-            {
-                // Use the encoder's desired frame size for processing.
-                output_frame_size = m_out.m_audio.m_codec_ctx->frame_size;
-            }
-
-            // Make sure that there is one frame worth of samples in the FIFO
-            // buffer so that the encoder can do its work.
-            // Since the decoder's and the encoder's frame size may differ, we
-            // need to FIFO buffer to store as many frames worth of input samples
-            // that they make up at least one frame worth of output samples.
-
-            while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
-            {
-                int ret = 0;
-
-                // Decode one frame worth of audio samples, convert it to the
-                // output sample format and put it into the FIFO buffer.
-
-                ret = read_decode_convert_and_store(&finished);
-                if (ret < 0)
-                {
-                    throw ret;
-                }
-
-                // If we are at the end of the input file, we continue
-                // encoding the remaining audio samples to the output file.
-
-                if (finished)
-                {
-                    break;
-                }
-            }
-
-            // If we have enough samples for the encoder, we encode them.
-            // At the end of the file, we pass the remaining samples to
-            // the encoder.
-
-            while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (finished && av_audio_fifo_size(m_audio_fifo) > 0))
-            {
-                int ret = 0;
-
-                // Take one frame worth of audio samples from the FIFO buffer,
-                // create a frame and store in audio frame FIFO.
-
-                ret = create_audio_frame(output_frame_size);
-                if (ret < 0)
-                {
-                    throw ret;
-                }
-            }
-
-            // Read audio frame FIFO, encode and store
-            for (FRAME_MAP::const_iterator it = m_audio_frame_map.cbegin(); it != m_audio_frame_map.cend(); ++it)
-            {
-                int ret = 0;
-                int data_written;
-
-                // Encode one frame worth of audio samples.
-                ret = encode_audio_frame(it->second, &data_written);
-
-                if (ret < 0 && ret != AVERROR(EAGAIN))
-                {
-                    // Erase from map what's been processed so far
-                    m_audio_frame_map.erase(m_audio_frame_map.begin(), ++it);
-                    throw ret;
-                }
-            }
-
-            m_audio_frame_map.clear();
-
-            // If we are at the end of the input file and have encoded
-            // all remaining samples, we can exit this loop and finish.
-
-            if (finished)
-            {
-                flush_delayed_audio();
-
-                status = 1;
+                throw ret;
             }
         }
         else
@@ -5251,226 +5201,163 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             }
         }
 
-        // Encode video
-        if (!m_copy_video)
+        do
         {
-            int ret = 0;
-
-            for (FRAME_MAP::const_iterator it = m_video_frame_map.cbegin(); it != m_video_frame_map.cend(); ++it)
+            if (!is_frameset())
             {
-                // Encode one video frame.
-                if (!is_frameset())
+                int64_t delay;
+
+                // The following values are arbitrarily chosen and seem to work.
+                if (is_hls())
                 {
-                    int data_written = 0;
-                    ret = encode_video_frame(it->second, &data_written);
+                    delay = params.m_segment_duration * 75 / 100;   // 75% of the segment duration
                 }
                 else
                 {
-                    int data_written = 0;
-                    ret = encode_image_frame(it->second, &data_written);
+                    delay = 6 * AV_TIME_BASE;                       // 6 seconds
                 }
 
-                if (ret < 0 && ret != AVERROR(EAGAIN))
+                if (!finished && (!m_frame_map.empty() && m_frame_map.cbegin()->first + delay > m_frame_map.crbegin()->first))
                 {
-                    // Erase from map what's been processed so far
-                    m_video_frame_map.erase(m_video_frame_map.begin(), ++it);
-                    throw ret;
+                    //Logging::error(destname(), "%1 %2", m_frame_map.cbegin()->first, m_frame_map.crbegin()->first);
+                    return 0;
+                }
+
+                //Logging::error(destname(), "-----> cnt = %1", m_frame_map.size());
+                while (!m_frame_map.empty())
+                {
+                    // Take first entry in map
+                    MULTIFRAME_MAP::const_iterator it = m_frame_map.cbegin();
+
+                    if (is_hls())
+                    {
+                        uint32_t next_segment = get_next_segment(it->first);
+
+                        if (goto_next_segment(next_segment))
+                        {
+                            // Reached next segment, end current now, and force new.
+                            //Logging::error(destname(), "SKIP!! pos = %1", it->first);
+                            m_inhibit_stream_msk = m_active_stream_msk;
+                            break;
+                        }
+                    }
+
+                    // Get multiframe from map
+                    MULTIFRAME multiframe = it->second;
+
+                    // Drop key from map, we've got a clone in multiframe now.
+                    m_frame_map.erase(it);
+
+                    if (std::holds_alternative<FFmpeg_Frame>(multiframe))
+                    {
+                        // Object is an audio/video frame
+                        const FFmpeg_Frame & frame = std::get<FFmpeg_Frame>(multiframe);
+
+                        int stream_idx = frame.m_stream_idx;
+
+                        if (!stream_exists(stream_idx))
+                        {
+                            Logging::error(destname(), "INTERNAL ERROR! Invalid stream index in audio/video buffer skipped.");
+                            continue;
+                        }
+
+                        if (stream_idx == m_out.m_audio.m_stream_idx)
+                        {
+                            // Encode audio
+                            int ret = 0;
+                            int data_written;
+
+                            // Encode one frame worth of audio samples.
+                            ret = encode_audio_frame(frame, &data_written);
+
+                            if (ret < 0 && ret != AVERROR(EAGAIN))
+                            {
+                                throw ret;
+                            }
+                        }
+                        else if (stream_idx == m_out.m_video.m_stream_idx)
+                        {
+                            // Encode video
+                            int ret = 0;
+                            int data_written = 0;
+                            ret = encode_video_frame(frame, &data_written);
+
+                            if (ret < 0 && ret != AVERROR(EAGAIN))
+                            {
+                                throw ret;
+                            }
+                        }
+                    }
+                    else if (std::holds_alternative<FFmpeg_Subtitle>(multiframe))
+                    {
+                        // Object is a subtitle
+                        const FFmpeg_Subtitle & subtitle = std::get<FFmpeg_Subtitle>(multiframe);
+
+                        int stream_idx = subtitle.m_stream_idx;
+
+                        if (!stream_exists(stream_idx))
+                        {
+                            Logging::error(destname(), "INTERNAL ERROR! Invalid stream index in subitle buffer skipped.");
+                            continue;
+                        }
+
+                        // Encode subtitles
+
+                        int ret = 0;
+                        int data_written = 0;
+
+                        ret = encode_subtitle(subtitle, stream_idx, &data_written);
+
+                        if (ret < 0 && ret != AVERROR(EAGAIN))
+                        {
+                            throw ret;
+                        }
+                    }
                 }
             }
-
-            m_video_frame_map.clear();
-
-            // If we are at the end of the input file and have encoded
-            // all remaining samples, we can exit this loop and finish.
-
-            if (finished)
+            else
             {
-                flush_delayed_video();
-
-                status = 1;
-            }
-        }
-
-        // Encode subtitles
-        {
-            int ret = 0;
-
-            for (SUBTITLESTREAM_MAP::iterator it = m_subtitle_maps.begin(); it != m_subtitle_maps.end(); ++it)
-            {
-                SUBTITLE_MAP & subtitle_map = it->second;
-                int out_stream_idx = map_in_to_out_stream(it->first);
-
-                if (out_stream_idx == INVALID_STREAM)
+                // Frame sets: no audio, no subtitles, no output stream (index)
+                while (!m_frame_map.empty())
                 {
-                    Logging::error(destname(), "INTERNAL ERROR! Unable to map in subtitle stream #%1 to output stream.", it->first);
-                    throw AVERROR(EINVAL);
-                }
-
-                for (SUBTITLE_MAP::const_iterator it = subtitle_map.cbegin(); it != subtitle_map.cend(); ++it)
-                {
-                    AVSubtitle *subtitle = it->second;
-
+                    MULTIFRAME_NODE nh = m_frame_map.extract(m_frame_map.cbegin());
+                    const MULTIFRAME & multiframe = nh.mapped();
+                    int ret = 0;
                     int data_written = 0;
-                    ret = encode_subtitle(subtitle, out_stream_idx, &data_written);
 
-                    avsubtitle_free(subtitle);
-                    av_free(subtitle);
+                    // Encode video
+                    ret = encode_image_frame(std::get<FFmpeg_Frame>(multiframe), &data_written);
 
                     if (ret < 0 && ret != AVERROR(EAGAIN))
                     {
-                        // Erase from map what's been processed so far
-                        subtitle_map.erase(subtitle_map.begin(), ++it);
                         throw ret;
                     }
                 }
-
-                subtitle_map.clear();
             }
 
-            // If we are at the end of the input file and have encoded
-            // all remaining samples, we can exit this loop and finish.
-
-            if (finished)
+            if (is_hls() && m_active_stream_msk == m_inhibit_stream_msk)
             {
-                flush_delayed_video();
+                // Start new HLS segment
+                int ret = 0;
 
-                status = 1;
+                ret = start_new_segment();
+                if (ret < 0)
+                {
+                    throw ret;
+                }
             }
-        }
+        } while (finished && !m_frame_map.empty()); // Ensure we've processed all frames in our buffer
 
-        if (is_hls())
+        // If we are at the end of the input file and have encoded
+        // all remaining samples, we can exit this loop and finish.
+
+        if (finished && m_frame_map.empty())
         {
-            if (m_active_stream_msk == m_inhibit_stream_msk)
-            {
-                bool opened = false;
+            flush_delayed_audio();
+            flush_delayed_video();
+            flush_delayed_subtitles();
 
-                encode_finish();
-
-                // Go to next requested segment...
-                uint32_t next_segment = m_current_segment + 1;
-
-                // ...or process any stacked seek requests.
-                while (!m_seek_to_fifo.empty())
-                {
-                    uint32_t segment_no = m_seek_to_fifo.front();
-                    m_seek_to_fifo.pop();
-
-                    // No check if m_segment_duration == 0, values <= 0 not accepted
-                    // Cast is OK here, the result will always be small enough for an int32.
-                    uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
-                    if (min_seek_segments && next_segment + min_seek_segments >= segment_no)
-                    {
-                        Logging::info(destname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) away.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments);
-                        continue;
-                    }
-
-                    if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
-                    {
-                        int ret = 0;
-
-                        m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position
-                        m_have_seeked   = true;                             // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
-
-                        Logging::info(destname(), "Performing seek request to HLS segment no. %1.", segment_no);
-
-                        int64_t pos = (segment_no - 1) * params.m_segment_duration;
-
-                        if (m_in.m_video.m_stream_idx && stream_exists(m_out.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
-                        {
-                            int64_t pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-
-                            if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
-                            {
-                                pts += m_in.m_video.m_stream->start_time;
-                            }
-
-                            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
-                        }
-                        else if (m_in.m_audio.m_stream_idx && stream_exists(m_out.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
-                        {
-                            int64_t pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-
-                            if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
-                            {
-                                pts += m_in.m_audio.m_stream->start_time;
-                            }
-
-                            ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
-                        }
-
-                        if (ret < 0)
-                        {
-                            Logging::error(destname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
-                            throw ret;
-                        }
-
-                        flush_buffers();
-
-                        close_output_file();
-
-                        purge_hls_fifo();   // We do not need the packets for the next frame, we start a new one at another position!
-
-                        ret = open_output(m_buffer);
-                        if (ret < 0)
-                        {
-                            throw ret;
-                        }
-
-                        next_segment = segment_no;
-
-                        opened = true;
-
-                        break;
-                    }
-
-                    Logging::info(destname(), "Discarded seek request to HLS segment no. %1.", segment_no);
-                }
-
-                // Set current segment
-                m_current_segment       = next_segment;
-
-                m_inhibit_stream_msk    = 0;
-
-                m_insert_keyframe       = false;
-
-                Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
-
-                if (!m_buffer->set_segment(m_current_segment))
-                {
-                    throw AVERROR(errno);
-                }
-
-                if (!opened)
-                {
-                    int ret = 0;
-
-                    // Process output file, already done by open_output() if file has been newly opened.
-                    ret = process_output();
-                    if (ret)
-                    {
-                        throw ret;
-                    }
-                }
-
-                if (is_hls())
-                {
-                    while (!m_hls_packet_fifo.empty())
-                    {
-                        int ret = 0;
-                        AVPacket *pkt = m_hls_packet_fifo.front();
-                        m_hls_packet_fifo.pop();
-
-                        ret = av_write_frame(m_out.m_format_ctx, pkt);
-
-                        if (ret < 0)
-                        {
-                            Logging::error(destname(), "Could not write frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                        }
-
-                        av_packet_unref(pkt);
-                    }
-                }
-            }
+            status = 1;
         }
     }
     catch (int _ret)
@@ -5479,6 +5366,193 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
         return _ret;
     }
 
+    return 0;
+}
+
+int FFmpeg_Transcoder::seek_frame()
+{
+    if (!m_last_seek_frame_no)
+    {
+        // No current seek frame, check if new seek frame was stacked.
+        {
+            std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+
+            while (!m_seek_to_fifo.empty())
+            {
+                uint32_t frame_no = m_seek_to_fifo.front();
+                m_seek_to_fifo.pop();
+
+                if (!m_buffer->have_frame(frame_no))
+                {
+                    // Frame not yet decoded, so skip to it.
+                    m_last_seek_frame_no = frame_no;
+                    break;
+                }
+            }
+        }
+
+        if (m_last_seek_frame_no)
+        {
+            int ret = 0;
+
+            // The first frame that FFmpeg API returns after av_seek_frame is wrong (the last frame before seek).
+            // We are unable to detect that because the pts seems correct (the one that we requested).
+            // So we position before the frame requested, and simply throw the first away.
+
+            //#define PRESCAN_FRAMES  3
+#ifdef PRESCAN_FRAMES
+            int64_t seek_frame_no = m_last_seek_frame_noX;
+            if (seek_frame_no > PRESCAN_FRAMES)
+            {
+                seek_frame_no -= PRESCAN_FRAMES;
+                //m_skip_next_frame = true; /**< @todo Take deinterlace into account */
+            }
+            else
+            {
+                seek_frame_no = 1;
+            }
+
+            ret = skip_decoded_frames(seek_frame_no, true);
+#else
+            ret = skip_decoded_frames(m_last_seek_frame_no, true);
+#endif
+
+            if (ret < 0)
+            {
+                return ret;
+            }
+        }
+    }
+    return 0;
+}
+
+int FFmpeg_Transcoder::start_new_segment()
+{
+    bool opened = false;
+
+    encode_finish();
+
+    // Go to next requested segment...
+    uint32_t next_segment = m_current_segment + 1;
+
+    // ...or process any stacked seek requests.
+    while (!m_seek_to_fifo.empty())
+    {
+        uint32_t segment_no = m_seek_to_fifo.front();
+        m_seek_to_fifo.pop();
+
+        // No check if m_segment_duration == 0, values <= 0 not accepted
+        // Cast is OK here, the result will always be small enough for an int32.
+        uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+        if (min_seek_segments && next_segment + min_seek_segments >= segment_no)
+        {
+            Logging::info(destname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) away.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments);
+            continue;
+        }
+
+        if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
+        {
+            int ret = 0;
+
+            m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position
+            m_have_seeked   = true;                             // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
+
+            Logging::info(destname(), "Performing seek request to HLS segment no. %1.", segment_no);
+
+            int64_t pos = (segment_no - 1) * params.m_segment_duration;
+
+            if (m_in.m_video.m_stream_idx && stream_exists(m_out.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
+            {
+                int64_t pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+
+                if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+                {
+                    pts += m_in.m_video.m_stream->start_time;
+                }
+
+                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+            }
+            else if (m_in.m_audio.m_stream_idx && stream_exists(m_out.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
+            {
+                int64_t pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+
+                if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+                {
+                    pts += m_in.m_audio.m_stream->start_time;
+                }
+
+                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+            }
+
+            if (ret < 0)
+            {
+                Logging::error(destname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+
+            flush_buffers();
+
+            close_output_file();
+
+            purge_hls_fifo();   // We do not need the packets for the next frame, we start a new one at another position!
+
+            ret = open_output(m_buffer);
+            if (ret < 0)
+            {
+                return ret;
+            }
+
+            next_segment = segment_no;
+
+            opened = true;
+
+            break;
+        }
+
+        Logging::info(destname(), "Discarded seek request to HLS segment no. %1.", segment_no);
+    }
+
+    // Set current segment
+    m_current_segment       = next_segment;
+    m_inhibit_stream_msk    = 0;
+    m_insert_keyframe       = false;
+
+    Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
+
+    if (!m_buffer->set_segment(m_current_segment))
+    {
+        return AVERROR(errno);
+    }
+
+    if (!opened)
+    {
+        int ret = 0;
+
+        // Process output file, already done by open_output() if file has been newly opened.
+        ret = process_output();
+        if (ret)
+        {
+            return ret;
+        }
+    }
+
+    // Flush delayed packets to disk, if any
+    while (!m_hls_packet_fifo.empty())
+    {
+        int ret = 0;
+        AVPacket *pkt = m_hls_packet_fifo.front();
+        m_hls_packet_fifo.pop();
+
+        ret = av_write_frame(m_out.m_format_ctx, pkt);
+
+        if (ret < 0)
+        {
+            Logging::error(destname(), "Could not write frame (error '%1').", ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+
+        av_packet_unref(pkt);
+    }
     return 0;
 }
 
@@ -6171,46 +6245,13 @@ int FFmpeg_Transcoder::purge_audio_fifo()
     return audio_samples_left;
 }
 
-size_t FFmpeg_Transcoder::purge_audio_frame_map()
+size_t FFmpeg_Transcoder::purge_multiframe_map()
 {
-    size_t audio_frames_left  = m_audio_frame_map.size();
+    size_t frames_left = m_frame_map.size();
 
-    m_audio_frame_map.clear();
+    m_frame_map.clear();
 
-    return audio_frames_left;
-}
-
-size_t FFmpeg_Transcoder::purge_video_frame_map()
-{
-    size_t video_frames_left = m_video_frame_map.size();
-
-    m_video_frame_map.clear();
-
-    return video_frames_left;
-}
-
-size_t FFmpeg_Transcoder::purge_subtitle_frame_maps()
-{
-    size_t subtitle_frames_left  = 0;
-
-    for (SUBTITLESTREAM_MAP::iterator it = m_subtitle_maps.begin(); it != m_subtitle_maps.end(); ++it)
-    {
-        SUBTITLE_MAP & subtitle_map = it->second;
-
-        subtitle_frames_left += subtitle_map.size();
-
-        for (SUBTITLE_MAP::const_iterator it = subtitle_map.begin(); it != subtitle_map.end(); ++it)
-        {
-            AVSubtitle *subtitle = it->second;
-
-            avsubtitle_free(subtitle);
-            av_free(subtitle);
-        }
-
-        subtitle_map.clear();
-    }
-
-    return subtitle_frames_left;
+    return frames_left;
 }
 
 size_t FFmpeg_Transcoder::purge_hls_fifo()
@@ -6232,9 +6273,7 @@ void FFmpeg_Transcoder::purge()
 {
     std::string outfile;
     int audio_samples_left      = purge_audio_fifo();
-    size_t audio_frames_left    = purge_audio_frame_map();
-    size_t video_frames_left    = purge_video_frame_map();
-    size_t subtitle_frames_left = purge_subtitle_frame_maps();
+    size_t frames_left          = purge_multiframe_map();
     size_t hls_packets_left     = purge_hls_fifo();
 
     if (m_out.m_format_ctx != nullptr)
@@ -6251,19 +6290,9 @@ void FFmpeg_Transcoder::purge()
         Logging::warning(p, "%1 audio samples left in buffer and not written to target file!", audio_samples_left);
     }
 
-    if (audio_frames_left)
+    if (frames_left)
     {
-        Logging::warning(p, "%1 audio frames left in buffer and not written to target file!", audio_frames_left);
-    }
-
-    if (video_frames_left)
-    {
-        Logging::warning(p, "%1 video frames left in buffer and not written to target file!", video_frames_left);
-    }
-
-    if (subtitle_frames_left)
-    {
-        Logging::warning(p, "%1 subtitle frames left in buffer and not written to target file!", subtitle_frames_left);
+        Logging::warning(p, "%1 frames left in buffer and not written to target file!", frames_left);
     }
 
     if (hls_packets_left)
@@ -6613,7 +6642,7 @@ int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
     {
         try
         {
-            FFmpeg_Frame filterframe;
+            FFmpeg_Frame filterframe(srcframe->m_stream_idx);
 
             ret = filterframe.res();
             if (ret < 0)
@@ -7516,4 +7545,3 @@ int FFmpeg_Transcoder::map_in_to_out_stream(int in_stream_idx) const
 
     return (it->second);
 }
-

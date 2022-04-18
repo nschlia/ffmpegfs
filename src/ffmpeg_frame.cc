@@ -42,18 +42,21 @@ extern "C" {
 }
 #endif
 
+#include "ffmpeg_utils.h"
 #include "ffmpeg_frame.h"
 
-FFmpeg_Frame::FFmpeg_Frame() :
+FFmpeg_Frame::FFmpeg_Frame(int stream_index) :
     m_frame(av_frame_alloc()),
-    m_res(0)
+    m_res(0),
+    m_stream_idx(stream_index)
 {
     m_res = (m_frame != nullptr) ? 0 : AVERROR(ENOMEM);
 }
 
 FFmpeg_Frame::FFmpeg_Frame(const FFmpeg_Frame& frame) :
     m_frame(nullptr),
-    m_res(0)
+    m_res(0),
+    m_stream_idx(frame.m_stream_idx)
 {
     if (frame.m_frame != nullptr)
     {
@@ -69,7 +72,8 @@ FFmpeg_Frame::FFmpeg_Frame(const FFmpeg_Frame& frame) :
 
 FFmpeg_Frame::FFmpeg_Frame(const AVFrame * frame) :
     m_frame(nullptr),
-    m_res(0)
+    m_res(0),
+    m_stream_idx(INVALID_STREAM)
 {
     if (frame != nullptr)
     {
@@ -145,6 +149,8 @@ FFmpeg_Frame& FFmpeg_Frame::operator=(const FFmpeg_Frame & frame) noexcept
 
         m_frame = new_frame;
 
+        m_stream_idx = frame.m_stream_idx;
+
         m_res = (m_frame != nullptr) ? 0 : AVERROR(ENOMEM);
     }
 
@@ -160,6 +166,8 @@ FFmpeg_Frame& FFmpeg_Frame::operator=(const AVFrame * frame) noexcept
         free();
 
         m_frame = new_frame;
+
+        m_stream_idx = INVALID_STREAM;
 
         m_res = (m_frame != nullptr) ? 0 : AVERROR(ENOMEM);
     }

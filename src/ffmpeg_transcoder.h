@@ -36,6 +36,7 @@
 
 #include "ffmpeg_base.h"
 #include "ffmpeg_frame.h"
+#include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
 #include "fileio.h"
@@ -43,6 +44,7 @@
 
 #include <queue>
 #include <mutex>
+#include <variant>
 
 class Buffer;
 struct SwrContext;
@@ -153,10 +155,18 @@ public:
 
     } HWACCELMODE;
 
-    typedef std::map<int64_t, FFmpeg_Frame>     FRAME_MAP;          /**< @brief Audio/video frame buffer */
-    typedef std::map<int64_t, AVSubtitle*>  SUBTITLE_MAP;           	/**< @brief Subtitle buffer */
-    typedef std::map<int, SUBTITLE_MAP>         SUBTITLESTREAM_MAP; /**< @brief Map stream index to SUBTITLE_MAP */
-    typedef std::map<int, int>                  STREAM_MAP;         /**< @brief Map input to output stream */
+    typedef std::variant<FFmpeg_Frame, FFmpeg_Subtitle> MULTIFRAME; /**< @brief Combined audio/videoframe and subtitle */
+    /**
+     * @brief MULTIFRAME_NODE node_type for use with std::map<...>::extract.
+     * To be honest I was incredibly close to using "auto" as in all examples,
+     * although abhoring this keyword.
+     * This syntax is really credible for the ugliest piece of C++ code of
+     * all times (grin).
+     */
+    typedef std::multimap<long, MULTIFRAME, std::less<long>, std::allocator<std::pair<const long, MULTIFRAME>>>::node_type MULTIFRAME_NODE;
+
+    typedef std::multimap<int64_t, MULTIFRAME>  MULTIFRAME_MAP;     /**< @brief Audio frame/video frame/subtitle buffer */
+    typedef std::map<int, int>                  STREAM_MAP;         /**< @brief Map input subtitle stream to output stream */
 
 public:
     /**
@@ -343,6 +353,13 @@ public:
     int                         flush_delayed_subtitles();
 
 protected:
+    /**
+     * @brief Copy data from audio FIFO to frame buffer.
+     * Divides WAV data into proper chunks to be fed into the
+     * encoder.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         copy_audio_to_frame_buffer(int *finished);
     /**
      * @brief Find best match stream and open codec context for it.
      * @param[out] avctx - Newly created codec context
@@ -820,17 +837,7 @@ protected:
      * @brief Purge all frames in buffer
      * @return Number of frames that have been purged. Function never fails.
      */
-    size_t                      purge_audio_frame_map();
-    /**
-     * @brief Purge all frames in video FIFO
-     * @return Number of frames that have been purged. Function never fails.
-     */
-    size_t                      purge_video_frame_map();
-    /**
-     * @brief Purge all frames in all subtitle frame FIFOs
-     * @return Number of frames that have been purged. Function never fails.
-     */
-    size_t                      purge_subtitle_frame_maps();
+    size_t                      purge_multiframe_map();
     /**
      * @brief Purge all packets in HLS FIFO buffer
      * @return Number of Packets that have been purged. Function never fails.
@@ -1102,6 +1109,18 @@ protected:
      */
     int                         add_subtitle_streams();
 
+    /**
+     * @brief Frame sets only: perform seek to a certain frame.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         seek_frame();
+
+    /**
+     * @brief HLS only: start a new HLS segment.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         start_new_segment();
+
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */
     bool                        m_close_fileio;                 /**< @brief If we own the FileIO object, we may close it in the end. */
@@ -1113,6 +1132,8 @@ private:
     bool                        m_skip_next_frame;              /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                     /**< @brief true if input is a video file */
 
+    MULTIFRAME_MAP              m_frame_map;                    /**< @brief Audio/video/subtitle frame map */
+
     // Audio conversion and buffering
     AVSampleFormat              m_cur_sample_fmt;               /**< @brief Currently selected audio sample format */
     int                         m_cur_sample_rate;              /**< @brief Currently selected audio sample rate */
@@ -1123,19 +1144,14 @@ private:
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
     AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
-    FRAME_MAP                   m_audio_frame_map;              /**< @brief Audio frame map */
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */
-    FRAME_MAP                   m_video_frame_map;              /**< @brief Video frame map */
     int64_t                     m_pts;                          /**< @brief Generated PTS */
     int64_t                     m_pos;                          /**< @brief Generated position */
-
-    // Subtitle conversion and buffering
-    SUBTITLESTREAM_MAP          m_subtitle_maps;               /**< @brief Maps for all subtitle streams */
 
     // Common things for audio/video/subtitles
     INPUTFILE                   m_in;                           /**< @brief Input file information */

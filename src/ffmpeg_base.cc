@@ -70,11 +70,6 @@ void FFmpeg_Base::init_packet(AVPacket *pkt) const
 }
 #endif // !LAVC_DEP_AV_INIT_PACKET
 
-AVSubtitle* FFmpeg_Base::alloc_subtitle() const
-{
-    return reinterpret_cast<AVSubtitle *>(av_mallocz(sizeof(AVSubtitle)));
-}
-
 void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat  enc_hw_pix_fmt) const
 {
     AVRational time_base_tbn;

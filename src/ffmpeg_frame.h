@@ -42,18 +42,21 @@ class FFmpeg_Frame
 public:
     /**
      * @brief Construct FFmpeg_Frame object.
+     * @param[in] stream_index - Index of stream
      */
-    explicit FFmpeg_Frame();
+    explicit FFmpeg_Frame(int stream_index = INVALID_STREAM);
     /**
      * @brief Copy construct from FFmpeg_Frame object.
      * @param[in] frame - Pointer to source FFmpeg_Frame object.
+     * @note Do not declare explicit, breaks use in std::variant
      */
-    explicit FFmpeg_Frame(const FFmpeg_Frame& frame);
+    FFmpeg_Frame(const FFmpeg_Frame & frame);
     /**
      * @brief Copy construct from AVFrame struct.
      * @param[in] frame - Pointer to source AVFrame struct.
+     * @note Do not declare explicit, breaks use in std::variant
      */
-    explicit FFmpeg_Frame(const AVFrame * frame);
+    FFmpeg_Frame(const AVFrame * frame);
     /**
      * @brief Destruct FFmpeg_Frame object.
      */
@@ -92,12 +95,12 @@ public:
     operator const  AVFrame*() const;
     /**
      * @brief operator ->: Do as if we were a pointer to AVFrame
-     * @return Pointer AVFrame struct.
+     * @return Pointer to AVFrame struct.
      */
     AVFrame* operator->();
     /**
      * @brief Make copy from other FFmpeg_Frame object.
-     * @param[in] frame - Pointer to source FFmpeg_Frame object.
+     * @param[in] frame - Reference to source FFmpeg_Frame object.
      * @return Reference to new FFmpeg_Frame object.
      */
     FFmpeg_Frame& operator=(const FFmpeg_Frame & frame) noexcept;
@@ -108,9 +111,12 @@ public:
      */
     FFmpeg_Frame& operator=(const AVFrame * frame) noexcept;
 
-//protected:
+protected:
     AVFrame *   m_frame;        /**< @brief Pointer to underlying AVFrame struct */
     int         m_res;          /**< @brief 0 if last operation was successful, or negative AVERROR value */
+
+public:
+    int         m_stream_idx;   /**< @brief Stream index frame belongs to, or -1 (INVALID_STREAM) */
 };
 
 #endif // FFMPEG_FRAME_H

@@ -63,11 +63,6 @@ protected:
     void                init_packet(AVPacket *pkt) const;
 #endif // !LAVC_DEP_AV_INIT_PACKET
     /**
-     * @brief Allocate a subtitle
-     * @return Returns a newly allocated AVSubtitle field, or nullptr if out of memory.
-     */
-    AVSubtitle*         alloc_subtitle() const;
-    /**
      * @brief Set up video stream
      * @param[in] output_codec_ctx - Output codec context.
      * @param[in] output_stream - Output stream object.

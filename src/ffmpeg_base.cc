@@ -233,7 +233,7 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
 
         if (stream->duration != AV_NOPTS_VALUE)
         {
-            duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            duration = ffmpeg_rescale_q_rnd(stream->duration, stream->time_base);
         }
 
         Logging::debug(out_file ? destname() : filename(), "Video %1 #%2: %3@%4 [%5]",
@@ -258,7 +258,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
 
         if (stream->duration != AV_NOPTS_VALUE)
         {
-            duration = av_rescale_q_rnd(stream->duration, stream->time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+            duration = ffmpeg_rescale_q_rnd(stream->duration, stream->time_base);
         }
 
         Logging::debug(out_file ? destname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",

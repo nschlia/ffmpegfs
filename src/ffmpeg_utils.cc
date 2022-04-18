@@ -1154,7 +1154,7 @@ std::string ffmpeg_geterror(int errnum)
     }
 }
 
-int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)
+int64_t ffmpeg_rescale_q(int64_t ts, const AVRational & timebase_in, const AVRational &timebase_out)
 {
     if (ts == AV_NOPTS_VALUE)
     {
@@ -1166,7 +1166,22 @@ int64_t ffmpeg_rescale(int64_t ts, const AVRational & time_base)
         return 0;
     }
 
-    return av_rescale_q_rnd(ts, time_base, av_get_time_base_q(), static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
+    return av_rescale_q(ts, timebase_in, timebase_out);
+}
+
+int64_t ffmpeg_rescale_q_rnd(int64_t ts, const AVRational & timebase_in, const AVRational &timebase_out)
+{
+    if (ts == AV_NOPTS_VALUE)
+    {
+        return AV_NOPTS_VALUE;
+    }
+
+    if (ts == 0)
+    {
+        return 0;
+    }
+
+    return av_rescale_q_rnd(ts, timebase_in, timebase_out, static_cast<AVRounding>(AV_ROUND_UP | AV_ROUND_PASS_MINMAX));
 }
 
 #if !HAVE_MEDIA_TYPE_STRING

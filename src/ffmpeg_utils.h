@@ -586,16 +586,31 @@ char *              new_strdup(const std::string & str);
  * @return Returns std::string with the error defined by errnum.
  */
 std::string         ffmpeg_geterror(int errnum);
+
 /**
- * @brief Convert a FFmpeg time from time_base into standard AV_TIME_BASE fractional seconds.
+ * @brief Convert a FFmpeg time from in timebase to outtime base.
  *
+ * If out time base is omitted, returns standard AV_TIME_BASE fractional seconds
  * Avoids conversion of AV_NOPTS_VALUE.
  *
- * @param[in] ts - Source time.
- * @param[in] time_base - Time base of source.
+ * @param[in] ts - Time in input timebase.
+ * @param[in] timebase_in - Input timebase.
+ * @param[in] timebase_out - Output timebase, defaults to AV_TIMEBASE if unset.
  * @return Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE.
  */
-int64_t             ffmpeg_rescale(int64_t ts, const AVRational & time_base);
+int64_t             ffmpeg_rescale_q(int64_t pts, const AVRational & timebase_in, const AVRational & timebase_out = av_get_time_base_q());
+/**
+ * @brief Convert a FFmpeg time from in timebase to out timebase with rounding.
+ *
+ * If out time base is omitted, returns standard AV_TIME_BASE fractional seconds
+ * Avoids conversion of AV_NOPTS_VALUE.
+ *
+ * @param[in] ts - Time in input timebase.
+ * @param[in] timebase_in - Input timebase.
+ * @param[in] timebase_out - Output timebase, defaults to AV_TIMEBASE if unset.
+ * @return Returns converted value, or AV_NOPTS_VALUE if ts is AV_NOPTS_VALUE.
+ */
+int64_t             ffmpeg_rescale_q_rnd(int64_t ts, const AVRational & timebase_in, const AVRational & timebase_out = av_get_time_base_q());
 /**
  * @brief Format numeric value.
  * @param[in] value - Value to format.

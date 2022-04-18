@@ -72,8 +72,6 @@ extern "C" {
 }
 #endif
 
-// #define USE_INTERLEAVED_WRITE
-
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
 const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
@@ -3645,11 +3643,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         }
     }
 
-#ifdef USE_INTERLEAVED_WRITE
-    int ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
-#else   // !USE_INTERLEAVED_WRITE
     int ret = av_write_frame(m_out.m_format_ctx, pkt);
-#endif  // !USE_INTERLEAVED_WRITE
 
     if (ret < 0)
     {
@@ -5354,16 +5348,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             {
                 bool opened = false;
 
-#ifdef USE_INTERLEAVED_WRITE
-                // Flush interleaved frame queue into old stream
-                ret = av_interleaved_write_frame(m_out.m_format_ctx, nullptr);
-
-                if (ret < 0)
-                {
-                    Logging::error(destname(), "Could not flush frame queue (error '%2').", ffmpeg_geterror(ret).c_str());
-                }
-#endif  // USE_INTERLEAVED_WRITE
-
                 encode_finish();
 
                 // Go to next requested segment...
@@ -5480,11 +5464,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         AVPacket *pkt = m_hls_packet_fifo.front();
                         m_hls_packet_fifo.pop();
 
-#ifdef USE_INTERLEAVED_WRITE
-                        ret = av_interleaved_write_frame(m_out.m_format_ctx, pkt);
-#else   // !USE_INTERLEAVED_WRITE
                         ret = av_write_frame(m_out.m_format_ctx, pkt);
-#endif  // !USE_INTERLEAVED_WRITE
 
                         if (ret < 0)
                         {

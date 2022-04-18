@@ -299,14 +299,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     //}
 
     // analyzeduration: Defaults to 5,000,000 microseconds = 5 seconds.
-    ret = dict_set_with_check(&opt, "analyzeduration", "15000000", 0);    // <<== honored
+    ret = dict_set_with_check(&opt, "analyzeduration", "15000000", 0);    // <<== honored: 15 seconds
     if (ret < 0)
     {
         return ret;
     }
 
     // probesize: 5000000 by default.
-    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured;
+    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured: ~15 MB
     if (ret < 0)
     {
         return ret;
@@ -424,17 +424,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
     m_in.m_filetype = get_filetype_from_list(m_in.m_format_ctx->iformat->name);
-
-    // The old code never worked. This would work, but as the old code never enabled "scan_all_pmts"
-    // we do not enable that now.
-    //
-    // Scan and combine all Program Map Tables (PMT). The value is an integer with value from -1 to 1
-    // (-1 means automatic setting, 1 means enabled, 0 means disabled). Default value is -1.
-    //ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_MATCH_CASE, filename());
-    //if (ret < 0)
-    //{
-    //    return ret;
-    //}
 
 #if HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA
     av_format_inject_global_side_data(m_in.m_format_ctx);

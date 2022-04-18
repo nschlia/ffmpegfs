@@ -4403,14 +4403,14 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             {
                 ret = AVERROR(ENOMEM);
                 Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_video.m_stream->time_base), ffmpeg_geterror(ret).c_str());
-                return ret;
+                throw ret;
             }
 
             ret = hw_frame->res();
             if (ret < 0)
             {
                 Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_video.m_stream->time_base), ffmpeg_geterror(ret).c_str());
-                return ret;
+                throw ret;
             }
 
             // If encoding is done in hardware, the resulting frame data needs to be copied to hardware

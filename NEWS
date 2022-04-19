@@ -5,7 +5,7 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-Important changes in 2.10 (2022-03-XX):
+Important changes in 2.10 (2022-04-XX):
 
 * Feature: Issue #120: Added subtitle support. Subtitle streams can now also be
   transcoded to the output files.
@@ -21,8 +21,8 @@ Important changes in 2.10 (2022-03-XX):
   Bluray directory or DVD IFO instead.
 * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
 * Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
-* Deprecate previous channel layout API based on uint64 bitmasks.
-* Deprecate swr_alloc_set_opts() and swr_build_matrix().
+* Deprecated previous channel layout API based on uint64 bitmasks.
+* Deprecated swr_alloc_set_opts() and swr_build_matrix().
 
 Important changes in 2.9 (2022-02-16):
 

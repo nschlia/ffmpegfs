@@ -27,11 +27,11 @@ News
 * **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
 * **Bugfix:** [Issue #130](https://github.com/nschlia/ffmpegfs/issues/130): Fix file sizes can be incorrectly reported by ls but are correct when data is read.
 * **Bugfix:** Duration was not saved in cache SQLite database.
-* **Bugfix:** [Issue #131](https://github.com/nschlia/ffmpegfs/issues/131): Sometimes video parameters for some Bluray or DVD chapters cannot be detected by FFmpeg API. Transcode then failes - fixed by using data from the Bluray directory or DVD IFO instead.
+* **Bugfix:** [Issue #131](https://github.com/nschlia/ffmpegfs/issues/131): Sometimes video parameters for some Bluray or DVD chapters cannot be detected by FFmpeg API. Transcode then fails - fixed by using data from the Bluray directory or DVD IFO instead.
 * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
 * Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
-* Deprecate previous channel layout API based on uint64 bitmasks.
-* Deprecate swr_alloc_set_opts() and swr_build_matrix().
+* Deprecated previous channel layout API based on uint64 bitmasks.
+* Deprecated swr_alloc_set_opts() and swr_build_matrix().
 
 ### Version 2.9 released
 

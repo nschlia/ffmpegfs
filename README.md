@@ -19,7 +19,7 @@ News
 
 ### Version 2.10 under development
 
-**New in in 2.10 (2022-03-XX):**
+**New in in 2.10 (2022-04-XX):**
 
 * **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files.
 * **Bugfix:** Fixed memory leak in encode_audio_frame().

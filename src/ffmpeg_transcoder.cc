@@ -2241,6 +2241,10 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
     {
         output_stream->duration             = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
     }
+    if (m_in.m_audio.m_stream != nullptr && m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+    }
     else if (m_in.m_format_ctx != nullptr && m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
     {
         output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);

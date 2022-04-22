@@ -2188,7 +2188,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         return ret;
     }
 
-    return 0;
+    return (output_stream == nullptr ? 0 : output_stream->index);
 }
 
 int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref)
@@ -2319,7 +2319,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
     // Update input to output stream map
     add_stream_map(input_streamref.m_stream_idx, output_streamref.m_stream_idx);
 
-    return 0;
+    return output_streamref.m_stream_idx;
 }
 
 int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_type)
@@ -3506,6 +3506,8 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     STREAMREF_MAP::const_iterator it = m_in.m_subtitle.find(pkt->stream_index);
     int ret = 0;
 
+    *decoded = 0;
+
     if (it == m_in.m_subtitle.cend())
     {
         // Should never happen, this should never be called with anything else than subtitle packets.
@@ -3513,12 +3515,6 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
         Logging::error(filename(), "INTERNAL ERROR! Subtitle stream #%1 not found (error '%2').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
-
-    int data_present = 0;
-
-    AVCodecContext *codec_ctx = it->second.m_codec_ctx;
-
-    *decoded = 0;
 
     // Decode the audio frame stored in the temporary packet.
     // The input audio stream decoder is used to do this.
@@ -3535,7 +3531,16 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
         throw AVERROR(EINVAL);
     }
 
+    return decode_subtitle(it->second.m_codec_ctx, pkt, decoded, out_stream_idx);
+}
+
+int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt, int *decoded, int out_stream_idx)
+{
     FFmpeg_Subtitle subtitle(out_stream_idx);
+    int data_present = 0;
+    int ret = 0;
+
+    *decoded = 0;
 
     ret = subtitle.res();
     if (ret < 0)

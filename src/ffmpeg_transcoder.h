@@ -589,6 +589,16 @@ protected:
      */
     int                         decode_subtitle(AVPacket *pkt, int *decoded);
     /**
+     * @brief decode_subtitle
+     * @brief Decode one subtitle
+     * @param[in] codec_context - AVCodecContext object of output codec context.
+     * @param[in] pkt - Packet to decode.
+     * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
+     * @param[in] out_stream_idx - Output stream index.
+     * @return On success returns 0; on error negative AVERROR.
+     */
+    int                         decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt, int *decoded, int out_stream_idx);
+    /**
      * @brief Decode one frame.
      * @param[in] pkt - Packet to decode.
      * @return On success returns 0; on error negative AVERROR.

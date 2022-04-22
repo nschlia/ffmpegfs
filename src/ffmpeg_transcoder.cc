@@ -821,7 +821,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
 }
 
-int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **avctx, int *stream_idx, AVMediaType type)
+int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int *stream_idx, AVMediaType type)
 {
 #if IF_DECLARED_CONST
     const AVCodec *input_codec = nullptr;
@@ -842,7 +842,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCod
 
     *stream_idx = ret;
 
-    return open_decoder(format_ctx, avctx, *stream_idx, input_codec, type);
+    return open_decoder(format_ctx, codec_ctx, *stream_idx, input_codec, type);
 }
 
 #if IF_DECLARED_CONST
@@ -1148,8 +1148,8 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
     }
 
-    //codec_context->sample_aspect_ratio  = frame->sample_aspect_ratio;
-    //codec_context->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
+    //codec_ctx->sample_aspect_ratio  = frame->sample_aspect_ratio;
+    //codec_ctx->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
@@ -3140,7 +3140,7 @@ int FFmpeg_Transcoder::alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int 
     return 0;
 }
 
-int FFmpeg_Transcoder::decode(AVCodecContext *codec_context, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
+int FFmpeg_Transcoder::decode(AVCodecContext *codec_ctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
 {
     int ret;
 
@@ -3148,7 +3148,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *codec_context, AVFrame *frame, int
 
     if (pkt != nullptr)
     {
-        ret = avcodec_send_packet(codec_context, pkt);
+        ret = avcodec_send_packet(codec_ctx, pkt);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             // In particular, we don't expect AVERROR(EAGAIN), because we read all
@@ -3176,7 +3176,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *codec_context, AVFrame *frame, int
         }
     }
 
-    ret = avcodec_receive_frame(codec_context, frame);
+    ret = avcodec_receive_frame(codec_ctx, frame);
     if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
     {
         Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -6498,7 +6498,7 @@ const char *FFmpeg_Transcoder::destname() const
 }
 
 // create
-int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
+int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
     const AVFilter * buffer_src     = avfilter_get_by_name("buffer");
     const AVFilter * buffer_sink    = avfilter_get_by_name("buffersink");
@@ -6532,9 +6532,9 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         // buffer video source: the decoded frames from the decoder will be inserted here.
         char args[1024];
         snprintf(args, sizeof(args), "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-                 codec_context->width, codec_context->height, pix_fmt,
+                 codec_ctx->width, codec_ctx->height, pix_fmt,
                  time_base.num, time_base.den,
-                 codec_context->sample_aspect_ratio.num, FFMAX(codec_context->sample_aspect_ratio.den, 1));
+                 codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)

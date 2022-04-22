@@ -362,13 +362,13 @@ protected:
     int                         copy_audio_to_frame_buffer(int *finished);
     /**
      * @brief Find best match stream and open codec context for it.
-     * @param[int] format_ctx - Output format context
-     * @param[out] avctx - Newly created codec context
+     * @param[in] format_ctx - Output format context
+     * @param[out] codec_ctx, - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **avctx, int *stream_idx, AVMediaType type);
+    int                         open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int *stream_idx, AVMediaType type);
     /**
      * @brief Open the best match video stream, if present in input file.
      * @return On success returns 0; on error negative AVERROR.
@@ -407,8 +407,8 @@ protected:
 #endif // !IF_DECLARED_CONST
     /**
      * @brief Open codec context for stream_idx.
-     * @param[int] format_ctx - Output format context
-     * @param[out] avctx - Newly created codec context
+     * @param[in] format_ctx - Output format context
+     * @param[out] codec_ctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] input_codec - Decoder codec to open, may be nullptr. Will open a matching codec automatically.
      * @param[in] mediatype - Type of media: audio or video.
@@ -589,9 +589,8 @@ protected:
      */
     int                         decode_subtitle(AVPacket *pkt, int *decoded);
     /**
-     * @brief decode_subtitle
      * @brief Decode one subtitle
-     * @param[in] codec_context - AVCodecContext object of output codec context.
+     * @param[in] codec_ctx - AVCodecContext object of output codec context.
      * @param[in] pkt - Packet to decode.
      * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
      * @param[in] out_stream_idx - Output stream index.
@@ -677,13 +676,13 @@ protected:
      * There is the following difference: if you got a frame, you must call
      * it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
      * (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
-     * @param[in] codec_context - AVCodecContext of input stream.
+     * @param[in] codec_ctx - AVCodecContext of input stream.
      * @param[in] frame - Decoded frame
      * @param[out] got_frame - 1 if a frame was decoded, 0 if not
      * @param[in] pkt - Packet to decode
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
-    int                         decode(AVCodecContext *codec_context, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
+    int                         decode(AVCodecContext *codec_ctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
     /**
      * @brief Load one audio frame from the FIFO buffer and store in frame buffer.
      * @param[in] frame_size - Size of frame.
@@ -804,13 +803,13 @@ protected:
 
     /**
      * @brief Initialise video filters
-     * @param[in] codec_context - AVCodecContext object of output video.
+     * @param[in] codec_ctx - AVCodecContext object of output video.
      * @param[in] pix_fmt - Output stream pixel format.
      * @param[in] avg_frame_rate - Average output stream frame rate.
      * @param[in] time_base - Output stream time base.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
-    int                         init_deinterlace_filters(AVCodecContext *codec_context, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
+    int                         init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
     /**
      * @brief Send video frame to the filters.
      * @param[inout] srcframe - On input video frame to process, on output video frame that was filtered.

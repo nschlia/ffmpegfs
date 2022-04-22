@@ -553,7 +553,7 @@ int FFmpeg_Transcoder::open_bestmatch_video()
         int ret;
 
         // Open best match video codec
-        ret = open_bestmatch_decoder(&m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
+        ret = open_bestmatch_decoder(m_in.m_format_ctx, &m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
         if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
         {
             Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -633,7 +633,7 @@ int FFmpeg_Transcoder::open_bestmatch_audio()
     int ret;
 
     // Open best match audio codec
-    ret = open_bestmatch_decoder(&m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
+    ret = open_bestmatch_decoder(m_in.m_format_ctx, &m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
         Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -686,7 +686,7 @@ int FFmpeg_Transcoder::open_subtitles()
         AVCodecContext * codec_ctx = nullptr;
         int ret;
 
-        ret = open_decoder(&codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_SUBTITLE);
+        ret = open_decoder(m_in.m_format_ctx, &codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_SUBTITLE);
         if (ret < 0)
         {
             Logging::error(filename(), "Failed to open subtitle codec (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -726,7 +726,7 @@ int FFmpeg_Transcoder::open_albumarts()
 
                 Logging::trace(filename(), "Found album art");
 
-                ret = open_decoder(&input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
+                ret = open_decoder(m_in.m_format_ctx, &input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
                 {
                     Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -821,7 +821,7 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
     }
 }
 
-int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type)
+int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **avctx, int *stream_idx, AVMediaType type)
 {
 #if IF_DECLARED_CONST
     const AVCodec *input_codec = nullptr;
@@ -830,7 +830,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
 #endif // !IF_DECLARED_CONST
     int ret;
 
-    ret = av_find_best_stream(m_in.m_format_ctx, type, INVALID_STREAM, INVALID_STREAM, &input_codec, 0);
+    ret = av_find_best_stream(format_ctx, type, INVALID_STREAM, INVALID_STREAM, &input_codec, 0);
     if (ret < 0)
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
@@ -842,7 +842,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVCodecContext **avctx, int *strea
 
     *stream_idx = ret;
 
-    return open_decoder(avctx, *stream_idx, input_codec, type);
+    return open_decoder(format_ctx, avctx, *stream_idx, input_codec, type);
 }
 
 #if IF_DECLARED_CONST
@@ -879,9 +879,9 @@ AVPixelFormat FFmpeg_Transcoder::get_hw_pix_fmt(AVCodec *codec, AVHWDeviceType d
 }
 
 #if IF_DECLARED_CONST
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype)
+int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype)
 #else // !IF_DECLARED_CONST
-int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype)
+int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype)
 #endif // !IF_DECLARED_CONST
 {
     while (true)
@@ -892,7 +892,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
         AVCodecID       codec_id            = AV_CODEC_ID_NONE;
         int ret;
 
-        input_stream = m_in.m_format_ctx->streams[stream_idx];
+        input_stream = format_ctx->streams[stream_idx];
 
         // Init the decoders, with or without reference counting
         // av_dict_set_with_check(&opt, "refcounted_frames", refcount ? "1" : "0", 0);
@@ -1039,7 +1039,7 @@ int FFmpeg_Transcoder::open_decoder(AVCodecContext **avctx, int stream_idx, AVCo
 
         Logging::debug(filename(), "Opened input codec for stream #%1: %2", input_stream->index, get_codec_name(codec_id, true));
 
-        *avctx = input_codec_ctx;
+        *codec_ctx = input_codec_ctx;
 
         return 0;
     };
@@ -3137,7 +3137,7 @@ int FFmpeg_Transcoder::alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int 
     return 0;
 }
 
-int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
+int FFmpeg_Transcoder::decode(AVCodecContext *codec_context, AVFrame *frame, int *got_frame, const AVPacket *pkt) const
 {
     int ret;
 
@@ -3145,7 +3145,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
 
     if (pkt != nullptr)
     {
-        ret = avcodec_send_packet(avctx, pkt);
+        ret = avcodec_send_packet(codec_context, pkt);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             // In particular, we don't expect AVERROR(EAGAIN), because we read all
@@ -3173,7 +3173,7 @@ int FFmpeg_Transcoder::decode(AVCodecContext *avctx, AVFrame *frame, int *got_fr
         }
     }
 
-    ret = avcodec_receive_frame(avctx, frame);
+    ret = avcodec_receive_frame(codec_context, frame);
     if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
     {
         Logging::error(filename(), "Could not receive packet from decoder (error '%1').", ffmpeg_geterror(ret).c_str());

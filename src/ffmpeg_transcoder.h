@@ -362,12 +362,13 @@ protected:
     int                         copy_audio_to_frame_buffer(int *finished);
     /**
      * @brief Find best match stream and open codec context for it.
+     * @param[int] format_ctx - Output format context
      * @param[out] avctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] type - Type of media: audio or video.
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         open_bestmatch_decoder(AVCodecContext **avctx, int *stream_idx, AVMediaType type);
+    int                         open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **avctx, int *stream_idx, AVMediaType type);
     /**
      * @brief Open the best match video stream, if present in input file.
      * @return On success returns 0; on error negative AVERROR.
@@ -406,6 +407,7 @@ protected:
 #endif // !IF_DECLARED_CONST
     /**
      * @brief Open codec context for stream_idx.
+     * @param[int] format_ctx - Output format context
      * @param[out] avctx - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] input_codec - Decoder codec to open, may be nullptr. Will open a matching codec automatically.
@@ -413,9 +415,9 @@ protected:
      * @return On success returns 0; on error negative AVERROR.
      */
 #if IF_DECLARED_CONST
-    int                         open_decoder(AVCodecContext **avctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype);
+    int                         open_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype);
 #else // !IF_DECLARED_CONST
-    int                         open_decoder(AVCodecContext **avctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype);
+    int                         open_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int stream_idx, AVCodec *input_codec, AVMediaType mediatype);
 #endif // !IF_DECLARED_CONST
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
@@ -665,12 +667,13 @@ protected:
      * There is the following difference: if you got a frame, you must call
      * it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
      * (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
+     * @param[in] codec_context - AVCodecContext of input stream.
      * @param[in] frame - Decoded frame
      * @param[out] got_frame - 1 if a frame was decoded, 0 if not
      * @param[in] pkt - Packet to decode
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
-    int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
+    int                         decode(AVCodecContext *codec_context, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
     /**
      * @brief Load one audio frame from the FIFO buffer and store in frame buffer.
      * @param[in] frame_size - Size of frame.

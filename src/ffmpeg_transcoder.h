@@ -458,14 +458,14 @@ protected:
     /**
      * @brief Add new stream to output file.
      * @param[in] codec_id - Codec for this stream.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success returns index of new stream [0...n]; on error negative AVERROR.
      */
     int                         add_stream(AVCodecID codec_id);
     /**
      * @brief Add new subtitle stream to output file.
      * @param[in] codec_id - Codec for this stream.
      * @param[in] input_streamref - Streamref of input stream.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success returns index of new stream [0...n]; on error negative AVERROR.
      */
     int                         add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref);
     /**
@@ -665,6 +665,9 @@ protected:
      * There is the following difference: if you got a frame, you must call
      * it again with pkt=nullptr. pkt==nullptr is treated differently from pkt->size==0
      * (pkt==nullptr means get more output, pkt->size==0 is a flush/drain packet)
+     * @param[in] frame - Decoded frame
+     * @param[out] got_frame - 1 if a frame was decoded, 0 if not
+     * @param[in] pkt - Packet to decode
      * @return On success returns 0. On error, returns a negative AVERROR value.
      */
     int                         decode(AVCodecContext *avctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;

@@ -7531,7 +7531,10 @@ bool FFmpeg_Transcoder::stream_exists(int stream_idx) const
 
 void FFmpeg_Transcoder::add_stream_map(int in_stream_idx, int out_stream_idx)
 {
-    m_stream_map.insert(std::make_pair(in_stream_idx, out_stream_idx));
+    if (in_stream_idx != INVALID_STREAM)
+    {
+        m_stream_map.insert(std::make_pair(in_stream_idx, out_stream_idx));
+    }
 }
 
 int FFmpeg_Transcoder::map_in_to_out_stream(int in_stream_idx) const

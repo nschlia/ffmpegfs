@@ -89,7 +89,7 @@ $(function() {
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Version 2.10 under development</h2>
-<p><b>New in in 2.10 (2022-03-XX):</b></p>
+<p><b>New in in 2.10 (2022-04-XX):</b></p>
 <ul>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/120">Issue #120</a>: Added subtitle support. Subtitle streams can now also be transcoded to the output files.</li>
 <li><b>Bugfix:</b> Fixed memory leak in encode_audio_frame().</li>
@@ -97,11 +97,11 @@ Version 2.10 under development</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/129">Issue #129</a>: Files remained zero size when previously transcoded.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/130">Issue #130</a>: Fix file sizes can be incorrectly reported by ls but are correct when data is read.</li>
 <li><b>Bugfix:</b> Duration was not saved in cache SQLite database.</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/131">Issue #131</a>: Sometimes video parameters for some Bluray or DVD chapters cannot be detected by FFmpeg API. Transcode then failes - fixed by using data from the Bluray directory or DVD IFO instead.</li>
+<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/131">Issue #131</a>: Sometimes video parameters for some Bluray or DVD chapters cannot be detected by FFmpeg API. Transcode then fails - fixed by using data from the Bluray directory or DVD IFO instead.</li>
 <li>Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".</li>
 <li>Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</li>
-<li>Deprecate previous channel layout API based on uint64 bitmasks.</li>
-<li>Deprecate swr_alloc_set_opts() and swr_build_matrix().</li>
+<li>Deprecated previous channel layout API based on uint64 bitmasks.</li>
+<li>Deprecated swr_alloc_set_opts() and swr_build_matrix().</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.9 released</h2>

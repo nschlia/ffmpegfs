@@ -1,0 +1,8 @@
+<map id="src/ffmpeg_subtitle.h" name="src/ffmpeg_subtitle.h">
+<area shape="rect" id="node1" title="FFmpeg AVSubtitle extension." alt="" coords="111,5,271,32"/>
+<area shape="rect" id="node2" href="$ffmpeg__subtitle_8cc.html" title="FFmpeg_Subtitle class implementation." alt="" coords="9,80,176,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder." alt="" coords="200,80,380,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations." alt="" coords="5,155,172,181"/>
+<area shape="rect" id="node5" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="197,155,383,181"/>
+<area shape="rect" id="node6" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="408,155,535,181"/>
+</map>

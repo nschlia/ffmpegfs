@@ -1,3 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structFormat__Options.html" title=" " alt="" coords="5,5,131,32"/>
+<area shape="rect" id="node1" href="$classFileIO.html" title="Base class for I/O." alt="" coords="5,107,64,133"/>
+<area shape="rect" id="node2" href="$classBlurayIO.html" title="Bluray I/O class." alt="" coords="112,5,191,32"/>
+<area shape="rect" id="node3" href="$classBuffer.html" title="The Buffer class." alt="" coords="120,56,183,83"/>
+<area shape="rect" id="node4" href="$classDiskIO.html" title="Disk file I/O class." alt="" coords="119,107,184,133"/>
+<area shape="rect" id="node5" href="$classDvdIO.html" title="DVD I/O class." alt="" coords="120,157,183,184"/>
+<area shape="rect" id="node6" href="$classVcdIO.html" title="Video CD and Super Video CD I/O class." alt="" coords="121,208,181,235"/>
 </map>

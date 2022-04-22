@@ -124,9 +124,6 @@ $(function() {
 <li>m_audio_format
 : <a class="el" href="structWAV__HEADER.html#ae7d5f03b840ce9e4c6559b364f18beb5">WAV_HEADER</a>
 </li>
-<li>m_audio_frame_map
-: <a class="el" href="classFFmpeg__Transcoder.html#aaa53811ceb9f3f3016a13e935f3cbf4e">FFmpeg_Transcoder</a>
-</li>
 <li>m_audio_pts
 : <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a9082195dfabab46a97850e09f9d2a04e">FFmpeg_Transcoder::OUTPUTFILE</a>
 </li>
@@ -525,6 +522,9 @@ $(function() {
 , <a class="el" href="classVcdChapter.html#abe5d426b930b6c0b07e9405037773505">VcdChapter</a>
 , <a class="el" href="structVCDMSF.html#a871ef49607f59cd5b99d9c694ae991fe">VCDMSF</a>
 </li>
+<li>m_frame_map
+: <a class="el" href="classFFmpeg__Transcoder.html#a790c0096a65de79d85029d24949cad01">FFmpeg_Transcoder</a>
+</li>
 <li>m_frame_no
 : <a class="el" href="structIMAGE__FRAME.html#a522ade92bd9c0860976049454c3b3c77">IMAGE_FRAME</a>
 </li>
@@ -602,12 +602,14 @@ $(function() {
 <li>m_hwaccel_enc_mode
 : <a class="el" href="classFFmpeg__Transcoder.html#af7115edb77371737162dcfc823f37d90">FFmpeg_Transcoder</a>
 </li>
+<li>m_id
+: <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
+</li>
 <li>m_ID
 : <a class="el" href="structVCDENTRIES.html#ab8ea131b127ca18d6c56a47f9378b84c">VCDENTRIES</a>
 </li>
 <li>m_id
-: <a class="el" href="classVcdEntries.html#a5480011244e8de3f4362821240b61960">VcdEntries</a>
-, <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
+: <a class="el" href="classVcdInfo.html#a7ed0881e96ef22e8dd8e60a6d85138c9">VcdInfo</a>
 </li>
 <li>m_ID
 : <a class="el" href="structVCDINFO.html#af5e02b335078a51c1e922e4cb5fdad50">VCDINFO</a>
@@ -832,8 +834,8 @@ $(function() {
 , <a class="el" href="structFFMPEGFS__PARAMS.html#a8b83fc974139919f59f2283969f429f8">FFMPEGFS_PARAMS</a>
 </li>
 <li>m_profile_tag
-: <a class="el" href="structVCDENTRIES.html#ad5e23f2aef71c1c0c53400e6d1814bf2">VCDENTRIES</a>
-, <a class="el" href="classVcdEntries.html#a77543848cf1169e39f8d4599d879e50f">VcdEntries</a>
+: <a class="el" href="classVcdEntries.html#a77543848cf1169e39f8d4599d879e50f">VcdEntries</a>
+, <a class="el" href="structVCDENTRIES.html#ad5e23f2aef71c1c0c53400e6d1814bf2">VCDENTRIES</a>
 , <a class="el" href="structVCDINFO.html#a3ba76569dbbd44f2ffada37dc21224ef">VCDINFO</a>
 , <a class="el" href="classVcdInfo.html#a0bd7fda9f07a3c4948a905978b30c73d">VcdInfo</a>
 </li>
@@ -863,6 +865,7 @@ $(function() {
 </li>
 <li>m_res
 : <a class="el" href="classFFmpeg__Frame.html#ae8444b16ba8861a185bf84b463827484">FFmpeg_Frame</a>
+, <a class="el" href="classFFmpeg__Subtitle.html#a57752ce7cfc1310fc67f721b63ba1e32">FFmpeg_Subtitle</a>
 </li>
 <li>m_reserved
 : <a class="el" href="structIMAGE__FRAME.html#ac40ed49fc9ad1bf029c489ae3b5ee2eb">IMAGE_FRAME</a>
@@ -958,7 +961,9 @@ $(function() {
 : <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#aae244dbcf9eec59780b1c78b7c081fed">FFmpeg_Transcoder::STREAMREF</a>
 </li>
 <li>m_stream_idx
-: <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#ad7dcf1c1130f5058e6f845c7e5c24aa8">FFmpeg_Transcoder::STREAMREF</a>
+: <a class="el" href="classFFmpeg__Frame.html#a08a955bf44268309e2d841977c6b1fc5">FFmpeg_Frame</a>
+, <a class="el" href="classFFmpeg__Subtitle.html#a2c1a8145e8ce81bfcba167e4f2688e37">FFmpeg_Subtitle</a>
+, <a class="el" href="structFFmpeg__Transcoder_1_1STREAMREF.html#ad7dcf1c1130f5058e6f845c7e5c24aa8">FFmpeg_Transcoder::STREAMREF</a>
 </li>
 <li>m_stream_map
 : <a class="el" href="classFFmpeg__Transcoder.html#a9c09c98e8f55ca898f7e1ceed7f2eaf3">FFmpeg_Transcoder</a>
@@ -971,9 +976,6 @@ $(function() {
 </li>
 <li>m_subtitle_codec
 : <a class="el" href="structFormat__Options_1_1__tagFORMAT.html#ae712f6db82831d954948b50d4e55cc34">Format_Options::_tagFORMAT</a>
-</li>
-<li>m_subtitle_maps
-: <a class="el" href="classFFmpeg__Transcoder.html#a3175822f2719b13415ec0de80d076fcb">FFmpeg_Transcoder</a>
 </li>
 <li>m_supported
 : <a class="el" href="structHWACCEL.html#a6b65c4fd15ba6ad4609704c93daa980c">HWACCEL</a>
@@ -1026,8 +1028,8 @@ $(function() {
 : <a class="el" href="classLogging.html#afe8ac8d94de71eecf43214b1380b32c0">Logging</a>
 </li>
 <li>m_track_no
-: <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
-, <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
+: <a class="el" href="classVcdChapter.html#a6af888bb25acc6acc66725969878d2cd">VcdChapter</a>
+, <a class="el" href="structVCDCHAPTER.html#a94d33dfa009208de9f25b3a31acc5c27">VCDCHAPTER</a>
 , <a class="el" href="classVcdIO.html#a75035ab02e01021aaa322f8e523f3c2e">VcdIO</a>
 , <a class="el" href="structVIRTUALFILE_1_1VCD__CHAPTER.html#ae6f9b5b821d631cfc547cec1f0134a5f">VIRTUALFILE::VCD_CHAPTER</a>
 </li>
@@ -1038,8 +1040,8 @@ $(function() {
 : <a class="el" href="structVIRTUALFILE_1_1CUESHEET__TRACK.html#aac21e3458448b474c340f10c6b50c207">VIRTUALFILE::CUESHEET_TRACK</a>
 </li>
 <li>m_type
-: <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
-, <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
+: <a class="el" href="structVCDENTRIES.html#a293853532c6abe2982bdb1ff940aad8a">VCDENTRIES</a>
+, <a class="el" href="classVcdEntries.html#a8847c29f86c40bae179d6076fdf27f10">VcdEntries</a>
 , <a class="el" href="structVCDINFO.html#a3c3488d8b79ae54e2d2a6fbd1a9644f3">VCDINFO</a>
 , <a class="el" href="classVcdInfo.html#acf8cf2e64c1091a63df1aa2cea15bc62">VcdInfo</a>
 , <a class="el" href="structVIRTUALFILE.html#a27038be2501f0f2a535748179cf90ec0">VIRTUALFILE</a>
@@ -1066,9 +1068,6 @@ $(function() {
 <li>m_video_frame_count
 : <a class="el" href="structCACHE__INFO.html#a04de9113f5377b2b286a3815c728c751">CACHE_INFO</a>
 , <a class="el" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">VIRTUALFILE</a>
-</li>
-<li>m_video_frame_map
-: <a class="el" href="classFFmpeg__Transcoder.html#ac9ee651a7dfacf51857e9037b63522a7">FFmpeg_Transcoder</a>
 </li>
 <li>m_video_pts
 : <a class="el" href="structFFmpeg__Transcoder_1_1OUTPUTFILE.html#a19ff8c025fd24f6f0b123720b90a16e2">FFmpeg_Transcoder::OUTPUTFILE</a>
@@ -1127,6 +1126,15 @@ $(function() {
 </li>
 <li>mtime()
 : <a class="el" href="classFFmpeg__Transcoder.html#ac390e42bd912f1579fc27b33495f2f08">FFmpeg_Transcoder</a>
+</li>
+<li>MULTIFRAME
+: <a class="el" href="classFFmpeg__Transcoder.html#a98c9923bf5a7d887350eed80fad48496">FFmpeg_Transcoder</a>
+</li>
+<li>MULTIFRAME_MAP
+: <a class="el" href="classFFmpeg__Transcoder.html#a2465e20c57b92f3fc045031a94707544">FFmpeg_Transcoder</a>
+</li>
+<li>MULTIFRAME_NODE
+: <a class="el" href="classFFmpeg__Transcoder.html#a338527dc43b9daaccdb25527c421aa83">FFmpeg_Transcoder</a>
 </li>
 </ul>
 </div><!-- contents -->

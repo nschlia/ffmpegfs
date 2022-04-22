@@ -2574,6 +2574,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     //video_codec = m_out.m_format_ctx->oformat->video_codec;
 
+    // Open video streams
     if (stream_exists(m_in.m_video.m_stream_idx) && m_current_format->video_codec() != AV_CODEC_ID_NONE)
     {
         m_active_stream_msk     |= FFMPEGFS_VIDEO;
@@ -2612,6 +2613,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
+    // Open audio streams
     if (stream_exists(m_in.m_audio.m_stream_idx) && m_current_format->audio_codec() != AV_CODEC_ID_NONE)
     {
         m_active_stream_msk     |= FFMPEGFS_AUDIO;
@@ -6592,7 +6594,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_context, A
         inputs->next           = nullptr;
 
         // args "null"      passthrough (dummy) filter for video
-        // args "anull"     passthrough (dummy) filter for audio
+        // args "null"      passthrough (dummy) filter for audio
 
         // https://stackoverflow.com/questions/31163120/c-applying-filter-in-ffmpeg
         const char * filters;

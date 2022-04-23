@@ -2642,16 +2642,20 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         }
     }
 
-    if (m_in.m_subtitle.size())
+    if (stream_exists(m_in.m_video.m_stream_idx) && m_current_format->video_codec() != AV_CODEC_ID_NONE)
     {
         int ret;
 
-        // No copy option, not worth it for a few frames
-        // Create as many subtitle streams as required
-        ret = add_subtitle_streams();
-        if (ret < 0)
+        // Open subtitle streams
+        if (m_in.m_subtitle.size())
         {
-            return ret;
+            // No copy option, not worth it for a few frames
+            // Create as many subtitle streams as required
+            ret = add_subtitle_streams();
+            if (ret < 0)
+            {
+                return ret;
+            }
         }
     }
 

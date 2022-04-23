@@ -1153,7 +1153,7 @@ private:
     AVSampleFormat              m_cur_sample_fmt;               /**< @brief Currently selected audio sample format */
     int                         m_cur_sample_rate;              /**< @brief Currently selected audio sample rate */
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-    AVChannelLayout             m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
+    AVChannelLayout             m_cur_ch_layout;                /**< @brief Currently selected audio channel layout */
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT

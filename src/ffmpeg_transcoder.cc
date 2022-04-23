@@ -224,7 +224,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     memset(&m_mtime, 0, sizeof(m_mtime));
 
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-    av_channel_layout_default(&m_cur_channel_layout, 2);
+    av_channel_layout_default(&m_cur_ch_layout, 2);
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
     // Initialise ID3v1.1 tag structure
@@ -2746,7 +2746,6 @@ int FFmpeg_Transcoder::init_resampler()
     }
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
-
     // Only initialise the resampler if it is necessary, i.e.,
     // if and only if the sample formats differ.
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
@@ -2768,7 +2767,7 @@ int FFmpeg_Transcoder::init_resampler()
     if (m_audio_resample_ctx == nullptr ||
             m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
             m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
-            !av_channel_layout_compare(&m_cur_channel_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
+            !av_channel_layout_compare(&m_cur_ch_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     if (m_audio_resample_ctx == nullptr ||
             m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
@@ -2801,7 +2800,7 @@ int FFmpeg_Transcoder::init_resampler()
         m_cur_sample_fmt        = m_in.m_audio.m_codec_ctx->sample_fmt;
         m_cur_sample_rate       = m_in.m_audio.m_codec_ctx->sample_rate;
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-        av_channel_layout_copy(&m_cur_channel_layout, &m_in.m_audio.m_codec_ctx->ch_layout);
+        av_channel_layout_copy(&m_cur_ch_layout, &m_in.m_audio.m_codec_ctx->ch_layout);
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
         m_cur_channel_layout    = m_in.m_audio.m_codec_ctx->channel_layout;
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT

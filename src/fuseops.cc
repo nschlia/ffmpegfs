@@ -53,7 +53,7 @@
 
 #include <dirent.h>
 #include <unistd.h>
-#include <map>
+#include <set>
 #include <regex>
 #include <list>
 #include <assert.h>
@@ -101,13 +101,8 @@ thread_pool*                tp;                 /**< @brief Thread pool object *
 /**
   *
   * List of passthrough file extensions
-  *
-  * Note: Must be in ascending aplhabetical order for the
-  * binary_search function used on it to work! New elements
-  * must be inserted in the correct position, elements
-  * removed by simply deleting them from the list.
   */
-static const std::list<std::string> passthrough_map =
+static const std::set<std::string, comp> passthrough_set =
 {
     "AA",
     "ACR",		// Dicom/ACR/IMA file format for medical images
@@ -174,7 +169,7 @@ static const std::list<std::string> passthrough_map =
     "MIFF",
     "MNG",		// Multiple Network Graphics
     "MRC",		// MRC format
-    "MrSID ",	// LizardTech's SID Wavelet format
+    "MrSID",	// LizardTech's SID Wavelet format
     "MRW",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
     "NEF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
     "NRW",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
@@ -196,7 +191,7 @@ static const std::list<std::string> passthrough_map =
     "PSD",		// Adobe PhotoShop format
     "PSP",		// Paint Shop Pro format
     "PVR",		// DreamCast Texture format
-    "QTIF ",    // Macintosh PICT format
+    "QTIF",     // Macintosh PICT format
     "RAF",		// Digital camera RAW formats (Adobe, Epson, Nikon, Minolta, Olympus, Fuji, Kodak, Sony, Pentax, Sigma)
     "RAS",		// Sun Raster format
     "RAW",		// Raw (binary) data
@@ -222,9 +217,9 @@ static const std::list<std::string> passthrough_map =
     "WAL",		// Quake 2 textures
     "WBC",		// Webshots formats
     "WBZ",		// Webshots formats
-    "WBMP ",    // WAP Bitmap format
+    "WBMP",     // WAP Bitmap format
     "WDP",		// JPEG-XR/Microsoft HD Photo format
-    "WebP ",    // Weppy file format
+    "WebP",     // Weppy file format
     "WMF",		// Windows Metafile Format
     "WSQ",		// Wavelet Scaler Quantization format
     "X",
@@ -233,7 +228,7 @@ static const std::list<std::string> passthrough_map =
     "XCF",		// GIMP file format
     "XPM",
     "XWD",
-    "YUV "		// Raw (binary) data
+    "YUV"		// Raw (binary) data
 };
 
 void init_fuse_ops(void)
@@ -381,7 +376,7 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
 {
     std::string ext;
 
-    if (!find_ext(&ext, *filepath) || std::binary_search(passthrough_map.cbegin(), passthrough_map.cend(), ext, nocasecompare))
+    if (!find_ext(&ext, *filepath) || passthrough_set.find(ext) != passthrough_set.cend())
     {
         return false;
     }

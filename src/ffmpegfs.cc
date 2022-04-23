@@ -1566,7 +1566,7 @@ std::string get_hwaccel_API_text(HWACCELAPI hwaccel_API)
 }
 
 /**
- * @brief Get value form command line string.
+ * @brief Get value from command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.
@@ -1589,7 +1589,7 @@ static int get_value(const std::string & arg, int *value)
 }
 
 /**
- * @brief Get value form command line string.
+ * @brief Get value from command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.
@@ -1612,7 +1612,7 @@ static int get_value(const std::string & arg, std::string *value)
 }
 
 /**
- * @brief Get value form command line string.
+ * @brief Get value from command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
  * @param[in] value - Upon return, contains the value after the "=" sign.

@@ -1078,6 +1078,12 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 for (std::map<const std::string, struct stat>::iterator it = files.begin(); it != files.end(); ++it)
                 {
                     std::string origname(it->first);
+
+                    if (is_blocked(origname))
+                    {
+                        continue;
+                    }
+
                     std::string origfile;
                     std::string filename(it->first);
                     struct stat & stbuf = it->second;
@@ -1281,6 +1287,12 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     int flags = 0;
 
     Logging::trace(path, "getattr");
+
+    if (is_blocked(path))
+    {
+        errno = ENOENT;
+        return -errno;
+    }
 
     translate_path(&origpath, path);
 

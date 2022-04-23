@@ -1029,4 +1029,11 @@ int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
  */
 const std::string & regex_escape(std::string *str);
 
+/**
+ * @brief Check if filename should be hidden from output path
+ * @param[in] filename - Name to check
+ * @return Returns true, if filename is blocked, false if not.
+ */
+bool is_blocked(const std::string & filename);
+
 #endif

@@ -2458,3 +2458,19 @@ const std::string & regex_escape(std::string * str)
     return *str;
 }
 
+bool is_blocked(const std::string & filename)
+{
+    std::string ext;
+
+    if (!find_ext(&ext, filename))
+    {
+        return false; // no extension
+    }
+
+    if (!strcasecmp(ext, "srt") || !strcasecmp(ext, "vtt"))
+    {
+        return true;
+    }
+
+    return false;
+}

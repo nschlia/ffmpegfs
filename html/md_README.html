@@ -91,7 +91,7 @@ News</h1>
 Version 2.10 under development</h2>
 <p><b>New in in 2.10 (2022-04-XX):</b></p>
 <ul>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/120">Issue #120</a>: Added subtitle support. Subtitle streams can now also be transcoded to the output files.</li>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/120">Issue #120</a>: Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.</li>
 <li><b>Bugfix:</b> Fixed memory leak in encode_audio_frame().</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/122">Issue #122</a>: Last song was missing from cuesheet files.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/129">Issue #129</a>: Files remained zero size when previously transcoded.</li>
@@ -465,12 +465,38 @@ Transcoding Subtitles</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">MKV   </td><td class="markdownTableBodyNone">DVB Subtitles   </td><td class="markdownTableBodyNone">Bitmap   </td></tr>
 </table>
-<p>Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec.</p>
+<p>Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec. MKV would be best choice to cover all input subtitles formats.</p>
+<h2><a class="anchor" id="autotoc_md29"></a>
+External Subtitle Files</h2>
+<p>Subtitles can reside in separate files. These must have the same filename, but the extension "srt" for ASS/SubRip or "vtt" for WebVTT. The language can be defined with a second level extension, e.g. "mediafile.en.srt" would define the contents as "english". There is no convention to the language name, so it could even be the full language name like mediafile.french.srt" or similar.</p>
+<p>Example:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Filename   </th><th class="markdownTableHeadNone">Contents    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">myvideo.mkv   </td><td class="markdownTableBodyNone">Video    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">myvideo.de.srt   </td><td class="markdownTableBodyNone">German Subtitles    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">myvideo.en.srt   </td><td class="markdownTableBodyNone">English Subtitles    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">myvideo.es.srt   </td><td class="markdownTableBodyNone">Spanish Subtitles    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">myvideo.fr.srt   </td><td class="markdownTableBodyNone">French Subtitles    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">myvideo.hu.srt   </td><td class="markdownTableBodyNone">Hungarian Subtitles    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">myvideo.it.srt   </td><td class="markdownTableBodyNone">Italian Subtitles    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">myvideo.jp.srt   </td><td class="markdownTableBodyNone">Japanese Subtitles    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">myvideo.srt   </td><td class="markdownTableBodyNone">Unknown Language Subtitles   </td></tr>
+</table>
 <p><b>TODO:</b></p>
 <ul>
 <li>Maybe FFmpeg could convert text to bitmap for TS/HLS if the input format is not bitmapped.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 MP4 Format Profiles</h1>
 <p>The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different as for Firefox, unfortunately.</p>
 <p>The &ndash;profile option allows to select the format:</p>
@@ -508,7 +534,7 @@ MP4 Format Profiles</h1>
 <p>This all boils down to the fact than Firefox and Edge are the only browsers that support the necessary extensions to start playback while still transcoding.</p>
 <p>In most cases files will not play if not properly optimised.</p>
 <p>See [TODO](TODO) for details.</p>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md31"></a>
 How It Works</h1>
 <p>When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.</p>
 <p>As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded. Once decoded the file is kept in a disk buffer and can be accessed very fast.</p>
@@ -518,7 +544,7 @@ How It Works</h1>
 <p>MP4: Same applies to meta atoms in MP4 containers.</p>
 <p>MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This <em>dramatically</em> speeds up such applications.</p>
 <p>WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.</p>
-<h1><a class="anchor" id="autotoc_md31"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 About Output Formats</h1>
 <p>A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.</p>
 <p>MP4 files are special, though, as regular MP4s are not quite suited for live streaming. Reason being that the start block of an MP4 contains a field with the size of the compressed data section. Suffice to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.</p>
@@ -530,16 +556,16 @@ About Output Formats</h1>
 <p>The data part is divided into chunks of about 1 second length, each with its own header, thus it is possible to fill in the size fields early enough.</p>
 <p>As a draw back not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback cannot be positioned past the current playback position, only backwards.</p>
 <p>But that's the price of starting playback fast.</p>
-<h1><a class="anchor" id="autotoc_md32"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 Fixing Problems</h1>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 General problems accessing a file</h2>
 <p>Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get a "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system.</p>
 <p>What you will have to do is refer to the syslog, system journal or to the FFmpeg log itself, optionally at a higher verbosity. If you are unable to resolve the problem yourself, feel free to create <a href="https://github.com/nschlia/ffmpegfs/issues">an issue</a>, stating what you have done and what has happened. Do not forget to add logs (preferably at a higher verbosity) and if possible a description how to recreate the issue. A demo file that causes the error would be helpful as well.</p>
-<h2><a class="anchor" id="autotoc_md34"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 Transcoding too slow</h2>
 <p>See <a href="INSTALL.md#building-ffmpeg-with-optimisations">Building FFmpeg with optimisations</a></p>
-<h2><a class="anchor" id="autotoc_md35"></a>
+<h2><a class="anchor" id="autotoc_md36"></a>
 Lock ups when accessed through Samba</h2>
 <p>When accessed one a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data was returned.</p>
 <p>Seems others had the same problem:</p>
@@ -548,12 +574,12 @@ Lock ups when accessed through Samba</h2>
 level2 oplocks = no
 aio read size = 1
 </pre><p> The "aio read size" parameter may be moved to the share config: </p><pre class="fragment">aio read size = 1
-</pre> <h2><a class="anchor" id="autotoc_md36"></a>
+</pre> <h2><a class="anchor" id="autotoc_md37"></a>
 rsync, Beyond Compare and other tools</h2>
 <p>Some copy tools do not go along very well with dynamically generated files as in <a href="https://github.com/nschlia/ffmpegfs/issues/22">Issue #23: Partial transcode of some files</a>.</p>
 <p>Under Linux it is best to use (optionally with -r parameter) </p><pre class="fragment">    cp -uv /path/to/source /path/to/target
 </pre><p> This will copy all missing/changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only copy the predicted size first and not respond to size changes.</p>
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h2><a class="anchor" id="autotoc_md38"></a>
 Play HLS output by opening hls.html from disk</h2>
 <p>Most browser prevent playback of files from disk. You may put them into a website directory, but sometimes even https must be used or playback will be blocked.</p>
 <p><b>To enable disk playback in Firefox:</b></p>
@@ -561,14 +587,14 @@ Play HLS output by opening hls.html from disk</h2>
 <li>Open about:config</li>
 <li>Set security.fileuri.strict_origin_policy to false</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md39"></a>
 Songs get cut short</h2>
 <p>If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.</p>
 <p>Happens when the files are transcoded on the fly, but never when file comes from cache. This is because the result is never exactly what was predicted.</p>
 <p>SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file ist larger than predicted.</p>
 <p>NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to - once the file is OK, once not.</p>
 <p>As of yet there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.</p>
-<h1><a class="anchor" id="autotoc_md39"></a>
+<h1><a class="anchor" id="autotoc_md40"></a>
 Development</h1>
 <p>FFmpegfs uses Git for revision control. You can obtain the full repository with: </p><pre class="fragment">git clone https://github.com/nschlia/ffmpegfs.git
 </pre><p> FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:</p>
@@ -581,29 +607,29 @@ Development</h1>
 </ul>
 <p>Please note that FFmpegfs is in active development, so the main branch may be unstable (but offer nice gimmicks, though). If you need a stable version please get one (preferrably the latest) release.</p>
 <p>Feel free to clone this project and add your own features. If they are interesting for others they might be pushed back into this project. Same applies to bug fixes, if you discover a bug your welcome to fix it!</p>
-<h1><a class="anchor" id="autotoc_md40"></a>
+<h1><a class="anchor" id="autotoc_md41"></a>
 Future Plans</h1>
 <ul>
 <li>Create a windows version</li>
 <li>and more, see [TODO](TODO)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md41"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 Demo Code</h1>
 <p>HLS player and demo code see: <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a></p>
-<h1><a class="anchor" id="autotoc_md42"></a>
+<h1><a class="anchor" id="autotoc_md43"></a>
 Authors</h1>
 <p>This fork with FFmpeg support is maintained by Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) since 2017 to date.</p>
 <p>Based on work by K. Henriksson (from 2008 to 2017) and the original author David Collett (from 2006 to 2008).</p>
 <p>Much thanks to them for the original work and giving me a good head start!</p>
-<h1><a class="anchor" id="autotoc_md43"></a>
+<h1><a class="anchor" id="autotoc_md44"></a>
 License</h1>
 <p>This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found <a href="http://www.gnu.org/licenses/gpl-3.0.html">online</a> or in the COPYING file.</p>
 <p>This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
-<h1><a class="anchor" id="autotoc_md44"></a>
+<h1><a class="anchor" id="autotoc_md45"></a>
 FFmpeg License</h1>
 <p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.</p>
 <p>See <a href="https://www.ffmpeg.org/legal.html">https://www.ffmpeg.org/legal.html</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md45"></a>
+<h1><a class="anchor" id="autotoc_md46"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>

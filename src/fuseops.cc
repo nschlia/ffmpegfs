@@ -64,30 +64,30 @@
  */
 typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;
 
-static void             init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
-static LPVIRTUALFILE    make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
-static void             prepare_script();
-static void             translate_path(std::string *origpath, const char* path);
-static bool             transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
+static void                 init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
+static LPVIRTUALFILE        make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
+static void                 prepare_script();
+static void                 translate_path(std::string *origpath, const char* path);
+static bool                 transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
-static int              get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
-static int              make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
-static int              kick_next(LPVIRTUALFILE virtualfile);
+static int                  get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int                  make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
+static int                  kick_next(LPVIRTUALFILE virtualfile);
 
-static int              ffmpegfs_readlink(const char *path, char *buf, size_t size);
-static int              ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
-static int              ffmpegfs_getattr(const char *path, struct stat *stbuf);
-static int              ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
-static int              ffmpegfs_open(const char *path, struct fuse_file_info *fi);
-static int              ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
-static int              ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
-static int              ffmpegfs_release(const char *path, struct fuse_file_info *fi);
-static void             sighandler(int signum);
-static void *           ffmpegfs_init(struct fuse_conn_info *conn);
-static void             ffmpegfs_destroy(__attribute__((unused)) void * p);
-static std::string      get_number(const char *path, uint32_t *value);
+static int                  ffmpegfs_readlink(const char *path, char *buf, size_t size);
+static int                  ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
+static int                  ffmpegfs_getattr(const char *path, struct stat *stbuf);
+static int                  ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
+static int                  ffmpegfs_open(const char *path, struct fuse_file_info *fi);
+static int                  ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
+static int                  ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
+static int                  ffmpegfs_release(const char *path, struct fuse_file_info *fi);
+static void                 sighandler(int signum);
+static void *               ffmpegfs_init(struct fuse_conn_info *conn);
+static void                 ffmpegfs_destroy(__attribute__((unused)) void * p);
+static std::string          get_number(const char *path, uint32_t *value);
 
-static FILENAME_MAP          filenames;          /**< @brief Map files to virtual files */
+static FILENAME_MAP         filenames;          /**< @brief Map files to virtual files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */

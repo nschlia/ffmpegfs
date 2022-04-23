@@ -45,6 +45,7 @@
 #include <queue>
 #include <mutex>
 #include <variant>
+#include <functional>
 
 class Buffer;
 struct SwrContext;
@@ -61,6 +62,12 @@ struct AVSubtitle;
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
 public:
+    typedef struct BUFFER_DATA
+    {
+        uint8_t *   ptr;
+        size_t      size; ///< size left in the buffer
+    } BUFFER_DATA;
+
 #define MAX_PRORES_FRAMERATE    2                                   /**< @brief Number of selectable fram rates */
 
     /**
@@ -467,9 +474,10 @@ protected:
      * @brief Add new subtitle stream to output file.
      * @param[in] codec_id - Codec for this stream.
      * @param[in] input_streamref - Streamref of input stream.
+     * @param[in] language - (Optional) Language or subtitle file, or std::nullopt if unknown.
      * @return On success returns index of new stream [0...n]; on error negative AVERROR.
      */
-    int                         add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref);
+    int                         add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref, const std::optional<std::string> &language = std::nullopt);
     /**
      * @brief Add new stream copy to output file.
      * @param[in] codec_id - Codec for this stream.
@@ -1135,6 +1143,36 @@ protected:
      * @return 0 on success, a negative AVERROR code on failure.
      */
     int                         start_new_segment();
+
+    /**
+     * @brief FFmpeg_Transcoder::read_packet
+     * @param opaque
+     * @param buf
+     * @param buf_size
+     * @return
+     */
+    static int                  read_packet(void *opaque, uint8_t *buf, int buf_size);
+    /**
+     * @brief Scan for external subtitle files
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         add_external_subtitle_streams();
+    /**
+     * @brief add_external_subtitle_stream
+     * @param[in] subtitle_file - Name of subtitle fule
+     * @param[in] language - Language or subtitle file, or std::nullopt if unknown.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         add_external_subtitle_stream(const std::string & subtitle_file, const std::optional<std::string> & language);
+    /**
+     * @brief foreach_subititle_file
+     * @param[in] search_path - Directory with subtitle files
+     * @param[in] regex - Regular expression to select subtitle files
+     * @param[in] depth - Recursively scan for subtitles, should be 0.
+     * @param[in] f - Funtion to be called for each file found
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, std::function<int(const std::string &, const std::optional<std::string> &)> f);
 
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */

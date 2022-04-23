@@ -8,8 +8,8 @@ FFmpegfs NEWS
 Important changes in 2.10 (2022-04-XX):
 
 * Feature: Issue #120: Added subtitle support. Subtitle streams can now also be
-  transcoded to the output files.
-* Enhancement:
+  transcoded to the output files. Separate SRT or VTT files will be incorporated
+  as subtitle streams.
 * Bugfix: Fixed memory leak in encode_audio_frame().
 * Bugfix: Issue #122: Last song was missing from cuesheet files.
 * Bugfix: Issue #129: Files remained zero size when previously transcoded.

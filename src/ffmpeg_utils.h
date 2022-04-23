@@ -1022,4 +1022,11 @@ bool is_text_codec(AVCodecID codec_id);
  */
 int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
 
+/**
+ * @brief Escape characters that are meaningful to regexp.
+ * @param[in] str - String to escape
+ * @return Returns reference to string.
+ */
+const std::string & regex_escape(std::string *str);
+
 #endif

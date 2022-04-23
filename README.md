@@ -21,7 +21,7 @@ News
 
 **New in in 2.10 (2022-04-XX):**
 
-* **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files.
+* **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.
 * **Bugfix:** Fixed memory leak in encode_audio_frame().
 * **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): Last song was missing from cuesheet files.
 * **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
@@ -443,7 +443,25 @@ Closed captions are converted to the output files, if possible. There are two ge
 | MKV              | ASS (Advanced SSA), SubRip Subtitles, WebVTT Subtitles       | Text   |
 | MKV              | DVB Subtitles                                                | Bitmap |
 
-Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec. 
+Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically select the best matching output codec.  MKV would be best choice to cover all input subtitles formats.
+
+### External Subtitle Files
+
+Subtitles can reside in separate files. These must have the same filename, but the extension "srt" for ASS/SubRip or "vtt" for WebVTT. The language can be defined with a second level extension, e.g. "mediafile.en.srt" would define the contents as "english". There is no convention to the language name, so it could even be the full language name like mediafile.french.srt" or similar.
+
+Example:
+
+| Filename | Contents |
+| ---- | ---- |
+| myvideo.mkv | Video |
+| myvideo.de.srt | German Subtitles |
+| myvideo.en.srt | English Subtitles     |
+| myvideo.es.srt | Spanish Subtitles     |
+| myvideo.fr.srt | French Subtitles     |
+| myvideo.hu.srt | Hungarian Subtitles     |
+| myvideo.it.srt | Italian Subtitles     |
+| myvideo.jp.srt | Japanese Subtitles     |
+| myvideo.srt | Unknown Language Subtitles     |
 
 **TODO:**
 

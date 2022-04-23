@@ -1223,11 +1223,11 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
     if (lib_exists)
     {
         strsprintf(info,
-                      "lib%-17s: %d.%d.%d\n",
-                      libname,
-                      version_minor,
-                      version_major,
-                      version_micro);
+                   "lib%-17s: %d.%d.%d\n",
+                   libname,
+                   version_minor,
+                   version_major,
+                   version_micro);
     }
 
     return info;
@@ -2438,5 +2438,23 @@ int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate)
     *samplerate  = fmt_ctx->streams[ret]->codecpar->sample_rate;
 
     return ret;
+}
+
+const std::string & regex_escape(std::string * str)
+{
+    // Escape characters that are meaningful to regexp.
+    // Note that "\\" must be first so we do not escape our own escapes...
+    const std::vector<std::string> charlist {"\\", "+", "*", "?", "^", "$", "(", ")", "[", "]", "{", "}", "|"};
+
+    for (const std::string & ch : charlist)
+    {
+        replace_all(str, ch, "\\" + ch);
+    }
+
+    replace_all(str, ".", "[.]");
+
+    fprintf(stderr, "%s\n", str->c_str());
+
+    return *str;
 }
 

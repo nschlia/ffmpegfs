@@ -44,6 +44,9 @@ extern "C" {
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
 #include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavformat/avio.h>
+#include <libavutil/file.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
@@ -58,6 +61,7 @@ extern "C" {
 
 #include <assert.h>
 #include <unistd.h>
+#include <filesystem>
 
 #ifdef __cplusplus
 extern "C" {
@@ -2191,7 +2195,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     return (output_stream == nullptr ? 0 : output_stream->index);
 }
 
-int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref)
+int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref, const std::optional<std::string> & language)
 {
     AVCodecContext *output_codec_ctx    = nullptr;
     AVStream *      output_stream       = nullptr;
@@ -2297,13 +2301,21 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
         return ret;
     }
 
-    // Copy language
-    AVDictionaryEntry *tag = nullptr;
-
-    tag = av_dict_get(input_streamref.m_stream->metadata, "language", nullptr, AV_DICT_IGNORE_SUFFIX);
-    if (tag != nullptr)
+    if (!language)
     {
-        av_dict_set(&output_stream->metadata, "language", tag->value, AV_DICT_IGNORE_SUFFIX);
+        // Copy language
+        AVDictionaryEntry *tag = nullptr;
+
+        tag = av_dict_get(input_streamref.m_stream->metadata, "language", nullptr, AV_DICT_IGNORE_SUFFIX);
+        if (tag != nullptr)
+        {
+            av_dict_set(&output_stream->metadata, "language", tag->value, AV_DICT_IGNORE_SUFFIX);
+        }
+    }
+    else
+    {
+        // Use predefined value
+        av_dict_set(&output_stream->metadata, "language", language->c_str(), AV_DICT_IGNORE_SUFFIX);
     }
 
     // Save the encoder context for easier access later.
@@ -2657,6 +2669,13 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
                 return ret;
             }
         }
+
+        // Open streams for external subtitle files
+        ret = add_external_subtitle_streams();
+        if (ret < 0)
+        {
+            return ret;
+        }
     }
 
     if (!params.m_noalbumarts && m_current_format->albumart_supported())
@@ -2770,7 +2789,7 @@ int FFmpeg_Transcoder::init_resampler()
     if ((m_audio_resample_ctx == nullptr) ||
             (m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt) ||
             (m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate) ||
-#if LAVU_DEP_OLD_CHANNEL_LAYOUT
+        #if LAVU_DEP_OLD_CHANNEL_LAYOUT
             av_channel_layout_compare(&m_cur_ch_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
             (m_cur_channel_layout != m_in.m_audio.m_codec_ctx->channel_layout))
@@ -7555,4 +7574,260 @@ int FFmpeg_Transcoder::map_in_to_out_stream(int in_stream_idx) const
     }
 
     return (it->second);
+}
+
+inline int FFmpeg_Transcoder::foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, std::function<int(const std::string &, const std::optional<std::string> &)> f)
+{
+    int ret = 0;
+
+    try
+    {
+        const std::filesystem::directory_iterator end;
+        for (std::filesystem::directory_iterator iter{ search_path }; iter != end && ret == 0; iter++)
+        {
+            const std::string filename(iter->path().filename().string());
+            if (std::filesystem::is_regular_file(*iter))
+            {
+                if (std::regex_match(filename, regex))
+                {
+                    std::smatch res;
+                    if (std::regex_search(filename.cbegin(), filename.cend(), res, regex))
+                    {
+                        if (res[2].length())
+                        {
+                            ret = f(iter->path().string(), res[2]);
+                        }
+                        else
+                        {
+                            ret = f(iter->path().string(), std::nullopt);
+                        }
+                    }
+                }
+            }
+            else if (std::filesystem::is_directory(*iter) && depth > 0)
+            {
+                ret = foreach_subtitle_file(iter->path().string(), regex, depth - 1, f);
+            }
+        }
+    }
+    catch (std::filesystem::filesystem_error& e)
+    {
+        ret = AVERROR(e.code().value());
+        Logging::error(filename(), "Could not open directory '%1' (error '%2').", search_path.c_str(), ffmpeg_geterror(ret).c_str());
+    }
+    catch (std::bad_alloc & e)
+    {
+        ret = AVERROR(ENOMEM);
+        Logging::error(filename(), "Could not open directory '%1' (error '%2').", search_path.c_str(), ffmpeg_geterror(ret).c_str());
+    }
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::read_packet(void *opaque, uint8_t *buf, int buf_size)
+{
+    BUFFER_DATA *bd = static_cast<BUFFER_DATA *>(opaque);
+    buf_size = FFMIN(buf_size, static_cast<int>(bd->size));
+
+    if (!buf_size)
+    {
+        return AVERROR_EOF;
+    }
+
+    /* copy internal buffer data to buf */
+    memcpy(buf, bd->ptr, static_cast<size_t>(buf_size));
+    bd->ptr  += buf_size;
+    bd->size -= static_cast<size_t>(buf_size);
+
+    return buf_size;
+}
+
+int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle_file, const std::optional<std::string> & language)
+{
+    AVFormatContext *format_ctx = nullptr;
+    AVIOContext *avio_ctx = nullptr;
+    uint8_t *buffer = nullptr;
+    size_t buffer_size;
+    int ret = 0;
+
+    if (language)
+    {
+        Logging::error(filename(), "Adding external subtitle stream: %1 [%2]", subtitle_file.c_str(), language->c_str());
+    }
+    else
+    {
+        Logging::error(filename(), "Adding external subtitle stream: %1", subtitle_file.c_str());
+    }
+
+    try
+    {
+        uint8_t *avio_ctx_buffer = nullptr;
+        int avio_ctx_buffer_size = 4096;
+        BUFFER_DATA bd = { nullptr, 0 };
+
+        // slurp file content into buffer
+        ret = av_file_map(subtitle_file.c_str(), &buffer, &buffer_size, 0, nullptr);
+        if (ret < 0)
+        {
+            throw ret;
+        }
+
+        // fill opaque structure used by the AVIOContext read callback
+        bd.ptr  = buffer;
+        bd.size = buffer_size;
+
+        format_ctx = avformat_alloc_context();
+        if (format_ctx == nullptr)
+        {
+            ret = AVERROR(ENOMEM);
+            throw ret;
+        }
+
+        avio_ctx_buffer = reinterpret_cast<uint8_t *>(av_malloc(static_cast<size_t>(avio_ctx_buffer_size)));
+        if (avio_ctx_buffer == nullptr)
+        {
+            ret = AVERROR(ENOMEM);
+            throw ret;
+        }
+
+        avio_ctx = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, &bd, &read_packet, nullptr, nullptr);
+        if (avio_ctx == nullptr)
+        {
+            ret = AVERROR(ENOMEM);
+            throw ret;
+        }
+        format_ctx->pb = avio_ctx;
+
+        ret = avformat_open_input(&format_ctx, nullptr, nullptr, nullptr);
+        if (ret < 0)
+        {
+            fprintf(stderr, "Could not open input\n");
+            throw ret;
+        }
+
+        ret = avformat_find_stream_info(format_ctx, nullptr);
+        if (ret < 0)
+        {
+            fprintf(stderr, "Could not find stream information\n");
+            throw ret;
+        }
+
+        //av_dump_format(format_ctx, 0, subtitle_file.c_str(), 0);
+
+        AVCodecContext * codec_ctx = nullptr;
+        int stream_idx = INVALID_STREAM;
+
+        ret = open_bestmatch_decoder(format_ctx, &codec_ctx, &stream_idx, AVMEDIA_TYPE_SUBTITLE);
+        if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
+        {
+            Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+
+        if (ret != AVERROR_STREAM_NOT_FOUND)
+        {
+            AVCodecID codec_id = m_current_format->subtitle_codec(codec_ctx->codec_id); // Get matching output codec
+
+            if (codec_id != AV_CODEC_ID_NONE)
+            {
+                STREAMREF input_streamref;
+
+                codec_ctx->pkt_timebase = codec_ctx->time_base = format_ctx->streams[0]->time_base;
+
+                // We have a subtitle stream
+                input_streamref.m_codec_ctx   = codec_ctx;
+                input_streamref.m_stream      = format_ctx->streams[0];
+                input_streamref.m_stream_idx  = INVALID_STREAM;
+
+                //m_active_stream_msk     |= FFMPEGFS_SUBTITLE;
+
+                ret = add_subtitle_stream(codec_id, input_streamref, language);
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
+                AVPacket pkt;
+                int output_stream_index = ret;
+                // Read one frame from the input file into a temporary packet.
+                while ((ret = av_read_frame(format_ctx, &pkt)) == 0)
+                {
+                    int decoded;
+                    ret = decode_subtitle(codec_ctx, &pkt, &decoded, output_stream_index);
+                    if (ret < 0)
+                    {
+                        throw ret;
+                    }
+                }
+            }
+        }
+
+        if (ret == AVERROR_EOF)
+        {
+            ret = 0;
+        }
+    }
+    catch (int _ret)
+    {
+        ret = _ret;
+    }
+
+    avformat_close_input(&format_ctx);
+
+    // note: the internal buffer could have changed, and be != avio_ctx_buffer
+    if (avio_ctx != nullptr)
+    {
+        av_freep(&avio_ctx->buffer);
+    }
+
+    avio_context_free(&avio_ctx);
+
+    av_file_unmap(buffer, buffer_size);
+
+    return ret;
+}
+
+int FFmpeg_Transcoder::add_external_subtitle_streams()
+{
+    int ret;
+
+    try
+    {
+        std::filesystem::path file(filename());
+        std::string stem(file.stem().string());
+
+        // Escape characters that are meaningful to regexp.
+        regex_escape(&stem);
+
+        std::string regex_string("^(" + stem + "[.])(.*)([.]srt|[.]vtt)|^(" + stem + ")([.]srt|[.]vtt)");   // filename.srt/vtt or filename.lang.srt/vtt
+
+        std::regex regex(regex_string, std::regex::ECMAScript);
+
+        ret = foreach_subtitle_file(file.parent_path(), regex, 0, std::bind(&FFmpeg_Transcoder::add_external_subtitle_stream, this, std::placeholders::_1, std::placeholders::_2));
+
+        // Ugly lambda would also be possible
+        //ret = foreach_subititle_file(
+        //            file.parent_path(),
+        //            regex,
+        //            0,
+        //            [this](const std::string & subtitle_file, const std::optional<std::string> & language)
+        //{
+        //    if (language)
+        //    {
+        //        Logging::error(filename(), "[%1] %2", language->c_str(), subtitle_file.c_str());
+        //    }
+        //    else
+        //    {
+        //        Logging::error(filename(), "%1", subtitle_file.c_str());
+        //    }
+        //    return 0;
+        //});
+    }
+    catch (std::regex_error & e)
+    {
+        ret = 0;    // Ignore error
+        Logging::error(filename(), "INTERNAL ERROR! Unable to create reg exp: %1", e.what());
+    }
+
+    return ret;
 }

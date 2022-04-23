@@ -391,7 +391,7 @@ static int parse_embedded_cuesheet(const std::string & filename, void *buf, fuse
             std::string result(tag->value);
 
             result += "\r\n";   // cue_parse_string() reports syntax error if string does not end with newline
-            result = replace_all(result, "\r\n", "\n"); // Convert all to unix
+            replace_all(&result, "\r\n", "\n"); // Convert all to unix
 
             res = parse_cuesheet(filename, cue_parse_string(result.c_str()), &stbuf, buf, filler, fmt_ctx);
         }

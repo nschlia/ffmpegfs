@@ -1844,9 +1844,9 @@ int reg_compare(const std::string & value, const std::string & pattern, std::reg
     }
     catch(const std::regex_error& e)
     {
-        std::cerr << "regex_error caught: " << e.what() << '\n';
+        std::cerr << "regex_error caught: " << e.what() << std::endl;
         if(e.code() == std::regex_constants::error_brack)
-            std::cerr << "The code was error_brack\n";
+            std::cerr << "The code was error_brack" << std::endl;
 
         reti = -1;
     }

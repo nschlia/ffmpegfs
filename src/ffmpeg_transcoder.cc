@@ -2763,16 +2763,13 @@ int FFmpeg_Transcoder::init_resampler()
         return 0;
     }
 
+    if ((m_audio_resample_ctx == nullptr) ||
+            (m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt) ||
+            (m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate) ||
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-    if (m_audio_resample_ctx == nullptr ||
-            m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
-            m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
-            !av_channel_layout_compare(&m_cur_ch_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
+            av_channel_layout_compare(&m_cur_ch_layout, &m_in.m_audio.m_codec_ctx->ch_layout))
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    if (m_audio_resample_ctx == nullptr ||
-            m_cur_sample_fmt != m_in.m_audio.m_codec_ctx->sample_fmt ||
-            m_cur_sample_rate != m_in.m_audio.m_codec_ctx->sample_rate ||
-            m_cur_channel_layout != m_in.m_audio.m_codec_ctx->channel_layout)
+            (m_cur_channel_layout != m_in.m_audio.m_codec_ctx->channel_layout))
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     {
         int ret;

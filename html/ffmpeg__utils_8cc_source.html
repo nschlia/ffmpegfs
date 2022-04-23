@@ -1878,9 +1878,9 @@ $(function() {
 <div class="line"><a name="l01844"></a><span class="lineno"> 1844</span>&#160;    }</div>
 <div class="line"><a name="l01845"></a><span class="lineno"> 1845</span>&#160;    <span class="keywordflow">catch</span>(<span class="keyword">const</span> std::regex_error&amp; e)</div>
 <div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;    {</div>
-<div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;        std::cerr &lt;&lt; <span class="stringliteral">&quot;regex_error caught: &quot;</span> &lt;&lt; e.what() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
+<div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;        std::cerr &lt;&lt; <span class="stringliteral">&quot;regex_error caught: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line"><a name="l01848"></a><span class="lineno"> 1848</span>&#160;        <span class="keywordflow">if</span>(e.code() == std::regex_constants::error_brack)</div>
-<div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160;            std::cerr &lt;&lt; <span class="stringliteral">&quot;The code was error_brack\n&quot;</span>;</div>
+<div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160;            std::cerr &lt;&lt; <span class="stringliteral">&quot;The code was error_brack&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l01850"></a><span class="lineno"> 1850</span>&#160; </div>
 <div class="line"><a name="l01851"></a><span class="lineno"> 1851</span>&#160;        reti = -1;</div>
 <div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;    }</div>

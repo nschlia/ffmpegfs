@@ -61,11 +61,14 @@ struct AVSubtitle;
  */
 class FFmpeg_Transcoder : public FFmpeg_Base, FFmpeg_Profiles
 {
-public:
+protected:
+    /**
+      * @brief Buffer structure, used in FFmpeg_Transcoder::read_packet
+      */
     typedef struct BUFFER_DATA
     {
-        uint8_t *   ptr;
-        size_t      size; ///< size left in the buffer
+        uint8_t *   ptr;    ///< Pointer to buffer
+        size_t      size;   ///< Size left in the buffer
     } BUFFER_DATA;
 
 #define MAX_PRORES_FRAMERATE    2                                   /**< @brief Number of selectable fram rates */

@@ -7652,11 +7652,11 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
 
     if (language)
     {
-        Logging::error(filename(), "Adding external subtitle stream: %1 [%2]", subtitle_file.c_str(), language->c_str());
+        Logging::debug(filename(), "Adding external subtitle stream: %1 [%2]", subtitle_file.c_str(), language->c_str());
     }
     else
     {
-        Logging::error(filename(), "Adding external subtitle stream: %1", subtitle_file.c_str());
+        Logging::debug(filename(), "Adding external subtitle stream: %1", subtitle_file.c_str());
     }
 
     try

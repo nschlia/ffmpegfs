@@ -2458,12 +2458,16 @@ bool is_blocked(const std::string & filename)
         return false; // no extension
     }
 
+    // These are blocked by default, they confuse players like VLC or mpv which
+    // auto load them. As they get incorporated by FFmpegfs they would end up
+    // as duplicates.
     if (!strcasecmp(ext, "srt") || !strcasecmp(ext, "vtt"))
     {
         return true;
     }
 
-    return false;
+    // Check block list
+    return (params.m_hide_extensions->find(ext) != params.m_hide_extensions->cend());
 }
 
 std::string implode(const STRINGSET & s)

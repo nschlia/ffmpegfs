@@ -132,6 +132,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
     , m_extensions(new STRINGSET)
+    , m_hide_extensions(new STRINGSET)
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
@@ -140,6 +141,7 @@ FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 {
     delete m_hwaccel_dec_blocked;
     delete m_extensions;
+    delete m_hide_extensions;
 }
 
 bool FFMPEGFS_PARAMS::smart_transcode(void) const
@@ -246,6 +248,7 @@ enum
     KEY_HWACCEL_DECODER_API,
     KEY_HWACCEL_DECODER_DEVICE,
     KEY_HWACCEL_DECODER_BLOCKED,
+    KEY_HIDE_EXTENSIONS
 };
 
 /**
@@ -353,6 +356,8 @@ static struct fuse_opt ffmpegfs_opts[] =
     FFMPEGFS_OPT("min_dvd_chapter_duration=%u",     m_min_dvd_chapter_duration, 0),
     FFMPEGFS_OPT("--oldnamescheme=%u",              m_oldnamescheme, 0),
     FFMPEGFS_OPT("oldnamescheme=%u",                m_oldnamescheme, 0),
+    FUSE_OPT_KEY("--hide_extensions=%u",            KEY_HIDE_EXTENSIONS),
+    FUSE_OPT_KEY("hide_extensions=%u",              KEY_HIDE_EXTENSIONS),
     // Experimental
     FFMPEGFS_OPT("--win_smb_fix=%u",                m_win_smb_fix, 1),
     FFMPEGFS_OPT("win_smb_fix=%u",                  m_win_smb_fix, 1),
@@ -1932,6 +1937,10 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
 
         return 0;
     }
+    case KEY_HIDE_EXTENSIONS:
+    {
+        return get_value(arg, params.m_hide_extensions);
+    }
     }
 
     return 1;
@@ -2022,6 +2031,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
     Logging::trace(nullptr, "Extra Extensions  : %1", implode(*params.m_extensions).c_str());
+    Logging::trace(nullptr, "Hide Extensions   : %1", implode(*params.m_hide_extensions).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
     Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());

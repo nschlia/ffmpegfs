@@ -7,6 +7,8 @@ FFmpegfs NEWS
 
 Important changes in 2.10 (2022-04-XX):
 
+* Feature: Issue #123: New command line option to hide files by extension. Example:
+  --hide_extensions=jpg,png,cue would stop covers and cue sheets from showing up.
 * Feature: Issue #120: Added subtitle support. Subtitle streams can now also be
   transcoded to the output files. Separate SRT or VTT files will be incorporated
   as subtitle streams.

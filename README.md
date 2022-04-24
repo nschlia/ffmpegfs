@@ -21,6 +21,7 @@ News
 
 **New in in 2.10 (2022-04-XX):**
 
+* **Feature:** [Issue #123](https://github.com/nschlia/ffmpegfs/issues/123): New command line option to hide files by extension. Example: `--hide_extensions=jpg,png,cue` would stop covers and cue sheets from showing up.
 * **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.
 * **Bugfix:** Fixed memory leak in encode_audio_frame().
 * **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): Last song was missing from cuesheet files.

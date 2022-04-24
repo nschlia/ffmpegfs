@@ -53,7 +53,6 @@
 
 #include <dirent.h>
 #include <unistd.h>
-#include <set>
 #include <regex>
 #include <list>
 #include <assert.h>
@@ -381,7 +380,7 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
         return false;
     }
 
-    if (allow_list_ext(ext, params.m_extensions))
+    if (allow_list_ext(ext))
     {
         if (!params.smart_transcode())
         {

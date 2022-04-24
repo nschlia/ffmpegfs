@@ -172,69 +172,69 @@ extern struct FFMPEGFS_PARAMS
     FFmpegfs_Format *   current_format(LPCVIRTUALFILE virtualfile);
 
     // Paths
-    std::string                 m_basepath;                 /**< @brief Base path: Files from this directory (including all sub directories) will be mapped to m_mountpath. */
-    std::string                 m_mountpath;                /**< @brief Mount path: Files from m_mountpath will be mapped to this directory. */
+    std::string             m_basepath;                     /**< @brief Base path: Files from this directory (including all sub directories) will be mapped to m_mountpath. */
+    std::string             m_mountpath;                    /**< @brief Mount path: Files from m_mountpath will be mapped to this directory. */
 
     // Output type
-    AVCodecID                   m_audio_codec;              /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
-    AVCodecID                   m_video_codec;              /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
-    AUTOCOPY                    m_autocopy;                 /**< @brief Copy streams if codec matches */
-    RECODESAME                  m_recodesame;               /**< @brief Recode to same format options */
-    PROFILE                     m_profile;					/**< @brief Target profile: Firefox, MS Edge/IE or other */
-    PRORESLEVEL                 m_level;                    /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
+    AVCodecID               m_audio_codec;                  /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
+    AVCodecID               m_video_codec;                  /**< @brief Either AV_CODEC_ID_NONE for default, or a user selected codec */
+    AUTOCOPY                m_autocopy;                     /**< @brief Copy streams if codec matches */
+    RECODESAME              m_recodesame;                   /**< @brief Recode to same format options */
+    PROFILE                 m_profile;                      /**< @brief Target profile: Firefox, MS Edge/IE or other */
+    PRORESLEVEL             m_level;                        /**< @brief Level, currently proxy/hq/lt/HQ (ProRes only) */
     // Audio
-    BITRATE                     m_audiobitrate;             /**< @brief Output audio bit rate (bits per second) */
-    int                         m_audiosamplerate;          /**< @brief Output audio sample rate (in Hz) */
-    int                         m_audiochannels;            /**< @brief Max. number of audio channels */
-    SAMPLE_FMT                  m_sample_fmt;               /**< @brief Sample format */
-    std::string                 m_extensions;               /**< @brief Comma separated lists of supplementary file extensions */
+    BITRATE                 m_audiobitrate;                 /**< @brief Output audio bit rate (bits per second) */
+    int                     m_audiosamplerate;              /**< @brief Output audio sample rate (in Hz) */
+    int                     m_audiochannels;                /**< @brief Max. number of audio channels */
+    SAMPLE_FMT              m_sample_fmt;                   /**< @brief Sample format */
     // Video
-    BITRATE                     m_videobitrate;             /**< @brief Output video bit rate (bits per second) */
-    int                         m_videowidth;               /**< @brief Output video width */
-    int                         m_videoheight;              /**< @brief Output video height */
-    int                         m_deinterlace;              /**< @brief 1: deinterlace video, 0: no deinterlace */
+    BITRATE                 m_videobitrate;                 /**< @brief Output video bit rate (bits per second) */
+    int                     m_videowidth;                   /**< @brief Output video width */
+    int                     m_videoheight;                  /**< @brief Output video height */
+    int                     m_deinterlace;                  /**< @brief 1: deinterlace video, 0: no deinterlace */
     // HLS Options
-    int64_t                     m_segment_duration;         /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
-    int64_t                     m_min_seek_time_diff;       /**< @brief Minimum time diff from current to next requested segment to perform a seek, in AV_TIME_BASE fractional seconds. */
+    int64_t                 m_segment_duration;             /**< @brief Duration of one HLS segment file, in AV_TIME_BASE fractional seconds. */
+    int64_t                 m_min_seek_time_diff;           /**< @brief Minimum time diff from current to next requested segment to perform a seek, in AV_TIME_BASE fractional seconds. */
     // Hardware acceleration
-    HWACCELAPI                  m_hwaccel_enc_API;          /**< @brief Encoder API */
-    AVHWDeviceType              m_hwaccel_enc_device_type;  /**< @brief Enable hardware acceleration buffering for encoder */
-    std::string                 m_hwaccel_enc_device;       /**< @brief Encoder device. May be AUTO to auto detect or empty */
-    HWACCELAPI                  m_hwaccel_dec_API;          /**< @brief Decoder API */
-    AVHWDeviceType              m_hwaccel_dec_device_type;  /**< @brief Enable hardware acceleration buffering for decoder */
-    std::string                 m_hwaccel_dec_device;       /**< @brief Decoder device. May be AUTO to auto detect or empty */
-    HWACCEL_BLOCKED_MAP*        m_hwaccel_dec_blocked;      /**< @brief List of blocked decoders and optional profiles */
+    HWACCELAPI              m_hwaccel_enc_API;              /**< @brief Encoder API */
+    AVHWDeviceType          m_hwaccel_enc_device_type;      /**< @brief Enable hardware acceleration buffering for encoder */
+    std::string             m_hwaccel_enc_device;           /**< @brief Encoder device. May be AUTO to auto detect or empty */
+    HWACCELAPI              m_hwaccel_dec_API;              /**< @brief Decoder API */
+    AVHWDeviceType          m_hwaccel_dec_device_type;      /**< @brief Enable hardware acceleration buffering for decoder */
+    std::string             m_hwaccel_dec_device;           /**< @brief Decoder device. May be AUTO to auto detect or empty */
+    HWACCEL_BLOCKED_MAP*    m_hwaccel_dec_blocked;          /**< @brief List of blocked decoders and optional profiles */
     // Album arts
-    int                         m_noalbumarts;              /**< @brief skip album arts */
+    int                     m_noalbumarts;                  /**< @brief skip album arts */
     // Virtual script
-    int                         m_enablescript;             /**< @brief Enable virtual script */
-    std::string                 m_scriptfile;               /**< @brief Script name */
-    std::string                 m_scriptsource;             /**< @brief Source script */
+    int                     m_enablescript;                 /**< @brief Enable virtual script */
+    std::string             m_scriptfile;                   /**< @brief Script name */
+    std::string             m_scriptsource;                 /**< @brief Source script */
     // FFmpegfs options
-    int                         m_debug;                    /**< @brief Debug mode (stay in foreground */
-    std::string                 m_log_maxlevel;             /**< @brief Max. log level */
-    int                         m_log_stderr;               /**< @brief Log output to standard error */
-    int                         m_log_syslog;               /**< @brief Log output to system log */
-    std::string                 m_logfile;                  /**< @brief Output filename if logging to file */
+    int                     m_debug;                        /**< @brief Debug mode (stay in foreground */
+    std::string             m_log_maxlevel;                 /**< @brief Max. log level */
+    int                     m_log_stderr;                   /**< @brief Log output to standard error */
+    int                     m_log_syslog;                   /**< @brief Log output to system log */
+    std::string             m_logfile;                      /**< @brief Output filename if logging to file */
     // Background recoding/caching
-    time_t                      m_expiry_time;              /**< @brief Time (seconds) after which an cache entry is deleted */
-    time_t                      m_max_inactive_suspend;     /**< @brief Time (seconds) that must elapse without access until transcoding is suspended */
-    time_t                      m_max_inactive_abort;       /**< @brief Time (seconds) that must elapse without access until transcoding is aborted */
-    size_t                      m_prebuffer_size;           /**< @brief Number of bytes that will be decoded before it can be accessed */
-    size_t                      m_max_cache_size;           /**< @brief Max. cache size in MB. When exceeded, oldest entries will be pruned */
-    size_t                      m_min_diskspace;            /**< @brief Min. diskspace required for cache */
-    std::string                 m_cachepath;                /**< @brief Disk cache path, defaults to $XDG_CACHE_HOME */
-    int                         m_disable_cache;            /**< @brief Disable cache */
-    time_t                      m_cache_maintenance;        /**< @brief Prune timer interval */
-    int                         m_prune_cache;              /**< @brief Prune cache immediately */
-    int                         m_clear_cache;              /**< @brief Clear cache on start up */
-    unsigned int                m_max_threads;              /**< @brief Max. number of recoder threads */
+    time_t                  m_expiry_time;                  /**< @brief Time (seconds) after which an cache entry is deleted */
+    time_t                  m_max_inactive_suspend;         /**< @brief Time (seconds) that must elapse without access until transcoding is suspended */
+    time_t                  m_max_inactive_abort;           /**< @brief Time (seconds) that must elapse without access until transcoding is aborted */
+    size_t                  m_prebuffer_size;               /**< @brief Number of bytes that will be decoded before it can be accessed */
+    size_t                  m_max_cache_size;               /**< @brief Max. cache size in MB. When exceeded, oldest entries will be pruned */
+    size_t                  m_min_diskspace;                /**< @brief Min. diskspace required for cache */
+    std::string             m_cachepath;                    /**< @brief Disk cache path, defaults to $XDG_CACHE_HOME */
+    int                     m_disable_cache;                /**< @brief Disable cache */
+    time_t                  m_cache_maintenance;            /**< @brief Prune timer interval */
+    int                     m_prune_cache;                  /**< @brief Prune cache immediately */
+    int                     m_clear_cache;                  /**< @brief Clear cache on start up */
+    unsigned int            m_max_threads;                  /**< @brief Max. number of recoder threads */
     // Miscellanous options
-    int                         m_decoding_errors;          /**< @brief Break transcoding on decoding error */
-    int                         m_min_dvd_chapter_duration; /**< @brief Min. DVD chapter duration. Shorter chapters will be ignored. */
-    int                         m_oldnamescheme;            /**< @brief Use old output name scheme, can create duplicate filenames */
+    int                     m_decoding_errors;              /**< @brief Break transcoding on decoding error */
+    int                     m_min_dvd_chapter_duration;     /**< @brief Min. DVD chapter duration. Shorter chapters will be ignored. */
+    int                     m_oldnamescheme;                /**< @brief Use old output name scheme, can create duplicate filenames */
+    STRINGSET*              m_extensions;                   /**< @brief List of supplementary file extensions. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
     // Experimental options
-    int                         m_win_smb_fix;              /**< @brief Experimental Windows fix for access to EOF at file open */
+    int                     m_win_smb_fix;                  /**< @brief Experimental Windows fix for access to EOF at file open */
 } params;                                                   /**< @brief Command line parameters */
 
 class Cache_Entry;

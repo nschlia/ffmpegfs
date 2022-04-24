@@ -51,6 +51,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <set>
 
 #ifndef PATH_MAX
 #include <linux/limits.h>
@@ -549,10 +550,9 @@ const std::string & remove_ext(std::string *filepath);
 /**
  * @brief Find extension in allowlist, if existing.
  * @param[in] ext - Extension, if found.
- * @param[in] allowlist - Allow list to inspect.
  * @return Returns true if extension was found, false if there was none
  */
-bool                allow_list_ext(const std::string & ext, const std::string & allowlist);
+bool                allow_list_ext(const std::string & ext);
 /**
  * @brief Find extension in filename, if existing.
  * @param[in] ext - Extension, if found.
@@ -1035,5 +1035,14 @@ const std::string & regex_escape(std::string *str);
  * @return Returns true, if filename is blocked, false if not.
  */
 bool is_blocked(const std::string & filename);
+
+typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set of strings, sorted/search case insensitive */
+
+/**
+ * @brief Conbine set of strings into comma separated list.
+ * @param[in] s - std::set object to combine
+ * @return List of strings, separated by commas.
+ */
+std::string implode(const STRINGSET & s);
 
 #endif

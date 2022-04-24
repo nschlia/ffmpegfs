@@ -89,7 +89,6 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_audiosamplerate(44100)                          // default: 44.1 kHz
     , m_audiochannels(2)                                // default: 2 channels
     , m_sample_fmt(SAMPLE_FMT_DONTCARE)                 // default: use source format
-    , m_extensions("")                                  // default: use list provided by FFmpeg API
 
     // Video
     , m_videobitrate(2*1024*1024)                       // default: 2 MBit
@@ -132,6 +131,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
+    , m_extensions(new STRINGSET)
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
@@ -139,6 +139,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
 FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 {
     delete m_hwaccel_dec_blocked;
+    delete m_extensions;
 }
 
 bool FFMPEGFS_PARAMS::smart_transcode(void) const
@@ -591,6 +592,8 @@ static int          get_codec(const std::string & codec, AVCodecID *codec_id);
 static int          get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
+static int          get_value(const std::string & arg, STRINGSET *value);
+//static int          get_value(const std::string & arg, std::optional<std::string> *value);
 static int          get_value(const std::string & arg, double *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
@@ -1612,6 +1615,55 @@ static int get_value(const std::string & arg, std::string *value)
 }
 
 /**
+ * @brief Get comma separated values from command line string.
+ * Finds whatever is after the "=" sign.
+ * @param[in] arg - Command line option.
+ * @param[in] value - Upon return, contains a set of the values after the "=" sign.
+ * @return Returns 0 if valid; if invalid returns -1.
+ */
+static int get_value(const std::string & arg, STRINGSET *value)
+{
+    size_t pos = arg.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::vector<std::string> v = split(arg.substr(pos + 1), ",");
+
+        value->clear();
+        value->insert(v.begin(), v.end());
+
+        return 0;
+    }
+
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+    return -1;
+}
+
+/**
+ * @brief Get value from command line string.
+ * Finds whatever is after the "=" sign.
+ * @param[in] arg - Command line option.
+ * @param[in] value - Upon return, contains the value after the "=" sign.
+ * @return Returns 0 if valid; if invalid returns -1.
+ */
+//static int get_value(const std::string & arg, std::optional<std::string> *value)
+//{
+//    size_t pos = arg.find('=');
+
+//    if (pos != std::string::npos)
+//    {
+//        *value = arg.substr(pos + 1);
+
+//        return 0;
+//    }
+
+//    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+
+//    return -1;
+//}
+
+/**
  * @brief Get value from command line string.
  * Finds whatever is after the "=" sign.
  * @param[in] arg - Command line option.
@@ -1787,7 +1839,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
     }
     case KEY_EXTENSIONS:
     {
-        return get_value(arg, &params.m_extensions);
+        return get_value(arg, params.m_extensions);
     }
     case KEY_SCRIPTFILE:
     {
@@ -1969,6 +2021,7 @@ static void print_params(void)
     Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
+    Logging::trace(nullptr, "Extra Extensions  : %1", implode(*params.m_extensions).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
     Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
@@ -1977,10 +2030,6 @@ static void print_params(void)
     if (params.m_sample_fmt != SAMPLE_FMT_DONTCARE)
     {
         Logging::trace(nullptr, "Sample Format     : %1", get_sampleformat_text(params.m_sample_fmt).c_str());
-    }
-    if (!params.m_extensions.empty())
-    {
-        Logging::trace(nullptr, "Extensions        : %1", params.m_extensions.c_str());
     }
     Logging::trace(nullptr, "--------- Video ---------");
     Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec(), true));

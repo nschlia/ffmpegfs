@@ -62,15 +62,6 @@ To use the smart transcoding feature, specify a video and audio file type, separ
 +
 Default: *mp4*
 
-*--extensions*=LIST, *-oextensions*=LIST::
-Set list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by kommas.
-+
-Example: --extensions=xxx,abc,yxz,aaa
-+
-Take care to select extensions that actually can be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
-+
-Default: Use default set as defined by FFmpeg.
-
 *--audiocodec*=TYPE, *-oaudiocodec*=TYPE::
 Select audio codec. 'TYPE' depends on the destination format and can currently be:
 +
@@ -169,6 +160,22 @@ Set level for output if available, 'NAME' can be:
 *Note:* Applies to MP4 output format only, ignored for all other formats.
 +
 Default: *HQ*
+
+*--extensions*=LIST, *-oextensions*=LIST::
+Set list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.
++
+Example: --extensions=xxx,abc,yxz,aaa
++
+Take care to select extensions that actually can be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
++
+Default: Use default set as defined by FFmpeg.
+
+*--hide_extensions*=LIST, *-ohide_extensions*=LIST::
+Set list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
++
+Example: --hide_extensions=jpg,png,cue to stop covers and cue sheets from showing up.
++
+Default: Show all files.
 
 === Audio Options ===
 *--audiobitrate*=BITRATE, *-o audiobitrate*=BITRATE::

@@ -1,14 +1,15 @@
 <map id="src/vcd/vcdutils.cc" name="src/vcd/vcdutils.cc">
-<area shape="rect" id="node1" title="S/VCD utility functions implementation." alt="" coords="328,5,469,32"/>
-<area shape="rect" id="node2" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="53,80,139,107"/>
-<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="223,80,339,107"/>
-<area shape="rect" id="node10" title=" " alt="" coords="363,80,434,107"/>
-<area shape="rect" id="node11" title=" " alt="" coords="459,80,533,107"/>
-<area shape="rect" id="node12" title=" " alt="" coords="557,80,643,107"/>
+<area shape="rect" id="node1" title="S/VCD utility functions implementation." alt="" coords="371,5,512,32"/>
+<area shape="rect" id="node2" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="96,80,181,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="266,80,382,107"/>
+<area shape="rect" id="node11" title=" " alt="" coords="406,80,477,107"/>
+<area shape="rect" id="node12" title=" " alt="" coords="501,80,576,107"/>
+<area shape="rect" id="node13" title=" " alt="" coords="600,80,685,107"/>
 <area shape="rect" id="node3" title=" " alt="" coords="5,155,64,181"/>
 <area shape="rect" id="node5" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="89,155,226,181"/>
 <area shape="rect" id="node6" title=" " alt="" coords="250,155,313,181"/>
 <area shape="rect" id="node7" title=" " alt="" coords="337,155,396,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="420,155,527,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="551,155,726,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="420,155,463,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="487,155,593,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="618,155,793,181"/>
 </map>

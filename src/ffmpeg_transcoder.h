@@ -46,6 +46,7 @@
 #include <mutex>
 #include <variant>
 #include <functional>
+#include <optional>
 
 class Buffer;
 struct SwrContext;

@@ -7679,22 +7679,19 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
         format_ctx = avformat_alloc_context();
         if (format_ctx == nullptr)
         {
-            ret = AVERROR(ENOMEM);
-            throw ret;
+            throw AVERROR(ENOMEM);
         }
 
         avio_ctx_buffer = reinterpret_cast<uint8_t *>(av_malloc(static_cast<size_t>(avio_ctx_buffer_size)));
         if (avio_ctx_buffer == nullptr)
         {
-            ret = AVERROR(ENOMEM);
-            throw ret;
+            throw AVERROR(ENOMEM);
         }
 
         avio_ctx = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, &bd, &read_packet, nullptr, nullptr);
         if (avio_ctx == nullptr)
         {
-            ret = AVERROR(ENOMEM);
-            throw ret;
+            throw AVERROR(ENOMEM);
         }
         format_ctx->pb = avio_ctx;
 

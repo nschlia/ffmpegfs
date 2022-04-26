@@ -5,7 +5,7 @@ FFmpegfs NEWS
 * Cool, there's an online review on Linux Uprising, you can read it here:
   https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
 
-Important changes in 2.10 (2022-04-XX):
+Important changes in 2.10 (2022-04-26):
 
 * Feature: Issue #123: New command line option to hide files by extension. Example:
   --hide_extensions=jpg,png,cue would stop covers and cue sheets from showing up.

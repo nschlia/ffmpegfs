@@ -6381,25 +6381,14 @@ void FFmpeg_Transcoder::close_output_file()
 
     close_resample();
 
-    if (m_sws_ctx != nullptr)
-    {
-        sws_freeContext(m_sws_ctx);
-        m_sws_ctx = nullptr;
-    }
+    sws_freeContext(m_sws_ctx);
+    m_sws_ctx = nullptr;
 
     // Close output file
-    if (m_out.m_audio.m_codec_ctx != nullptr)
-    {
-        m_out.m_audio.close();
-    }
-
-    if (m_out.m_video.m_codec_ctx != nullptr)
-    {
-        m_out.m_video.close();
-    }
+    m_out.m_audio.close();
+    m_out.m_video.close();
 
     m_out.m_album_art.clear();
-
     m_out.m_subtitle.clear();
 
     if (m_out.m_format_ctx != nullptr)
@@ -6425,42 +6414,31 @@ void FFmpeg_Transcoder::close_output_file()
 
 void FFmpeg_Transcoder::close_input_file()
 {
-    if (m_in.m_audio.m_codec_ctx != nullptr)
-    {
-        m_in.m_audio.close();
-    }
-
-    if (m_in.m_video.m_codec_ctx != nullptr)
-    {
-        m_in.m_video.close();
-    }
+    m_in.m_audio.close();
+    m_in.m_video.close();
 
     m_in.m_album_art.clear();
-
     m_in.m_subtitle.clear();
 
     if (m_in.m_format_ctx != nullptr)
     {
-        //if (!(m_in.m_format_ctx->oformat->flags & AVFMT_NOFILE))
+        if (m_close_fileio && m_fileio != nullptr)
         {
-            if (m_close_fileio && m_fileio != nullptr)
-            {
-                m_fileio->close();
-                delete m_fileio;
-                m_fileio = nullptr;
-            }
+            m_fileio->close();
+            delete m_fileio;
+            m_fileio = nullptr;
+        }
 
-            if (m_in.m_format_ctx->pb != nullptr)
-            {
-                // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
-                //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
+        if (m_in.m_format_ctx->pb != nullptr)
+        {
+            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
+            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
 #if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
-                avio_context_free(&m_in.m_format_ctx->pb);
+            avio_context_free(&m_in.m_format_ctx->pb);
 #else
-                av_freep(m_in.m_format_ctx->pb);
+            av_freep(m_in.m_format_ctx->pb);
 #endif
-                m_in.m_format_ctx->pb = nullptr;
-            }
+            m_in.m_format_ctx->pb = nullptr;
         }
 
         avformat_close_input(&m_in.m_format_ctx);

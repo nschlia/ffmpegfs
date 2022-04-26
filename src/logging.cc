@@ -102,7 +102,7 @@ Logging::Logger::~Logger()
     loglevel = m_level_name_map.at(m_loglevel) + ":";
 
     msg = str();
-    rtrim(msg);
+    trim(msg);
 
     if (!m_filename.empty())
     {

@@ -99,22 +99,24 @@ protected:
     } PRORES_BITRATE, *LPPRORES_BITRATE;                            /**< @brief Pointer version of PRORES_BITRATE */
     typedef PRORES_BITRATE const * LPCPRORES_BITRATE;               /**< @brief Pointer to const version of PRORES_BITRATE */
 
-    struct STREAMREF                                                /**< @brief In/output stream reference data */
+    class StreamRef                                                 /**< @brief In/output stream reference data */
     {
-        STREAMREF() :
-            m_codec_ctx(nullptr),
-            m_stream(nullptr),
-            m_stream_idx(INVALID_STREAM),
-            m_start_time(0)
-        {}
+    public:
+        StreamRef();
+        virtual ~StreamRef();
 
-        AVCodecContext *        m_codec_ctx;                        /**< @brief AVCodecContext for this encoder stream */
-        AVStream *              m_stream;                           /**< @brief AVStream for this encoder stream */
-        int                     m_stream_idx;                       /**< @brief Stream index in AVFormatContext */
-        int64_t                 m_start_time;                       /**< @brief Start time of the stream in stream time base units, may be 0 */
+        void set_codec_ctx(AVCodecContext *codec_ctx);
+
+        void close();
+
+    public:
+        std::shared_ptr<AVCodecContext> m_codec_ctx;                /**< @brief AVCodecContext for this encoder stream */
+        AVStream *                      m_stream;                   /**< @brief AVStream for this encoder stream */
+        int                             m_stream_idx;               /**< @brief Stream index in AVFormatContext */
+        int64_t                         m_start_time;               /**< @brief Start time of the stream in stream time base units, may be 0 */
     };
 
-    typedef std::map<int, STREAMREF> STREAMREF_MAP;                 /**< @brief Map stream index to STREAMREF */
+    typedef std::map<int, StreamRef> StreamRef_map;                 /**< @brief Map stream index to StreamRef */
 
     struct INPUTFILE                                                /**< @brief Input file definition */
     {
@@ -130,12 +132,12 @@ protected:
 
         AVFormatContext *       m_format_ctx;                       /**< @brief Output format context */
 
-        STREAMREF               m_audio;                            /**< @brief Audio stream information */
-        STREAMREF               m_video;                            /**< @brief Video stream information */
+        StreamRef               m_audio;                            /**< @brief Audio stream information */
+        StreamRef               m_video;                            /**< @brief Video stream information */
         AVPixelFormat           m_pix_fmt;                          /**< @brief Video stream pixel format */
-        STREAMREF_MAP           m_subtitle;                         /**< @brief Subtitle stream information */
+        StreamRef_map           m_subtitle;                         /**< @brief Subtitle stream information */
 
-        std::vector<STREAMREF>  m_album_art;                        /**< @brief Album art stream */
+        std::vector<StreamRef>  m_album_art;                        /**< @brief Album art stream */
     };
 
     // Output file
@@ -305,14 +307,12 @@ public:
     static bool                 total_overhead(size_t *filesize, FILETYPE filetype);
     /**
      * @brief Closes the output file of open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
-     * @return Returns true if the output file was closed, false if it was not upon upon calling this function.
      */
-    bool                        close_output_file();
+    void                        close_output_file();
     /**
      * @brief Closes the input file of open. Can safely be called again after the file was already closed or if the file was never open.
-     * @return Returns true if the input file was closed, false if it was not upon upon calling this function.
      */
-    bool                        close_input_file();
+    void                        close_input_file();
 
     /**
      * @brief Seek to a specific frame. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
@@ -481,7 +481,7 @@ protected:
      * @param[in] language - (Optional) Language or subtitle file, or std::nullopt if unknown.
      * @return On success returns index of new stream [0...n]; on error negative AVERROR.
      */
-    int                         add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref, const std::optional<std::string> &language = std::nullopt);
+    int                         add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> &language = std::nullopt);
     /**
      * @brief Add new stream copy to output file.
      * @param[in] codec_id - Codec for this stream.
@@ -1107,7 +1107,7 @@ protected:
      * @param stream_idx - Stream index to get subtitle stream for
      * @return Pointer to subbtitle stream or nullptr if not found
      */
-    STREAMREF *                 get_out_subtitle_stream(int stream_idx);
+    StreamRef *                 get_out_subtitle_stream(int stream_idx);
     /**
      * @brief Check if stream exists
      * @param[in] stream_idx - ID of stream to check

@@ -181,6 +181,48 @@ const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
     #endif
 };
 
+FFmpeg_Transcoder::StreamRef::StreamRef() :
+    m_codec_ctx(nullptr),
+    m_stream(nullptr),
+    m_stream_idx(INVALID_STREAM),
+    m_start_time(0)
+{
+
+}
+FFmpeg_Transcoder::StreamRef::~StreamRef()
+{
+    close();
+}
+
+template< typename T >
+struct av_context_deleter
+{
+    void operator ()( T * p)
+    {
+        avcodec_close(p);
+        avcodec_free_context(&p);
+    }
+};
+
+void FFmpeg_Transcoder::StreamRef::set_codec_ctx(AVCodecContext *codec_ctx)
+{
+    if (codec_ctx != nullptr)
+    {
+        std::shared_ptr<AVCodecContext> sp(codec_ctx, av_context_deleter<AVCodecContext>());
+
+        m_codec_ctx = sp;
+    }
+    else
+    {
+        m_codec_ctx.reset();
+    }
+}
+
+void FFmpeg_Transcoder::StreamRef::close()
+{
+    m_codec_ctx.reset();
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFmpeg_Transcoder::FFmpeg_Transcoder()
@@ -557,12 +599,14 @@ int FFmpeg_Transcoder::open_bestmatch_video()
         int ret;
 
         // Open best match video codec
-        ret = open_bestmatch_decoder(m_in.m_format_ctx, &m_in.m_video.m_codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
+        AVCodecContext * codec_ctx = nullptr;
+        ret = open_bestmatch_decoder(m_in.m_format_ctx, &codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
         if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
         {
             Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
+        m_in.m_video.set_codec_ctx(codec_ctx);
 
         if (stream_exists(m_in.m_video.m_stream_idx))
         {
@@ -637,12 +681,14 @@ int FFmpeg_Transcoder::open_bestmatch_audio()
     int ret;
 
     // Open best match audio codec
-    ret = open_bestmatch_decoder(m_in.m_format_ctx, &m_in.m_audio.m_codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
+    AVCodecContext * codec_ctx = nullptr;
+    ret = open_bestmatch_decoder(m_in.m_format_ctx, &codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
         Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
+    m_in.m_audio.set_codec_ctx(codec_ctx);
 
     if (stream_exists(m_in.m_audio.m_stream_idx))
     {
@@ -699,10 +745,10 @@ int FFmpeg_Transcoder::open_subtitles()
 
         codec_ctx->pkt_timebase = codec_ctx->time_base = stream->time_base;
 
-        STREAMREF input_streamref;
+        StreamRef input_streamref;
 
         // We have a subtitle stream
-        input_streamref.m_codec_ctx   = codec_ctx;
+        input_streamref.set_codec_ctx(codec_ctx);
         input_streamref.m_stream      = stream;
         input_streamref.m_stream_idx  = stream_idx;
 
@@ -724,7 +770,7 @@ int FFmpeg_Transcoder::open_albumarts()
 
             if (is_album_art(input_stream->codecpar->codec_id, &input_stream->r_frame_rate))
             {
-                STREAMREF streamref;
+                StreamRef streamref;
                 AVCodecContext * input_codec_ctx;
                 int ret;
 
@@ -737,7 +783,7 @@ int FFmpeg_Transcoder::open_albumarts()
                     return ret;
                 }
 
-                streamref.m_codec_ctx  = input_codec_ctx;
+                streamref.set_codec_ctx(input_codec_ctx);
                 streamref.m_stream     = input_stream;
                 streamref.m_stream_idx = input_stream->index;
 
@@ -833,6 +879,9 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCod
     AVCodec *input_codec = nullptr;
 #endif // !IF_DECLARED_CONST
     int ret;
+
+    *codec_ctx = nullptr;
+    *stream_idx = INVALID_STREAM;
 
     ret = av_find_best_stream(format_ctx, type, INVALID_STREAM, INVALID_STREAM, &input_codec, 0);
     if (ret < 0)
@@ -1029,9 +1078,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 // Free hardware device contexts if open
                 hwdevice_ctx_free(&m_hwaccel_dec_device_ctx);
 
-                avcodec_close(m_in.m_video.m_codec_ctx);
-                avcodec_free_context(&m_in.m_video.m_codec_ctx);
-                m_in.m_video.m_codec_ctx = nullptr;
+                m_in.m_video.close();
 
                 // Try again with a software decoder
                 continue;
@@ -1180,12 +1227,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         }
     }
 
-    m_out.m_video.m_codec_ctx               = output_codec_ctx;
+    m_out.m_video.set_codec_ctx(output_codec_ctx);
     m_out.m_video.m_stream_idx              = INVALID_STREAM;
     m_out.m_video.m_stream                  = nullptr;
 
     // No audio
-    m_out.m_audio.m_codec_ctx               = nullptr;
+    m_out.m_audio.set_codec_ctx(nullptr);
     m_out.m_audio.m_stream_idx              = INVALID_STREAM;
     m_out.m_audio.m_stream                  = nullptr;
 
@@ -1268,7 +1315,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
     }
 
-    for (STREAMREF_MAP::const_iterator it = m_out.m_subtitle.cbegin(); it != m_out.m_subtitle.cend(); ++it)
+    for (StreamRef_map::const_iterator it = m_out.m_subtitle.cbegin(); it != m_out.m_subtitle.cend(); ++it)
     {
         subtitle_info(true, m_out.m_format_ctx, it->second.m_stream);
     }
@@ -1330,9 +1377,9 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         }
     }
 
-    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    for (StreamRef_map::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
     {
-        STREAMREF * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(it->first));
+        StreamRef * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(it->first));
         if (out_streamref != nullptr)
         {
             it->second.m_start_time                 = it->second.m_stream->start_time;
@@ -1660,16 +1707,16 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                            format_bitrate(output_codec_ctx->bit_rate).c_str());
         }
 
-        if (params.m_audiochannels > 0 && get_channels(m_in.m_audio.m_codec_ctx) > params.m_audiochannels)
+        if (params.m_audiochannels > 0 && get_channels(m_in.m_audio.m_codec_ctx.get()) > params.m_audiochannels)
         {
             Logging::trace(destname(), "Limiting audio channels from %1 to %2.",
-                           get_channels(m_in.m_audio.m_codec_ctx),
+                           get_channels(m_in.m_audio.m_codec_ctx.get()),
                            params.m_audiochannels);
             set_channels(output_codec_ctx, params.m_audiochannels);
         }
         else
         {
-            set_channels(output_codec_ctx, m_in.m_audio.m_codec_ctx);
+            set_channels(output_codec_ctx, m_in.m_audio.m_codec_ctx.get());
         }
 
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
@@ -1820,7 +1867,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
-        m_out.m_audio.m_codec_ctx               = output_codec_ctx;
+        m_out.m_audio.set_codec_ctx(output_codec_ctx);
         // Save the stream index
         m_out.m_audio.m_stream_idx              = output_stream->index;
         // Save output audio stream for faster reference
@@ -1840,7 +1887,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
             m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, false);
 
-            ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx, m_hwaccel_enc_device_ctx);
+            ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx.get(), m_hwaccel_enc_device_ctx);
             if (ret < 0)
             {
                 return ret;
@@ -1879,7 +1926,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             output_codec_ctx->height            = m_in.m_video.m_stream->codecpar->height;
         }
 
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx, m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
+        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx.get(), m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
 
         AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
 
@@ -2138,7 +2185,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
         // Save the encoder context for easier access later.
-        m_out.m_video.m_codec_ctx               = output_codec_ctx;
+        m_out.m_video.set_codec_ctx(output_codec_ctx);
         // Save the stream index
         m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
@@ -2195,7 +2242,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     return (output_stream == nullptr ? 0 : output_stream->index);
 }
 
-int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input_streamref, const std::optional<std::string> & language)
+int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> & language)
 {
     AVCodecContext *output_codec_ctx    = nullptr;
     AVStream *      output_stream       = nullptr;
@@ -2254,7 +2301,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
         output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
     }
 
-    AVCodecContext * input_codec_ctx = input_streamref.m_codec_ctx;
+    AVCodecContext * input_codec_ctx = input_streamref.m_codec_ctx.get();
 
     if (input_codec_ctx != nullptr && input_codec_ctx->subtitle_header != nullptr)
     {
@@ -2319,9 +2366,9 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, STREAMREF & input
     }
 
     // Save the encoder context for easier access later.
-    STREAMREF output_streamref;
+    StreamRef output_streamref;
 
-    output_streamref.m_codec_ctx               = output_codec_ctx;
+    output_streamref.set_codec_ctx(output_codec_ctx);
     // Save the stream index
     output_streamref.m_stream_idx              = output_stream->index;
     // Save output audio stream for faster reference
@@ -2366,7 +2413,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         output_stream->duration                 = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
 
         // Save the encoder context for easier access later.
-        m_out.m_audio.m_codec_ctx               = nullptr;
+        m_out.m_audio.set_codec_ctx(nullptr);
         // Save the stream index
         m_out.m_audio.m_stream_idx              = output_stream->index;
         // Save output audio stream for faster reference
@@ -2395,7 +2442,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         output_stream->duration                 = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
 
         // Save the encoder context for easier access later.
-        m_out.m_video.m_codec_ctx               = nullptr;
+        m_out.m_video.set_codec_ctx(nullptr);
         // Save the stream index
         m_out.m_video.m_stream_idx              = output_stream->index;
         // Save output video stream for faster reference
@@ -2511,9 +2558,9 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
         return ret;
     }
 
-    STREAMREF streamref;
+    StreamRef streamref;
 
-    streamref.m_codec_ctx     = output_codec_ctx;
+    streamref.set_codec_ctx(output_codec_ctx);
     streamref.m_stream        = output_stream;
     streamref.m_stream_idx    = output_stream->index;
 
@@ -2604,7 +2651,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
             if (params.m_deinterlace)
             {
                 // Init deinterlace filters
-                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx, m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
+                ret = init_deinterlace_filters(m_in.m_video.m_codec_ctx.get(), m_in.m_pix_fmt, m_in.m_video.m_stream->avg_frame_rate, m_in.m_video.m_stream->time_base);
                 if (ret < 0)
                 {
                     return ret;
@@ -2684,7 +2731,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
         {
             int ret;
 
-            ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx);
+            ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx.get());
             if (ret < 0)
             {
                 return ret;
@@ -2721,7 +2768,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
 int FFmpeg_Transcoder::add_subtitle_streams()
 {
-    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    for (StreamRef_map::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
     {
         AVCodecID codec_id = m_current_format->subtitle_codec(it->second.m_stream->codecpar->codec_id); // Get matching output codec
 
@@ -2873,7 +2920,7 @@ int FFmpeg_Transcoder::init_resampler()
 int FFmpeg_Transcoder::init_audio_fifo()
 {
     // Create the audio FIFO buffer based on the specified output sample format.
-    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx), 1);
+    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
     if (m_audio_fifo == nullptr)
     {
         Logging::error(destname(), "Could not allocate audio FIFO.");
@@ -3242,7 +3289,7 @@ int FFmpeg_Transcoder::decode_audio_frame(AVPacket *pkt, int *decoded)
             break;
         }
 
-        ret = decode(m_in.m_audio.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
+        ret = decode(m_in.m_audio.m_codec_ctx.get(), frame, &data_present, again ? nullptr : pkt);
         if (!data_present)
         {
             break;
@@ -3353,7 +3400,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             break;
         }
 
-        ret = decode(m_in.m_video.m_codec_ctx, frame, &data_present, again ? nullptr : pkt);
+        ret = decode(m_in.m_video.m_codec_ctx.get(), frame, &data_present, again ? nullptr : pkt);
         if (!data_present)
         {
             break;
@@ -3378,7 +3425,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             }
 
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
-            //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx, &sw_frame, frame);
+            //ret = hwframe_copy_from_hw(m_in.m_video.m_codec_ctx.get(), &sw_frame, frame);
 
             // retrieve data from GPU to CPU
             ret = av_hwframe_transfer_data(sw_frame, frame, 0); // hwframe_copy_from_hw
@@ -3437,7 +3484,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         return ret;
                     }
 
-                    AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx;
+                    AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx.get();
 
                     ret = alloc_picture(tmp_frame, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                     if (ret < 0)
@@ -3525,7 +3572,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
 int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
 {
-    STREAMREF_MAP::const_iterator it = m_in.m_subtitle.find(pkt->stream_index);
+    StreamRef_map::const_iterator it = m_in.m_subtitle.find(pkt->stream_index);
     int ret = 0;
 
     *decoded = 0;
@@ -3553,7 +3600,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
         throw AVERROR(EINVAL);
     }
 
-    return decode_subtitle(it->second.m_codec_ctx, pkt, decoded, out_stream_idx);
+    return decode_subtitle(it->second.m_codec_ctx.get(), pkt, decoded, out_stream_idx);
 }
 
 int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt, int *decoded, int out_stream_idx)
@@ -3648,7 +3695,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         }
         case AVMEDIA_TYPE_SUBTITLE:
         {
-            STREAMREF * subtitle = get_out_subtitle_stream(pkt->stream_index);
+            StreamRef * subtitle = get_out_subtitle_stream(pkt->stream_index);
 
             if (subtitle != nullptr && subtitle->m_stream != nullptr)
             {
@@ -3876,7 +3923,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Each pointer will later point to the audio samples of the corresponding
     // channels (although it may be nullptr for interleaved formats).
 
-    *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(get_channels(m_out.m_audio.m_codec_ctx)), sizeof(**converted_input_samples)));
+    *converted_input_samples = static_cast<uint8_t **>(av_calloc(static_cast<size_t>(get_channels(m_out.m_audio.m_codec_ctx.get())), sizeof(**converted_input_samples)));
 
     if (*converted_input_samples == nullptr)
     {
@@ -3887,7 +3934,7 @@ int FFmpeg_Transcoder::init_converted_samples(uint8_t ***converted_input_samples
     // Allocate memory for the samples of all channels in one consecutive
     // block for convenience.
     ret = av_samples_alloc(*converted_input_samples, nullptr,
-                           get_channels(m_out.m_audio.m_codec_ctx),
+                           get_channels(m_out.m_audio.m_codec_ctx.get()),
                            frame_size,
                            m_out.m_audio.m_codec_ctx->sample_fmt, 0);
     if (ret < 0)
@@ -3924,13 +3971,13 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
         if (!av_sample_fmt_is_planar(m_out.m_audio.m_codec_ctx->sample_fmt))
         {
             // Interleaved format
-            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx)));
+            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx.get())));
         }
         else
         {
             // Planar format
             size_t samples = static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
-            for (int n = 0; n < get_channels(m_out.m_audio.m_codec_ctx); n++)
+            for (int n = 0; n < get_channels(m_out.m_audio.m_codec_ctx.get()); n++)
             {
                 memcpy(converted_data[n], input_data[n], samples);
             }
@@ -4228,7 +4275,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
         *data_present = 0;
 
         // send the frame for encoding
-        ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx, frame);
+        ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx.get(), frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base), ffmpeg_geterror(ret).c_str());
@@ -4240,7 +4287,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
         {
             *data_present = 0;
 
-            ret = avcodec_receive_packet(m_out.m_audio.m_codec_ctx, pkt);
+            ret = avcodec_receive_packet(m_out.m_audio.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 throw ret;
@@ -4341,7 +4388,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         *data_present = 0;
 
         // send the frame for encoding
-        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, cloned_frame);
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx.get(), cloned_frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             Logging::error(destname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -4353,7 +4400,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         {
             *data_present = 0;
 
-            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, pkt);
+            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 av_packet_unref(pkt);
@@ -4452,7 +4499,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             }
 
             // If encoding is done in hardware, the resulting frame data needs to be copied to hardware
-            ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx, hw_frame, frame);
+            ret = hwframe_copy_to_hw(m_out.m_video.m_codec_ctx.get(), hw_frame, frame);
             if (ret < 0)
             {
                 throw ret;
@@ -4473,7 +4520,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         *data_present = 0;
 
         // send the frame for encoding
-        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx, frame);
+        ret = avcodec_send_frame(m_out.m_video.m_codec_ctx.get(), frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
             Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_video.m_stream->time_base), ffmpeg_geterror(ret).c_str());
@@ -4485,7 +4532,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         {
             *data_present = 0;
 
-            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx, pkt);
+            ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
                 av_packet_unref(pkt);
@@ -4581,7 +4628,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
 
 int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx, int *data_present)
 {
-    STREAMREF * out_streamref = get_out_subtitle_stream(out_stream_idx);
+    StreamRef * out_streamref = get_out_subtitle_stream(out_stream_idx);
 
     *data_present = 0;
 
@@ -4667,7 +4714,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
             }
 
             // The avcodec_encode_subtitle seems to be not completely ready
-            ret = avcodec_encode_subtitle(out_streamref->m_codec_ctx, pkt->data, pkt->size, &subtmp);
+            ret = avcodec_encode_subtitle(out_streamref->m_codec_ctx.get(), pkt->data, pkt->size, &subtmp);
             if (i == 1)
             {
                 subtmp.num_rects = save_num_rects;
@@ -4959,11 +5006,11 @@ void FFmpeg_Transcoder::flush_buffers()
 {
     if (m_in.m_audio.m_codec_ctx != nullptr)
     {
-        avcodec_flush_buffers(m_in.m_audio.m_codec_ctx);
+        avcodec_flush_buffers(m_in.m_audio.m_codec_ctx.get());
     }
     if (m_in.m_video.m_codec_ctx != nullptr)
     {
-        avcodec_flush_buffers(m_in.m_video.m_codec_ctx);
+        avcodec_flush_buffers(m_in.m_video.m_codec_ctx.get());
     }
 }
 
@@ -6042,7 +6089,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
     if (input_audio_bit_rate)
     {
-        int channels = get_channels(m_in.m_audio.m_codec_ctx);
+        int channels = get_channels(m_in.m_audio.m_codec_ctx.get());
 
         if (!audio_size(&filesize, m_current_format->audio_codec(), input_audio_bit_rate, duration, channels, input_sample_rate, m_cur_sample_fmt))
         {
@@ -6328,61 +6375,31 @@ void FFmpeg_Transcoder::purge()
     }
 }
 
-bool FFmpeg_Transcoder::close_output_file()
+void FFmpeg_Transcoder::close_output_file()
 {
-    bool closed = false;
-
     purge();
 
-    if (close_resample())
-    {
-        closed = true;
-    }
+    close_resample();
 
     if (m_sws_ctx != nullptr)
     {
         sws_freeContext(m_sws_ctx);
         m_sws_ctx = nullptr;
-        closed = true;
     }
 
     // Close output file
     if (m_out.m_audio.m_codec_ctx != nullptr)
     {
-        avcodec_free_context(&m_out.m_audio.m_codec_ctx);
-        m_out.m_audio.m_codec_ctx = nullptr;
-        closed = true;
+        m_out.m_audio.close();
     }
 
     if (m_out.m_video.m_codec_ctx != nullptr)
     {
-        avcodec_free_context(&m_out.m_video.m_codec_ctx);
-        m_out.m_video.m_codec_ctx = nullptr;
-        closed = true;
+        m_out.m_video.close();
     }
 
-    while (m_out.m_album_art.size())
-    {
-        AVCodecContext *codec_ctx = m_out.m_album_art.back().m_codec_ctx;
-        m_out.m_album_art.pop_back();
-        if (codec_ctx != nullptr)
-        {
-            avcodec_free_context(&codec_ctx);
+    m_out.m_album_art.clear();
 
-            closed = true;
-        }
-    }
-
-    for (STREAMREF_MAP::iterator it = m_out.m_subtitle.begin(); it != m_out.m_subtitle.end(); ++it)
-    {
-        AVCodecContext *codec_ctx = (*it).second.m_codec_ctx;
-        if (codec_ctx != nullptr)
-        {
-            avcodec_free_context(&codec_ctx);
-
-            closed = true;
-        }
-    }
     m_out.m_subtitle.clear();
 
     if (m_out.m_format_ctx != nullptr)
@@ -6403,52 +6420,23 @@ bool FFmpeg_Transcoder::close_output_file()
         avformat_free_context(m_out.m_format_ctx);
 
         m_out.m_format_ctx = nullptr;
-        closed = true;
     }
-
-    return closed;
 }
 
-bool FFmpeg_Transcoder::close_input_file()
+void FFmpeg_Transcoder::close_input_file()
 {
-    bool closed = false;
-
     if (m_in.m_audio.m_codec_ctx != nullptr)
     {
-        avcodec_free_context(&m_in.m_audio.m_codec_ctx);
-        m_in.m_audio.m_codec_ctx = nullptr;
-        closed = true;
+        m_in.m_audio.close();
     }
 
     if (m_in.m_video.m_codec_ctx != nullptr)
     {
-        avcodec_free_context(&m_in.m_video.m_codec_ctx);
-        m_in.m_video.m_codec_ctx = nullptr;
-        closed = true;
+        m_in.m_video.close();
     }
 
-    while (m_in.m_album_art.size())
-    {
-        AVCodecContext *codec_ctx = m_in.m_album_art.back().m_codec_ctx;
-        m_in.m_album_art.pop_back();
-        if (codec_ctx != nullptr)
-        {
-            avcodec_free_context(&codec_ctx);
+    m_in.m_album_art.clear();
 
-            closed = true;
-        }
-    }
-
-    for (STREAMREF_MAP::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
-    {
-        AVCodecContext *codec_ctx = (*it).second.m_codec_ctx;
-        if (codec_ctx != nullptr)
-        {
-            avcodec_free_context(&codec_ctx);
-
-            closed = true;
-        }
-    }
     m_in.m_subtitle.clear();
 
     if (m_in.m_format_ctx != nullptr)
@@ -6477,33 +6465,25 @@ bool FFmpeg_Transcoder::close_input_file()
 
         avformat_close_input(&m_in.m_format_ctx);
         m_in.m_format_ctx = nullptr;
-        closed = true;
     }
 
     free_filters();
-
-    return closed;
 }
 
 void FFmpeg_Transcoder::close()
 {
-    bool closed = false;
-
     // Close input file
-    closed |= close_input_file();
+    close_input_file();
 
     // Close output file
-    closed |= close_output_file();
+    close_output_file();
 
     // Free hardware device contexts if open
     hwdevice_ctx_free(&m_hwaccel_dec_device_ctx);
     hwdevice_ctx_free(&m_hwaccel_enc_device_ctx);
 
-    if (closed)
-    {
-        // Closed anything (anything had been open to be closed in the first place)...
-        Logging::trace(nullptr, "FFmpeg transcoder closed.");
-    }
+    // Closed anything (anything had been open to be closed in the first place)...
+    Logging::trace(nullptr, "FFmpeg transcoder closed.");
 }
 
 const char *FFmpeg_Transcoder::filename() const
@@ -7488,7 +7468,7 @@ void FFmpeg_Transcoder::get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat
 
     if (output_codec_ctx == nullptr)
     {
-        output_codec_ctx = m_out.m_video.m_codec_ctx;
+        output_codec_ctx = m_out.m_video.m_codec_ctx.get();
     }
 
     // Fail safe: If output_codec_ctx is NULL, set to something common (AV_PIX_FMT_YUV420P is widely used)
@@ -7534,14 +7514,14 @@ bool FFmpeg_Transcoder::is_video_stream(int stream_idx) const
 
 bool FFmpeg_Transcoder::is_subtitle_stream(int stream_idx) const
 {
-    STREAMREF_MAP::const_iterator it = m_in.m_subtitle.find(stream_idx);
+    StreamRef_map::const_iterator it = m_in.m_subtitle.find(stream_idx);
 
     return (it != m_in.m_subtitle.cend());
 }
 
-FFmpeg_Transcoder::STREAMREF * FFmpeg_Transcoder::get_out_subtitle_stream(int stream_idx)
+FFmpeg_Transcoder::StreamRef * FFmpeg_Transcoder::get_out_subtitle_stream(int stream_idx)
 {
-    STREAMREF_MAP::iterator it = m_out.m_subtitle.find(stream_idx);
+    StreamRef_map::iterator it = m_out.m_subtitle.find(stream_idx);
 
     if (it == m_out.m_subtitle.end())
     {
@@ -7698,14 +7678,14 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
         ret = avformat_open_input(&format_ctx, nullptr, nullptr, nullptr);
         if (ret < 0)
         {
-            fprintf(stderr, "Could not open input\n");
+            Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
         ret = avformat_find_stream_info(format_ctx, nullptr);
         if (ret < 0)
         {
-            fprintf(stderr, "Could not find stream information\n");
+            Logging::error(filename(), "Could not find stream info (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
@@ -7727,12 +7707,12 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
 
             if (codec_id != AV_CODEC_ID_NONE)
             {
-                STREAMREF input_streamref;
+                StreamRef input_streamref;
 
                 codec_ctx->pkt_timebase = codec_ctx->time_base = format_ctx->streams[0]->time_base;
 
                 // We have a subtitle stream
-                input_streamref.m_codec_ctx   = codec_ctx;
+                input_streamref.set_codec_ctx(codec_ctx);
                 input_streamref.m_stream      = format_ctx->streams[0];
                 input_streamref.m_stream_idx  = INVALID_STREAM;
 

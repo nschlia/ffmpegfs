@@ -73,7 +73,7 @@ $(function() {
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.10 (2022-04-XX):</div>
+<div class="line">Important changes in 2.10 (2022-04-26):</div>
 <div class="line"> </div>
 <div class="line">* Feature: Issue #123: New command line option to hide files by extension. Example:</div>
 <div class="line">  --hide_extensions=jpg,png,cue would stop covers and cue sheets from showing up.</div>
@@ -86,13 +86,17 @@ $(function() {
 <div class="line">* Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but are</div>
 <div class="line">  correct when data is read.</div>
 <div class="line">* Bugfix: Duration was not saved in cache SQLite database.</div>
-<div class="line">* Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD chapters cannot be</div>
-<div class="line">  detected by FFmpeg API. Transcode then failes - fixed by using data from the</div>
-<div class="line">  Bluray directory or DVD IFO instead.</div>
+<div class="line">* Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD chapters</div>
+<div class="line">  cannot be detected by FFmpeg API. Transcode then failes - fixed by using data</div>
+<div class="line">  from the Bluray directory or DVD IFO instead.</div>
 <div class="line">* Lowest supported FFmpeg API version raised to 4.1.8 &quot;al-Khwarizmi&quot;.</div>
 <div class="line">* Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</div>
 <div class="line">* Deprecated previous channel layout API based on uint64 bitmasks.</div>
 <div class="line">* Deprecated swr_alloc_set_opts() and swr_build_matrix().</div>
+<div class="line">* Going C++17 now: The packet queue has been recoded in C++17 to support</div>
+<div class="line">  external subtitles files. As C++17 is required now, why not go all the way:</div>
+<div class="line">  Starting to replace legacy C++ and somewhat C-like parts with real C++.</div>
+<div class="line">* Using std::shared_ptr to ensure proper memory allocation/free.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.9 (2022-02-16):</div>
 <div class="line"> </div>

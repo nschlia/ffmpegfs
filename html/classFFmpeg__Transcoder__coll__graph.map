@@ -15,7 +15,7 @@
 <area shape="rect" id="node13" href="$structFormat__Options.html" title=" " alt="" coords="735,275,860,301"/>
 <area shape="rect" id="node14" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="717,381,878,422"/>
 <area shape="rect" id="node18" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition." alt="" coords="1076,326,1237,367"/>
-<area shape="rect" id="node15" href="$structFFmpeg__Transcoder_1_1STREAMREF.html" title="In/output stream reference data." alt="" coords="345,381,507,422"/>
+<area shape="rect" id="node15" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="345,381,507,422"/>
 <area shape="rect" id="node16" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE.html" title="Predicted bitrates for Apple Prores, see https://www.apple.com/final&#45;cut&#45;pro/docs/Apple_ProRes_White_..." alt="" coords="1076,462,1237,503"/>
 <area shape="rect" id="node17" href="$structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html" title="List of ProRes frame rates." alt="" coords="700,455,895,511"/>
 <area shape="rect" id="node19" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="767,325,827,352"/>

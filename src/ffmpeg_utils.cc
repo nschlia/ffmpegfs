@@ -2444,8 +2444,6 @@ const std::string & regex_escape(std::string * str)
 
     replace_all(str, ".", "[.]");
 
-    fprintf(stderr, "%s\n", str->c_str());
-
     return *str;
 }
 

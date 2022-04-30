@@ -1086,7 +1086,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     if (lstat((origpath + de->d_name).c_str(), &stbuf) == -1)
                     {
                         // Should actually not happen, file listed by readdir, so it should exist
-                        throw false;
+                        throw ENOENT;
                     }
 
                     files.insert({ de->d_name, stbuf });
@@ -1118,73 +1118,55 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         // Check if file can be transcoded
                         if (transcoded_name(&filename, origpath, &current_format))
                         {
-                            if (current_format->video_codec() != AV_CODEC_ID_NONE)
-                            {
-                                int res2;
+                            AVFormatContext *fmt_ctx = nullptr;
+                            int res;
 
-                                // Check if we have a cue sheet
-                                res2 = check_cuesheet(origfile, buf, filler);
-                                if (res2 < 0)
-                                {
-                                    return res2;
-                                }
+                            res = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
+                            if (res)
+                            {
+                                Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res).c_str());
+                                throw ENOENT;
                             }
-                            else
+
+                            res = avformat_find_stream_info(fmt_ctx, nullptr);
+                            if (res < 0)
+                            {
+                                Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
+                                throw EINVAL;
+                            }
+
+                            if (current_format->video_codec() == AV_CODEC_ID_NONE)
                             {
                                 // If target supports no video, we need to do some extra work and check
                                 // the input file to actually have an audio stream. If not, hide the file,
                                 // makes no sense to transcode anyway.
-                                AVFormatContext *fmt_ctx = nullptr;
-                                int res2 = 0;
-
-                                try
+                                res = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+                                if (res < 0 && res != AVERROR_STREAM_NOT_FOUND)
                                 {
-                                    res2 = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
-                                    if (res2)
-                                    {
-                                        Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res2).c_str());
-                                        throw res2;
-                                    }
-
-                                    res2 = avformat_find_stream_info(fmt_ctx, nullptr);
-                                    if (res2 < 0)
-                                    {
-                                        Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res2).c_str());
-                                        throw res2;
-                                    }
-
-                                    res2 = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
-                                    if (res2 < 0 && res2 != AVERROR_STREAM_NOT_FOUND)
-                                    {
-                                        Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res2).c_str());
-                                        throw res2;
-                                    }
-
-                                    if (res2 == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
-                                    {
-                                        Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
-                                        flags |= VIRTUALFLAG_HIDDEN;
-                                    }
-                                }
-                                catch (int _res)
-                                {
-                                    res2 = _res;
+                                    Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res).c_str());
+                                    throw EINVAL;
                                 }
 
-                                if (!(flags & VIRTUALFLAG_HIDDEN))
+                                if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
                                 {
-                                    // Check if we have a cue sheet
-                                    res2 = check_cuesheet(origfile, buf, filler, fmt_ctx);
-                                    if (res2 < 0)
-                                    {
-                                        return res2;
-                                    }
+                                    Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
+                                    flags |= VIRTUALFLAG_HIDDEN;
                                 }
+                            }
 
-                                if (fmt_ctx != nullptr)
+                            if (!(flags & VIRTUALFLAG_HIDDEN))
+                            {
+                                // Check if we have a cue sheet
+                                res = check_cuesheet(origfile, buf, filler, fmt_ctx);
+                                if (res < 0)
                                 {
-                                    avformat_close_input(&fmt_ctx);
+                                    throw EINVAL;
                                 }
+                            }
+
+                            if (fmt_ctx != nullptr)
+                            {
+                                avformat_close_input(&fmt_ctx);
                             }
 
                             std::string newext;
@@ -1234,60 +1216,69 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         }
                     }
                 }
+
+                closedir(dp);
+
+                errno = 0;  // Just to make sure - reset any error
             }
-            catch (bool)
+            catch (int _errno)
             {
+                closedir(dp);
 
+                errno = _errno;
             }
-
-            closedir(dp);
-
-            errno = 0;  // Just to make sure - reset any error
         }
     }
     else
     {
-        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
+        try
         {
-            add_dotdot(buf, filler, &virtualfile->m_st, 0);
-        }
-
-        FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
-
-        if (ffmpegfs_format->is_frameset())
-        {
-            // Generate set of all frames
-            if (!virtualfile->m_video_frame_count)
+            if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
             {
-                int res2 = get_source_properties(origpath, virtualfile);
-                if (res2 < 0)
+                add_dotdot(buf, filler, &virtualfile->m_st, 0);
+            }
+
+            FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
+
+            if (ffmpegfs_format->is_frameset())
+            {
+                // Generate set of all frames
+                if (!virtualfile->m_video_frame_count)
                 {
-                    return res2;
+                    int res = get_source_properties(origpath, virtualfile);
+                    if (res < 0)
+                    {
+                        throw EINVAL;
+                    }
+                }
+
+                //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
+
+                for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
+                {
+                    make_file(buf, filler, virtualfile->m_type, origpath, make_filename(frame_no, params.current_format(virtualfile)->fileext()), virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
                 }
             }
-
-            //Logging::debug(origpath, "readdir: Creating frame set of %1 frames. %2", virtualfile->m_video_frame_count, virtualfile->m_origfile);
-
-            for (uint32_t frame_no = 1; frame_no <= virtualfile->m_video_frame_count; frame_no++)
+            else if (ffmpegfs_format->is_hls())
             {
-                make_file(buf, filler, virtualfile->m_type, origpath, make_filename(frame_no, params.current_format(virtualfile)->fileext()), virtualfile->m_predicted_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_FRAME); /**< @todo Calculate correct file size for frame image in set */
+                int res = make_hls_fileset(buf, filler, origpath, virtualfile);
+                if (res < 0)
+                {
+                    throw EINVAL;
+                }
             }
-        }
-        else if (ffmpegfs_format->is_hls())
-        {
-            int res2 = make_hls_fileset(buf, filler, origpath, virtualfile);
-            if (res2 < 0)
+            else if (/*virtualfile != nullptr && */virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
             {
-                return res2;
+                // Fill in list for cue sheet
+                load_path(origpath, nullptr, buf, filler);
             }
-        }
-        else if (/*virtualfile != nullptr && */virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
-        {
-            // Fill in list for cue sheet
-            load_path(origpath, nullptr, buf, filler);
-        }
 
-        errno = 0;  // Just to make sure - reset any error
+            errno = 0;  // Just to make sure - reset any error
+        }
+        catch (int _errno)
+        {
+            errno = _errno;
+        }
     }
 
     return -errno;

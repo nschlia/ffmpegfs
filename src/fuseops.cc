@@ -67,7 +67,7 @@ static void                 init_stat(struct stat *stbuf, size_t fsize, time_t f
 static LPVIRTUALFILE        make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
 static void                 prepare_script();
 static void                 translate_path(std::string *origpath, const char* path);
-static bool                 transcoded_name(std::string *filepath, FFmpegfs_Format **current_format = nullptr);
+static bool                 transcoded_name(std::string *filepath, const std::string &origpath = "", FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
 static int                  get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
@@ -368,10 +368,11 @@ static void translate_path(std::string *origpath, const char* path)
 /**
  * @brief Convert file name from source to destination name.
  * @param[in] filepath - Name of source file, will be changed to destination name.
+ * @param[in] origpath - Original path to file. My be empty string if filepath is already a full path.
  * @param[out] current_format - If format has been found points to format info, nullptr if not.
  * @return Returns true if format has been found and filename changed, false if not.
  */
-static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_format /*= nullptr*/)
+static bool transcoded_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
 {
     std::string ext;
 
@@ -382,48 +383,66 @@ static bool transcoded_name(std::string * filepath, FFmpegfs_Format **current_fo
 
     if (allow_list_ext(ext))
     {
+        FFmpegfs_Format *ffmpegfs_format = nullptr;
+
         if (!params.smart_transcode())
         {
-            *current_format = &ffmpeg_format[0];
+            ffmpegfs_format = &ffmpeg_format[0];
         }
         else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
         {
-            *current_format = &ffmpeg_format[1];
+            ffmpegfs_format = &ffmpeg_format[1];
         }
 
-        if (params.m_oldnamescheme)
+        if (ffmpegfs_format != nullptr)
         {
-            // Old filename scheme, creates duplicates
-            replace_ext(filepath, (*current_format)->fileext());
+            // Could determine format
+            if (params.m_oldnamescheme)
+            {
+                // Old filename scheme, creates duplicates
+                replace_ext(filepath, ffmpegfs_format->fileext());
+            }
+            else
+            {
+                // New name scheme
+                append_ext(filepath, ffmpegfs_format->fileext());
+            }
+
+            if (current_format != nullptr)
+            {
+                *current_format = ffmpegfs_format;
+            }
+
+            return true;
         }
-        else
-        {
-            // New name scheme
-            append_ext(filepath, (*current_format)->fileext());
-        }
-        return true;
     }
 
     const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
 
     if (format != nullptr)
     {
-        FFmpegfs_Format *ffmpegfs_format = params.current_format(*filepath);
+        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *filepath);
 
-        if ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE))
+        if (ffmpegfs_format != nullptr &&
+                ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                 (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE)))
         {
-            *current_format = params.current_format(*filepath);
             if (params.m_oldnamescheme)
             {
                 // Old filename scheme, creates duplicates
-                replace_ext(filepath, (*current_format)->fileext());
+                replace_ext(filepath, ffmpegfs_format->fileext());
             }
             else
             {
                 // New name scheme
-                append_ext(filepath, (*current_format)->fileext());
+                append_ext(filepath, ffmpegfs_format->fileext());
             }
+
+            if (current_format != nullptr)
+            {
+                *current_format = ffmpegfs_format;
+            }
+
             return true;
         }
     }
@@ -807,7 +826,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
         buf[len] = '\0';
 
         transcoded = buf;
-        transcoded_name(&transcoded);
+        transcoded_name(&transcoded, origpath);
 
         buf[0] = '\0';
         strncat(buf, transcoded.c_str(), size);
@@ -1097,7 +1116,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     {
                         FFmpegfs_Format *current_format = nullptr;
                         // Check if file can be transcoded
-                        if (transcoded_name(&filename, &current_format))
+                        if (transcoded_name(&filename, origpath, &current_format))
                         {
                             if (current_format->video_codec() != AV_CODEC_ID_NONE)
                             {
@@ -1312,7 +1331,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         FFmpegfs_Format *current_format = nullptr;
         std::string filename(origpath);
 
-        if (transcoded_name(&filename, &current_format))
+        if (transcoded_name(&filename, "", &current_format))
         {
             if (!current_format->is_multiformat())
             {

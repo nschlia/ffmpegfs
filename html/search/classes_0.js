@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['_5ftagcacheinfo_1318',['_tagCACHEINFO',['../structBuffer_1_1__tagCACHEINFO.html',1,'Buffer']]],
-  ['_5ftagformat_1319',['_tagFORMAT',['../structFormat__Options_1_1__tagFORMAT.html',1,'Format_Options']]]
+  ['_5ftagcacheinfo_1321',['_tagCACHEINFO',['../structBuffer_1_1__tagCACHEINFO.html',1,'Buffer']]],
+  ['_5ftagformat_1322',['_tagFORMAT',['../structFormat__Options_1_1__tagFORMAT.html',1,'Format_Options']]]
 ];

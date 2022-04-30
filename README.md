@@ -17,6 +17,8 @@ FFmpegfs
 News
 ----
 
+### Version 2.11 under development
+
 ### Version 2.10 released
 
 **New in in 2.10 (2022-04-26):**

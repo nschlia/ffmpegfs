@@ -6125,50 +6125,22 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
 int64_t FFmpeg_Transcoder::duration() const
 {
-    if (m_virtualfile != nullptr)
-    {
-        return m_virtualfile->m_duration;
-    }
-    else
-    {
-        return 0;
-    }
+    return SAFE_VALUE(m_virtualfile, m_duration, 0);
 }
 
 size_t FFmpeg_Transcoder::predicted_filesize() const
 {
-    if (m_virtualfile != nullptr)
-    {
-        return m_virtualfile->m_predicted_size;
-    }
-    else
-    {
-        return 0;
-    }
+    return SAFE_VALUE(m_virtualfile, m_predicted_size, 0);
 }
 
 uint32_t FFmpeg_Transcoder::video_frame_count() const
 {
-    if (m_virtualfile != nullptr)
-    {
-        return m_virtualfile->m_video_frame_count;
-    }
-    else
-    {
-        return 0;
-    }
+    return SAFE_VALUE(m_virtualfile, m_video_frame_count, 0);
 }
 
 uint32_t FFmpeg_Transcoder::segment_count() const
 {
-    if (m_virtualfile != nullptr)
-    {
-        return m_virtualfile->get_segment_count();
-    }
-    else
-    {
-        return 0;
-    }
+    return SAFE_VALUE(m_virtualfile, get_segment_count(), 0);
 }
 
 int FFmpeg_Transcoder::encode_finish()

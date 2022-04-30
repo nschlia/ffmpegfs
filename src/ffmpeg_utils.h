@@ -1011,7 +1011,7 @@ typename std::map<const std::string, const T, comp>::const_iterator search_by_va
  * @param[in] codec_id - Codec to check, must be one of the subtitle codecs.
  * @return Returns true if codec_id is a text based codec, false if it is bitmap based.
  */
-bool is_text_codec(AVCodecID codec_id);
+bool                is_text_codec(AVCodecID codec_id);
 
 /**
  * @brief Get first audio stream
@@ -1020,7 +1020,7 @@ bool is_text_codec(AVCodecID codec_id);
  * @param[out] samplerate - Audio sample rate of stream
  * @return Returns stream number (value greater or equal zero) or negative errno value
  */
-int get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
+int                 get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
 
 /**
  * @brief Escape characters that are meaningful to regexp.
@@ -1034,7 +1034,7 @@ const std::string & regex_escape(std::string *str);
  * @param[in] filename - Name to check
  * @return Returns true, if filename is blocked, false if not.
  */
-bool is_blocked(const std::string & filename);
+bool                is_blocked(const std::string & filename);
 
 typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set of strings, sorted/search case insensitive */
 
@@ -1043,6 +1043,6 @@ typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set 
  * @param[in] s - std::set object to combine
  * @return List of strings, separated by commas.
  */
-std::string implode(const STRINGSET & s);
+std::string         implode(const STRINGSET & s);
 
 #endif

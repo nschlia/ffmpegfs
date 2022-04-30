@@ -342,6 +342,12 @@ LPVIRTUALFILE   insert_dir(VIRTUALTYPE type, const std::string & virtdir, const 
  */
 LPVIRTUALFILE   find_file(const std::string &virtfile);
 /**
+ * @brief Find file in cache.
+ * @param[in] origfile - Filename and path of file to find.
+ * @return If found, returns VIRTUALFILE object, if not found returns nullptr.
+ */
+LPVIRTUALFILE   find_file_from_orig(const std::string &origfile);
+/**
  * @brief Check if path has already been parsed.
  * Only useful if for DVD, Bluray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.
  * @param[in] path - Path to parse.

@@ -181,7 +181,7 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
 
 FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 {
-    LPCVIRTUALFILE virtualfile = find_file(filepath);
+    LPCVIRTUALFILE virtualfile = find_file_from_orig(filepath);
 
     if (virtualfile != nullptr)
     {

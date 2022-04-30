@@ -563,6 +563,18 @@ LPVIRTUALFILE find_file(const std::string & virtfile)
     return nullptr;
 }
 
+LPVIRTUALFILE find_file_from_orig(const std::string &origfile) ///<* @todo Needs optimisation!
+{
+    for (FILENAME_MAP::iterator it = filenames.begin(); it != filenames.end(); ++it)
+    {
+        if (it->second.m_origfile == origfile)
+        {
+            return &it->second;
+        }
+    }
+    return nullptr;
+}
+
 bool check_path(const std::string & path)
 {
     FILENAME_MAP::const_iterator it = find_prefix(filenames, path);

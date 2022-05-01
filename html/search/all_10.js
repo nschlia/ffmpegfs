@@ -35,6 +35,7 @@ var searchData=
   ['resultcode_5ffinished_5fsuccess_1087',['RESULTCODE_FINISHED_SUCCESS',['../cache_8h.html#a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea',1,'cache.h']]],
   ['resultcode_5fnone_1088',['RESULTCODE_NONE',['../cache_8h.html#a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080',1,'cache.h']]],
   ['rewind_1089',['rewind',['../classDvdIO.html#a30735642fa6c2b10525124d22c959d03',1,'DvdIO']]],
-  ['rollback_5ftransaction_1090',['rollback_transaction',['../classCache.html#a7708292b16bef7bdd9a76e67a5d06e3b',1,'Cache']]],
-  ['rtrim_1091',['rtrim',['../ffmpeg__utils_8cc.html#a141668703041152c424ec6735261fb52',1,'rtrim(std::string &amp;s):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a141668703041152c424ec6735261fb52',1,'rtrim(std::string &amp;s):&#160;ffmpeg_utils.cc']]]
+  ['rfilenames_1090',['rfilenames',['../fuseops_8cc.html#a373097aa19e460d00f494f91e5b4cd67',1,'fuseops.cc']]],
+  ['rollback_5ftransaction_1091',['rollback_transaction',['../classCache.html#a7708292b16bef7bdd9a76e67a5d06e3b',1,'Cache']]],
+  ['rtrim_1092',['rtrim',['../ffmpeg__utils_8cc.html#a141668703041152c424ec6735261fb52',1,'rtrim(std::string &amp;s):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a141668703041152c424ec6735261fb52',1,'rtrim(std::string &amp;s):&#160;ffmpeg_utils.cc']]]
 ];

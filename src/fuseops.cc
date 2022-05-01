@@ -72,6 +72,8 @@ static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const 
 static int                  get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  kick_next(LPVIRTUALFILE virtualfile);
+static void                 sighandler(int signum);
+static std::string          get_number(const char *path, uint32_t *value);
 
 static int                  ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int                  ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -81,10 +83,8 @@ static int                  ffmpegfs_open(const char *path, struct fuse_file_inf
 static int                  ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 static int                  ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
 static int                  ffmpegfs_release(const char *path, struct fuse_file_info *fi);
-static void                 sighandler(int signum);
 static void *               ffmpegfs_init(struct fuse_conn_info *conn);
 static void                 ffmpegfs_destroy(__attribute__((unused)) void * p);
-static std::string          get_number(const char *path, uint32_t *value);
 
 static FILENAME_MAP         filenames;          /**< @brief Map files to virtual files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
@@ -2152,6 +2152,24 @@ static void sighandler(int signum)
 }
 
 /**
+ * @brief Extract the number for a file name
+ * @param path - Path and filename of requested file
+ * @param value - Returns the number extracted
+ * @return Returns the filename that was processed, without path.
+ */
+static std::string get_number(const char *path, uint32_t *value)
+{
+    std::string filename(path);
+
+    // Get frame number
+    remove_path(&filename);
+
+    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
+
+    return filename;
+}
+
+/**
  * @brief Initialise filesystem
  * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
  * @return nullptr
@@ -2225,24 +2243,6 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     script_file.clear();
 
     Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, FFMPEFS_VERSION);
-}
-
-/**
- * @brief Extract the number for a file name
- * @param path - Path and filename of requested file
- * @param value - Returns the number extracted
- * @return Returns the filename that was processed, without path.
- */
-static std::string get_number(const char *path, uint32_t *value)
-{
-    std::string filename(path);
-
-    // Get frame number
-    remove_path(&filename);
-
-    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
-
-    return filename;
 }
 
 int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off)

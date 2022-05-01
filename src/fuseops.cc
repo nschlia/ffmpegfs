@@ -62,6 +62,7 @@
  * @brief Map source file names to virtual file objects.
  */
 typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;
+typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;
 
 static void                 init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE        make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
@@ -87,6 +88,7 @@ static void *               ffmpegfs_init(struct fuse_conn_info *conn);
 static void                 ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static FILENAME_MAP         filenames;          /**< @brief Map files to virtual files */
+static RFILENAME_MAP        rfilenames;         /**< @brief Reverse map virtual files to real files */
 static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
 
 static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
@@ -513,6 +515,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
 
         filenames.insert(make_pair(_virtfile, virtualfile));
+        rfilenames.insert(make_pair(_origfile, virtualfile));
 
         it = filenames.find(_virtfile);
     }
@@ -563,14 +566,15 @@ LPVIRTUALFILE find_file(const std::string & virtfile)
     return nullptr;
 }
 
-LPVIRTUALFILE find_file_from_orig(const std::string &origfile) ///<* @todo Needs optimisation!
+LPVIRTUALFILE find_file_from_orig(const std::string &origfile)
 {
-    for (FILENAME_MAP::iterator it = filenames.begin(); it != filenames.end(); ++it)
+    RFILENAME_MAP::iterator it = rfilenames.find(sanitise_filepath(origfile));
+
+    errno = 0;
+
+    if (it != rfilenames.end())
     {
-        if (it->second.m_origfile == origfile)
-        {
-            return &it->second;
-        }
+        return &it->second;
     }
     return nullptr;
 }

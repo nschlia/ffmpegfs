@@ -164,7 +164,7 @@ Enable deinterlacing for enhanced image quality.
 
 Hardware Acceleration
 ---------------------
-The new hardware acceleration feature depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.
+The hardware acceleration feature depends heavily on the hardware used. As this is a personal project, I cannot go, buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may act different. Sometimes the format range is not the same, sometimes subfeatures are missing and so on.
 
 ### How It Works
 Acceleration is done by specialised graphics adapters, the FFmpeg API can use several types using a range of APIs. As of today even cheapy on board chips can do hardware acceleration.
@@ -320,7 +320,7 @@ If destination type is TS, the following files and directories will appear:
 
 Tracks defined in the cue sheet will show up in the *.tracks sub directories.
 
-Select Audio and Video Codecs
+Selecting Audio and Video Codecs
 ----------
 
 Some new codec combinations are now possible (the default codecs in bold):
@@ -333,7 +333,7 @@ Some new codec combinations are now possible (the default codecs in bold):
 | TS, HLS | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
 
 The audio codec can be selected with --audiocodec, for  videos use --videocodec. Without these parameters, FFmpegfs will use the codecs as before (no change).
-Please note that hardware acceleration might not work, e.g., my hardware encoder supports H264 but not H265. So even though H265 creates much  smaller files it takes 10 times longer to transcode.
+Please note that hardware acceleration might not work, e.g., my hardware encoder supports H264 but not H265. So even though H265 creates much smaller files it takes 10 times longer to transcode.
 
 Building A Docker Container
 ----------
@@ -355,7 +355,7 @@ Depending on the machine speed, this will take quite a while. After the command 
           nschlia/ffmpegfs \
           -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 
-Of course,  */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to MP4 or whatever desired. 
+Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. desttype may be changed to MP4 or whatever desired. 
 
 Auto Copy
 ---------

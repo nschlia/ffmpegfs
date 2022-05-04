@@ -563,9 +563,6 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
  */
 static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 {
-    std::string origpath;
-    int flags = 0;
-
     Logging::trace(path, "getattr");
 
     if (is_blocked(path))
@@ -574,12 +571,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         return -errno;
     }
 
+    std::string origpath;
+
     append_basepath(&origpath, path);
 
-    LPVIRTUALFILE virtualfile = find_original(&origpath);
-    VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
-
-    flags = (virtualfile != nullptr) ? virtualfile->m_flags : VIRTUALFLAG_NONE;
+    LPVIRTUALFILE   virtualfile = find_original(&origpath);
+    VIRTUALTYPE     type        = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
+    int             flags       = (virtualfile != nullptr) ? virtualfile->m_flags : VIRTUALFLAG_NONE;
 
     if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
     {

@@ -1661,10 +1661,10 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const std::string & origfile, const struct stat * stbuf, int flags)
 {
-    std::string _virtfile(sanitise_filepath(virtfile));
-    std::string _origfile(sanitise_filepath(origfile));
+    std::string sanitised_virtfile(sanitise_filepath(virtfile));
+    std::string sanitised_origfile(sanitise_filepath(origfile));
 
-    FILENAME_MAP::iterator it    = filenames.find(_virtfile);
+    FILENAME_MAP::iterator it    = filenames.find(sanitised_virtfile);
 
     if (it != filenames.cend())
     {
@@ -1674,9 +1674,9 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
-        virtualfile.m_destfile          = _virtfile;
-        virtualfile.m_origfile          = _origfile;
+        virtualfile.m_format_idx        = params.guess_format_idx(sanitised_origfile);
+        virtualfile.m_destfile          = sanitised_virtfile;
+        virtualfile.m_origfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
     }
     else
@@ -1687,15 +1687,15 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
-        virtualfile.m_destfile          = _virtfile;
-        virtualfile.m_origfile          = _origfile;
+        virtualfile.m_format_idx        = params.guess_format_idx(sanitised_origfile);
+        virtualfile.m_destfile          = sanitised_virtfile;
+        virtualfile.m_origfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
 
-        filenames.insert(make_pair(_virtfile, virtualfile));
-        rfilenames.insert(make_pair(_origfile, virtualfile));
+        filenames.insert(make_pair(sanitised_virtfile, virtualfile));
+        rfilenames.insert(make_pair(sanitised_origfile, virtualfile));
 
-        it = filenames.find(_virtfile);
+        it = filenames.find(sanitised_virtfile);
     }
 
     return &it->second;

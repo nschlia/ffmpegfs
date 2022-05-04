@@ -1546,16 +1546,21 @@ static void prepare_script()
 
 /**
  * @brief Convert file name from source to destination name.
- * @param[in] filepath - Name of source file, will be changed to destination name.
- * @param[in] origpath - Original path to file. My be empty string if filepath is already a full path.
+ * @param[in] virtualpath - Name of source file, will be changed to destination name.
+ * @param[in] origpath - Original path to file. May be empty string if filepath is already a full path.
  * @param[out] current_format - If format has been found points to format info, nullptr if not.
  * @return Returns true if format has been found and filename changed, false if not.
  */
-static bool virtual_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
+static bool virtual_name(std::string * virtualpath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
 {
     std::string ext;
 
-    if (!find_ext(&ext, *filepath) || passthrough_set.find(ext) != passthrough_set.cend())
+    if (current_format != nullptr)
+    {
+        *current_format = nullptr;
+    }
+
+    if (!find_ext(&ext, *virtualpath) || passthrough_set.find(ext) != passthrough_set.cend())
     {
         return false;
     }
@@ -1579,12 +1584,12 @@ static bool virtual_name(std::string * filepath, const std::string & origpath /*
             if (params.m_oldnamescheme)
             {
                 // Old filename scheme, creates duplicates
-                replace_ext(filepath, ffmpegfs_format->fileext());
+                replace_ext(virtualpath, ffmpegfs_format->fileext());
             }
             else
             {
                 // New name scheme
-                append_ext(filepath, ffmpegfs_format->fileext());
+                append_ext(virtualpath, ffmpegfs_format->fileext());
             }
 
             if (current_format != nullptr)
@@ -1596,11 +1601,11 @@ static bool virtual_name(std::string * filepath, const std::string & origpath /*
         }
     }
 
-    const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
+    const AVOutputFormat* format = av_guess_format(nullptr, virtualpath->c_str(), nullptr);
 
     if (format != nullptr)
     {
-        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *filepath);
+        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *virtualpath);
 
         if (ffmpegfs_format != nullptr &&
                 ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
@@ -1609,12 +1614,12 @@ static bool virtual_name(std::string * filepath, const std::string & origpath /*
             if (params.m_oldnamescheme)
             {
                 // Old filename scheme, creates duplicates
-                replace_ext(filepath, ffmpegfs_format->fileext());
+                replace_ext(virtualpath, ffmpegfs_format->fileext());
             }
             else
             {
                 // New name scheme
-                append_ext(filepath, ffmpegfs_format->fileext());
+                append_ext(virtualpath, ffmpegfs_format->fileext());
             }
 
             if (current_format != nullptr)
@@ -1626,10 +1631,6 @@ static bool virtual_name(std::string * filepath, const std::string & origpath /*
         }
     }
 
-    if (current_format != nullptr)
-    {
-        *current_format = nullptr;
-    }
     return false;
 }
 

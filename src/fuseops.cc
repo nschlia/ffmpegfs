@@ -67,14 +67,15 @@ typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;
 static void                 init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE        make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
 static void                 prepare_script();
-static void                 translate_path(std::string *origpath, const char* path);
-static bool                 transcoded_name(std::string *filepath, const std::string &origpath = "", FFmpegfs_Format **current_format = nullptr);
+static bool                 virtual_name(std::string *virtualpath, const std::string &origpath = "", FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
 static int                  get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  kick_next(LPVIRTUALFILE virtualfile);
 static void                 sighandler(int signum);
 static std::string          get_number(const char *path, uint32_t *value);
+static int                  selector(const struct dirent * de);
+static int                  scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 
 static int                  ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int                  ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
@@ -352,29 +353,13 @@ static void prepare_script()
 }
 
 /**
- * @brief Translate file names from FUSE to the original absolute path.
- * @param[out] origpath - Upon return, contains the name and path of the original file.
- * @param[in] path - Filename and relative path of the original file.
- */
-static void translate_path(std::string *origpath, const char* path)
-{
-    *origpath = params.m_basepath;
-    if (*path == '/')
-    {
-        ++path;
-    }
-    *origpath += path;
-    sanitise_filepath(origpath);
-}
-
-/**
  * @brief Convert file name from source to destination name.
  * @param[in] filepath - Name of source file, will be changed to destination name.
  * @param[in] origpath - Original path to file. My be empty string if filepath is already a full path.
  * @param[out] current_format - If format has been found points to format info, nullptr if not.
  * @return Returns true if format has been found and filename changed, false if not.
  */
-static bool transcoded_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
+static bool virtual_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
 {
     std::string ext;
 
@@ -833,7 +818,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 
     Logging::trace(path, "readlink");
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
     find_original(&origpath);
 
     len = readlink(origpath.c_str(), buf, size - 2);
@@ -842,7 +827,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
         buf[len] = '\0';
 
         transcoded = buf;
-        transcoded_name(&transcoded, origpath);
+        virtual_name(&transcoded, origpath);
 
         buf[0] = '\0';
         strncat(buf, transcoded.c_str(), size);
@@ -1041,7 +1026,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     Logging::trace(path, "readdir");
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
     append_sep(&origpath);
 
     // Add a virtual script if enabled
@@ -1132,7 +1117,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     {
                         FFmpegfs_Format *current_format = nullptr;
                         // Check if file can be transcoded
-                        if (transcoded_name(&filename, origpath, &current_format))
+                        if (virtual_name(&filename, origpath, &current_format))
                         {
                             AVFormatContext *fmt_ctx = nullptr;
                             int res;
@@ -1319,7 +1304,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         return -errno;
     }
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
 
     LPVIRTUALFILE virtualfile = find_original(&origpath);
     VIRTUALTYPE type = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
@@ -1338,7 +1323,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         FFmpegfs_Format *current_format = nullptr;
         std::string filename(origpath);
 
-        if (transcoded_name(&filename, "", &current_format))
+        if (virtual_name(&filename, "", &current_format))
         {
             if (!current_format->is_multiformat())
             {
@@ -1636,7 +1621,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
     errno = 0;
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
 
     LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
@@ -1787,7 +1772,7 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
     Logging::trace(path, "open");
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
 
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
@@ -1912,7 +1897,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
 
     Logging::trace(path, "read: Reading %1 bytes from %2.", size, locoffset);
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
 
     LPVIRTUALFILE virtualfile = find_original(&origpath);
 
@@ -2073,7 +2058,7 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
 
     Logging::trace(path, "statfs");
 
-    translate_path(&origpath, path);
+    append_basepath(&origpath, path);
 
     // passthrough for regular files
     if (statvfs(origpath.c_str(), stbuf) == 0)

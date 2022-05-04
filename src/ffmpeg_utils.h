@@ -858,6 +858,13 @@ std::string         sanitise_filepath(const std::string & filepath);
 std::string         sanitise_filepath(std::string * filepath);
 
 /**
+ * @brief Translate file names from FUSE to the original absolute path.
+ * @param[out] origpath - Upon return, contains the name and path of the original file.
+ * @param[in] path - Filename and relative path of the original file.
+ */
+void                 append_basepath(std::string *origpath, const char* path);
+
+/**
  * @brief Minimal check if codec is an album art.
  * Requires frame_rate to decide whether this is a video stream if codec_id is
  * not BMP or PNG (which means its undoubtedly an album art). For MJPEG this may

@@ -1969,6 +1969,18 @@ std::string sanitise_filepath(const std::string & filepath)
     return sanitise_filepath(&buffer);
 }
 
+void append_basepath(std::string *origpath, const char* path)
+{
+    *origpath = params.m_basepath;
+    if (*path == '/')
+    {
+        ++path;
+    }
+    *origpath += path;
+
+    sanitise_filepath(origpath);
+}
+
 bool is_album_art(AVCodecID codec_id, const AVRational * frame_rate)
 {
     if (codec_id == AV_CODEC_ID_PNG || codec_id == AV_CODEC_ID_BMP)

@@ -249,561 +249,6 @@ void init_fuse_ops(void)
 }
 
 /**
- * @brief Initialise a stat structure.
- * @param[in] stbuf - struct stat to fill in.
- * @param[in] fsize - size of the corresponding file.
- * @param[in] ftime - File time (creation/modified/access) of the corresponding file.
- * @param[in] directory - If true, the structure is set up for a directory.
- */
-static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool directory)
-{
-    memset(stbuf, 0, sizeof(struct stat));
-
-    stbuf->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
-    if (directory)
-    {
-        stbuf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-        stbuf->st_nlink = 2;
-    }
-    else
-    {
-        stbuf->st_mode |= S_IFREG;
-        stbuf->st_nlink = 1;
-    }
-
-    stat_set_size(stbuf, fsize);
-
-    // Set current user as owner
-    stbuf->st_uid = getuid();
-    stbuf->st_gid = getgid();
-
-    // Use current date/time
-    stbuf->st_atime = stbuf->st_mtime = stbuf->st_ctime = ftime;
-}
-
-/**
- * @brief Make a virtual file.
- * @param[in] buf - FUSE buffer to fill.
- * @param[in] filler - Filler function.
- * @param[in] type - Type of virtual file.
- * @param[in] origpath - Original path.
- * @param[in] filename - Name of virtual file.
- * @param[in] flags - On of the VIRTUALFLAG_ macros.
- * @param[in] fsize - Size of virtual file.
- * @param[in] ftime - Time of virtual file.
- * @return Returns constant pointer to VIRTUALFILE object of file.
- */
-static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime, int flags)
-{
-    struct stat stbuf;
-
-    init_stat(&stbuf, fsize, ftime, false);
-
-    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
-    {
-        return nullptr;
-    }
-
-    return insert_file(type, origpath + filename, &stbuf, flags);
-}
-
-/**
- * @brief Read the virtual script file into memory and store in buffer.
- */
-static void prepare_script()
-{
-    std::string scriptsource;
-
-    exepath(&scriptsource);
-    scriptsource += params.m_scriptsource;
-
-    Logging::debug(scriptsource, "Reading virtual script source.");
-
-    FILE *fpi = fopen(scriptsource.c_str(), "rt");
-    if (fpi == nullptr)
-    {
-        Logging::warning(scriptsource, "File open failed. Disabling script: (%1) %2", errno, strerror(errno));
-        params.m_enablescript = false;
-    }
-    else
-    {
-        struct stat stbuf;
-        if (fstat(fileno(fpi), &stbuf) == -1)
-        {
-            Logging::warning(scriptsource, "File could not be accessed. Disabling script: (%1) %2", errno, strerror(errno));
-            params.m_enablescript = false;
-        }
-        else
-        {
-            script_file.resize(static_cast<size_t>(stbuf.st_size));
-
-            if (fread(&script_file[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
-            {
-                Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
-                params.m_enablescript = false;
-            }
-            else
-            {
-                Logging::trace(scriptsource, "Read %1 bytes of script file.", script_file.size());
-            }
-        }
-
-        fclose(fpi);
-    }
-}
-
-/**
- * @brief Convert file name from source to destination name.
- * @param[in] filepath - Name of source file, will be changed to destination name.
- * @param[in] origpath - Original path to file. My be empty string if filepath is already a full path.
- * @param[out] current_format - If format has been found points to format info, nullptr if not.
- * @return Returns true if format has been found and filename changed, false if not.
- */
-static bool virtual_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
-{
-    std::string ext;
-
-    if (!find_ext(&ext, *filepath) || passthrough_set.find(ext) != passthrough_set.cend())
-    {
-        return false;
-    }
-
-    if (allow_list_ext(ext))
-    {
-        FFmpegfs_Format *ffmpegfs_format = nullptr;
-
-        if (!params.smart_transcode())
-        {
-            ffmpegfs_format = &ffmpeg_format[0];
-        }
-        else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
-        {
-            ffmpegfs_format = &ffmpeg_format[1];
-        }
-
-        if (ffmpegfs_format != nullptr)
-        {
-            // Could determine format
-            if (params.m_oldnamescheme)
-            {
-                // Old filename scheme, creates duplicates
-                replace_ext(filepath, ffmpegfs_format->fileext());
-            }
-            else
-            {
-                // New name scheme
-                append_ext(filepath, ffmpegfs_format->fileext());
-            }
-
-            if (current_format != nullptr)
-            {
-                *current_format = ffmpegfs_format;
-            }
-
-            return true;
-        }
-    }
-
-    const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
-
-    if (format != nullptr)
-    {
-        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *filepath);
-
-        if (ffmpegfs_format != nullptr &&
-                ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                 (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE)))
-        {
-            if (params.m_oldnamescheme)
-            {
-                // Old filename scheme, creates duplicates
-                replace_ext(filepath, ffmpegfs_format->fileext());
-            }
-            else
-            {
-                // New name scheme
-                append_ext(filepath, ffmpegfs_format->fileext());
-            }
-
-            if (current_format != nullptr)
-            {
-                *current_format = ffmpegfs_format;
-            }
-
-            return true;
-        }
-    }
-
-    if (current_format != nullptr)
-    {
-        *current_format = nullptr;
-    }
-    return false;
-}
-
-/**
- * @brief Find mapped file by prefix. Normally used to find a path.
- * @param[in] map - File map with virtual files.
- * @param[in] search_for - Prefix (path) to search for.
- * @return If found, returns const_iterator to map entry. Returns map.cend() if not found.
- */
-static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for)
-{
-    FILENAME_MAP::const_iterator it = map.lower_bound(search_for);
-    if (it != map.cend())
-    {
-        const std::string & key = it->first;
-        if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
-        {
-            return it;
-        }
-    }
-    return map.cend();
-}
-
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat * stbuf, int flags)
-{
-    return insert_file(type, virtfile, virtfile, stbuf, flags);
-}
-
-LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const std::string & origfile, const struct stat * stbuf, int flags)
-{
-    std::string _virtfile(sanitise_filepath(virtfile));
-    std::string _origfile(sanitise_filepath(origfile));
-
-    FILENAME_MAP::iterator it    = filenames.find(_virtfile);
-
-    if (it != filenames.cend())
-    {
-        VIRTUALFILE & virtualfile = it->second;
-
-        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
-
-        virtualfile.m_type              = type;
-        virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
-        virtualfile.m_destfile          = _virtfile;
-        virtualfile.m_origfile          = _origfile;
-        //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
-    }
-    else
-    {
-        VIRTUALFILE virtualfile;
-
-        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
-
-        virtualfile.m_type              = type;
-        virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
-        virtualfile.m_destfile          = _virtfile;
-        virtualfile.m_origfile          = _origfile;
-        //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
-
-        filenames.insert(make_pair(_virtfile, virtualfile));
-        rfilenames.insert(make_pair(_origfile, virtualfile));
-
-        it = filenames.find(_virtfile);
-    }
-
-    return &it->second;
-}
-
-LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const struct stat * stbuf, int flags)
-{
-    struct stat stbufdir;
-
-    flags |= VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
-
-    std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
-
-    // Change file to directory for the frame set
-    // Change file to virtual directory for the frame set. Keep permissions.
-    stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-    stbufdir.st_mode  |= S_IFDIR;
-    stbufdir.st_nlink = 2;
-    stbufdir.st_size  = stbufdir.st_blksize;
-
-    std::string path(virtdir);
-    append_sep(&path);
-
-    if (ffmpeg_format[0].is_frameset())
-    {
-        flags |= VIRTUALFLAG_FRAME;
-    }
-    else if (ffmpeg_format[0].is_hls())
-    {
-        flags |= VIRTUALFLAG_HLS;
-    }
-
-    return insert_file(type, path, &stbufdir, flags);
-}
-
-LPVIRTUALFILE find_file(const std::string & virtfile)
-{
-    FILENAME_MAP::iterator it = filenames.find(sanitise_filepath(virtfile));
-
-    errno = 0;
-
-    if (it != filenames.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
-}
-
-LPVIRTUALFILE find_file_from_orig(const std::string &origfile)
-{
-    RFILENAME_MAP::iterator it = rfilenames.find(sanitise_filepath(origfile));
-
-    errno = 0;
-
-    if (it != rfilenames.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
-}
-
-bool check_path(const std::string & path)
-{
-    FILENAME_MAP::const_iterator it = find_prefix(filenames, path);
-
-    return (it != filenames.cend());
-}
-
-int load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
-{
-    if (buf == nullptr)
-    {
-        // We can't add anything here if buf == nullptr
-        return 0;
-    }
-
-    int title_count = 0;
-
-    for (FILENAME_MAP::iterator it = filenames.lower_bound(path); it != filenames.end(); ++it)
-    {
-        std::string virtfilepath    = it->first;
-        LPVIRTUALFILE virtualfile   = &it->second;
-
-        if (
-        #ifdef USE_LIBVCD
-                (virtualfile->m_type != VIRTUALTYPE_VCD) &&
-        #endif // USE_LIBVCD
-        #ifdef USE_LIBDVD
-                (virtualfile->m_type != VIRTUALTYPE_DVD) &&
-        #endif // USE_LIBDVD
-        #ifdef USE_LIBBLURAY
-                (virtualfile->m_type != VIRTUALTYPE_BLURAY) &&
-        #endif // USE_LIBBLURAY
-                !(virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
-                )
-        {
-            continue;
-        }
-
-        remove_filename(&virtfilepath);
-        if (virtfilepath == path) // Really a prefix?
-        {
-            struct stat stbuf;
-            std::string destfile(virtualfile->m_destfile);
-
-            if (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY)
-            {
-                // Is a directory, no need to translate the file name, just drop terminating separator
-                remove_sep(&destfile);
-            }
-            remove_path(&destfile);
-
-            title_count++;
-
-            std::string cachefile;
-
-            Buffer::make_cachefile_name(cachefile, virtualfile->m_destfile, params.current_format(virtualfile)->fileext(), false);
-
-            struct stat stbuf2;
-            if (!lstat(cachefile.c_str(), &stbuf2))
-            {
-                // Cache file exists, use cache file size here
-
-                stat_set_size(&virtualfile->m_st, static_cast<size_t>(stbuf2.st_size));
-
-                memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
-            }
-            else
-            {
-                if (statbuf == nullptr)
-                {
-                    memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
-                }
-                else
-                {
-                    memcpy(&stbuf, statbuf, sizeof(struct stat));
-
-                    stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
-                }
-            }
-
-            if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))
-            {
-                // break;
-            }
-        }
-    }
-
-    return title_count;
-}
-
-/**
- * @brief Filter function used for scandir.
- *
- * Selects files only that can be processed with FFmpeg API.
- *
- * @param[in] de - dirent to check
- * @return Returns nonzero if dirent matches, 0 if not.
- */
-static int selector(const struct dirent * de)
-{
-    if (de->d_type & (DT_REG | DT_LNK))
-    {
-        return (av_guess_format(nullptr, de->d_name, nullptr) != nullptr);
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-/**
- * @brief Scans the directory dirp
- * Works exactly like the scandir(3) function, the only
- * difference is that it returns the result in a std:vector.
- * @param[in] dirp - Directory to be searched.
- * @param[out] _namelist - Returns the list of files found
- * @param[in] selector - Entries for which selector() returns nonzero are stored in _namelist
- * @param[in] cmp - Entries are sorted using qsort(3) with the comparison function cmp(). May be nullptr for no sort.
- * @return Returns the number of directory entries selected.
- * On error, -1 is returned, with errno set to indicate
- * the error.
- */
-static int scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **))
-{
-    struct dirent **namelist;
-    int count = scandir(dirp, &namelist, selector, cmp);
-
-    _namelist->clear();
-
-    if (count != -1)
-    {
-        for (int n = 0; n < count; n++)
-        {
-            _namelist->push_back(*namelist[n]);
-            free(namelist[n]);
-        }
-        free(namelist);
-    }
-
-    return  count;
-}
-
-LPVIRTUALFILE find_original(const std::string & origpath)
-{
-    std::string buffer(origpath);
-    return find_original(&buffer);
-}
-
-LPVIRTUALFILE find_original(std::string * filepath)
-{
-    sanitise_filepath(filepath);
-
-    LPVIRTUALFILE virtualfile = find_file(*filepath);
-
-    errno = 0;
-
-    if (virtualfile != nullptr)
-    {
-        *filepath = virtualfile->m_origfile;
-        return virtualfile;
-    }
-    else
-    {
-        // Fallback to old method (required if file accessed directly)
-        std::string ext;
-        if (!ffmpeg_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, ffmpeg_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, ffmpeg_format[1].fileext()) == 0)))
-        {
-            std::string dir(*filepath);
-            std::string searchexp(*filepath);
-            std::string origfile;
-            std::vector<struct dirent> namelist;
-            struct stat stbuf;
-            int count;
-            int found = 0;
-
-            remove_filename(&dir);
-            origfile = dir;
-
-            count = scandir(dir.c_str(), &namelist, selector, nullptr);
-            if (count == -1)
-            {
-                if (errno != ENOTDIR)   // If not a directory, simply ignore error
-                {
-                    Logging::error(dir, "Error scanning directory: (%1) %2", errno, strerror(errno));
-                }
-                return nullptr;
-            }
-
-            remove_path(&searchexp);
-            remove_ext(&searchexp);
-
-            for (size_t n = 0; n < static_cast<size_t>(count); n++)
-            {
-                if (!strcmp(namelist[n].d_name, searchexp.c_str()))
-                {
-                    append_filename(&origfile, namelist[n].d_name);
-                    sanitise_filepath(&origfile);
-                    found = 1;
-                    break;
-                }
-            }
-
-            if (found && lstat(origfile.c_str(), &stbuf) == 0)
-            {
-                // The original file exists
-                LPVIRTUALFILE virtualfile2;
-
-                if (*filepath != origfile)
-                {
-                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
-                    *filepath = origfile;
-                }
-                else
-                {
-                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
-                }
-                return virtualfile2;
-            }
-            else
-            {
-                // File does not exist; this is a virtual file, not an error
-                errno = 0;
-            }
-        }
-    }
-    // Source file exists with no supported extension, keep path
-    return nullptr;
-}
-
-LPVIRTUALFILE find_parent(const std::string & origpath)
-{
-    std::string filepath(origpath);
-
-    remove_filename(&filepath);
-    remove_sep(&filepath);
-
-    return find_original(&filepath);
-}
-
-/**
  * @brief Read the target of a symbolic link.
  * @param[in] path
  * @param[in] buf - FUSE buffer to fill.
@@ -836,181 +281,6 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
     }
 
     return -errno;
-}
-
-/**
- * @brief Calculate the video frame count.
- * @param[in] origpath - Path of original file.
- * @param[inout] virtualfile - Virtual file object to modify.
- * @return On success, returns 0. On error, returns -errno.
- */
-static int get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile)
-{
-    Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
-    if (cache_entry == nullptr)
-    {
-        return -errno;
-    }
-
-    transcoder_delete(cache_entry);
-
-    Logging::debug(origpath, "Duration: %1 Frames: %2 Segments: %3", virtualfile->m_duration, virtualfile->m_video_frame_count, virtualfile->get_segment_count());
-
-    return 0;
-}
-
-/**
- * @brief Build a virtual HLS file set
- * @param[in, out] buf - The buffer passed to the readdir() operation.
- * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
- * @param[in] origpath - The original file
- * @param[in] virtualfile - LPCVIRTUALFILE of file to create file set for
- * @return On success, returns 0. On error, returns -errno.
- */
-static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
-{
-    // Generate set of TS segment files and necessary M3U lists
-    std::string master_contents;
-    std::string index_0_av_contents;
-
-    if (!virtualfile->get_segment_count())
-    {
-        int res = get_source_properties(origpath, virtualfile);
-        if (res < 0)
-        {
-            return res;
-        }
-    }
-
-    if (virtualfile->get_segment_count())
-    {
-        // Examples...
-        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1250,RESOLUTION=720x406,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
-        //"index_0_av.m3u8\n";
-        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2647000,RESOLUTION=1280x720,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
-        //"index_1_av.m3u8\n"
-        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=922000,RESOLUTION=640x360,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
-        //"index_2_av.m3u8\n"
-        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=448000,RESOLUTION=384x216,CODECS= \"avc1.66.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
-        //"index_3_av.m3u8\n"
-        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=61000,CODECS= \"mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
-        //"index_3_a.m3u8\n";
-
-        master_contents = "#EXTM3U\n"
-                "#EXT-X-STREAM-INF:PROGRAM-ID=1\n"
-                "index_0_av.m3u8\n";
-
-        index_0_av_contents = strsprintf("#EXTM3U\n"
-                "#EXT-X-TARGETDURATION:%i\n"
-                "#EXT-X-ALLOW-CACHE:YES\n"
-                "#EXT-X-PLAYLIST-TYPE:VOD\n"
-                "#EXT-X-VERSION:3\n"
-                "#EXT-X-MEDIA-SEQUENCE:1\n", static_cast<int32_t>(params.m_segment_duration / AV_TIME_BASE));
-
-        int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
-        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count();
-        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count();
-
-        for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
-        {
-            std::string buffer;
-            std::string segment_name = make_filename(file_no, params.current_format(virtualfile)->fileext());
-
-            struct stat stbuf;
-            std::string cachefile;
-            std::string _origpath(origpath);
-            remove_sep(&_origpath);
-            Buffer::make_cachefile_name(cachefile, _origpath + "." + segment_name, params.current_format(virtualfile)->fileext(), false);
-
-            if (!lstat(cachefile.c_str(), &stbuf))
-            {
-                make_file(buf, filler, virtualfile->m_type, origpath, segment_name, static_cast<size_t>(stbuf.st_size), virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-            }
-            else
-            {
-                if (file_no < virtualfile->get_segment_count())
-                {
-                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                }
-                else
-                {
-                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, remaining_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                }
-            }
-
-            if (file_no < virtualfile->get_segment_count())
-            {
-                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
-            }
-            else
-            {
-                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
-            }
-
-            index_0_av_contents += buffer;
-            index_0_av_contents += segment_name;
-            index_0_av_contents += "\n";
-        }
-
-        index_0_av_contents += "#EXT-X-ENDLIST\n";
-
-        LPVIRTUALFILE child_file;
-        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
-        std::copy(master_contents.begin(), master_contents.end(), std::back_inserter(child_file->m_file_contents));
-
-        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "index_0_av.m3u8", index_0_av_contents.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
-        std::copy(index_0_av_contents.begin(), index_0_av_contents.end(), std::back_inserter(child_file->m_file_contents));
-
-        {
-            // Demo code adapted from: https://github.com/video-dev/hls.js/
-            std::string hls_html;
-
-            hls_html =
-                    "<html>\n"
-                    "\n"
-                    "<head>\n"
-                    "    <title>HLS Demo</title>\n"
-                    "    <script src=\"https://cdn.jsdelivr.net/npm/hls.js@latest\"></script>\n"
-                    "    <meta charset=\"utf-8\">\n"
-                    "</head>\n"
-                    "\n"
-                    "<body>\n"
-                    "    <center>\n"
-                    "        <h1>Hls.js demo - basic usage</h1>\n"
-                    "        <video height=\"600\" id=\"video\" controls></video>\n"
-                    "    </center>\n"
-                    "    <script>\n"
-                    "      var video = document.getElementById(\"video\");\n"
-                    "      var videoSrc = \"index_0_av.m3u8\";\n"
-                    "      if (Hls.isSupported()) {\n"
-                    "        var hls = new Hls();\n"
-                    "        hls.loadSource(videoSrc);\n"
-                    "        hls.attachMedia(video);\n"
-                    "        hls.on(Hls.Events.MANIFEST_PARSED, function() {\n"
-                    "          video.play();\n"
-                    "        });\n"
-                    "      }\n"
-                    "      // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.\n"
-                    "      // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element through the `src` property.\n"
-                    "      // This is using the built-in support of the plain video element, without using hls.js.\n"
-                    "      // Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven\n"
-                    "      // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.\n"
-                    "      else if (video.canPlayType(\"application/vnd.apple.mpegurl\")) {\n"
-                    "        video.src = videoSrc;\n"
-                    "        video.addEventListener(\"loadedmetadata\", function() {\n"
-                    "          video.play();\n"
-                    "        });\n"
-                    "    }\n"
-                    "    </script>\n"
-                    "</body>\n"
-                    "\n"
-                    "</html>\n";
-
-            child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "hls.html", hls_html.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
-            std::copy(hls_html.begin(), hls_html.end(), std::back_inserter(child_file->m_file_contents));
-        }
-    }
-    return 0;
 }
 
 /**
@@ -1721,46 +991,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 }
 
 /**
- * @brief Give next song in cuesheet list a kick start
- * Starts transcoding of the next song on the cuesheet list
- * to ensure a somewhat gapless start when the current song
- * finishes. Next song can be played from cache and start
- * faster then.
- * @todo Will work only if transcoding finishes within timeout.
- * Probably remove or raise timeout here.
- * @param virtualfile - VIRTUALFILE object of current song
- * @return On success, returns 0. On error, returns -errno.
- */
-static int kick_next(LPVIRTUALFILE virtualfile)
-{
-    if (virtualfile == nullptr)
-    {
-        // Not OK, should not happen
-        return -EINVAL;
-    }
-
-    if (virtualfile->m_cuesheet.m_nextfile == nullptr)
-    {
-        // No next file
-        return 0;
-    }
-
-    LPVIRTUALFILE nextvirtualfile = virtualfile->m_cuesheet.m_nextfile;
-
-    Logging::debug(virtualfile->m_destfile, "Preparing next file: %1", nextvirtualfile->m_destfile.c_str());
-
-    Cache_Entry* cache_entry = transcoder_new(nextvirtualfile, true); // TODO: DISABLE TIMEOUT
-    if (cache_entry == nullptr)
-    {
-        return -errno;
-    }
-
-    transcoder_delete(cache_entry);
-
-    return 0;
-}
-
-/**
  * @brief File open operation
  * @param[in] path
  * @param[in] fi
@@ -2116,49 +1346,6 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 }
 
 /**
- * @brief Replacement SIGINT handler.
- *
- * FUSE handles SIGINT internally, but because there are extra threads running while transcoding this
- * mechanism does not properly work. We implement our own SIGINT handler to ensure proper shutdown of
- * all threads. Next we restore the original handler and dispatch the signal to it.
- *
- * @param[in] signum - Signal to handle. Must be SIGINT.
- */
-static void sighandler(int signum)
-{
-    assert(signum == SIGINT);
-
-    if (signum == SIGINT)
-    {
-        Logging::warning(nullptr, "Caught SIGINT, shutting down now...");
-        // Make our threads terminate now
-        transcoder_exit();
-        // Restore fuse's handler
-        sigaction(SIGINT, &oldHandler, nullptr);
-        // Dispatch to fuse's handler
-        raise(SIGINT);
-    }
-}
-
-/**
- * @brief Extract the number for a file name
- * @param path - Path and filename of requested file
- * @param value - Returns the number extracted
- * @return Returns the filename that was processed, without path.
- */
-static std::string get_number(const char *path, uint32_t *value)
-{
-    std::string filename(path);
-
-    // Get frame number
-    remove_path(&filename);
-
-    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
-
-    return filename;
-}
-
-/**
  * @brief Initialise filesystem
  * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
  * @return nullptr
@@ -2232,6 +1419,819 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     script_file.clear();
 
     Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, FFMPEFS_VERSION);
+}
+
+/**
+ * @brief Calculate the video frame count.
+ * @param[in] origpath - Path of original file.
+ * @param[inout] virtualfile - Virtual file object to modify.
+ * @return On success, returns 0. On error, returns -errno.
+ */
+static int get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile)
+{
+    Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
+    if (cache_entry == nullptr)
+    {
+        return -errno;
+    }
+
+    transcoder_delete(cache_entry);
+
+    Logging::debug(origpath, "Duration: %1 Frames: %2 Segments: %3", virtualfile->m_duration, virtualfile->m_video_frame_count, virtualfile->get_segment_count());
+
+    return 0;
+}
+
+/**
+ * @brief Initialise a stat structure.
+ * @param[in] stbuf - struct stat to fill in.
+ * @param[in] fsize - size of the corresponding file.
+ * @param[in] ftime - File time (creation/modified/access) of the corresponding file.
+ * @param[in] directory - If true, the structure is set up for a directory.
+ */
+static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool directory)
+{
+    memset(stbuf, 0, sizeof(struct stat));
+
+    stbuf->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    if (directory)
+    {
+        stbuf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+        stbuf->st_nlink = 2;
+    }
+    else
+    {
+        stbuf->st_mode |= S_IFREG;
+        stbuf->st_nlink = 1;
+    }
+
+    stat_set_size(stbuf, fsize);
+
+    // Set current user as owner
+    stbuf->st_uid = getuid();
+    stbuf->st_gid = getgid();
+
+    // Use current date/time
+    stbuf->st_atime = stbuf->st_mtime = stbuf->st_ctime = ftime;
+}
+
+/**
+ * @brief Make a virtual file.
+ * @param[in] buf - FUSE buffer to fill.
+ * @param[in] filler - Filler function.
+ * @param[in] type - Type of virtual file.
+ * @param[in] origpath - Original path.
+ * @param[in] filename - Name of virtual file.
+ * @param[in] flags - On of the VIRTUALFLAG_ macros.
+ * @param[in] fsize - Size of virtual file.
+ * @param[in] ftime - Time of virtual file.
+ * @return Returns constant pointer to VIRTUALFILE object of file.
+ */
+static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime, int flags)
+{
+    struct stat stbuf;
+
+    init_stat(&stbuf, fsize, ftime, false);
+
+    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
+    {
+        return nullptr;
+    }
+
+    return insert_file(type, origpath + filename, &stbuf, flags);
+}
+
+/**
+ * @brief Read the virtual script file into memory and store in buffer.
+ */
+static void prepare_script()
+{
+    std::string scriptsource;
+
+    exepath(&scriptsource);
+    scriptsource += params.m_scriptsource;
+
+    Logging::debug(scriptsource, "Reading virtual script source.");
+
+    FILE *fpi = fopen(scriptsource.c_str(), "rt");
+    if (fpi == nullptr)
+    {
+        Logging::warning(scriptsource, "File open failed. Disabling script: (%1) %2", errno, strerror(errno));
+        params.m_enablescript = false;
+    }
+    else
+    {
+        struct stat stbuf;
+        if (fstat(fileno(fpi), &stbuf) == -1)
+        {
+            Logging::warning(scriptsource, "File could not be accessed. Disabling script: (%1) %2", errno, strerror(errno));
+            params.m_enablescript = false;
+        }
+        else
+        {
+            script_file.resize(static_cast<size_t>(stbuf.st_size));
+
+            if (fread(&script_file[0], 1, static_cast<size_t>(stbuf.st_size), fpi) != static_cast<size_t>(stbuf.st_size))
+            {
+                Logging::warning(scriptsource, "File could not be read. Disabling script: (%1) %2", errno, strerror(errno));
+                params.m_enablescript = false;
+            }
+            else
+            {
+                Logging::trace(scriptsource, "Read %1 bytes of script file.", script_file.size());
+            }
+        }
+
+        fclose(fpi);
+    }
+}
+
+/**
+ * @brief Convert file name from source to destination name.
+ * @param[in] filepath - Name of source file, will be changed to destination name.
+ * @param[in] origpath - Original path to file. My be empty string if filepath is already a full path.
+ * @param[out] current_format - If format has been found points to format info, nullptr if not.
+ * @return Returns true if format has been found and filename changed, false if not.
+ */
+static bool virtual_name(std::string * filepath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
+{
+    std::string ext;
+
+    if (!find_ext(&ext, *filepath) || passthrough_set.find(ext) != passthrough_set.cend())
+    {
+        return false;
+    }
+
+    if (allow_list_ext(ext))
+    {
+        FFmpegfs_Format *ffmpegfs_format = nullptr;
+
+        if (!params.smart_transcode())
+        {
+            ffmpegfs_format = &ffmpeg_format[0];
+        }
+        else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
+        {
+            ffmpegfs_format = &ffmpeg_format[1];
+        }
+
+        if (ffmpegfs_format != nullptr)
+        {
+            // Could determine format
+            if (params.m_oldnamescheme)
+            {
+                // Old filename scheme, creates duplicates
+                replace_ext(filepath, ffmpegfs_format->fileext());
+            }
+            else
+            {
+                // New name scheme
+                append_ext(filepath, ffmpegfs_format->fileext());
+            }
+
+            if (current_format != nullptr)
+            {
+                *current_format = ffmpegfs_format;
+            }
+
+            return true;
+        }
+    }
+
+    const AVOutputFormat* format = av_guess_format(nullptr, filepath->c_str(), nullptr);
+
+    if (format != nullptr)
+    {
+        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *filepath);
+
+        if (ffmpegfs_format != nullptr &&
+                ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
+                 (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE)))
+        {
+            if (params.m_oldnamescheme)
+            {
+                // Old filename scheme, creates duplicates
+                replace_ext(filepath, ffmpegfs_format->fileext());
+            }
+            else
+            {
+                // New name scheme
+                append_ext(filepath, ffmpegfs_format->fileext());
+            }
+
+            if (current_format != nullptr)
+            {
+                *current_format = ffmpegfs_format;
+            }
+
+            return true;
+        }
+    }
+
+    if (current_format != nullptr)
+    {
+        *current_format = nullptr;
+    }
+    return false;
+}
+
+/**
+ * @brief Find mapped file by prefix. Normally used to find a path.
+ * @param[in] map - File map with virtual files.
+ * @param[in] search_for - Prefix (path) to search for.
+ * @return If found, returns const_iterator to map entry. Returns map.cend() if not found.
+ */
+static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for)
+{
+    FILENAME_MAP::const_iterator it = map.lower_bound(search_for);
+    if (it != map.cend())
+    {
+        const std::string & key = it->first;
+        if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
+        {
+            return it;
+        }
+    }
+    return map.cend();
+}
+
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat * stbuf, int flags)
+{
+    return insert_file(type, virtfile, virtfile, stbuf, flags);
+}
+
+LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const std::string & origfile, const struct stat * stbuf, int flags)
+{
+    std::string _virtfile(sanitise_filepath(virtfile));
+    std::string _origfile(sanitise_filepath(origfile));
+
+    FILENAME_MAP::iterator it    = filenames.find(_virtfile);
+
+    if (it != filenames.cend())
+    {
+        VIRTUALFILE & virtualfile = it->second;
+
+        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
+
+        virtualfile.m_type              = type;
+        virtualfile.m_flags             = flags;
+        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
+        virtualfile.m_destfile          = _virtfile;
+        virtualfile.m_origfile          = _origfile;
+        //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
+    }
+    else
+    {
+        VIRTUALFILE virtualfile;
+
+        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
+
+        virtualfile.m_type              = type;
+        virtualfile.m_flags             = flags;
+        virtualfile.m_format_idx        = params.guess_format_idx(_origfile);
+        virtualfile.m_destfile          = _virtfile;
+        virtualfile.m_origfile          = _origfile;
+        //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
+
+        filenames.insert(make_pair(_virtfile, virtualfile));
+        rfilenames.insert(make_pair(_origfile, virtualfile));
+
+        it = filenames.find(_virtfile);
+    }
+
+    return &it->second;
+}
+
+LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const struct stat * stbuf, int flags)
+{
+    struct stat stbufdir;
+
+    flags |= VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
+
+    std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
+
+    // Change file to directory for the frame set
+    // Change file to virtual directory for the frame set. Keep permissions.
+    stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+    stbufdir.st_mode  |= S_IFDIR;
+    stbufdir.st_nlink = 2;
+    stbufdir.st_size  = stbufdir.st_blksize;
+
+    std::string path(virtdir);
+    append_sep(&path);
+
+    if (ffmpeg_format[0].is_frameset())
+    {
+        flags |= VIRTUALFLAG_FRAME;
+    }
+    else if (ffmpeg_format[0].is_hls())
+    {
+        flags |= VIRTUALFLAG_HLS;
+    }
+
+    return insert_file(type, path, &stbufdir, flags);
+}
+
+LPVIRTUALFILE find_file(const std::string & virtfile)
+{
+    FILENAME_MAP::iterator it = filenames.find(sanitise_filepath(virtfile));
+
+    errno = 0;
+
+    if (it != filenames.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+LPVIRTUALFILE find_file_from_orig(const std::string &origfile)
+{
+    RFILENAME_MAP::iterator it = rfilenames.find(sanitise_filepath(origfile));
+
+    errno = 0;
+
+    if (it != rfilenames.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+bool check_path(const std::string & path)
+{
+    FILENAME_MAP::const_iterator it = find_prefix(filenames, path);
+
+    return (it != filenames.cend());
+}
+
+int load_path(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)
+{
+    if (buf == nullptr)
+    {
+        // We can't add anything here if buf == nullptr
+        return 0;
+    }
+
+    int title_count = 0;
+
+    for (FILENAME_MAP::iterator it = filenames.lower_bound(path); it != filenames.end(); ++it)
+    {
+        std::string virtfilepath    = it->first;
+        LPVIRTUALFILE virtualfile   = &it->second;
+
+        if (
+        #ifdef USE_LIBVCD
+                (virtualfile->m_type != VIRTUALTYPE_VCD) &&
+        #endif // USE_LIBVCD
+        #ifdef USE_LIBDVD
+                (virtualfile->m_type != VIRTUALTYPE_DVD) &&
+        #endif // USE_LIBDVD
+        #ifdef USE_LIBBLURAY
+                (virtualfile->m_type != VIRTUALTYPE_BLURAY) &&
+        #endif // USE_LIBBLURAY
+                !(virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
+                )
+        {
+            continue;
+        }
+
+        remove_filename(&virtfilepath);
+        if (virtfilepath == path) // Really a prefix?
+        {
+            struct stat stbuf;
+            std::string destfile(virtualfile->m_destfile);
+
+            if (virtualfile->m_flags & VIRTUALFLAG_DIRECTORY)
+            {
+                // Is a directory, no need to translate the file name, just drop terminating separator
+                remove_sep(&destfile);
+            }
+            remove_path(&destfile);
+
+            title_count++;
+
+            std::string cachefile;
+
+            Buffer::make_cachefile_name(cachefile, virtualfile->m_destfile, params.current_format(virtualfile)->fileext(), false);
+
+            struct stat stbuf2;
+            if (!lstat(cachefile.c_str(), &stbuf2))
+            {
+                // Cache file exists, use cache file size here
+
+                stat_set_size(&virtualfile->m_st, static_cast<size_t>(stbuf2.st_size));
+
+                memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+            }
+            else
+            {
+                if (statbuf == nullptr)
+                {
+                    memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+                }
+                else
+                {
+                    memcpy(&stbuf, statbuf, sizeof(struct stat));
+
+                    stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
+                }
+            }
+
+            if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))
+            {
+                // break;
+            }
+        }
+    }
+
+    return title_count;
+}
+
+/**
+ * @brief Filter function used for scandir.
+ *
+ * Selects files only that can be processed with FFmpeg API.
+ *
+ * @param[in] de - dirent to check
+ * @return Returns nonzero if dirent matches, 0 if not.
+ */
+static int selector(const struct dirent * de)
+{
+    if (de->d_type & (DT_REG | DT_LNK))
+    {
+        return (av_guess_format(nullptr, de->d_name, nullptr) != nullptr);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+/**
+ * @brief Scans the directory dirp
+ * Works exactly like the scandir(3) function, the only
+ * difference is that it returns the result in a std:vector.
+ * @param[in] dirp - Directory to be searched.
+ * @param[out] _namelist - Returns the list of files found
+ * @param[in] selector - Entries for which selector() returns nonzero are stored in _namelist
+ * @param[in] cmp - Entries are sorted using qsort(3) with the comparison function cmp(). May be nullptr for no sort.
+ * @return Returns the number of directory entries selected.
+ * On error, -1 is returned, with errno set to indicate
+ * the error.
+ */
+static int scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **))
+{
+    struct dirent **namelist;
+    int count = scandir(dirp, &namelist, selector, cmp);
+
+    _namelist->clear();
+
+    if (count != -1)
+    {
+        for (int n = 0; n < count; n++)
+        {
+            _namelist->push_back(*namelist[n]);
+            free(namelist[n]);
+        }
+        free(namelist);
+    }
+
+    return  count;
+}
+
+LPVIRTUALFILE find_original(const std::string & origpath)
+{
+    std::string buffer(origpath);
+    return find_original(&buffer);
+}
+
+LPVIRTUALFILE find_original(std::string * filepath)
+{
+    sanitise_filepath(filepath);
+
+    LPVIRTUALFILE virtualfile = find_file(*filepath);
+
+    errno = 0;
+
+    if (virtualfile != nullptr)
+    {
+        *filepath = virtualfile->m_origfile;
+        return virtualfile;
+    }
+    else
+    {
+        // Fallback to old method (required if file accessed directly)
+        std::string ext;
+        if (!ffmpeg_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, ffmpeg_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, ffmpeg_format[1].fileext()) == 0)))
+        {
+            std::string dir(*filepath);
+            std::string searchexp(*filepath);
+            std::string origfile;
+            std::vector<struct dirent> namelist;
+            struct stat stbuf;
+            int count;
+            int found = 0;
+
+            remove_filename(&dir);
+            origfile = dir;
+
+            count = scandir(dir.c_str(), &namelist, selector, nullptr);
+            if (count == -1)
+            {
+                if (errno != ENOTDIR)   // If not a directory, simply ignore error
+                {
+                    Logging::error(dir, "Error scanning directory: (%1) %2", errno, strerror(errno));
+                }
+                return nullptr;
+            }
+
+            remove_path(&searchexp);
+            remove_ext(&searchexp);
+
+            for (size_t n = 0; n < static_cast<size_t>(count); n++)
+            {
+                if (!strcmp(namelist[n].d_name, searchexp.c_str()))
+                {
+                    append_filename(&origfile, namelist[n].d_name);
+                    sanitise_filepath(&origfile);
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (found && lstat(origfile.c_str(), &stbuf) == 0)
+            {
+                // The original file exists
+                LPVIRTUALFILE virtualfile2;
+
+                if (*filepath != origfile)
+                {
+                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
+                    *filepath = origfile;
+                }
+                else
+                {
+                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                }
+                return virtualfile2;
+            }
+            else
+            {
+                // File does not exist; this is a virtual file, not an error
+                errno = 0;
+            }
+        }
+    }
+    // Source file exists with no supported extension, keep path
+    return nullptr;
+}
+
+LPVIRTUALFILE find_parent(const std::string & origpath)
+{
+    std::string filepath(origpath);
+
+    remove_filename(&filepath);
+    remove_sep(&filepath);
+
+    return find_original(&filepath);
+}
+
+/**
+ * @brief Build a virtual HLS file set
+ * @param[in, out] buf - The buffer passed to the readdir() operation.
+ * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
+ * @param[in] origpath - The original file
+ * @param[in] virtualfile - LPCVIRTUALFILE of file to create file set for
+ * @return On success, returns 0. On error, returns -errno.
+ */
+static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
+{
+    // Generate set of TS segment files and necessary M3U lists
+    std::string master_contents;
+    std::string index_0_av_contents;
+
+    if (!virtualfile->get_segment_count())
+    {
+        int res = get_source_properties(origpath, virtualfile);
+        if (res < 0)
+        {
+            return res;
+        }
+    }
+
+    if (virtualfile->get_segment_count())
+    {
+        // Examples...
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1250,RESOLUTION=720x406,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_0_av.m3u8\n";
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2647000,RESOLUTION=1280x720,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_1_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=922000,RESOLUTION=640x360,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_2_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=448000,RESOLUTION=384x216,CODECS= \"avc1.66.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_3_av.m3u8\n"
+        //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=61000,CODECS= \"mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
+        //"index_3_a.m3u8\n";
+
+        master_contents = "#EXTM3U\n"
+                "#EXT-X-STREAM-INF:PROGRAM-ID=1\n"
+                "index_0_av.m3u8\n";
+
+        index_0_av_contents = strsprintf("#EXTM3U\n"
+                "#EXT-X-TARGETDURATION:%i\n"
+                "#EXT-X-ALLOW-CACHE:YES\n"
+                "#EXT-X-PLAYLIST-TYPE:VOD\n"
+                "#EXT-X-VERSION:3\n"
+                "#EXT-X-MEDIA-SEQUENCE:1\n", static_cast<int32_t>(params.m_segment_duration / AV_TIME_BASE));
+
+        int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
+        size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count();
+        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count();
+
+        for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
+        {
+            std::string buffer;
+            std::string segment_name = make_filename(file_no, params.current_format(virtualfile)->fileext());
+
+            struct stat stbuf;
+            std::string cachefile;
+            std::string _origpath(origpath);
+            remove_sep(&_origpath);
+            Buffer::make_cachefile_name(cachefile, _origpath + "." + segment_name, params.current_format(virtualfile)->fileext(), false);
+
+            if (!lstat(cachefile.c_str(), &stbuf))
+            {
+                make_file(buf, filler, virtualfile->m_type, origpath, segment_name, static_cast<size_t>(stbuf.st_size), virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+            }
+            else
+            {
+                if (file_no < virtualfile->get_segment_count())
+                {
+                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+                }
+                else
+                {
+                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, remaining_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
+                }
+            }
+
+            if (file_no < virtualfile->get_segment_count())
+            {
+                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
+            }
+            else
+            {
+                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
+            }
+
+            index_0_av_contents += buffer;
+            index_0_av_contents += segment_name;
+            index_0_av_contents += "\n";
+        }
+
+        index_0_av_contents += "#EXT-X-ENDLIST\n";
+
+        LPVIRTUALFILE child_file;
+        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
+        std::copy(master_contents.begin(), master_contents.end(), std::back_inserter(child_file->m_file_contents));
+
+        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "index_0_av.m3u8", index_0_av_contents.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+        std::copy(index_0_av_contents.begin(), index_0_av_contents.end(), std::back_inserter(child_file->m_file_contents));
+
+        {
+            // Demo code adapted from: https://github.com/video-dev/hls.js/
+            std::string hls_html;
+
+            hls_html =
+                    "<html>\n"
+                    "\n"
+                    "<head>\n"
+                    "    <title>HLS Demo</title>\n"
+                    "    <script src=\"https://cdn.jsdelivr.net/npm/hls.js@latest\"></script>\n"
+                    "    <meta charset=\"utf-8\">\n"
+                    "</head>\n"
+                    "\n"
+                    "<body>\n"
+                    "    <center>\n"
+                    "        <h1>Hls.js demo - basic usage</h1>\n"
+                    "        <video height=\"600\" id=\"video\" controls></video>\n"
+                    "    </center>\n"
+                    "    <script>\n"
+                    "      var video = document.getElementById(\"video\");\n"
+                    "      var videoSrc = \"index_0_av.m3u8\";\n"
+                    "      if (Hls.isSupported()) {\n"
+                    "        var hls = new Hls();\n"
+                    "        hls.loadSource(videoSrc);\n"
+                    "        hls.attachMedia(video);\n"
+                    "        hls.on(Hls.Events.MANIFEST_PARSED, function() {\n"
+                    "          video.play();\n"
+                    "        });\n"
+                    "      }\n"
+                    "      // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.\n"
+                    "      // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element through the `src` property.\n"
+                    "      // This is using the built-in support of the plain video element, without using hls.js.\n"
+                    "      // Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven\n"
+                    "      // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.\n"
+                    "      else if (video.canPlayType(\"application/vnd.apple.mpegurl\")) {\n"
+                    "        video.src = videoSrc;\n"
+                    "        video.addEventListener(\"loadedmetadata\", function() {\n"
+                    "          video.play();\n"
+                    "        });\n"
+                    "    }\n"
+                    "    </script>\n"
+                    "</body>\n"
+                    "\n"
+                    "</html>\n";
+
+            child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "hls.html", hls_html.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+            std::copy(hls_html.begin(), hls_html.end(), std::back_inserter(child_file->m_file_contents));
+        }
+    }
+    return 0;
+}
+
+/**
+ * @brief Give next song in cuesheet list a kick start
+ * Starts transcoding of the next song on the cuesheet list
+ * to ensure a somewhat gapless start when the current song
+ * finishes. Next song can be played from cache and start
+ * faster then.
+ * @todo Will work only if transcoding finishes within timeout.
+ * Probably remove or raise timeout here.
+ * @param virtualfile - VIRTUALFILE object of current song
+ * @return On success, returns 0. On error, returns -errno.
+ */
+static int kick_next(LPVIRTUALFILE virtualfile)
+{
+    if (virtualfile == nullptr)
+    {
+        // Not OK, should not happen
+        return -EINVAL;
+    }
+
+    if (virtualfile->m_cuesheet.m_nextfile == nullptr)
+    {
+        // No next file
+        return 0;
+    }
+
+    LPVIRTUALFILE nextvirtualfile = virtualfile->m_cuesheet.m_nextfile;
+
+    Logging::debug(virtualfile->m_destfile, "Preparing next file: %1", nextvirtualfile->m_destfile.c_str());
+
+    Cache_Entry* cache_entry = transcoder_new(nextvirtualfile, true); // TODO: DISABLE TIMEOUT
+    if (cache_entry == nullptr)
+    {
+        return -errno;
+    }
+
+    transcoder_delete(cache_entry);
+
+    return 0;
+}
+
+/**
+ * @brief Replacement SIGINT handler.
+ *
+ * FUSE handles SIGINT internally, but because there are extra threads running while transcoding this
+ * mechanism does not properly work. We implement our own SIGINT handler to ensure proper shutdown of
+ * all threads. Next we restore the original handler and dispatch the signal to it.
+ *
+ * @param[in] signum - Signal to handle. Must be SIGINT.
+ */
+static void sighandler(int signum)
+{
+    assert(signum == SIGINT);
+
+    if (signum == SIGINT)
+    {
+        Logging::warning(nullptr, "Caught SIGINT, shutting down now...");
+        // Make our threads terminate now
+        transcoder_exit();
+        // Restore fuse's handler
+        sigaction(SIGINT, &oldHandler, nullptr);
+        // Dispatch to fuse's handler
+        raise(SIGINT);
+    }
+}
+
+/**
+ * @brief Extract the number for a file name
+ * @param path - Path and filename of requested file
+ * @param value - Returns the number extracted
+ * @return Returns the filename that was processed, without path.
+ */
+static std::string get_number(const char *path, uint32_t *value)
+{
+    std::string filename(path);
+
+    // Get frame number
+    remove_path(&filename);
+
+    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
+
+    return filename;
 }
 
 int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off)

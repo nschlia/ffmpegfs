@@ -149,57 +149,6 @@ bool FFMPEGFS_PARAMS::smart_transcode(void) const
     return (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN && ffmpeg_format[0].filetype() != ffmpeg_format[1].filetype());
 }
 
-int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
-{
-    const AVOutputFormat* oformat = ::av_guess_format(nullptr, filepath.c_str(), nullptr);
-
-    if (oformat != nullptr)
-    {
-        if (!params.smart_transcode())
-        {
-            // Not smart encoding: use first format (video file)
-            return 0;
-        }
-        else
-        {
-            // Smart transcoding
-            if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
-            {
-                // Is a video: use first format (video file)
-                return 0;
-            }
-            else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
-            {
-                // For audio only, use second format (audio only file)
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
-const FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
-{
-    LPCVIRTUALFILE virtualfile = find_file_from_orig(filepath);
-
-    if (virtualfile != nullptr)
-    {
-        // We know the file
-        return current_format(virtualfile);
-    }
-
-    // Guess the result
-    int format_idx = guess_format_idx(filepath);
-
-    if (format_idx > -1)
-    {
-        return &ffmpeg_format[format_idx];
-    }
-
-    return nullptr;
-}
-
 const FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const
 {
     if (virtualfile == nullptr || virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)

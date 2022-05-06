@@ -152,18 +152,7 @@ extern struct FFMPEGFS_PARAMS
      * @return true if smart transcode is active, false if not
      */
     bool                smart_transcode(void) const;
-    /**
-     * @brief Try to guess the format index (audio or video) for a file.
-     * @param[in] filepath - Name of the file, path my be included, but not required.
-     * @return Index 0 or 1
-     */
-    int                 guess_format_idx(const std::string & filepath) const;
-    /**
-     * @brief Get FFmpegfs_Format for the file.
-     * @param[in] filepath - Name of the file, path my be included, but not required.
-     * @return On success, returns pointer to format. On error, returns nullptr.
-     */
-    const FFmpegfs_Format *current_format(const std::string & filepath);
+
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
      * @param[in] virtualfile - virtualfile struct of a file.

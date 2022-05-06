@@ -34,7 +34,7 @@
  */
 
 #include "transcode.h"
-#include "ffmpeg_utils.h"
+//#include "ffmpeg_utils.h"
 #include "cache_maintenance.h"
 #include "logging.h"
 #ifdef USE_LIBVCD
@@ -75,6 +75,8 @@ static int                          make_hls_fileset(void * buf, fuse_fill_dir_t
 static int                          kick_next(LPVIRTUALFILE virtualfile);
 static void                         sighandler(int signum);
 static std::string                  get_number(const char *path, uint32_t *value);
+static int                          guess_format_idx(const std::string & filepath);
+static const FFmpegfs_Format * 		get_format(const std::string & filepath);
 static int                          selector(const struct dirent * de);
 static int                          scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 
@@ -1618,7 +1620,7 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
 
     if (format != nullptr)
     {
-        const FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *virtualpath);
+        const FFmpegfs_Format *ffmpegfs_format = get_format(origpath + *virtualpath);
 
         if (ffmpegfs_format != nullptr &&
                 ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
@@ -1687,7 +1689,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(sanitised_origfile);
+        virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile);
         virtualfile.m_destfile          = sanitised_virtfile;
         virtualfile.m_origfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
@@ -1700,7 +1702,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = params.guess_format_idx(sanitised_origfile);
+        virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile);
         virtualfile.m_destfile          = sanitised_virtfile;
         virtualfile.m_origfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
@@ -2244,6 +2246,67 @@ static std::string get_number(const char *path, uint32_t *value)
     *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
 
     return filename;
+}
+
+/**
+ * @brief Try to guess the format index (audio or video) for a file.
+ * @param[in] filepath - Name of the file, path my be included, but not required.
+ * @return Index 0 or 1
+ */
+static int guess_format_idx(const std::string & filepath)
+{
+    const AVOutputFormat* oformat = ::av_guess_format(nullptr, filepath.c_str(), nullptr);
+
+    if (oformat != nullptr)
+    {
+        if (!params.smart_transcode())
+        {
+            // Not smart encoding: use first format (video file)
+            return 0;
+        }
+        else
+        {
+            // Smart transcoding
+            if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
+            {
+                // Is a video: use first format (video file)
+                return 0;
+            }
+            else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
+            {
+                // For audio only, use second format (audio only file)
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * @brief Get FFmpegfs_Format for the file.
+ * @param[in] filepath - Name of the file, path my be included, but not required.
+ * @return On success, returns true. On error, returns false.
+ */
+static const FFmpegfs_Format * get_format(const std::string & filepath)
+{
+    LPVIRTUALFILE virtualfile = find_file_from_orig(filepath);
+
+    if (virtualfile != nullptr)
+    {
+        // We know the file
+        return params.current_format(virtualfile);
+    }
+
+    // Guess the result
+    int format_idx = guess_format_idx(filepath);
+
+    if (format_idx > -1)
+    {
+        return &ffmpeg_format[format_idx];
+    }
+
+    return nullptr;
 }
 
 int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off)

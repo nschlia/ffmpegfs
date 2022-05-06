@@ -2169,13 +2169,13 @@ static int kick_next(LPVIRTUALFILE virtualfile)
         return -EINVAL;
     }
 
-    if (virtualfile->m_cuesheet.m_nextfile == nullptr)
+    if (virtualfile->m_cuesheet_track.m_nextfile == nullptr)
     {
         // No next file
         return 0;
     }
 
-    LPVIRTUALFILE nextvirtualfile = virtualfile->m_cuesheet.m_nextfile;
+    LPVIRTUALFILE nextvirtualfile = virtualfile->m_cuesheet_track.m_nextfile;
 
     Logging::debug(virtualfile->m_destfile, "Preparing next file: %1", nextvirtualfile->m_destfile.c_str());
 

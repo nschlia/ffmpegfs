@@ -192,19 +192,19 @@ static bool create_cuesheet_virtualfile(Track *track, int titleno, const std::st
         AVRational framerate    = { 0, 0 };
         int interleaved         = 0;
 
-        virtualfile->m_duration                 = duration;
-        virtualfile->m_cuesheet.m_duration      = duration;
-        virtualfile->m_cuesheet.m_start         = start;
-        virtualfile->m_cuesheet.m_tracktotal    = trackcount;
-        virtualfile->m_cuesheet.m_trackno       = trackno;
-        virtualfile->m_cuesheet.m_artist        = performer;
-        virtualfile->m_cuesheet.m_title         = title;
-        virtualfile->m_cuesheet.m_album         = album;
-        virtualfile->m_cuesheet.m_genre         = genre;
-        virtualfile->m_cuesheet.m_date          = date;
+        virtualfile->m_duration                         = duration;
+        virtualfile->m_cuesheet_track.m_duration        = duration;
+        virtualfile->m_cuesheet_track.m_start           = start;
+        virtualfile->m_cuesheet_track.m_tracktotal      = trackcount;
+        virtualfile->m_cuesheet_track.m_trackno         = trackno;
+        virtualfile->m_cuesheet_track.m_artist          = performer;
+        virtualfile->m_cuesheet_track.m_title           = title;
+        virtualfile->m_cuesheet_track.m_album           = album;
+        virtualfile->m_cuesheet_track.m_genre           = genre;
+        virtualfile->m_cuesheet_track.m_date            = date;
         if (*lastfile != nullptr)
         {
-            (*lastfile)->m_cuesheet.m_nextfile  = virtualfile;
+            (*lastfile)->m_cuesheet_track.m_nextfile    = virtualfile;
         }
         *lastfile                               = virtualfile;
 

@@ -68,8 +68,8 @@ extern "C" {
 
 #include "ffmpeg_utils.h"
 
-FFmpegfs_Format     ffmpeg_format[2];               /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
-FFMPEGFS_PARAMS     params;                         /**< @brief FFmpegfs command line parameters */
+FFmpegfs_Format ffmpeg_format[2];                       /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
+FFMPEGFS_PARAMS params;                                 /**< @brief FFmpegfs command line parameters */
 
 FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter

@@ -226,7 +226,7 @@ typedef struct VIRTUALFILE
         int64_t             m_duration;                             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
 
         VIRTUALFILE*        m_nextfile;                             /**< @brief Next (probable) file to be played. Used for cuesheet lists. */
-    }                       m_cuesheet;                             /**< @brief Cue sheet data for track */
+    }                       m_cuesheet_track;                       /**< @brief Cue sheet data for track */
 
     // These may be filled in for DVD/Bluray
     int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Bluray directory */

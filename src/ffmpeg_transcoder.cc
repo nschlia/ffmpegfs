@@ -579,7 +579,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
     {
         // Position to start of cue sheet track
-        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet.m_start, 0);
+        ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet_track.m_start, 0);
         if (ret < 0)
         {
             Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -2203,7 +2203,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
     if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
     {
-        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_virtualfile->m_cuesheet.m_duration, AV_DICT_IGNORE_SUFFIX);
+        av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_virtualfile->m_cuesheet_track.m_duration, AV_DICT_IGNORE_SUFFIX);
     }
     else
     {
@@ -4133,7 +4133,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             if (is_audio_stream(pkt.stream_index))
             {
                 int64_t pts = ffmpeg_rescale_q(pkt.pts, m_in.m_audio.m_stream->time_base);
-                if (pts > m_virtualfile->m_cuesheet.m_start + m_virtualfile->m_cuesheet.m_duration)
+                if (pts > m_virtualfile->m_cuesheet_track.m_start + m_virtualfile->m_cuesheet_track.m_duration)
                 {
                     Logging::trace(destname(), "Read to end of track.");
                     *finished = 1;
@@ -4880,16 +4880,16 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
             // Replace tags with cue sheet values
             if (!strcasecmp(tag->key, "ARTIST"))
             {
-                value = m_virtualfile->m_cuesheet.m_artist;
+                value = m_virtualfile->m_cuesheet_track.m_artist;
             }
             else if (!strcasecmp(tag->key, "TITLE"))
             {
-                value = m_virtualfile->m_cuesheet.m_title;
+                value = m_virtualfile->m_cuesheet_track.m_title;
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
                 char buf[20];
-                sprintf(buf, "%i", m_virtualfile->m_cuesheet.m_trackno);
+                sprintf(buf, "%i", m_virtualfile->m_cuesheet_track.m_trackno);
                 value = buf;
             }
         }
@@ -4962,18 +4962,18 @@ int FFmpeg_Transcoder::process_metadata()
 
     if (m_virtualfile != nullptr && m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
     {
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACKTOTAL", m_virtualfile->m_cuesheet.m_tracktotal, 0, destname());
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet.m_trackno, 0, destname(), true);
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACKTOTAL", m_virtualfile->m_cuesheet_track.m_tracktotal, 0, destname());
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TRACK", m_virtualfile->m_cuesheet_track.m_trackno, 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ARTIST", m_virtualfile->m_cuesheet_track.m_artist.c_str(), 0, destname(), true);
         if (av_dict_get(m_out.m_format_ctx->metadata, "ALBUM_ARTIST", nullptr, 0) == nullptr)
         {
             // Issue #78: duplicate ARTIST tag to ALBUM_ARTIST, if target is empty.
-            dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet.m_artist.c_str(), 0, destname(), true);
+            dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM_ARTIST", m_virtualfile->m_cuesheet_track.m_artist.c_str(), 0, destname(), true);
         }
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet.m_title.c_str(), 0, destname(), true);
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet.m_album.c_str(), 0, destname(), true);
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "GENRE", m_virtualfile->m_cuesheet.m_genre.c_str(), 0, destname(), true);
-        dict_set_with_check(&m_out.m_format_ctx->metadata, "DATE", m_virtualfile->m_cuesheet.m_date.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "TITLE", m_virtualfile->m_cuesheet_track.m_title.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "ALBUM", m_virtualfile->m_cuesheet_track.m_album.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "GENRE", m_virtualfile->m_cuesheet_track.m_genre.c_str(), 0, destname(), true);
+        dict_set_with_check(&m_out.m_format_ctx->metadata, "DATE", m_virtualfile->m_cuesheet_track.m_date.c_str(), 0, destname(), true);
     }
 
     return 0;

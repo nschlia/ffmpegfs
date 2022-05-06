@@ -42,7 +42,7 @@ var searchData=
   ['create_5ffake_5fwav_5fheader_1519',['create_fake_wav_header',['../classFFmpeg__Transcoder.html#aaeb89d7207eeb67eb0a6720e68544182',1,'FFmpeg_Transcoder']]],
   ['create_5ftable_5fcache_5fentry_1520',['create_table_cache_entry',['../classCache.html#a7a30069937a00fb3c622578b6563cc55',1,'Cache']]],
   ['create_5fvcd_5fvirtualfile_1521',['create_vcd_virtualfile',['../vcdparser_8cc.html#afeb7a39f03e9b9f5599b00eac210a205',1,'vcdparser.cc']]],
-  ['current_5fformat_1522',['current_format',['../structFFMPEGFS__PARAMS.html#a3f5a3c0e70661f5010a4285292f4ac57',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)'],['../structFFMPEGFS__PARAMS.html#afd8436f43504eed93b3b2fe05cfacc10',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)']]],
+  ['current_5fformat_1522',['current_format',['../structFFMPEGFS__PARAMS.html#a45a4ede1d39402856b910061673ee110',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)'],['../structFFMPEGFS__PARAMS.html#a43ec8efde865d36aa1eaf81623bd05ae',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const']]],
   ['current_5fqueued_1523',['current_queued',['../classthread__pool.html#ade1494a78b0363a44e013938c51a72a8',1,'thread_pool']]],
   ['current_5frunning_1524',['current_running',['../classthread__pool.html#aee7607c774b8f568ee151701d6b3268a',1,'thread_pool']]],
   ['current_5fsegment_5fno_1525',['current_segment_no',['../classBuffer.html#aa356d401405307f29e73586c7cad10c4',1,'Buffer']]]

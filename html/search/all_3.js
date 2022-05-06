@@ -84,7 +84,7 @@ var searchData=
   ['cuesheet_5ftrack_172',['CUESHEET_TRACK',['../structVIRTUALFILE_1_1CUESHEET__TRACK.html',1,'VIRTUALFILE']]],
   ['cuesheetparser_2ecc_173',['cuesheetparser.cc',['../cuesheetparser_8cc.html',1,'']]],
   ['cuesheetparser_2eh_174',['cuesheetparser.h',['../cuesheetparser_8h.html',1,'']]],
-  ['current_5fformat_175',['current_format',['../structFFMPEGFS__PARAMS.html#afd8436f43504eed93b3b2fe05cfacc10',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)'],['../structFFMPEGFS__PARAMS.html#a3f5a3c0e70661f5010a4285292f4ac57',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)']]],
+  ['current_5fformat_175',['current_format',['../structFFMPEGFS__PARAMS.html#a43ec8efde865d36aa1eaf81623bd05ae',1,'FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const'],['../structFFMPEGFS__PARAMS.html#a45a4ede1d39402856b910061673ee110',1,'FFMPEGFS_PARAMS::current_format(const std::string &amp;filepath)']]],
   ['current_5fqueued_176',['current_queued',['../classthread__pool.html#ade1494a78b0363a44e013938c51a72a8',1,'thread_pool']]],
   ['current_5frunning_177',['current_running',['../classthread__pool.html#aee7607c774b8f568ee151701d6b3268a',1,'thread_pool']]],
   ['current_5fsegment_5fno_178',['current_segment_no',['../classBuffer.html#aa356d401405307f29e73586c7cad10c4',1,'Buffer']]]

@@ -51,7 +51,7 @@ var searchData=
   ['video_5fstream_5fsetup_1269',['video_stream_setup',['../classFFmpeg__Base.html#a7e41229fd1c6188abcb7e2e52aab95b9',1,'FFmpeg_Base']]],
   ['videocodec_5fmap_1270',['videocodec_map',['../ffmpegfs_8cc.html#a106e481c04279e7d8270581647f8b970',1,'ffmpegfs.cc']]],
   ['videocodec_5fmap_1271',['VIDEOCODEC_MAP',['../ffmpegfs_8cc.html#a1f115500c01efb54290306637d5b3e1f',1,'ffmpegfs.cc']]],
-  ['virtual_5fname_1272',['virtual_name',['../fuseops_8cc.html#a1edc55fb8cb2eb2f9a7f67306ffb67ca',1,'fuseops.cc']]],
+  ['virtual_5fname_1272',['virtual_name',['../fuseops_8cc.html#a6f9d1620e857e2078360c178d991aa38',1,'fuseops.cc']]],
   ['virtualfile_1273',['virtualfile',['../classFileIO.html#a2e330b909423f2118b8482732f50986a',1,'FileIO::virtualfile()'],['../classCache__Entry.html#a64a6705c9c8a72f25d86874c76f80b1c',1,'Cache_Entry::virtualfile()']]],
   ['virtualfile_1274',['VIRTUALFILE',['../fileio_8h.html#ac14b9a43ba93b51b3e68f9403d6a3f95',1,'VIRTUALFILE():&#160;fileio.h'],['../structVIRTUALFILE.html',1,'VIRTUALFILE']]],
   ['virtualflag_5fcuesheet_1275',['VIRTUALFLAG_CUESHEET',['../fileio_8h.html#a67c7c4e857f5afabddc599e04f15a6e5',1,'fileio.h']]],

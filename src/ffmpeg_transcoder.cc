@@ -315,6 +315,13 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_virtualfile       = virtualfile;
 
+    // Make sure this is set!
+    if (m_virtualfile->m_format_idx < 0)
+    {
+        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): format_idx not set.");
+        return AVERROR(EINVAL);
+    }
+
     m_in.m_filename     = m_virtualfile->m_origfile;
     m_out.m_filename    = m_virtualfile->m_destfile;
     m_mtime             = m_virtualfile->m_st.st_mtime;
@@ -565,9 +572,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         // Number of frames: should be quite accurate
         m_virtualfile->m_video_frame_count = static_cast<uint32_t>(ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, av_inv_q(m_in.m_video.m_stream->avg_frame_rate)));
     }
-
-    // Make sure this is set, although should already have happened
-    m_virtualfile->m_format_idx = params.guess_format_idx(filename());
 
     ret = open_albumarts();
     if (ret < 0)

@@ -202,7 +202,7 @@ FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 
 FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)
 {
-    if (virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)
+    if (virtualfile == nullptr || virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)
     {
         return nullptr;
     }

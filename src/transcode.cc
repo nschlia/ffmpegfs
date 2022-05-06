@@ -281,7 +281,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
         return false;
     }
 
-    FFmpegfs_Format *current_format = params.current_format(virtualfile);
+    const FFmpegfs_Format *current_format = params.current_format(virtualfile);
     if (current_format == nullptr)
     {
         Logging::error(cache_entry->destname(), "Internal error getting file size.");

@@ -179,7 +179,7 @@ int FFMPEGFS_PARAMS::guess_format_idx(const std::string & filepath) const
     return 0;
 }
 
-FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
+const FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
 {
     LPCVIRTUALFILE virtualfile = find_file_from_orig(filepath);
 
@@ -200,7 +200,7 @@ FFmpegfs_Format * FFMPEGFS_PARAMS::current_format(const std::string & filepath)
     return nullptr;
 }
 
-FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile)
+const FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const
 {
     if (virtualfile == nullptr || virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)
     {

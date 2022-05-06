@@ -1222,7 +1222,7 @@ private:
     bool                        m_copy_audio;                   /**< @brief If true, copy audio stream from source to target (just remux, no recode). */
     bool                        m_copy_video;                   /**< @brief If true, copy video stream from source to target (just remux, no recode). */
 
-    FFmpegfs_Format *           m_current_format;               /**< @brief Currently used output format(s) */
+    const FFmpegfs_Format *     m_current_format;               /**< @brief Currently used output format(s) */
 
     Buffer *                    m_buffer;                       /**< @brief Pointer to cache buffer object */
 

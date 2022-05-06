@@ -67,7 +67,7 @@ typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;
 static void                 init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE        make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);
 static void                 prepare_script();
-static bool                 virtual_name(std::string *virtualpath, const std::string &origpath = "", FFmpegfs_Format **current_format = nullptr);
+static bool                 virtual_name(std::string *virtualpath, const std::string &origpath = "", const FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
 static int                  get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                  make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
@@ -385,7 +385,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                     if (S_ISREG(stbuf.st_mode) || S_ISLNK(stbuf.st_mode))
                     {
-                        FFmpegfs_Format *current_format = nullptr;
+                        const FFmpegfs_Format *current_format = nullptr;
                         // Check if file can be transcoded
                         if (virtual_name(&filename, origpath, &current_format))
                         {
@@ -509,7 +509,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 add_dotdot(buf, filler, &virtualfile->m_st, 0);
             }
 
-            FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
+            const FFmpegfs_Format *ffmpegfs_format = params.current_format(virtualfile);
 
             if (ffmpegfs_format->is_frameset())
             {
@@ -588,7 +588,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     if (virtualfile == nullptr && lstat(origpath.c_str(), stbuf) == 0)
     {
         // File was not yet created as virtual file, but physically exists
-        FFmpegfs_Format *current_format = nullptr;
+        const FFmpegfs_Format *current_format = nullptr;
         std::string filename(origpath);
 
         if (virtual_name(&filename, "", &current_format))
@@ -1551,7 +1551,7 @@ static void prepare_script()
  * @param[out] current_format - If format has been found points to format info, nullptr if not.
  * @return Returns true if format has been found and filename changed, false if not.
  */
-static bool virtual_name(std::string * virtualpath, const std::string & origpath /*= ""*/, FFmpegfs_Format **current_format /*= nullptr*/)
+static bool virtual_name(std::string * virtualpath, const std::string & origpath /*= ""*/, const FFmpegfs_Format **current_format /*= nullptr*/)
 {
     std::string ext;
 
@@ -1567,14 +1567,16 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
 
     if (allow_list_ext(ext))
     {
-        FFmpegfs_Format *ffmpegfs_format = nullptr;
+        const FFmpegfs_Format *ffmpegfs_format = nullptr;
 
         if (!params.smart_transcode())
         {
+            // Not smart encoding: use first format (video file)
             ffmpegfs_format = &ffmpeg_format[0];
         }
         else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
         {
+            // We have an audio track
             ffmpegfs_format = &ffmpeg_format[1];
         }
 
@@ -1605,7 +1607,7 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
 
     if (format != nullptr)
     {
-        FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *virtualpath);
+        const FFmpegfs_Format *ffmpegfs_format = params.current_format(origpath + *virtualpath);
 
         if (ffmpegfs_format != nullptr &&
                 ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||

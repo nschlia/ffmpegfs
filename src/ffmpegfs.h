@@ -163,13 +163,13 @@ extern struct FFMPEGFS_PARAMS
      * @param[in] filepath - Name of the file, path my be included, but not required.
      * @return On success, returns pointer to format. On error, returns nullptr.
      */
-    FFmpegfs_Format *   current_format(const std::string & filepath);
+    const FFmpegfs_Format *current_format(const std::string & filepath);
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
      * @param[in] virtualfile - virtualfile struct of a file.
      * @return On success, returns pointer to format. On error, returns nullptr.
      */
-    FFmpegfs_Format *   current_format(LPCVIRTUALFILE virtualfile);
+    const FFmpegfs_Format *current_format(LPCVIRTUALFILE virtualfile) const;
 
     // Paths
     std::string             m_basepath;                     /**< @brief Base path: Files from this directory (including all sub directories) will be mapped to m_mountpath. */

@@ -1038,9 +1038,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     }
 
     // This is a virtual file
-
-    assert(virtualfile != nullptr);
-
     kick_next(virtualfile);
 
     switch (virtualfile->m_type)

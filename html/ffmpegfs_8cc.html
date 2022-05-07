@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.10</span>
+   &#160;<span id="projectnumber">2.11</span>
    </div>
   </td>
  </tr>
@@ -553,11 +553,11 @@ Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (<a href="#" onclick="l
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>-1 on error, 0 if arg is to be discarded, 1 if arg should be kept </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01651">1651</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01653">1653</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00100">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01850">expand_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01866">is_mount()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00165">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01951">sanitise_filepath()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l00097">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01850">expand_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01866">is_mount()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00165">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01951">sanitise_filepath()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02047">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02049">main()</a>.</p>
 
 </div>
 </div>
@@ -968,7 +968,7 @@ Index 1: Selected audio format. </td></tr>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00453">hwaccel_map</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01642">FFmpeg_Transcoder::add_stream()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00597">FFmpeg_Transcoder::open_bestmatch_video()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01646">FFmpeg_Transcoder::add_stream()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>.</p>
 
 </div>
 </div>
@@ -1650,17 +1650,9 @@ Weeks:   #w
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1.</dd></dl>
-<p>Get value from command line string. Finds whatever is after the "=" sign. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>- Command line option. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- Upon return, contains the value after the "=" sign. </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns 0 if valid; if invalid returns -1. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01627">1627</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01629">1629</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 </div>
 </div>
@@ -1982,9 +1974,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Return value will be the errorlevel of the executable. Returns 0 on success, 1 on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l02047">2047</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l02049">2049</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01920">build_device_type_list()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02379">detect_docker()</a>, <a class="el" href="fuseops_8cc_source.html#l00100">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01850">expand_path()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00042">FFMPEFS_VERSION</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="transcode_8cc_source.html#l01020">ffmpeg_log()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01651">ffmpegfs_opt_proc()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00211">ffmpegfs_opts</a>, <a class="el" href="fuseops_8cc_source.html#l00249">init_fuse_ops()</a>, <a class="el" href="transcode_8cc_source.html#l01099">init_logging()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00214">FFMPEGFS_PARAMS::m_cachepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00202">FFMPEGFS_PARAMS::m_debug</a>, <a class="el" href="ffmpegfs_8h_source.html#l00203">FFMPEGFS_PARAMS::m_log_maxlevel</a>, <a class="el" href="ffmpegfs_8h_source.html#l00204">FFMPEGFS_PARAMS::m_log_stderr</a>, <a class="el" href="ffmpegfs_8h_source.html#l00205">FFMPEGFS_PARAMS::m_log_syslog</a>, <a class="el" href="ffmpegfs_8h_source.html#l00206">FFMPEGFS_PARAMS::m_logfile</a>, <a class="el" href="ffmpegfs_8h_source.html#l00219">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00165">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00217">FFMPEGFS_PARAMS::m_prune_cache</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, <a class="el" href="transcode_8cc_source.html#l00727">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00214">transcoder_init()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01922">build_device_type_list()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l02379">detect_docker()</a>, <a class="el" href="fuseops_8cc_source.html#l00097">docker_client</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01850">expand_path()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00042">FFMPEFS_VERSION</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="transcode_8cc_source.html#l01020">ffmpeg_log()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01653">ffmpegfs_opt_proc()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00211">ffmpegfs_opts</a>, <a class="el" href="fuseops_8cc_source.html#l00246">init_fuse_ops()</a>, <a class="el" href="transcode_8cc_source.html#l01099">init_logging()</a>, <a class="el" href="ffmpegfs_8h_source.html#l00164">FFMPEGFS_PARAMS::m_basepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00214">FFMPEGFS_PARAMS::m_cachepath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00202">FFMPEGFS_PARAMS::m_debug</a>, <a class="el" href="ffmpegfs_8h_source.html#l00203">FFMPEGFS_PARAMS::m_log_maxlevel</a>, <a class="el" href="ffmpegfs_8h_source.html#l00204">FFMPEGFS_PARAMS::m_log_stderr</a>, <a class="el" href="ffmpegfs_8h_source.html#l00205">FFMPEGFS_PARAMS::m_log_syslog</a>, <a class="el" href="ffmpegfs_8h_source.html#l00206">FFMPEGFS_PARAMS::m_logfile</a>, <a class="el" href="ffmpegfs_8h_source.html#l00219">FFMPEGFS_PARAMS::m_max_threads</a>, <a class="el" href="ffmpegfs_8h_source.html#l00165">FFMPEGFS_PARAMS::m_mountpath</a>, <a class="el" href="ffmpegfs_8h_source.html#l00217">FFMPEGFS_PARAMS::m_prune_cache</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, <a class="el" href="transcode_8cc_source.html#l00727">transcoder_cache_maintenance()</a>, and <a class="el" href="transcode_8cc_source.html#l00214">transcoder_init()</a>.</p>
 
 </div>
 </div>
@@ -2015,7 +2007,7 @@ template&lt;typename T &gt; </div>
 <p>Set default values. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if options are OK, false if option combination is invalid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01902">1902</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l01904">1904</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpegfs_8h_source.html#l00173">FFMPEGFS_PARAMS::m_level</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00072">params</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00214">PRORESLEVEL_NONE</a>, and <a class="el" href="ffmpeg__utils_8h_source.html#l00219">PRORESLEVEL_PRORES_HQ</a>.</p>
 
@@ -2128,7 +2120,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00152">152</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02047">main()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l02049">main()</a>.</p>
 
 </div>
 </div>
@@ -2195,7 +2187,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00453">453</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01920">build_device_type_list()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01372">get_hwaccel()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01510">get_hwaccel_API_text()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpegfs_8cc_source.html#l01922">build_device_type_list()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l01372">get_hwaccel()</a>, and <a class="el" href="ffmpegfs_8cc_source.html#l01510">get_hwaccel_API_text()</a>.</p>
 
 </div>
 </div>

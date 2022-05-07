@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.10</span>
+   &#160;<span id="projectnumber">2.11</span>
    </div>
   </td>
  </tr>
@@ -82,11 +82,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acb503a4bc28ffc92211c3be51a8e694f"><td class="memItemLeft" align="right" valign="top"><a id="acb503a4bc28ffc92211c3be51a8e694f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_codec_ctx</b> (AVCodecContext *codec_ctx)</td></tr>
+<tr class="memitem:acb503a4bc28ffc92211c3be51a8e694f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Transcoder_1_1StreamRef.html#acb503a4bc28ffc92211c3be51a8e694f">set_codec_ctx</a> (AVCodecContext *codec_ctx)</td></tr>
+<tr class="memdesc:acb503a4bc28ffc92211c3be51a8e694f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the AVCodecContext pointer. Will be shared and deleted after the last consumer freed it.  <a href="classFFmpeg__Transcoder_1_1StreamRef.html#acb503a4bc28ffc92211c3be51a8e694f">More...</a><br /></td></tr>
 <tr class="separator:acb503a4bc28ffc92211c3be51a8e694f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff8b24d2de99aefbe7747cd68bc998d5"><td class="memItemLeft" align="right" valign="top"><a id="aff8b24d2de99aefbe7747cd68bc998d5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Transcoder_1_1StreamRef.html#aff8b24d2de99aefbe7747cd68bc998d5">close</a> ()</td></tr>
+<tr class="memdesc:aff8b24d2de99aefbe7747cd68bc998d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close (reset) AVCodecContext pointer. <br /></td></tr>
 <tr class="separator:aff8b24d2de99aefbe7747cd68bc998d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -113,7 +114,38 @@ int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <p>&lt; </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8h_source.html#l00102">102</a> of file <a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a>.</p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="acb503a4bc28ffc92211c3be51a8e694f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb503a4bc28ffc92211c3be51a8e694f">&#9670;&nbsp;</a></span>set_codec_ctx()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FFmpeg_Transcoder::StreamRef::set_codec_ctx </td>
+          <td>(</td>
+          <td class="paramtype">AVCodecContext *&#160;</td>
+          <td class="paramname"><em>codec_ctx</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the AVCodecContext pointer. Will be shared and deleted after the last consumer freed it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">codec_ctx</td><td>- AVCodecContext pointer to store </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00211">211</a> of file <a class="el" href="ffmpeg__transcoder_8cc_source.html">ffmpeg_transcoder.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02472">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07583">FFmpeg_Transcoder::add_external_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01646">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02393">FFmpeg_Transcoder::add_stream_copy()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02253">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00770">FFmpeg_Transcoder::open_albumarts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00687">FFmpeg_Transcoder::open_bestmatch_audio()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01107">FFmpeg_Transcoder::open_output_frame_set()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00726">FFmpeg_Transcoder::open_subtitles()</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a></li>
 <li>src/<a class="el" href="ffmpeg__transcoder_8cc_source.html">ffmpeg_transcoder.cc</a></li>
 </ul>

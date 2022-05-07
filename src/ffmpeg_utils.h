@@ -484,7 +484,7 @@ public:
     AVCodecID           subtitle_codec(AVCodecID codec_id) const;
 
     /**
-     * @brief Check if this si some sort of multi file format
+     * @brief Check if this is some sort of multi file format
      * (any of the following: is_frameset() or is_hls()).
      * @return Returns true for a multi file format.
      */

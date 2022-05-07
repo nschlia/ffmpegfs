@@ -195,8 +195,12 @@ FFmpeg_Transcoder::StreamRef::~StreamRef()
 }
 
 template< typename T >
-struct av_context_deleter
+struct av_context_deleter       /**< @brief Delete helper struct for std::shared_ptr<AVCodecContext> */
 {
+    /**
+     * @brief Delete for std::shared_ptr<AVCodecContext>: Deletes the AVCodecContext pointer
+     * @param[in] p - AVCodecContext pointer to delete
+     */
     void operator ()( T * p)
     {
         avcodec_close(p);

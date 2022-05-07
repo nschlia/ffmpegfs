@@ -105,8 +105,15 @@ protected:
         StreamRef();
         virtual ~StreamRef();
 
+        /**
+         * @brief Set the AVCodecContext pointer. Will be shared and deleted after the last consumer freed it.
+         * @param[in] codec_ctx - AVCodecContext pointer to store
+         */
         void set_codec_ctx(AVCodecContext *codec_ctx);
 
+        /**
+         * @brief Close (reset) AVCodecContext pointer
+         */
         void close();
 
     public:

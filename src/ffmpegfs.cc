@@ -1594,6 +1594,7 @@ static int get_value(const std::string & arg, STRINGSET *value)
     return -1;
 }
 
+#if 0
 /**
  * @brief Get value from command line string.
  * Finds whatever is after the "=" sign.
@@ -1601,21 +1602,22 @@ static int get_value(const std::string & arg, STRINGSET *value)
  * @param[in] value - Upon return, contains the value after the "=" sign.
  * @return Returns 0 if valid; if invalid returns -1.
  */
-//static int get_value(const std::string & arg, std::optional<std::string> *value)
-//{
-//    size_t pos = arg.find('=');
+static int get_value(const std::string & arg, std::optional<std::string> *value)
+{
+    size_t pos = arg.find('=');
 
-//    if (pos != std::string::npos)
-//    {
-//        *value = arg.substr(pos + 1);
+    if (pos != std::string::npos)
+    {
+        *value = arg.substr(pos + 1);
 
-//        return 0;
-//    }
+        return 0;
+    }
 
-//    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
+    std::fprintf(stderr, "INVALID PARAMETER (%s): Missing argument\n", arg.c_str());
 
-//    return -1;
-//}
+    return -1;
+}
+#endif
 
 /**
  * @brief Get value from command line string.

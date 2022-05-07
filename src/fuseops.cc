@@ -58,11 +58,8 @@
 #include <assert.h>
 #include <signal.h>
 
-/**
- * @brief Map source file names to virtual file objects.
- */
-typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;
-typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;
+typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;      /**< @brief Map virtual file names to virtual file objects. */
+typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;     /**< @brief Map source file names to virtual file objects. */
 
 static void                         init_stat(struct stat *stbuf, size_t fsize, time_t ftime, bool directory);
 static LPVIRTUALFILE                make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE type, const std::string & origpath, const std::string & filename, size_t fsize, time_t ftime = time(nullptr), int flags = VIRTUALFLAG_NONE);

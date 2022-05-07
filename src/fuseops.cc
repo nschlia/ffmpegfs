@@ -605,8 +605,8 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         {
             if (!current_format->is_multiformat())
             {
-                // Pass-through for regular files
-                Logging::trace(origpath, "getattr: Not transcoding existing file.");
+                // Regular files
+                Logging::trace(origpath, "getattr: Existing file.");
                 errno = 0;
                 return 0;
             }

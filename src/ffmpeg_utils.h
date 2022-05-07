@@ -1025,12 +1025,12 @@ bool                is_text_codec(AVCodecID codec_id);
 
 /**
  * @brief Get first audio stream
- * @param[in] fmt_ctx - Format context of file
+ * @param[in] format_ctx - Format context of file
  * @param[out] channels - Number of audio channels in stream
  * @param[out] samplerate - Audio sample rate of stream
  * @return Returns stream number (value greater or equal zero) or negative errno value
  */
-int                 get_audio_props(AVFormatContext *fmt_ctx, int *channels, int *samplerate);
+int                 get_audio_props(AVFormatContext *format_ctx, int *channels, int *samplerate);
 
 /**
  * @brief Escape characters that are meaningful to regexp.

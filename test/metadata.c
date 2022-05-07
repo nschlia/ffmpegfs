@@ -47,8 +47,8 @@ int main (int argc, char **argv)
 #endif
 
     const char *filename = argv[1];
-    AVFormatContext *fmt_ctx = NULL;
-    int ret = avformat_open_input(&fmt_ctx, filename, NULL, NULL);
+    AVFormatContext *format_ctx = NULL;
+    int ret = avformat_open_input(&format_ctx, filename, NULL, NULL);
     if (ret)
     {
         char error[AV_ERROR_MAX_STRING_SIZE];
@@ -57,18 +57,18 @@ int main (int argc, char **argv)
         return ret;
     }
 
-    ret = avformat_find_stream_info(fmt_ctx, NULL);
+    ret = avformat_find_stream_info(format_ctx, NULL);
     if (ret < 0)
     {
         av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
         return ret;
     }
 
-    for (unsigned int streamno = 0; streamno < fmt_ctx->nb_streams; streamno++)
+    for (unsigned int streamno = 0; streamno < format_ctx->nb_streams; streamno++)
     {
         AVDictionaryEntry *tag = NULL;
 
-        while ((tag = av_dict_get(fmt_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
+        while ((tag = av_dict_get(format_ctx->streams[streamno]->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
         {
             printf("%s=%s\n", tag->key, tag->value);
         }
@@ -77,13 +77,13 @@ int main (int argc, char **argv)
     {
         AVDictionaryEntry *tag = NULL;
 
-        while ((tag = av_dict_get(fmt_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
+        while ((tag = av_dict_get(format_ctx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX)) != NULL)
         {
             printf("%s=%s\n", tag->key, tag->value);
         }
     }
 
-    avformat_close_input(&fmt_ctx);
+    avformat_close_input(&format_ctx);
 
     return 0;
 }

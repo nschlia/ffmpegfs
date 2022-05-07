@@ -67,6 +67,7 @@ static void                         prepare_script();
 static bool                         is_passthrough(const std::string & ext);
 static bool                         virtual_name(std::string *virtualpath, const std::string &origpath = "", const FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
+static void                         insert(const VIRTUALFILE & virtualfile);
 static int                          get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                          make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                          kick_next(LPVIRTUALFILE virtualfile);
@@ -396,6 +397,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     if (S_ISREG(stbuf.st_mode) || S_ISLNK(stbuf.st_mode))
                     {
                         const FFmpegfs_Format *current_format = nullptr;
+
                         // Check if file can be transcoded
                         if (virtual_name(&filename, origpath, &current_format))
                         {
@@ -1663,6 +1665,16 @@ static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const 
     return map.cend();
 }
 
+/**
+ * @brief Insert virtualfile into list.
+ * @param[in] virtualfile - VIRTUALFILE object to insert
+ */
+static void insert(const VIRTUALFILE & virtualfile)
+{
+    filenames.insert(make_pair(virtualfile.m_destfile, virtualfile));
+    rfilenames.insert(make_pair(virtualfile.m_origfile, virtualfile));
+}
+
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat * stbuf, int flags)
 {
     return insert_file(type, virtfile, virtfile, stbuf, flags);
@@ -1696,13 +1708,12 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile);
+        virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile); // Make a guess, will be finalised later
         virtualfile.m_destfile          = sanitised_virtfile;
         virtualfile.m_origfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
 
-        filenames.insert(make_pair(sanitised_virtfile, virtualfile));
-        rfilenames.insert(make_pair(sanitised_origfile, virtualfile));
+        insert(virtualfile);
 
         it = filenames.find(sanitised_virtfile);
     }
@@ -1746,11 +1757,7 @@ LPVIRTUALFILE find_file(const std::string & virtfile)
 
     errno = 0;
 
-    if (it != filenames.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
+    return (it != filenames.end() ? &it->second : nullptr);
 }
 
 LPVIRTUALFILE find_file_from_orig(const std::string &origfile)
@@ -1759,11 +1766,7 @@ LPVIRTUALFILE find_file_from_orig(const std::string &origfile)
 
     errno = 0;
 
-    if (it != rfilenames.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
+    return (it != rfilenames.end() ? &it->second : nullptr);
 }
 
 bool check_path(const std::string & path)

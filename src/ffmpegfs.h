@@ -421,8 +421,8 @@ std::string  	get_hwaccel_API_text(HWACCELAPI hwaccel_API);
 
 /**
  * @brief Check if codec_id and optional profile is in block list.
- * @param codec_id - Codec ID of rto check
- * @param profile - Profile to check. Set to FF_PROFILE_UNKOWN to ignore.
+ * @param[in] codec_id - Codec ID to check
+ * @param[in] profile - Profile to check. Set to FF_PROFILE_UNKOWN to ignore.
  * @return Returns true if codec is in block list, false if not.
  */
 bool            check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);

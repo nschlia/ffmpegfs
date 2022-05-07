@@ -64,7 +64,7 @@ private:
 public:
     /**
      * @brief operator = declared deleted, should use create to get this object to maintain reference count.
-     * @param other - Assignment object
+     * @param[in] other - Assignment object
      * @return Pointer to this
      */
     Cache_Entry & operator= (Cache_Entry const & other) = delete;

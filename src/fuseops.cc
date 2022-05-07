@@ -2173,7 +2173,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
  * faster then.
  * @todo Will work only if transcoding finishes within timeout.
  * Probably remove or raise timeout here.
- * @param virtualfile - VIRTUALFILE object of current song
+ * @param[in] virtualfile - VIRTUALFILE object of current song
  * @return On success, returns 0. On error, returns -errno.
  */
 static int kick_next(LPVIRTUALFILE virtualfile)
@@ -2232,8 +2232,8 @@ static void sighandler(int signum)
 
 /**
  * @brief Extract the number for a file name
- * @param path - Path and filename of requested file
- * @param value - Returns the number extracted
+ * @param[in] path - Path and filename of requested file
+ * @param[out] value - Returns the number extracted
  * @return Returns the filename that was processed, without path.
  */
 static std::string get_number(const char *path, uint32_t *value)

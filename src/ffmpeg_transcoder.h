@@ -301,7 +301,7 @@ public:
     /**
      * @brief Predict overhead in file size. This may (better will surely) be inaccurate.
      * @param[out] filesize - Predicted file size in bytes, including overhead.
-     * @param filetype - File type: MP3, TS etc.
+     * @param[in] filetype - File type: MP3, TS etc.
      * @return On success, returns true; on failure, returns false.
      */
     static bool                 total_overhead(size_t *filesize, FILETYPE filetype);
@@ -406,9 +406,9 @@ protected:
     int                         open_albumarts();
     /**
      * @brief Determine the hardware pixel format for the codec, if applicable.
-     * @param codec - Input codec used
-     * @param dev_type - Hardware device type
-     * @param use_device_ctx - If true checks for pix format if using a hardware device context, for a pix format using a hardware frames context otherwise.
+     * @param[in] codec - Input codec used
+     * @param[in] dev_type - Hardware device type
+     * @param[in] use_device_ctx - If true checks for pix format if using a hardware device context, for a pix format using a hardware frames context otherwise.
      * @return Returns hardware pixel format, or AV_PIX_FMT_NONE if not applicable.
      */
 #if IF_DECLARED_CONST
@@ -891,9 +891,9 @@ protected:
     int                         skip_decoded_frames(uint32_t frame_no, bool forced_seek);
     /**
      * @brief Get correct input and output pixel format
-     * @param [in] output_codec_ctx - Output codec context.
-     * @param [out] in_pix_fmt - Input pixel format.
-     * @param [out] out_pix_fmt - Output pixel format.
+     * @param[in] output_codec_ctx - Output codec context.
+     * @param[out] in_pix_fmt - Input pixel format.
+     * @param[out] out_pix_fmt - Output pixel format.
      */
     void                        get_pix_formats(AVPixelFormat *in_pix_fmt, AVPixelFormat *out_pix_fmt, AVCodecContext* output_codec_ctx = nullptr) const;
 
@@ -1104,7 +1104,7 @@ protected:
     bool                        is_subtitle_stream(int stream_idx) const;
     /**
      * @brief Get subtitle stream for the stream index
-     * @param stream_idx - Stream index to get subtitle stream for
+     * @param[in] stream_idx - Stream index to get subtitle stream for
      * @return Pointer to subbtitle stream or nullptr if not found
      */
     StreamRef *                 get_out_subtitle_stream(int stream_idx);
@@ -1150,9 +1150,9 @@ protected:
 
     /**
      * @brief FFmpeg_Transcoder::read_packet
-     * @param opaque
-     * @param buf
-     * @param buf_size
+     * @param[in] opaque
+     * @param[in] buf
+     * @param[in] buf_size
      * @return
      */
     static int                  read_packet(void *opaque, uint8_t *buf, int buf_size);

@@ -282,7 +282,7 @@ protected:
     /**
      * @brief Standard format_helper without parameters
      * @param[in] string_to_update - original string
-     * @param size - unused
+     * @param[in] size - unused
      * @return Original string
      */
     static std::string format_helper(

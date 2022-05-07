@@ -321,7 +321,7 @@ public:
     AVCodecID           video_codec() const;
     /**
      * @brief Check if video codec/file format combination is supported
-     * @param codec_id - Codec ID to check
+     * @param[in] codec_id - Codec ID to check
      * @return Returns true if supported, false if not.
      */
     bool                is_video_codec_supported(AVCodecID codec_id) const;
@@ -338,7 +338,7 @@ public:
     AVCodecID           audio_codec() const;
     /**
      * @brief Check if audio codec/file format combination is supported
-     * @param codec_id - Codec ID to check
+     * @param[in] codec_id - Codec ID to check
      * @return Returns true if supported, false if not.
      */
     bool                is_audio_codec_supported(AVCodecID codec_id) const;
@@ -433,7 +433,7 @@ public:
     AVCodecID           video_codec() const;
     /**
      * @brief Check if video codec/file format combination is supported
-     * @param codec_id - Codec ID to check
+     * @param[in] codec_id - Codec ID to check
      * @return Returns true if supported, false if not.
      */
     bool                is_video_codec_supported(AVCodecID codec_id) const;
@@ -450,7 +450,7 @@ public:
     AVCodecID           audio_codec() const;
     /**
      * @brief Check if audio codec/file format combination is supported
-     * @param codec_id - Codec ID to check
+     * @param[in] codec_id - Codec ID to check
      * @return Returns true if supported, false if not.
      */
     bool                is_audio_codec_supported(AVCodecID codec_id) const;
@@ -787,8 +787,8 @@ int                 print_stream_info(const AVStream* stream);
  * Fill the provided buffer with a string containing a FourCC (four-character
  * code) representation.
  *
- * @param buf - Upon return, filled in with the FourCC representation.
- * @param fourcc - The fourcc to represent
+ * @param[in] buf - Upon return, filled in with the FourCC representation.
+ * @param[in] fourcc - The fourcc to represent
  * @return The buffer in input.
  */
 std::string         fourcc_make_string(std::string * buf, uint32_t fourcc);

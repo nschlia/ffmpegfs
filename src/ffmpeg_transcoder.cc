@@ -313,7 +313,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (virtualfile == nullptr)
     {
-        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): virtualfile is NULL.");
+        Logging::error(filename(), "INTERNAL ERROR: open_input_file()! virtualfile is NULL.");
         return AVERROR(EINVAL);
     }
 
@@ -322,7 +322,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     // Make sure this is set!
     if (m_virtualfile->m_format_idx < 0)
     {
-        Logging::error(filename(), "INTERNAL ERROR in open_input_file(): format_idx not set.");
+        Logging::error(filename(), "INTERNAL ERROR: open_input_file()! format_idx not set.");
         return AVERROR(EINVAL);
     }
 
@@ -3589,7 +3589,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
     {
         // Should never happen, this should never be called with anything else than subtitle packets.
         ret = AVERROR_STREAM_NOT_FOUND;
-        Logging::error(filename(), "INTERNAL ERROR! Subtitle stream #%1 not found (error '%2').", ffmpeg_geterror(ret).c_str());
+        Logging::error(filename(), "INTERNAL ERROR: decode_subtitle()! Subtitle stream #%1 not found (error '%2').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -3604,7 +3604,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
 
     if (out_stream_idx == INVALID_STREAM)
     {
-        Logging::error(destname(), "INTERNAL ERROR! Unable to map in subtitle stream #%1 to output stream.", it->first);
+        Logging::error(destname(), "INTERNAL ERROR: decode_subtitle()! Unable to map in subtitle stream #%1 to output stream.", it->first);
         throw AVERROR(EINVAL);
     }
 
@@ -4642,7 +4642,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 
     if (out_streamref == nullptr)
     {
-        Logging::error(destname(), "INTERNAL ERROR! Invalid stream index #%1 passed to encode_subtitle", out_stream_idx);
+        Logging::error(destname(), "INTERNAL ERROR: encode_subtitle()! Invalid stream index #%1", out_stream_idx);
         return AVERROR(EINVAL);
     }
 
@@ -5339,7 +5339,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         if (!stream_exists(stream_idx))
                         {
-                            Logging::error(destname(), "INTERNAL ERROR! Invalid stream index in audio/video buffer skipped.");
+                            Logging::error(destname(), "INTERNAL ERROR: process_single_fr()! Invalid stream index in audio/video buffer skipped.");
                             continue;
                         }
 
@@ -5379,7 +5379,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         if (!stream_exists(stream_idx))
                         {
-                            Logging::error(destname(), "INTERNAL ERROR! Invalid stream index in subitle buffer skipped.");
+                            Logging::error(destname(), "INTERNAL ERROR: process_single_fr()! Invalid stream index in subitle buffer skipped.");
                             continue;
                         }
 
@@ -6805,7 +6805,7 @@ int FFmpeg_Transcoder::hwdevice_ctx_add_ref(AVCodecContext *input_codec_ctx)
     if (m_hwaccel_dec_device_ctx == nullptr)
     {
         int ret = AVERROR(EINVAL);
-        Logging::error(destname(), "INTERNAL ERROR! HW decoder device context is NULL (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "INTERNAL ERROR: hwdevice_ctx_add_ref()! HW decoder device context is NULL (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -7761,7 +7761,7 @@ int FFmpeg_Transcoder::add_external_subtitle_streams()
     catch (std::regex_error & e)
     {
         ret = 0;    // Ignore error
-        Logging::error(filename(), "INTERNAL ERROR! Unable to create reg exp: %1", e.what());
+        Logging::error(filename(), "INTERNAL ERROR: add_external_subtitle_streams()! Unable to create reg exp: %1", e.what());
     }
 
     return ret;

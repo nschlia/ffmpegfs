@@ -188,7 +188,7 @@ bool Buffer::init(bool erase_cache)
             }
             else
             {
-                Logging::error(filename(), "INTERNAL ERROR: Segment count is 0!");
+                Logging::error(filename(), "INTERNAL ERROR: Buffer::init()! Segment count is 0.");
                 errno = EINVAL;
                 throw false;
             }
@@ -250,7 +250,7 @@ bool Buffer::init(bool erase_cache)
             if (virtualfile()->m_video_frame_count == 0)
             {
                 errno = EINVAL;
-                Logging::error(m_ci[0].m_cachefile, "INTERNAL ERROR! Frame count is zero (%1) %2", errno, strerror(errno));
+                Logging::error(m_ci[0].m_cachefile, "INTERNAL ERROR: Buffer::init()! Frame count is zero (%1) %2", errno, strerror(errno));
                 throw false;
             }
             assert(sizeof(IMAGE_FRAME) == 32);

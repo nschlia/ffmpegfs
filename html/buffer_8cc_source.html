@@ -250,7 +250,7 @@ $(function() {
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            }</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            {</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">filename</a>(), <span class="stringliteral">&quot;INTERNAL ERROR: Segment count is 0!&quot;</span>);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">filename</a>(), <span class="stringliteral">&quot;INTERNAL ERROR: Buffer::init()! Segment count is 0.&quot;</span>);</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                errno = EINVAL;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;            }</div>
@@ -312,7 +312,7 @@ $(function() {
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>()-&gt;m_video_frame_count == 0)</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            {</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                errno = EINVAL;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classBuffer.html#a06d70fd4eff6ff0addb7bbd41f4654a1">m_ci</a>[0].m_cachefile, <span class="stringliteral">&quot;INTERNAL ERROR! Frame count is zero (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a>(<a class="code" href="classBuffer.html#a06d70fd4eff6ff0addb7bbd41f4654a1">m_ci</a>[0].m_cachefile, <span class="stringliteral">&quot;INTERNAL ERROR: Buffer::init()! Frame count is zero (%1) %2&quot;</span>, errno, strerror(errno));</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            }</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            assert(<span class="keyword">sizeof</span>(<a class="code" href="structIMAGE__FRAME.html">IMAGE_FRAME</a>) == 32);</div>

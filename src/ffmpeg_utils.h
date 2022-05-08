@@ -564,6 +564,13 @@ bool                allow_list_ext(const std::string & ext);
  */
 bool                find_ext(std::string * ext, const std::string & filename);
 /**
+ * @brief Check if filename has a certain extension. The check is case sensitive.
+ * @param ext - Extension to check.
+ * @param filename - Filename to check
+ * @return Returns true if extension matches, false if not
+ */
+bool                check_ext(const std::string & ext, const std::string & filename);
+/**
  * @brief Replace extension in filename, taking into account that there might not be an extension already.
  * @param[in] filepath - Filename to replace extension.
  * @param[in] ext - Extension to replace.

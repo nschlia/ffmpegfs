@@ -1079,6 +1079,12 @@ bool find_ext(std::string * ext, const std::string & filename)
     }
 }
 
+bool check_ext(const std::string & ext, const std::string & filename)
+{
+    std::string ext1;
+    return (find_ext(&ext1, filename) && ext1 == ext);
+}
+
 const std::string & replace_ext(std::string * filepath, const std::string & ext)
 {
     size_t found;

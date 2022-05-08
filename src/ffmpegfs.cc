@@ -362,13 +362,11 @@ static const AUDIOCODEC_MAP audiocodec_map =
     { "MP3",            AV_CODEC_ID_MP3 },          // TS, MP4, MOV, MKV
     { "OPUS",           AV_CODEC_ID_OPUS },         // webm
 
-    // TODO: More to come..
-
-    { "VORBIS",         AV_CODEC_ID_VORBIS },       // webm TODO: Sound skips
-    { "DTS",            AV_CODEC_ID_DTS },          // TODO: invalid argument?
-    { "PCM16",          AV_CODEC_ID_PCM_S16LE },    // TODO: is this useable?
-    { "PCM24",          AV_CODEC_ID_PCM_S24LE },    // TODO: is this useable?
-    { "PCM32",          AV_CODEC_ID_PCM_S32LE },    // TODO: is this useable?
+    { "VORBIS",         AV_CODEC_ID_VORBIS },       /** @todo webm: sound skips */
+    { "DTS",            AV_CODEC_ID_DTS },          /** @todo invalid argument? */
+    { "PCM16",          AV_CODEC_ID_PCM_S16LE },    /** @todo is this useable? */
+    { "PCM24",          AV_CODEC_ID_PCM_S24LE },    /** @todo is this useable? */
+    { "PCM32",          AV_CODEC_ID_PCM_S32LE },    /** @todo is this useable? */
 };
 
 /**
@@ -383,9 +381,7 @@ static const VIDEOCODEC_MAP videocodec_map =
     { "VP8",            AV_CODEC_ID_VP8 },          // WebM
     { "VP9",            AV_CODEC_ID_VP9 },          // WebM
 
-    // TODO: More to come..
-
-    //{ "AV1",            AV_CODEC_ID_AV1 },          // WebM   TODO: Ends with "Could not write video frame (error 'Invalid data found when processing input')."
+    //{ "AV1",            AV_CODEC_ID_AV1 },          /** @todo WebM ends with "Could not write video frame (error 'Invalid data found when processing input')." */
 };
 
 /**

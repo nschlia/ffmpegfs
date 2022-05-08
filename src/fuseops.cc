@@ -2191,7 +2191,7 @@ static int kick_next(LPVIRTUALFILE virtualfile)
 
     Logging::debug(virtualfile->m_destfile, "Preparing next file: %1", nextvirtualfile->m_destfile.c_str());
 
-    Cache_Entry* cache_entry = transcoder_new(nextvirtualfile, true); // TODO: DISABLE TIMEOUT
+    Cache_Entry* cache_entry = transcoder_new(nextvirtualfile, true); /** @todo Disable timeout */
     if (cache_entry == nullptr)
     {
         return -errno;

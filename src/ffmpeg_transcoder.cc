@@ -5157,10 +5157,8 @@ int FFmpeg_Transcoder::flush_delayed_video()
     return ret;
 }
 
-int FFmpeg_Transcoder::flush_delayed_subtitles()
+int FFmpeg_Transcoder::flush_delayed_subtitles()    /** @todo Implement flush_delayed_subtitles() if required */
 {
-    // TODO
-
     return 0;
 }
 
@@ -5951,7 +5949,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
         *filesize = static_cast<size_t>(1450 * (*filesize) / 1000); // add overhead
         break;
     }
-    case AV_CODEC_ID_AV1:           // TODO...
+    case AV_CODEC_ID_AV1:           /** @todo AV1 prediction has not been tested yet */
     {
         *filesize += static_cast<size_t>(duration * out_video_bit_rate / (8LL * AV_TIME_BASE));
         //*filesize = static_cast<size_t>(1150 * (*filesize) / 1000); // add overhead
@@ -7304,7 +7302,7 @@ int FFmpeg_Transcoder::get_hw_mmal_decoder_name(AVCodecID codec_id, std::string 
 //        *codec_name = "mpeg4_v4l2m2m";
 //        break;
 //    }
-//    //case AV_CODEC_ID_VC1:     TODO: WMV not supported
+//    //case AV_CODEC_ID_VC1:     /** @todo WMV is currently not supported */
 //    //{
 //    //    *codec_name = "vc1_v4l2m2m";
 //    //    break;

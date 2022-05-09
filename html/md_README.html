@@ -89,6 +89,10 @@ $(function() {
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Version 2.11 under development</h2>
+<ul>
+<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>: Smart transcode now detects if a source file has audio only and uses the correct target format. For example, with &ndash;destination=webm+mp3, if one MP4 input file contains a video stream, another an audio stream only, the resulting files will be webm (for the video input) and mp3 for the audio only file.</li>
+<li><b>Bugfix:</b> Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.</li>
+</ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.10 released</h2>
 <p><b>New in in 2.10 (2022-04-26):</b></p>

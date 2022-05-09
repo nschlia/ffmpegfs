@@ -67,6 +67,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">cuesheetparser.h File Reference</div>  </div>
@@ -98,11 +99,16 @@ This graph shows which files directly or indirectly include this file:</div>
 </div>
 <p><a href="cuesheetparser_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:af687d46c56bfe626504e419300f881ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8h.html#af687d46c56bfe626504e419300f881ab">TRACKDIR</a>&#160;&#160;&#160;&quot;tracks&quot;</td></tr>
+<tr class="separator:af687d46c56bfe626504e419300f881ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4d2c07f66a3046e7b42048fd98919366"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8h.html#a4d2c07f66a3046e7b42048fd98919366">check_cuesheet</a> (const std::string &amp;filename, void *buf=nullptr, fuse_fill_dir_t filler=nullptr, AVFormatContext *fmt_ctx=nullptr)</td></tr>
-<tr class="memdesc:a4d2c07f66a3046e7b42048fd98919366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles in cue sheet.  <a href="cuesheetparser_8h.html#a4d2c07f66a3046e7b42048fd98919366">More...</a><br /></td></tr>
-<tr class="separator:a4d2c07f66a3046e7b42048fd98919366"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6780da3bb32ad0393f781e8e3a888208"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cuesheetparser_8h.html#a6780da3bb32ad0393f781e8e3a888208">check_cuesheet</a> (const std::string &amp;filename, void *buf=nullptr, fuse_fill_dir_t filler=nullptr)</td></tr>
+<tr class="memdesc:a6780da3bb32ad0393f781e8e3a888208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles in cue sheet.  <a href="cuesheetparser_8h.html#a6780da3bb32ad0393f781e8e3a888208">More...</a><br /></td></tr>
+<tr class="separator:a6780da3bb32ad0393f781e8e3a888208"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Clue sheet parser. </p>
@@ -110,9 +116,29 @@ Functions</h2></td></tr>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2018-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="cuesheetparser_8h_source.html">cuesheetparser.h</a>.</p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a4d2c07f66a3046e7b42048fd98919366"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d2c07f66a3046e7b42048fd98919366">&#9670;&nbsp;</a></span>check_cuesheet()</h2>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="af687d46c56bfe626504e419300f881ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af687d46c56bfe626504e419300f881ab">&#9670;&nbsp;</a></span>TRACKDIR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TRACKDIR&#160;&#160;&#160;&quot;tracks&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<ul>
+<li>Extension of virtual tracks directory </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8h_source.html#l00039">39</a> of file <a class="el" href="cuesheetparser_8h_source.html">cuesheetparser.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a6780da3bb32ad0393f781e8e3a888208"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6780da3bb32ad0393f781e8e3a888208">&#9670;&nbsp;</a></span>check_cuesheet()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -133,13 +159,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">fuse_fill_dir_t&#160;</td>
-          <td class="paramname"><em>filler</em> = <code>nullptr</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AVFormatContext *&#160;</td>
-          <td class="paramname"><em>fmt_ctx</em> = <code>nullptr</code>&#160;</td>
+          <td class="paramname"><em>filler</em> = <code>nullptr</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -155,18 +175,17 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Path to check </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- The buffer passed to the readdir() operation. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">fmt_ctx</td><td>- Format context of file, may be nullptr </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>-errno or number or titles in cue sheet </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00407">407</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cuesheetparser_8cc_source.html#l00362">362</a> of file <a class="el" href="cuesheetparser_8cc_source.html">cuesheetparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01110">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l01772">check_path()</a>, <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01140">ffmpeg_geterror()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01062">find_ext()</a>, <a class="el" href="fuseops_8cc_source.html#l01754">find_file()</a>, <a class="el" href="fileio_8h_source.html#l00144">VIRTUALFILE::m_st</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00229">parse_cuesheet()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00371">parse_embedded_cuesheet()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01043">remove_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01028">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01088">replace_ext()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00042">TRACKDIR</a>, and <a class="el" href="logging_8h_source.html#l00234">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01110">append_ext()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l01774">check_path()</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="fuseops_8cc_source.html#l01756">find_file()</a>, <a class="el" href="fuseops_8cc_source.html#l01765">find_file_from_orig()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00224">parse_cuesheet_file()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00247">parse_cuesheet_text()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01028">remove_path()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01088">replace_ext()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, and <a class="el" href="cuesheetparser_8h_source.html#l00039">TRACKDIR</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00576">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00304">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00555">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00305">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>

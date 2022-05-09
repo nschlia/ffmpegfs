@@ -73,6 +73,16 @@ $(function() {
 <div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
 <div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
 <div class="line"> </div>
+<div class="line">Important changes in 2.11 (2022-05-XX):</div>
+<div class="line"> </div>
+<div class="line">* Feature: Issue #86: Smart transcode now detects if a source file has audio only</div>
+<div class="line">  and uses the correct target format. For example, with --destination=webm+mp3, if</div>
+<div class="line">  one MP4 input file contains a video stream, another an audio stream only, the</div>
+<div class="line">  resulting files will be webm (for the video input) and mp3 for the audio only</div>
+<div class="line">  file.</div>
+<div class="line">* Bugfix: Smart encode selected the video format for cue sheet tracks, regardless</div>
+<div class="line">  of the input format. This has been fixed now.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.10 (2022-04-26):</div>
 <div class="line"> </div>
 <div class="line">* Feature: Issue #123: New command line option to hide files by extension. Example:</div>

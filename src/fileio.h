@@ -124,6 +124,9 @@ typedef struct VIRTUALFILE
         , m_duration(0)
         , m_predicted_size(0)
         , m_video_frame_count(0)
+        , m_has_audio(false)
+        , m_has_video(false)
+        , m_has_subtitle(false)
         , m_channels(0)
         , m_sample_rate(0)
         , m_width(0)
@@ -147,6 +150,10 @@ typedef struct VIRTUALFILE
     int64_t                 m_duration;                             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
     size_t                  m_predicted_size;                       /**< @brief Use this as the size instead of computing it over and over. */
     uint32_t                m_video_frame_count;                    /**< @brief Number of frames in video or 0 if not a video */
+
+    bool                    m_has_audio;                            /**< @brief True if file has an audio track */
+    bool                    m_has_video;                            /**< @brief True if file has a video track */
+    bool                    m_has_subtitle;                            /**< @brief True if file has a subtitle track */
 
     std::vector<char>       m_file_contents;                        /**< @brief Buffer for virtual files */
 
@@ -227,6 +234,7 @@ typedef struct VIRTUALFILE
 
         VIRTUALFILE*        m_nextfile;                             /**< @brief Next (probable) file to be played. Used for cuesheet lists. */
     }                       m_cuesheet_track;                       /**< @brief Cue sheet data for track */
+    std::string             m_cuesheet;                             /**< @brief Cue sheet file contents for physical file */
 
     // These may be filled in for DVD/Bluray
     int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Bluray directory */

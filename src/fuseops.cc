@@ -74,7 +74,8 @@ static int                          kick_next(LPVIRTUALFILE virtualfile);
 static void                         sighandler(int signum);
 static std::string                  get_number(const char *path, uint32_t *value);
 static int                          guess_format_idx(const std::string & filepath);
-static const FFmpegfs_Format * 		get_format(const std::string & filepath);
+static int                          parse_file(LPVIRTUALFILE newvirtualfile);
+static const FFmpegfs_Format * 		get_format(LPVIRTUALFILE newvirtualfile);
 static int                          selector(const struct dirent * de);
 static int                          scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 
@@ -401,36 +402,21 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         // Check if file can be transcoded
                         if (virtual_name(&filename, origpath, &current_format))
                         {
-                            AVFormatContext *fmt_ctx = nullptr;
-                            int res;
-
-                            res = avformat_open_input(&fmt_ctx, origfile.c_str(), nullptr, nullptr);
-                            if (res)
-                            {
-                                Logging::warning(origfile, "Unable to open file: %1", ffmpeg_geterror(res).c_str());
-                                throw ENOENT;
-                            }
-
-                            res = avformat_find_stream_info(fmt_ctx, nullptr);
-                            if (res < 0)
-                            {
-                                Logging::warning(origfile, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
-                                throw EINVAL;
-                            }
-
                             if (current_format->video_codec() == AV_CODEC_ID_NONE)
                             {
-                                // If target supports no video, we need to do some extra work and check
-                                // the input file to actually have an audio stream. If not, hide the file,
-                                // makes no sense to transcode anyway.
-                                res = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
-                                if (res < 0 && res != AVERROR_STREAM_NOT_FOUND)
+                                LPVIRTUALFILE newvirtualfile = find_file_from_orig(origfile);
+
+                                if (newvirtualfile == nullptr)
                                 {
-                                    Logging::warning(origfile, "Could not find %1 stream in input file (error '%2').", get_media_type_string(AVMEDIA_TYPE_AUDIO), ffmpeg_geterror(res).c_str());
+                                    // Should never happen, we've just created this entry in virtual_name...
+                                    Logging::error(origfile, "INTERNAL ERROR: ffmpegfs_readdir()! newvirtualfile is NULL.");
                                     throw EINVAL;
                                 }
 
-                                if (res == AVERROR_STREAM_NOT_FOUND && current_format->video_codec() == AV_CODEC_ID_NONE)
+                                // If target supports no video, we need to do some extra work and checkF
+                                // the input file to actually have an audio stream. If not, hide the file,
+                                // makes no sense to transcode anyway.
+                                if (!newvirtualfile->m_has_audio)
                                 {
                                     Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
                                     flags |= VIRTUALFLAG_HIDDEN;
@@ -439,17 +425,10 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                             if (!(flags & VIRTUALFLAG_HIDDEN))
                             {
-                                // Check if we have a cue sheet
-                                res = check_cuesheet(origfile, buf, filler, fmt_ctx);
-                                if (res < 0)
+                                if (check_cuesheet(origfile, buf, filler) < 0)
                                 {
                                     throw EINVAL;
                                 }
-                            }
-
-                            if (fmt_ctx != nullptr)
-                            {
-                                avformat_close_input(&fmt_ctx);
                             }
 
                             std::string newext;
@@ -725,8 +704,20 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #endif // USE_LIBBLURAY
                     if (res <= 0)
                     {
-                        // Returns -errno or number or titles in cue sheet
-                        res = check_cuesheet(origpath);
+                        if (check_ext(TRACKDIR, origpath))
+                        {
+                            std::string origfile(origpath);
+
+                            remove_ext(&origfile);      // remove TRACKDIR extension to get original media file name
+
+                            Logging::trace(origfile, "getattr: Checking for cue sheet.");
+
+                            if (virtual_name(&origfile))
+                            {
+                                // Returns -errno or number or titles in cue sheet
+                                res = check_cuesheet(origfile);
+                            }
+                        }
                     }
 
                     if (ffmpeg_format[0].is_frameset())
@@ -1612,34 +1603,45 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
         }
     }
 
-    const AVOutputFormat* format = av_guess_format(nullptr, virtualpath->c_str(), nullptr);
+    VIRTUALFILE newvirtualfile;
 
-    if (format != nullptr)
+    newvirtualfile.m_origfile = origpath + *virtualpath;
+
+    const FFmpegfs_Format *ffmpegfs_format = get_format(&newvirtualfile);
+
+    if (ffmpegfs_format != nullptr)
     {
-        const FFmpegfs_Format *ffmpegfs_format = get_format(origpath + *virtualpath);
-
-        if (ffmpegfs_format != nullptr &&
-                ((ffmpegfs_format->audio_codec() != AV_CODEC_ID_NONE && format->audio_codec != AV_CODEC_ID_NONE) ||
-                 (ffmpegfs_format->video_codec() != AV_CODEC_ID_NONE && format->video_codec != AV_CODEC_ID_NONE)))
+        if (params.m_oldnamescheme)
         {
-            if (params.m_oldnamescheme)
-            {
-                // Old filename scheme, creates duplicates
-                replace_ext(virtualpath, ffmpegfs_format->fileext());
-            }
-            else
-            {
-                // New name scheme
-                append_ext(virtualpath, ffmpegfs_format->fileext());
-            }
-
-            if (current_format != nullptr)
-            {
-                *current_format = ffmpegfs_format;
-            }
-
-            return true;
+            // Old filename scheme, creates duplicates
+            replace_ext(virtualpath, ffmpegfs_format->fileext());
         }
+        else
+        {
+            // New name scheme
+            append_ext(virtualpath, ffmpegfs_format->fileext());
+        }
+
+        newvirtualfile.m_destfile = origpath + *virtualpath;
+
+        struct stat stbuf;
+
+        if (lstat(newvirtualfile.m_destfile.c_str(), &stbuf) == 0)
+        {
+            if (params.m_recodesame == RECODESAME_NO)
+            {
+                newvirtualfile.m_flags |= VIRTUALFLAG_PASSTHROUGH;
+            }
+        }
+
+        insert(newvirtualfile);
+
+        if (current_format != nullptr)
+        {
+            *current_format = ffmpegfs_format;
+        }
+
+        return true;
     }
 
     return false;
@@ -1683,25 +1685,13 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const std::string & origfile, const struct stat * stbuf, int flags)
 {
     std::string sanitised_virtfile(sanitise_filepath(virtfile));
-    std::string sanitised_origfile(sanitise_filepath(origfile));
 
     FILENAME_MAP::iterator it    = filenames.find(sanitised_virtfile);
 
-    if (it != filenames.cend())
+    if (it == filenames.cend())
     {
-        VIRTUALFILE & virtualfile = it->second;
-
-        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
-
-        virtualfile.m_type              = type;
-        virtualfile.m_flags             = flags;
-        virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile);
-        virtualfile.m_destfile          = sanitised_virtfile;
-        virtualfile.m_origfile          = sanitised_origfile;
-        //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
-    }
-    else
-    {
+        // Create new
+        std::string sanitised_origfile(sanitise_filepath(origfile));
         VIRTUALFILE virtualfile;
 
         memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
@@ -1733,6 +1723,18 @@ LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const st
     // Change file to virtual directory for the frame set. Keep permissions.
     stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
     stbufdir.st_mode  |= S_IFDIR;
+    if (stbufdir.st_mode & S_IRWXU)
+    {
+        stbufdir.st_mode  |= S_IXUSR;   // Add user execute bit if user has read or write access
+    }
+    if (stbufdir.st_mode & S_IRWXG)
+    {
+        stbufdir.st_mode  |= S_IXGRP;   // Add group execute bit if group has read or write access
+    }
+    if (stbufdir.st_mode & S_IRWXO)
+    {
+        stbufdir.st_mode  |= S_IXOTH;   // Add other execute bit if other has read or write access
+    }
     stbufdir.st_nlink = 2;
     stbufdir.st_size  = stbufdir.st_blksize;
 
@@ -2281,26 +2283,145 @@ static int guess_format_idx(const std::string & filepath)
 }
 
 /**
+ * @brief Open file with FFmpeg API and parse for streams and cue sheet.
+ * @param[inout] newvirtualfile - VIRTUALFILE object of file to parse
+ * @return On success returns 0. On error, returns a negative AVERROR value.
+ */
+static int parse_file(LPVIRTUALFILE newvirtualfile)
+{
+    AVFormatContext *format_ctx = nullptr;
+    int res;
+
+    try
+    {
+        Logging::debug(newvirtualfile->m_origfile, "Creating new format context and parsing file");
+
+        res = avformat_open_input(&format_ctx, newvirtualfile->m_origfile.c_str(), nullptr, nullptr);
+        if (res)
+        {
+            Logging::trace(newvirtualfile->m_origfile, "No parseable file: %1", ffmpeg_geterror(res).c_str());
+            throw res;
+        }
+
+        res = avformat_find_stream_info(format_ctx, nullptr);
+        if (res < 0)
+        {
+            Logging::error(newvirtualfile->m_origfile, "Cannot find stream information: %1", ffmpeg_geterror(res).c_str());
+            throw res;
+        }
+
+        // Check for an embedded cue sheet
+        AVDictionaryEntry *tag = av_dict_get(format_ctx->metadata, "CUESHEET", nullptr, AV_DICT_IGNORE_SUFFIX);
+        if (tag != nullptr)
+        {
+            // Found cue sheet
+            Logging::trace(newvirtualfile->m_origfile, "Found embedded cue sheet.");
+
+            newvirtualfile->m_cuesheet = tag->value;
+            newvirtualfile->m_cuesheet += "\r\n";                   // cue_parse_string() reports syntax error if string does not end with newline
+            replace_all(&newvirtualfile->m_cuesheet, "\r\n", "\n"); // Convert all to unix
+        }
+
+        // Check for audio/video/subtitles
+        int ret = get_audio_props(format_ctx, &newvirtualfile->m_channels, &newvirtualfile->m_sample_rate);
+        if (ret < 0)
+        {
+            if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error, no audio is OK
+            {
+                Logging::error(newvirtualfile->m_origfile, "Could not find audio stream in input file (error '%1').", ffmpeg_geterror(ret).c_str());
+            }
+        }
+        else
+        {
+            newvirtualfile->m_has_audio = true;
+        }
+
+        newvirtualfile->m_duration = format_ctx->duration;
+
+        struct stat stbuf;
+        if (lstat(newvirtualfile->m_origfile.c_str(), &stbuf) == 0)
+        {
+            memcpy(&newvirtualfile->m_st, &stbuf, sizeof(stbuf));
+        }
+
+        for (unsigned int stream_idx = 0; stream_idx < format_ctx->nb_streams; stream_idx++)
+        {
+            switch (format_ctx->streams[stream_idx]->codecpar->codec_type)
+            {
+            case AVMEDIA_TYPE_VIDEO:
+            {
+                if (!is_album_art(format_ctx->streams[stream_idx]->codecpar->codec_id))
+                {
+                    newvirtualfile->m_has_video = true;
+                }
+                break;
+            }
+            case AVMEDIA_TYPE_SUBTITLE:
+            {
+                newvirtualfile->m_has_subtitle = true;
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
+        }
+    }
+    catch (int _res)
+    {
+        res = _res;
+    }
+
+    if (format_ctx != nullptr)
+    {
+        avformat_close_input(&format_ctx);
+    }
+
+    return res;
+}
+
+/**
  * @brief Get FFmpegfs_Format for the file.
- * @param[in] filepath - Name of the file, path my be included, but not required.
+ * @param[inout] newvirtualfile - VIRTUALFILE object of file to parse
  * @return On success, returns true. On error, returns false.
  */
-static const FFmpegfs_Format * get_format(const std::string & filepath)
+static const FFmpegfs_Format * get_format(LPVIRTUALFILE newvirtualfile)
 {
-    LPVIRTUALFILE virtualfile = find_file_from_orig(filepath);
+    LPVIRTUALFILE virtualfile = find_file_from_orig(newvirtualfile->m_origfile);
 
     if (virtualfile != nullptr)
     {
-        // We know the file
+        // We already know the file!
         return params.current_format(virtualfile);
     }
 
-    // Guess the result
-    int format_idx = guess_format_idx(filepath);
-
-    if (format_idx > -1)
+    if (parse_file(newvirtualfile) < 0)
     {
-        return &ffmpeg_format[format_idx];
+        return nullptr;
+    }
+
+    Logging::trace(newvirtualfile->m_origfile, "Audio: %1 Video: %2 Subtitles: %3", newvirtualfile->m_has_audio, newvirtualfile->m_has_video, newvirtualfile->m_has_subtitle);
+
+    if (!params.smart_transcode())
+    {
+        // Not smart encoding: use first format (video file)
+        newvirtualfile->m_format_idx = 0;
+        return &ffmpeg_format[0];
+    }
+    else
+    {
+        if (newvirtualfile->m_has_video)
+        {
+            newvirtualfile->m_format_idx = 0;
+            return &ffmpeg_format[0];
+        }
+
+        if (newvirtualfile->m_has_audio)
+        {
+            newvirtualfile->m_format_idx = 1;
+            return &ffmpeg_format[1];
+        }
     }
 
     return nullptr;

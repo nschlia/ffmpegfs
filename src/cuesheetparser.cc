@@ -94,7 +94,7 @@
   *     INDEX 01 36:53:71 @n
   */
 
-static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track, int titleno, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile);
+static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track, int titleno, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string &aperformer, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile);
 static int parse_cuesheet_file(LPCVIRTUALFILE virtualfile, const std::string & cuesheet, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet_text(LPCVIRTUALFILE virtualfile, void *buf, fuse_fill_dir_t filler);
 static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cuesheet, Cd *cd, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
@@ -108,6 +108,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
  * @param[in] statbuf - File status structure of original file.
  * @param[in] trackcount - Number of tracks in cue sheet.
  * @param[in] trackno - Track number.
+ * @param[in] aperformer - Album performer.
  * @param[in] album - Name of album.
  * @param[in] genre - Album genre.
  * @param[in] date - Publishing date.
@@ -115,7 +116,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
  * @param[in] lastfile - Pointer to last virtual file. May be nullptr if none exists.
  * @return On error, returns false. On success, returns true.
  */
-static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track, int titleno, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile)
+static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track, int titleno, const std::string & path, const struct stat * statbuf, int trackcount, int trackno, const std::string & aperformer, const std::string & album, const std::string & genre, const std::string & date, int64_t *remainingduration, LPVIRTUALFILE *lastfile)
 {
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
@@ -127,6 +128,12 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
 
     std::string performer   = VAL_OR_EMPTY(cdtext_get(PTI_PERFORMER, cuesheetcdtext));
     std::string title       = VAL_OR_EMPTY(cdtext_get(PTI_TITLE, cuesheetcdtext));
+
+    if (performer.empty())
+    {
+		// If track performer is empty, try album performer.
+        performer = aperformer;
+    }
 
     int64_t start           = AV_TIME_BASE * static_cast<int64_t>(track_get_start(track)) / FPS;
     int64_t length          = track_get_length(track);
@@ -337,7 +344,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
                     throw -errno;
                 }
 
-                if (!create_cuesheet_virtualfile(virtualfile, track, trackno, path + dirname + "/", statbuf, trackcount, trackno, album, genre, date, &remainingduration, &lastfile))
+                if (!create_cuesheet_virtualfile(virtualfile, track, trackno, path + dirname + "/", statbuf, trackcount, trackno, performer, album, genre, date, &remainingduration, &lastfile))
                 {
                     throw -errno;
                 }

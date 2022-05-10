@@ -9,15 +9,15 @@ ls -l "${DIRNAME}"
 # Use -w 1000  to ensure all in one line
 if [ "${FILEEXT}" == "mp4" ]
 then
-    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.${FILEEXT}" ]
+    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, cuesheet, dir.flac, frame_test_pal.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.${FILEEXT}" ]
 elif [ "${FILEEXT}" == "ogg" ]
 then
-    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, cuesheet, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
 elif [ "${FILEEXT}" == "flac" ]
 then
-    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, cuesheet, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
 else
-    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
+    [ "$(ls -w 1000 -m "${DIRNAME}")" = "copyright, cuesheet, dir.flac, frame_test_pal.mp4.${FILEEXT}, raven_d.ogg.${FILEEXT}, raven_e.flac.${FILEEXT}, snowboard.mp4.${FILEEXT}" ]
 fi
 
 echo "Pass"

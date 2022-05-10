@@ -1,0 +1,36 @@
+#!/bin/bash
+
+ADDOPT=""
+
+if [ "$1" == "file" ];
+then
+    echo "Checking external cuesheet file"
+    TESTDIR=raven_e_cuesheet.flac.tracks
+elif [ "$1" == "embedded" ];
+then
+    echo "Checking embedded cuesheet"
+    TESTDIR=raven_e.flac.tracks
+else
+    echo "ERROR! Missing parameter"
+    echo
+    echo "Usage:"
+    echo
+    echo "$(basename -- "$0") file       Check external cue sheet file"
+    echo "$(basename -- "$0") embedded   Check embedded cue sheet file"
+    exit 1
+fi
+    
+. "${BASH_SOURCE%/*}/funcs.sh" "flac"
+
+XDIRNAME="${DIRNAME}/cuesheet/${TESTDIR}"
+
+TRACKS=10
+
+ls -1 "${XDIRNAME}"
+
+echo "Checking number of tracks is ${TRACKS}"
+[ $(ls "${XDIRNAME}"/*.${FILEEXT} -1 | wc -l) = ${TRACKS} ]
+
+echo "Pass"
+
+echo "OK"

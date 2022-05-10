@@ -21,6 +21,7 @@ News
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file has audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream, another an audio stream only, the resulting files will be webm (for the video input) and mp3 for the audio only file.
 * **Bugfix:** Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.
+* **Bugfix:** Fix crash when DVD/Bluray should be transcoded to audio only.
 
 ### Version 2.10 released
 

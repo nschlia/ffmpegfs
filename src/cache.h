@@ -141,7 +141,7 @@ public:
      *
      * Opens a cache entry and opens the cache file.
      *
-     * @param[in] virtualfile - virtualfile struct of a file.
+     * @param[in] virtualfile - VIRTUALFILE struct of a file.
      * @return On success, returns pointer to a Cache_Entry. On error, returns nullptr.
      */
     Cache_Entry *           open(LPVIRTUALFILE virtualfile);
@@ -227,7 +227,7 @@ protected:
     bool                    delete_info(const std::string & filename, const std::string & desttype);
     /**
      * @brief Create cache entry object for a VIRTUALFILE.
-     * @param[in] virtualfile - virtualfile struct of a file.
+     * @param[in] virtualfile - VIRTUALFILE struct of a file.
      * @param[in] desttype - Destination type (MP4, WEBM etc.).
      * @return On success, returns pointer to a Cache_Entry. On error, returns nullptr.
      */

@@ -683,7 +683,7 @@ protected:
      * @param[in] height - Picture height
      * @return On success returns 0; on error negative AVERROR.
      */
-    int                         alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height);
+    int                         alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height) const;
     /**
      * @brief Produce audio dts/pts. This is required because the target codec usually has a different
      * frame size than the source, so the number of packets will not match 1:1.

@@ -201,7 +201,7 @@ struct av_context_deleter       /**< @brief Delete helper struct for std::shared
      * @brief Delete for std::shared_ptr<AVCodecContext>: Deletes the AVCodecContext pointer
      * @param[in] p - AVCodecContext pointer to delete
      */
-    void operator ()( T * p)
+    void operator ()( T * p) const
     {
         avcodec_close(p);
         avcodec_free_context(&p);
@@ -2247,7 +2247,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         return ret;
     }
 
-    return (output_stream == nullptr ? 0 : output_stream->index);
+    return (output_stream->index);
 }
 
 int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> & language)
@@ -3195,7 +3195,7 @@ int FFmpeg_Transcoder::write_output_file_header()
     return ret;
 }
 
-int FFmpeg_Transcoder::alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height)
+int FFmpeg_Transcoder::alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height) const
 {
     int ret;
 
@@ -3581,14 +3581,13 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
 {
     StreamRef_map::const_iterator it = m_in.m_subtitle.find(pkt->stream_index);
-    int ret = 0;
 
     *decoded = 0;
 
     if (it == m_in.m_subtitle.cend())
     {
         // Should never happen, this should never be called with anything else than subtitle packets.
-        ret = AVERROR_STREAM_NOT_FOUND;
+        int ret = AVERROR_STREAM_NOT_FOUND;
         Logging::error(filename(), "INTERNAL ERROR: decode_subtitle()! Subtitle stream #%1 not found (error '%2').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
@@ -4286,7 +4285,7 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_send_frame(m_out.m_audio.m_codec_ctx.get(), frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(destname(), "Could not encode audio frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_audio.m_stream->time_base), ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not encode audio frame (error %1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 
@@ -4531,7 +4530,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
         ret = avcodec_send_frame(m_out.m_video.m_codec_ctx.get(), frame);
         if (ret < 0 && ret != AVERROR_EOF)
         {
-            Logging::error(destname(), "Could not encode video frame at PTS=%1 (error %2').", ffmpeg_rescale_q(frame->pts, m_in.m_video.m_stream->time_base), ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not encode video frame (error %1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
 

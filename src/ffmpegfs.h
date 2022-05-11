@@ -145,6 +145,12 @@ extern FFmpegfs_Format  ffmpeg_format[2];                       /**< @brief Two 
 extern struct FFMPEGFS_PARAMS
 {
     FFMPEGFS_PARAMS();
+    /**
+     * @brief Make copy from other FFMPEGFS_PARAMS object.
+     * @param[in] frame - Reference to source FFmpeg_Frame object.
+     * @return Reference to new FFmpeg_Frame object.
+     */
+    FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other);
     ~FFMPEGFS_PARAMS(); // Do not make virtual, breaks fuse API compatibility!
 
     /**
@@ -155,10 +161,17 @@ extern struct FFMPEGFS_PARAMS
 
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
-     * @param[in] virtualfile - virtualfile struct of a file.
+     * @param[in] virtualfile - VIRTUALFILE struct of a file.
      * @return On success, returns pointer to format. On error, returns nullptr.
      */
     const FFmpegfs_Format *current_format(LPCVIRTUALFILE virtualfile) const;
+
+    /**
+     * @brief Make copy from other FFMPEGFS_PARAMS object.
+     * @param[in] frame - Reference to source FFmpeg_Frame object.
+     * @return Reference to new FFmpeg_Frame object.
+     */
+    FFMPEGFS_PARAMS& operator=(const FFMPEGFS_PARAMS & other) noexcept;
 
     // Paths
     std::string             m_basepath;                     /**< @brief Base path: Files from this directory (including all sub directories) will be mapped to m_mountpath. */

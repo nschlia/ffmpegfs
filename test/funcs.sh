@@ -1,7 +1,7 @@
 PATH=$PWD/../src:$PATH
 export LC_ALL=C
 
-if [ ! -s "$2" ]
+if [ ! -z "$2" ]
 then
     EXITCODE="$2"
 else

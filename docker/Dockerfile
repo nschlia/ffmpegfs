@@ -25,8 +25,6 @@ RUN ./autogen.sh
 RUN ./configure
 RUN make -s
 RUN make -s install
-RUN chmod +x ./test/test_*
-RUN make -s check
 
 FROM common
 

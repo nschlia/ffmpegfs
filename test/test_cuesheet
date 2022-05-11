@@ -2,11 +2,11 @@
 
 ADDOPT=""
 
-if [ "$1" == "file" ];
+if [ "$2" == "file" ];
 then
     echo "Checking external cuesheet file"
     TESTDIR=raven_e_cuesheet.flac.tracks
-elif [ "$1" == "embedded" ];
+elif [ "$2" == "embedded" ];
 then
     echo "Checking embedded cuesheet"
     TESTDIR=raven_e.flac.tracks
@@ -15,12 +15,12 @@ else
     echo
     echo "Usage:"
     echo
-    echo "$(basename -- "$0") file       Check external cue sheet file"
-    echo "$(basename -- "$0") embedded   Check embedded cue sheet file"
+    echo "$(basename -- "$0") DESTTYPE file       Check external cue sheet file"
+    echo "$(basename -- "$0") DESTTYPE embedded   Check embedded cue sheet file"
     exit 1
 fi
     
-. "${BASH_SOURCE%/*}/funcs.sh" "flac"
+. "${BASH_SOURCE%/*}/funcs.sh" "$1" 99 "$2"
 
 XDIRNAME="${DIRNAME}/cuesheet/${TESTDIR}"
 

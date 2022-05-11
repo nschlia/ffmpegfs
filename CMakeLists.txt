@@ -408,6 +408,9 @@ list(APPEND SOURCES
     test/test_audio_ts
     test/test_audio_wav
     test/test_audio_webm
+    test/test_cuesheet
+    test/test_cuesheet_embedded
+    test/test_cuesheet_file
     test/test_filecount_hls
     test/test_filenames
     test/test_filenames_aiff

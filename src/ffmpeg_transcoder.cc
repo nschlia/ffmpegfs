@@ -238,9 +238,6 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
-    #if !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    , m_cur_channel_layout(0)
-    #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     , m_audio_resample_ctx(nullptr)
     , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
@@ -274,7 +271,9 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     memset(&m_mtime, 0, sizeof(m_mtime));
 
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-    av_channel_layout_default(&m_cur_ch_layout, 2);
+    av_channel_layout_default(&m_cur_ch_layout, params.m_audiochannels);
+#else // !LAVU_DEP_OLD_CHANNEL_LAYOUT
+    m_cur_channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(params.m_audiochannels));
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
     // Initialise ID3v1.1 tag structure

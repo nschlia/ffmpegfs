@@ -108,6 +108,9 @@ FOREACH(format ${encoders})
     SET_TESTS_PROPERTIES(test_video_hw_enc_${format} PROPERTIES SKIP_RETURN_CODE 77)    # Soft fail
 ENDFOREACH()
 
+ADD_TEST(NAME test_cuesheet_embedded COMMAND test_cuesheet_embedded)
+ADD_TEST(NAME test_cuesheet_file COMMAND test_cuesheet_file)
+
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -R test_)
 
 # Build audio comparator required by tests

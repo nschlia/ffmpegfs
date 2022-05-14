@@ -1330,7 +1330,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
             if (!segment_no)
             {
                 errno = EINVAL;
-                Logging::error(path, "read: Unable to deduct segment no. from file name (%1): (%2) %3", filename.c_str(), errno, strerror(errno));
+                Logging::error(path, "release: Unable to deduct segment no. from file name (%1): (%2) %3", filename.c_str(), errno, strerror(errno));
             }
             else
             {

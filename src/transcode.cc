@@ -647,7 +647,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Cache miss at offset %<%11zu>1 (length %<%6u>2).", offset, len);
+                    Logging::trace(cache_entry->destname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
                     reported = true;
                 }
 

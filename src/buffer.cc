@@ -87,7 +87,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
 
     if (m_ci[index].m_fd != -1)
     {
-        Logging::trace(m_ci[index].m_cachefile, "Cache file already open, no need to open again.");
+        Logging::trace(m_ci[index].m_cachefile, "Cache file already open.");
         // Already open
         return true;
     }

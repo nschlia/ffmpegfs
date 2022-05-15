@@ -5398,7 +5398,10 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 // Frame sets: no audio, no subtitles, no output stream (index)
                 while (!m_frame_map.empty())
                 {
-                    MULTIFRAME_NODE nh = m_frame_map.extract(m_frame_map.cbegin());
+                    // Although I abhore "auto", it seems that nodes are declared slightly different throughout
+                    // serveral std::map implementations. To avoid #ifdef orgies, I resign: Using "auto" here
+                    // is much more coherent.
+                    auto nh = m_frame_map.extract(m_frame_map.cbegin());
                     const MULTIFRAME & multiframe = nh.mapped();
                     int ret = 0;
                     int data_written = 0;

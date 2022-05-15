@@ -176,15 +176,6 @@ protected:
     } HWACCELMODE;
 
     typedef std::variant<FFmpeg_Frame, FFmpeg_Subtitle> MULTIFRAME; /**< @brief Combined audio/videoframe and subtitle */
-    /**
-     * @brief MULTIFRAME_NODE node_type for use with std::map<...>::extract.
-     * To be honest I was incredibly close to using "auto" as in all examples,
-     * although abhoring this keyword.
-     * This syntax is really credible for the ugliest piece of C++ code of
-     * all times (grin).
-     */
-    typedef std::multimap<long, MULTIFRAME, std::less<long>, std::allocator<std::pair<const long, MULTIFRAME>>>::node_type MULTIFRAME_NODE;
-
     typedef std::multimap<int64_t, MULTIFRAME>  MULTIFRAME_MAP;     /**< @brief Audio frame/video frame/subtitle buffer */
     typedef std::map<int, int>                  STREAM_MAP;         /**< @brief Map input subtitle stream to output stream */
 

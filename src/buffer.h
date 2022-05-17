@@ -422,10 +422,11 @@ private:
      * @param[in] filename - Name of cache file to unmap.
      * @param[in] fd - The file descriptor of the open cache file.
      * @param[in] p - Memory pointer to cache file.
+     * @param[in] len - Length of allocated block
      * @param[in] filesize - Actual size of the cache file.
      * @return Returns true on success; false on error.
      */
-    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize) const;
+    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t len, size_t *filesize) const;
 
     /**
      * @brief cacheinfo

@@ -148,7 +148,7 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
     Logging::trace(m_ci[index].m_cachefile, "Closing cache file.");
 
-    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, &m_ci[index].m_buffer_watermark);
+    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, m_ci[index].m_buffer_size, &m_ci[index].m_buffer_watermark);
 
     m_ci[index].m_buffer_pos    = 0;
     m_ci[index].m_buffer_size   = 0;
@@ -400,6 +400,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
         if (*p == MAP_FAILED)
         {
             Logging::error(filename, "File mapping failed: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
+            *p = nullptr;
             throw false;
         }
     }
@@ -417,7 +418,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     return success;
 }
 
-bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t * filesize) const
+bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t len, size_t * filesize) const
 {
     bool success = true;
 
@@ -434,9 +435,9 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
 
     if (__p != nullptr)
     {
-        if (munmap(__p, __filesize ? __filesize : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spitzs EINVBAL error)
+        if (munmap(__p, len ? len : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spits EINVAL error)
         {
-            Logging::error(filename, "Unmapping cache file failed: (%1) %2 %3", errno, strerror(errno), __filesize);
+            Logging::error(filename, "Unmapping cache file failed: (%1) %2 Size: %3", errno, strerror(errno), len);
             success = false;
         }
     }
@@ -447,7 +448,7 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
         {
             if (ftruncate(__fd, static_cast<off_t>(__filesize)) == -1)
             {
-                Logging::error(filename, "Error calling ftruncate() to resize and close the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
+                Logging::error(filename, "Error calling ftruncate() to resize and close the cache file: (%1) %2 (fd = %3) Size: %5", errno, strerror(errno), __fd, __filesize);
                 success = false;
             }
             ::close(__fd);
@@ -456,7 +457,7 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
         {
             ::close(__fd);
 
-            if (unlink(filename.c_str()))
+            if (unlink(filename.c_str()) && errno != ENOENT)    // Ignore if file does not exist
             {
                 Logging::error(filename, "Error removing the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
                 success = false;
@@ -508,7 +509,7 @@ bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
     // Remove index for frame sets. There is only one.
     if (!m_ci[0].m_cachefile_idx.empty())
     {
-        if (!unmap_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &m_ci[0].m_buffer_idx, &m_ci[0].m_buffer_size_idx))
+        if (!unmap_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &m_ci[0].m_buffer_idx, m_ci[0].m_buffer_size_idx, &m_ci[0].m_buffer_size_idx))
         {
             success = false;
         }
@@ -607,10 +608,9 @@ bool Buffer::reserve(size_t size)
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = EBADF;
+        //Logging::error(m_cur_ci->m_cachefile, "Error in resize(): (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
         return false;
     }
-
-    bool success = true;
 
     if (!size)
     {
@@ -618,18 +618,22 @@ bool Buffer::reserve(size_t size)
     }
 
     m_cur_ci->m_buffer = static_cast<uint8_t*>(mremap(m_cur_ci->m_buffer, m_cur_ci->m_buffer_size, size, MREMAP_MAYMOVE));
-    if (m_cur_ci->m_buffer != nullptr)
+    if (m_cur_ci->m_buffer == MAP_FAILED)
     {
-        m_cur_ci->m_buffer_size = size;
+        Logging::error(m_cur_ci->m_cachefile, "Error calling mremap() to resize the file: (%1) %2 (fd = %3) Old size: %4 New: %5", errno, strerror(errno), m_cur_ci->m_fd, m_cur_ci->m_buffer_size, size);
+        m_cur_ci->m_buffer = nullptr;
+        return false;
     }
+
+    m_cur_ci->m_buffer_size = size;
 
     if (ftruncate(m_cur_ci->m_fd, static_cast<off_t>(m_cur_ci->m_buffer_size)) == -1)
     {
         Logging::error(m_cur_ci->m_cachefile, "Error calling ftruncate() to resize the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
-        success = false;
+        return false;
     }
 
-    return ((m_cur_ci->m_buffer != nullptr) && success);
+    return true;
 }
 
 size_t Buffer::write(const uint8_t* data, size_t length)

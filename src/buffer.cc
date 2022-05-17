@@ -607,7 +607,7 @@ bool Buffer::reserve(size_t size)
 
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
-        errno = EBADF;
+        errno = ENOMEM;
         //Logging::error(m_cur_ci->m_cachefile, "Error in resize(): (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
         return false;
     }
@@ -642,7 +642,7 @@ size_t Buffer::write(const uint8_t* data, size_t length)
 
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
-        errno = EBADF;
+        errno = ENOMEM;
         return 0;
     }
 
@@ -747,7 +747,7 @@ int Buffer::seek(int64_t offset, int whence, uint32_t segment_no)
 
     if (ci == nullptr || ci->m_buffer == nullptr)
     {
-        errno = EBADF;
+        errno = ENOMEM;
         return (EOF);
     }
 
@@ -866,7 +866,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     if (ci->m_buffer == nullptr)
     {
-        errno = EBADF;
+        errno = ENOMEM;
         return false;
     }
 

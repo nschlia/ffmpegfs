@@ -626,6 +626,7 @@ bool Buffer::reserve(size_t size)
         return false;
     }
 
+    // Save size
     m_cur_ci->m_buffer_size = size;
 
     if (ftruncate(m_cur_ci->m_fd, static_cast<off_t>(m_cur_ci->m_buffer_size)) == -1)

@@ -147,7 +147,7 @@ extern struct FFMPEGFS_PARAMS
     FFMPEGFS_PARAMS();
     /**
      * @brief Make copy from other FFMPEGFS_PARAMS object.
-     * @param[in] frame - Reference to source FFmpeg_Frame object.
+     * @param[in] other - Reference to source FFmpeg_Frame object.
      * @return Reference to new FFmpeg_Frame object.
      */
     FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other);
@@ -168,7 +168,7 @@ extern struct FFMPEGFS_PARAMS
 
     /**
      * @brief Make copy from other FFMPEGFS_PARAMS object.
-     * @param[in] frame - Reference to source FFmpeg_Frame object.
+     * @param[in] other - Reference to source FFmpeg_Frame object.
      * @return Reference to new FFmpeg_Frame object.
      */
     FFMPEGFS_PARAMS& operator=(const FFMPEGFS_PARAMS & other) noexcept;

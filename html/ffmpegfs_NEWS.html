@@ -75,13 +75,23 @@ $(function() {
 <div class="line"> </div>
 <div class="line">Important changes in 2.11 (2022-05-XX):</div>
 <div class="line"> </div>
-<div class="line">* Feature: Issue #86: Smart transcode now detects if a source file has audio only</div>
+<div class="line">* Feature: Issue #86: Smart transcode now detects if a source file is audio only</div>
 <div class="line">  and uses the correct target format. For example, with --destination=webm+mp3, if</div>
 <div class="line">  one MP4 input file contains a video stream, another an audio stream only, the</div>
 <div class="line">  resulting files will be webm (for the video input) and mp3 for the audio only</div>
 <div class="line">  file.</div>
 <div class="line">* Bugfix: Smart encode selected the video format for cue sheet tracks, regardless</div>
 <div class="line">  of the input format. This has been fixed now.</div>
+<div class="line">* Bugfix: Fix crash when DVD/Bluray should be transcoded to audio only.</div>
+<div class="line">* Bugfix: If track performer is empty, try album performer instead.</div>
+<div class="line">* Bugfix: Failing to mount Fuse during &quot;make check&quot; went unnoticed as the result</div>
+<div class="line">  code (which was supposed to be 99) was actually 0. Now nonzero is returned.</div>
+<div class="line">* Bugfix: The Docker build command contained a &quot;make check&quot; which actually failed</div>
+<div class="line">  altogether. Step has been removed, &quot;make check&quot; mounts Fuse but this requires</div>
+<div class="line">  privileges that do not exist during &quot;docker build&quot;.</div>
+<div class="line">* Bugfix: mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong</div>
+<div class="line">  error condition, could cause the application to crash or return stupid error</div>
+<div class="line">  messages.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.10 (2022-04-26):</div>
 <div class="line"> </div>

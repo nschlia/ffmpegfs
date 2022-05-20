@@ -29,7 +29,7 @@ var searchData=
   ['aiff_5ftextchunk_30',['AIFF_TEXTCHUNK',['../structAIFF__TEXTCHUNK.html',1,'']]],
   ['albumart_5fsupported_31',['albumart_supported',['../classFFmpegfs__Format.html#a504a706b33b76fef7b9cfdc2113bbba3',1,'FFmpegfs_Format']]],
   ['alloc_32',['alloc',['../classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e',1,'FileIO']]],
-  ['alloc_5fpicture_33',['alloc_picture',['../classFFmpeg__Transcoder.html#a6e6cda2318bf38db1cd444df6e8cea95',1,'FFmpeg_Transcoder']]],
+  ['alloc_5fpicture_33',['alloc_picture',['../classFFmpeg__Transcoder.html#a8f11f9e84745323aab9860906f1f8df4',1,'FFmpeg_Transcoder']]],
   ['alloc_5fsubtitle_34',['alloc_subtitle',['../classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59',1,'FFmpeg_Subtitle']]],
   ['allow_5flist_5fext_35',['allow_list_ext',['../ffmpeg__utils_8h.html#af75dd452a61663af7f294dd97a7982d8',1,'allow_list_ext(const std::string &amp;ext):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#af75dd452a61663af7f294dd97a7982d8',1,'allow_list_ext(const std::string &amp;ext):&#160;ffmpeg_utils.cc']]],
   ['append_5fbasepath_36',['append_basepath',['../ffmpeg__utils_8h.html#acdbad6f18e0debc2b2eea1edf9e28d00',1,'append_basepath(std::string *origpath, const char *path):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#acdbad6f18e0debc2b2eea1edf9e28d00',1,'append_basepath(std::string *origpath, const char *path):&#160;ffmpeg_utils.cc']]],

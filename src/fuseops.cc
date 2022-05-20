@@ -1716,7 +1716,7 @@ static void stat_to_dir(struct stat *stbuf)
 
 /**
  * @brief Convert flags to directory
- * @param[inot] flags - Flags variable to change
+ * @param[inout] flags - Flags variable to change
  */
 static void flags_to_dir(int *flags)
 {

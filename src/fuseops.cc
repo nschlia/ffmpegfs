@@ -1603,13 +1603,19 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
 
         newvirtualfile.m_destfile = origpath + *virtualpath;
 
-        struct stat stbuf;
-
-        if (lstat(newvirtualfile.m_destfile.c_str(), &stbuf) == 0)
+        if (lstat(newvirtualfile.m_destfile.c_str(), &newvirtualfile.m_st) == 0)
         {
             if (params.m_recodesame == RECODESAME_NO)
             {
                 newvirtualfile.m_flags |= VIRTUALFLAG_PASSTHROUGH;
+            }
+
+            if (ffmpegfs_format->is_multiformat())
+            {
+                // Change file to directory for the frame set
+                // Change file to virtual directory for the frame set. Keep permissions.
+                stat_to_dir(&newvirtualfile.m_st);
+                flags_to_dir(&newvirtualfile.m_flags);
             }
         }
 

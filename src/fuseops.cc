@@ -67,6 +67,8 @@ static void                         prepare_script();
 static bool                         is_passthrough(const std::string & ext);
 static bool                         virtual_name(std::string *virtualpath, const std::string &origpath = "", const FFmpegfs_Format **current_format = nullptr);
 static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const std::string & search_for);
+static void                         stat_to_dir(struct stat *stbuf);
+static void                         flags_to_dir(int *flags);
 static void                         insert(const VIRTUALFILE & virtualfile);
 static int                          get_source_properties(const std::string & origpath, LPVIRTUALFILE virtualfile);
 static int                          make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile);
@@ -447,23 +449,11 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                             }
                             else
                             {
-                                flags |= VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
-
                                 // Change file to directory for the frame set
-                                stbuf.st_mode &=  ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-                                stbuf.st_mode |=  S_IFDIR;
-                                stbuf.st_size = stbuf.st_blksize;
+                                stat_to_dir(&stbuf);
+                                flags_to_dir(&flags);
 
                                 filename = origname;	// Restore original name
-
-                                if (current_format->is_frameset())
-                                {
-                                    flags |= VIRTUALFLAG_FRAME;
-                                }
-                                else if (current_format->is_hls())
-                                {
-                                    flags |= VIRTUALFLAG_HLS;
-                                }
 
                                 insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
                             }
@@ -809,24 +799,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
             if (flags & VIRTUALFLAG_FILESET)
             {
+                int flags2 = 0;
+
                 // Change file to virtual directory for the frame set. Keep permissions.
-                stbuf->st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-                stbuf->st_mode  |= S_IFDIR;
-                stbuf->st_nlink = 2;
-                stbuf->st_size  = stbuf->st_blksize;
+                stat_to_dir(stbuf);
+                flags_to_dir(&flags2);
 
                 append_sep(&origpath);
-
-                int flags2 = VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
-
-                if (ffmpeg_format[0].is_frameset())
-                {
-                    flags2 |= VIRTUALFLAG_FRAME;
-                }
-                else if (ffmpeg_format[0].is_hls())
-                {
-                    flags2 |= VIRTUALFLAG_HLS;
-                }
 
                 insert_file(type, origpath, stbuf, flags2);
             }
@@ -1711,44 +1690,61 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
     return &it->second;
 }
 
+/**
+ * @brief Convert stbuf to directory
+ * @param[inout] stbuf - Buffer to convert to directory
+ */
+static void stat_to_dir(struct stat *stbuf)
+{
+    stbuf->st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
+    stbuf->st_mode  |= S_IFDIR;
+    if (stbuf->st_mode & S_IRWXU)
+    {
+        stbuf->st_mode  |= S_IXUSR;   // Add user execute bit if user has read or write access
+    }
+    if (stbuf->st_mode & S_IRWXG)
+    {
+        stbuf->st_mode  |= S_IXGRP;   // Add group execute bit if group has read or write access
+    }
+    if (stbuf->st_mode & S_IRWXO)
+    {
+        stbuf->st_mode  |= S_IXOTH;   // Add other execute bit if other has read or write access
+    }
+    stbuf->st_nlink = 2;
+    stbuf->st_size  = stbuf->st_blksize;
+}
+
+/**
+ * @brief Convert flags to directory
+ * @param[inot] flags - Flags variable to change
+ */
+static void flags_to_dir(int *flags)
+{
+    *flags |= VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
+
+    if (ffmpeg_format[0].is_frameset())
+    {
+        *flags |= VIRTUALFLAG_FRAME;
+    }
+    else if (ffmpeg_format[0].is_hls())
+    {
+        *flags |= VIRTUALFLAG_HLS;
+    }
+}
+
 LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string & virtdir, const struct stat * stbuf, int flags)
 {
     struct stat stbufdir;
-
-    flags |= VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_FILESET;
 
     std::memcpy(&stbufdir, stbuf, sizeof(stbufdir));
 
     // Change file to directory for the frame set
     // Change file to virtual directory for the frame set. Keep permissions.
-    stbufdir.st_mode  &= ~static_cast<mode_t>(S_IFREG | S_IFLNK);
-    stbufdir.st_mode  |= S_IFDIR;
-    if (stbufdir.st_mode & S_IRWXU)
-    {
-        stbufdir.st_mode  |= S_IXUSR;   // Add user execute bit if user has read or write access
-    }
-    if (stbufdir.st_mode & S_IRWXG)
-    {
-        stbufdir.st_mode  |= S_IXGRP;   // Add group execute bit if group has read or write access
-    }
-    if (stbufdir.st_mode & S_IRWXO)
-    {
-        stbufdir.st_mode  |= S_IXOTH;   // Add other execute bit if other has read or write access
-    }
-    stbufdir.st_nlink = 2;
-    stbufdir.st_size  = stbufdir.st_blksize;
+    stat_to_dir(&stbufdir);
+    flags_to_dir(&flags);
 
     std::string path(virtdir);
     append_sep(&path);
-
-    if (ffmpeg_format[0].is_frameset())
-    {
-        flags |= VIRTUALFLAG_FRAME;
-    }
-    else if (ffmpeg_format[0].is_hls())
-    {
-        flags |= VIRTUALFLAG_HLS;
-    }
 
     return insert_file(type, path, &stbufdir, flags);
 }

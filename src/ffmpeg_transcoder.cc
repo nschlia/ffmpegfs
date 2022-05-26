@@ -5378,7 +5378,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                         if (!stream_exists(stream_idx))
                         {
-                            Logging::error(destname(), "INTERNAL ERROR: process_single_fr()! Invalid stream index in subitle buffer skipped.");
+                            Logging::error(destname(), "INTERNAL ERROR: process_single_fr()! Invalid stream index in subtitle buffer skipped.");
                             continue;
                         }
 

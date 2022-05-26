@@ -205,6 +205,8 @@ extern struct FFMPEGFS_PARAMS
     AVHWDeviceType          m_hwaccel_dec_device_type;      /**< @brief Enable hardware acceleration buffering for decoder */
     std::string             m_hwaccel_dec_device;           /**< @brief Decoder device. May be AUTO to auto detect or empty */
     HWACCEL_BLOCKED_MAP*    m_hwaccel_dec_blocked;          /**< @brief List of blocked decoders and optional profiles */
+    // Subtitles
+    int                     m_no_subtitles;                  /**< @brief 0: allow subtitles, 1: do no transcode subtitles */
     // Album arts
     int                     m_noalbumarts;                  /**< @brief skip album arts */
     // Virtual script

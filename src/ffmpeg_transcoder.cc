@@ -559,11 +559,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
-    ret = open_subtitles();
-    if (ret < 0)
+    if (!params.m_no_subtitles)
     {
-        // Already logged
-        return ret;
+        ret = open_subtitles();
+        if (ret < 0)
+        {
+            // Already logged
+            return ret;
+        }
     }
 
     // Predict size of transcoded file as exact as possible

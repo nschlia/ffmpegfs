@@ -103,6 +103,10 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_hwaccel_dec_API(HWACCELAPI_NONE)                // default: Use software encoder
     , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software decoder
     , m_hwaccel_dec_blocked(nullptr)                    // default: No blocked encoders
+
+    // Subtitles
+    , m_no_subtitles(0)                                  // default: enable subtitles
+
     // Album arts
     , m_noalbumarts(0)                                  // default: copy album arts
     // Virtual Script
@@ -181,6 +185,8 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
     m_hwaccel_dec_device_type = other.m_hwaccel_dec_device_type;
     m_hwaccel_dec_device = other.m_hwaccel_dec_device;
     m_hwaccel_dec_blocked = other.m_hwaccel_dec_blocked;
+
+    m_no_subtitles = other.m_no_subtitles;
 
     m_noalbumarts = other.m_noalbumarts;
 
@@ -334,6 +340,9 @@ static struct fuse_opt ffmpegfs_opts[] =
     FUSE_OPT_KEY("hwaccel_dec_device=%s",           KEY_HWACCEL_DECODER_DEVICE),
     FUSE_OPT_KEY("--hwaccel_dec_blocked=%s",        KEY_HWACCEL_DECODER_BLOCKED),
     FUSE_OPT_KEY("hwaccel_dec_blocked=%s",          KEY_HWACCEL_DECODER_BLOCKED),
+    // Subtitles
+    FFMPEGFS_OPT("--no_subtitles",                  m_no_subtitles, 1),
+    FFMPEGFS_OPT("no_subtitles",                    m_no_subtitles, 1),
     // Album arts
     FFMPEGFS_OPT("--noalbumarts",                   m_noalbumarts, 1),
     FFMPEGFS_OPT("noalbumarts",                     m_noalbumarts, 1),
@@ -2077,6 +2086,8 @@ static void print_params(void)
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
     Logging::trace(nullptr, "Frame Buffering   : %1", av_hwdevice_get_type_name(params.m_hwaccel_enc_device_type));
     Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device.c_str());
+    Logging::trace(nullptr, "--------- Subtitles ---------");
+    Logging::trace(nullptr, "No subtitles      : %1", params.m_no_subtitles ? "yes" : "no");
     Logging::trace(nullptr, "--------- Virtual Script ---------");
     Logging::trace(nullptr, "Create script     : %1", params.m_enablescript ? "yes" : "no");
     Logging::trace(nullptr, "Script file name  : %1", params.m_scriptfile.c_str());

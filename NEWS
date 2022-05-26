@@ -12,6 +12,7 @@ Important changes in 2.11 (2022-05-XX):
   one MP4 input file contains a video stream, another an audio stream only, the
   resulting files will be webm (for the video input) and mp3 for the audio only
   file.
+* Feature: Issue #137: Added --no_subtitles option to turn subtitles off.
 * Bugfix: Smart encode selected the video format for cue sheet tracks, regardless
   of the input format. This has been fixed now.
 * Bugfix: Fix crash when DVD/Bluray should be transcoded to audio only.

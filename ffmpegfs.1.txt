@@ -5,7 +5,7 @@
 :man manual:    User Commands
 
 == NAME ==
-ffmpegfs - mounts and transcodes a multitude of formats to one of the target formats on the fly
+ffmpegfs - mounts and transcodes a multitude of formats to one of the target formats on the fly.
 
 == SYNOPSIS ==
 *ffmpegfs* ['OPTION']... 'IN_DIR' 'OUT_DIR'
@@ -56,9 +56,9 @@ To stream videos, *MP4*, *TS*, *HLS*, *OGG*, *WEBM*, *MKV* or *MOV*/*PRORES* mus
 +
 To use HTTP Live Streaming, set *HLS*.
 +
-When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will no be available.
+When a destination *JPG*, *PNG*, or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.
 +
-To use the smart transcoding feature, specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio only files to AIFF.
+To use the smart transcoding feature, specify a video and audio file type, separated by a "+" sign. For example, --desttype=mov+aiff will convert video files to Apple Quicktime MOV and audio-only files to AIFF.
 +
 Default: *mp4*
 
@@ -77,10 +77,10 @@ Select audio codec. 'TYPE' depends on the destination format and can currently b
 +
 Other destination formats do not support other codecs than the default.
 +
-Default: The default setting for the destination format, see bold codec name in table
+Default: The destination format's default setting, as indicated by the bold codec name in the table.
 
 *--videocodec*=TYPE, *-ovideocodec*=TYPE::
-Select video codec. 'TYPE' depends on the destination format and can currently be:
+Select a video codec. 'TYPE' depends on the destination format and can currently be:
 +
 [width="100%"]
 |===================================================================================
@@ -94,10 +94,10 @@ Select video codec. 'TYPE' depends on the destination format and can currently b
 +
 Other destination formats do not support other codecs than the default.
 +
-Default: The default setting for the destination format, see bold codec name in table
+Default: The destination format's default setting, as indicated by the bold codec name in the table.
 
 *--autocopy*=OPTION, *-oautocopy*=OPTION::
-Select auto copy option, 'OPTION' can be:
+Select the auto copy option. 'OPTION' can be:
 +
 [width="100%"]
 |===================================================================================
@@ -110,19 +110,19 @@ Select auto copy option, 'OPTION' can be:
 +
 This can speed up transcoding significantly as copying streams uses much less computing power as compared to transcoding.
 +
-*MATCH* copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG although FFmpeg's target format is MP3 for this container. H264 would be copied to ProRes although the result will be a regular MOV/MP4, not a ProRes file.
+*MATCH* copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG, although FFmpeg's target format is MP3 for this container. H264 would be copied to ProRes, although the result would be a regular MOV or MP4, not a ProRes file.
 +
 *STRICT* would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to strictly adhere to the output format setting. This will create homogenous results which might prevent problems with picky playback software.
 +
 Default: *OFF*
 
 *--recodesame*=OPTION, *-orecodesame*=OPTION::
-Select recode to same format option, 'OPTION' can be:
+Select recode to the same format option, 'OPTION' can be:
 +
 [width="100%"]
 |===================================================================================
-|*NO* |Never recode to same format.
-|*YES* |Always recode to same format.
+|*NO* |Never recode to the same format.
+|*YES* |Always recode to the same format.
 |===================================================================================
 +
 Default: *NO*
@@ -142,12 +142,12 @@ Set profile for target audience, 'NAME' can be:
 |*MAXTHON* |Maxthon
 |=======================================================
 +
-*Note:* Applies to MP4 output format only, ignored for all other formats.
+*Note:* applies to the MP4 output format only, and is ignored for all other formats.
 +
 Default: *NONE*
 
 --*level*=NAME, -o *level*=NAME::
-Set level for output if available, 'NAME' can be:
+Set level for output if available. 'NAME' can be:
 +
 [width="100%"]
 |===========================
@@ -157,21 +157,21 @@ Set level for output if available, 'NAME' can be:
 |*HQ* |HQ - apch
 |===========================
 +
-*Note:* Applies to MP4 output format only, ignored for all other formats.
+*Note:* applies to the MP4 output format only, and is ignored for all other formats.
 +
 Default: *HQ*
 
 *--extensions*=LIST, *-oextensions*=LIST::
-Set list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.
+Set a list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.
 +
 Example: --extensions=xxx,abc,yxz,aaa
 +
-Take care to select extensions that actually can be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
+Set a list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.Take care to select extensions that can actually be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
 +
-Default: Use default set as defined by FFmpeg.
+Default: Use the default set as defined by FFmpeg.
 
 *--hide_extensions*=LIST, *-ohide_extensions*=LIST::
-Set list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
+Set a list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
 +
 Example: --hide_extensions=jpg,png,cue to stop covers and cue sheets from showing up.
 +
@@ -199,13 +199,13 @@ When in doubt, it is recommended to choose a bitrate among 96, 112, 128, 160, 19
 * n Mbit/s: #M or #Mbps
 
 *--audiosamplerate*=SAMPLERATE, *-o audiosamplerate*=SAMPLERATE::
-Limits the output sample rate to 'SAMPLERATE'. If the source file sample rate is more it will be downsampled automatically.
+Limits the output sample rate to 'SAMPLERATE'. If the source file sample rate is higher, it will be downsampled automatically.
 +
 Typical values are 8000, 11025, 22050, 44100, 48000, 96000, 192000.
 +
 If the target codec does not support the selected sample rate, the next matching rate will be chosen (e.g. if 24K is selected ut only 22.05 or 44.1 KHz supported, 22.05 KHz will be set).
 +
-Set to 0 to keep source rate.
+Set to 0 to keep the source rate.
 +
 Default: *44.1 kHz*
 +
@@ -227,9 +227,9 @@ Default: *2 channels (stereo)*
 *--audiosamplefmt*=SAMPLEFMT, *-o audiosamplefmt*=SAMPLEFMT::
 Set sample format. 'SAMPLEFMT' can be:
 +
-0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point
+0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point.
 +
-Not all formats are supported by all destination types, selecting an invalid format for will be reported as command line error and a list of values printed.
+Not all formats are supported by all destination types. Selecting an invalid format will be reported as a command line error and a list of values printed.
 +
 [width="100%"]
 |===========================
@@ -240,15 +240,15 @@ Not all formats are supported by all destination types, selecting an invalid for
 |*FLAC* |0, 16, 24
 |===========================
 +
-Default: 0 (Use same as source or the predefined format of the destination if source format is not possible).
+Default: 0 (Use the same as the source or the predefined format of the destination if the source format is not possible.).
 
 === Video Options ===
 *--videobitrate*=BITRATE, *-o videobitrate*=BITRATE::
-Video encoding bit rate. Setting this too high or low may cause transcoding to fail.
+Video encoding bit rate. Setting this too high or too low may cause transcoding to fail.
 +
 Default: *2 Mbit*
 +
-*mp4:* May be specified as 500 to 25000 kbit.
+*mp4:* May be specified as 500 to 25,000 kbps.
 +
 *BITRATE* can be defined as...
  * n bit/s:  #  or #bps
@@ -256,45 +256,43 @@ Default: *2 Mbit*
  * n Mbit/s: #M or #Mbps
 
 *--videoheight*=HEIGHT, -o *videoheight*=HEIGHT::
-Sets the height of the transcoded video.
+This sets the height of the transcoded video.
 +
-When the video is rescaled the aspect ratio is preserved if --width is not set at the same time.
+When the video is rescaled, the aspect ratio is preserved if --width is not set at the same time.
 +
-Default: *keep source video height*
+Default: *maintain source video height*
 
 *--videowidth*=WIDTH, -o *videowidth*=WIDTH::
-Sets the width of the transcoded video.
+This sets the width of the transcoded video.
 +
-When the video is rescaled the aspect ratio is preserved if --height is not set at the same time.
+When the video is rescaled, the aspect ratio is preserved if --height is not set at the same time.
 +
-Default: *keep source video width*
+Default: *maintain source video width*
 
 *--deinterlace*, -o *deinterlace*::
 Deinterlace video if necessary while transcoding.
 +
-May need higher bit rate, but will increase picture quality when streaming via HTML5.
+It may need a higher bit rate, but this will increase picture quality when streaming via HTML5.
 +
-Default: *no deinterlace*
+Default: "no deinterlace"
 
 === HLS Options ===
 *--segment_duration*, -o *segment_duration*::
-Set duration of one video segment of HLS stream. This argument is a floating point value,
-e.g can be set to 2.5 for 2500 milliseconds.
+Set the duration of one video segment of the HLS stream. This argument is a floating point value, e.g., it can be set to 2.5 for 2500 milliseconds.
 +
-Should normally be left at default.
+Should normally be left as the default.
 +
-*Note:* Applies to HLS output format only, ignored for all other formats.
+*Note:* This applies to the HLS output format only, and is ignored for all other formats.
 +
 Default: *10 seconds*
 
 *--min_seek_time_diff*, -o *min_seek_time_diff*::
-If requested HLS segment is less than min_seek_time seconds away,  discard seek request.
-The segment will be available very soon anyway, and that seek makes a re-transcode
-necessary. Set to 0 to disable.
+If the requested HLS segment is less than min_seek_time seconds away, discard the seek request.
+The segment will be available very soon anyway, and that makes a re-transcode necessary. To disable, set to 0.
 +
-Should normally be left at default.
+Should normally be left as the default.
 +
-*Note:* Applies to HLS output format only, ignored for all other formats.
+*Note:* This applies to the HLS output format only, and is ignored for all other formats.
 +
 Default: *30 seconds*
 
@@ -310,8 +308,7 @@ Default: *NONE* (no acceleration)
  * *OMX*: OpenMAX (Open Media Acceleration)
 
 *--hwaccel_dec_blocked*=CODEC[:PROFILE[:PROFILE]], *-o hwaccel_dec_blocked*=CODEC:[:PROFILE[:PROFILE]]::
-Block codec and optionally profile from hardware decoding. Option can be
-repeated to block several codecs
+Block codec and optionally profiled for hardware decoding. The option can be repeated to block several codecs.
 +
 Default: no codecs blocked
 +
@@ -328,15 +325,15 @@ Default: no codecs blocked
 +
 *PROFILE*:: can optionally be added to block a certain profile only.
 +
-Example: VP9:0 blocks Google VP profile 0
+Example: VP9:0 blocks Google VP profile 0.
 +
-Example: H264:1:33 blocks H.264 profile 1 and 33
+Example: H264:1:33 blocks H.264 profile 1 and 33.
 
 *--hwaccel_enc_device*=DEVICE, -o *hwaccel_enc_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially
-if more the one device is available.
+if more than one device is available.
 +
-*Note:* Applies to VAAPI hardware acceleration only, ignored for all other types.
+*Note:* This only applies to VAAPI hardware acceleration; all other types are ignored.
 +
 Default: *empty* (use default device)
 +
@@ -354,9 +351,9 @@ Default: *NONE* (no acceleration)
 
 *--hwaccel_dec_device*=DEVICE, -o *hwaccel_dec_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially
-if more the one device is available.
+if more than one device is available.
 +
-*Note:* Applies to VAAPI hardware acceleration only, ignored for all other types.
+*Note:* This only applies to VAAPI hardware acceleration; all other types are ignored.
 +
 Default: *empty* (use default device)
 +
@@ -364,17 +361,17 @@ Example: */dev/dri/renderD128*
 
 === Album Arts ===
 --*noalbumarts*, -o *noalbumarts*::
-Do not copy album arts into output file.
+Do not copy album art into the output file.
 +
-This will reduce the file size, may be useful when streaming via HTML5 when album arts are not used anyway.
+This will reduce the file size and may be useful when streaming via HTML5 when album art is not used anyway.
 +
 Default: *add album arts*
 
 === Virtual Script ===
 --*enablescript*, -o *enablescript*::
-Add virtual index.php to every directory. It reads scripts/videotag.php from the FFmpegfs binary directory.
+Add a virtual index.php to every directory. It reads scripts/videotag.php from the FFmpegfs binary directory.
 +
-This can be very handy to test video playback. Of course, feel free to replace videotag.php with your own script.
+This can be very handy for testing video playback. Of course, feel free to replace videotag.php with your own script.
 +
 Default: *Do not generate script file*
 
@@ -384,45 +381,45 @@ Set the name of the virtual script created in each directory.
 Default: *index.php*
 
 --*scriptsource*, -o *scriptsource*::
-Take a different source file.
+Use a different source file.
 +
 Default: *scripts/videotag.php*
 
 === Cache Options ===
 *--expiry_time*=TIME, *-o expiry_time*=TIME::
-Cache entries expire after 'TIME' and will be deleted to save disk space.
+Cache entries expire after 'TIME' and will be deleted to save disc space.
 +
 Default: *1 week*
 
 *--max_inactive_suspend*=TIME, *-o max_inactive_suspend*=TIME::
-While being accessed the file is transcoded to the target format in the background. When the client quits transcoding will continue until this time out. Transcoding is suspended until it is accessed again, then transcoding will continue.
+While being accessed, the file is transcoded to the target format in the background. When the client quits, transcoding will continue until this time out. Transcoding is suspended until it is accessed again, then transcoding will continue.
 +
 Default: *15 seconds*
 
 *--max_inactive_abort*=TIME, *-o max_inactive_abort*=TIME::
-While being accessed the file is transcoded in the background to the target format. When the client quits transcoding will continue until this time out, then the transcoder thread quits.
+While being accessed, the file is transcoded in the background to the target format. When the client quits, transcoding will continue until this time out, then the transcoder thread quits.
 +
 Default: *30 seconds*
 
 *--prebuffer_size*=SIZE, *-o prebuffer_size*=SIZE::
-Files will be decoded until the buffer contains this much bytes allowing playback to start smoothly without lags.
+Files will be decoded until the buffer contains this many bytes, allowing playback to start smoothly without lags.
 +
 Set to 0 to disable pre-buffering.
 +
 Default: *100 KB*
 
 *--max_cache_size*=SIZE, *-o max_cache_size*=SIZE::
-Set the maximum diskspace used by the cache. If the cache would grow beyond this limit when a file is transcoded, old entries will be deleted to keep the cache within the size limit.
+Set the maximum diskspace used by the cache. If the cache grows beyond this limit when a file is transcoded, old entries will be deleted to keep the cache within the size limit.
 +
 Default: *unlimited*
 
 *--min_diskspace*=SIZE, *-o min_diskspace*=SIZE::
-Set the required diskspace on the cachepath mount. If the remaining space would fall below 'SIZE' when a file is transcoded, old entries will be deleted to keep the diskspace within the limit.
+Set the required diskspace on the cachepath mount. If the remaining space falls below 'SIZE' when a file is transcoded, old entries will be deleted to keep the diskspace within the limit.
 +
 Default: *0 (no minimum space)*
 
 *--cachepath*=DIR, *-o cachepath*=DIR::
-Sets the disk cache directory to 'DIR'. Will be created if not existing. The user running FFmpegfs must have write access to the location.
+Sets the disc cache directory to 'DIR'. If it does not already exist, it will be created. The user running FFmpegfs must have write access to the location.
 +
 Default: *${XDG_CACHE_HOME:-~/.cache}/ffmpegfs* (as specified in the XDG Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not defined. If executed with root privileges, "/var/cache/ffmpegfs" will be used.
 
@@ -432,17 +429,17 @@ Disable the cache functionality completely.
 Default: *enabled*
 
 *--cache_maintenance*=TIME, *-o cache_maintenance*=TIME::
-Starts cache maintenance in 'TIME' intervals. This will enforce the expery_time, max_cache_size and min_diskspace settings. Do not set too low as this can slow down transcoding.
+Starts cache maintenance in 'TIME' intervals. This will enforce the expery_time, max_cache_size and min_diskspace settings. Do not set it too low as this can slow down transcoding.
 +
-Only one FFmpegfs process will do the maintenance by becoming the master. If that process exits, another will take over so that always one will do the maintenance.
+Only one FFmpegfs process will do the maintenance by becoming the master. If that process exits, another will take over, so that one will always do the maintenance.
 +
 Default: *1 hour*
 
 *--prune_cache*::
-Prune cache immediately according to the above settings at application start up.
+Prune the cache immediately according to the above settings at application start up.
 
 *--clear_cache*, *-o clear_cache*::
-Clear cache on start up. All previously transcoded files will be deleted.
+On startup, clear the cache. All previously transcoded files will be deleted.
 +
 *TIME* can be defined as...
   * Seconds: #
@@ -460,29 +457,28 @@ Clear cache on start up. All previously transcoded files will be deleted.
 
 === Other ===
 *--max_threads*=COUNT, *-o max_threads*=COUNT::
-Limit concurrent transcoder threads. Set to 0 for unlimited threads. Recommended values are up to 16 times number of CPU cores. Should be left at default.
+Limit concurrent transcoder threads. Set to 0 for unlimited threads. Recommended values are up to 16 times the number of CPU cores. Should be left as the default.
 +
 Default: *16 times number of detected cpu cores*
 
 *--decoding_errors*, *-o decoding_errors*::
-Decoding errors are normally ignored, leaving bloopers and hiccups in encoded audio or video but yet creating a valid file. When this option is set, transcoding will stop with an error.
+Decoding errors are normally ignored, leaving bloopers and hiccups in encoded audio or video but still creating a valid file. When this option is set, transcoding will stop with an error.
 +
 Default: *Ignore errors*
 
 *--min_dvd_chapter_duration*=SECONDS, *-o min_dvd_chapter_duration*=SECONDS::
-Ignores DVD chapters shorter than SECONDS. Set to 0 to disable. This avoids transcoding errors for DVD chapters too
-short to detect its streams.
+This ignores DVD chapters shorter than SECONDS. To disable, set to 0. This avoids transcoding errors for DVD chapters too short to detect its streams.
 +
 Default: *1 second*
 
 *--win_smb_fix*, *-o win_smb_fix*::
-Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
+Windows seems to access the files on Samba drives starting at the last 64K segment when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
 +
 Default: *on*
 
 === Logging ===
 *--log_maxlevel*=LEVEL, *-o log_maxlevel*=LEVEL::
-Maximum level of messages to log, either ERROR, WARNING, INFO, DEBUG or TRACE. Defaults to INFO, and always set to DEBUG in debug mode.
+Maximum level of messages to log, either ERROR, WARNING, INFO, DEBUG or TRACE. Defaults to INFO and is always set to DEBUG in debug mode.
 +
 Note that the other log flags must also be set to enable logging.
 
@@ -497,10 +493,10 @@ File to output log messages to. By default, no file will be written.
 
 === General/FUSE options ===
 *-d*, *-o debug*::
-Enable debug output. This will result in a large quantity of diagnostic information being printed to stderr as the program runs. It implies *-f*.
+Enable debug output. This will result in a large quantity of diagnostic information being printed to stderr as the programme runs. It implies *-f*.
 
 *-f*::
-Run in foreground instead of detaching from the terminal.
+Run in the foreground instead of detaching from the terminal.
 
 *-h*, *--help*::
 Print usage information.
@@ -509,7 +505,7 @@ Print usage information.
 Output version information.
 
 *-c*, *--capabilities*::
-Output FFmpeg capabilities: list on the system available codecs.
+Output FFmpeg capabilities: a list of the system's available codecs.
 
 *-s*::
 Force single-threaded operation.
@@ -523,8 +519,7 @@ For example,
 
     ffmpegfs --audiobitrate 256K -videobitrate 2000000 /mnt/music /mnt/ffmpegfs -o allow_other,ro
 
-In recent versions of FUSE and FFmpegfs, the same can be achieved with the
-following entry in `/etc/fstab`:
+In recent versions of FUSE and FFmpegfs, the same can be achieved with the following entry in `/etc/fstab`:
 
     ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
 
@@ -532,28 +527,25 @@ Another (more modern) form of this command:
 
     /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000 0 0
 
-At this point files like `/mnt/music/{empty}*.flac` and `/mnt/music/{empty}*.ogg` will
-show up as `/mnt/ffmpegfs/{empty}*.mp4`.
+At this point, files like `/mnt/music/{empty}*.flac` and `/mnt/music/{empty}*.ogg` will show up as `/mnt/ffmpegfs/{empty}*.mp4`.
 
 Note that the "allow_other" option by default can only be used by root.
-You must either run FFmpegfs as root or better add a "user_allow_other" key
-to /etc/fuse.conf.
+You must either run FFmpegfs as root or better yet, add a "user_allow_other" key to /etc/fuse.conf.
 
-"allow_other" is required to permit any user access to the mount, by
-default this is only possible for the user who launched FFmpegfs.
+"allow_other" is required to permit any user access to the mount. By default, this is only possible for the user who launched FFmpegfs.
 
 == HOW IT WORKS ==
-When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time the final filesize can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair to good for MP4 or WebM because the actual size heavily depends on the content encoded.
+When a file is opened, the decoder and encoder are initialised and the file metadata is read. At this time, the final file size can be determined approximately. This works well for MP3, AIFF or WAV output files, but only fair-to-good for MP4 or WebM because the actual size heavily depends on the content encoded.
 
-As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded in memory. Once decoded the file is kept in a disk buffer and can be accessed very fast.
+As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded in memory. Once decoded, the file is kept in a disc buffer and can be accessed very fast.
 
-Transcoding is done in an extra thread, so if other processes should access the same file they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before timeout, transcoding will continue, if not it stops and the chunk created so far discarded to save disk space.
+Transcoding is done in an extra thread, so if other processes access the same file, they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before the timeout, transcoding will continue. If not, it will stop and the chunk created so far will be discarded to save disc space.
 
-Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible is yet unclear due to restrictions to positioning inside compressed streams).
+Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programmes will read a file from start to finish. Future enhancements may provide true random seeking (but if this is feasible, it is not yet clear due to restrictions to positioning inside compressed streams).
 
-MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file respectively.
+MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file, respectively.
 
-MP4: Same applies to meta atoms in MP4 containers.
+MP4: The same applies to meta atoms in MP4 containers.
 
 MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This dramatically speeds up such applications.
 
@@ -561,29 +553,28 @@ WAV: A pro format WAV header will be created with estimates of the WAV file size
 
 == ABOUT OUTPUT FORMATS ==
 
-A few words to the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
+A few words about the supported output formats. There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
 
-MP4 files are special, though, as regular MP4s are not quite suited for live streaming. Reason being that the start block of an MP4 contains a field with the size of the compressed data section. Suffice to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.
+MP4 files are special, though, as regular MP4s are not quite suited for live streaming. The reason is that the start block of an MP4 contains a field with the size of the compressed data section. Suffice it to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated.
 
-For a continuous live stream, that size will never be known. For our transcoded files one would have to wait for the whole file to be recoded to get that value. If that was not enough some important pieces of information are located at the end of the file, including meta tags with artist, album, etc. Also, there is only one big data block, a fact that hampers random seek inside the contents without having the complete data section.
+For a continuous live stream, that size will never be known. For our transcoded files, one would have to wait for the whole file to be recoded to get that value. If that was not enough, some important pieces of information are located at the end of the file, including meta tags with artist, album, etc. Also, there is only one big data block, a fact that hampers random seeking inside the contents without having the complete data section.
 
-Subsequently many applications will go to the end of an MP4 to read important information before going back to the head of the file and start playing. This will break the whole transcode-on-demand idea of FFmpegfs.
+Subsequently, many applications will go to the end of an MP4 to read important information before going back to the head of the file and starting playing. This will break the whole transcode-on-demand idea of FFmpegfs.
 
-To get around the restriction several extensions have been developed, one of which is called "faststart" that relocates the aforementioned meta data from the end to the beginning of the MP4. Additionally, the size field can be left empty (0). isml (smooth live streaming) is another extension.
+To get around the restriction, several extensions have been developed, one of which is called "faststart", which relocates the aforementioned meta data from the end to the beginning of the MP4. Additionally, the size field can be left empty (0). isml (smooth live streaming) is another extension.
 
-For direct to stream transcoding several new features in MP4 need to be active (ISMV, faststart, separate_moof/empty_moov to name them) which are not implemented in older versions of FFmpeg (or if available, not working properly).
+For direct to stream transcoding, several new features in MP4 need to be active (ISMV, faststart, separate_moof/empty_moov to name them) which are not implemented in older versions of FFmpeg (or if available, not working properly).
 
-By default faststart files will be created with an empty size field so that the file can be started to be written out at once instead of encoding it as a whole before this is possible. Encoding it completely would mean it would take some time before playback can start.
+By default, faststart files will be created with an empty size field so that the file can be started to be written out at once instead of encoding it as a whole before this is possible. Encoding it completely would mean it would take some time before playback could start.
 
-The data part is divided into chunks of about 1 second length, each with its own header, thus it is possible to fill in the size fields early enough.
+The data part is divided into chunks of about 1 second each, each with its own header, so it is possible to fill in the size fields early enough.
 
 As a draw back not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback cannot be positioned past the current playback position, only backwards.
 
 But that's the price of starting playback fast.
 
 == DEVELOPMENT ==
-FFmpegfs uses Git for revision control. You can obtain the full repository
-with:
+FFmpegfs uses Git for revision control. You can obtain the full repository here:
 
     git clone https://github.com/nschlia/ffmpegfs.git
 
@@ -596,7 +587,7 @@ FFmpeg home pages:
 * https://www.ffmpeg.org/[FFmpeg]
 
 == Future Plans ==
-* Create a windows version
+* Develop a Windows version
 
 == FILES ==
 */usr/local/bin/ffmpegfs*, */etc/fstab*

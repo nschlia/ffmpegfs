@@ -25,6 +25,8 @@ Important changes in 2.11 (2022-05-XX):
 * Bugfix: mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong
   error condition, could cause the application to crash or return stupid error
   messages.
+* Bugfix: Issue #119: Fixed problem that caused frame set generation to
+  fail sometimes. Seems to be related to the nremap() issue.
 
 Important changes in 2.10 (2022-04-26):
 
@@ -68,7 +70,7 @@ Important changes in 2.9 (2022-02-16):
 * Bugfix: Fixed crash when video had no audio.
 * Bugfix: Issue #112: Fixed access problems with frame sets and HLS.
 * Bugfix: Issue #119: Fixed problem that caused frame set generation to
-  sometimes fail.
+  fail sometimes.
 * Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was
   required to have FFmpeg API accept the codec.
 * Enhancement: Issue #67: Enhance file size prediction.

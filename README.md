@@ -45,7 +45,7 @@ News
 * Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.
 * Deprecated previous channel layout API based on uint64 bitmasks.
 * Deprecated swr_alloc_set_opts() and swr_build_matrix().
-* Going C++17 now: The packet queue has been recoded in C++17 to support external subtitles files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.
+* Going C++17 now: The packet queue has been recoded in C++17 to support external subtitle files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.
 * Using std::shared_ptr to ensure proper memory allocation/free.
 
 ## Planned Features

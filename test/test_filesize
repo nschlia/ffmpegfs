@@ -71,7 +71,7 @@ elif [ "${DESTTYPE}" == "flac" ];
 then
     # flac
     check_filesize "raven_e.flac" 3037626 3596355
-    check_filesize "raven_d.ogg"  1132052 1132062
+    check_filesize "raven_d.ogg"  1132018 1132062
 else
 echo "Internal error, unknown type ${DESTTYPE}. Fix script!"
 exit 99

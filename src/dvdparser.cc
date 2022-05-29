@@ -433,19 +433,19 @@ static int parse_dvd(const std::string & path, const struct stat *statbuf, void 
     int titles;
     bool success = true;
 
-    Logging::debug(path, "Parsing DVD.");
+    Logging::debug(path, "Parsing the DVD.");
 
     dvd = DVDOpen(path.c_str());
     if (dvd == nullptr)
     {
-        Logging::error(path, "Couldn't open DVD.");
+        Logging::error(path, "Couldn't open the DVD.");
         return ENOENT;
     }
 
     ifo_file = ifoOpen(dvd, 0);
     if (ifo_file == nullptr)
     {
-        Logging::error(path, "Can't open VMG info for DVD.");
+        Logging::error(path, "Can't open VMG info for the DVD.");
         DVDClose(dvd);
         return -EINVAL;
     }
@@ -564,7 +564,7 @@ int check_dvd(const std::string & path, void *buf, fuse_fill_dir_t filler)
         {
             Logging::trace(_path, "DVD detected.");
             res = parse_dvd(_path, &stbuf, buf, filler);
-            Logging::trace(_path, "Found %1 titles.", res);
+            Logging::trace(_path, "%1 titles were discovered.", res);
         }
         else
         {

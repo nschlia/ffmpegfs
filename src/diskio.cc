@@ -60,7 +60,7 @@ int DiskIO::open(LPVIRTUALFILE virtualfile)
 {
     set_virtualfile(virtualfile);
 
-    Logging::debug(virtualfile->m_origfile, "Opening input file.");
+    Logging::debug(virtualfile->m_origfile, "Opening the input file.");
 
     m_fpi = fopen(virtualfile->m_origfile.c_str(), "rb");
 

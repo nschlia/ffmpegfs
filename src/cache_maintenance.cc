@@ -144,7 +144,7 @@ static bool start_timer(time_t interval)
         Logging::error(nullptr, "start_timer(): sigprocmask(SIG_UNBLOCK) failed: (%1) %2", errno, strerror(errno));
     }
 
-    Logging::trace(nullptr, "Maintenance timer started successfully.");
+    Logging::trace(nullptr, "The maintenance timer started successfully.");
 
     return true;
 }
@@ -155,7 +155,7 @@ static bool start_timer(time_t interval)
  */
 static bool stop_timer()
 {
-    Logging::info(nullptr, "Stopping maintenance timer.");
+    Logging::info(nullptr, "Stopping the maintenance timer.");
 
     if (timer_delete(timerid) == -1)
     {
@@ -213,11 +213,11 @@ static bool link_up()
     if (master)
     {
         *pid_master = getpid();
-        Logging::info(nullptr, "Process with PID %1 is now master.", *pid_master);
+        Logging::info(nullptr, "The process with PID %1 is now master.", *pid_master);
     }
     else
     {
-        Logging::info(nullptr, "Process with PID %1 is now client, master is PID %2.", getpid(), *pid_master);
+        Logging::info(nullptr, "The process with PID %1 is now a client, and PID %2 is the master.", getpid(), *pid_master);
     }
 
     // Also create inter-process semaphore.
@@ -252,7 +252,7 @@ static void master_check()
 
     if (*pid_master == pid_self)
     {
-        Logging::trace(nullptr, "PID %1 is already master.", pid_self);
+        Logging::trace(nullptr, "The process with PID %1 is already master.", pid_self);
         return;
     }
 

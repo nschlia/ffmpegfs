@@ -112,13 +112,13 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
         m_duration      = AV_NOPTS_VALUE;
     }
 
-    Logging::debug(path(), "Opening input DVD.");
+    Logging::debug(path(), "Opening the input DVD.");
 
     // Open the disc.
     m_dvd = DVDOpen(path().c_str());
     if (m_dvd == nullptr)
     {
-        Logging::error(path(), "Couldn't open DVD.");
+        Logging::error(path(), "Couldn't open the DVD.");
         return EINVAL;
     }
 
@@ -148,7 +148,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     if (m_chapter_idx < 0 || m_chapter_idx >= tt_srpt->title[m_title_idx].nr_of_ptts)
     {
-        Logging::error(path(), "Invalid chapter %1", m_chapter_idx + 1);
+        Logging::error(path(), "Invalid chapter %1.", m_chapter_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
@@ -159,7 +159,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
 
     if (m_angle_idx < 0 || m_angle_idx >= tt_srpt->title[m_title_idx].nr_of_angles)
     {
-        Logging::error(nullptr, "Invalid angle %1", m_angle_idx + 1);
+        Logging::error(nullptr, "Invalid angle %1.", m_angle_idx + 1);
         ifoClose(m_vmg_file);
         DVDClose(m_dvd);
         return EINVAL;
@@ -610,7 +610,7 @@ size_t DvdIO::read(void * data, size_t size)
             maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
             if (maxlen != 1)
             {
-                Logging::error(path(), "Read failed for block at %1", m_cur_block);
+                Logging::error(path(), "Read failed for block at %1.", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
@@ -624,14 +624,14 @@ size_t DvdIO::read(void * data, size_t size)
             dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer);
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
-                Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn", m_cur_block);
+                Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn.", m_cur_block);
                 m_errno = EIO;
                 return 0;
             }
 
             if (cur_output_size >= 1024)
             {
-                Logging::error(path(), "Read failed at %1 because current output size %2 >= 1024", m_cur_block, cur_output_size);
+                Logging::error(path(), "Read failed at %1 because current output size %2 >= 1024.", m_cur_block, cur_output_size);
                 m_errno = EIO;
                 return 0;
             }
@@ -643,7 +643,7 @@ size_t DvdIO::read(void * data, size_t size)
 
             if (maxlen != static_cast<int>(cur_output_size))
             {
-                Logging::error(path(), "Read failed for %1 blocks at %2", cur_output_size, m_cur_block);
+                Logging::error(path(), "Read failed for %1 blocks at %2.", cur_output_size, m_cur_block);
                 m_errno = EIO;
                 return 0;
             }

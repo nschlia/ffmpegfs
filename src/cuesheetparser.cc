@@ -121,7 +121,7 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
     Cdtext *cuesheetcdtext = track_get_cdtext(track);
     if (cuesheetcdtext == nullptr)
     {
-        Logging::error(virtualfile->m_origfile, "Unable to get track cd text from cue sheet.");
+        Logging::error(virtualfile->m_origfile, "The track CD text could not be extracted from the cue sheet.");
         errno = EIO;
         return false;
     }
@@ -239,7 +239,7 @@ static int parse_cuesheet_file(LPCVIRTUALFILE virtualfile, const std::string & c
     }
 
     // Found cue sheet
-    Logging::trace(cuesheet, "Found external cue sheet file.");
+    Logging::trace(cuesheet, "Found an external cue sheet file.");
 
     return parse_cuesheet(virtualfile, cuesheet, cue_parse_string(text.c_str()), statbuf, buf, filler);
 }
@@ -254,7 +254,7 @@ static int parse_cuesheet_file(LPCVIRTUALFILE virtualfile, const std::string & c
 static int parse_cuesheet_text(LPCVIRTUALFILE virtualfile, void *buf, fuse_fill_dir_t filler)
 {
     // Found cue sheet
-    Logging::trace(virtualfile->m_origfile, "Found embedded cue sheet file.");
+    Logging::trace(virtualfile->m_origfile, "Found an embedded cue sheet file.");
 
     return parse_cuesheet(virtualfile, virtualfile->m_origfile, cue_parse_string(virtualfile->m_cuesheet.c_str()), &virtualfile->m_st, buf, filler);
 }
@@ -277,21 +277,21 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
     {
         if (cd == nullptr)
         {
-            Logging::error(cuesheet, "Unable to parse cue sheet.");
+            Logging::error(cuesheet, "The cue sheet could not be parsed.");
             throw AVERROR(EIO);
         }
 
         Rem *rem = cd_get_rem(cd);
         if (rem == nullptr)
         {
-            Logging::error(cuesheet, "Unable to parse remarks from cue sheet.");
+            Logging::error(cuesheet, "Unable to parse remarks from the cue sheet.");
             throw AVERROR(EIO);
         }
 
         Cdtext *cdtext = cd_get_cdtext(cd);
         if (cdtext == nullptr)
         {
-            Logging::error(cuesheet, "Unable to get cd text from cue sheet.");
+            Logging::error(cuesheet, "The CD text could not be extracted from the cue sheet.");
             throw AVERROR(EIO);
         }
 
@@ -339,7 +339,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
                 Track *track = cd_get_track(cd, trackno);
                 if (track == nullptr)
                 {
-                    Logging::error(cuesheet, "Unable to get track no. %1 from cue sheet.", trackno);
+                    Logging::error(cuesheet, "Track no. %1 could not be obtained from the cue sheet.", trackno);
                     errno = EIO;
                     throw -errno;
                 }
@@ -404,7 +404,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
                 // Not a virtual directory
                 res = parse_cuesheet_file(virtualfile, cuesheet, &stbuf, buf, filler);
 
-                Logging::trace(cuesheet, "Found %1 titles.", res);
+                Logging::trace(cuesheet, "%1 titles were discovered.", res);
             }
             else
             {

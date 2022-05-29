@@ -57,7 +57,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
     clear();
 
-    Logging::trace(filename(), "Created new cache entry.");
+    Logging::trace(filename(), "Created a new cache entry.");
 }
 
 Cache_Entry::~Cache_Entry()
@@ -188,7 +188,7 @@ bool Cache_Entry::open(bool create_cache /*= true*/)
         erase_cache = true;
     }
 
-    Logging::trace(filename(), "Last transcode finished: Result %1 Erase cache: %2.", m_cache_info.m_result, erase_cache);
+    Logging::trace(filename(), "The last transcode was completed. Result %1 Erasing cache: %2.", m_cache_info.m_result, erase_cache);
 
     // Store access time
     update_access(true);

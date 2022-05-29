@@ -173,7 +173,7 @@ static bool audio_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
     }
     default:
     {
-        Logging::error(path, "Unrecognised coding type %<%02x>1", ss->coding_type);
+        Logging::error(path, "Unrecognised coding type %<%02x>1.", ss->coding_type);
         break;
     }
     }
@@ -383,7 +383,7 @@ static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
     }
     default:
     {
-        Logging::error(path, "Unrecognised coding type %<%02x>1", ss->coding_type);
+        Logging::error(path, "Unrecognised coding type %<%02x>1.", ss->coding_type);
         break;
     }
     }
@@ -443,7 +443,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration < AV_TIME_BASE)
         {
-            Logging::trace(path, "Title %1: skipping empty title", title_idx + 1);
+            Logging::trace(path, "Title %1: skipping empty title.", title_idx + 1);
             return true;
         }
 
@@ -459,7 +459,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (duration < AV_TIME_BASE)
         {
-            Logging::trace(path, "Title %1 Chapter %2: skipping empty chapter", title_idx + 1, chapter_idx + 1);
+            Logging::trace(path, "Title %1 Chapter %2: skipping empty chapter.", title_idx + 1, chapter_idx + 1);
             return true;
         }
 
@@ -516,7 +516,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (!bd_select_title(bd, title_idx))
         {
-            Logging::error(path, "Failed to open Blu-ray title %1", title_idx);
+            Logging::error(path, "The Blu-ray title %1 could not be opened.", title_idx);
             errno = EIO;
             return false;
         }
@@ -637,7 +637,7 @@ int check_bluray(const std::string & path, void *buf, fuse_fill_dir_t filler)
         {
             Logging::trace(_path, "Blu-ray detected.");
             res = parse_bluray(_path, &stbuf, buf, filler);
-            Logging::trace(_path, "Found %1 titles.", res);
+            Logging::trace(_path, "%1 titles were discovered.", res);
         }
         else
         {

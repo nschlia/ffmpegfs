@@ -87,7 +87,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
 
     if (m_ci[index].m_fd != -1)
     {
-        Logging::trace(m_ci[index].m_cachefile, "Cache file already open.");
+        Logging::trace(m_ci[index].m_cachefile, "Cache file is already open.");
         // Already open
         return true;
     }
@@ -135,14 +135,14 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
     if (m_ci[index].m_flags)
     {
-        Logging::trace(m_ci[index].m_cachefile, "Cache file still in use while trying to close. Currently open: %1", m_cur_open);
+        Logging::trace(m_ci[index].m_cachefile, "While attempting to close, the cache file is still in use. Currently open: %1", m_cur_open);
         return true;
     }
 
     if (m_ci[index].m_fd == -1)
     {
         // Already closed
-        Logging::trace(m_ci[index].m_cachefile, "No need to close unopened cache file. Currenly open: %1", m_cur_open);
+        Logging::trace(m_ci[index].m_cachefile, "No need to close the unopened cache file. Currently open: %1", m_cur_open);
         return true;
     }
 
@@ -214,7 +214,7 @@ bool Buffer::init(bool erase_cache)
 
         if (cachefile == nullptr)
         {
-            Logging::error(m_ci[0].m_cachefile, "Error opening cache file: Out of memory");
+            Logging::error(m_ci[0].m_cachefile, "Error opening the cache file: out of memory.");
             errno = ENOMEM;
             throw false;
         }
@@ -355,7 +355,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
         *fd = ::open(filename.c_str(), O_CREAT | O_RDWR | (truncate ? O_TRUNC : 0), static_cast<mode_t>(0644));
         if (*fd == -1)
         {
-            Logging::error(filename, "Error opening cache file: (%1) %2", errno, strerror(errno));
+            Logging::error(filename, "The cache file could not be opened due to an error: (%1) %2", errno, strerror(errno));
             throw false;
         }
 

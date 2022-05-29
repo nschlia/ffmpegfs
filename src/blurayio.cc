@@ -115,20 +115,20 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
     if (title_count == 0)
     {
-        Logging::error(bdpath, "No titles found.");
+        Logging::error(bdpath, "There were no titles found.");
         return 1;
     }
 
     if (!bd_select_title(m_bd, m_title_idx))
     {
-        Logging::error(bdpath, "Failed to open Blu-ray title %1", m_title_idx);
+        Logging::error(bdpath, "The Blu-ray title No. %1 could not be opened.", m_title_idx);
         return 1;
     }
     ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
 
     if (m_angle_idx >= ti->angle_count)
     {
-        Logging::warning(bdpath, "Invalid angle %1 > angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
+        Logging::warning(bdpath, "The angle %1 is greate than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
         m_angle_idx = 0;
     }
 
@@ -136,7 +136,7 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
 
     if (m_chapter_idx >= ti->chapter_count)
     {
-        Logging::error(bdpath, "First chapter %1 > chapter count %2", m_chapter_idx + 1, ti->chapter_count);
+        Logging::error(bdpath, "The first chapter %1 is greater than the chapter count %2.", m_chapter_idx + 1, ti->chapter_count);
         return 1;
     }
 
@@ -208,7 +208,7 @@ size_t BlurayIO::read(void * data, size_t size)
         int res = bd_read(m_bd, m_data, maxsize);
         if (res < 0)
         {
-            Logging::error(path(), "bd_read fail");
+            Logging::error(path(), "bd_read has failed.");
             return 0;
         }
 

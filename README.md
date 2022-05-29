@@ -22,7 +22,7 @@ News
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream, another an audio stream only, the resulting files will be webm (for the video input) and mp3 for the audio only file.
 * **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Added --no_subtitles option to turn subtitles off.
 * **Bugfix:** Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.
-* **Bugfix:** Fix crash when DVD/Bluray should be transcoded to audio only.
+* **Bugfix:** Fix crash when DVD/Blu-ray should be transcoded to audio only.
 * **Bugfix:** If track performer is empty, try the album performer instead.
 * **Bugfix:** Failing to mount Fuse during "make check" went unnoticed as the result code (which was supposed to be 99) was actually 0. Now nonzero is returned.
 * **Bugfix:** The Docker build command contained a "make check" which actually failed altogether. Step has been removed, "make check" mounts Fuse but this requires privileges that do not exist during "docker build".
@@ -40,7 +40,7 @@ News
 * **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
 * **Bugfix:** [Issue #130](https://github.com/nschlia/ffmpegfs/issues/130): Fix file sizes can be incorrectly reported by ls but are correct when data is read.
 * **Bugfix:** Duration was not saved in cache SQLite database.
-* **Bugfix:** [Issue #131](https://github.com/nschlia/ffmpegfs/issues/131): Sometimes video parameters for some Bluray or DVD chapters cannot be detected by the FFmpeg API. Transcode then fails - fixed by using data from the Bluray directory or DVD IFO instead.
+* **Bugfix:** [Issue #131](https://github.com/nschlia/ffmpegfs/issues/131): Sometimes video parameters for some Blu-ray or DVD chapters cannot be detected by the FFmpeg API. Transcode then fails - fixed by using data from the Blu-ray directory or DVD IFO instead.
 * The lowest supported FFmpeg API version has been raised to 4.1.8 "al-Khwarizmi".
 * Dropped libavresample support, library was removed from the FFmpeg API after 3.4.9.
 * Deprecated previous channel layout API based on uint64 bitmasks.
@@ -279,7 +279,7 @@ If your system supports VAAPI:
 
 * It could be possible that the rendering device on your system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set it.
 
-On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable. 
+On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable. 
 
 The decoding part is a bit tricky. If encoding is set to hardware, and this hardware is there and capable of encoding, it will work. If decoding in hardware is possible, it depends on the source file. Therefore, the file needs to be checked first and then decided if hardware acceleration can be used or if a fallback to software is required. FFmpeg requires that to be set via command line, but FFmpegfs must be able to decide that automatically.
 
@@ -366,7 +366,7 @@ Depending on the machine speed, this will take quite a while. After the command 
           nschlia/ffmpegfs \
           -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 
-Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired. 
+Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired. 
 
 Auto Copy
 ---------
@@ -397,7 +397,7 @@ To use the new feature, simply specify a video and audio file type, separated by
 1. The first format must be a video codec, and the second must be an audio codec. For example, *--desttype=wav+mp4* is invalid, and instead it should be *--desttype=mp4+wav*.
 2. Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.
 
-The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
+The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
 
 Transcode To Frame Images
 -------------------------
@@ -520,7 +520,7 @@ About Output Formats
 
 A few words about the supported output formats: There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
 
-MP4 files are special, though, as regular MP4s are not quite suited for live streaming. The reason is that the start block of an MP4 contains a field with the size of the compressed data section. Suffice it to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated. 
+MP4 files are special, though, as regular MP4s are not quite suited for live streaming. The reason is that the start block of an MP4 contains a field with the size of the compressed data section. Suffice it to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated. 
 
 For a continuous live stream, that size will never be known. For our transcoded files, one would have to wait for the whole file to be recoded to get that value. If that was not enough, some important pieces of information are located at the end of the file, including meta tags with artist, album, etc. Also, there is only one big data block, a fact that hampers random seeking inside the contents without having the complete data section.
 
@@ -543,7 +543,7 @@ Fixing Problems
 
 ### General problems accessing a file
 
-Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get an "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system. 
+Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get an "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system. 
 
 What you will have to do is refer to the syslog, system journal, or to the FFmpeg log itself, optionally at a higher verbosity. If you are unable to resolve the problem yourself, feel free to create [an issue](https://github.com/nschlia/ffmpegfs/issues), stating what you have done and what has happened. Do not forget to add logs (preferably at a higher verbosity) and, if possible, a description of how to recreate the issue. A demo file that causes the error would be helpful as well.
 
@@ -575,7 +575,7 @@ Some copy tools do not go along very well with dynamically generated files, as i
 
 Under Linux, it is best to use (optionally with the -r parameter)
 
-        cp -uv /path/to/source /path/to/target
+        cp -uv /path/to/source /path/to/target
 
 This will copy all missing or changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Tools like Beyond Compare may only copy the predicted size first and may not respond to size changes.
 
@@ -605,7 +605,7 @@ Development
 
 FFmpegfs uses Git for revision control. You can obtain the full repository here:
 
-    git clone https://github.com/nschlia/ffmpegfs.git
+    git clone https://github.com/nschlia/ffmpegfs.git
 
 FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:
 

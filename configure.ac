@@ -250,5 +250,5 @@ AC_OUTPUT
 AM_COND_IF([HINT_LIBDVD],
            [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdread development packages. See INSTALL.md for details.])])
 AM_COND_IF([HINT_LIBBLURAY],
-           [AC_MSG_NOTICE([HINT: To enable bluray suport install the libbluray development package. See INSTALL.md for details.])])
+           [AC_MSG_NOTICE([HINT: To enable Blu-ray suport install the libbluray development package. See INSTALL.md for details.])])
 

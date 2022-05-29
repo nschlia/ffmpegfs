@@ -348,7 +348,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         res = check_bluray(origpath, buf, filler);
         if (res != 0)
         {
-            // Found Bluray or error reading Bluray
+            // Found Blu-ray or error reading Blu-ray
             return (res >= 0 ?  0 : res);
         }
 #endif // USE_LIBBLURAY
@@ -688,7 +688,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 #ifdef USE_LIBBLURAY
                     if (res <= 0)
                     {
-                        // Returns -errno or number or titles on Bluray
+                        // Returns -errno or number or titles on Blu-ray
                         res = check_bluray(pathonly);
                     }
 #endif // USE_LIBBLURAY
@@ -781,7 +781,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                     if (res <= 0)
                     {
-                        // No Bluray/DVD/VCD found or error reading disk
+                        // No Blu-ray/DVD/VCD found or error reading disk
                         return (!res ?  error : res);
                     }
                 }
@@ -790,7 +790,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
                 if (virtualfile == nullptr)
                 {
-                    // Not a DVD/VCD/Bluray file or cue sheet track
+                    // Not a DVD/VCD/Blu-ray file or cue sheet track
                     return -ENOENT;
                 }
 

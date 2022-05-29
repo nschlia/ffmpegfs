@@ -1805,7 +1805,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
         std::printf("%-20s: %s\n", "DVD Library", "enabled");
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        std::printf("%-20s: %s\n", "Bluray Library", BLURAY_VERSION_STRING);
+        std::printf("%-20s: %s\n", "Blu-ray Library", BLURAY_VERSION_STRING);
 #endif // USE_LIBBLURAY
 
         fuse_opt_add_arg(outargs, "--version");

@@ -23,7 +23,7 @@
  * @file fileio.h
  * @brief FileIO class
  *
- * This class allows transparent access to files from DVD, Bluray, Video CD or
+ * This class allows transparent access to files from DVD, Blu-ray, Video CD or
  * to regular disk files.
  *
  * @ingroup ffmpegfs
@@ -95,7 +95,7 @@ typedef enum VIRTUALTYPE
     VIRTUALTYPE_DVD,                                                /**< @brief DVD file */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    VIRTUALTYPE_BLURAY,                                             /**< @brief Bluray disk file */
+    VIRTUALTYPE_BLURAY,                                             /**< @brief Blu-ray disk file */
 #endif // USE_LIBBLURAY
 
     VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
@@ -192,7 +192,7 @@ typedef struct VIRTUALFILE
     }                       m_dvd;                                  /**< @brief DVD title/chapter info */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    /** @brief Extra value structure for Bluray disks
+    /** @brief Extra value structure for Blu-ray disks
      *  @note Only available if compiled with -DUSE_LIBBLURAY
      */
     struct BLURAY_CHAPTER
@@ -207,7 +207,7 @@ typedef struct VIRTUALFILE
         uint32_t            m_playlist_no;                          /**< @brief Playlist number (1...n) */
         unsigned            m_chapter_no;                           /**< @brief Chapter number (1...n) */
         unsigned            m_angle_no;                             /**< @brief Selected angle number (1...n) */
-    }                       m_bluray;                               /**< @brief Bluray title/chapter info */
+    }                       m_bluray;                               /**< @brief Blu-ray title/chapter info */
 #endif // USE_LIBBLURAY
     /** @brief Extra value structure for cue sheets
      */
@@ -236,13 +236,13 @@ typedef struct VIRTUALFILE
     }                       m_cuesheet_track;                       /**< @brief Cue sheet data for track */
     std::string             m_cuesheet;                             /**< @brief Cue sheet file contents for physical file */
 
-    // These may be filled in for DVD/Bluray
-    int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Bluray directory */
-    int                     m_sample_rate;                          /**< @brief Audio sample rate - filled in for DVD/Bluray directory */
+    // These may be filled in for DVD/Blu-ray
+    int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Blu-ray directory */
+    int                     m_sample_rate;                          /**< @brief Audio sample rate - filled in for DVD/Blu-ray directory */
 
-    int                     m_width;                                /**< @brief Video width - filled in for DVD/Bluray directory */
-    int                     m_height;                               /**< @brief Video height - filled in for DVD/Bluray directory */
-    AVRational              m_framerate;                            /**< @brief Video frame rate - filled in for DVD/Bluray directory */
+    int                     m_width;                                /**< @brief Video width - filled in for DVD/Blu-ray directory */
+    int                     m_height;                               /**< @brief Video height - filled in for DVD/Blu-ray directory */
+    AVRational              m_framerate;                            /**< @brief Video frame rate - filled in for DVD/Blu-ray directory */
 
 } VIRTUALFILE;
 typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */

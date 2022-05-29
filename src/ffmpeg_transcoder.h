@@ -201,7 +201,7 @@ public:
      * Collect information for the file (duration, bitrate, etc.).
      * After this function, the other methods can be used to process the file.
      *
-     * @param[in,out] virtualfile - Virtualfile object for desired file. May be a physical file, a DVD, Bluray or video CD
+     * @param[in,out] virtualfile - Virtualfile object for desired file. May be a physical file, a DVD, Blu-ray or video CD
      * @param[in,out] fio - Pass an already open fileio object. Normally the file is opened, but if this parameter is not nullptr the already existing object is used.
      *
      * @return On success returns 0; on error negative AVERROR.
@@ -736,7 +736,7 @@ protected:
     /**
      * @brief Custom read function for FFmpeg
      *
-     * Read from virtual files, may be a physical file but also a DVD, VCD or Bluray chapter.
+     * Read from virtual files, may be a physical file but also a DVD, VCD or Blu-ray chapter.
      *
      * @param[in] opaque - Payload given to FFmpeg, basically the FileIO object
      * @param[in] data - Returned data read from file.

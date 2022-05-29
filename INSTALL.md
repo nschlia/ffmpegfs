@@ -69,7 +69,7 @@ For optional DVD support, you need the following libraries:
 * libdvdread (>= 5.0.0)
 * libdvdnav (>= 5.0.0)
 
-For optional Bluray support, you need the following libraries:
+For optional Blu-ray support, you need the following libraries:
 
 * libbluray (>= 0.6.2)
 
@@ -87,7 +87,7 @@ To get DVD support:
 
     apt-get install libdvdread-dev libdvdnav-dev
 
-To get Bluray support:
+To get Blu-ray support:
 
     apt-get install libbluray-dev
 
@@ -109,7 +109,7 @@ To get DVD support:
 
     zypper install libdvdread-devel libdvdnav-devel
 
-To get Bluray support:
+To get Blu-ray support:
 
     zypper install libbluray-devel
 
@@ -125,7 +125,7 @@ To get DVD support:
 
     yum install libdvdread-devel libdvdnav-devel
 
-To get Bluray support:
+To get Blu-ray support:
 
     yum install libbluray-devel
 
@@ -273,7 +273,7 @@ For a minimum build that contains all the libraries required by FFmpegfs and SSL
 
 Fix the complaints by configure, i.e., installing the required development packages, then
 
-    make install
+    make install
 
 This works for me. Decoding runs much faster with these settings.
 
@@ -379,7 +379,7 @@ When you see this message while accessing blurays:
     bdj.c:340: libbluray-j2se-0.9.3.jar not found.
     bdj.c:466: BD-J check: Failed to load libbluray.jar
 
-To get rid of this message, simply install "libbluray-bdj". This will make it go away. Though not necessary, as to read the bluray tracks, Java support is not required, so this is simply cosmetical.
+To get rid of this message, simply install "libbluray-bdj". This will make it go away. Though not necessary, as to read the Blu-ray tracks, Java support is not required, so this is simply cosmetical.
 
 Copyright
 ---------

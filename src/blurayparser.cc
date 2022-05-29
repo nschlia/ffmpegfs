@@ -23,7 +23,7 @@
 
 /**
  * @file blurayparser.cc
- * @brief Bluray disk parser implementation
+ * @brief Blu-ray disk parser implementation
  *
  * @ingroup ffmpegfs
  *
@@ -52,8 +52,8 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 static int  parse_bluray(const std::string & path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler);
 
 /**
- * @brief Get information about Bluray stream
- * @param[in] path - Path to Bluray disk.
+ * @brief Get information about Blu-ray stream
+ * @param[in] path - Path to Blu-ray disk.
  * @param[in] ss - BLURAY_STREAM_INFO object.
  * @param[out] channels - Number of audio channels in stream.
  * @param[out] sample_rate - Sample rate of stream.
@@ -182,8 +182,8 @@ static bool audio_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
 }
 
 /**
- * @brief Get information about Bluray stream
- * @param[in] path - Path to Bluray disk.
+ * @brief Get information about Blu-ray stream
+ * @param[in] path - Path to Blu-ray disk.
  * @param[in] ss - BLURAY_STREAM_INFO object.
  * @param[out] width - Width of video stream.
  * @param[out] height - Height of video stream.
@@ -416,17 +416,17 @@ static int parse_find_best_video_stream()
 }
 
 /**
- * @brief Create a virtual file entry of a bluray chapter or title.
- * @param[in] bd - Bluray disk clip info.
- * @param[in] ti - Bluray disk title info.
+ * @brief Create a virtual file entry of a Blu-ray chapter or title.
+ * @param[in] bd - Blu-ray disk clip info.
+ * @param[in] ti - Blu-ray disk title info.
  * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
  * @param[in, out] filler - Function to add an entry in a readdir() operation (see https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660)
  * @param[in] is_main_title - true if title_idx is the main title
  * @param[in] full_title - If true, create virtual file of all title. If false, include single chapter only.
- * @param[in] title_idx - Zero-based title index on Bluray
- * @param[in] chapter_idx - Zero-based chapter index on Bluray
+ * @param[in] title_idx - Zero-based title index on Blu-ray
+ * @param[in] chapter_idx - Zero-based chapter index on Blu-ray
  * @note buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in.
  * @return On error, returns false. On success, returns true.
  */
@@ -496,7 +496,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         // break;
     }
 
-    // Bluray is video format anyway
+    // Blu-ray is video format anyway
     virtualfile->m_format_idx           = 0;
     // Mark title/chapter/angle
     virtualfile->m_full_title           = full_title;
@@ -516,7 +516,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         if (!bd_select_title(bd, title_idx))
         {
-            Logging::error(path, "Failed to open bluray title %1", title_idx);
+            Logging::error(path, "Failed to open Blu-ray title %1", title_idx);
             errno = EIO;
             return false;
         }
@@ -528,7 +528,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
         if (duration)
         {
             /**
-             * @todo We actually calculate the overall Bluray bitrate here, including all audio
+             * @todo We actually calculate the overall Blu-ray bitrate here, including all audio
              * streams, not just the video bitrate. This should be the video bitrate alone. We
              * should also calculate the audio bitrate for the selected stream.
             */
@@ -561,7 +561,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 }
 
 /**
- * @brief Parse Bluray directory and get all Bluray titles and chapters as virtual files.
+ * @brief Parse Blu-ray directory and get all Blu-ray titles and chapters as virtual files.
  * @param[in] path - Path to check.
  * @param[in] statbuf - File status structure of original file.
  * @param[in, out] buf - The buffer passed to the readdir() operation.
@@ -580,7 +580,7 @@ static int parse_bluray(const std::string & path, const struct stat * statbuf, v
 
     bd_dir = path.c_str();
 
-    Logging::debug(path, "Parsing Bluray.");
+    Logging::debug(path, "Parsing Blu-ray.");
 
     bd = bd_open(bd_dir, nullptr);
 
@@ -635,7 +635,7 @@ int check_bluray(const std::string & path, void *buf, fuse_fill_dir_t filler)
     {
         if (!check_path(_path))
         {
-            Logging::trace(_path, "Bluray detected.");
+            Logging::trace(_path, "Blu-ray detected.");
             res = parse_bluray(_path, &stbuf, buf, filler);
             Logging::trace(_path, "Found %1 titles.", res);
         }

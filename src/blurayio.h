@@ -21,7 +21,7 @@
 
 /**
  * @file blurayio.h
- * @brief Bluray I/O
+ * @brief Blu-ray I/O
  *
  * This is only available if built with -DUSE_LIBBLURAY parameter.
  *
@@ -43,7 +43,7 @@
 typedef struct bluray BLURAY;               /**< @brief Forward declaration of libbluray handle */
 
 /**
- * @brief Bluray I/O class
+ * @brief Blu-ray I/O class
  */
 class BlurayIO : public FileIO
 {
@@ -138,7 +138,7 @@ private:
     void            _close();
 
 protected:
-    BLURAY *        m_bd;                                       /**< @brief Bluray disk handle */
+    BLURAY *        m_bd;                                       /**< @brief Blu-ray disk handle */
 
     bool            m_is_eof;                                   /**< @brief true if at end of virtual file */
     int             m_errno;                                    /**< @brief Last errno */

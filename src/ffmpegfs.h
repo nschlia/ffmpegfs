@@ -308,7 +308,7 @@ bool            transcoder_cache_clear(void);
 /**
  * @brief Add new virtual file to internal list.
  *
- * For Bluray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
+ * For Blu-ray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
  * The input file is handled by the BlurayIO or VcdIO classes.
  * For cue sheets, the original (huge) input file is used. Start positions are sought, end positions
  * reported as EOF.
@@ -353,7 +353,7 @@ LPVIRTUALFILE   find_file(const std::string &virtfile);
 LPVIRTUALFILE   find_file_from_orig(const std::string &origfile);
 /**
  * @brief Check if path has already been parsed.
- * Only useful if for DVD, Bluray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.
+ * Only useful if for DVD, Blu-ray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.
  * @param[in] path - Path to parse.
  * @return Returns true if path was found; false if not.
  */

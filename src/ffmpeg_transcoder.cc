@@ -5402,7 +5402,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                 while (!m_frame_map.empty())
                 {
                     // Although I abhore "auto", it seems that nodes are declared slightly different throughout
-                    // serveral std::map implementations. To avoid #ifdef orgies, I resign: Using "auto" here
+                    // several std::map implementations. To avoid #ifdef orgies, I resign: Using "auto" here
                     // is much more coherent.
                     auto nh = m_frame_map.extract(m_frame_map.cbegin());
                     const MULTIFRAME & multiframe = nh.mapped();

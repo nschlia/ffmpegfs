@@ -592,7 +592,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         ret = av_seek_frame(m_in.m_format_ctx, -1, m_virtualfile->m_cuesheet_track.m_start, 0);
         if (ret < 0)
         {
-            Logging::error(filename(), "Failed to seek track start (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "The track start was nout found (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
     }
@@ -613,7 +613,7 @@ int FFmpeg_Transcoder::open_bestmatch_video()
         ret = open_bestmatch_decoder(m_in.m_format_ctx, &codec_ctx, &m_in.m_video.m_stream_idx, AVMEDIA_TYPE_VIDEO);
         if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
         {
-            Logging::error(filename(), "Failed to open video codec (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "The video codec could not be opened (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
         m_in.m_video.set_codec_ctx(codec_ctx);
@@ -695,7 +695,7 @@ int FFmpeg_Transcoder::open_bestmatch_audio()
     ret = open_bestmatch_decoder(m_in.m_format_ctx, &codec_ctx, &m_in.m_audio.m_stream_idx, AVMEDIA_TYPE_AUDIO);
     if (ret < 0 && ret != AVERROR_STREAM_NOT_FOUND)    // AVERROR_STREAM_NOT_FOUND is not an error
     {
-        Logging::error(filename(), "Failed to open audio codec (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(filename(), "The audio codec could not be opened (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
     m_in.m_audio.set_codec_ctx(codec_ctx);
@@ -749,7 +749,7 @@ int FFmpeg_Transcoder::open_subtitles()
         ret = open_decoder(m_in.m_format_ctx, &codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_SUBTITLE);
         if (ret < 0)
         {
-            Logging::error(filename(), "Failed to open subtitle codec (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "The subtitle codec could not be opened (error '%1').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
@@ -789,7 +789,7 @@ int FFmpeg_Transcoder::open_albumarts()
                 ret = open_decoder(m_in.m_format_ctx, &input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
                 {
-                    Logging::error(filename(), "Failed to open album art codec (error '%1').", ffmpeg_geterror(ret).c_str());
+                    Logging::error(filename(), "The album art codec could not be opened (error '%1').", ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
 
@@ -898,7 +898,7 @@ int FFmpeg_Transcoder::open_bestmatch_decoder(AVFormatContext *format_ctx, AVCod
     {
         if (ret != AVERROR_STREAM_NOT_FOUND)    // Not an error
         {
-            Logging::error(filename(), "Could not find %1 stream in input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
+            Logging::error(filename(), "Could not find a %1 stream in the input file (error '%2').", get_media_type_string(type), ffmpeg_geterror(ret).c_str());
         }
         return ret;
     }
@@ -964,7 +964,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
         input_codec_ctx = avcodec_alloc_context3(nullptr);
         if (input_codec_ctx == nullptr)
         {
-            Logging::error(filename(), "Could not allocate a decoding context.");
+            Logging::error(filename(), "Decoding context could not be allocated.");
             return AVERROR(ENOMEM);
         }
 
@@ -1035,11 +1035,11 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
                     if (input_codec == nullptr)
                     {
-                        Logging::error(filename(), "Could not find decoder '%1'.", hw_decoder_codec_name.c_str());
+                        Logging::error(filename(), "Decoder '%1' could not be found.", hw_decoder_codec_name.c_str());
                         return AVERROR(EINVAL);
                     }
 
-                    Logging::debug(filename(), "Hardware decoder acceleration enabled. Codec '%1'.", input_codec->name);
+                    Logging::debug(filename(), "Hardware decoder acceleration is enabled with codec '%1'.", input_codec->name);
 
                     m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
                 }
@@ -1680,7 +1680,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             return AVERROR(EINVAL);
         }
 
-        Logging::debug(destname(), "Hardware encoder acceleration enabled. Codec '%1'.", output_codec->name);
+        Logging::debug(destname(), "Hardware encoder acceleration enabled with codec '%1'.", output_codec->name);
 
         m_hwaccel_enc_mode = HWACCELMODE_ENABLED;
     }

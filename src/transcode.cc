@@ -99,13 +99,13 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
             {
                 if (fuse_interrupted())
                 {
-                    Logging::info(cache_entry->destname(), "Client has gone away.");
+                    Logging::info(cache_entry->destname(), "The client has gone away.");
                     throw false;
                 }
 
                 if (thread_exit)
                 {
-                    Logging::warning(cache_entry->destname(), "Received thread exit.");
+                    Logging::warning(cache_entry->destname(), "Thread exit was received.");
                     throw false;
                 }
 
@@ -160,7 +160,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transco
 
     if (!cache_entry->m_buffer->reserve(cache_entry->m_cache_info.m_encoded_filesize))
     {
-        Logging::debug(transcoder.destname(), "Unable to truncate buffer.");
+        Logging::debug(transcoder.destname(), "Unable to truncate the buffer.");
     }
 
     if (!transcoder.is_multiformat())
@@ -530,7 +530,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                         check_ignore(cache_entry->size(), offset) &&
                         ((offset + len) > (cache_entry->size())))
                 {
-                    Logging::warning(cache_entry->destname(), "Ignoring Windows' groundless access to last 8K boundary of file.");
+                    Logging::warning(cache_entry->destname(), "Ignoring Windows' groundless access to the last 8K boundary of the file.");
 
                     errno = 0;
                     *bytes_read = 0;  // We've read nothing

@@ -266,7 +266,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_inhibit_stream_msk(0)
 {
 #pragma GCC diagnostic pop
-    Logging::trace(nullptr, "FFmpeg trancoder ready to initialise.");
+    Logging::trace(nullptr, "The FFmpeg trancoder is ready to initialise.");
 
     memset(&m_mtime, 0, sizeof(m_mtime));
 
@@ -285,7 +285,7 @@ FFmpeg_Transcoder::~FFmpeg_Transcoder()
     // Close files and resample context
     close();
 
-    Logging::trace(nullptr, "FFmpeg trancoder object destroyed.");
+    Logging::trace(nullptr, "The FFmpeg transcoder object was destroyed.");
 }
 
 bool FFmpeg_Transcoder::is_video() const
@@ -332,7 +332,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (is_open())
     {
-        Logging::warning(filename(), "File is already open.");
+        Logging::warning(filename(), "The file is already open.");
         return 0;
     }
 
@@ -396,14 +396,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     m_in.m_format_ctx = avformat_alloc_context();
     if (m_in.m_format_ctx == nullptr)
     {
-        Logging::error(filename(), "Out of memory opening file: Unable to allocate format context.");
+        Logging::error(filename(), "Out of memory opening file: format context could not be allocated.");
         return AVERROR(ENOMEM);
     }
 
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer == nullptr)
     {
-        Logging::error(filename(), "Out of memory opening file: Unable to allocate I/O buffer.");
+        Logging::error(filename(), "Out of memory opening file: I/O buffer could not be allocated.");
         avformat_free_context(m_in.m_format_ctx);
         m_in.m_format_ctx = nullptr;
         return AVERROR(ENOMEM);
@@ -428,21 +428,21 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #ifdef USE_LIBVCD
     if (m_virtualfile->m_type == VIRTUALTYPE_VCD)
     {
-        Logging::debug(filename(), "Forcing mpeg format for VCD source to avoid misdetections.");
+        Logging::debug(filename(), "To avoid misdetection, forcing MPEG format for VCD source.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
     {
-        Logging::debug(filename(), "Forcing mpeg format for DVD source to avoid misdetections.");
+        Logging::debug(filename(), "To avoid misdetection, forcing MPEG format for DVD source.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
     {
-        Logging::debug(filename(), "Forcing mpegts format for Blu-ray source to avoid misdetections.");
+        Logging::debug(filename(), "To avoid misdetection, forcing MPEGTS format for Blu-ray source.");
         infmt = av_find_input_format("mpegts");
     }
 #endif // USE_LIBBLURAY
@@ -555,7 +555,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     if (!stream_exists(m_in.m_audio.m_stream_idx) && !stream_exists(m_in.m_video.m_stream_idx))
     {
-        Logging::error(filename(), "File contains neither a video nor an audio stream.");
+        Logging::error(filename(), "The file contains neither a video nor an audio stream.");
         return AVERROR(EINVAL);
     }
 
@@ -639,12 +639,12 @@ int FFmpeg_Transcoder::open_bestmatch_video()
                     Logging::error(destname(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
-                Logging::debug(destname(), "Hardware encoder acceleration and frame buffering active using codec '%1'.", hw_encoder_codec_name.c_str());
+                Logging::debug(destname(), "Hardware encoder acceleration and frame buffering are active using the codec '%1'.", hw_encoder_codec_name.c_str());
             }
             else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
             {
                 // No hardware acceleration, fallback to software,
-                Logging::debug(destname(), "Hardware encoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+                Logging::debug(destname(), "Hardware encoder frame buffering %1 is not supported by the codec. '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
             }
             else if (!hw_encoder_codec_name.empty())
             {
@@ -784,7 +784,7 @@ int FFmpeg_Transcoder::open_albumarts()
                 AVCodecContext * input_codec_ctx;
                 int ret;
 
-                Logging::trace(filename(), "Found album art");
+                Logging::trace(filename(), "Found album art.");
 
                 ret = open_decoder(m_in.m_format_ctx, &input_codec_ctx, stream_idx, nullptr, AVMEDIA_TYPE_VIDEO);
                 if (ret < 0)
@@ -844,7 +844,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
         if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate))
         {
             // Bit rate changed, no auto copy
-            Logging::info(destname(), "Bit rate changed, no auto copy possible.");
+            Logging::info(destname(), "Because the bit rate has changed, no auto copy is possible.");
             return false;
         }
     }
@@ -858,11 +858,11 @@ int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 
     m_out.m_filetype    = m_current_format->filetype();
 
-    Logging::debug(destname(), "Opening output file.");
+    Logging::debug(destname(), "Opening the output file.");
 
     if (!stream_exists(m_in.m_audio.m_stream_idx) && m_current_format->video_codec() == AV_CODEC_ID_NONE)
     {
-        Logging::error(destname(), "Unable to transcode, source contains no audio stream, but target just supports audio.");
+        Logging::error(destname(), "Unable to transcode. The source contains no audio stream, but the target just supports audio.");
         m_virtualfile->m_flags |= VIRTUALFLAG_HIDDEN;   // Hide file from now on
         return AVERROR(ENOENT);                         // Report file not found
     }
@@ -1009,7 +1009,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 if (m_hwaccel_enable_dec_buffering)
                 {
                     // Hardware buffers available, enabling decoder hardware acceleration.
-                    Logging::info(filename(), "Hardware decoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
+                    Logging::info(filename(), "Hardware decoder frame buffering %1 is enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
                     ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
                     if (ret < 0)
                     {
@@ -1126,14 +1126,14 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     output_codec = avcodec_find_encoder(m_current_format->video_codec());
     if (output_codec == nullptr)
     {
-        Logging::error(destname(), "Codec not found");
+        Logging::error(destname(), "Codec not found.");
         return AVERROR(EINVAL);
     }
 
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not allocate video codec context");
+        Logging::error(destname(), "The video codec context could not be allocated.");
         return AVERROR(ENOMEM);
     }
 
@@ -1173,7 +1173,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
             break;
         }
         }
-        Logging::debug(destname(), "No best match output pixel format found, using default: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
+        Logging::debug(destname(), "There was no best match output pixel format found, so we used the default: %1", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
     }
     else
     {
@@ -1215,7 +1215,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not open image codec.");
+        Logging::error(destname(), "The image codec could not be opened.");
         return ret;
     }
 
@@ -1275,7 +1275,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     if (!m_out.m_video_pts && is_hls())
     {
         m_current_segment = 1;
-        Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
+        Logging::info(destname(), "Starting HLS segment no. %1 of %2.", m_current_segment, m_virtualfile->get_segment_count());
     }
 
     while (true)
@@ -1637,7 +1637,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                     SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
         if (m_sws_ctx == nullptr)
         {
-            Logging::error(destname(), "Could not allocate scaling/conversion context.");
+            Logging::error(destname(), "Could not allocate a scaling/conversion context.");
             return AVERROR(ENOMEM);
         }
     }
@@ -1696,7 +1696,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not alloc an encoding context.");
+        Logging::error(destname(), "Could not allocate an encoding context.");
         return AVERROR(ENOMEM);
     }
 
@@ -1809,11 +1809,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 else
                 {
                     // Should never happen... There must at least be one.
-                    Logging::error(destname(), "Audio sample rate to %1 not supported by codec.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+                    Logging::error(destname(), "The codec does not support an audio sample rate of %1.", format_samplerate(output_codec_ctx->sample_rate).c_str());
                     return AVERROR(EINVAL);
                 }
 
-                Logging::debug(destname(), "Changed audio sample rate from %1 to %2 because requested value is not supported by codec.",
+                Logging::debug(destname(), "Because the requested value is not supported by the codec, the audio sample rate was changed from %1 to %2.",
                                format_samplerate(orig_sample_rate).c_str(),
                                format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
@@ -1893,7 +1893,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         if (m_hwaccel_enable_enc_buffering && m_hwaccel_enc_device_ctx != nullptr)
         {
-            Logging::debug(destname(), "Hardware encoder init: Creating new hardware frame context for %1 encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+            Logging::debug(destname(), "Hardware encoder init: Creating a new hardware frame context for the encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
 
             m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, false);
 

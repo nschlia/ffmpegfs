@@ -90,7 +90,7 @@ int VcdIO::open(LPVIRTUALFILE virtualfile)
 
     VCDUTILS::locate_video(path(), m_track_no, src_filename);
 
-    Logging::info(src_filename.c_str(), "Opening input VCD.");
+    Logging::info(src_filename.c_str(), "Opening the input VCD.");
 
     m_fpi = fopen(src_filename.c_str(), "rb");
 

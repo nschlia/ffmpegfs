@@ -420,7 +420,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                                 // makes no sense to transcode anyway.
                                 if (!newvirtualfile->m_has_audio)
                                 {
-                                    Logging::debug(origfile, "Unable to transcode, source has no audio stream, but target just supports audio.");
+                                    Logging::debug(origfile, "Unable to transcode. The source has no audio stream, but the target just supports audio.");
                                     flags |= VIRTUALFLAG_HIDDEN;
                                 }
                             }
@@ -2296,7 +2296,7 @@ static int parse_file(LPVIRTUALFILE newvirtualfile)
 
     try
     {
-        Logging::debug(newvirtualfile->m_origfile, "Creating new format context and parsing file");
+        Logging::debug(newvirtualfile->m_origfile, "Creating a new format context and parsing the file.");
 
         res = avformat_open_input(&format_ctx, newvirtualfile->m_origfile.c_str(), nullptr, nullptr);
         if (res)
@@ -2317,7 +2317,7 @@ static int parse_file(LPVIRTUALFILE newvirtualfile)
         if (tag != nullptr)
         {
             // Found cue sheet
-            Logging::trace(newvirtualfile->m_origfile, "Found embedded cue sheet.");
+            Logging::trace(newvirtualfile->m_origfile, "Found an embedded cue sheet.");
 
             newvirtualfile->m_cuesheet = tag->value;
             newvirtualfile->m_cuesheet += "\r\n";                   // cue_parse_string() reports syntax error if string does not end with newline

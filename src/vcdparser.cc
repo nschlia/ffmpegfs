@@ -138,7 +138,7 @@ static int parse_vcd(const std::string & path, const struct stat * statbuf, void
 
     vcd.load_file(path);
 
-    Logging::debug(path, "Parsing Video CD.");
+    Logging::debug(path, "Parsing the Video CD.");
 
     for (int chapter_no = 0; chapter_no < vcd.get_number_of_chapters() && success; chapter_no++)
     {
@@ -174,7 +174,7 @@ int check_vcd(const std::string & path, void *buf, fuse_fill_dir_t filler)
         {
             Logging::trace(_path, "SVCD detected.");
             res = parse_vcd(_path, &stbuf, buf, filler);
-            Logging::trace(nullptr, "Found %1 titles.", res);
+            Logging::trace(nullptr, "%1 titles were discovered.", res);
         }
         else
         {
@@ -189,7 +189,7 @@ int check_vcd(const std::string & path, void *buf, fuse_fill_dir_t filler)
         {
             Logging::trace(_path, "VCD detected.");
             res = parse_vcd(_path, &stbuf, buf, filler);
-            Logging::trace(nullptr, "Found %1 titles.", res);
+            Logging::trace(nullptr, "%1 titles were discovered.", res);
         }
         else
         {

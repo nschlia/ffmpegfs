@@ -79,7 +79,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
     {
         framerate.num = 25;
         framerate.den = 1;
-        Logging::warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for output stream.");
+        Logging::warning(nullptr, "No information about the input framerate is available. Falling back to a default value of 25fps for the output stream.");
     }
 
     // timebase: This is the fundamental unit of time (in seconds) in terms

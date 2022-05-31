@@ -59,6 +59,8 @@ extern "C" {
 #include <locale>
 #include <codecvt>
 #include <vector>
+#include <cstring>
+#include <iterator>
 
 #include <iconv.h>
 #ifdef HAVE_CONFIG_H

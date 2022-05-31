@@ -57,6 +57,7 @@
 #include <list>
 #include <assert.h>
 #include <signal.h>
+#include <cstring>
 
 typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;      /**< @brief Map virtual file names to virtual file objects. */
 typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;     /**< @brief Map source file names to virtual file objects. */

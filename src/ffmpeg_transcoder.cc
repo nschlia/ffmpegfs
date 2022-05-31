@@ -2269,7 +2269,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
 
     if (output_codec == nullptr)
     {
-        Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
+        Logging::error(destname(), "'%1' encoder could not be found.", avcodec_get_name(codec_id));
         return AVERROR(EINVAL);
     }
 
@@ -2284,7 +2284,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not alloc an encoding context for encoder '%1'.", avcodec_get_name(codec_id));
+        Logging::error(destname(), "Could not allocate an encoding context for encoder '%1'.", avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
 
@@ -2412,7 +2412,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_audio.m_stream->codecpar);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
@@ -2438,7 +2438,7 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
         ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_video.m_stream->codecpar);
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not alloc an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
             return ret;
         }
 
@@ -2484,7 +2484,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     output_codec = avcodec_find_encoder(input_codec->id);
     if (output_codec == nullptr)
     {
-        Logging::error(destname(), "Could not find encoder '%1'.", avcodec_get_name(input_codec->id));
+        Logging::error(destname(), "'%1' encoder could not be found.", avcodec_get_name(input_codec->id));
         return AVERROR(EINVAL);
     }
 
@@ -2506,7 +2506,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     output_codec_ctx = avcodec_alloc_context3(output_codec);
     if (output_codec_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not alloc an encoding context.");
+        Logging::error(destname(), "Could not allocate an encoding context.");
         return AVERROR(ENOMEM);
     }
 
@@ -2632,7 +2632,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (m_out.m_format_ctx == nullptr)
     {
-        Logging::error(destname(), "Could not allocate output format context.");
+        Logging::error(destname(), "Could not allocate an output format context.");
         return AVERROR(ENOMEM);
     }
 
@@ -2909,7 +2909,7 @@ int FFmpeg_Transcoder::init_resampler()
                                                   0, nullptr);
         if (m_audio_resample_ctx == nullptr)
         {
-            Logging::error(destname(), "Could not allocate resample context.");
+            Logging::error(destname(), "Could not allocate a resample context.");
             return AVERROR(ENOMEM);
         }
 #endif
@@ -2933,7 +2933,7 @@ int FFmpeg_Transcoder::init_audio_fifo()
     m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
     if (m_audio_fifo == nullptr)
     {
-        Logging::error(destname(), "Could not allocate audio FIFO.");
+        Logging::error(destname(), "Could not allocate an audio FIFO.");
         return AVERROR(ENOMEM);
     }
     return 0;
@@ -3560,7 +3560,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                     if (goto_next_segment(next_segment) && !m_insert_keyframe)
                     {
-                        Logging::debug(destname(), "Force key frame for next segment %1 at PTS %2 %3", next_segment, pts, format_duration(pos).c_str());
+                        Logging::debug(destname(), "Force key frame for next segment %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
 
                         frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
                         frame->pict_type    = AV_PICTURE_TYPE_I;
@@ -3605,7 +3605,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVPacket *pkt, int *decoded)
 
     if (out_stream_idx == INVALID_STREAM)
     {
-        Logging::error(destname(), "INTERNAL ERROR: decode_subtitle()! Unable to map in subtitle stream #%1 to output stream.", it->first);
+        Logging::error(destname(), "INTERNAL ERROR: decode_subtitle()! Unable to map input subtitle stream #%1 to output stream.", it->first);
         throw AVERROR(EINVAL);
     }
 
@@ -3671,7 +3671,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_AUDIO;
 
-                    Logging::trace(destname(), "Buffering audio packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
+                    Logging::trace(destname(), "Buffering audio packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
@@ -3694,7 +3694,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                 {
                     m_inhibit_stream_msk |= FFMPEGFS_VIDEO;
 
-                    Logging::trace(destname(), "Buffering video packets until next segment no. %1 from pos. %2 (%3)", next_segment, pos, format_duration(pos).c_str());
+                    Logging::trace(destname(), "Buffering video packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
                 m_hls_packet_fifo.push(av_packet_clone(pkt));
@@ -3770,7 +3770,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
             m_out.m_audio_pts = ffmpeg_rescale_q(pts, av_get_time_base_q(), m_out.m_audio.m_stream->time_base);
 
-            Logging::debug(destname(), "Reset PTS from audio packet to %1", format_duration(pts).c_str());
+            Logging::debug(destname(), "Reset the PTS from the audio packet to %1.", format_duration(pts).c_str());
         }
 
         if (!m_copy_audio)
@@ -3809,7 +3809,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 
             m_out.m_video_pts = ffmpeg_rescale_q(pts, av_get_time_base_q(), m_out.m_video.m_stream->time_base);
 
-            Logging::debug(destname(), "Reset PTS from video packet to %1", format_duration(pts).c_str());
+            Logging::debug(destname(), "Reset PTS from the video packet to %1.", format_duration(pts).c_str());
         }
 
         if (!m_copy_video)
@@ -4005,7 +4005,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     ret = av_audio_fifo_realloc(m_audio_fifo, av_audio_fifo_size(m_audio_fifo) + frame_size);
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not reallocate audio FIFO.");
+        Logging::error(destname(), "Could not reallocate the audio FIFO.");
         return ret;
     }
 
@@ -4225,7 +4225,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
     if (pkt->pts == AV_NOPTS_VALUE && pkt->dts == AV_NOPTS_VALUE)
     {
         // Normally we have already added the PTS to the frame when it was created. Just in case
-        // this failed, and there are no valid PTS/DTS valuesm we add it here.
+        // this failed, and there are no valid PTS/DTS values, we add it here.
         int64_t duration;
 
         // Some encoders to not produce dts/pts.
@@ -4352,13 +4352,13 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
 
     if (m_current_format == nullptr)
     {
-        Logging::error(destname(), "Internal - missing format.");
+        Logging::error(destname(), "INTERNAL ERROR! Missing format.");
         return AVERROR(EINVAL);
     }
 
     if (m_buffer == nullptr)
     {
-        Logging::error(destname(), "Internal - cache not open.");
+        Logging::error(destname(), "INTERNAL ERROR! Cache not open.");
         return AVERROR(EINVAL);
     }
 
@@ -4568,7 +4568,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                             m_out.m_last_mux_dts != AV_NOPTS_VALUE)
                     {
 
-                        Logging::warning(destname(), "Invalid DTS: %1 PTS: %2 in video output, replacing by guess.", pkt->dts, pkt->pts);
+                        Logging::warning(destname(), "Invalid DTS=%1 PTS=%2 in video output, replacing by guess.", pkt->dts, pkt->pts);
 
                         pkt->pts =
                                 pkt->dts = pkt->pts + pkt->dts + m_out.m_last_mux_dts + 1
@@ -4643,7 +4643,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 
     if (out_streamref == nullptr)
     {
-        Logging::error(destname(), "INTERNAL ERROR: encode_subtitle()! Invalid stream index #%1", out_stream_idx);
+        Logging::error(destname(), "INTERNAL ERROR: encode_subtitle()! Invalid stream index #%1.", out_stream_idx);
         return AVERROR(EINVAL);
     }
 
@@ -4673,7 +4673,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 
         if (subtmp.pts == AV_NOPTS_VALUE)
         {
-            Logging::error(destname(), "Subtitle packets must have a pts (stream index #%1)", out_streamref->m_stream_idx);
+            Logging::error(destname(), "Subtitle packets must have a PTS (stream index #%1).", out_streamref->m_stream_idx);
             throw AVERROR(EINVAL);
         }
 
@@ -4782,7 +4782,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     ret = output_frame.res();
     if (ret < 0)
     {
-        Logging::error(destname(), "Could not read data from audio FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
+        Logging::error(destname(), "Could not read data from the audio FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -4807,11 +4807,11 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     {
         if (ret < 0)
         {
-            Logging::error(destname(), "Could not read data from FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
+            Logging::error(destname(), "Could not read data from the audio FIFO (error '%1').", ffmpeg_geterror(ret).c_str());
         }
         else
         {
-            Logging::error(destname(), "Could not read data from FIFO.");
+            Logging::error(destname(), "Could not read data from the audio FIFO.");
             ret = AVERROR_EXIT;
         }
         return ret;
@@ -5300,11 +5300,9 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
                 if (!finished && (!m_frame_map.empty() && m_frame_map.cbegin()->first + delay > m_frame_map.crbegin()->first))
                 {
-                    //Logging::error(destname(), "%1 %2", m_frame_map.cbegin()->first, m_frame_map.crbegin()->first);
                     return 0;
                 }
 
-                //Logging::error(destname(), "-----> cnt = %1", m_frame_map.size());
                 while (!m_frame_map.empty())
                 {
                     // Take first entry in map
@@ -5317,7 +5315,6 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
                         if (goto_next_segment(next_segment))
                         {
                             // Reached next segment, end current now, and force new.
-                            //Logging::error(destname(), "SKIP!! pos = %1", it->first);
                             m_inhibit_stream_msk = m_active_stream_msk;
                             break;
                         }
@@ -6353,7 +6350,7 @@ void FFmpeg_Transcoder::purge()
 
     if (hls_packets_left)
     {
-        Logging::warning(p, "%1 hls packets left in buffer and not written to target file!", hls_packets_left);
+        Logging::warning(p, "%1 HLS packets left in buffer and not written to target file!", hls_packets_left);
     }
 }
 

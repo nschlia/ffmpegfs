@@ -65,8 +65,9 @@ extern "C" {
 /**
   * @brief Image frame header
   *
-  * This image frame header will always start at a 8K boundary of the cache.
-  * It can be used to find the next image by seeking a 8K block starting with tag.
+  * This image frame header will always start at an 8K boundary of the cache.
+  *
+  * It can be used to find the next image by seeking an 8K block starting with the tag.
   */
 typedef struct IMAGE_FRAME
 {
@@ -158,8 +159,8 @@ typedef struct VIRTUALFILE
     std::vector<char>       m_file_contents;                        /**< @brief Buffer for virtual files */
 
 #ifdef USE_LIBVCD
-    /** @brief Extra value structure for Video CDs
-     *  @note Only available if compiled with -DUSE_LIBVCD
+    /** @brief Extra value structure for Video CDs.
+     *  @note Only available if compiled with -DUSE_LIBVCD.
      */
     struct VCD_CHAPTER
     {
@@ -176,8 +177,8 @@ typedef struct VIRTUALFILE
     }                       m_vcd;                                  /**< @brief S/VCD track/chapter info */
 #endif //USE_LIBVCD
 #ifdef USE_LIBDVD
-    /** @brief Extra value structure for DVDs
-     *  @note Only available if compiled with -DUSE_LIBDVD
+    /** @brief Extra value structure for DVDs.
+     *  @note Only available if compiled with -DUSE_LIBDVD.
      */
     struct DVD_CHAPTER
     {
@@ -192,8 +193,8 @@ typedef struct VIRTUALFILE
     }                       m_dvd;                                  /**< @brief DVD title/chapter info */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    /** @brief Extra value structure for Blu-ray disks
-     *  @note Only available if compiled with -DUSE_LIBBLURAY
+    /** @brief Extra value structure for Blu-ray disks.
+     *  @note Only available if compiled with -DUSE_LIBBLURAY.
      */
     struct BLURAY_CHAPTER
     {
@@ -209,7 +210,7 @@ typedef struct VIRTUALFILE
         unsigned            m_angle_no;                             /**< @brief Selected angle number (1...n) */
     }                       m_bluray;                               /**< @brief Blu-ray title/chapter info */
 #endif // USE_LIBBLURAY
-    /** @brief Extra value structure for cue sheets
+    /** @brief Extra value structure for cue sheets.
      */
     struct CUESHEET_TRACK
     {
@@ -221,7 +222,7 @@ typedef struct VIRTUALFILE
             , m_nextfile(nullptr)
         {}
 
-        int                 m_tracktotal;                           /**< @brief Total number of tracks in cue sheet */
+        int                 m_tracktotal;                           /**< @brief Total number of tracks in cue sheet. */
         int                 m_trackno;                              /**< @brief Track number */
         std::string         m_artist;                               /**< @brief Track artist */
         std::string         m_title;                                /**< @brief Track title */
@@ -233,20 +234,20 @@ typedef struct VIRTUALFILE
         int64_t             m_duration;                             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
 
         VIRTUALFILE*        m_nextfile;                             /**< @brief Next (probable) file to be played. Used for cuesheet lists. */
-    }                       m_cuesheet_track;                       /**< @brief Cue sheet data for track */
-    std::string             m_cuesheet;                             /**< @brief Cue sheet file contents for physical file */
+    }                       m_cuesheet_track;                       /**< @brief Cue sheet data for track. */
+    std::string             m_cuesheet;                             /**< @brief Cue sheet file contents for physical file. */
 
     // These may be filled in for DVD/Blu-ray
-    int                     m_channels;                             /**< @brief Audio channels - filled in for DVD/Blu-ray directory */
-    int                     m_sample_rate;                          /**< @brief Audio sample rate - filled in for DVD/Blu-ray directory */
+    int                     m_channels;                             /**< @brief Audio channels - Filled in for the DVD/Blu-ray directory. */
+    int                     m_sample_rate;                          /**< @brief Audio sample rate - Filled in for the DVD/Blu-ray directory. */
 
-    int                     m_width;                                /**< @brief Video width - filled in for DVD/Blu-ray directory */
-    int                     m_height;                               /**< @brief Video height - filled in for DVD/Blu-ray directory */
-    AVRational              m_framerate;                            /**< @brief Video frame rate - filled in for DVD/Blu-ray directory */
+    int                     m_width;                                /**< @brief Video width - Filled in for the DVD/Blu-ray directory. */
+    int                     m_height;                               /**< @brief Video height - Filled in for the DVD/Blu-ray directory. */
+    AVRational              m_framerate;                            /**< @brief Video frame rate - Filled in for the DVD/Blu-ray directory. */
 
 } VIRTUALFILE;
-typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE */
-typedef VIRTUALFILE *LPVIRTUALFILE;                                 /**< @brief Pointer version of VIRTUALFILE */
+typedef VIRTUALFILE const *LPCVIRTUALFILE;                          /**< @brief Pointer to const version of VIRTUALFILE. */
+typedef VIRTUALFILE *LPVIRTUALFILE;                                 /**< @brief Pointer version of VIRTUALFILE. */
 
 /** @brief Base class for I/O
  */
@@ -266,14 +267,14 @@ public:
      *
      * Free with delete if no longer required.
      *
-     * @param[in] type - VIRTUALTYPE of new object
-     * @return Upon successful completion, #FileIO of requested type. @n
-     * On error (out of memory), returns a nullptr.
+     * @param[in] type - VIRTUALTYPE of new object.
+     * @return Upon successful completion, #FileIO of the requested type.
+     * On error (out of memory), it returns a nullptr.
      */
     static FileIO *     alloc(VIRTUALTYPE type);
 
     /**
-     * @brief Get type of the virtual file
+     * @brief Get type of the virtual file.
      * @return Returns the type of the virtual file.
      */
     virtual VIRTUALTYPE type() const = 0;
@@ -282,19 +283,19 @@ public:
      * @return Return the ideal buffer size.
      */
     virtual size_t  	bufsize() const = 0;
-    /** @brief Open a virtual file
-     * @param[in] virtualfile - LPCVIRTUALFILE of file to open
+    /** @brief Open a virtual file.
+     * @param[in] virtualfile - LPCVIRTUALFILE of file to open.
      * @return Upon successful completion, #open() returns 0. @n
-     * On error, an nonzero value is returned and errno is set to indicate the error.
+     * On error, a nonzero value is returned and errno is set to indicate the error.
      */
     virtual int         open(LPVIRTUALFILE virtualfile) = 0;
-    /** @brief Read data from file
-     * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
-     * @param[in] size - number of bytes to read
+    /** @brief Read data from a file.
+     * @param[out] data - A buffer to store read bytes in. It must be large enough to hold up to size bytes.
+     * @param[in] size - The number of bytes to read.
      * @return Upon successful completion, #read() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
-     * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
+     * If at the end of the file, 0 may be returned but errno is not set. error() will return 0 if at EOF.
      */
     virtual size_t      read(void *data, size_t size) = 0;
     /**

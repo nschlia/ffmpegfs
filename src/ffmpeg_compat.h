@@ -35,10 +35,10 @@
 #define FFMPEG_COMPAT_H
 
 /**
- * FFmpeg compatibility layer: Keep support for older versions, but remove deprecated
- * functions when necessary.
+ * FFmpeg compatibility layer: Maintain support for older versions while removing
+ * deprecated functions as needed.
  *
- * see doc/APIchanges
+ * See doc/APIchanges
  */
 
 // FFmpeg 4.1.8 "al-Khwarizmi" or newer:

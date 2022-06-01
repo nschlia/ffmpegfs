@@ -54,7 +54,7 @@
  * argument will not be printed). The input value is automatically converted to string format and
  * can be among std::string, char *, int, uint64_t and more.
  *
- * The format specifier is the same as used in printf/sprintf.
+ * The format specifier is the same as used in printf and sprintf.
  *
  * @code
  * int channels = 2;
@@ -79,43 +79,43 @@ public:
      */
     enum class level
     {
-        LOGERROR = 1,      /**< @brief Error level */
-        LOGWARN = 2,    /**< @brief Warning level */
-        LOGINFO = 3,       /**< @brief Info level */
-        LOGDEBUG = 4,      /**< @brief Debug level */
-        LOGTRACE = 5       /**< @brief Error level */
+        LOGERROR = 1,       /**< @brief Error level */
+        LOGWARN = 2,        /**< @brief Warning level */
+        LOGINFO = 3,        /**< @brief Info level */
+        LOGDEBUG = 4,       /**< @brief Debug level */
+        LOGTRACE = 5        /**< @brief Error level */
     };
 
     /**
-     * Construct Logging object
+     * Construct Logging object.
      *
      * @param[in] logfile - The name of a file to write logging output to. If empty, no output will be written.
      * @param[in] max_level - The maximum level of log output to write.
      * @param[in] to_stderr - Whether to write log output to stderr.
      * @param[in] to_syslog - Whether to write log output to syslog.
      *
-     * @return Returns 0 if successful; if <0 on this is an FFmpeg AVERROR value
+     * @return If successful, returns 0; otherwise, returns a negative FFmpeg AVERROR value.
      */
     explicit Logging(const std::string & logfile, level max_level, bool to_stderr, bool to_syslog);
 
     /**
-     * @brief Check whether either failbit or badbit is set
-     * @return Returns true if either (or both) the failbit or the badbit error state flags is set for the stream.
+     * @brief Check whether either failbit or badbit is set.
+     * @return Returns true if either (or both) the failbit or the badbit error state flags are set for the stream.
      */
     bool GetFail() const;
 
 private:
     /**
-     * @brief Logging helper class
+     * @brief Logging helper class.
      */
     class Logger : public std::ostringstream
     {
     public:
         /**
-         * @brief Construct Logger object
+         * @brief Construct Logger object.
          * @param[in] loglevel - The maximum level of log output to write.
          * @param[in] filename - Name of file for which this log entry was written. May be empty.
-         * @param[in] logging - Corresponding Logging object
+         * @param[in] logging - Corresponding Logging object.
          */
         Logger(level loglevel, const std::string & filename, Logging* logging) :
             m_loglevel(loglevel),
@@ -151,15 +151,15 @@ public:
      * @param[in] to_stderr - Whether to write log output to stderr.
      * @param[in] to_syslog - Whether to write log output to syslog.
      * @return On success, returns true. On error, returns false.
-     * @note Will only fail if the file could not be opened. Writing to stderr or syslog will never fail. errno is not set.
+     * @note It will only fail if the file cannot be opened. Writing to stderr or syslog will never fail. errno is not set.
      */
     static bool init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
 
     /**
      * @brief Write trace level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @param[in] filename - Name of the file for which this log entry was written. May be nullptr.
+     * @param[in] format_string - Format string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void trace(const char *filename, const std::string &format_string, Args &&...args)
@@ -167,10 +167,10 @@ public:
         log_with_level(Logging::level::LOGTRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
-     * @brief Write trace level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write trace level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void trace(const std::string &filename, const std::string &format_string, Args &&...args)
@@ -179,10 +179,10 @@ public:
     }
 
     /**
-     * @brief Write debug level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write debug level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void debug(const char * filename, const std::string &format_string, Args &&...args)
@@ -190,10 +190,10 @@ public:
         log_with_level(Logging::level::LOGDEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
-     * @brief Write debug level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write debug level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void debug(const std::string & filename, const std::string &format_string, Args &&...args)
@@ -202,10 +202,10 @@ public:
     }
 
     /**
-     * @brief Write info level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write info level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void info(const char *filename, const std::string &format_string, Args &&...args)
@@ -213,10 +213,10 @@ public:
         log_with_level(Logging::level::LOGINFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
-     * @brief Write info level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write info level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void info(const std::string &filename, const std::string &format_string, Args &&...args)
@@ -225,10 +225,10 @@ public:
     }
 
     /**
-     * @brief Write warning level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write warning level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void warning(const char *filename, const std::string &format_string, Args &&...args)
@@ -236,10 +236,10 @@ public:
         log_with_level(Logging::level::LOGWARN, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
-     * @brief Write warning level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write warning level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void warning(const std::string &filename, const std::string &format_string, Args &&...args)
@@ -248,10 +248,10 @@ public:
     }
 
     /**
-     * @brief Write error level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write error level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void error(const char *filename, const std::string &format_string, Args &&...args)
@@ -259,10 +259,10 @@ public:
         log_with_level(Logging::level::LOGERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
-     * @brief Write error level log entry
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format string in ffmpegfs logger format.
-     * @param[in] args - 0 or more argments for format. See @ref format.
+     * @brief Write error level log entry.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] format_string - Format a string in FFmpegfs logger format.
+     * @param[in] args - 0 or more format arguments. See @ref format.
      */
     template <typename... Args>
     static void error(const std::string &filename, const std::string &format_string, Args &&...args)
@@ -273,31 +273,31 @@ public:
     /**
      * @brief Write log entry
      * @param[in] loglevel - The maximum level of log output to write.
-     * @param[in] filename - Name of file for which this log entry was written. May be empty.
-     * @param[in] message - Message to log
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
+     * @param[in] message - Message to log.
      */
     static void log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message);
 
 protected:
     /**
-     * @brief Standard format_helper without parameters
-     * @param[in] string_to_update - original string
+     * @brief Standard format_helper without parameters.
+     * @param[in] string_to_update - Original string.
      * @param[in] size - unused
-     * @return Original string
+     * @return Returns original string.
      */
     static std::string format_helper(
             const std::string &string_to_update,
             const size_t __attribute__((unused)) size);
 
     /**
-     * @brief format_helper with variadic parameters
+     * @brief format_helper with variadic parameters.
      *
      * Calls itself recursively until all tokens are replaced.
      *
-     * @param[in] string_to_search - format string to be searched
+     * @param[in] string_to_search - fformat string to be searched.
      * @param[in] index_to_replace - index numer (%n) to be replaced. May be present 0...x times.
-     * @param[in] val - replace value to fill into tokens
-     * @param[in] args - further arguments
+     * @param[in] val - Replacement value to fill in tokens.
+     * @param[in] args - Further arguments.
      * @return Contents of string_to_search with all tokens replaced.
      */
     template <typename T, typename... Args>
@@ -350,7 +350,7 @@ protected:
     /**
      * @brief format string with single token
      *
-     * @param[in] format_string - format string to be searched
+     * @param[in] format_string - Format string to be searched.
      * @param[in] args - arguments
      * @return Contents of format_string with all tokens replaced.
      */

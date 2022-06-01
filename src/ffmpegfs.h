@@ -42,7 +42,7 @@
  * @section ffmpeg_introduction Introduction to FFmpegfs
  *
  * FFmpegfs: A read-only FUSE filesystem which transcodes various audio and video formats
- * to MP4, WebM and many more on the fly when opened and read.
+ * to MP4, WebM, and many more on the fly when opened and read.
  *
  * FFmpegfs can be download [here](https://github.com/nschlia/ffmpegfs).
  *

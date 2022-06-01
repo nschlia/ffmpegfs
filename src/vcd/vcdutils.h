@@ -115,47 +115,47 @@ extern const char SYNC[12];                 /**< @brief Chapter synchronisation 
 namespace VCDUTILS
 {
 /**
- * @brief Convert non zero terminated text to std::string
- * @param[in] txt - Text for conversion (not zero terminated)
- * @param[in] size - Length of string
- * @param[in] trimmed - If true, trim trailing white spaces
+ * @brief Non-zero terminated text is converted to std::string.
+ * @param[in] txt - Text for conversion (not zero-terminated).
+ * @param[in] size - Length of string.
+ * @param[in] trimmed - If true, trim trailing white spaces.
  * @return Converted text
  */
 std::string convert_txt2string(const char * txt, int size, bool trimmed = true);
 /**
  * @brief Check if path is a S/VCD
  * @param[in] path - Path to check
- * @param[in] filename - file name to check, can per ENTRIES or INFO (extension .SVD or .VCD will be added automatically).
- * @param[out] fullname - path and filename or ENTRIES.SVC/VCD or INFO.SVC/VCD if found
- * @param[out] is_vcd - true if directory contains a Super Video CD, false if it's a Video CD
- * @return true if path contains a S/VCD, false if not
+ * @param[in] filename - File name to check, can be done per ENTRIES or INFO (extension .SVD or .VCD will be added automatically).
+ * @param[out] fullname - Path and filename of ENTRIES.SVC/VCD or INFO.SVC/VCD, if found.
+ * @param[out] is_vcd - True if the directory contains a Super Video CD, false if it's a Video CD.
+ * @return true if path contains a S/VCD, false if not.
  */
 bool        locate_file(const std::string & path, const std::string & filename, std::string & fullname, bool & is_vcd);
 /**
- * @brief Locate AVSEQ*DAT/MPEG video file for track_no
- * @param[in] path - path to search in
- * @param[in] track_no - track number (1...n)
- * @param[out] fullname - name and path of file if found
- * @return
+ * @brief Locate AVSEQ*DAT/MPEG video file for track_no.
+ * @param[in] path - path to search in.
+ * @param[in] track_no - track number (1...n).
+ * @param[out] fullname - name and path of file if found.
+ * @return If successful, it returns 0 or errno if not.
  */
 int         locate_video(const std::string & path, int track_no, std::string & fullname);
 /**
- * @brief Return disk type as string
+ * @brief Return disk type as a human readable string.
  * @param[in] type - 1: VCD 1.0, VCD 1.1, SVCD 1.0, HQVCD, 2: VCD 2.0
- * @return Disk type as human readable string
+ * @return Disk type as a human readable string.
  */
 std::string get_type_str(int type);
 /**
- * @brief get_profile_tag_str
+ * @brief Profile as a human readable string.
  * @param[in] tag - 1: VCD 1.0, VCD 2.0, SVCD, HQVCD, 2: VCD 1.1
- * @return Profile as human readable string
+ * @return Returns profile as a human readable string.
  */
 std::string get_profile_tag_str(int tag);
 /**
- * @brief Check if fullname is a directory. Remove filename if necessary.
+ * @brief Check if  fullname is a directory. Remove the filename if necessary.
  * @note Really checks if fullname is a path even if the trailing slash is missing.
- * @param[in] fullname - Path and optional filename
- * @param[out] directory - Directory without file name
+ * @param[in] fullname - Path and optional filename.
+ * @param[out] directory - Directory without a file name.
  */
 void        get_directory(const std::string & fullname, std::string * directory);
 }

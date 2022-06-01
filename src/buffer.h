@@ -111,14 +111,14 @@ public:
     virtual VIRTUALTYPE     type() const override;
     /**
      * @brief Initialise cache
-     * @param[in] erase_cache - if true delete old file before opening.
+     * @param[in] erase_cache - If true, delete the old file before opening.
      * @return Returns true on success; false on error.
      */
     bool                    init(bool erase_cache);
     /**
-     * @brief Set the current segment
-     * @param[in] segment_no - HLS segment file number [1..n].
-     * @return Returns true on success; if segment_no is 0 or greated then segment_count() returns false and sets errno to EINVALID.
+     * @brief Set the current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number.
+     * @return Returns true on success; if segment_no is 0 or greater, then segment_count() returns false and sets errno to EINVALID.
      */
     bool                    set_segment(uint32_t segment_no);
     /**
@@ -127,15 +127,14 @@ public:
      */
     uint32_t                segment_count();
     /**
-     * @brief Get currently selected segment.
-     * @return Current segment number [1..n] or 0 if none selected.
+     * @brief Get the currently selected segment.
+     * @return current segment number [1..n], or 0 if none is chosen.
      */
     uint32_t                current_segment_no();
     /**
      * @brief Check if segment exists.
-     * Returns true if it exists, or false if it still has to be decoded.
-     * @param[in] segment_no - HLS segment file number [1..n].
-     * @return Returns true if it exists, or false if not.
+     * @param[in] segment_no - [1..n] HLS segment file number.
+     * @return Returns true if it exists, or false if it still has to be decoded.
      */
     bool                    segment_exists(uint32_t segment_no);
     /**
@@ -164,13 +163,13 @@ public:
      */
     virtual size_t          read(void *data, size_t size) override;
     /**
-    * @brief Write image data for the frame number into the Buffer
+    * @brief Write image data for the frame number into the buffer.
      * @param[out] data - Buffer to read data in.
      * @param[in] frame_no - Number of the frame to write.
      * @return Upon successful completion, #read() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
-     * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
+     * If at the end of the file, 0 may be returned by errno not set. error() will return 0 if at EOF. @n
      * If the image frame is not yet read, the function also returns 0 and errno is EAGAIN.
      */
     size_t                  read_frame(std::vector<uint8_t> * data, uint32_t frame_no);
@@ -190,7 +189,7 @@ public:
     virtual size_t          size() const override;
     /**
      * @brief Get the value of the internal buffer size pointer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns the value of the internal buffer size pointer.
      */
     virtual size_t          size(uint32_t segment_no) const;
@@ -201,14 +200,14 @@ public:
     virtual size_t          tell() const override;
     /**
      * @brief Get the value of the internal read position pointer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns the value of the internal read position pointer.
      */
     virtual size_t          tell(uint32_t segment_no) const;
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
-     * May block for a long time if buffer has not been filled to the requested offset.
+     * May block for a long time if the buffer has not been filled to the requested offset.
      *
      * @param[in] offset - offset in bytes
      * @param[in] whence - how to seek: @n
@@ -222,14 +221,14 @@ public:
     /** @brief Seek to position in file
      *
      * Repositions the offset of the open file to the argument offset according to the directive whence.
-     * May block for a long time if buffer has not been filled to the requested offset.
+     * May block for a long time if the buffer has not been filled to the requested offset.
      *
      * @param[in] offset - offset in bytes
      * @param[in] whence - how to seek: @n
      * SEEK_SET: The offset is set to offset bytes. @n
      * SEEK_CUR: The offset is set to its current location plus offset bytes. @n
      * SEEK_END: The offset is set to the size of the file plus offset bytes.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Upon successful completion, #seek() returns the resulting offset location as measured in bytes
      * from the beginning of the file.
      */
@@ -241,7 +240,7 @@ public:
     virtual bool            eof() const override;
     /**
      * @brief Check if at end of file.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns true if at end of buffer.
      */
     virtual bool            eof(uint32_t segment_no) const;
@@ -250,10 +249,10 @@ public:
      */
     virtual void            close() override;
     /**
-     * @brief Write data to the current position into the buffer. The position pointer will be updated.
+     * @brief Write data to the current position in the buffer. The position pointer will be updated.
      * @param[in] data - Buffer with data to write.
      * @param[in] length - Length of buffer to write.
-     * @return Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details.
+     * @return Returns the bytes written to the buffer. If less than length, this indicates an error. Consult errno for details.
      */
     size_t                  write(const uint8_t* data, size_t length);
     /**
@@ -261,7 +260,7 @@ public:
      * @param[in] data - Buffer with data to write.
      * @param[in] length - Length of buffer to write.
      * @param[in] frame_no - Number of the frame to write.
-     * @return Returns the bytes written to the buffer. If less than length this indicates an error, consult errno for details.
+     * @return Returns the bytes written to the buffer. If less than length, this indicates an error. Consult errno for details.
      */
     size_t                  write_frame(const uint8_t* data, size_t length, uint32_t frame_no);
     /**
@@ -280,7 +279,7 @@ public:
      * @return Returns true on success; false on error.
      */
     bool                    reserve(size_t size);
-    /** @brief Return the current watermark of the file while transcoding
+    /** @brief Return the current watermark of the file while transcoding.
      *
      * While transcoding, this value reflects the current size of the transcoded file.
      * This is the maximum byte offset until the file can be read so far.
@@ -303,141 +302,141 @@ public:
      * @param[in] out_data - Buffer to copy data to.
      * @param[in] offset - Offset in buffer to copy data from.
      * @param[in] bufsize - Size of out_data buffer.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns true on success; false on error.
      */
     bool                    copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t segment_no = 0);
     /**
      * @brief Get cache filename.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns cache filename.
      */
     const std::string &     cachefile(uint32_t segment_no) const;
     /**
-     * @brief Make up a cache file name including full path
+     * @brief Make up a cache file name, including the full path.
      * @param[out] cachefile - Name of cache file.
      * @param[in] filename - Source file name.
      * @param[in] fileext - File extension (MP4, WEBM etc.).
-     * @param[in] is_idx - If true, create index file; otherwise create a cache.
-     * @return Returns the name of the cache file.
+     * @param[in] is_idx - If true, create an index file; otherwise, create a cache.
+     * @return Returns the name of the cache/index file.
      */
     static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &fileext, bool is_idx);
     /**
-     * @brief Remove (unlink) file.
-     * @param[in] filename - Name of file to remove.
+     * @brief Remove (unlink) the file.
+     * @param[in] filename - Name of the file to remove.
      * @return Returns true on success; false on error.
      */
     static bool             remove_file(const std::string & filename);
     /**
      * @brief Check if we have the requested frame number. Works only when processing a frame set.
      * @param[in] frame_no - 1...frames
-     * @return Returns true of frame is already in cache, false if not.
+     * @return Returns true if the frame is already in the cache, false if not.
      */
     bool                    have_frame(uint32_t frame_no);
     /**
-     * @brief Finish decoded segment
+     * @brief Complete the segment decoding.
      */
     void                    finished_segment();
     /**
-     * @brief Return true if transcoding segement finished.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @brief Return true if transcoding of the segment is finished.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns true if finished, false if not.
      */
     bool                    is_segment_finished(uint32_t segment_no) const;
     /**
-     * @brief Open cache file if not already open.
-     * @param[in] segment_no - Index of segment file number [0..n-1].
+     * @brief Open the cache file if not already open.
+     * @param[in] segment_no - [0..n-1] Index of segment file number.
      * @param[in] flags - CACHE_FLAG_* options
-     * @return Returns true on success or file already open; false on error.
+     * @return Returns true if the operation was successful or the file was already open; false otherwise.
      */
     bool                    open_file(uint32_t segment_no, uint32_t flags);
     /**
-     * @brief Close cache file if not already closed.
-     * @param[in] segment_no - Index of segment file number [0..n-1].
+     * @brief If it hasn't already been done, close the cache file.
+     * @param[in] segment_no - [0..n-1] Index of segment file number.
      * @param[in] flags - CACHE_FLAG_* options
-     * @return Returns true on success or file already closed; false on error.
+     * @return Returns true if the operation was successful or the file was already closed; false otherwise.
      */
     bool                    close_file(uint32_t segment_no, uint32_t flags);
 
 protected:
     /**
      * @brief Remove the cachefile.
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current segment.
      * @return Returns true on success; false on error.
      */
     bool                    remove_cachefile(uint32_t segment_no = 0) const;
     /**
-     * @brief Check if the cache file is open
+     * @brief Check if the cache file is open.
      * @return Returns true if the cache file is open; false if not.
      */
     bool                    is_open();
 
 private:
     /**
-     * @brief Prepare write operation.
+     * @brief Prepare for the writing operation.
      *
-     * Ensure the Buffer has sufficient space for a quantity of data and
-     * return a pointer where the data may be written. The position pointer
-     * should be updated afterward with increment_pos().
-     * @param[in] length - Length of buffer to prepare.
-     * @return Returns a pointer to the memory to write.
+     * Ensure the buffer has sufficient space for the quantity of data and return
+     * a pointer to where the data may be written. The position pointer should be
+     * updated afterward with increment_pos().
+     * @param[in] length - Buffer length to prepare.
+     * @return Returns a pointer to the memory to write to.
      */
     uint8_t*                write_prepare(size_t length);
     /**
      * @brief Increment buffer position.
      *
      * Increment the location of the internal pointer. This cannot fail and so
-     * returns void. It does not ensure the position is valid memory because
-     * that is done by the write_prepare methods via reallocate.
+     * returns void. It does not ensure the position is valid memory. That is
+     * done by the write_prepare methods via reallocate.
      * @param[in] increment - Increment size.
      */
     void                    increment_pos(size_t increment);
     /**
-     * @brief Reallocate buffer to new size.
+     * @brief Reallocate the buffer to a new size.
      *
-     * Ensure the allocation has at least size bytes available. If not,
-     * reallocate memory to make more available. Fill the newly allocated memory
-     * with zeroes.
-     * @param[in] newsize - New buffer size
+     * Ensure the allocation has at least the size of bytes available.
+     * If not, reallocate memory to make more available. Fill the newly
+     * allocated memory with zeroes.
+     * @param[in] newsize - New buffer size.
      * @return Returns true on success; false on error.
      */
     bool                    reallocate(size_t newsize);
     /**
-     * @brief Map memory to file.
-     * @param[in] filename - Name of cache file to open.
+     * @brief Map memory to a file.
+     * @param[in] filename - Name of the cache file to open.
      * @param[out] fd - The file descriptor of the open cache file.
-     * @param[out] p - Memory pointer to cache file.
+     * @param[out] p - Memory pointer to the cache file.
      * @param[out] filesize - Actual size of the cache file after this call.
      * @param[inout] isdefaultsize -@n
      * In: If false, the file size will be the size of the existing file, returning the size in filesize. If the file does not exist, it will be sized to defaultsize.
      * If true, the defaultsize will be used in any case, resizing an existing file if necessary.@n
      * Out: true if the file size was set to default.
-     * @param[out] defaultsize - Default size of the file if it does not exist. This parameter can be zero in which case the size will be set to the system's page size.
-     * @param[out] truncate - If true, truncate file when opened.
-     * @return Returns true if successful and fd, p, filesize, isdefaultsize filled in or false on error.
+     * @param[out] defaultsize - The default size of the file if it does not exist. This parameter can be zero, in which case the size will be set to the system's page size.
+     * @param[out] truncate - If true, when the file is opened, it is truncated.
+     * @return Returns true if successful and fd, p, filesize, and isdefaultsize are filled in, or false on error.
      */
     bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const;
     /**
-     * @brief Unmap memory from file.
+     * @brief Unmap memory from the file.
      * @param[in] filename - Name of cache file to unmap.
      * @param[in] fd - The file descriptor of the open cache file.
-     * @param[in] p - Memory pointer to cache file.
-     * @param[in] len - Length of allocated block
+     * @param[in] p - Memory pointer to the cache file.
+     * @param[in] len - Length of the allocated block.
      * @param[in] filesize - Actual size of the cache file.
      * @return Returns true on success; false on error.
      */
     bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t len, size_t *filesize) const;
 
     /**
-     * @brief cacheinfo
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment or 0 for current segment.
-     * @return
+     * @brief Get cache information.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for the current segment.
+     * @return Pointer to CACHEINFO object, or nullptr on error.
      */
     LPCACHEINFO             cacheinfo(uint32_t segment_no);
     /**
-     * @brief cacheinfo
-     * @param[in] segment_no - HLS segment file number [1..n] or 0 for current segment.
-     * @return
+     * @brief Get cache information.
+     * @param[in] segment_no - HLS segment file number [1..n] or 0 for the current segment.
+     * @return Pointer to CACHEINFO object, or nullptr on error.
      */
     LPCCACHEINFO            const_cacheinfo(uint32_t segment_no) const;
 

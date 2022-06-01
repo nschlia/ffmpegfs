@@ -72,7 +72,7 @@ public:
     int                         load_file(const std::string & path);
 
     /**
-     * @brief Get date of disk (takenf rom INFO.VCD or SVD).
+     * @brief Get date of disk (taken from INFO.VCD or SVD).
      * @return Returns date of disk.
      */
     time_t                      get_file_date() const;
@@ -108,13 +108,13 @@ public:
     int                         get_number_of_chapters() const;
     /**
      * @brief Get chapter object.
-     * @note At least 1 chapter is guaranteed to exist if a disk was sucessfully read.
+     * @note If a disk is successfully read, at least one chapter is guaranteed to exist.
      * @param[in] chapter_idx - 0..number of chapters - 1
-     * @return VcdChapter object with this chapter, nullptr if chapter_idx is invalid
+     * @return VcdChapter object with this chapter, nullptr if chapter_idx is invalid.
      */
     const VcdChapter  *         get_chapter(int chapter_idx) const;
     /**
-     * @brief Get total disk duration, in AV_TIME_BASE fractional seconds.
+     * @brief Get the total disk duration in AV_TIME_BASE fractional seconds.
      * @return Returns total disk duration.
      */
     int64_t                     get_duration() const;
@@ -130,7 +130,7 @@ public:
 
 protected:
     /**
-     * @brief Scan disk for chapters.
+     * @brief Scan the disk for chapters.
      * @return On success, returns 0; on error, returns errno.
      */
     int                         scan_chapters();

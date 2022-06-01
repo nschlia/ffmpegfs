@@ -54,7 +54,7 @@ public:
     /**
      * @brief Load VCD from path
      * @param[in] path - path to locate VCD in
-     * @return On success, returns 0; in case of error returns errno
+     * @return If successful, returns 0; otherwise, returns errno.
      */
     int                     load_file(const std::string & path);
 

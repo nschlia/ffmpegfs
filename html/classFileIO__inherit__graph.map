@@ -1,6 +1,6 @@
 <map id="FileIO" name="FileIO">
 <area shape="rect" id="node1" title="Base class for I/O." alt="" coords="198,5,257,32"/>
-<area shape="rect" id="node2" href="$classBlurayIO.html" title="Bluray I/O class." alt="" coords="5,80,84,107"/>
+<area shape="rect" id="node2" href="$classBlurayIO.html" title="Blu&#45;ray I/O class." alt="" coords="5,80,84,107"/>
 <area shape="rect" id="node3" href="$classBuffer.html" title="The Buffer class." alt="" coords="108,80,171,107"/>
 <area shape="rect" id="node4" href="$classDiskIO.html" title="Disk file I/O class." alt="" coords="195,80,260,107"/>
 <area shape="rect" id="node5" href="$classDvdIO.html" title="DVD I/O class." alt="" coords="284,80,347,107"/>

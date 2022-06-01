@@ -67,16 +67,16 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h1><a class="anchor" id="autotoc_md47"></a>
-Installation from repository</h1>
+Installation from the repository</h1>
 <h2><a class="anchor" id="autotoc_md48"></a>
 Debian Bullseye</h2>
-<p>FFmpegfs has been added to Debian 11 Bullseye so it is available as binary distribution.</p>
+<p>FFmpegfs has been added to Debian 11 Bullseye so it is available as a binary distribution.</p>
 <p><b>On Debian 11 Bullseye, you get V2.2 by simply doing</b> </p><pre class="fragment">apt-get install ffmpegfs
 </pre><p> Newer FFmpegfs versions can be installed on Debian 11 Bullseye from Bullseye Backports and sid (which is not recommended and therefore not described here).</p>
 <p>To enable Bullseye Backports: </p><pre class="fragment"> echo "deb http://deb.debian.org/debian bullseye-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
 
  sudo apt-get update
-</pre><p> To install FFmpegfs from backports run <code>apt-get install ffmpegfs/bullseye-backports</code> or<code>apt-get install -t bullseye-backports ffmpegfs</code>.</p>
+</pre><p> To install FFmpegfs from backports, run <code>apt-get install ffmpegfs/bullseye-backports</code> or <code>apt-get install -t bullseye-backports ffmpegfs</code>.</p>
 <p><b>For Ubuntu 20.04 or newer and Linux distributions based on it this is</b> </p><pre class="fragment">apt-get install ffmpegfs
 </pre> <h2><a class="anchor" id="autotoc_md49"></a>
 Debian Buster</h2>
@@ -92,7 +92,7 @@ Other Distributions</h2>
 Building FFmpegfs yourself</h1>
 <h2><a class="anchor" id="autotoc_md52"></a>
 Prerequisites</h2>
-<p>FFmpegfs uses FFmpeg lib for decoding/encoding. It requires the following libraries:</p>
+<p>FFmpegfs uses the FFmpeg lib for decoding and encoding. It requires the following libraries:</p>
 <ul>
 <li>gcc and g++ compilers</li>
 <li>fuse (&gt;= 2.6.0)</li>
@@ -107,12 +107,12 @@ Prerequisites</h2>
 <li>libswscale (&gt;= 5.3.100)</li>
 <li>libswresample (&gt;= 3.3.100)</li>
 </ul>
-<p>For optional DVD support you need the following libraries</p>
+<p>For optional DVD support, you need the following libraries:</p>
 <ul>
 <li>libdvdread (&gt;= 5.0.0)</li>
 <li>libdvdnav (&gt;= 5.0.0)</li>
 </ul>
-<p>For optional Bluray support you need the following library</p>
+<p>For optional Blu-ray support, you need the following libraries:</p>
 <ul>
 <li>libbluray (&gt;= 0.6.2)</li>
 </ul>
@@ -122,27 +122,27 @@ Prerequisites</h2>
 
 apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
 </pre><p> To get DVD support: </p><pre class="fragment">apt-get install libdvdread-dev libdvdnav-dev
-</pre><p> To get Bluray support: </p><pre class="fragment">apt-get install libbluray-dev
+</pre><p> To get Blu-ray support: </p><pre class="fragment">apt-get install libbluray-dev
 </pre><p> To "make doxy" (build Doxygen documentation): </p><pre class="fragment">apt-get install doxygen graphviz curl
 </pre><p> To "make check" (run test suite): </p><pre class="fragment">apt-get install libchromaprint-dev bc
 </pre><p> <b>On Suse</b> (please read notes before continuing): </p><pre class="fragment">zypper install gcc gcc-c++
 
 zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel libchardet-devel
 </pre><p> To get DVD support: </p><pre class="fragment">zypper install libdvdread-devel libdvdnav-devel
-</pre><p> To get Bluray support: </p><pre class="fragment">zypper install libbluray-devel
+</pre><p> To get Blu-ray support: </p><pre class="fragment">zypper install libbluray-devel
 </pre><p> Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 are <em>not</em> available which renders this library next to usesless. But FFmpeg can be built from source, see <a href="https://trac.ffmpeg.org/wiki/CompilationGuide">https://trac.ffmpeg.org/wiki/CompilationGuide</a> and check "FFmpeg compile notes" below.</p>
 <p><b>On Red Hat:</b> </p><pre class="fragment">yum install gcc g++
 
 yum install fuse-devel sqlite-devel libcue-devel libchardet-devel
 </pre><p> To get DVD support: </p><pre class="fragment">yum install libdvdread-devel libdvdnav-devel
-</pre><p> To get Bluray support: </p><pre class="fragment">yum install libbluray-devel
-</pre><p> Red Hat does not provide FFmpeg from its repositories. It must be built from source code, see this guide: <a href="https://trac.ffmpeg.org/wiki/CompilationGuide/Centos">https://trac.ffmpeg.org/wiki/CompilationGuide/Centos</a></p>
-<p>If you want to build the documentation you will find "asciidoc" missing from the Red Hat repositories. To get it use a beta repository: </p><pre class="fragment">yum --enablerepo=rhel-7-server-optional-beta-rpms install asciidoc
+</pre><p> To get Blu-ray support: </p><pre class="fragment">yum install libbluray-devel
+</pre><p> FFmpeg is not provided by Red Hat from its repositories. It must be built from source code. See this guide: <a href="https://trac.ffmpeg.org/wiki/CompilationGuide/Centos">https://trac.ffmpeg.org/wiki/CompilationGuide/Centos</a></p>
+<p>If you want to build the documentation, you will find "asciidoc" missing from the Red Hat repositories. To get it, use a beta repository: </p><pre class="fragment">yum --enablerepo=rhel-7-server-optional-beta-rpms install asciidoc
 </pre><p> <b>On Funtoo Linux:</b></p>
 <p>To get fuse support and chromaprint (for make check): </p><pre class="fragment">emerge sys-fs/fuse
 emerge media-libs/chromaprint
 </pre><p> To get FFmpeg with H264 etc. support, specify some "USE flags" when doing emerge:</p>
-<p>Create file /etc/portage/package.use, for example "vi vi /etc/portage/package.use" and add this line: </p><pre class="fragment">media-video/ffmpeg mp3 x264 opus vorbis vpx
+<p>Create a file /etc/portage/package.use, for example "vi vi /etc/portage/package.use" and add this line: </p><pre class="fragment">media-video/ffmpeg mp3 x264 opus vorbis vpx
 </pre><p> This will enable H264, mp3, Opus and WebM support. Next... </p><pre class="fragment">emerge media-libs/openh264
 emerge media-sound/twolame
 emerge media-video/ffmpeg
@@ -151,17 +151,17 @@ emerge media-video/ffmpeg
 Building FFmpegfs from source code</h2>
 <h3><a class="anchor" id="autotoc_md54"></a>
 Building from tar ball</h3>
-<p>Download a release archive: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.2/ffmpegfs-2.2.tar.gz
+<p>Download the release archive: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.2/ffmpegfs-2.2.tar.gz
 </pre><p> You may check <a href="https://github.com/nschlia/ffmpegfs/releases">https://github.com/nschlia/ffmpegfs/releases</a> to see if there are newer releases available.</p>
 <p>Then unpack and cd to the source directory. To build and install, run: </p><pre class="fragment">./configure
 make
 make install
-</pre><p> To build and run the check suite, do: </p><pre class="fragment">make check
+</pre><p> To build and run the test suite, do: </p><pre class="fragment">make check
 </pre><p> This will test audio conversion, tagging and size prediction.</p>
 <p>NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.</p>
 <h3><a class="anchor" id="autotoc_md55"></a>
 Building from GIT</h3>
-<p>If you want to build FFmpegfs yourself, for example check out the latest version from GIT and be at the bleeding edge:</p>
+<p>If you want to build FFmpegfs yourself, for example, check out the latest version from GIT and be on the bleeding edge:</p>
 <p><b>If building from git, you'll need these additional prerequisites:</b></p>
 <ul>
 <li>autoconf</li>
@@ -169,19 +169,19 @@ Building from GIT</h3>
 <li>asciidoc (or at least asciidoc-base to save disk space)</li>
 <li>w3m</li>
 </ul>
-<p>For those who are lazy like me, simply copy and issue this command to get all prerequisites: </p><pre class="fragment">apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+<p>For those who are lazy like me, simply copy and issue this command to get all the prerequisites: </p><pre class="fragment">apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
 </pre><p> FFmpegfs uses the GNU build system, so you'll need to run first: </p><pre class="fragment">./autogen.sh
 </pre><p> If you are downloading a release, this has already been done for you. To build and install, run: </p><pre class="fragment">./configure
 make
 make install
-</pre><p> To build and run the check suite, do: </p><pre class="fragment">make check
+</pre><p> To build and run the test suite, do: </p><pre class="fragment">make check
 </pre> <h2><a class="anchor" id="autotoc_md56"></a>
 Switching between repository version and source builds</h2>
-<p>It is easy to switch between both worlds. You can do that as many times as you want to, alas the cache directory will be cleared every time. But it will be rebuilt in the background so this will almost go unnoticed.</p>
+<p>It is easy to switch between both worlds. You can do that as many times as you want to, but alas, the cache directory will be cleared every time. But it will be rebuilt in the background, so this will almost go unnoticed.</p>
 <p>To switch from repository to a source build do</p>
 <div class="fragment"><div class="line">apt-get remove ffmpegfs</div>
 </div><!-- fragment --><p>Then follow the steps under "Building FFmpegfs yourself". If you do not remove the repository version, your self-build could inadvertently be up- or downgraded when a new version becomes available from the repository.</p>
-<p>To switch from a source build to a repository installation change to the build directory and do</p>
+<p>To switch from a source build to a repository installation, change to the build directory and do</p>
 <div class="fragment"><div class="line">make uninstall</div>
 </div><!-- fragment --><p>Then follow the steps under "Installation from repository".</p>
 <h2><a class="anchor" id="autotoc_md57"></a>
@@ -193,8 +193,8 @@ make help-html
 Building FFmpeg</h1>
 <h2><a class="anchor" id="autotoc_md59"></a>
 Building FFmpeg with optimisations</h2>
-<p>The precompiled package of FFmpeg available for Debian, Ubuntu etc. is built with common options so that it can run on many processors. To leverage the full potential it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.</p>
-<p>FFmpeg must be built with at least libx264, libfdk_aac and libmp3lame support. Other libraries, for example ogg, Windows Media or FLAC must be added when these formats should be used as source.</p>
+<p>The precompiled package of FFmpeg available for Debian, Ubuntu, etc. is built with common options so that it can run on many processors. To leverage its full potential, it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.</p>
+<p>FFmpeg must be built with at least libx264, libfdk_aac, and libmp3lame support. Other libraries, for example, ogg, Windows Media, or FLAC, must be added when these formats should be used as sources.</p>
 <p><b>Attention!</b> Remember to do "apt remove ffmpeg" before proceeding with the next steps to avoid maleficent blends of custom and official distribution binaries.</p>
 <p>For a minimum build that contains all the libraries required by FFmpegfs and SSL support for convenience use: </p><pre class="fragment">configure \
     --extra-cflags='-march=native' \
@@ -215,9 +215,9 @@ Building FFmpeg with optimisations</h2>
     --enable-libtheora \
     --enable-libxvid \
     --enable-libx264
-</pre><p> Fix the complaints by configure, i.e., install the required development packages, then </p><pre class="fragment">make install
+</pre><p> Fix the complaints by configure, i.e., installing the required development packages, then </p><pre class="fragment">make install
 </pre><p> This works for me. Decoding runs much faster with these settings.</p>
-<p><b>NOTE:</b> Depending on the source formats you have it may be required to add additional libraries.</p>
+<p><b>NOTE:</b> Depending on the source formats you have, it may be required to add additional libraries.</p>
 <h1><a class="anchor" id="autotoc_md60"></a>
 Trouble Shooting</h1>
 <h2><a class="anchor" id="autotoc_md61"></a>
@@ -231,7 +231,7 @@ Mounting via /etc/fstab fails</h2>
 </div><!-- fragment --><p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
 </pre> <h2><a class="anchor" id="autotoc_md62"></a>
 fuse: failed to exec fusermount: No such file or directory</h2>
-<p>Trying to mount as other than root, the message </p><pre class="fragment">fuse: failed to exec fusermount: No such file or directory
+<p>Trying to mount as any other than root, the message </p><pre class="fragment">fuse: failed to exec fusermount: No such file or directory
 </pre><p> is printed.</p>
 <p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
 </pre> <h2><a class="anchor" id="autotoc_md63"></a>
@@ -244,23 +244,23 @@ configure.ac:46: error: possibly undefined macro: AC_DEFINE
   If this token and others are legitimate, please use m4_pattern_allow.
   See the Autoconf documentation.
 autoreconf: /usr/bin/autoconf failed with exit status: 1
-</pre><p> You are probably missing out on pkg-config, either it is not installed or not in path. "apt-get install pkg-config" (on Debian or equivalent on other Linux distributions) should help.</p>
+</pre><p> You are probably missing out on pkg-config; either it is not installed or not in path. "apt-get install pkg-config" (on Debian or equivalent on other Linux distributions) should help.</p>
 <h2><a class="anchor" id="autotoc_md65"></a>
 If the videotag.php script does not work under PHP7</h2>
 <p>The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7) it suddenly stops showing the list of files.</p>
 <p>Check the Apache2 error.log, you might see this:</p>
 <p>"PHP Fatal error:  Uncaught Error: Call to undefined function utf8_encode() in index.php"</p>
-<p>This is because for some reason utf8_encode() has been moved to the XML library. Just do (or similar): </p><pre class="fragment">apt-get install php7.0-xml
+<p>This is because, for some reason, utf8_encode() has been moved to the XML library. Just do (or similar): </p><pre class="fragment">apt-get install php7.0-xml
 systemctl restart apache2
 </pre><p> And your troubles should be gone.</p>
 <h2><a class="anchor" id="autotoc_md66"></a>
 "make check": all audio checks fail</h2>
 <p>Log files contain "bc: command not found", so the command line communicator is missing.</p>
-<p>Fix by installing it (or similar): </p><pre class="fragment"> apt-get install bc
+<p>Fix it by installing (or similar): </p><pre class="fragment"> apt-get install bc
 </pre> <h2><a class="anchor" id="autotoc_md67"></a>
 Make reports "/bin/sh: a2x: command not found"</h2>
-<p>You are missing out on asciidoc, to install do (or similar): </p><pre class="fragment"> apt-get install asciidoc
-</pre><p> That should fix it. You may just install asciidoc-base to safe disk space</p>
+<p>You are missing out on asciidoc. To install it, do (or similar): </p><pre class="fragment"> apt-get install asciidoc
+</pre><p> That should fix it. You may just install asciidoc-base to save disc space.</p>
 <h2><a class="anchor" id="autotoc_md68"></a>
 "make help-pdf" reports "non-zero exit status 127"</h2>
 <p>Running "make help-pdf" fails like this: </p><pre class="fragment">$ make -s help-pdf
@@ -268,13 +268,13 @@ Make reports "/bin/sh: a2x: command not found"</h2>
 a2x: ERROR: "fop"   -fo "ffmpegfs.1.fo" -pdf "ffmpegfs.1.pdf" returned non-zero exit status 127
 
 make: *** [Makefile:918: ffmpegfs.1.pdf] Error 1
-</pre><p> This happens when "fop" is missing, a command line wrapper for the java version of fop. </p><pre class="fragment"> apt-get install fop
+</pre><p> This happens when "fop" is missing, a command line wrapper for the Java version of fop. </p><pre class="fragment"> apt-get install fop
 </pre><p> That should do it.</p>
 <h2><a class="anchor" id="autotoc_md69"></a>
 libbluray fails to load libbluray.jar</h2>
-<p>When you see this message accessing blurays: </p><pre class="fragment">bdj.c:340: libbluray-j2se-0.9.3.jar not found.
+<p>When you see this message while accessing blurays: </p><pre class="fragment">bdj.c:340: libbluray-j2se-0.9.3.jar not found.
 bdj.c:466: BD-J check: Failed to load libbluray.jar
-</pre><p> To get rid of this message simply install "libbluray-bdj", this will make it go away. Though not necessary, as to read the bluray tracks java support is not required, so this is simply cosmetical.</p>
+</pre><p> To get rid of this message, simply install "libbluray-bdj". This will make it go away. Though not necessary, as to read the Blu-ray tracks, Java support is not required, so this is simply cosmetical.</p>
 <h1><a class="anchor" id="autotoc_md70"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>

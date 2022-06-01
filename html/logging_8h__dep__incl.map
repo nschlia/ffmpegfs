@@ -1,7 +1,7 @@
 <map id="src/logging.h" name="src/logging.h">
 <area shape="rect" id="node1" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1399,5,1504,32"/>
 <area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="5,80,121,107"/>
-<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Bluray disk parser implementation." alt="" coords="145,80,291,107"/>
+<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="145,80,291,107"/>
 <area shape="rect" id="node4" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="315,80,417,107"/>
 <area shape="rect" id="node5" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="442,80,543,107"/>
 <area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="568,80,708,107"/>

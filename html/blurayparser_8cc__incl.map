@@ -1,8 +1,8 @@
 <map id="src/blurayparser.cc" name="src/blurayparser.cc">
-<area shape="rect" id="node1" title="Bluray disk parser implementation." alt="" coords="792,5,937,32"/>
+<area shape="rect" id="node1" title="Blu&#45;ray disk parser implementation." alt="" coords="792,5,937,32"/>
 <area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="702,155,795,181"/>
 <area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="443,229,559,256"/>
-<area shape="rect" id="node17" href="$blurayparser_8h.html" title="Bluray parser." alt="" coords="545,155,661,181"/>
+<area shape="rect" id="node17" href="$blurayparser_8h.html" title="Blu&#45;ray parser." alt="" coords="545,155,661,181"/>
 <area shape="rect" id="node18" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="773,80,871,107"/>
 <area shape="rect" id="node19" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1105,229,1187,256"/>
 <area shape="rect" id="node23" title=" " alt="" coords="947,80,1081,107"/>

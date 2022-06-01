@@ -1,7 +1,7 @@
 <map id="src/ffmpegfs.h" name="src/ffmpegfs.h">
 <area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="1251,5,1367,32"/>
 <area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="377,80,493,107"/>
-<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Bluray disk parser implementation." alt="" coords="5,155,151,181"/>
+<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,155,151,181"/>
 <area shape="rect" id="node4" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="1131,80,1233,107"/>
 <area shape="rect" id="node5" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="1258,80,1359,107"/>
 <area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="1384,80,1524,107"/>

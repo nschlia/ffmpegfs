@@ -2,7 +2,7 @@
 <area shape="rect" id="node1" title="FFmpeg API compatibility." alt="" coords="1050,5,1210,32"/>
 <area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="1060,80,1199,107"/>
 <area shape="rect" id="node3" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="229,229,345,256"/>
-<area shape="rect" id="node4" href="$blurayparser_8cc.html" title="Bluray disk parser implementation." alt="" coords="2237,304,2382,331"/>
+<area shape="rect" id="node4" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="2237,304,2382,331"/>
 <area shape="rect" id="node5" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="369,229,472,256"/>
 <area shape="rect" id="node6" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="496,229,598,256"/>
 <area shape="rect" id="node7" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="622,229,816,256"/>

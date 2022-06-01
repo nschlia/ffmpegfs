@@ -1,7 +1,7 @@
 <map id="src/ffmpeg_utils.h" name="src/ffmpeg_utils.h">
 <area shape="rect" id="node1" title="Various FFmpegfs utility functions." alt="" coords="1060,5,1199,32"/>
 <area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="229,155,345,181"/>
-<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Bluray disk parser implementation." alt="" coords="2237,229,2382,256"/>
+<area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="2237,229,2382,256"/>
 <area shape="rect" id="node4" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="369,155,472,181"/>
 <area shape="rect" id="node5" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="496,155,598,181"/>
 <area shape="rect" id="node6" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="622,155,816,181"/>

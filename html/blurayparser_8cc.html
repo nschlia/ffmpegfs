@@ -73,7 +73,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Bluray disk parser implementation.  
+<p>Blu-ray disk parser implementation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="blurayparser_8h_source.html">blurayparser.h</a>&quot;</code><br />
@@ -88,10 +88,10 @@ Include dependency graph for blurayparser.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="blurayparser_8cc__incl.png" border="0" usemap="#asrc_2blurayparser_8cc" alt=""/></div>
 <map name="asrc_2blurayparser_8cc" id="asrc_2blurayparser_8cc">
-<area shape="rect" title="Bluray disk parser implementation." alt="" coords="792,5,937,32"/>
+<area shape="rect" title="Blu&#45;ray disk parser implementation." alt="" coords="792,5,937,32"/>
 <area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="702,155,795,181"/>
 <area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="443,229,559,256"/>
-<area shape="rect" href="blurayparser_8h.html" title="Bluray parser." alt="" coords="545,155,661,181"/>
+<area shape="rect" href="blurayparser_8h.html" title="Blu&#45;ray parser." alt="" coords="545,155,661,181"/>
 <area shape="rect" href="transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="773,80,871,107"/>
 <area shape="rect" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1105,229,1187,256"/>
 <area shape="rect" title=" " alt="" coords="947,80,1081,107"/>
@@ -121,10 +121,10 @@ Include dependency graph for blurayparser.cc:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a86948e96326ded4413c96c5c0f38c519"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a86948e96326ded4413c96c5c0f38c519">audio_stream_info</a> (const std::string &amp;path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate)</td></tr>
-<tr class="memdesc:a86948e96326ded4413c96c5c0f38c519"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about Bluray stream.  <a href="blurayparser_8cc.html#a86948e96326ded4413c96c5c0f38c519">More...</a><br /></td></tr>
+<tr class="memdesc:a86948e96326ded4413c96c5c0f38c519"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about Blu-ray stream.  <a href="blurayparser_8cc.html#a86948e96326ded4413c96c5c0f38c519">More...</a><br /></td></tr>
 <tr class="separator:a86948e96326ded4413c96c5c0f38c519"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab946ae9d94a09028f911a53a54ce0df2"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#ab946ae9d94a09028f911a53a54ce0df2">video_stream_info</a> (const std::string &amp;path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, int *interleaved)</td></tr>
-<tr class="memdesc:ab946ae9d94a09028f911a53a54ce0df2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about Bluray stream.  <a href="blurayparser_8cc.html#ab946ae9d94a09028f911a53a54ce0df2">More...</a><br /></td></tr>
+<tr class="memdesc:ab946ae9d94a09028f911a53a54ce0df2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about Blu-ray stream.  <a href="blurayparser_8cc.html#ab946ae9d94a09028f911a53a54ce0df2">More...</a><br /></td></tr>
 <tr class="separator:ab946ae9d94a09028f911a53a54ce0df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84935cc18021375ba2475fb7851435d5"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a> ()</td></tr>
 <tr class="memdesc:a84935cc18021375ba2475fb7851435d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find best match audio stream.  <a href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">More...</a><br /></td></tr>
@@ -133,17 +133,17 @@ Functions</h2></td></tr>
 <tr class="memdesc:aa1d91d3ccaa872502b7054e73ba33677"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find best match video stream.  <a href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">More...</a><br /></td></tr>
 <tr class="separator:aa1d91d3ccaa872502b7054e73ba33677"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3629b60b55784a2b0be1d920d331946e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">create_bluray_virtualfile</a> (<a class="el" href="blurayio_8h.html#ab446b017f0a8a6c31684027d6ddd3a69">BLURAY</a> *bd, const BLURAY_TITLE_INFO *ti, const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx)</td></tr>
-<tr class="memdesc:a3629b60b55784a2b0be1d920d331946e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a virtual file entry of a bluray chapter or title.  <a href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">More...</a><br /></td></tr>
+<tr class="memdesc:a3629b60b55784a2b0be1d920d331946e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a virtual file entry of a Blu-ray chapter or title.  <a href="blurayparser_8cc.html#a3629b60b55784a2b0be1d920d331946e">More...</a><br /></td></tr>
 <tr class="separator:a3629b60b55784a2b0be1d920d331946e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45266d5096307aad8773c64b9923b2e9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a45266d5096307aad8773c64b9923b2e9">parse_bluray</a> (const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</td></tr>
-<tr class="memdesc:a45266d5096307aad8773c64b9923b2e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse Bluray directory and get all Bluray titles and chapters as virtual files.  <a href="blurayparser_8cc.html#a45266d5096307aad8773c64b9923b2e9">More...</a><br /></td></tr>
+<tr class="memdesc:a45266d5096307aad8773c64b9923b2e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse Blu-ray directory and get all Blu-ray titles and chapters as virtual files.  <a href="blurayparser_8cc.html#a45266d5096307aad8773c64b9923b2e9">More...</a><br /></td></tr>
 <tr class="separator:a45266d5096307aad8773c64b9923b2e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28421598e88f9a949dd1131f3d55a9ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="blurayparser_8cc.html#a28421598e88f9a949dd1131f3d55a9ac">check_bluray</a> (const std::string &amp;path, void *buf, fuse_fill_dir_t filler)</td></tr>
-<tr class="memdesc:a28421598e88f9a949dd1131f3d55a9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles on Bluray.  <a href="blurayparser_8cc.html#a28421598e88f9a949dd1131f3d55a9ac">More...</a><br /></td></tr>
+<tr class="memdesc:a28421598e88f9a949dd1131f3d55a9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of titles on Blu-ray.  <a href="blurayparser_8cc.html#a28421598e88f9a949dd1131f3d55a9ac">More...</a><br /></td></tr>
 <tr class="separator:a28421598e88f9a949dd1131f3d55a9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Bluray disk parser implementation. </p>
+<div class="textblock"><p>Blu-ray disk parser implementation. </p>
 <dl class="section author"><dt>Author</dt><dd>Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) </dd></dl>
 
@@ -195,10 +195,10 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get information about Bluray stream. </p>
+<p>Get information about Blu-ray stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to Bluray disk. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to Blu-ray disk. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ss</td><td>- BLURAY_STREAM_INFO object. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">channels</td><td>- Number of audio channels in stream. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">sample_rate</td><td>- Sample rate of stream. </td></tr>
@@ -247,7 +247,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get number of titles on Bluray. </p>
+<p>Get number of titles on Blu-ray. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to check </td></tr>
@@ -257,13 +257,13 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>-errno or number or titles on Bluray </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>-errno or number or titles on Blu-ray </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00626">626</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l02442">add_dotdot()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l01776">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l01783">load_path()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l02443">add_dotdot()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l00985">append_sep()</a>, <a class="el" href="fuseops_8cc_source.html#l01777">check_path()</a>, <a class="el" href="fuseops_8cc_source.html#l01784">load_path()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00545">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00307">ffmpegfs_readdir()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l00546">ffmpegfs_getattr()</a>, and <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>.</p>
 
 </div>
 </div>
@@ -349,29 +349,29 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create a virtual file entry of a bluray chapter or title. </p>
+<p>Create a virtual file entry of a Blu-ray chapter or title. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">bd</td><td>- Bluray disk clip info. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ti</td><td>- Bluray disk title info. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">bd</td><td>- Blu-ray disk clip info. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ti</td><td>- Blu-ray disk title info. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to check. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">statbuf</td><td>- File status structure of original file. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buf</td><td>- The buffer passed to the readdir() operation. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">filler</td><td>- Function to add an entry in a readdir() operation (see <a href="https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660">https://libfuse.github.io/doxygen/fuse_8h.html#a7dd132de66a5cc2add2a4eff5d435660</a>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">is_main_title</td><td>- true if title_idx is the main title </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">full_title</td><td>- If true, create virtual file of all title. If false, include single chapter only. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">title_idx</td><td>- Zero-based title index on Bluray </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">chapter_idx</td><td>- Zero-based chapter index on Bluray </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title_idx</td><td>- Zero-based title index on Blu-ray </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">chapter_idx</td><td>- Zero-based chapter index on Blu-ray </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>buf and filler can be nullptr. In that case the call will run faster, so these parameters should only be passed if to be filled in. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>On error, returns false. On success, returns true. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>We actually calculate the overall Bluray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>We actually calculate the overall Blu-ray bitrate here, including all audio streams, not just the video bitrate. This should be the video bitrate alone. We should also calculate the audio bitrate for the selected stream. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="blurayparser_8cc_source.html#l00433">433</a> of file <a class="el" href="blurayparser_8cc_source.html">blurayparser.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l02432">add_fuse_entry()</a>, <a class="el" href="blurayparser_8cc_source.html#l00062">audio_stream_info()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00145">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01508">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01549">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01529">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01627">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l01741">insert_dir()</a>, <a class="el" href="fuseops_8cc_source.html#l01665">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00209">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="fileio_8h_source.html#l00240">VIRTUALFILE::m_channels</a>, <a class="el" href="fileio_8h_source.html#l00208">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00145">VIRTUALFILE::m_destfile</a>, <a class="el" href="fileio_8h_source.html#l00150">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00144">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00245">VIRTUALFILE::m_framerate</a>, <a class="el" href="fileio_8h_source.html#l00149">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00244">VIRTUALFILE::m_height</a>, <a class="el" href="fileio_8h_source.html#l00207">VIRTUALFILE::BLURAY_CHAPTER::m_playlist_no</a>, <a class="el" href="fileio_8h_source.html#l00151">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="fileio_8h_source.html#l00241">VIRTUALFILE::m_sample_rate</a>, <a class="el" href="fileio_8h_source.html#l00147">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00206">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8h_source.html#l00152">VIRTUALFILE::m_video_frame_count</a>, <a class="el" href="fileio_8h_source.html#l00243">VIRTUALFILE::m_width</a>, <a class="el" href="blurayparser_8cc_source.html#l00402">parse_find_best_audio_stream()</a>, <a class="el" href="blurayparser_8cc_source.html#l00413">parse_find_best_video_stream()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01804">replace_all()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00248">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00275">transcoder_set_filesize()</a>, <a class="el" href="blurayparser_8cc_source.html#l00194">video_stream_info()</a>, and <a class="el" href="fileio_8h_source.html#l00098">VIRTUALTYPE_BLURAY</a>.</p>
+<p class="reference">References <a class="el" href="fuseops_8cc_source.html#l02433">add_fuse_entry()</a>, <a class="el" href="blurayparser_8cc_source.html#l00062">audio_stream_info()</a>, <a class="el" href="ffmpeg__utils_8h_source.html#l00145">BITRATE</a>, <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01510">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01551">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01531">format_samplerate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01629">format_size()</a>, <a class="el" href="fuseops_8cc_source.html#l01742">insert_dir()</a>, <a class="el" href="fuseops_8cc_source.html#l01666">insert_file()</a>, <a class="el" href="fileio_8h_source.html#l00209">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="fileio_8h_source.html#l00240">VIRTUALFILE::m_channels</a>, <a class="el" href="fileio_8h_source.html#l00208">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="fileio_8h_source.html#l00145">VIRTUALFILE::m_destfile</a>, <a class="el" href="fileio_8h_source.html#l00150">VIRTUALFILE::m_duration</a>, <a class="el" href="fileio_8h_source.html#l00144">VIRTUALFILE::m_format_idx</a>, <a class="el" href="fileio_8h_source.html#l00245">VIRTUALFILE::m_framerate</a>, <a class="el" href="fileio_8h_source.html#l00149">VIRTUALFILE::m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00244">VIRTUALFILE::m_height</a>, <a class="el" href="fileio_8h_source.html#l00207">VIRTUALFILE::BLURAY_CHAPTER::m_playlist_no</a>, <a class="el" href="fileio_8h_source.html#l00151">VIRTUALFILE::m_predicted_size</a>, <a class="el" href="fileio_8h_source.html#l00241">VIRTUALFILE::m_sample_rate</a>, <a class="el" href="fileio_8h_source.html#l00147">VIRTUALFILE::m_st</a>, <a class="el" href="fileio_8h_source.html#l00206">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8h_source.html#l00152">VIRTUALFILE::m_video_frame_count</a>, <a class="el" href="fileio_8h_source.html#l00243">VIRTUALFILE::m_width</a>, <a class="el" href="blurayparser_8cc_source.html#l00402">parse_find_best_audio_stream()</a>, <a class="el" href="blurayparser_8cc_source.html#l00413">parse_find_best_video_stream()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01806">replace_all()</a>, <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>, <a class="el" href="transcode_8cc_source.html#l00248">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00275">transcoder_set_filesize()</a>, <a class="el" href="blurayparser_8cc_source.html#l00194">video_stream_info()</a>, and <a class="el" href="fileio_8h_source.html#l00098">VIRTUALTYPE_BLURAY</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>.</p>
 
@@ -423,7 +423,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Parse Bluray directory and get all Bluray titles and chapters as virtual files. </p>
+<p>Parse Blu-ray directory and get all Blu-ray titles and chapters as virtual files. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to check. </td></tr>
@@ -567,10 +567,10 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get information about Bluray stream. </p>
+<p>Get information about Blu-ray stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to Bluray disk. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>- Path to Blu-ray disk. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ss</td><td>- BLURAY_STREAM_INFO object. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">width</td><td>- Width of video stream. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">height</td><td>- Height of video stream. </td></tr>

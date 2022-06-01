@@ -83,7 +83,7 @@ $(function() {
 <div class="line">* Feature: Issue #137: Added --no_subtitles option to turn subtitles off.</div>
 <div class="line">* Bugfix: Smart encode selected the video format for cue sheet tracks, regardless</div>
 <div class="line">  of the input format. This has been fixed now.</div>
-<div class="line">* Bugfix: Fix crash when DVD/Bluray should be transcoded to audio only.</div>
+<div class="line">* Bugfix: Fix crash when DVD/Blu-ray should be transcoded to audio only.</div>
 <div class="line">* Bugfix: If track performer is empty, try album performer instead.</div>
 <div class="line">* Bugfix: Failing to mount Fuse during &quot;make check&quot; went unnoticed as the result</div>
 <div class="line">  code (which was supposed to be 99) was actually 0. Now nonzero is returned.</div>
@@ -93,6 +93,8 @@ $(function() {
 <div class="line">* Bugfix: mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong</div>
 <div class="line">  error condition, could cause the application to crash or return stupid error</div>
 <div class="line">  messages.</div>
+<div class="line">* Bugfix: Issue #119: Fixed problem that caused frame set generation to</div>
+<div class="line">  fail sometimes. Seems to be related to the nremap() issue.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.10 (2022-04-26):</div>
 <div class="line"> </div>
@@ -107,9 +109,9 @@ $(function() {
 <div class="line">* Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but are</div>
 <div class="line">  correct when data is read.</div>
 <div class="line">* Bugfix: Duration was not saved in cache SQLite database.</div>
-<div class="line">* Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD chapters</div>
+<div class="line">* Bugfix: Issue #131: Sometimes video parameters for some Blu-ray or DVD chapters</div>
 <div class="line">  cannot be detected by FFmpeg API. Transcode then failes - fixed by using data</div>
-<div class="line">  from the Bluray directory or DVD IFO instead.</div>
+<div class="line">  from the Blu-ray directory or DVD IFO instead.</div>
 <div class="line">* Lowest supported FFmpeg API version raised to 4.1.8 &quot;al-Khwarizmi&quot;.</div>
 <div class="line">* Dropped libavresample support, library was removed from FFmpeg API after 3.4.9.</div>
 <div class="line">* Deprecated previous channel layout API based on uint64 bitmasks.</div>
@@ -136,7 +138,7 @@ $(function() {
 <div class="line">* Bugfix: Fixed crash when video had no audio.</div>
 <div class="line">* Bugfix: Issue #112: Fixed access problems with frame sets and HLS.</div>
 <div class="line">* Bugfix: Issue #119: Fixed problem that caused frame set generation to</div>
-<div class="line">  sometimes fail.</div>
+<div class="line">  fail sometimes.</div>
 <div class="line">* Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was</div>
 <div class="line">  required to have FFmpeg API accept the codec.</div>
 <div class="line">* Enhancement: Issue #67: Enhance file size prediction.</div>
@@ -343,7 +345,7 @@ $(function() {
 <div class="line">           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not</div>
 <div class="line">           defined. Only if executed with root privileges, &quot;/var/cache/ffmpegfs&quot; will be used</div>
 <div class="line">           (e.g. if invoked via /etc/fstab entry).</div>
-<div class="line">* Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each</div>
+<div class="line">* Feature: Changed PTS generation: For DVD/Blu-ray chapters they will not start at 0 for each</div>
 <div class="line">           chapter, but at the real time the chapter begins in its title. Fixes #51.</div>
 <div class="line">* Feature: Issue #52 - Added --audiochannels option to select a different number of channels.</div>
 <div class="line">           Defaults to 2 (stereo), may be set to 1 to create mono files. Set to 0 to keep the</div>
@@ -371,14 +373,14 @@ $(function() {
 <div class="line">* Feature: Added support for HLS (HTTP Live Streaming). Select desttype=hls to enable.</div>
 <div class="line">* Feature: Added checks for mov/mp4/prores/webm video format.</div>
 <div class="line">* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on</div>
-<div class="line">          rescaled videos, what a suprise. Especially caused strange results on Bluray sources,</div>
+<div class="line">          rescaled videos, what a suprise. Especially caused strange results on Blu-ray sources,</div>
 <div class="line">          created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.</div>
 <div class="line">* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.</div>
 <div class="line">* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.</div>
 <div class="line">* Bugfix: Properly handle case when start_time is AV_NOPTS_VALUE (frame sets only)</div>
 <div class="line">* Bugfix: Corrected mistake in online help: clear-cache should be clear_cache instead.</div>
 <div class="line">* Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.</div>
-<div class="line">* Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround, the problem is</div>
+<div class="line">* Workaround: Issue #45 - fix garbled Blu-ray/DVD playback. Just a workaround, the problem is</div>
 <div class="line">              somewhere else.</div>
 <div class="line">* Due to copyright uncertanties and because the public domain license used is controversal, all</div>
 <div class="line">  demo files in test/srcdir have been replaced with own works and put under the CC0 1.0 Universal</div>
@@ -392,7 +394,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line">* Feature: Added version check and auto update to cache database. Older database versions will</div>
 <div class="line">           now automatically upgraded to the latest structure.</div>
-<div class="line">* Feature: Transcode videos to frame works transparently for any input now (DVD, Bluray and VideoCD).</div>
+<div class="line">* Feature: Transcode videos to frame works transparently for any input now (DVD, Blu-ray and VideoCD).</div>
 <div class="line">* Bugfix:  Fix for &quot;prores can&#39;t allocate memory #41&quot;.</div>
 <div class="line">* Bugfix:  Do not shrink cache when reopening it.</div>
 <div class="line">* Known bug:</div>
@@ -428,7 +430,7 @@ $(function() {
 <div class="line">           Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not</div>
 <div class="line">           defined. Only if executed with root privileges, &quot;/var/cache/ffmpegfs&quot; will be used</div>
 <div class="line">           (e.g. if invoked via /etc/fstab entry).</div>
-<div class="line">* Feature: Changed PTS generation: For DVD/Bluray chapters they will not start at 0 for each</div>
+<div class="line">* Feature: Changed PTS generation: For DVD/Blu-ray chapters they will not start at 0 for each</div>
 <div class="line">           chapter, but at the real time the chapter begins in its title.</div>
 <div class="line">* Feature: Issue #52 - Added --audiochannels option to select a different number of channels.</div>
 <div class="line">           Defaults to 2 (stereo), may be set to 1 to create mono files. Set to 0 to keep the</div>
@@ -454,14 +456,14 @@ $(function() {
 <div class="line"> </div>
 <div class="line">* Feature: Added checks for mov/mp4/prores/webm video format.</div>
 <div class="line">* Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does not work properly on</div>
-<div class="line">          rescaled videos, what a suprise. Especially caused strange results on Bluray sources,</div>
+<div class="line">          rescaled videos, what a suprise. Especially caused strange results on Blu-ray sources,</div>
 <div class="line">          created blurred frames if downscaled from HD to SD (or lower) before deinterlacing.</div>
 <div class="line">* Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size. Minor problem, but ugly.</div>
 <div class="line">* Bugfix: Cache structure was not properly initialised, causing invalid values in the database.</div>
 <div class="line">* Bugfix: Skip corrupted and discarded video frames to avoid blurps.</div>
 <div class="line">* Bugfix: Corrected mistake in online help: clear-cache should be clear_cache instead.</div>
 <div class="line">* Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture quality.</div>
-<div class="line">* Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround, the problem is</div>
+<div class="line">* Workaround: Issue #45 - fix garbled Blu-ray/DVD playback. Just a workaround, the problem is</div>
 <div class="line">              somewhere else.</div>
 <div class="line">* Due to copyright uncertanties and because the public domain license used is controversal, all</div>
 <div class="line">  demo files in test/srcdir have been replaced with own works and put under the CC0 1.0 Universal</div>
@@ -484,7 +486,7 @@ $(function() {
 <div class="line">* Bugfix: Fixed several warnings if compiled for 32 bit.</div>
 <div class="line">* Bugfix: Removed unused xmlint prerequisite from configure.</div>
 <div class="line">* Bugfix: Video and audio was out of sync on android devices.</div>
-<div class="line">* Bugfix: Fix crash when Bluray video without audio was opened.</div>
+<div class="line">* Bugfix: Fix crash when Blu-ray video without audio was opened.</div>
 <div class="line">* Bugfix: Cache files were left at the predicted size if it was larger than the result size.</div>
 <div class="line">          Size is now correctly capped to the correct result size.</div>
 <div class="line">* Fixed deprecation in fpcompare: 2018-04-01 - f1805d160d - lavfi 7.14.100 - avfilter.h</div>
@@ -519,9 +521,9 @@ $(function() {
 <div class="line">           file up to this point).</div>
 <div class="line">* Feature: Added &quot;Auto Stream Copy&quot; option. This will copy audio or video streams to the output file rather than</div>
 <div class="line">           recoding. Reduces computing time and CPU load.</div>
-<div class="line">* Feature: Sped up DVD/Bluray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.</div>
+<div class="line">* Feature: Sped up DVD/Blu-ray/VCD access drastically. FUSE calls getattr like crazy, using cached data now.</div>
 <div class="line">* Feature: Extended stream copy: now any codec can be copied if supported by target container using --autocopy=MATCH option.</div>
-<div class="line">* Feature: Added full virtual titles to DVD, Bluray and Video CD. Creating one virtual file per chapter is very nice for</div>
+<div class="line">* Feature: Added full virtual titles to DVD, Blu-ray and Video CD. Creating one virtual file per chapter is very nice for</div>
 <div class="line">       music disks as it allows access to every single title very easily. For movies it is better to have it in one</div>
 <div class="line">       piece.</div>
 <div class="line">* Feature: Enhanced win_smb_fix=1 functionality to hopefully catch all Windows incidents.</div>
@@ -555,7 +557,7 @@ $(function() {
 <div class="line">* Feature: Do not &quot;upgrade&quot; mono audio to stereo. Create mono audio stream.</div>
 <div class="line">* Feature: Speed up DVD conversion significantly by using IFO data instead of probing each chapter.</div>
 <div class="line">* Feature: Added DVD angle support.Chapters with angles will show as separate files.</div>
-<div class="line">* Feature: Speed up Bluray conversion significantly by using the directory instead of probing each chapter.</div>
+<div class="line">* Feature: Speed up Blu-ray conversion significantly by using the directory instead of probing each chapter.</div>
 <div class="line">* Feature: Speed up VCD conversion.</div>
 <div class="line">* Feature: EXPERIMENTAL: Windows seems to access the files on Samba drives starting at the last 64K segment</div>
 <div class="line">           simply when the file is opened. Setting win_smb_fix=1 will ignore these attempts (not decode the file</div>
@@ -576,11 +578,11 @@ $(function() {
 <div class="line">* Bugfix: Properly honour client exit (end wait for data).</div>
 <div class="line">* Bugfix: Issue #23: do not block open with a read waiting for data.</div>
 <div class="line">* Bugfix: WebM files had no duration. Added duration to Matroska container.</div>
-<div class="line">* Bugfix: Fixed EOF detection for Bluray chapters.</div>
+<div class="line">* Bugfix: Fixed EOF detection for Blu-ray chapters.</div>
 <div class="line">* Bugfix: Force mpeg format for DVDs to avoid misdetections.</div>
 <div class="line">* Bugfix: Force mpegts format for Blurays to avoid misdetections.</div>
 <div class="line">* Bugfix: Take DVD chapter duration from IFO as probed playtime from VOB segment is sometimes wrong.</div>
-<div class="line">* Bugfix: Take Bluray chapter duration from directory as probed playtime from MTS segment is sometimes wrong.</div>
+<div class="line">* Bugfix: Take Blu-ray chapter duration from directory as probed playtime from MTS segment is sometimes wrong.</div>
 <div class="line">* Fixed deprecation:</div>
 <div class="line"> </div>
 <div class="line">Important changes in 1.5 (2018-06-08)</div>
@@ -607,7 +609,7 @@ $(function() {
 <div class="line">* Feature: Enhanced logging, added a colour profile to screen logs and raised or lowered</div>
 <div class="line">           some messages log levels appropriately. Also added a few informative log</div>
 <div class="line">           messages.</div>
-<div class="line">* Feature: Bluray support: Detect bluray files in directories and list separate chapters</div>
+<div class="line">* Feature: Blu-ray support: Detect Blu-ray files in directories and list separate chapters</div>
 <div class="line">           and titles as separate files.</div>
 <div class="line">* Feature: DVD support: Detect IFO files and list separate DVD chapters or programs</div>
 <div class="line">           as separate files.</div>

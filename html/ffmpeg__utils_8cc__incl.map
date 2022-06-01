@@ -1,5 +1,5 @@
 <map id="src/ffmpeg_utils.cc" name="src/ffmpeg_utils.cc">
-<area shape="rect" id="node1" title="FFmpegfs utility set implementation." alt="" coords="1101,5,1247,32"/>
+<area shape="rect" id="node1" title="FFmpegfs utility set implementation." alt="" coords="1209,5,1355,32"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,80,164,107"/>
 <area shape="rect" id="node3" title=" " alt="" coords="189,80,338,107"/>
 <area shape="rect" id="node4" title=" " alt="" coords="362,80,525,107"/>
@@ -17,9 +17,11 @@
 <area shape="rect" id="node28" title=" " alt="" coords="1607,80,1682,107"/>
 <area shape="rect" id="node29" title=" " alt="" coords="1706,80,1767,107"/>
 <area shape="rect" id="node30" title=" " alt="" coords="1792,80,1865,107"/>
-<area shape="rect" id="node31" title=" " alt="" coords="1889,80,1957,107"/>
-<area shape="rect" id="node32" title=" " alt="" coords="1982,80,2065,107"/>
-<area shape="rect" id="node33" title=" " alt="" coords="2089,80,2301,107"/>
+<area shape="rect" id="node31" title=" " alt="" coords="1890,80,1957,107"/>
+<area shape="rect" id="node32" title=" " alt="" coords="1981,80,2052,107"/>
+<area shape="rect" id="node33" title=" " alt="" coords="2076,80,2144,107"/>
+<area shape="rect" id="node34" title=" " alt="" coords="2169,80,2251,107"/>
+<area shape="rect" id="node35" title=" " alt="" coords="2276,80,2488,107"/>
 <area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="57,229,195,256"/>
 <area shape="rect" id="node7" title=" " alt="" coords="786,229,845,256"/>
 <area shape="rect" id="node9" title=" " alt="" coords="219,229,278,256"/>

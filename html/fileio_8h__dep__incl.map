@@ -1,6 +1,6 @@
 <map id="src/fileio.h" name="src/fileio.h">
 <area shape="rect" id="node1" title="FileIO class." alt="" coords="970,5,1061,32"/>
-<area shape="rect" id="node2" href="$blurayio_8h.html" title="Bluray I/O." alt="" coords="711,80,821,107"/>
+<area shape="rect" id="node2" href="$blurayio_8h.html" title="Blu&#45;ray I/O." alt="" coords="711,80,821,107"/>
 <area shape="rect" id="node4" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="587,155,683,181"/>
 <area shape="rect" id="node5" href="$buffer_8h.html" title="Buffer class." alt="" coords="349,80,445,107"/>
 <area shape="rect" id="node14" href="$diskio_8h.html" title="Direct disk I/O." alt="" coords="849,80,945,107"/>
@@ -21,7 +21,7 @@
 <area shape="rect" id="node15" href="$diskio_8cc.html" title="DiskIO class implementation." alt="" coords="848,155,951,181"/>
 <area shape="rect" id="node17" href="$dvdio_8cc.html" title="DvdIO class implementation." alt="" coords="975,155,1074,181"/>
 <area shape="rect" id="node19" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations." alt="" coords="1184,229,1351,256"/>
-<area shape="rect" id="node21" href="$blurayparser_8cc.html" title="Bluray disk parser implementation." alt="" coords="1575,229,1720,256"/>
+<area shape="rect" id="node21" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="1575,229,1720,256"/>
 <area shape="rect" id="node22" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="1629,155,1823,181"/>
 <area shape="rect" id="node23" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="1837,229,1999,256"/>
 <area shape="rect" id="node24" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="2069,229,2197,256"/>

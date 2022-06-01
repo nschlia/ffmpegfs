@@ -172,8 +172,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>FFmpeg compatibility layer: Keep support for older versions, but remove deprecated functions when necessary.</p>
-<p>see doc/APIchanges 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h Deprecated av_init_packet(). Once removed, sizeof(AVPacket) will no longer be a part of the public ABI. Deprecated AVPacketList.</p>
+<p>FFmpeg compatibility layer: Maintain support for older versions while removing deprecated functions as needed.</p>
+<p>See doc/APIchanges 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h Deprecated av_init_packet(). Once removed, sizeof(AVPacket) will no longer be a part of the public ABI. Deprecated AVPacketList.</p>
 <p>Note from libacodec/packet.h:</p>
 <p>sizeof(AVPacket) being a part of the public ABI is deprecated. once av_init_packet() is removed, new packets will only be able to be allocated with av_packet_alloc(), and new fields may be added to the end of the struct with a minor bump.</p>
 <p>see av_packet_alloc see av_packet_ref see av_packet_unref </p>

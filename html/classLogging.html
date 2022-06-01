@@ -166,7 +166,7 @@ Static Protected Member Functions</h2></td></tr>
 <tr class="separator:a34acf8ad49f5b4f978d53894f639aa38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
 <tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">format_helper</a> (const std::string &amp;string_to_search, const size_t index_to_replace, T &amp;&amp;val, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="mdescLeft">&#160;</td><td class="mdescRight">format_helper with variadic parameters  <a href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">More...</a><br /></td></tr>
+<tr class="memdesc:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="mdescLeft">&#160;</td><td class="mdescRight">format_helper with variadic parameters.  <a href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">More...</a><br /></td></tr>
 <tr class="separator:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a40fe836d9d3c27436f7a454a47973843">format</a> (const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
@@ -214,7 +214,7 @@ Friends</h2></td></tr>
 <p><a class="anchor" id="format"></a>Within the log message text, escape sequences are supported for dynamically formatting the message.</p>
 <p>Escape sequences have either the form n or %&lt;format specifier&gt;n, where the index n starts at 1.</p>
 <p>The index specifies the position of the argument in the list. They can appear in any given order. An index can be used more than once, and not all indexes have to be present (in which case the argument will not be printed). The input value is automatically converted to string format and can be among std::string, char *, int, uint64_t and more.</p>
-<p>The format specifier is the same as used in printf/sprintf.</p>
+<p>The format specifier is the same as used in printf and sprintf.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> channels = 2;</div>
 <div class="line"><span class="keywordtype">int</span> sample_rate = 44100:</div>
 <div class="line"><a class="code" href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">Logging::debug</a>(filename, <span class="stringliteral">&quot;Audio %1 channels %2 KHz&quot;</span>, channels, sample_rate);</div>
@@ -311,7 +311,7 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Construct <a class="el" href="classLogging.html" title="Logging facility">Logging</a> object</p>
+<p>Construct <a class="el" href="classLogging.html" title="Logging facility">Logging</a> object.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">logfile</td><td>- The name of a file to write logging output to. If empty, no output will be written. </td></tr>
@@ -321,7 +321,7 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns 0 if successful; if &lt;0 on this is an FFmpeg AVERROR value </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>If successful, returns 0; otherwise, returns a negative FFmpeg AVERROR value. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00067">67</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
@@ -377,9 +377,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write debug level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -437,9 +437,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write debug level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -495,9 +495,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write error level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -555,9 +555,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write error level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -607,7 +607,7 @@ template&lt;typename... Args&gt; </div>
 <p>format string with single token </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- format string to be searched </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string to be searched. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- arguments </td></tr>
   </table>
   </dd>
@@ -668,14 +668,14 @@ template&lt;typename T , typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>format_helper with variadic parameters </p>
+<p>format_helper with variadic parameters. </p>
 <p>Calls itself recursively until all tokens are replaced.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">string_to_search</td><td>- format string to be searched </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">string_to_search</td><td>- fformat string to be searched. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">index_to_replace</td><td>- index numer (n) to be replaced. May be present 0...x times. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- replace value to fill into tokens </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- further arguments </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- Replacement value to fill in tokens. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- Further arguments. </td></tr>
   </table>
   </dd>
 </dl>
@@ -724,12 +724,12 @@ template&lt;typename T , typename... Args&gt; </div>
 <p>Standard format_helper without parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">string_to_update</td><td>- original string </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">string_to_update</td><td>- Original string. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>- unused </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Original string </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns original string. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00190">190</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
@@ -753,7 +753,7 @@ template&lt;typename T , typename... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>Check whether either failbit or badbit is set. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if either (or both) the failbit or the badbit error state flags is set for the stream. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if either (or both) the failbit or the badbit error state flags are set for the stream. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00138">138</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
@@ -806,9 +806,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write info level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -866,9 +866,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write info level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -936,7 +936,7 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns true. On error, returns false. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Will only fail if the file could not be opened. Writing to stderr or syslog will never fail. errno is not set. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>It will only fail if the file cannot be opened. Writing to stderr or syslog will never fail. errno is not set. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00175">175</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
@@ -990,8 +990,8 @@ template&lt;typename... Args&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The maximum level of log output to write. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>- Message to log </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>- Message to log. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1049,9 +1049,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write trace level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be nullptr. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1109,9 +1109,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write trace level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1167,9 +1167,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write warning level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1227,9 +1227,9 @@ template&lt;typename... Args&gt; </div>
 <p>Write warning level log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in ffmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more argments for format. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
   </table>
   </dd>
 </dl>

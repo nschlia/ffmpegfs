@@ -124,7 +124,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memdesc:ac6f8d683c47d7b37a8d20351f084af10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a virtual file.  <a href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10">More...</a><br /></td></tr>
 <tr class="separator:ac6f8d683c47d7b37a8d20351f084af10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe9ad83e019855f655e4c69c3a282f26"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">read</a> (void *data, size_t <a class="el" href="classFileIO.html#a28df61747de114001d67ef6abad2ca7d">size</a>)=0</td></tr>
-<tr class="memdesc:afe9ad83e019855f655e4c69c3a282f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">More...</a><br /></td></tr>
+<tr class="memdesc:afe9ad83e019855f655e4c69c3a282f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from a file.  <a href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">More...</a><br /></td></tr>
 <tr class="separator:afe9ad83e019855f655e4c69c3a282f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a705727f41def56f0d14c631514d3b115"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115">error</a> () const =0</td></tr>
 <tr class="memdesc:a705727f41def56f0d14c631514d3b115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error.  <a href="classFileIO.html#a705727f41def56f0d14c631514d3b115">More...</a><br /></td></tr>
@@ -184,7 +184,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class for I/O. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00253">253</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00254">254</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab67ef47f0295909426a82d9fb29afa9e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab67ef47f0295909426a82d9fb29afa9e">&#9670;&nbsp;</a></span>alloc()</h2>
@@ -214,16 +214,15 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Free with delete if no longer required.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>- VIRTUALTYPE of new object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>- VIRTUALTYPE of new object. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classFileIO.html" title="Base class for I/O.">FileIO</a> of requested type. <br  />
-On error (out of memory), returns a nullptr. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classFileIO.html" title="Base class for I/O.">FileIO</a> of the requested type. On error (out of memory), it returns a nullptr. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="fileio_8cc_source.html#l00071">71</a> of file <a class="el" href="fileio_8cc_source.html">fileio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type()</a>, <a class="el" href="fileio_8h_source.html#l00098">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00089">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00095">VIRTUALTYPE_DVD</a>, and <a class="el" href="fileio_8h_source.html#l00092">VIRTUALTYPE_VCD</a>.</p>
+<p class="reference">References <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type()</a>, <a class="el" href="fileio_8h_source.html#l00099">VIRTUALTYPE_BLURAY</a>, <a class="el" href="fileio_8h_source.html#l00090">VIRTUALTYPE_DISK</a>, <a class="el" href="fileio_8h_source.html#l00096">VIRTUALTYPE_DVD</a>, and <a class="el" href="fileio_8h_source.html#l00093">VIRTUALTYPE_VCD</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
@@ -377,7 +376,7 @@ On error (out of memory), returns a nullptr. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="fileio_8cc_source.html#l00131">131</a> of file <a class="el" href="fileio_8cc_source.html">fileio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00145">VIRTUALFILE::m_destfile</a>, and <a class="el" href="fileio_8h_source.html#l00368">m_virtualfile</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00146">VIRTUALFILE::m_destfile</a>, and <a class="el" href="fileio_8h_source.html#l00369">m_virtualfile</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="buffer_8cc_source.html#l00926">Buffer::make_cachefile_name()</a>, <a class="el" href="buffer_8cc_source.html#l00345">Buffer::map_file()</a>, <a class="el" href="buffer_8cc_source.html#l00896">Buffer::reallocate()</a>, <a class="el" href="buffer_8cc_source.html#l00946">Buffer::remove_file()</a>, and <a class="el" href="buffer_8cc_source.html#l00421">Buffer::unmap_file()</a>.</p>
 
@@ -410,12 +409,12 @@ On error (out of memory), returns a nullptr. </dd></dl>
 <p>Open a virtual file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">virtualfile</td><td>- LPCVIRTUALFILE of file to open </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">virtualfile</td><td>- LPCVIRTUALFILE of file to open. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10" title="Open a virtual file.">open()</a> returns 0. <br  />
-On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
+On error, a nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
 <p>Implemented in <a class="el" href="classVcdIO.html#a4f307154f1b83ae60e513846718db434">VcdIO</a>, <a class="el" href="classDvdIO.html#ab7c00ddd49cb420515e5da8ca23d060c">DvdIO</a>, <a class="el" href="classDiskIO.html#a719c925a2430fba13d0ed3928ad5761e">DiskIO</a>, <a class="el" href="classBuffer.html#aed7175a89728134d1b9a56a3f0fbd58f">Buffer</a>, and <a class="el" href="classBlurayIO.html#a2aaef823df7a6dbbd9377a947a0b6c79">BlurayIO</a>.</p>
 
@@ -443,7 +442,7 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 <p class="definition">Definition at line <a class="el" href="fileio_8cc_source.html#l00126">126</a> of file <a class="el" href="fileio_8cc_source.html">fileio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00367">m_path</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00368">m_path</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="vcdio_8cc_source.html#l00068">VcdIO::open()</a>, <a class="el" href="blurayio_8cc_source.html#l00177">BlurayIO::read()</a>, and <a class="el" href="dvdio_8cc_source.html#l00555">DvdIO::read()</a>.</p>
 
@@ -483,18 +482,18 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 </table>
 </div><div class="memdoc">
 
-<p>Read data from file. </p>
+<p>Read data from a file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>- buffer to store read bytes in. Must be large enough to hold up to size bytes. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>- number of bytes to read </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>- A buffer to store read bytes in. It must be large enough to hold up to size bytes. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>- The number of bytes to read. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26" title="Read data from file.">read()</a> returns the number of bytes read. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26" title="Read data from a file.">read()</a> returns the number of bytes read. <br  />
 This may be less than size. <br  />
 On error, the value 0 is returned and errno is set to indicate the error. <br  />
-If at end of file, 0 may be returned by errno not set. <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115" title="Get last error.">error()</a> will return 0 if at EOF. </dd></dl>
+If at the end of the file, 0 may be returned but errno is not set. <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115" title="Get last error.">error()</a> will return 0 if at EOF. </dd></dl>
 
 <p>Implemented in <a class="el" href="classVcdIO.html#a15172b3e42d09e354a53b7d7f10d212a">VcdIO</a>, <a class="el" href="classDvdIO.html#a4cab1ed59302fbd4ec77f4f33ecc7a1d">DvdIO</a>, <a class="el" href="classDiskIO.html#acc78ff2b8417bfc5be35026f169f939b">DiskIO</a>, <a class="el" href="classBuffer.html#a670ccc5dd0c8c185eeeac10a241c43c2">Buffer</a>, and <a class="el" href="classBlurayIO.html#aaa42b907e91e8b244940dc1e767452db">BlurayIO</a>.</p>
 
@@ -591,7 +590,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p class="definition">Definition at line <a class="el" href="fileio_8cc_source.html#l00104">104</a> of file <a class="el" href="fileio_8cc_source.html">fileio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00146">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00367">m_path</a>, <a class="el" href="fileio_8h_source.html#l00368">m_virtualfile</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01014">remove_filename()</a>, and <a class="el" href="fileio_8cc_source.html#l00121">virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00147">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8h_source.html#l00368">m_path</a>, <a class="el" href="fileio_8h_source.html#l00369">m_virtualfile</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01014">remove_filename()</a>, and <a class="el" href="fileio_8cc_source.html#l00121">virtualfile()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="buffer_8cc_source.html#l00065">Buffer::open()</a>, <a class="el" href="diskio_8cc_source.html#l00059">DiskIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, and <a class="el" href="vcdio_8cc_source.html#l00068">VcdIO::open()</a>.</p>
 
@@ -711,7 +710,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p class="definition">Definition at line <a class="el" href="fileio_8cc_source.html#l00121">121</a> of file <a class="el" href="fileio_8cc_source.html">fileio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00368">m_virtualfile</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00369">m_virtualfile</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06153">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="buffer_8cc_source.html#l01014">Buffer::have_frame()</a>, <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="buffer_8cc_source.html#l00065">Buffer::open()</a>, <a class="el" href="diskio_8cc_source.html#l00059">DiskIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="vcdio_8cc_source.html#l00068">VcdIO::open()</a>, <a class="el" href="buffer_8cc_source.html#l00967">Buffer::read_frame()</a>, <a class="el" href="fileio_8cc_source.html#l00104">set_virtualfile()</a>, and <a class="el" href="buffer_8cc_source.html#l00665">Buffer::write_frame()</a>.</p>
 

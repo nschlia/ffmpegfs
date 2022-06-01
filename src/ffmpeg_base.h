@@ -213,7 +213,7 @@ protected:
 #define ASS_DEFAULT_FONT        "Arial"     /**< @brief Default font name */
 #define ASS_DEFAULT_FONT_SIZE   16          /**< @brief Default font size */
     /**
-     * @briefDefault foreground colour: white
+     * @brief Default foreground colour: white.
      *
      * Colour values are expressed in hexadecimal BGR format as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
      *

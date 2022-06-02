@@ -304,11 +304,11 @@ public:
      */
     static bool                 total_overhead(size_t *filesize, FILETYPE filetype);
     /**
-     * @brief Closes the output file of open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
+     * @brief Closes the output file if open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
      */
     void                        close_output_file();
     /**
-     * @brief Closes the input file of open. Can safely be called again after the file was already closed or if the file was never open.
+     * @brief Closes the input file if open. Can safely be called again after the file was already closed or if the file was never open.
      */
     void                        close_input_file();
 

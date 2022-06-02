@@ -58,70 +58,70 @@ protected:
 #if !LAVC_DEP_AV_INIT_PACKET
     /**
      * @brief Initialise one data packet for reading or writing.
-     * @param[in] pkt - Packet to be initialised
+     * @param[in] pkt - Packet to be initialised.
      */
     void                init_packet(AVPacket *pkt) const;
 #endif // !LAVC_DEP_AV_INIT_PACKET
     /**
-     * @brief Set up video stream
+     * @brief Set up a video stream.
      * @param[in] output_codec_ctx - Output codec context.
      * @param[in] output_stream - Output stream object.
      * @param[in] input_codec_ctx - Input codec context.
      * @param[in] framerate - Frame rate of input stream.
-     * @param[in] enc_hw_pix_fmt - Forcibly set destination pixel format. Set to AV_PIX_FMT_NONE for automatic selection.
+     * @param[in] enc_hw_pix_fmt - Forcibly set the destination pixel format. Set it to AV_PIX_FMT_NONE for automatic selection.
      */
     void                video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat enc_hw_pix_fmt) const;
     /**
-     * @brief Call av_dict_set and check result code. Displays an error message if appropriate.
-     * @param[in] pm - pointer to a pointer to a dictionary struct.
-     * @param[in] key - entry key to add to *pm.
-     * @param[in] value - entry value to add to *pm.
+     * @brief Call av_dict_set and check the result code. It displays an error message if appropriate.
+     * @param[in] pm - Pointer to a pointer to a dictionary struct.
+     * @param[in] key - Entry key to add to *pm.
+     * @param[in] value - Entry value to add to *pm.
      * @param[in] flags - AV_DICT_* flags.
-     * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @param[in] nodelete - If true, does not delete tag if value is 0.
-     * @return On success returns 0; on error negative AVERROR.
+     * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
+     * @param[in] nodelete - If true, the tag is not deleted if the value is 0.
+     * @return On success, returns 0; on error, a negative AVERROR.
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr, bool nodelete = false) const;
     /**
-     * @brief Call av_dict_set and check result code. Displays an error message if appropriate.
-     * @param[in] pm - pointer to a pointer to a dictionary struct.
-     * @param[in] key - entry key to add to *pm.
-     * @param[in] value - entry value to add to *pm.
+     * @brief Call av_dict_set and check the result code. It displays an error message if appropriate.
+     * @param[in] pm - Pointer to a pointer to a dictionary struct.
+     * @param[in] key - Entry key to add to *pm.
+     * @param[in] value - Entry value to add to *pm.
      * @param[in] flags - AV_DICT_* flags.
-     * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @param[in] nodelete - If true, does not delete tag if value is 0.
-     * @return On success returns 0; on error negative AVERROR.
+     * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
+     * @param[in] nodelete - If true, the tag is not deleted if the value is 0.
+     * @return On success, returns 0; on error, a negative AVERROR.
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, int64_t value, int flags, const char *filename = nullptr, bool nodelete = false) const;
     /**
      * @brief Call av_opt_set and check result code. Displays an error message if appropriate.
-     * @param[in] obj - A struct whose first element is a pointer to an AVClass.
-     * @param[in] key - the name of the field to set
-     * @param[in] value - The value to set.
-     * @param[in] flags - flags passed to av_opt_find2.
-     * @param[in] filename - Filename this frame is created for. Used for logging only, may be nullptr.
-     * @return On success returns 0; on error negative AVERROR.
+     * @param[in] obj - A structure whose first element is a pointer to an AVClass.
+     * @param[in] key - The name of the field to be set.
+     * @param[in] value - The value to be set.
+     * @param[in] flags - Flags to be passed to av_opt_find2.
+     * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
+     * @return On success, returns 0; on error, a negative AVERROR.
      */
     int                 opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
-     * @brief Print info of video stream to log.
-     * @param[in] out_file - true if file is output.
-     * @param[in] format_ctx - AVFormatContext belonging to stream.
-     * @param[in] stream - Stream to show information for.
+     * @brief Print data from the video stream to a log.
+     * @param[in] out_file - True if the file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to the stream.
+     * @param[in] stream - Stream to show data for.
      */
     void                video_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
-     * @brief Print info of audio stream to log.
-     * @param[in] out_file - true if file is output.
-     * @param[in] format_ctx - AVFormatContext belonging to stream.
-     * @param[in] stream - Stream to show information for.
+     * @brief Print data from the audio stream to log.
+     * @param[in] out_file - True if the file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to the stream.
+     * @param[in] stream - Stream to show data for.
      */
     void                audio_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
-     * @brief Print info of subtitle stream to log.
-     * @param[in] out_file - true if file is output.
-     * @param[in] format_ctx - AVFormatContext belonging to stream.
-     * @param[in] stream - Stream to show information for.
+     * @brief Print data from the subtitle stream to log.
+     * @param[in] out_file - True if the file is output.
+     * @param[in] format_ctx - AVFormatContext belonging to the stream.
+     * @param[in] stream - Stream to show data for.
      */
     void                subtitle_info(bool out_file, const AVFormatContext *format_ctx, const AVStream *stream) const;
     /**
@@ -171,40 +171,40 @@ protected:
      */
     uint32_t            pts_to_frame(AVStream* stream, int64_t pts) const;
     /**
-     * @brief FrameToPts
+     * @brief Convert frame number to PTS value.
      * @param[in] stream - Source video stream.
      * @param[in] frame_no - Number of frame.
-     * @return Returns PTS of frame in stream's time_base units.
+     * @return Returns PTS of frame in the stream's time_base units.
      */
     int64_t              frame_to_pts(AVStream* stream, uint32_t frame_no) const;
     /**
-     * @brief Get number of channels from AVCodecParameters
-     * @param[in] codecpar - AVCodecParameters to check
-     * @return Returns number of channels
+     * @brief Get the number of channels from AVCodecParameters.
+     * @param[in] codecpar - AVCodecParameters to check.
+     * @return Returns the number of channels.
      */
     int                 get_channels(const AVCodecParameters *codecpar) const;
     /**
-     * @brief Set number of channels from AVCodecParameters
-     * @param[inout] codecpar_out - AVCodecParameters to set
-     * @param[in] codecpar_in - AVCodecParameters to get channels from
+     * @brief Set the number of channels from AVCodecParameters.
+     * @param[inout] codecpar_out - AVCodecParameters to set.
+     * @param[in] codecpar_in - AVCodecParameters to get channels from.
      */
     void                set_channels(AVCodecParameters *codecpar_out, const AVCodecParameters *codecpar_in) const;
     /**
-     * @brief Get number of channels from AVCodecContext
-     * @param[in] codec_ctx - AVCodecContext to check
-     * @return Returns number of channels
+     * @brief Get the number of channels from AVCodecContext.
+     * @param[in] codec_ctx - AVCodecContext to check.
+     * @return Returns the number of channels.
      */
     int                 get_channels(const AVCodecContext *codec_ctx) const;
     /**
-     * @brief Set number of channels from AVCodecContext
-     * @param[inout] codec_ctx_out - AVCodecContext to set channels for
-     * @param[in] codec_ctx_in - AVCodecContext to copy channels from
+     * @brief Set the number of channels from AVCodecContext.
+     * @param[inout] codec_ctx_out - AVCodecContext to set channels for.
+     * @param[in] codec_ctx_in - AVCodecContext to copy channels from.
      */
     void                set_channels(AVCodecContext *codec_ctx_out, const AVCodecContext *codec_ctx_in) const;
     /**
-     * @brief Set number of channels from AVCodecContext
-     * @param[inout] codec_ctx_out - AVCodecContext to set
-     * @param[in] channels - Number of channels to set
+     * @brief Set the number of channels from AVCodecContext.
+     * @param[inout] codec_ctx_out - AVCodecContext to set.
+     * @param[in] channels - Number of channels to set.
      */
     void                set_channels(AVCodecContext *codec_ctx_out, int channels) const;
 
@@ -213,9 +213,10 @@ protected:
 #define ASS_DEFAULT_FONT        "Arial"     /**< @brief Default font name */
 #define ASS_DEFAULT_FONT_SIZE   16          /**< @brief Default font size */
     /**
-     * @brief Default foreground colour: white
-     * Colour values are expressed in hexadecimal BGR format
-     * as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
+     * @brief Default foreground colour: white.
+     *
+     * Colour values are expressed in hexadecimal BGR format as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
+     *
      * Transparency (alpha) can be expressed as &HAA&.
      *
      * Note that in the alpha channel, 00 is opaque and FF is transparent.
@@ -250,7 +251,7 @@ protected:
 
     /**
      * @brief Generate a suitable AVCodecContext.subtitle_header for SUBTITLE_ASS.
-     * Nicked from FFmpeg API's ff_ass_subtitle_header_full() function :)
+     * Nicked  from the FFmpeg API function ff_ass_subtitle_header_full(). :)
      * @param[in] codec_ctx pointer to the AVCodecContext
      * @param[in] play_res_x subtitle frame width
      * @param[in] play_res_y subtitle frame height
@@ -265,7 +266,7 @@ protected:
      * @param[in] underline 1 for underline text, 0 for normal text
      * @param[in] border_style 1 for outline, 3 for opaque box
      * @param[in] alignment position of the text (left, center, top...), defined after the layout of the numpad (1-3 sub, 4-6 mid, 7-9 top)
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success returns 0; on error, negative AVERROR.
      */
     int                 get_script_info(AVCodecContext *codec_ctx, int play_res_x, int play_res_y, const char *font, int font_size, int primary_color, int secondary_color, int outline_color, int back_color, int bold, int italic, int underline, int border_style, int alignment) const;
 

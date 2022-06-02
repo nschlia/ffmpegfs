@@ -57,6 +57,7 @@
 #include <list>
 #include <assert.h>
 #include <signal.h>
+#include <cstring>
 
 typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;      /**< @brief Map virtual file names to virtual file objects. */
 typedef std::map<const std::string, VIRTUALFILE> RFILENAME_MAP;     /**< @brief Map source file names to virtual file objects. */
@@ -1378,7 +1379,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
  */
 static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 {
-    Logging::info(nullptr, "%1 V%2 terminating", PACKAGE_NAME, FFMPEFS_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminating.", PACKAGE_NAME, FFMPEFS_VERSION);
     std::printf("%s V%s terminating\n", PACKAGE_NAME, FFMPEFS_VERSION);
 
     stop_cache_maintenance();
@@ -1395,7 +1396,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
 
     script_file.clear();
 
-    Logging::info(nullptr, "%1 V%2 terminated", PACKAGE_NAME, FFMPEFS_VERSION);
+    Logging::info(nullptr, "%1 V%2 terminated.", PACKAGE_NAME, FFMPEFS_VERSION);
 }
 
 /**
@@ -2146,8 +2147,8 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
                     "      // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.\n"
                     "      // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element through the `src` property.\n"
                     "      // This is using the built-in support of the plain video element, without using hls.js.\n"
-                    "      // Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven\n"
-                    "      // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.\n"
+                    "      // Note: it would be more normal to wait on the 'canplay' event below, but on Safari (where you are most likely to find built-in HLS support), the video.src URL must be on the user-driven\n"
+                    "      // white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened to when the URL is not on the white-list is 'loadedmetadata'.\n"
                     "      else if (video.canPlayType(\"application/vnd.apple.mpegurl\")) {\n"
                     "        video.src = videoSrc;\n"
                     "        video.addEventListener(\"loadedmetadata\", function() {\n"

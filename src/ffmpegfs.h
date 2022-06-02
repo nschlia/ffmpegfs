@@ -42,7 +42,7 @@
  * @section ffmpeg_introduction Introduction to FFmpegfs
  *
  * FFmpegfs: A read-only FUSE filesystem which transcodes various audio and video formats
- * to MP4, WebM and many more on the fly when opened and read.
+ * to MP4, WebM, and many more on the fly when opened and read.
  *
  * FFmpegfs can be download [here](https://github.com/nschlia/ffmpegfs).
  *
@@ -208,7 +208,7 @@ extern struct FFMPEGFS_PARAMS
     // Subtitles
     int                     m_no_subtitles;                  /**< @brief 0: allow subtitles, 1: do no transcode subtitles */
     // Album arts
-    int                     m_noalbumarts;                  /**< @brief skip album arts */
+    int                     m_noalbumarts;                  /**< @brief Skip album arts */
     // Virtual script
     int                     m_enablescript;                 /**< @brief Enable virtual script */
     std::string             m_scriptfile;                   /**< @brief Script name */
@@ -308,10 +308,13 @@ bool            transcoder_cache_clear(void);
 /**
  * @brief Add new virtual file to internal list.
  *
- * For Blu-ray/DVD/VCD actually no physical input file exists, so virtual file and origfile are the same.
+ * For Blu-ray/DVD/VCD, actually, no physical input file exists, so virtual and
+ * origfile are the same.
+ *
  * The input file is handled by the BlurayIO or VcdIO classes.
- * For cue sheets, the original (huge) input file is used. Start positions are sought, end positions
- * reported as EOF.
+ *
+ * For cue sheets, the original (huge) input file is used. Start positions are
+ * sought; end positions are reported as EOF.
  *
  * @param[in] type - Type of virtual file.
  * @param[in] virtfile - Name of virtual file.
@@ -331,7 +334,7 @@ LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string & virtfile, cons
  */
 LPVIRTUALFILE   insert_file(VIRTUALTYPE type, const std::string &virtfile, const std::string & origfile, const struct stat *stbuf, int flags = VIRTUALFLAG_NONE);
 /**
- * @brief Add new virtual directory to internal list. If the file already exists, it will be updated.
+ * @brief Add new virtual directory to the internal list. If the file already exists, it will be updated.
  * @param[in] type - Type of virtual file.
  * @param[in] virtdir - Name of virtual directory.
  * @param[in] stbuf - stat buffer with file size, time etc.
@@ -346,13 +349,13 @@ LPVIRTUALFILE   insert_dir(VIRTUALTYPE type, const std::string & virtdir, const 
  */
 LPVIRTUALFILE   find_file(const std::string &virtfile);
 /**
- * @brief Find file in cache.
+ * @brief Look for the file in the cache.
  * @param[in] origfile - Filename and path of file to find.
  * @return If found, returns VIRTUALFILE object, if not found returns nullptr.
  */
 LPVIRTUALFILE   find_file_from_orig(const std::string &origfile);
 /**
- * @brief Check if path has already been parsed.
+ * @brief Check if the path has already been parsed.
  * Only useful if for DVD, Blu-ray or VCD where it is guaranteed that all files have been parsed whenever the directory is in the hash.
  * @param[in] path - Path to parse.
  * @return Returns true if path was found; false if not.
@@ -435,7 +438,7 @@ std::string 	get_level_text(PRORESLEVEL level);
 std::string  	get_hwaccel_API_text(HWACCELAPI hwaccel_API);
 
 /**
- * @brief Check if codec_id and optional profile is in block list.
+ * @brief Check if codec_id and the optional profile are in the block list.
  * @param[in] codec_id - Codec ID to check
  * @param[in] profile - Profile to check. Set to FF_PROFILE_UNKOWN to ignore.
  * @return Returns true if codec is in block list, false if not.
@@ -445,7 +448,7 @@ bool            check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
 /**
  * @brief Wrapper to the Fuse filler function.
  * @param[inout] buf - The buffer passed to the readdir() operation. May be nullptr.
- * @param[in] filler - Function pointer to the Fuse update function.  May be nullptr.
+ * @param[in] filler - Function pointer to the Fuse update function. May be nullptr.
  * @param[in] name - The file name of the directory entry. Do not include the path!
  * @param[in] stbuf - File attributes, can be nullptr.
  * @param[in] off - Offset of the next entry or zero.
@@ -454,11 +457,11 @@ bool            check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
 int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off);
 
 /**
- * @brief Create the ./.. entries for a virtual directory
+ * @brief Make dot and double dot entries for a virtual directory.
  * @param[inout] buf - The buffer passed to the readdir() operation. May be nullptr.
- * @param[in] filler - Function pointer to the Fuse update function.  May be nullptr.
- * @param[in] stbuf - File attributes, can be nullptr.
+ * @param[in] filler - Function pointer to the Fuse update function. May be nullptr.
+ * @param[in] stbuf - File attributes. May be nullptr.
  * @param[in] off - Offset of the next entry or zero.
- * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
+ * @return Returns 1 if the buffer is full, zero otherwise. If buf or filler is nullptr, returns zero.
  */
 int             add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off);

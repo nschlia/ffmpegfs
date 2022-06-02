@@ -163,7 +163,7 @@ static int dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_chan
 /**
  * @brief Get the frame rate of the DVD. Can be 25 fps (PAL) or  29.97 (NTCS).
  * @param[in] ptr - Pointer to frame_u element in dvd_time_t structure.
- * @return On success returns AVRational with frame rate. On error returns frame rate { 0, 0 }.
+ * @return On success, returns AVRational with frame rate. On error, returns frame rate { 0, 0 }.
  */
 static AVRational dvd_frame_rate(const uint8_t * ptr)
 {

@@ -136,7 +136,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
  * @brief Close the input file and free everything but the initial buffer.
  * @param[in] cache_entry - corresponding cache entry
  * @param[in] transcoder - Current FFmpeg_Transcoder object.
- * @return On success returns 0; on error negative AVERROR.
+ * @return On success, returns 0; on error, a negative AVERROR value.
  */
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transcoder)
 {

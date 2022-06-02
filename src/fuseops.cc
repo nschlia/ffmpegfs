@@ -2288,7 +2288,7 @@ static int guess_format_idx(const std::string & filepath)
 /**
  * @brief Open file with FFmpeg API and parse for streams and cue sheet.
  * @param[inout] newvirtualfile - VIRTUALFILE object of file to parse
- * @return On success returns 0. On error, returns a negative AVERROR value.
+ * @return On success, returns 0. On error, returns a negative AVERROR value.
  */
 static int parse_file(LPVIRTUALFILE newvirtualfile)
 {

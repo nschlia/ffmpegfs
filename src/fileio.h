@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2017-2022 by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -269,7 +269,7 @@ public:
      *
      * @param[in] type - VIRTUALTYPE of new object.
      * @return Upon successful completion, #FileIO of the requested type.
-     * On error (out of memory), it returns a nullptr.
+     * On error, (out of memory), it returns a nullptr.
      */
     static FileIO *     alloc(VIRTUALTYPE type);
 

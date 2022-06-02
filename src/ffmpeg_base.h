@@ -79,7 +79,7 @@ protected:
      * @param[in] flags - AV_DICT_* flags.
      * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
      * @param[in] nodelete - If true, the tag is not deleted if the value is 0.
-     * @return On success, returns 0; on error, a negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, const char *value, int flags, const char *filename = nullptr, bool nodelete = false) const;
     /**
@@ -90,7 +90,7 @@ protected:
      * @param[in] flags - AV_DICT_* flags.
      * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
      * @param[in] nodelete - If true, the tag is not deleted if the value is 0.
-     * @return On success, returns 0; on error, a negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                 dict_set_with_check(AVDictionary **pm, const char *key, int64_t value, int flags, const char *filename = nullptr, bool nodelete = false) const;
     /**
@@ -100,7 +100,7 @@ protected:
      * @param[in] value - The value to be set.
      * @param[in] flags - Flags to be passed to av_opt_find2.
      * @param[in] filename - Filename this frame was created for. Only used for logging; may be nullptr.
-     * @return On success, returns 0; on error, a negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                 opt_set_with_check(void *obj, const char *key, const char *value, int flags, const char *filename = nullptr) const;
     /**
@@ -215,7 +215,8 @@ protected:
     /**
      * @brief Default foreground colour: white.
      *
-     * Colour values are expressed in hexadecimal BGR format as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
+     * Colour values are expressed in hexadecimal BGR format
+     * as &HBBGGRR& or ABGR (with alpha channel) as &HAABBGGRR&.
      *
      * Transparency (alpha) can be expressed as &HAA&.
      *
@@ -266,7 +267,7 @@ protected:
      * @param[in] underline 1 for underline text, 0 for normal text
      * @param[in] border_style 1 for outline, 3 for opaque box
      * @param[in] alignment position of the text (left, center, top...), defined after the layout of the numpad (1-3 sub, 4-6 mid, 7-9 top)
-     * @return On success returns 0; on error, negative AVERROR.
+     * @return On success, returns 0; on error, negative AVERROR value.
      */
     int                 get_script_info(AVCodecContext *codec_ctx, int play_res_x, int play_res_y, const char *font, int font_size, int primary_color, int secondary_color, int outline_color, int back_color, int bold, int italic, int underline, int border_style, int alignment) const;
 

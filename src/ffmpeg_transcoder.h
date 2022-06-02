@@ -204,13 +204,13 @@ public:
      * @param[in,out] virtualfile - Virtualfile object for desired file. May be a physical file, a DVD, Blu-ray or video CD
      * @param[in,out] fio - Pass an already open fileio object. Normally the file is opened, but if this parameter is not nullptr the already existing object is used.
      *
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Cache buffer to be written.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_output_file(Buffer* buffer);
     /**
@@ -218,13 +218,13 @@ public:
      * of the Encoder will be used to process the resulting audio data, with the
      * result going into the given Buffer.
      * @param[out] status - On success, returns 0; if at EOF, returns 1; on error, returns -1
-     * @return On success returns 0; on error negative AVERROR. 1 if EOF reached
+     * @return On success, returns 0; on error, a negative AVERROR value. If EOF is reached, it returns 1.
      */
     int                         process_single_fr(int & status);
     /**
      * Encode any remaining PCM data to the given buffer. This should be called
      * after all input data has already been passed to encode_pcm_data().
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         encode_finish();
     /**
@@ -315,13 +315,13 @@ public:
     /**
      * @brief Seek to a specific frame. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
      * @param[in] frame_no - Frame number to seek 1...n
-     * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
+     * @return On success, returns 0; On error, negative AVERROR value and sets errno to EINVAL.
      */
     int                         stack_seek_frame(uint32_t frame_no);
     /**
      * @brief Seek to a specific HLS segment. Does not actually perform the seek, this is done asynchronously by the transcoder thread.
      * @param[in] segment_no - Segment number to seek 1...n
-     * @return On success returns 0; on error negative AVERROR value and sets errno to EINVAL.
+     * @return On success, returns 0; On error, negative AVERROR value and sets errno to EINVAL.
      */
     int                         stack_seek_segment(uint32_t segment_no);
     /**
@@ -366,7 +366,7 @@ protected:
      * @brief Copy data from audio FIFO to frame buffer.
      * Divides WAV data into proper chunks to be fed into the
      * encoder.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         copy_audio_to_frame_buffer(int *finished);
     /**
@@ -375,17 +375,17 @@ protected:
      * @param[out] codec_ctx, - Newly created codec context
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] type - Type of media: audio or video.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_bestmatch_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int *stream_idx, AVMediaType type);
     /**
      * @brief Open the best match video stream, if present in input file.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_bestmatch_video();
     /**
      * @brief Open the best match audio stream.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_bestmatch_audio();
     /**
@@ -394,12 +394,12 @@ protected:
      * type must also match: Can only transcode bitmap subtitles
      * into bitmap subtitles or text to text.
      * @todo Add text to bitmap conversion.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int open_subtitles();
     /**
      * @brief open_albumarts
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_albumarts();
     /**
@@ -421,7 +421,7 @@ protected:
      * @param[in] stream_idx - Stream index of new stream.
      * @param[in] input_codec - Decoder codec to open, may be nullptr. Will open a matching codec automatically.
      * @param[in] mediatype - Type of media: audio or video.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
 #if IF_DECLARED_CONST
     int                         open_decoder(AVFormatContext *format_ctx, AVCodecContext **codec_ctx, int stream_idx, const AVCodec *input_codec, AVMediaType mediatype);
@@ -431,19 +431,19 @@ protected:
     /**
      * @brief Open output frame set. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Stream buffer to operate on
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_output_frame_set(Buffer *buffer);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Stream buffer to operate on
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_output(Buffer *buffer);
     /**
      * @brief Process headers of output file
      * Write file header, process meta data and add album arts.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         process_output();
     /**
@@ -456,20 +456,20 @@ protected:
      * @brief Prepare codec options.
      * @param[in] opt - Codec private data.
      * @param[in] profile_option - Selected profile option.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         update_codec(void *opt, LPCPROFILE_OPTION profile_option) const;
     /**
      * @brief Prepare codec options for a file type.
      * @param[in] opt - Codec private data.
      * @param[in] filetype - File type: MP3, MP4 etc.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         prepare_codec(void *opt, FILETYPE filetype) const;
     /**
      * @brief Add new stream to output file.
      * @param[in] codec_id - Codec for this stream.
-     * @return On success returns index of new stream [0...n]; on error negative AVERROR.
+     * @return On success, returns index of new stream [0...n]; On error, negative AVERROR value.
      */
     int                         add_stream(AVCodecID codec_id);
     /**
@@ -477,27 +477,27 @@ protected:
      * @param[in] codec_id - Codec for this stream.
      * @param[in] input_streamref - Streamref of input stream.
      * @param[in] language - (Optional) Language or subtitle file, or std::nullopt if unknown.
-     * @return On success returns index of new stream [0...n]; on error negative AVERROR.
+     * @return On success, returns index of new stream [0...n]; On error, negative AVERROR value.
      */
     int                         add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> &language = std::nullopt);
     /**
      * @brief Add new stream copy to output file.
      * @param[in] codec_id - Codec for this stream.
      * @param[in] codec_type - Codec type: audio or video.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         add_stream_copy(AVCodecID codec_id, AVMediaType codec_type);
     /**
      * @brief Add a stream for an album art.
      * @param[in] input_codec_ctx - Input codec context.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         add_albumart_stream(const AVCodecContext *input_codec_ctx);
     /**
      * @brief Add album art to stream.
      * @param[in] output_stream - Output stream.
      * @param[in] pkt_in - Packet with album art.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in);
     /**
@@ -505,7 +505,7 @@ protected:
      * Also set some basic encoder parameters.
      * Some of these parameters are based on the input file's parameters.
      * @param[in] buffer - Stream buffer to operate on
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         open_output_filestreams(Buffer *buffer);
     /**
@@ -531,71 +531,71 @@ protected:
     void                        copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream = true);
     /**
      * @brief Copy metadata from source to target
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         process_metadata();
     /**
      * @brief Copy all album arts from source to target.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         process_albumarts();
     /**
      * @brief Initialize the audio resampler based on the input and output codec settings.
      * If the input and output sample formats differ, a conversion is required
      * libswresample takes care of this, but requires initialization.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         init_resampler();
     /**
      * @brief Initialise a FIFO buffer for the audio samples to be encoded.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         init_audio_fifo();
     /**
      * @brief Update format options
      * @param[in] dict - Dictionary to update.
      * @param[in] option - Profile option to set.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
     /**
      * @brief Prepare format optimisations
      * @param[in] dict - Dictionary to update.
      * @param[in] filetype - File type: MP3, MP4 etc.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         prepare_format(AVDictionary **dict, FILETYPE filetype) const;
     /**
      * @brief Write the header of the output file container.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         write_output_file_header();
     /**
      * @brief Store packet in output stream.
      * @param[in] pkt - Packet to store.
      * @param[in] mediatype - Typo of packet: audio, video, image (attachment)
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         store_packet(AVPacket *pkt, AVMediaType mediatype);
     /**
      * @brief Decode one audio frame
      * @param[in] pkt - Packet to decode.
      * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         decode_audio_frame(AVPacket *pkt, int *decoded);
     /**
      * @brief Decode one video frame
      * @param[in] pkt - Packet to decode.
      * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         decode_video_frame(AVPacket *pkt, int *decoded);
     /**
      * @brief Decode one subtitle
      * @param[in] pkt - Packet to decode.
      * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         decode_subtitle(AVPacket *pkt, int *decoded);
     /**
@@ -604,13 +604,13 @@ protected:
      * @param[in] pkt - Packet to decode.
      * @param[in] decoded - 1 if packet was decoded, 0 if it did not contain data.
      * @param[in] out_stream_idx - Output stream index.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt, int *decoded, int out_stream_idx);
     /**
      * @brief Decode one frame.
      * @param[in] pkt - Packet to decode.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         decode_frame(AVPacket *pkt);
     /**
@@ -619,7 +619,7 @@ protected:
      * The number of audio samples to be allocated is specified in frame_size.
      * @param[out] converted_input_samples - Memory for input samples.
      * @param[in] frame_size - Size of one frame.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         init_converted_samples(uint8_t ***converted_input_samples, int frame_size);
     /**
@@ -630,32 +630,32 @@ protected:
      * @param[in] in_samples - Number of input samples.
      * @param[out] converted_data - Converted data.
      * @param[out] out_samples - Number of output samples
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         convert_samples(uint8_t **input_data, int in_samples, uint8_t **converted_data, int *out_samples);
     /**
      * @brief Add converted input audio samples to the FIFO buffer for later processing.
      * @param[in] converted_input_samples - Samples to add.
      * @param[in] frame_size - Frame size
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         add_samples_to_fifo(uint8_t **converted_input_samples, int frame_size);
     /**
      * @brief Flush the remaining frames for all streams.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         flush_frames_all(bool use_flush_packet);
     /**
      * @brief Flush the remaining frames
      * @param[in] stream_idx - Stream index to flush.
      * @param[in] use_flush_packet - If true, use flush packet. Otherwise pass nullptr to avcodec_receive_frame.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         flush_frames_single(int stream_idx, bool use_flush_packet);
     /**
      * @brief Read frame from source file, decode and store in FIFO.
      * @param[in] finished - 1 if at EOF.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         read_decode_convert_and_store(int *finished);
     /**
@@ -663,7 +663,7 @@ protected:
      * The frame will be exactly frame_size samples large.
      * @param[in] frame - Newly initialised frame.
      * @param[in] frame_size - Size of new frame.
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         init_audio_output_frame(AVFrame *frame, int frame_size) const;
     /**
@@ -672,7 +672,7 @@ protected:
      * @param[in] pix_fmt - Pixel format
      * @param[in] width - Picture width
      * @param[in] height - Picture height
-     * @return On success returns 0; on error negative AVERROR.
+     * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         alloc_picture(AVFrame *frame, AVPixelFormat pix_fmt, int width, int height) const;
     /**
@@ -690,27 +690,27 @@ protected:
      * @param[in] frame - Decoded frame
      * @param[out] got_frame - 1 if a frame was decoded, 0 if not
      * @param[in] pkt - Packet to decode
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         decode(AVCodecContext *codec_ctx, AVFrame *frame, int *got_frame, const AVPacket *pkt) const;
     /**
      * @brief Load one audio frame from the FIFO buffer and store in frame buffer.
      * @param[in] frame_size - Size of frame.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         create_audio_frame(int frame_size);
     /**
      * @brief Create one frame worth of audio to the output file.
      * @param[in] frame - Audio frame to encode
      * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_audio_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Encode one frame worth of video to the output file.
      * @param[in] frame - Video frame to encode
      * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_video_frame(const AVFrame *frame, int *data_present);
     /**
@@ -718,19 +718,19 @@ protected:
      * @param[in] sub - Subtitle frame to encode
      * @param[in] out_stream_idx - Index of stream to encode to.
      * @param[in] data_present - 1 if frame contained data that could be encoded, 0 if not.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_subtitle(const AVSubtitle *sub, int out_stream_idx, int *data_present);
     /**
      * @brief Encode frame to image
      * @param[in] frame - Video frame to encode
      * @param[out] data_present - Set to 1 if data was encoded. 0 if not.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         encode_image_frame(const AVFrame *frame, int *data_present);
     /**
      * @brief Write the trailer of the output file container.
-     * @return On success returns 0. On error, returns a negative AVERROR value.
+     * @return On success, returns 0. On error, returns a negative AVERROR value.
      */
     int                         write_output_file_trailer();
     /**
@@ -741,7 +741,7 @@ protected:
      * @param[in] opaque - Payload given to FFmpeg, basically the FileIO object
      * @param[in] data - Returned data read from file.
      * @param[in] size - Size of data buffer.
-     * @return On success returns bytes read. May be less than size or even 0. On error, returns a negative AVERROR value.
+     * @return On success, returns bytes read. May be less than size or even 0. On error, returns a negative AVERROR value.
      */
     static int                  input_read(void * opaque, unsigned char * data, int size);
     /**
@@ -749,7 +749,7 @@ protected:
      * @param[in] opaque - Payload given to FFmpeg, basically the FileIO object
      * @param[in] data - Data to be written
      * @param[in] size - Size of data block.
-     * @return On success returns bytes written. On error, returns a negative AVERROR value.
+     * @return On success, returns bytes written. On error, returns a negative AVERROR value.
      */
     static int                  output_write(void * opaque, unsigned char * data, int size);
     /**
@@ -760,7 +760,7 @@ protected:
      * @param[in] opaque - Payload given to FFmpeg, basically the FileIO object
      * @param[in] offset - Offset to seek to.
      * @param[in] whence - One of the regular seek() constants like SEEK_SET/SEEK_END. Additionally FFmpeg constants like AVSEEK_SIZE are supported.
-     * @return On successs returns 0. On error returns -1 and sets errno accordingly.
+     * @return On successs returns 0. On error, returns -1 and sets errno accordingly.
      */
     static int64_t              seek(void * opaque, int64_t offset, int whence);
 
@@ -807,7 +807,7 @@ protected:
      * @param[in] height - Video height in pixels.
      * @param[in] sar - Aspect ratio of input video.
      * @param[in] ar - Calulcated aspect ratio, if computeable.
-     * @return On success returns true; if false is returned ar may not be used.
+     * @return On success, returns true; if false is returned ar may not be used.
      */
     bool                        get_aspect_ratio(int width, int height, const AVRational & sar, AVRational * ar) const;
 
@@ -1079,7 +1079,7 @@ protected:
      * @param[in] ID - Chunk ID (fourCC)
      * @param[out] chunk - Buffer for chunk
      * @param[inout] size - Size of chunk. Buffer for chunk must be large enough to hold it. Upon return holds the actual size of the chunk read.
-     * @return Returns 0 if successful or -1 on error or end of file. Check buffer->eof().
+     * @return Returns 0 if successful or -1 On error, or end of file. Check buffer->eof().
      */
     int                         read_aiff_chunk(Buffer *buffer, size_t *buffoffset, const char *ID, uint8_t *chunk, size_t *size) const;
     /**

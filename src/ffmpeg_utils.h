@@ -749,7 +749,7 @@ std::string         ffmpeg_libinfo();
 /**
  * @brief Lists all supported codecs and devices.
  * @param[in] device_only - If true lists devices only.
- * @return On success returns 0; on error negative AVERROR.
+ * @return On success, returns 0; on error, a negative AVERROR value.
  */
 int                 show_caps(int device_only);
 /**
@@ -768,7 +768,7 @@ int                 supports_albumart(FILETYPE filetype);
 /**
  * @brief Get the FFmpegfs filetype, desttype must be one of FFmpeg's "official" short names for formats.
  * @param[in] desttype - Destination type (MP4, WEBM etc.).
- * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
+ * @return On success, returns FILETYPE enum; On error, returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype(const std::string & desttype);
 /**
@@ -781,13 +781,13 @@ std::string         get_filetype_text(FILETYPE filetype);
  * @brief Get the FFmpegfs filetype, desttypelist must be a comma separated list of FFmpeg's "official" short names for formats.
  * Will return the first match. Same as get_filetype, but accepts a comma separated list.
  * @param[in] desttypelist - Destination type list (MP4, WEBM etc.) separated by commas.
- * @return On success returns FILETYPE enum; on error returns FILETYPE_UNKNOWN.
+ * @return On success, returns FILETYPE enum; On error, returns FILETYPE_UNKNOWN.
  */
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
 /**
  * @brief Print info about an AVStream.
  * @param[in] stream - Stream to print.
- * @return On success returns 0; on error negative AVERROR.
+ * @return On success, returns 0; on error, a negative AVERROR value.
  */
 int                 print_stream_info(const AVStream* stream);
 /**
@@ -817,7 +817,7 @@ const std::string & expand_path(std::string *tgt, const std::string &src);
 /**
  * @brief Check if path is a mount.
  * @param[in] path - Path to check.
- * @return Returns 1 if path is a mount point; 0 if not. On error returns -1. Check errorno for details.
+ * @return Returns 1 if path is a mount point; 0 if not. On error, returns -1. Check errorno for details.
  */
 int                 is_mount(const std::string & path);
 /**
@@ -965,7 +965,7 @@ typedef enum ENCODING
  * @param[in] text - Text to be converted
  * @param[in] encoding - Encoding of input text.
  * @return Returns 0 if successful and the converted text,
- * or errno value on error and text is unchanged.
+ * or errno value On error, and text is unchanged.
  */
 int                 to_utf8(std::string & text, const std::string & encoding);
 /**

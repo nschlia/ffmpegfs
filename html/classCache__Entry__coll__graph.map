@@ -1,16 +1,16 @@
 <map id="Cache_Entry" name="Cache_Entry">
-<area shape="rect" id="node1" title="The Cache_Entry class." alt="" coords="1252,107,1355,133"/>
-<area shape="rect" id="node2" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="1026,5,1086,32"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="329,149,435,176"/>
-<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="607,158,789,199"/>
-<area shape="rect" id="node10" href="$classFileIO.html" title="Base class for I/O." alt="" coords="669,224,727,251"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,91,215,117"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,142,192,183"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,208,216,235"/>
-<area shape="rect" id="node8" href="$structCACHE__INFO.html" title="Cache information block." alt="" coords="1003,157,1109,184"/>
-<area shape="rect" id="node9" href="$classBuffer.html" title="The Buffer class." alt="" coords="1025,107,1087,133"/>
-<area shape="rect" id="node11" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="611,107,785,133"/>
-<area shape="rect" id="node12" href="$classCache.html" title="The Cache class." alt="" coords="1025,275,1087,301"/>
-<area shape="rect" id="node13" href="$structCache_1_1TABLE__COLUMNS.html" title="Column definition of sql table." alt="" coords="607,335,789,361"/>
-<area shape="rect" id="node14" href="$structCache_1_1TABLE__DEF.html" title="Definition of sql table." alt="" coords="626,275,770,301"/>
+<area shape="rect" id="node1" title="The Cache_Entry class." alt="" coords="1249,107,1352,133"/>
+<area shape="rect" id="node2" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="1023,5,1083,32"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="328,149,432,176"/>
+<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="605,158,786,199"/>
+<area shape="rect" id="node10" href="$classFileIO.html" title="Base class for I/O." alt="" coords="666,224,725,251"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,91,214,117"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,142,191,183"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,208,215,235"/>
+<area shape="rect" id="node8" href="$structCACHE__INFO.html" title="Cache information block." alt="" coords="1000,157,1107,184"/>
+<area shape="rect" id="node9" href="$classBuffer.html" title="The Buffer class." alt="" coords="1023,107,1084,133"/>
+<area shape="rect" id="node11" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="608,107,783,133"/>
+<area shape="rect" id="node12" href="$classCache.html" title="The Cache class." alt="" coords="1022,275,1085,301"/>
+<area shape="rect" id="node13" href="$structCache_1_1TABLE__COLUMNS.html" title="Column definition of sql table." alt="" coords="604,335,787,361"/>
+<area shape="rect" id="node14" href="$structCache_1_1TABLE__DEF.html" title="Definition of sql table." alt="" coords="624,275,767,301"/>
 </map>

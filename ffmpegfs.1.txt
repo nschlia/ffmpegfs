@@ -191,11 +191,12 @@ For sampling frequencies of 16, 22.05, and 24 kHz, 'BITRATE' can be among 8, 16,
 +
 When in doubt, it is recommended to choose a bitrate among 96, 112, 128, 160, 192, 224, 256, and 320 kbps.
 +
-*BITRATE* can be defined as...
-* n bit/s:  #  or #bps
-* n kbit/s: #K or #Kbps
-* n Mbit/s: #M or #Mbps
-
+--
+*BITRATE*:: can be defined as...
+ * n bit/s:  #  or #bps
+ * n kbit/s: #K or #Kbps
+ * n Mbit/s: #M or #Mbps
+--
 *--audiosamplerate*=SAMPLERATE, *-o audiosamplerate*=SAMPLERATE::
 This limits the output sample rate to 'SAMPLERATE'. If the source file sample rate is higher, it will be downsampled automatically.
 +
@@ -207,10 +208,11 @@ Set to 0 to keep the source rate.
 +
 Defaults to: *44.1 kHz*
 +
-*SAMPLERATE* can be defined as...
+--
+*SAMPLERATE*:: can be defined as...
  * In Hz:  #  or #Hz
  * In kHz: #K or #KHz
-
+--
 *--audiochannels*=CHANNELS, *-o audiochannels*=CHANNELS::
 This limits the number of output channels to 'CHANNELS'. If the source has more channels, the number will be reduced to this limit.
 +
@@ -248,11 +250,12 @@ Defaults to: *2 Mbit*
 +
 *mp4:* May be specified as 500 to 25,000 kbps.
 +
-*BITRATE* can be defined as...
+--
+*BITRATE*:: can be defined as...
  * n bit/s:  #  or #bps
  * n kbit/s: #K or #Kbps
  * n Mbit/s: #M or #Mbps
-
+--
 *--videoheight*=HEIGHT, -o *videoheight*=HEIGHT::
 This sets the height of the transcoded video.
 +
@@ -300,16 +303,18 @@ Select the hardware acceleration API for encoding.
 +
 Defaults to: *NONE* (no acceleration).
 +
+--
 *API*:: can be defined as...
  * *NONE*: use software encoder
  * *VAAPI*: Video Acceleration API (VA-API)
  * *OMX*: OpenMAX (Open Media Acceleration)
-
+--
 *--hwaccel_dec_blocked*=CODEC[:PROFILE[:PROFILE]], *-o hwaccel_dec_blocked*=CODEC:[:PROFILE[:PROFILE]]::
 Block a codec and, optionally, a profile for hardware decoding. The option can be repeated to block several codecs.
 +
 Defaults to: no codecs blocked.
 +
+--
 *CODEC*:: can be defined as...
  * *H263*:  H.263
  * *H264*:  H.264
@@ -320,6 +325,7 @@ Defaults to: no codecs blocked.
  * *VP8*:   Google VP9
  * *VP9*:   Google VP9
  * *WMV3*:  Windows Media Video 9
+--
 +
 *PROFILE*:: can optionally be added to block a certain profile from the codec only.
 +
@@ -341,11 +347,12 @@ Select the hardware acceleration API for decoding.
 +
 Defaults to: *NONE* (no acceleration)
 +
+--
 *API*:: can be defined as...
  * *NONE*: use software decoder
  * *VAAPI*: Video Acceleration API (VA-API)
  * *MMAL*: Multimedia Abstraction Layer by Broadcom
-
+--
 *--hwaccel_dec_device*=DEVICE, -o *hwaccel_dec_device*=DEVICE::
 Select the hardware acceleration device. May be required for VAAPI, especially if more than one device is available.
 +
@@ -437,20 +444,23 @@ Prune the cache immediately according to the above settings at application start
 *--clear_cache*, *-o clear_cache*::
 On startup, clear the cache. All previously transcoded files will be deleted.
 +
-*TIME* can be defined as...
+--
+*TIME*:: can be defined as...
   * Seconds: #
   * Minutes: #m
   * Hours:   #h
   * Days:    #d
   * Weeks:   #w
+--
 +
-*SIZE* can be defined as...
+--
+*SIZE*:: can be defined as...
   * In bytes:  # or #B
   * In KBytes: #K or #KB
   * In MBytes: #M or #MB
   * In GBytes: #G or #GB
   * In TBytes: #T or #TB
-
+--
 === Other ===
 *--max_threads*=COUNT, *-o max_threads*=COUNT::
 Limit concurrent transcoder threads. Set to 0 for unlimited threads. Recommended values are up to 16 times the number of CPU cores. Should be left as the default.

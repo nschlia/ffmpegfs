@@ -17,7 +17,7 @@ FFmpegfs
 News
 ----
 
-### Version 2.11 under development
+### Version 2.11 is under development
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream, another an audio stream only, the resulting files will be webm (for the video input) and mp3 for the audio only file.
 * **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Added --no_subtitles option to turn subtitles off.
@@ -29,7 +29,7 @@ News
 * **Bugfix:** mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong error condition, could cause the application to crash or return stupid error messages.
 * **Bugfix:** [Issue #119](https://github.com/nschlia/ffmpegfs/issues/119): Fixed problem that caused frame set generation to fail sometimes. Seems to be related to the nremap() issue.
 
-### Version 2.10 released
+### Version 2.10 has been released
 
 **New in in 2.10 (2022-04-26):**
 
@@ -93,9 +93,9 @@ Currently supported output formats:
 
 This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.
 
-For live streaming select *WebM* or *MP4* for best results. If video transcoding is not required, *MP3* will also do, but *WebM* and *MP4* create better results. The *OGG* encoder is not fast enough for real-time recoding of files.
+For live streaming, select *WebM* or *MP4* for best results. If video transcoding is not required, *MP3* will also do, but *WebM* and *MP4* create better results. The *OGG* encoder is not fast enough for real-time recoding of files.
 
-When a destination *JPG*, *PNG* or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.
+When a destination *JPG*, *PNG*, or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.
 
 Selecting *HLS* creates a directory with TS segments together with an M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.
 
@@ -152,11 +152,11 @@ Another (more modern) form of this command:
 
 At this point, files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will show up as `/mnt/ffmpegfs/**.mp4`.
 
-Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source bitrate is less it will not be scaled up but rather left at the lower value.
+Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source bitrate is lower, it will not be scaled up but rather left at the lower value.
 
-Note that the "allow_other" option by default can only be used by root. You must either run FFmpegfs as root or better add a "user_allow_other" key to /etc/fuse.conf.
+Note that the "allow_other" option by default can only be used by root. You must either run FFmpegfs as root or better yet, add a "user_allow_other" key to /etc/fuse.conf.
 
-"allow_other" is required to allow any user access to the mount, by default this is only possible for the user who launched FFmpegfs.
+"allow_other" is required to allow any user access to the mount. By default, this is only possible for the user who launched FFmpegfs.
 
 Examples:
 
@@ -166,7 +166,7 @@ Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatt
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 
-Similar to above, but limit video width to 640 pixelsLarger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
+Similar to the preceding, but limit the video width to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 
@@ -185,7 +185,7 @@ Here is an incomplete list.
 Hardware acceleration using hardware buffered frames:
 
 * VAAPI: Intel, AMD (Decoders: H.264, MPEG-2, MPEG-4 part 2, VC-1. H.265, H.265 10-bit on recent devices. Encoder: H.264, H.265, MPJEPG, MPEG-2, VP8/9, MPEG-4 part 2 can probably be enabled.)
-* VDPAU: Nividia, AMD (H.264, MPEG-1/2/4 and VC-1)
+* VDPAU: Nividia, AMD (H.264, MPEG-1/2/4, and VC-1)
 * CUDA: Compute Unified Device Architecture (Decoders: VP9, H.264, MPEG-2, MPEG-4. Encoding: H.264, H.265), see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
 * QSV: QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
 * OPENCL: Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
@@ -197,7 +197,7 @@ These use software frames:
 * OpenMAX: Encoding on Raspberry (H.264, MPEG-4. Requires key to unlock.)
 * MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)
 
-More details see: https://trac.ffmpeg.org/wiki/HWAccelIntro
+More information can be found at https://trac.ffmpeg.org/wiki/HWAccelIntro.
 
 ### Current Implementation
 
@@ -262,11 +262,11 @@ As found in libavcodec/vaapi_encode.c:
  * If a bitrate is set, try AVBR, then VBR, then CBR.
  * If no bitrate is set, try ICQ, then CQP.
 
-At the moment this is hardwired in code. None of these values can be controlled now by command line. This is planned of course, but not implemented in the current version yet.
+At the moment, this is hardwired into the code. None of these values can be controlled now by the command line. This is planned, of course, but not implemented in the current version yet.
 
 ### Hardware Decoding
 
-This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed, yet.
+This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed yet.
 
 To enable hardware support, use these parameters respectively (of course, use only one):
 
@@ -277,11 +277,11 @@ To enable hardware support, use these parameters respectively (of course, use on
 
 If your system supports VAAPI:
 
-* It could be possible that the rendering device on your system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set it.
+- It could be possible that the rendering device on your system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set it.
 
 On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable. 
 
-The decoding part is a bit tricky. If encoding is set to hardware, and this hardware is there and capable of encoding, it will work. If decoding in hardware is possible, it depends on the source file. Therefore, the file needs to be checked first and then decided if hardware acceleration can be used or if a fallback to software is required. FFmpeg requires that to be set via command line, but FFmpegfs must be able to decide that automatically.
+The decoding part is a bit tricky. If encoding is set to hardware, and this hardware is there and capable of encoding, it will work. If hardware decoding is possible, it depends on the source file. Therefore, the file needs to be checked first and then it needs to be decided if hardware acceleration can be used or if a fallback to software is required. FFmpeg requires that to be set via the command line, but FFmpegfs must be able to decide that automatically.
 
 ### TODOs
 
@@ -289,7 +289,7 @@ Doing both de- and encoding in hardware can make costly transfers of frames betw
 
 It is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing), which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.
 
-Selecting a target bitrate turns out to be a bit tricky, as seen above. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ or AVBR).
+As seen above, selecting a target bitrate turns out to be a bit tricky. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ, or AVBR).
 
 On the other hand, everything seems to work and there are no show stoppers in sight. Sheesh, wiping the sweat off my chin :)
 
@@ -302,14 +302,14 @@ To use the new HLS feature, invoke FFmpegfs with:
 
      ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 
-Please note that this will only work over http, because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from a disk. Simply navigate to the directory and open test.html.
+Please note that this will only work over http because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from a disk. Simply navigate to the directory and open test.html.
 
 Cue Sheets
 ----------
 
-Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically, they are used to define a CD/DVD track layout. Today, they are supported by a wide range of optical disc authoring applications and, moreover, media players.
+Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically, they are used to define a CD or DVD track layout. Today, they are supported by a wide range of optical disk authoring applications and, moreover, media players.
 
-When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name, but the extension ".cue" instead. It can also be embedded into the media file.
+When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name but the extension ".cue" instead. It can also be embedded into the media file.
 
 The directory is named after the source media, with an additional ".tracks" extension. If several media files with different extensions exist, for example, different formats, several ".tracks" directories will be visible.
 
@@ -344,6 +344,7 @@ Some new codec combinations are now possible (the default codecs are in bold):
 | TS, HLS | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
 
 For audio, the codec can be selected with --audiocodec. For videos, use --videocodec. Without these parameters, FFmpegfs will use the codecs as before (no change).
+
 Please note that hardware acceleration might not work, e.g., my hardware encoder supports H264 but not H265. So even though H265 creates much smaller files, it takes 10 times longer to transcode.
 
 Building A Docker Container
@@ -366,14 +367,14 @@ Depending on the machine speed, this will take quite a while. After the command 
           nschlia/ffmpegfs \
           -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 
-Of course, */path/to/source* must be changed to a directory with multi media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired. 
+Of course, */path/to/source* must be changed to a directory with multi-media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired. 
 
 Auto Copy
 ---------
 
 "Auto copy" performs intelligent stream copy. For example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream, it is possible to simply repackage it to an mp4 container without recoding.
 
-This is very efficient as it does not require as much computing as de- and encoding does, and it also will not degrade quality as the original file basically stays the same.
+This is very efficient because it does not require as much computing as de- and encoding, and it also does not degrade quality because the original file remains essentially unchanged.
 
 The function detects if the target format supports the source codec and simply remuxes the stream even if recoding from one format (for example, TS) to another (for example, MOV, MP4).
 
@@ -381,9 +382,9 @@ There are three options:
 
 |Option|Description|
 | ------------- | ------------- |
-|OFF|no auto copy|
-|LIMIT|only auto copy if target file will not become significantly larger|
-|ALWAYS|auto copy whenever possible, even if the target file becomes larger|
+|OFF|no auto copy.|
+|LIMIT|only auto copy if the target file will not become significantly larger.|
+|ALWAYS|auto copy whenever possible, even if the target file becomes larger.|
 
 Smart Transcoding
 -----------------
@@ -395,14 +396,14 @@ To use the new feature, simply specify a video and audio file type, separated by
 *Notes*
 
 1. The first format must be a video codec, and the second must be an audio codec. For example, *--desttype=wav+mp4* is invalid, and instead it should be *--desttype=mp4+wav*.
-2. Smart transcoding currently simply determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.
+2. Smart transcoding currently determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.
 
-The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86).
+The input format should be scanned for streams and the output  selected appropriately: An MP4 with video should be transcoded to MOV,  an MP4 with audio only to AIFF. See [Issue #86] (https://github.com/nschlia/ffmpegfs/issues/86) for details.
 
 Transcode To Frame Images
 -------------------------
 
-To transcode a video to frame images, set the destination type to JPG, PNG or BMP. This will convert videos into virtual folders with one image for each frame.
+To transcode a video to frame images, set the destination type to JPG, PNG, or BMP. This will convert videos into virtual folders with one image for each frame.
 
 ```
 $ ls /storage/videos
@@ -421,7 +422,7 @@ $ find /mnt/ffmpegfs
 A Few Words On ProRes
 ---------------------
 
-Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines the highest possible quality while still saving some disk space and not requiring high-performance disk systems. On the other hand, this means that ProRes encoded videos will become quite large - for example, a 60-minute video may require up to 25 GB.
+Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines the highest possible quality while still saving some disk space and not requiring high-performance disk systems. On the other hand, this means that ProRes encoded videos will become quite large—for example, a 60-minute video may require up to 25 GB.
 
 It is not for target audience use, and certainly not suitable for internet streaming.
 
@@ -430,7 +431,7 @@ Also, please keep in mind that when using lossy source input formats, the qualit
 Transcoding Subtitles
 ---------------------
 
-Closed captions are converted to the output files, if possible. There are two general subtitle formats, text and bitmap. Subtitle transcoding is currently only possible from text to text or bitmap to bitmap. It may be relatively easy to convert text to bitmap, but not vice versa. This would require some sort of OCR and could become arbitrarily complex. That may work well for Latin alphabets, but there are others. Guess what would happen with Georgian, Indian, Chinese, or Arabic...
+Closed captions are converted to the output files, if possible. There are two general subtitle formats: text and bitmap. Subtitle transcoding is currently only possible from text to text or bitmap to bitmap. It may be relatively easy to convert text to bitmap, but not vice versa. This would require some sort of OCR and could become arbitrarily complex. That may work well for Latin alphabets, but there are others. Guess what would happen with Georgian, Indian, Chinese, or Arabic...
 
 | Output Format    | Subtitle Codec                                               | Format |
 | ---------------- | ------------------------------------------------------------ | ------ |
@@ -486,9 +487,9 @@ The --profile option allows you to select the format.
 | MAXTHON | Win | Maxthon| Must decode first (1) |
 
 (1)
-* When opened while transcoding, an error message appears.
-* must start again when the file is transcoded
-* Works fine when the file is loaded directly from the buffer.
+* An error message appears when the file is opened while transcoding.
+* Must start again when the file is transcoded.
+* It works fine when the file is loaded directly from the buffer.
 
 This all boils down to the fact that Firefox and Edge are the only browsers that support the necessary extensions to start playback while still transcoding.
 
@@ -505,7 +506,7 @@ As the file is read, it is transcoded into an internal per-file buffer. This buf
 
 Transcoding is done in an extra thread, so if other processes access the same file, they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before the timeout, transcoding will continue. If not, it will stop, and the chunk created so far will be discarded to save disk space.
 
-Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programs will read a file from start to finish. Futzure enhancements may provide true random seeking (but if this is feasible, it is not yet clear due to restrictions to positioning inside compressed streams). This already works when HLS streaming is selected. FFmpegfs simply skips to the requested segment.
+Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programmes will read a file from start to finish. Futzure enhancements may provide true random seeking (but if this is feasible, it is not yet clear due to restrictions to positioning inside compressed streams). This already works when HLS streaming is selected. FFmpegfs simply skips to the requested segment.
 
 MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file, respectively.
 
@@ -518,7 +519,7 @@ WAV: A pro format WAV header will be created with estimates of the WAV file size
 About Output Formats
 --------------------
 
-A few words about the supported output formats: There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should play well in any modern player.
+A few words about the supported output formats: There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should be played well by any modern player.
 
 MP4 files are special, though, as regular MP4s are not quite suited for live streaming. The reason is that the start block of an MP4 contains a field with the size of the compressed data section. Suffice it to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated. 
 
@@ -526,13 +527,13 @@ For a continuous live stream, that size will never be known. For our transcoded 
 
 Subsequently, many applications will go to the end of an MP4 to read important information before going back to the head of the file and starting playing. This will break the whole transcode-on-demand idea of FFmpegfs.
 
-To get around the restriction, several extensions have been developed, one of which is called "faststart" which relocates the aforementioned meta data from the end to the beginning of the MP4. Additionally, the size field can be left empty (0). isml (smooth live streaming) is another extension.
+To get around the restriction, several extensions have been developed, one of which is called "faststart", which relocates the aforementioned meta data from the end to the beginning of the MP4. Additionally, the size field can be left empty (0). isml (smooth live streaming) is another extension.
 
-For direct to stream transcoding, several new features in MP4 need to be active (ISMV, faststart, separate_moof/empty_moov to name them) which are not implemented in older versions of FFmpeg (or if available, not working properly).
+For direct-to-stream transcoding, several new features in MP4 need to be active (ISMV, faststart, separate_moof/empty_moov to name a few) which are not implemented in older versions of FFmpeg (or if available, not working properly).
 
 By default, faststart files will be created with an empty size field so that the file can be started to be written out at once instead of encoding it as a whole before this is possible. Encoding it completely would mean it would take some time before playback could start.
 
-The data part is divided into chunks of about 1 second each, all with its own header, so it is possible to fill in the size fields early enough.
+The data part is divided into chunks of about 1 second each, all with their own header, so it is possible to fill in the size fields early enough.
 
 As a drawback, not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback can not be positioned past the current playback position, only backwards.
 
@@ -553,7 +554,7 @@ See [Building FFmpeg with optimisations](INSTALL.md#building-ffmpeg-with-optimis
 
 ### Lock ups when accessed through Samba
 
-When accessed from a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked, Even "ls" is not possible and blocks until the data is returned.
+When accessed from a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked. Even "ls" is not possible and blocks until the data is returned.
 
 It seems others had the same problem:
 
@@ -571,7 +572,7 @@ The "aio read size" parameter may be moved to the share config:
 
 ### rsync, Beyond Compare and other tools
 
-Some copy tools do not go along very well with dynamically generated files, as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).
+Some copy tools do not get along very well with dynamically generated files, as in [Issue #23: Partial transcode of some files](https://github.com/nschlia/ffmpegfs/issues/22).
 
 Under Linux, it is best to use (optionally with the -r parameter)
 
@@ -581,20 +582,21 @@ This will copy all missing or changed files without missing parts. On the Window
 
 ### Open hls.html from disk to play HLS output.
 
-Most browsers prevent the playback of files from disk. You may put them into a website directory, but sometimes https must be used or playback will be blocked.
+* Most browsers prevent the playback of files from disk. You may put them into a website directory, but sometimes https must be used or playback will be blocked.
 
-**To enable disk playback in Firefox:**
+  **To enable disk playback in Firefox:**
 
-* Open about:config
-* Set security.fileuri.strict_origin_policy to false.
+  \* Open about:config
+
+  \* Set security.fileuri.strict_origin_policy to false.
 
 ### Songs get cut short
 
-If songs do not play to the very end and you are using SAMBA or NFS you're in trouble.
+If songs do not play to the very end and you are using SAMBA or NFS, you're in trouble.
 
 It happens when the files are transcoded on the fly, but never when the file comes from the cache. This is because the result is never exactly what was predicted.
 
-SAMBA fills files with zeros if the result is smaller, or cuts off the rest if the file is larger than predicted.
+SAMBA fills files with zeros if the result is smaller than predicted, or cuts off the rest if the file is larger than predicted.
 
 NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA. This can be repeated as many times as one wants to—once the file is OK, once not.
 
@@ -605,22 +607,22 @@ Development
 
 FFmpegfs uses Git for revision control. You can obtain the full repository here:
 
-    git clone https://github.com/nschlia/ffmpegfs.git
+  git clone https://github.com/nschlia/ffmpegfs.git
 
-FFmpegfs is written in a little bit of C and mostly C++11. It uses the following libraries:
+FFmpegfs is written in a little bit of C and mostly C++17. It uses the following libraries:
 
-* [FUSE](http://fuse.sourceforge.net/)
+\* [FUSE](http://fuse.sourceforge.net/)
 
 FFmpeg library:
 
-* [FFmpeg](https://www.FFmpeg.org/)
+\* [FFmpeg](https://www.FFmpeg.org/)
 
-Please note that FFmpegfs is in active development, so the main branch may be unstable (but offers nice gimmicks, though). If you need a stable version, please get one (preferably the latest) release.
+Please note that FFmpegfs is in active development, so the main branch may be unstable (but offers nice gimmicks). If you need a stable version, please get one (preferably the latest) release.
 
 Feel free to clone this project and add your own features. If they are interesting to others, they might be pushed back into this project. The same applies to bug fixes; if you discover a bug, you're welcome to fix it!
 
-Future Plans
-------------
+Future Objectives
+-----------------
 
 * Develop a Windows version
 * For more information, see [TODO] (TODO).

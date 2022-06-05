@@ -61,6 +61,7 @@ extern "C" {
 #include <vector>
 #include <cstring>
 #include <iterator>
+#include <functional>
 
 #include <iconv.h>
 #ifdef HAVE_CONFIG_H

@@ -75,7 +75,7 @@ Select an audio codec. 'TYPE' depends on the destination format and can currentl
 +
 Other destination formats do not support other codecs than the default.
 +
-Defaults to: The destination format's default setting, as indicated by the bold codec name in the table.
+Defaults to: The destination format's default setting, as indicated by the first codec name in the list.
 
 *--videocodec*=TYPE, *-ovideocodec*=TYPE::
 Select a video codec. 'TYPE' depends on the destination format and can currently be:
@@ -92,7 +92,7 @@ Select a video codec. 'TYPE' depends on the destination format and can currently
 +
 Other destination formats do not support other codecs than the default.
 +
-Defaults to: The destination format's default setting, as indicated by the bold codec name in the table.
+Defaults to: The destination format's default setting, as indicated by the first codec name in the list.
 
 *--autocopy*=OPTION, *-oautocopy*=OPTION::
 Select the auto copy option. 'OPTION' can be:
@@ -108,7 +108,7 @@ Select the auto copy option. 'OPTION' can be:
 +
 This can speed up transcoding significantly as copying streams uses much less computing power as compared to transcoding.
 +
-*MATCH* copies a stream if the target supports it, e.g. an AAC audio stream will be copied to MPEG, although FFmpeg's target format is MP3 for this container. H264 would be copied to ProRes, although the result would be a regular MOV or MP4, not a ProRes file.
+*MATCH* copies a stream if the target supports it, e.g., an AAC audio stream will be copied to MPEG, although FFmpeg's target format is MP3 for this container. H264 would be copied to ProRes, although the result would be a regular MOV or MP4, not a ProRes file.
 +
 *STRICT* would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to strictly adhere to the output format setting. This will create homogenous results which might prevent problems with picky playback software.
 +

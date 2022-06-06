@@ -3548,7 +3548,6 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                 if (frame->pts != AV_NOPTS_VALUE)
                 {
-                    // Issue #90: Insert key frame at start of each subsequent HLS segment
                     int64_t pts = frame->pts - video_start_time;
                     int64_t pos = ffmpeg_rescale_q_rnd(pts, m_out.m_video.m_codec_ctx->time_base);
                     if (pos < 0)
@@ -3556,15 +3555,19 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         pos = 0;
                     }
 
-                    uint32_t next_segment = get_next_segment(pos);
-
-                    if (goto_next_segment(next_segment) && !m_insert_keyframe)
+                    if (is_hls())
                     {
-                        Logging::debug(destname(), "Force key frame for next segment %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
+                        // Issue #90: Insert key frame at start of each subsequent HLS segment
+                        uint32_t next_segment = get_next_segment(pos);
 
-                        frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
-                        frame->pict_type    = AV_PICTURE_TYPE_I;
-                        m_insert_keyframe   = true;
+                        if (goto_next_segment(next_segment) && !m_insert_keyframe)
+                        {
+                            Logging::debug(destname(), "Force key frame for next segment %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
+
+                            frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
+                            frame->pict_type    = AV_PICTURE_TYPE_I;
+                            m_insert_keyframe   = true;
+                        }
                     }
 
                     m_frame_map.insert(std::make_pair(pos, frame));

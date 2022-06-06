@@ -29,6 +29,7 @@ News
 * **Bugfix:** mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong error condition, could cause the application to crash or return stupid error messages.
 * **Bugfix:** [Issue #119](https://github.com/nschlia/ffmpegfs/issues/119): Fixed problem that caused frame set generation to fail sometimes. Seems to be related to the nremap() issue.
 * Generally revisited documentation, logging, and display texts. Improved grammar, formatting, and fixed quite a few typos that escaped all proofreading sessions.
+* Changed FFmpeg API INFO and DEBUG level log output to FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.
 
 ### Version 2.10 has been released
 

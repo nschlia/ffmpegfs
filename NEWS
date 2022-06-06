@@ -29,6 +29,8 @@ Important changes in 2.11 (2022-06-XX):
   fail sometimes. Seems to be related to the nremap() issue.
 * Generally revisited documentation, logging, and display texts. Improved grammar,
   formatting, and fixed quite a few typos that escaped all proofreading sessions.
+* Changed FFmpeg API INFO and DEBUG level log output to FFmpegfs DEBUG level.
+  What FFmpeg considers "INFO" is far too chatty.
 
 Important changes in 2.10 (2022-04-26):
 

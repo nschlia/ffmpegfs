@@ -2172,8 +2172,7 @@ int main(int argc, char *argv[])
     {
         params.m_log_stderr = 1;
         params.m_log_maxlevel = "DEBUG";
-        // av_log_set_level(AV_LOG_DEBUG);
-        av_log_set_level(AV_LOG_INFO);
+        av_log_set_level(AV_LOG_INFO); // Do not use AV_LOG_DEBUG; AV_LOG_INFO is chatty enough
     }
     else
     {

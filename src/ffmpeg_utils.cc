@@ -1818,6 +1818,16 @@ std::string replace_all(std::string *str, const std::string& from, const std::st
     return *str;
 }
 
+std::string replace_start(std::string *str, const std::string& from, const std::string& to)
+{
+    if (str->find(from, 0) == 0)
+    {
+        str->replace(0, from.length(), to);
+    }
+
+    return *str;
+}
+
 int strcasecmp(const std::string & s1, const std::string & s2)
 {
     return ::strcasecmp(s1.c_str(), s2.c_str());

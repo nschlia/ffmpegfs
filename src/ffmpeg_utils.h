@@ -703,7 +703,7 @@ std::string &       rtrim(std::string &s);
 std::string &       trim(std::string &s);
 /**
  * @brief Same as std::string replace(), but replaces all occurrences.
- * @param[in] str - Source string.
+ * @param[inout] str - Source string.
  * @param[in] from - String to replace.
  * @param[in] to - Replacement string.
  * @return Source string with all occurrences of from replaced with to.
@@ -711,12 +711,20 @@ std::string &       trim(std::string &s);
 std::string         replace_all(std::string str, const std::string& from, const std::string& to);
 /**
  * @brief Same as std::string replace(), but replaces string in-place.
- * @param[in] str - Source string.
+ * @param[inout] str - Source string.
  * @param[in] from - String to replace.
  * @param[in] to - Replacement string.
  * @return Source string with all occurrences of from replaced with to.
  */
 std::string         replace_all(std::string * str, const std::string& from, const std::string& to);
+/**
+ * @brief Replace start of string from "from" to "to".
+ * @param[inout] str - Source string.
+ * @param[in] from - String to replace.
+ * @param[in] to - Replacement string.
+ * @return Source string with all from replaced with to.
+ */
+std::string         replace_start(std::string *str, const std::string& from, const std::string& to);
 /**
  * @brief Format a std::string sprintf-like.
  * @param[in] format - sprintf-like format string.

@@ -305,12 +305,14 @@ public:
     static bool                 total_overhead(size_t *filesize, FILETYPE filetype);
     /**
      * @brief Closes the output file if open and reports lost packets. Can safely be called again after the file was already closed or if the file was never open.
+     * @return Returns true if anything has been closed; false if not.
      */
-    void                        close_output_file();
+    bool                        close_output_file();
     /**
      * @brief Closes the input file if open. Can safely be called again after the file was already closed or if the file was never open.
+     * @return Returns true if anything has been closed; false if not.
      */
-    void                        close_input_file();
+    bool                        close_input_file();
 
     /**
      * @brief Seek to a specific frame. Does not actually perform the seek, this is done asynchronously by the transcoder thread.

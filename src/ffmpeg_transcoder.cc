@@ -6355,8 +6355,10 @@ void FFmpeg_Transcoder::purge()
     }
 }
 
-void FFmpeg_Transcoder::close_output_file()
+bool FFmpeg_Transcoder::close_output_file()
 {
+    bool closed = false;
+
     purge();
 
     close_resample();
@@ -6373,6 +6375,8 @@ void FFmpeg_Transcoder::close_output_file()
 
     if (m_out.m_format_ctx != nullptr)
     {
+        closed = true;
+
         if (m_out.m_format_ctx->pb != nullptr)
         {
             // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
@@ -6390,10 +6394,14 @@ void FFmpeg_Transcoder::close_output_file()
 
         m_out.m_format_ctx = nullptr;
     }
+
+    return closed;
 }
 
-void FFmpeg_Transcoder::close_input_file()
+bool FFmpeg_Transcoder::close_input_file()
 {
+    bool closed = false;
+
     m_in.m_audio.close();
     m_in.m_video.close();
 
@@ -6402,6 +6410,8 @@ void FFmpeg_Transcoder::close_input_file()
 
     if (m_in.m_format_ctx != nullptr)
     {
+        closed = true;
+
         if (m_close_fileio && m_fileio != nullptr)
         {
             m_fileio->close();
@@ -6426,22 +6436,29 @@ void FFmpeg_Transcoder::close_input_file()
     }
 
     free_filters();
+
+    return closed;
 }
 
 void FFmpeg_Transcoder::close()
 {
+    bool closed = false;
+
     // Close input file
-    close_input_file();
+    closed |= close_input_file();
 
     // Close output file
-    close_output_file();
+    closed |= close_output_file();
 
     // Free hardware device contexts if open
     hwdevice_ctx_free(&m_hwaccel_dec_device_ctx);
     hwdevice_ctx_free(&m_hwaccel_enc_device_ctx);
 
     // Closed anything (anything had been open to be closed in the first place)...
-    Logging::trace(nullptr, "FFmpeg transcoder closed.");
+    if (closed)
+    {
+        Logging::trace(nullptr, "FFmpeg transcoder closed.");
+    }
 }
 
 const char *FFmpeg_Transcoder::filename() const

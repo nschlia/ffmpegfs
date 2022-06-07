@@ -351,25 +351,41 @@ bool Cache_Entry::outdated() const
 
     if (m_cache_info.m_audiobitrate != params.m_audiobitrate)
     {
-        Logging::debug(filename(), "Triggering re-transcode: Selected audio bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        if (m_cache_info.m_audiobitrate)
+        {
+            // Report if old rate is known
+            Logging::debug(filename(), "Triggering re-transcode: Selected audio bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        }
         return true;
     }
 
     if (m_cache_info.m_audiosamplerate != params.m_audiosamplerate)
     {
-        Logging::debug(filename(), "Triggering re-transcode: Selected audio samplerate changed from %1 to %2.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
+        if (m_cache_info.m_audiosamplerate)
+        {
+            // Report if old rate is known
+            Logging::debug(filename(), "Triggering re-transcode: Selected audio samplerate changed from %1 to %2.", m_cache_info.m_audiosamplerate, params.m_audiosamplerate);
+        }
         return true;
     }
 
     if (m_cache_info.m_videobitrate != params.m_videobitrate)
     {
-        Logging::debug(filename(), "Triggering re-transcode: Selected video bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        if (m_cache_info.m_videobitrate)
+        {
+            // Report if old rate is known
+            Logging::debug(filename(), "Triggering re-transcode: Selected video bitrate changed from %1 to %2.", m_cache_info.m_audiobitrate, params.m_audiobitrate);
+        }
         return true;
     }
 
     if (m_cache_info.m_videowidth != params.m_videowidth || m_cache_info.m_videoheight != params.m_videoheight)
     {
-        Logging::debug(filename(), "Triggering re-transcode: Selected video witdh/height changed.");
+        if (m_cache_info.m_videowidth && m_cache_info.m_videoheight)
+        {
+            // Report if old dimensions is known
+            Logging::debug(filename(), "Triggering re-transcode: Selected video witdh/height changed from %1/%2 to %3/%4.", m_cache_info.m_videowidth, m_cache_info.m_videoheight, params.m_videowidth, params.m_videoheight);
+        }
         return true;
     }
 

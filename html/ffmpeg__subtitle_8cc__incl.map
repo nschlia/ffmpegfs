@@ -1,14 +1,14 @@
 <map id="src/ffmpeg_subtitle.cc" name="src/ffmpeg_subtitle.cc">
-<area shape="rect" id="node1" title="FFmpeg_Subtitle class implementation." alt="" coords="321,5,488,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="159,80,322,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="347,80,463,107"/>
-<area shape="rect" id="node11" href="$ffmpeg__subtitle_8h.html" title="FFmpeg AVSubtitle extension." alt="" coords="656,80,793,107"/>
-<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,143,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="167,155,226,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="251,155,313,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="338,155,397,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="421,155,463,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="487,155,594,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="619,155,793,181"/>
-<area shape="rect" id="node12" title=" " alt="" coords="818,155,895,181"/>
+<area shape="rect" id="node1" title="FFmpeg_Subtitle class implementation." alt="" coords="320,5,485,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="159,80,321,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="345,80,460,107"/>
+<area shape="rect" id="node11" href="$ffmpeg__subtitle_8h.html" title="FFmpeg AVSubtitle extension." alt="" coords="653,80,789,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,141,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="165,155,224,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="249,155,311,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="336,155,395,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="419,155,461,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="485,155,592,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="617,155,791,181"/>
+<area shape="rect" id="node12" title=" " alt="" coords="816,155,893,181"/>
 </map>

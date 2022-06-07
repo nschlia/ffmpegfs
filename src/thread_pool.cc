@@ -55,8 +55,6 @@ void thread_pool::loop_function()
 {
     unsigned int thread_no = ++m_cur_threads;
 
-    Logging::trace(nullptr, "Starting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
-
     while (true)
     {
         THREADINFO info;
@@ -70,22 +68,22 @@ void thread_pool::loop_function()
                 break;
             }
 
-            Logging::trace(nullptr, "Starting job using pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+            Logging::trace(nullptr, "Starting job taking pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
             info = m_thread_queue.front();
             m_thread_queue.pop();
         }
 
-        info.m_thread_func(info.m_opaque);
-    }
+        int ret = info.m_thread_func(info.m_opaque);
 
-    Logging::trace(nullptr, "Exiting pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+        Logging::trace(nullptr, "Job using pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2 has exited with return code %3.", thread_no, pthread_self(), ret);
+    }
 }
 
-bool thread_pool::schedule_thread(void (*thread_func)(void *), void *opaque)
+bool thread_pool::schedule_thread(int (*thread_func)(void *), void *opaque)
 {
     if (!m_queue_shutdown)
     {
-        Logging::trace(nullptr, "Queueing new thread. %1 threads already in queue.", m_thread_pool.size());
+        Logging::trace(nullptr, "Queuing up a new thread. %1 threads in the pool.", m_thread_pool.size());
 
         {
             std::lock_guard<std::mutex> lock(m_queue_mutex);
@@ -131,7 +129,7 @@ void thread_pool::init(unsigned int num_threads /*= 0*/)
         m_num_threads = num_threads;
     }
 
-    Logging::info(nullptr, "Initialising thread pool with max. %1 threads.", m_num_threads);
+    Logging::info(nullptr, "Thread pool is being initialised with a maximum of %1 threads.", m_num_threads);
 
     for(unsigned int i = 0; i < m_num_threads; i++)
     {
@@ -143,7 +141,7 @@ void thread_pool::tear_down(bool silent)
 {
     if (!silent)
     {
-        Logging::debug(nullptr, "Tearing down thread pool. %1 threads still in queue.", m_thread_queue.size());
+        Logging::debug(nullptr, "Tearing down the thread pool. %1 threads still in queue.", m_thread_queue.size());
     }
 
     m_queue_mutex.lock();

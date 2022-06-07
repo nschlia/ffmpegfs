@@ -65,7 +65,7 @@ typedef struct THREAD_DATA
 static Cache *cache;                            /**< @brief Global cache manager object */
 static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
 
-static void transcoder_thread(void *arg);
+static int transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
@@ -215,12 +215,12 @@ bool transcoder_init(void)
 {
     if (cache == nullptr)
     {
-        Logging::debug(nullptr, "Creating media file cache.");
+        Logging::debug(nullptr, "Creating new media file cache.");
         cache = new(std::nothrow) Cache;
         if (cache == nullptr)
         {
-            Logging::error(nullptr, "Unable to create media file cache. Out of memory.");
-            std::fprintf(stderr, "ERROR: Creating media file cache. Out of memory.\n");
+            Logging::error(nullptr, "Unable to create new media file cache. Out of memory.");
+            std::fprintf(stderr, "ERROR: Creating new media file cache. Out of memory.\n");
             return false;
         }
 
@@ -751,8 +751,9 @@ bool transcoder_cache_clear(void)
 /**
  * @brief Transcoding thread
  * @param[in] arg - Corresponding Cache_Entry object.
+ * @returns Returns 0 on success; or errno code on error.
  */
-static void transcoder_thread(void *arg)
+static int transcoder_thread(void *arg)
 {
     THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
@@ -1015,6 +1016,8 @@ static void transcoder_thread(void *arg)
     delete thread_data;
 
     errno = syserror;
+
+    return errno;
 }
 
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)

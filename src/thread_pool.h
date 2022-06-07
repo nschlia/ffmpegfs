@@ -47,7 +47,7 @@ class thread_pool
 {
     typedef struct THREADINFO                       /**< Thread info structure */
     {
-        void (*m_thread_func)(void *);              /**< Job function pointer */
+        int (*m_thread_func)(void *);               /**< Job function pointer */
         void *m_opaque;                             /**< Parameter for job function */
     } THREADINFO;
 
@@ -78,7 +78,7 @@ public:
      * @param[in] opaque - Parameter passed to thread function.
      * @return Returns true if thread was successfully scheduled, fals if not.
      */
-    bool            schedule_thread(void (*thread_func)(void *), void *opaque);
+    bool            schedule_thread(int (*thread_func)(void *), void *opaque);
     /**
      * @brief Get number of currently running threads.
      * @return Returns number of currently running threads.

@@ -2610,7 +2610,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 {
     m_out.m_filetype = m_current_format->filetype();
 
-    Logging::debug(destname(), "Opening format type '%1'.", m_current_format->desttype().c_str());
+    Logging::debug(destname(), "Opening output format '%1'.", m_current_format->desttype().c_str());
 
     // Reset active streams
     m_active_stream_msk     = 0;

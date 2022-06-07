@@ -632,24 +632,24 @@ int FFmpeg_Transcoder::open_bestmatch_video()
             if (m_hwaccel_enable_enc_buffering)
             {
                 // Hardware buffers available, enabling encoder hardware accceleration.
-                Logging::info(destname(), "Hardware encoder frame buffering %1 enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+                Logging::trace(destname(), "Hardware encoder frame buffering %1 is enabled.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
                 ret = hwdevice_ctx_create(&m_hwaccel_enc_device_ctx, params.m_hwaccel_enc_device_type, params.m_hwaccel_enc_device);
                 if (ret < 0)
                 {
                     Logging::error(destname(), "Failed to create a %1 device for encoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), ffmpeg_geterror(ret).c_str());
                     return ret;
                 }
-                Logging::debug(destname(), "Hardware encoder acceleration and frame buffering are active using the codec '%1'.", hw_encoder_codec_name.c_str());
+                Logging::info(destname(), "Hardware encoder acceleration and frame buffering are active using codec '%1'.", hw_encoder_codec_name.c_str());
             }
             else if (params.m_hwaccel_enc_device_type != AV_HWDEVICE_TYPE_NONE)
             {
                 // No hardware acceleration, fallback to software,
-                Logging::debug(destname(), "Hardware encoder frame buffering %1 is not supported by the codec. '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
+                Logging::debug(destname(), "Hardware encoder frame buffering %1 is not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str(), get_codec_name(m_in.m_video.m_codec_ctx->codec_id, true));
             }
             else if (!hw_encoder_codec_name.empty())
             {
                 // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-                Logging::debug(destname(), "Hardware encoder acceleration active using codec '%1'.", hw_encoder_codec_name.c_str());
+                Logging::info(destname(), "Hardware encoder acceleration is active using codec '%1'.", hw_encoder_codec_name.c_str());
             }
 
             m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
@@ -1009,27 +1009,25 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 if (m_hwaccel_enable_dec_buffering)
                 {
                     // Hardware buffers available, enabling decoder hardware acceleration.
-                    Logging::info(filename(), "Hardware decoder frame buffering %1 is enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
+                    Logging::trace(filename(), "Hardware decoder frame buffering %1 is enabled.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
                     ret = hwdevice_ctx_create(&m_hwaccel_dec_device_ctx, params.m_hwaccel_dec_device_type, params.m_hwaccel_dec_device);
                     if (ret < 0)
                     {
                         Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), ffmpeg_geterror(ret).c_str());
                         return ret;
                     }
-                    Logging::debug(filename(), "Hardware decoder acceleration and frame buffering active using codec '%1'.", input_codec->name);
+                    Logging::info(filename(), "Hardware decoder acceleration and frame buffering are active using codec '%1'.", input_codec->name);
 
                     m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
                 }
                 else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
                 {
                     // No hardware acceleration, fallback to software,
-                    Logging::info(filename(), "Hardware decoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(input_codec_ctx->codec_id, true));
+                    Logging::debug(filename(), "Hardware decoder frame buffering %1 not supported by codec '%2'. Falling back to software.", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), get_codec_name(input_codec_ctx->codec_id, true));
                 }
                 else if (!hw_decoder_codec_name.empty())
                 {
                     // No frame buffering (e.g. OpenMAX or MMAL), but hardware acceleration possible.
-                    Logging::info(filename(), "Hardware decoder acceleration active using codec '%1'.", hw_decoder_codec_name.c_str());
-
                     // Open hw_decoder_codec_name codec here
                     input_codec = avcodec_find_decoder_by_name(hw_decoder_codec_name.c_str());
 
@@ -1039,7 +1037,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                         return AVERROR(EINVAL);
                     }
 
-                    Logging::debug(filename(), "Hardware decoder acceleration is enabled with codec '%1'.", input_codec->name);
+                    Logging::info(filename(), "Hardware decoder acceleration is active using codec '%1'.", input_codec->name);
 
                     m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
                 }
@@ -1680,7 +1678,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             return AVERROR(EINVAL);
         }
 
-        Logging::debug(destname(), "Hardware encoder acceleration enabled with codec '%1'.", output_codec->name);
+        //Logging::info(destname(), "Hardware encoder acceleration active with codec '%1'.", output_codec->name);
 
         m_hwaccel_enc_mode = HWACCELMODE_ENABLED;
     }
@@ -1813,7 +1811,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                     return AVERROR(EINVAL);
                 }
 
-                Logging::debug(destname(), "Because the requested value is not supported by the codec, the audio sample rate was changed from %1 to %2.",
+                Logging::debug(destname(), "Because the requested value is not supported by codec, the audio sample rate was changed from %1 to %2.",
                                format_samplerate(orig_sample_rate).c_str(),
                                format_samplerate(output_codec_ctx->sample_rate).c_str());
             }

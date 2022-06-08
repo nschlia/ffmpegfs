@@ -1,13 +1,13 @@
 <map id="src/ffmpeg_frame.cc" name="src/ffmpeg_frame.cc">
-<area shape="rect" id="node1" title="FFmpeg_Frame class implementation." alt="" coords="288,5,443,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="121,80,284,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="308,80,423,107"/>
-<area shape="rect" id="node11" href="$ffmpeg__frame_8h.html" title="FFmpeg AVFrame extension." alt="" coords="447,80,574,107"/>
-<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,141,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="165,155,224,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="249,155,311,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="336,155,395,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="419,155,461,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="485,155,592,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="617,155,791,181"/>
+<area shape="rect" id="node1" title="FFmpeg_Frame class implementation." alt="" coords="289,5,445,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="122,80,285,107"/>
+<area shape="rect" id="node3" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="309,80,425,107"/>
+<area shape="rect" id="node11" href="$ffmpeg__frame_8h.html" title="FFmpeg AVFrame extension." alt="" coords="449,80,576,107"/>
+<area shape="rect" id="node4" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,143,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="167,155,226,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="251,155,313,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="338,155,397,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="421,155,463,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="487,155,594,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="619,155,793,181"/>
 </map>

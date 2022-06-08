@@ -38,7 +38,7 @@ var searchData=
   ['set_5fchannels_1141',['set_channels',['../classFFmpeg__Base.html#ab3ff00e8fecbd060531ed064ab149cee',1,'FFmpeg_Base::set_channels(AVCodecContext *codec_ctx_out, int channels) const'],['../classFFmpeg__Base.html#a9a8e88c3a5af797ca5702e3cb1f006f3',1,'FFmpeg_Base::set_channels(AVCodecContext *codec_ctx_out, const AVCodecContext *codec_ctx_in) const'],['../classFFmpeg__Base.html#aaf804580f723a75abbf4696f5da22126',1,'FFmpeg_Base::set_channels(AVCodecParameters *codecpar_out, const AVCodecParameters *codecpar_in) const']]],
   ['set_5fcodec_5fctx_1142',['set_codec_ctx',['../classFFmpeg__Transcoder_1_1StreamRef.html#acb503a4bc28ffc92211c3be51a8e694f',1,'FFmpeg_Transcoder::StreamRef']]],
   ['set_5fdefaults_1143',['set_defaults',['../ffmpegfs_8cc.html#a47d3ff9de75a2914f7185cf3dcf03746',1,'ffmpegfs.cc']]],
-  ['set_5fsegment_1144',['set_segment',['../classBuffer.html#a7504c5ecdb98fef9897fd40a7d1fcf4d',1,'Buffer']]],
+  ['set_5fsegment_1144',['set_segment',['../classBuffer.html#ae00cd56ba92c33805447ded6400cd0bd',1,'Buffer']]],
   ['set_5fvirtualfile_1145',['set_virtualfile',['../classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba',1,'FileIO']]],
   ['shmid_1146',['shmid',['../cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430',1,'cache_maintenance.cc']]],
   ['show_5fcaps_1147',['show_caps',['../ffmpeg__utils_8cc.html#a7dcbff20971891a1ae2b556479afe1ad',1,'show_caps(int device_only):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8h.html#a7dcbff20971891a1ae2b556479afe1ad',1,'show_caps(int device_only):&#160;ffmpeg_utils.cc']]],

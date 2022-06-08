@@ -91,9 +91,9 @@ Applying fix for DVDs only.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ab7fc3ccbcad63d267dcc99a688348115">FFmpeg_Transcoder::flush_delayed_subtitles</a>  ()</dt>
 <dd><a class="anchor" id="_todo000014"></a>Implement <a class="el" href="classFFmpeg__Transcoder.html#ab7fc3ccbcad63d267dcc99a688348115" title="Flush delayed subtitle packets, if there are any.">flush_delayed_subtitles()</a> if required  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ab1c5d95c822b31beee2815e1ef0d0aed">FFmpeg_Transcoder::get_hw_decoder_name</a>  (AVCodecID codec_id, std::string *codec_name=nullptr) const</dt>
-<dd><a class="anchor" id="_todo000016"></a><a class="el" href="structHWACCEL.html" title="Hardware acceleration device and type.">HWACCEL</a> - Supported formats </dd>
+<dd><a class="anchor" id="_todo000017"></a><a class="el" href="structHWACCEL.html" title="Hardware acceleration device and type.">HWACCEL</a> - Supported formats </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a26f0c35e837afa3b58b39f4d0a165afe">FFmpeg_Transcoder::get_hw_mmal_decoder_name</a>  (AVCodecID codec_id, std::string *codec_name) const</dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000019"></a>mmal VC1 hardware acceleration not working. Probably because I have not bought a key... <br  />
+<dd><p class="startdd"><a class="anchor" id="_todo000020"></a>mmal VC1 hardware acceleration not working. Probably because I have not bought a key... <br  />
 <br  />
 INFO : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Hardware decoder acceleration active using codec 'vc1_mmal'. <br  />
 INFO : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Hardware decoder acceleration enabled. Codec 'vc1_mmal'. <br  />
@@ -104,7 +104,7 @@ mmal: mmal_port_disable: port vc.ril.video_decode:out:0(0x6e546660) is not enabl
 mmal: mmal_port_disable: port vc.ril.video_decode:ctr:0(0x6e54c240) is not enabled <br  />
 ERROR : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video input codec for stream video (error '0'). <br  />
 ERROR : [/root/test/in/Test_1440x576_WVC1_6Mbps.wmv] Failed to open video codec (error 'Unknown error occurred'). </p>
-<p class="enddd"><a class="anchor" id="_todo000018"></a>mmal MPEG1 hardware acceleration not working. Probably because I have not bought a key... <br  />
+<p class="enddd"><a class="anchor" id="_todo000019"></a>mmal MPEG1 hardware acceleration not working. Probably because I have not bought a key... <br  />
 <br  />
 INFO : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Transcoding to ts. <br  />
 INFO : [/root/test/in/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).mpeg] Hardware decoder acceleration active using codec 'mpeg2_mmal'. <br  />
@@ -121,37 +121,39 @@ ERROR : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (m
 ERROR : [/root/test/out/En Vogue - Don-t Let Go (Love) (Official Music Video) (mpeg2).ts] FFMpeg error: (-1313558101) Unknown error occurred  </p>
 </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a10d35e42fd531b0f96da0ad9eb5ead89">FFmpeg_Transcoder::get_hw_vaapi_codec_name</a>  (AVCodecID codec_id, std::string *codec_name) const</dt>
-<dd><a class="anchor" id="_todo000017"></a>fixit, MPEG-1 decoding does not work... </dd>
+<dd><a class="anchor" id="_todo000018"></a>fixit, MPEG-1 decoding does not work... </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#aac45e5ea83a42253119635023ce8d8e6">FFmpeg_Transcoder::open_output_frame_set</a>  (<a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> *buffer)</dt>
 <dd><a class="anchor" id="_todo000008"></a>Make frame image compression rate command line settable  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a47031e756634d90dc5e82eef8b38a618">FFmpeg_Transcoder::open_subtitles</a>  ()</dt>
-<dd><a class="anchor" id="_todo000020"></a>Add text to bitmap conversion.  </dd>
+<dd><a class="anchor" id="_todo000021"></a>Add text to bitmap conversion.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae9493510e3944742d2027f0d2b459f0c">FFmpeg_Transcoder::produce_audio_dts</a>  (AVPacket *pkt)</dt>
 <dd><a class="anchor" id="_todo000013"></a>Is this a FFmpeg bug or am I too stupid? <br  />
 OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar at 48 K sampling rate. <br  />
 For some reason the duration calculated by the FFMpeg API is wrong. We have to rescale it to the correct value. Same applies to mpegts, so let's rescale.  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a6afa2189ecd068bcbaa1054835db27c4">FFmpeg_Transcoder::read_decode_convert_and_store</a>  (int *finished)</dt>
 <dd><a class="anchor" id="_todo000012"></a>Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.  </dd>
+<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ad5fc4ed5d3550cf962f842bf4b8e3425">FFmpeg_Transcoder::start_new_segment</a>  ()</dt>
+<dd><a class="anchor" id="_todo000015"></a>Set reasonable size here  </dd>
 <dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a52c544c5ae93090357de29b4f39075ae">FFmpeg_Transcoder::video_size</a>  (size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational &amp;framerate)</dt>
-<dd><a class="anchor" id="_todo000015"></a>AV1 prediction has not been tested yet  </dd>
+<dd><a class="anchor" id="_todo000016"></a>AV1 prediction has not been tested yet  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a823061cda8036c46d185b5edd62bf770">ffmpegfs_getattr</a>  (const char *path, struct stat *stbuf)</dt>
-<dd><a class="anchor" id="_todo000023"></a>Calculate correct file size for frame image in set  </dd>
+<dd><a class="anchor" id="_todo000024"></a>Calculate correct file size for frame image in set  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a6c0c07bc6805650f5da69fc23258cc51">ffmpegfs_readdir</a>  (const char *path, void *buf, fuse_fill_dir_t filler, off_t, struct fuse_file_info *)</dt>
-<dd><a class="anchor" id="_todo000022"></a>Calculate correct file size for frame image in set  </dd>
+<dd><a class="anchor" id="_todo000023"></a>Calculate correct file size for frame image in set  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#a7ad0a9782c3231049be5c9c9b22542a7">find_original</a>  (std::string *filepath)</dt>
-<dd><a class="anchor" id="_todo000024"></a>This probably won't work, need to redo "Fallback to old method"  </dd>
+<dd><a class="anchor" id="_todo000025"></a>This probably won't work, need to redo "Fallback to old method"  </dd>
 <dt>Member <a class="el" href="ffmpeg__utils_8cc.html#a2c52f6750d9830ac7fd4c31875b563a1">is_device</a>  (__attribute__((unused)) const AVClass *avclass)</dt>
-<dd><a class="anchor" id="_todo000021"></a>Currently always returns 0. Must implement real check.  </dd>
+<dd><a class="anchor" id="_todo000022"></a>Currently always returns 0. Must implement real check.  </dd>
 <dt>Member <a class="el" href="fuseops_8cc.html#ac422769b0b726d7438d3e0f39eebf00f">kick_next</a>  (LPVIRTUALFILE virtualfile)</dt>
-<dd><p class="startdd"><a class="anchor" id="_todo000025"></a>Will work only if transcoding finishes within timeout. Probably remove or raise timeout here. </p>
-<p class="enddd"><a class="anchor" id="_todo000026"></a>Disable timeout  </p>
+<dd><p class="startdd"><a class="anchor" id="_todo000026"></a>Will work only if transcoding finishes within timeout. Probably remove or raise timeout here. </p>
+<p class="enddd"><a class="anchor" id="_todo000027"></a>Disable timeout  </p>
 </dd>
 <dt>Member <a class="el" href="blurayparser_8cc.html#a84935cc18021375ba2475fb7851435d5">parse_find_best_audio_stream</a>  ()</dt>
 <dd><a class="anchor" id="_todo000001"></a>Returning 0 is not necessarily the best match. Probably better to parse. For "The life of Brian", e.g., this is the Hungarian audio track. No big deal, though, I can recite mostly all dialogs in English and German (and Latin :), but should be fixed anyway.  </dd>
 <dt>Member <a class="el" href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">parse_find_best_video_stream</a>  ()</dt>
 <dd><a class="anchor" id="_todo000002"></a>Returning 0 is not necessarily the best match. Probably better to parse. Most DVDs contain only one video track anyway, so this does not hurt at the moment.  </dd>
 <dt>Member <a class="el" href="classVcdIO.html#a819639f2ee5edf791dc84cf01468dac9">VcdIO::duration</a>  () const override</dt>
-<dd><a class="anchor" id="_todo000027"></a>Implement duration of video CD chapters </dd>
+<dd><a class="anchor" id="_todo000028"></a>Implement duration of video CD chapters </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

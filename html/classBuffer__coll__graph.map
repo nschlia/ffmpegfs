@@ -1,10 +1,10 @@
 <map id="Buffer" name="Buffer">
-<area shape="rect" id="node1" title="The Buffer class." alt="" coords="896,119,957,145"/>
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="665,19,724,45"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="328,64,432,91"/>
-<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="604,70,785,111"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,32"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,57,191,98"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,215,149"/>
-<area shape="rect" id="node8" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="607,136,782,163"/>
+<area shape="rect" id="node1" title="The Buffer class." alt="" coords="900,119,963,145"/>
+<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="669,19,727,45"/>
+<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="329,64,435,91"/>
+<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="607,70,789,111"/>
+<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,215,32"/>
+<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,57,192,98"/>
+<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,123,216,149"/>
+<area shape="rect" id="node8" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="611,136,785,163"/>
 </map>

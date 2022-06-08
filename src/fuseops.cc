@@ -1103,7 +1103,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     size_t locoffset = static_cast<size_t>(offset);  // Cast OK: offset can never be < 0.
     int bytes_read = 0;
 
-    Logging::trace(path, "read: Reading %1 bytes from %2.", size, locoffset);
+    Logging::trace(path, "read: Reading %1 bytes from offset %2.", size, locoffset);
 
     append_basepath(&origpath, path);
 

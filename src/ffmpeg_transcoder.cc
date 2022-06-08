@@ -3560,7 +3560,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
                         if (goto_next_segment(next_segment) && !m_insert_keyframe)
                         {
-                            Logging::debug(destname(), "Force key frame for next segment %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
+                            Logging::debug(destname(), "Force key frame for next segment no. %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
 
                             frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
                             frame->pict_type    = AV_PICTURE_TYPE_I;
@@ -6721,7 +6721,7 @@ int FFmpeg_Transcoder::stack_seek_segment(uint32_t segment_no)
     else
     {
         errno = EINVAL;
-        Logging::error(destname(), "stack_seek() failed: Segment %1 was requested, but is out of range (1...%2)", segment_no, video_frame_count() + 1);
+        Logging::error(destname(), "stack_seek() failed: Segment no. %1 was requested, but is out of range (1...%2)", segment_no, video_frame_count() + 1);
         return AVERROR(EINVAL);
     }
 }

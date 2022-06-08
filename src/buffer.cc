@@ -288,7 +288,7 @@ bool Buffer::init(bool erase_cache)
     return success;
 }
 
-bool Buffer::set_segment(uint32_t segment_no)
+bool Buffer::set_segment(uint32_t segment_no, size_t size)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
@@ -310,7 +310,8 @@ bool Buffer::set_segment(uint32_t segment_no)
 
     m_cur_ci = &m_ci[segment_no - 1];
 
-    return true;
+    // Reserve enough buffer space for segment to avoid frequent resizes
+    return reserve(size);
 }
 
 uint32_t Buffer::segment_count()

@@ -118,9 +118,10 @@ public:
     /**
      * @brief Set the current segment.
      * @param[in] segment_no - [1..n] HLS segment file number.
+     * @param[in] size - Estimated size of segment. Should be large enough to hold the resulting size.
      * @return Returns true on success; if segment_no is 0 or greater, then segment_count() returns false and sets errno to EINVALID.
      */
-    bool                    set_segment(uint32_t segment_no);
+    bool                    set_segment(uint32_t segment_no, size_t size);
     /**
      * @brief Get segment count.
      * @return Number of segments.

@@ -5601,7 +5601,7 @@ int FFmpeg_Transcoder::start_new_segment()
 
     Logging::info(destname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
 
-    if (!m_buffer->set_segment(m_current_segment))
+    if (!m_buffer->set_segment(m_current_segment, m_virtualfile->m_predicted_size / m_virtualfile->get_segment_count()))   /** @todo Set reasonable size here */
     {
         return AVERROR(errno);
     }

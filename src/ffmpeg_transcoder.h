@@ -129,13 +129,11 @@ protected:
     {
         INPUTFILE() :
             m_filetype(FILETYPE_UNKNOWN),
-            m_filename("unset"),
             m_format_ctx(nullptr),
             m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;                         /**< @brief File type, MP3, MP4, OPUS etc. */
-        std::string             m_filename;                         /**< @brief Output filename */
 
         AVFormatContext *       m_format_ctx;                       /**< @brief Output format context */
 
@@ -262,12 +260,12 @@ public:
      */
     const ID3v1 *               id3v1tag() const;
     /**
-     * @brief Return source filename. Must be implemented in child class.
+     * @brief Return source filename.
      * @return Returns filename.
      */
     virtual const char *        filename() const override;
     /**
-     * @brief Return destination filename. Must be implemented in child class.
+     * @brief Return destination filename.
      * @return Returns filename.
      */
     virtual const char *        destname() const override;

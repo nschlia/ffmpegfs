@@ -325,8 +325,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(EINVAL);
     }
 
-    m_in.m_filename     = m_virtualfile->m_origfile;
-    m_out.m_filename    = m_virtualfile->m_destfile;
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
 
@@ -6463,12 +6461,12 @@ void FFmpeg_Transcoder::close()
 
 const char *FFmpeg_Transcoder::filename() const
 {
-    return m_in.m_filename.c_str();
+    return (m_virtualfile != nullptr ? m_virtualfile->m_origfile.c_str() : "");
 }
 
 const char *FFmpeg_Transcoder::destname() const
 {
-    return m_out.m_filename.c_str();
+    return (m_virtualfile != nullptr ? m_virtualfile->m_destfile.c_str() : "");
 }
 
 // create

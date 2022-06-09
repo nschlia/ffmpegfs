@@ -113,7 +113,7 @@ void Cache_Entry::clear(bool fetch_file_time /*= true*/)
     {
         struct stat sb;
 
-        if (stat(filename().c_str(), &sb) == -1)
+        if (stat(filename(), &sb) == -1)
         {
             m_cache_info.m_file_time    = 0;
             m_cache_info.m_file_size    = 0;
@@ -310,14 +310,14 @@ bool Cache_Entry::decode_timeout() const
     return (((time(nullptr) - m_cache_info.m_access_time) >= params.m_max_inactive_abort) && m_ref_count <= 1);
 }
 
-const std::string & Cache_Entry::filename() const
+const char * Cache_Entry::filename() const
 {
-    return m_cache_info.m_origfile;
+    return (m_virtualfile != nullptr ? m_virtualfile->m_origfile.c_str() : "");
 }
 
-const std::string & Cache_Entry::destname() const
+const char *Cache_Entry::destname() const
 {
-    return m_cache_info.m_destfile;
+    return (m_virtualfile != nullptr ? m_virtualfile->m_destfile.c_str() : "");
 }
 
 void Cache_Entry::lock()
@@ -395,7 +395,7 @@ bool Cache_Entry::outdated() const
         return true;
     }
 
-    if (stat(filename().c_str(), &sb) != -1)
+    if (stat(filename(), &sb) != -1)
     {
         // If source file exists, check file date/size
         if (m_cache_info.m_file_time < sb.st_mtime)

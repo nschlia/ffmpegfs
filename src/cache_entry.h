@@ -140,15 +140,15 @@ public:
      */
     bool                    decode_timeout() const;
     /**
-     * @brief Get the name of the source file.
-     * @return Returns the name of the source file.
-     */
-    const std::string &     filename() const;
-    /**
-     * @brief Get the name of the transcoded file.
+     * @brief Return source filename.
      * @return Returns the name of the transcoded file.
      */
-    const std::string &     destname() const;
+    const char *            filename() const;
+    /**
+     * @brief Return destination filename.
+     * @return Returns the name of the transcoded file.
+     */
+    const char *            destname() const;
     /**
      * @brief Update last access time.
      * @param[in] update_database - If true, also persist in SQL database.

@@ -99,13 +99,13 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
             {
                 if (fuse_interrupted())
                 {
-                    Logging::info(cache_entry->destname(), "The client has gone away.");
+                    Logging::info(cache_entry->virtname(), "The client has gone away.");
                     throw false;
                 }
 
                 if (thread_exit)
                 {
-                    Logging::warning(cache_entry->destname(), "Thread exit was received.");
+                    Logging::warning(cache_entry->virtname(), "Thread exit was received.");
                     throw false;
                 }
 
@@ -113,11 +113,11 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                 {
                     if (!segment_no)
                     {
-                        Logging::trace(cache_entry->destname(), "Cache miss at offset %1 with length %2.", offset, len);
+                        Logging::trace(cache_entry->virtname(), "Cache miss at offset %1 with length %2.", offset, len);
                     }
                     else
                     {
-                        Logging::trace(cache_entry->destname(), "Cache miss at offset %1 with length %2 for segment no. %3.", offset, len, segment_no);
+                        Logging::trace(cache_entry->virtname(), "Cache miss at offset %1 with length %2 for segment no. %3.", offset, len, segment_no);
                     }
                     reported = true;
                 }
@@ -128,11 +128,11 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
             {
                 if (!segment_no)
                 {
-                    Logging::trace(cache_entry->destname(), "Cache hit at offset %1 with length %2.", offset, len);
+                    Logging::trace(cache_entry->virtname(), "Cache hit at offset %1 with length %2.", offset, len);
                 }
                 else
                 {
-                    Logging::trace(cache_entry->destname(), "Cache hit at offset %1 with length %2 for segment no. %3.", offset, len, segment_no);
+                    Logging::trace(cache_entry->virtname(), "Cache hit at offset %1 with length %2 for segment no. %3.", offset, len, segment_no);
                 }
             }
             success = !cache_entry->m_cache_info.m_error;
@@ -170,16 +170,16 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transco
     cache_entry->m_cache_info.m_errno               = 0;
     cache_entry->m_cache_info.m_averror             = 0;
 
-    Logging::debug(transcoder.destname(), "Finishing file.");
+    Logging::debug(transcoder.virtname(), "Finishing file.");
 
     if (!cache_entry->m_buffer->reserve(cache_entry->m_cache_info.m_encoded_filesize))
     {
-        Logging::debug(transcoder.destname(), "Unable to truncate the buffer.");
+        Logging::debug(transcoder.virtname(), "Unable to truncate the buffer.");
     }
 
     if (!transcoder.is_multiformat())
     {
-        Logging::debug(transcoder.destname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
+        Logging::debug(transcoder.virtname(), "Predicted size: %1 Final: %2 Diff: %3 (%4%).",
                        format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str(),
                        format_size_ex(cache_entry->m_cache_info.m_encoded_filesize).c_str(),
                        format_result_size_ex(cache_entry->m_cache_info.m_encoded_filesize, cache_entry->m_cache_info.m_predicted_filesize).c_str(),
@@ -298,7 +298,7 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
     const FFmpegfs_Format *current_format = params.current_format(virtualfile);
     if (current_format == nullptr)
     {
-        Logging::error(cache_entry->destname(), "Internal error getting file size.");
+        Logging::error(cache_entry->virtname(), "Internal error getting file size.");
         return false;
     }
 
@@ -306,22 +306,22 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec(), audio_bit_rate, duration, channels, sample_rate, sample_format))
     {
-        Logging::warning(cache_entry->destname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->virtname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec(), 0), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->destname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->virtname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), 0), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::total_overhead(&filesize, current_format->filetype()))
     {
-        Logging::warning(cache_entry->destname(), "Unsupported file type '%1' for format %2.", get_filetype_text(current_format->filetype()).c_str(), current_format->desttype().c_str());
+        Logging::warning(cache_entry->virtname(), "Unsupported file type '%1' for format %2.", get_filetype_text(current_format->filetype()).c_str(), current_format->desttype().c_str());
     }
 
     cache_entry->m_cache_info.m_predicted_filesize = virtualfile->m_predicted_size = filesize;
 
-    Logging::trace(cache_entry->destname(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
+    Logging::trace(cache_entry->virtname(), "Predicted transcoded size of %1.", format_size_ex(cache_entry->m_cache_info.m_predicted_filesize).c_str());
 
     return true;
 }
@@ -450,7 +450,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         }
         else if (begin_transcode)
         {
-            Logging::trace(cache_entry->destname(), "Reading file from cache.");
+            Logging::trace(cache_entry->virtname(), "Reading file from cache.");
         }
 
         cache_entry->unlock();
@@ -473,11 +473,11 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     if (!segment_no)
     {
-        Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2.", len, offset);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2.", len, offset);
     }
     else
     {
-        Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2 for segment no. %3.", len, offset, segment_no);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for segment no. %3.", len, offset, segment_no);
     }
 
     // Store access time
@@ -544,7 +544,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                         check_ignore(cache_entry->size(), offset) &&
                         ((offset + len) > (cache_entry->size())))
                 {
-                    Logging::warning(cache_entry->destname(), "Ignoring Windows' groundless access to the last 8K boundary of the file.");
+                    Logging::warning(cache_entry->virtname(), "Ignoring Windows' groundless access to the last 8K boundary of the file.");
 
                     errno = 0;
                     *bytes_read = 0;  // We've read nothing
@@ -602,7 +602,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 {
     bool success = false;
 
-    Logging::trace(cache_entry->destname(), "Reading %1 bytes from offset %2 for frame no. %3.", len, offset, frame_no);
+    Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for frame no. %3.", len, offset, frame_no);
 
     // Store access time
     cache_entry->update_access();
@@ -636,32 +636,32 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             {
                 if (errno != EAGAIN)
                 {
-                    Logging::error(cache_entry->destname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                    Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
                     throw false;
                 }
 
                 if (errno == EAGAIN && !--retries)
                 {
                     errno = ETIMEDOUT;
-                    Logging::error(cache_entry->destname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                    Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
                     throw false;
                 }
 
                 if (fuse_interrupted())
                 {
-                    Logging::info(cache_entry->destname(), "Client has gone away.");
+                    Logging::info(cache_entry->virtname(), "Client has gone away.");
                     throw false;
                 }
 
                 if (thread_exit)
                 {
-                    Logging::warning(cache_entry->destname(), "Received thread exit.");
+                    Logging::warning(cache_entry->virtname(), "Received thread exit.");
                     throw false;
                 }
 
                 if (!reported)
                 {
-                    Logging::trace(cache_entry->destname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+                    Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
                     reported = true;
                 }
 
@@ -671,7 +671,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
             if (reported)
             {
-                Logging::trace(cache_entry->destname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+                Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
             }
             success = !cache_entry->m_cache_info.m_error;
         }
@@ -680,7 +680,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             success = cache_entry->m_buffer->read_frame(&data, frame_no);
             if (!success)
             {
-                Logging::error(cache_entry->destname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
                 throw false;
             }
         }
@@ -852,7 +852,7 @@ static int transcoder_thread(void *arg)
         }
         else
         {
-            Logging::debug(cache_entry->destname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
+            Logging::debug(cache_entry->virtname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
         }
 
         while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
@@ -910,7 +910,7 @@ static int transcoder_thread(void *arg)
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
             {
                 unlocked = true;
-                Logging::debug(cache_entry->destname(), "Pre-buffer limit reached.");
+                Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
                 thread_data->m_lock_guard = true;
                 thread_data->m_cond.notify_all();       // signal that we are running
             }
@@ -924,7 +924,7 @@ static int transcoder_thread(void *arg)
                     thread_data->m_cond.notify_all();  // signal that we are running
                 }
 
-                Logging::info(cache_entry->destname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
+                Logging::info(cache_entry->virtname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
@@ -937,13 +937,13 @@ static int transcoder_thread(void *arg)
                     break;
                 }
 
-                Logging::info(cache_entry->destname(), "Transcoding resumed.");
+                Logging::info(cache_entry->virtname(), "Transcoding resumed.");
             }
         }
 
         if (!unlocked && params.m_prebuffer_size)
         {
-            Logging::debug(cache_entry->destname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
+            Logging::debug(cache_entry->virtname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
             thread_data->m_lock_guard = true;
             thread_data->m_cond.notify_all();       // signal that we are running
         }
@@ -984,11 +984,11 @@ static int transcoder_thread(void *arg)
 
             if (timeout)
             {
-                Logging::warning(cache_entry->destname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
+                Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
             }
             else
             {
-                Logging::info(cache_entry->destname(), "Thread exit! Transcoding aborted.");
+                Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
             }
         }
         else
@@ -1009,18 +1009,18 @@ static int transcoder_thread(void *arg)
 
         if (success)
         {
-            Logging::info(cache_entry->destname(), "Transcoding completed successfully.");
+            Logging::info(cache_entry->virtname(), "Transcoding completed successfully.");
         }
         else
         {
-            Logging::error(cache_entry->destname(), "Transcoding exited with error.");
+            Logging::error(cache_entry->virtname(), "Transcoding exited with error.");
             if (cache_entry->m_cache_info.m_errno)
             {
-                Logging::error(cache_entry->destname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
+                Logging::error(cache_entry->virtname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
             }
             if (cache_entry->m_cache_info.m_averror)
             {
-                Logging::error(cache_entry->destname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
+                Logging::error(cache_entry->virtname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
             }
         }
     }

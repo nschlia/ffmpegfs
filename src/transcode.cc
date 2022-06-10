@@ -1037,7 +1037,7 @@ static int transcoder_thread(void *arg)
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
     va_list vl2;
-    Logging::level ffmpegfs_level;
+    Logging::LOGLEVEL ffmpegfs_level;
     static int print_prefix = 1;
 
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
@@ -1115,7 +1115,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 
 bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
 {
-    static const std::map<const std::string, const Logging::level, comp> level_map =
+    static const std::map<const std::string, const Logging::LOGLEVEL, comp> level_map =
     {
         { "ERROR",      LOGERROR },
         { "WARNING",    LOGWARN },
@@ -1124,7 +1124,7 @@ bool init_logging(const std::string &logfile, const std::string & max_level, boo
         { "TRACE",      LOGTRACE },
     };
 
-    std::map<const std::string, const Logging::level, comp>::const_iterator it = level_map.find(max_level);
+    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = level_map.find(max_level);
 
     if (it == level_map.cend())
     {

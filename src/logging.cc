@@ -57,14 +57,11 @@
 #define COLOUR_WHITE        "\033[1;37m"        /**< @brief ANSI ESC for white foreground */
 #define COLOUR_RESET        "\033[0m"           /**< @brief ANSI ESC to reset the foreground colour */
 
-namespace
-{
-Logging* logging;
-}
+Logging* Logging::m_logging;
 
 std::recursive_mutex Logging::m_mutex;
 
-const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
+const std::map<Logging::LOGLEVEL, int> Logging::Logger::m_syslog_level_map =
 {
     { LOGERROR,     LOG_ERR },
     { LOGWARN,      LOG_WARNING },
@@ -73,7 +70,7 @@ const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
     { LOGTRACE,     LOG_DEBUG },
 };
 
-const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
+const std::map<Logging::LOGLEVEL, std::string> Logging::Logger::m_level_name_map =
 {
     { LOGERROR,     "ERROR  " },
     { LOGWARN,      "WARNING" },
@@ -82,7 +79,7 @@ const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
     { LOGTRACE,     "TRACE  " },
 };
 
-const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map =
+const std::map<Logging::LOGLEVEL, std::string> Logging::Logger::m_level_colour_map =
 {
     { LOGERROR,     COLOUR_RED },
     { LOGWARN,      COLOUR_YELLOW },
@@ -91,7 +88,7 @@ const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map 
     { LOGTRACE,     COLOUR_BLUE },
 };
 
-Logging::Logging(const std::string &logfile, level max_level, bool to_stderr, bool to_syslog) :
+Logging::Logging(const std::string &logfile, LOGLEVEL max_level, bool to_stderr, bool to_syslog) :
     m_max_level(max_level),
     m_to_stderr(to_stderr),
     m_to_syslog(to_syslog)
@@ -167,28 +164,34 @@ bool Logging::GetFail() const
     return m_logfile.fail();
 }
 
-Logging::Logger Log(Logging::level loglevel, const std::string & filename)
+Logging::Logger Log(Logging::LOGLEVEL loglevel, const std::string & filename)
 {
-    return {loglevel, filename, logging};
+    return {loglevel, filename};
 }
 
-bool Logging::init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog)
+bool Logging::init_logging(const std::string & logfile, Logging::LOGLEVEL max_level, bool to_stderr, bool to_syslog)
 {
-    logging = new(std::nothrow) Logging(logfile, max_level, to_stderr, to_syslog);
-    if (logging == nullptr)
+    if (m_logging != nullptr)
+    {
+        // Do not alloc twice
+        return false;
+    }
+
+    m_logging = new(std::nothrow) Logging(logfile, max_level, to_stderr, to_syslog);
+    if (m_logging == nullptr)
     {
         return false;   // Out of memory...
     }
-    return !logging->GetFail();
+    return !m_logging->GetFail();
 }
 
-void Logging::log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message)
+void Logging::log_with_level(Logging::LOGLEVEL loglevel, const std::string & filename, const std::string & message)
 {
     Log(loglevel, filename) << message;
 }
 
 std::string Logging::format_helper(const std::string &string_to_update,
-        const size_t __attribute__((unused)) size)
+                                   const size_t __attribute__((unused)) size)
 {
     return string_to_update;
 }

@@ -77,7 +77,7 @@ class Logging
 public:
     /** @brief Logging level types enum
      */
-    enum class level
+    enum class LOGLEVEL
     {
         LOGERROR = 1,       /**< @brief Error level */
         LOGWARN = 2,        /**< @brief Warning level */
@@ -96,7 +96,7 @@ public:
      *
      * @return If successful, returns 0; otherwise, returns a negative FFmpeg AVERROR value.
      */
-    explicit Logging(const std::string & logfile, level max_level, bool to_stderr, bool to_syslog);
+    explicit Logging(const std::string & logfile, LOGLEVEL max_level, bool to_stderr, bool to_syslog);
 
     /**
      * @brief Check whether either failbit or badbit is set.
@@ -117,30 +117,27 @@ private:
          * @param[in] filename - Name of file for which this log entry was written. May be empty.
          * @param[in] logging - Corresponding Logging object.
          */
-        Logger(level loglevel, const std::string & filename, Logging* logging) :
+        Logger(LOGLEVEL loglevel, const std::string & filename) :
             m_loglevel(loglevel),
-            m_filename(filename),
-            m_logging(logging) {}
+            m_filename(filename) {}
         /**
          * @brief Construct Logger object
          */
         explicit Logger() :
-            m_loglevel(level::LOGDEBUG),
-            m_logging(nullptr) {}
+            m_loglevel(LOGLEVEL::LOGDEBUG) {}
         /**
          * @brief Destroy Logger object
          */
         virtual ~Logger();
 
     private:
-        const level         m_loglevel;                                     /**< @brief Log level required to write log entry */
+        const LOGLEVEL      m_loglevel;                                     /**< @brief Log level required to write log entry */
 
         const std::string   m_filename;                                     /**< @brief Name of file for which this log entry was written. May be empty. */
-        Logging*            m_logging;                                      /**< @brief Corresponding Logging object */
 
-        static const std::map<level, int>           m_syslog_level_map;     /**< @brief Map our log levels to syslog levels */
-        static const std::map<level, std::string>   m_level_name_map;       /**< @brief Map log level enums to strings */
-        static const std::map<level, std::string>   m_level_colour_map;     /**< @brief Map log level enums to colours (logging to stderr only) */
+        static const std::map<LOGLEVEL, int>           m_syslog_level_map;  /**< @brief Map our log levels to syslog levels */
+        static const std::map<LOGLEVEL, std::string>   m_level_name_map;    /**< @brief Map log level enums to strings */
+        static const std::map<LOGLEVEL, std::string>   m_level_colour_map;  /**< @brief Map log level enums to colours (logging to stderr only) */
     };
 
 public:
@@ -153,7 +150,7 @@ public:
      * @return On success, returns true. On error, returns false.
      * @note It will only fail if the file cannot be opened. Writing to stderr or syslog will never fail. errno is not set.
      */
-    static bool init_logging(const std::string & logfile, Logging::level max_level, bool to_stderr, bool to_syslog);
+    static bool init_logging(const std::string & logfile, Logging::LOGLEVEL max_level, bool to_stderr, bool to_syslog);
 
     /**
      * @brief Write trace level log entry
@@ -164,7 +161,7 @@ public:
     template <typename... Args>
     static void trace(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGTRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGTRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write trace level log entry.
@@ -175,7 +172,7 @@ public:
     template <typename... Args>
     static void trace(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -187,7 +184,7 @@ public:
     template <typename... Args>
     static void debug(const char * filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGDEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGDEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write debug level log entry.
@@ -198,7 +195,7 @@ public:
     template <typename... Args>
     static void debug(const std::string & filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -210,7 +207,7 @@ public:
     template <typename... Args>
     static void info(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGINFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGINFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write info level log entry.
@@ -221,7 +218,7 @@ public:
     template <typename... Args>
     static void info(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -233,7 +230,7 @@ public:
     template <typename... Args>
     static void warning(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGWARN, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGWARN, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write warning level log entry.
@@ -244,7 +241,7 @@ public:
     template <typename... Args>
     static void warning(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -256,7 +253,7 @@ public:
     template <typename... Args>
     static void error(const char *filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
     }
     /**
      * @brief Write error level log entry.
@@ -267,7 +264,7 @@ public:
     template <typename... Args>
     static void error(const std::string &filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::level::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(Logging::LOGLEVEL::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -276,7 +273,7 @@ public:
      * @param[in] filename - Name of the file for which this log entry was written. May be empty.
      * @param[in] message - Message to log.
      */
-    static void log_with_level(Logging::level loglevel, const std::string & filename, const std::string & message);
+    static void log_with_level(Logging::LOGLEVEL loglevel, const std::string & filename, const std::string & message);
 
 protected:
     /**
@@ -363,23 +360,24 @@ protected:
 protected:
     /**
      * @brief Make logger class our friend for our constructor
-     * @param[in] loglevel - Selected loglevel.
-     * @param[in] filename - If logging to file, use this file name.
+     * @param[in] loglevel - The level of log this message is for.
+     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
      */
-    friend Logger Log(level loglevel, const std::string & filename);
-    friend Logger;                                                  /**< @brief Make logger class our friend */
+    friend Logger Log(LOGLEVEL loglevel, const std::string & filename);
+    friend Logger;                                                      /**< @brief Make logger class our friend */
 
-    static std::recursive_mutex     m_mutex;                        /**< @brief Access mutex */
-    std::ofstream                   m_logfile;                      /**< @brief Log file object for writing to disk */
-    const level                     m_max_level;                    /**< @brief The maximum level of log output to write. */
-    const bool                      m_to_stderr;                    /**< @brief Whether to write log output to stderr. */
-    const bool                      m_to_syslog;                    /**< @brief Whether to write log output to syslog. */
+    static Logging*                 m_logging;
+    static std::recursive_mutex     m_mutex;                            /**< @brief Access mutex */
+    std::ofstream                   m_logfile;                          /**< @brief Log file object for writing to disk */
+    const LOGLEVEL                  m_max_level;                        /**< @brief The maximum level of log output to write. */
+    const bool                      m_to_stderr;                        /**< @brief Whether to write log output to stderr. */
+    const bool                      m_to_syslog;                        /**< @brief Whether to write log output to syslog. */
 };
 
-constexpr Logging::level LOGERROR   = Logging::level::LOGERROR;     /**< @brief Shorthand for log level ERROR */
-constexpr Logging::level LOGWARN    = Logging::level::LOGWARN;      /**< @brief Shorthand for log level WARNING */
-constexpr Logging::level LOGINFO    = Logging::level::LOGINFO;      /**< @brief Shorthand for log level INFO */
-constexpr Logging::level LOGDEBUG   = Logging::level::LOGDEBUG;     /**< @brief Shorthand for log level DEBUG */
-constexpr Logging::level LOGTRACE   = Logging::level::LOGTRACE;     /**< @brief Shorthand for log level TRACE */
+constexpr Logging::LOGLEVEL LOGERROR   = Logging::LOGLEVEL::LOGERROR;   /**< @brief Shorthand for log level ERROR */
+constexpr Logging::LOGLEVEL LOGWARN    = Logging::LOGLEVEL::LOGWARN;    /**< @brief Shorthand for log level WARNING */
+constexpr Logging::LOGLEVEL LOGINFO    = Logging::LOGLEVEL::LOGINFO;    /**< @brief Shorthand for log level INFO */
+constexpr Logging::LOGLEVEL LOGDEBUG   = Logging::LOGLEVEL::LOGDEBUG;   /**< @brief Shorthand for log level DEBUG */
+constexpr Logging::LOGLEVEL LOGTRACE   = Logging::LOGLEVEL::LOGTRACE;   /**< @brief Shorthand for log level TRACE */
 
 #endif

@@ -143,8 +143,9 @@ typedef struct VIRTUALFILE
     int                     m_flags;                                /**< @brief One of the VIRTUALFLAG_* flags */
 
     int                     m_format_idx;                           /**< @brief Index into params.format[] array */
-    std::string             m_destfile;                             /**< @brief Name of virtual file */
-    std::string             m_origfile;                             /**< @brief Sanitised original file name */
+    std::string             m_destfile;                             /**< @brief Name and path of destination file */
+    std::string             m_virtfile;                             /**< @brief Name and path of virtual file */
+    std::string             m_origfile;                             /**< @brief Sanitised name and path of original file */
     struct stat             m_st;                                   /**< @brief stat structure with size etc. */
 
     bool                    m_full_title;                           /**< @brief If true, ignore m_chapter_no and provide full track */

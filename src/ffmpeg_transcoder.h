@@ -270,6 +270,11 @@ public:
      */
     virtual const char *        destname() const override;
     /**
+     * @brief Return virtual filename. Same as destination filename, but with virtual (mount) path..
+     * @return Returns filename.
+     */
+    virtual const char *        virtname() const override;
+    /**
      * @brief Predict audio file size. This may (better will surely) be inaccurate.
      * @param[out] filesize - Predicted file size in bytes, including audio stream size.
      * @param[in] codec_id - Target codec ID.

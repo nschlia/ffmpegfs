@@ -150,6 +150,11 @@ public:
      */
     const char *            destname() const;
     /**
+     * @brief Return virtual filename. Same as destination filename, but with virtual (mount) path..
+     * @return Returns the name of the transcoded file.
+     */
+    const char *            virtname() const;
+    /**
      * @brief Update last access time.
      * @param[in] update_database - If true, also persist in SQL database.
      * @return If update was successful, returns true; returns false on error.

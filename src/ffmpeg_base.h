@@ -164,6 +164,11 @@ protected:
      */
     virtual const char *destname() const = 0;
     /**
+     * @brief Return virtual filename. Must be implemented in child class.
+     * @return Returns filename.
+     */
+    virtual const char *virtname() const = 0;
+    /**
      * @brief Convert PTS value to frame number.
      * @param[in] stream - Source video stream.
      * @param[in] pts - PTS of current frame in stream's time_base units.

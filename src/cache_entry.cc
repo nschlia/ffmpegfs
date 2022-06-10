@@ -320,6 +320,11 @@ const char *Cache_Entry::destname() const
     return (m_virtualfile != nullptr ? m_virtualfile->m_destfile.c_str() : "");
 }
 
+const char * Cache_Entry::virtname() const
+{
+    return (m_virtualfile != nullptr ? m_virtualfile->m_virtfile.c_str() : "");
+}
+
 void Cache_Entry::lock()
 {
     m_mutex.lock();

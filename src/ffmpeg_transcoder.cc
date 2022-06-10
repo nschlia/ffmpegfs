@@ -6469,6 +6469,11 @@ const char *FFmpeg_Transcoder::destname() const
     return (m_virtualfile != nullptr ? m_virtualfile->m_destfile.c_str() : "");
 }
 
+const char *FFmpeg_Transcoder::virtname() const
+{
+    return (m_virtualfile != nullptr ? m_virtualfile->m_virtfile.c_str() : "");
+}
+
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {

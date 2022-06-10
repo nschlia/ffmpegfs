@@ -150,29 +150,18 @@ public:
      * @return On success, returns true. On error, returns false.
      * @note It will only fail if the file cannot be opened. Writing to stderr or syslog will never fail. errno is not set.
      */
-    static bool init_logging(const std::string & logfile, Logging::LOGLEVEL max_level, bool to_stderr, bool to_syslog);
+    static bool init_logging(const std::string & logfile, LOGLEVEL max_level, bool to_stderr, bool to_syslog);
 
-    /**
-     * @brief Write trace level log entry
-     * @param[in] filename - Name of the file for which this log entry was written. May be nullptr.
-     * @param[in] format_string - Format string in FFmpegfs logger format.
-     * @param[in] args - 0 or more format arguments. See @ref format.
-     */
-    template <typename... Args>
-    static void trace(const char *filename, const std::string &format_string, Args &&...args)
-    {
-        log_with_level(Logging::LOGLEVEL::LOGTRACE, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
-    }
     /**
      * @brief Write trace level log entry.
      * @param[in] filename - Name of the file for which this log entry was written. May be empty.
      * @param[in] format_string - Format a string in FFmpegfs logger format.
      * @param[in] args - 0 or more format arguments. See @ref format.
      */
-    template <typename... Args>
-    static void trace(const std::string &filename, const std::string &format_string, Args &&...args)
+    template <typename T, typename... Args>
+    static void trace(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::LOGLEVEL::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(LOGLEVEL::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -181,21 +170,10 @@ public:
      * @param[in] format_string - Format a string in FFmpegfs logger format.
      * @param[in] args - 0 or more format arguments. See @ref format.
      */
-    template <typename... Args>
-    static void debug(const char * filename, const std::string &format_string, Args &&...args)
+    template <typename T, typename... Args>
+    static void debug(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::LOGLEVEL::LOGDEBUG, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
-    }
-    /**
-     * @brief Write debug level log entry.
-     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format a string in FFmpegfs logger format.
-     * @param[in] args - 0 or more format arguments. See @ref format.
-     */
-    template <typename... Args>
-    static void debug(const std::string & filename, const std::string &format_string, Args &&...args)
-    {
-        log_with_level(Logging::LOGLEVEL::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(LOGLEVEL::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -204,21 +182,10 @@ public:
      * @param[in] format_string - Format a string in FFmpegfs logger format.
      * @param[in] args - 0 or more format arguments. See @ref format.
      */
-    template <typename... Args>
-    static void info(const char *filename, const std::string &format_string, Args &&...args)
+    template <typename T, typename... Args>
+    static void info(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::LOGLEVEL::LOGINFO, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
-    }
-    /**
-     * @brief Write info level log entry.
-     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format a string in FFmpegfs logger format.
-     * @param[in] args - 0 or more format arguments. See @ref format.
-     */
-    template <typename... Args>
-    static void info(const std::string &filename, const std::string &format_string, Args &&...args)
-    {
-        log_with_level(Logging::LOGLEVEL::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(LOGLEVEL::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -227,21 +194,10 @@ public:
      * @param[in] format_string - Format a string in FFmpegfs logger format.
      * @param[in] args - 0 or more format arguments. See @ref format.
      */
-    template <typename... Args>
-    static void warning(const char *filename, const std::string &format_string, Args &&...args)
+    template <typename T, typename... Args>
+    static void warning(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::LOGLEVEL::LOGWARN, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
-    }
-    /**
-     * @brief Write warning level log entry.
-     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format a string in FFmpegfs logger format.
-     * @param[in] args - 0 or more format arguments. See @ref format.
-     */
-    template <typename... Args>
-    static void warning(const std::string &filename, const std::string &format_string, Args &&...args)
-    {
-        log_with_level(Logging::LOGLEVEL::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(LOGLEVEL::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -250,30 +206,27 @@ public:
      * @param[in] format_string - Format a string in FFmpegfs logger format.
      * @param[in] args - 0 or more format arguments. See @ref format.
      */
-    template <typename... Args>
-    static void error(const char *filename, const std::string &format_string, Args &&...args)
+    template <typename T, typename... Args>
+    static void error(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(Logging::LOGLEVEL::LOGERROR, filename != nullptr ? filename : "", format_helper(format_string, 1, std::forward<Args>(args)...));
-    }
-    /**
-     * @brief Write error level log entry.
-     * @param[in] filename - Name of the file for which this log entry was written. May be empty.
-     * @param[in] format_string - Format a string in FFmpegfs logger format.
-     * @param[in] args - 0 or more format arguments. See @ref format.
-     */
-    template <typename... Args>
-    static void error(const std::string &filename, const std::string &format_string, Args &&...args)
-    {
-        log_with_level(Logging::LOGLEVEL::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        log_with_level(LOGLEVEL::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
      * @brief Write log entry
-     * @param[in] loglevel - The maximum level of log output to write.
+     * @param[in] loglevel - The level of log this message is for.
+     * @param[in] filename - Name of the file for which this log entry was written. May be nullptr.
+     * @param[in] message - Message to log.
+     */
+    static void log_with_level(LOGLEVEL loglevel, const char *filename, const std::string & message);
+
+    /**
+     * @brief Write log entry
+     * @param[in] loglevel - The level of log this message is for.
      * @param[in] filename - Name of the file for which this log entry was written. May be empty.
      * @param[in] message - Message to log.
      */
-    static void log_with_level(Logging::LOGLEVEL loglevel, const std::string & filename, const std::string & message);
+    static void log_with_level(LOGLEVEL loglevel, const std::string & filename, const std::string & message);
 
 protected:
     /**

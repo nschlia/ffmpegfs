@@ -169,7 +169,7 @@ Logging::Logger Log(Logging::LOGLEVEL loglevel, const std::string & filename)
     return {loglevel, filename};
 }
 
-bool Logging::init_logging(const std::string & logfile, Logging::LOGLEVEL max_level, bool to_stderr, bool to_syslog)
+bool Logging::init_logging(const std::string & logfile, LOGLEVEL max_level, bool to_stderr, bool to_syslog)
 {
     if (m_logging != nullptr)
     {
@@ -185,7 +185,12 @@ bool Logging::init_logging(const std::string & logfile, Logging::LOGLEVEL max_le
     return !m_logging->GetFail();
 }
 
-void Logging::log_with_level(Logging::LOGLEVEL loglevel, const std::string & filename, const std::string & message)
+void Logging::log_with_level(LOGLEVEL loglevel, const char * filename, const std::string & message)
+{
+    log_with_level(loglevel, std::string(filename != nullptr ? filename : ""), message);
+}
+
+void Logging::log_with_level(LOGLEVEL loglevel, const std::string & filename, const std::string & message)
 {
     Log(loglevel, filename) << message;
 }

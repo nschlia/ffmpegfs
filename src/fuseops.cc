@@ -1603,6 +1603,7 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
         }
 
         newvirtualfile.m_destfile = origpath + *virtualpath;
+        newvirtualfile.m_virtfile = params.m_mountpath + *virtualpath;
 
         if (lstat(newvirtualfile.m_destfile.c_str(), &newvirtualfile.m_st) == 0)
         {
@@ -1687,7 +1688,10 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
         virtualfile.m_format_idx        = guess_format_idx(sanitised_origfile); // Make a guess, will be finalised later
         virtualfile.m_destfile          = sanitised_virtfile;
         virtualfile.m_origfile          = sanitised_origfile;
+        virtualfile.m_virtfile          = sanitised_origfile;
         //virtualfile.m_predicted_size    = static_cast<size_t>(stbuf->st_size);
+
+        replace_start(&virtualfile.m_virtfile, params.m_basepath, params.m_mountpath);
 
         insert(virtualfile);
 

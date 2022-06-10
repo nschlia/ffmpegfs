@@ -64,6 +64,33 @@ Logging* logging;
 
 std::recursive_mutex Logging::m_mutex;
 
+const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
+{
+    { LOGERROR,     LOG_ERR },
+    { LOGWARN,      LOG_WARNING },
+    { LOGINFO,      LOG_INFO },
+    { LOGDEBUG,     LOG_DEBUG },
+    { LOGTRACE,     LOG_DEBUG },
+};
+
+const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
+{
+    { LOGERROR,     "ERROR  " },
+    { LOGWARN,      "WARNING" },
+    { LOGINFO,      "INFO   " },
+    { LOGDEBUG,     "DEBUG  " },
+    { LOGTRACE,     "TRACE  " },
+};
+
+const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map =
+{
+    { LOGERROR,     COLOUR_RED },
+    { LOGWARN,      COLOUR_YELLOW },
+    { LOGINFO,      COLOUR_WHITE },
+    { LOGDEBUG,     COLOUR_GREEN },
+    { LOGTRACE,     COLOUR_BLUE },
+};
+
 Logging::Logging(const std::string &logfile, level max_level, bool to_stderr, bool to_syslog) :
     m_max_level(max_level),
     m_to_stderr(to_stderr),
@@ -139,33 +166,6 @@ bool Logging::GetFail() const
 {
     return m_logfile.fail();
 }
-
-const std::map<Logging::level, int> Logging::Logger::m_syslog_level_map =
-{
-    { LOGERROR,     LOG_ERR },
-    { LOGWARN,      LOG_WARNING },
-    { LOGINFO,      LOG_INFO },
-    { LOGDEBUG,     LOG_DEBUG },
-    { LOGTRACE,     LOG_DEBUG },
-};
-
-const std::map<Logging::level, std::string> Logging::Logger::m_level_name_map =
-{
-    { LOGERROR,     "ERROR  " },
-    { LOGWARN,      "WARNING" },
-    { LOGINFO,      "INFO   " },
-    { LOGDEBUG,     "DEBUG  " },
-    { LOGTRACE,     "TRACE  " },
-};
-
-const std::map<Logging::level, std::string> Logging::Logger::m_level_colour_map =
-{
-    { LOGERROR,     COLOUR_RED },
-    { LOGWARN,      COLOUR_YELLOW },
-    { LOGINFO,      COLOUR_WHITE },
-    { LOGDEBUG,     COLOUR_GREEN },
-    { LOGTRACE,     COLOUR_BLUE },
-};
 
 Logging::Logger Log(Logging::level loglevel, const std::string & filename)
 {

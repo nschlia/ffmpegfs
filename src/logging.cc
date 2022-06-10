@@ -106,11 +106,6 @@ Logging::Logging(const std::string &logfile, LOGLEVEL max_level, bool to_stderr,
 
 Logging::Logger::~Logger()
 {
-    if (!m_logging || m_loglevel > m_logging->m_max_level)
-    {
-        return;
-    }
-
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Construct string containing time

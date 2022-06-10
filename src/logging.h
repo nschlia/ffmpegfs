@@ -161,7 +161,14 @@ public:
     template <typename T, typename... Args>
     static void trace(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(LOGLEVEL::LOGTRACE, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        LOGLEVEL loglevel = LOGLEVEL::LOGTRACE;
+
+        if (!show(loglevel))
+        {
+            return;
+        }
+
+        log_with_level(loglevel, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -173,7 +180,14 @@ public:
     template <typename T, typename... Args>
     static void debug(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(LOGLEVEL::LOGDEBUG, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        LOGLEVEL loglevel = LOGLEVEL::LOGDEBUG;
+
+        if (!show(loglevel))
+        {
+            return;
+        }
+
+        log_with_level(loglevel, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -185,7 +199,14 @@ public:
     template <typename T, typename... Args>
     static void info(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(LOGLEVEL::LOGINFO, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        LOGLEVEL loglevel = LOGLEVEL::LOGINFO;
+
+        if (!show(loglevel))
+        {
+            return;
+        }
+
+        log_with_level(loglevel, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -197,7 +218,14 @@ public:
     template <typename T, typename... Args>
     static void warning(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(LOGLEVEL::LOGWARN, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        LOGLEVEL loglevel = LOGLEVEL::LOGWARN;
+
+        if (!show(loglevel))
+        {
+            return;
+        }
+
+        log_with_level(loglevel, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -209,7 +237,14 @@ public:
     template <typename T, typename... Args>
     static void error(const T filename, const std::string &format_string, Args &&...args)
     {
-        log_with_level(LOGLEVEL::LOGERROR, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
+        LOGLEVEL loglevel = LOGLEVEL::LOGERROR;
+
+        if (!show(loglevel))
+        {
+            return;
+        }
+
+        log_with_level(loglevel, filename, format_helper(format_string, 1, std::forward<Args>(args)...));
     }
 
     /**
@@ -228,7 +263,7 @@ public:
      */
     static void log_with_level(LOGLEVEL loglevel, const std::string & filename, const std::string & message);
 
-protected:
+private:
     /**
      * @brief Standard format_helper without parameters.
      * @param[in] string_to_update - Original string.
@@ -308,6 +343,17 @@ protected:
     static std::string format(const std::string &format_string, Args &&...args)
     {
         return format_helper(format_string, 1, std::forward<Args>(args)...);
+    }
+
+
+    /**
+     * @brief Check if log entry should be displayed at the current log level.
+     * @param[in] loglevel - Log level of log entry.
+     * @return True, if entry should be be shown; false if not.
+     */
+    static bool show(LOGLEVEL loglevel)
+    {
+        return (m_logging && loglevel <= m_logging->m_max_level);
     }
 
 protected:

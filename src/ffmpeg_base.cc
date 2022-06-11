@@ -231,7 +231,7 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
             duration = ffmpeg_rescale_q_rnd(stream->duration, stream->time_base);
         }
 
-        Logging::debug(out_file ? destname() : filename(), "Video %1 #%2: %3@%4 [%5]",
+        Logging::debug(out_file ? virtname() : filename(), "Video %1 #%2: %3@%4 [%5]",
                        out_file ? "out" : "in",
                        stream->index,
                        get_codec_name(stream->codecpar->codec_id, false),
@@ -240,7 +240,7 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
     }
     else
     {
-        Logging::debug(out_file ? destname() : filename(), "Video %1: invalid stream",
+        Logging::debug(out_file ? virtname() : filename(), "Video %1: invalid stream",
                        out_file ? "out" : "in");
     }
 }
@@ -256,7 +256,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
             duration = ffmpeg_rescale_q_rnd(stream->duration, stream->time_base);
         }
 
-        Logging::debug(out_file ? destname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
+        Logging::debug(out_file ? virtname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
                        out_file ? "out" : "in",
                        stream->index,
                        get_codec_name(stream->codecpar->codec_id, false),
@@ -267,7 +267,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
     }
     else
     {
-        Logging::debug(out_file ? destname() : filename(), "Audio %1: invalid stream",
+        Logging::debug(out_file ? virtname() : filename(), "Audio %1: invalid stream",
                        out_file ? "out" : "in");
     }
 }
@@ -276,14 +276,14 @@ void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_
 {
     if (stream != nullptr && stream->codecpar != nullptr)
     {
-        Logging::debug(out_file ? destname() : filename(), "Subtitle %1 #%2: %3",
+        Logging::debug(out_file ? virtname() : filename(), "Subtitle %1 #%2: %3",
                        out_file ? "out" : "in",
                        stream->index,
                        get_codec_name(stream->codecpar->codec_id, false));
     }
     else
     {
-        Logging::debug(out_file ? destname() : filename(), "Subtitle %1: invalid stream",
+        Logging::debug(out_file ? virtname() : filename(), "Subtitle %1: invalid stream",
                        out_file ? "out" : "in");
     }
 }

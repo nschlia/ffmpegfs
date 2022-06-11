@@ -115,7 +115,6 @@ private:
          * @brief Construct Logger object.
          * @param[in] loglevel - The maximum level of log output to write.
          * @param[in] filename - Name of file for which this log entry was written. May be empty.
-         * @param[in] logging - Corresponding Logging object.
          */
         Logger(LOGLEVEL loglevel, const std::string & filename) :
             m_loglevel(loglevel),
@@ -365,7 +364,7 @@ protected:
     friend Logger Log(LOGLEVEL loglevel, const std::string & filename);
     friend Logger;                                                          /**< @brief Make logger class our friend */
 
-    static Logging*                 m_logging;
+    static Logging*                 m_logging;                              /**< @brief Reference to self, Logging is a singleton */
     static std::recursive_mutex     m_mutex;                                /**< @brief Access mutex */
     std::ofstream                   m_logfile;                              /**< @brief Log file object for writing to disk */
     const LOGLEVEL                  m_max_level;                            /**< @brief The maximum level of log output to write. */

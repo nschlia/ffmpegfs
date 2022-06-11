@@ -262,6 +262,16 @@ public:
      */
     static void log_with_level(LOGLEVEL loglevel, const std::string & filename, const std::string & message);
 
+    /**
+     * @brief Check if log entry should be displayed at the current log level.
+     * @param[in] loglevel - Log level of log entry.
+     * @return True, if entry should be be shown; false if not.
+     */
+    static bool show(LOGLEVEL loglevel)
+    {
+        return (m_logging && loglevel <= m_logging->m_max_level);
+    }
+
 private:
     /**
      * @brief Standard format_helper without parameters.
@@ -342,17 +352,6 @@ private:
     static std::string format(const std::string &format_string, Args &&...args)
     {
         return format_helper(format_string, 1, std::forward<Args>(args)...);
-    }
-
-
-    /**
-     * @brief Check if log entry should be displayed at the current log level.
-     * @param[in] loglevel - Log level of log entry.
-     * @return True, if entry should be be shown; false if not.
-     */
-    static bool show(LOGLEVEL loglevel)
-    {
-        return (m_logging && loglevel <= m_logging->m_max_level);
     }
 
 protected:

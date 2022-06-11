@@ -1036,37 +1036,7 @@ static int transcoder_thread(void *arg)
 
 void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 {
-    va_list vl2;
     Logging::LOGLEVEL ffmpegfs_level;
-    static int print_prefix = 1;
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
-    char * line;
-    int line_size;
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
-    if (line_size < 0)
-    {
-        va_end(vl2);
-        return;
-    }
-    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
-    if (line == nullptr)
-    {
-        return;
-    }
-    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
-    va_end(vl2);
-#else
-    char line[1024];
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
-    va_end(vl2);
-#endif
 
     // Map log level
     // AV_LOG_PANIC     0
@@ -1104,6 +1074,42 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     {
         ffmpegfs_level = DEBUG;
     }
+#endif
+
+    if (!Logging::show(ffmpegfs_level))
+    {
+        return;
+    }
+
+    va_list vl2;
+    static int print_prefix = 1;
+
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
+    char * line;
+    int line_size;
+
+    va_copy(vl2, vl);
+    av_log_default_callback(ptr, level, fmt, vl);
+    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
+    if (line_size < 0)
+    {
+        va_end(vl2);
+        return;
+    }
+    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
+    if (line == nullptr)
+    {
+        return;
+    }
+    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
+    va_end(vl2);
+#else
+    char line[1024];
+
+    va_copy(vl2, vl);
+    av_log_default_callback(ptr, level, fmt, vl);
+    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
+    va_end(vl2);
 #endif
 
     Logging::log_with_level(ffmpegfs_level, "", line);

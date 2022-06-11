@@ -349,7 +349,7 @@ $(function() {
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <span class="keywordflow">if</span> (virtualfile == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        {</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            <span class="comment">// Should never happen...</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(origfile, <span class="stringliteral">&quot;INTERNAL ERROR: check_cuesheet()! virtualfile is NULL.&quot;</span>);</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(filename, <span class="stringliteral">&quot;INTERNAL ERROR: check_cuesheet()! virtualfile is NULL.&quot;</span>);</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;            errno = EINVAL;</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;            <span class="keywordflow">throw</span> -errno;</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        }</div>

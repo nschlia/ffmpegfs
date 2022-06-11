@@ -385,7 +385,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
         if (virtualfile == nullptr)
         {
             // Should never happen...
-            Logging::error(origfile, "INTERNAL ERROR: check_cuesheet()! virtualfile is NULL.");
+            Logging::error(filename, "INTERNAL ERROR: check_cuesheet()! virtualfile is NULL.");
             errno = EINVAL;
             throw -errno;
         }

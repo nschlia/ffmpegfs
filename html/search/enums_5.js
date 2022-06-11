@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['level_2510',['level',['../classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a',1,'Logging']]]
+  ['loglevel_2517',['LOGLEVEL',['../classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc',1,'Logging']]]
 ];

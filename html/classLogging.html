@@ -67,9 +67,9 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classLogging-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -81,6 +81,14 @@ $(function() {
  <a href="classLogging.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="logging_8h_source.html">logging.h</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for Logging:</div>
+<div class="dyncontent">
+<div class="center"><img src="classLogging__coll__graph.png" border="0" usemap="#aLogging_coll__map" alt="Collaboration graph"/></div>
+<map name="aLogging_coll__map" id="aLogging_coll__map">
+<area shape="rect" title="Logging facility" alt="" coords="5,5,79,32"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -90,88 +98,57 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a7a137bd14e9ab75019822b8c3119bc3a"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">level</a> { <br />
-&#160;&#160;<a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aadf23add0723043a76dda3d86c4a53abf">LOGERROR</a> = 1
-, <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aaa54958b19f8cf89c793d0093ed60d365">LOGWARN</a> = 2
-, <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2cc51af136473955bd58302d21eed12b">LOGINFO</a> = 3
-, <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aab8f73513ec0f2b730dbee65fdb0d66fb">LOGDEBUG</a> = 4
+<tr class="memitem:afedd719fe29d8c925e8246c0a7ab90fc"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> { <br />
+&#160;&#160;<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcadf23add0723043a76dda3d86c4a53abf">LOGERROR</a> = 1
+, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcaa54958b19f8cf89c793d0093ed60d365">LOGWARN</a> = 2
+, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fca2cc51af136473955bd58302d21eed12b">LOGINFO</a> = 3
+, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcab8f73513ec0f2b730dbee65fdb0d66fb">LOGDEBUG</a> = 4
 , <br />
-&#160;&#160;<a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aabc556bb176a3964b482f0930b691aee0">LOGTRACE</a> = 5
+&#160;&#160;<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcabc556bb176a3964b482f0930b691aee0">LOGTRACE</a> = 5
 <br />
  }</td></tr>
-<tr class="memdesc:a7a137bd14e9ab75019822b8c3119bc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classLogging.html" title="Logging facility">Logging</a> level types enum.  <a href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">More...</a><br /></td></tr>
-<tr class="separator:a7a137bd14e9ab75019822b8c3119bc3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:afedd719fe29d8c925e8246c0a7ab90fc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classLogging.html" title="Logging facility">Logging</a> level types enum.  <a href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">More...</a><br /></td></tr>
+<tr class="separator:afedd719fe29d8c925e8246c0a7ab90fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8395c1893046dfe114321346e026d791"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a8395c1893046dfe114321346e026d791">Logging</a> (const std::string &amp;logfile, <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">level</a> max_level, bool to_stderr, bool to_syslog)</td></tr>
-<tr class="separator:a8395c1893046dfe114321346e026d791"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bb56694e8920881aac8e86f9125d590"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a8bb56694e8920881aac8e86f9125d590">Logging</a> (const std::string &amp;logfile, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> max_level, bool to_stderr, bool to_syslog)</td></tr>
+<tr class="separator:a8bb56694e8920881aac8e86f9125d590"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a166c1f15637a47c858b80ac1ca3f8dd8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a166c1f15637a47c858b80ac1ca3f8dd8">GetFail</a> () const</td></tr>
 <tr class="memdesc:a166c1f15637a47c858b80ac1ca3f8dd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether either failbit or badbit is set.  <a href="classLogging.html#a166c1f15637a47c858b80ac1ca3f8dd8">More...</a><br /></td></tr>
 <tr class="separator:a166c1f15637a47c858b80ac1ca3f8dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a77721bbb1fdfcb27bd8c4c36cf1bd848"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a77721bbb1fdfcb27bd8c4c36cf1bd848">init_logging</a> (const std::string &amp;logfile, <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a> max_level, bool to_stderr, bool to_syslog)</td></tr>
-<tr class="memdesc:a77721bbb1fdfcb27bd8c4c36cf1bd848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the logging facility.  <a href="classLogging.html#a77721bbb1fdfcb27bd8c4c36cf1bd848">More...</a><br /></td></tr>
-<tr class="separator:a77721bbb1fdfcb27bd8c4c36cf1bd848"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a9dac8c040170d6ab1314a935eb999c"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a1a9dac8c040170d6ab1314a935eb999c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a1a9dac8c040170d6ab1314a935eb999c">trace</a> (const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a1a9dac8c040170d6ab1314a935eb999c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write trace level log entry.  <a href="classLogging.html#a1a9dac8c040170d6ab1314a935eb999c">More...</a><br /></td></tr>
-<tr class="separator:a1a9dac8c040170d6ab1314a935eb999c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9be7c1f8cc73e80b09121069f709e77e"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a9be7c1f8cc73e80b09121069f709e77e"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a9be7c1f8cc73e80b09121069f709e77e">trace</a> (const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a9be7c1f8cc73e80b09121069f709e77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write trace level log entry.  <a href="classLogging.html#a9be7c1f8cc73e80b09121069f709e77e">More...</a><br /></td></tr>
-<tr class="separator:a9be7c1f8cc73e80b09121069f709e77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a146e0d379961bb2bdc4d5f8053b5ced5"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a146e0d379961bb2bdc4d5f8053b5ced5"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">debug</a> (const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a146e0d379961bb2bdc4d5f8053b5ced5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write debug level log entry.  <a href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">More...</a><br /></td></tr>
-<tr class="separator:a146e0d379961bb2bdc4d5f8053b5ced5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dfbf79ac37ff24286b79dbc7070cee2"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a2dfbf79ac37ff24286b79dbc7070cee2"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a2dfbf79ac37ff24286b79dbc7070cee2">debug</a> (const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a2dfbf79ac37ff24286b79dbc7070cee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write debug level log entry.  <a href="classLogging.html#a2dfbf79ac37ff24286b79dbc7070cee2">More...</a><br /></td></tr>
-<tr class="separator:a2dfbf79ac37ff24286b79dbc7070cee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61245156bad50e71fee169c78247172e"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a61245156bad50e71fee169c78247172e"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a61245156bad50e71fee169c78247172e">info</a> (const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a61245156bad50e71fee169c78247172e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write info level log entry.  <a href="classLogging.html#a61245156bad50e71fee169c78247172e">More...</a><br /></td></tr>
-<tr class="separator:a61245156bad50e71fee169c78247172e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fa4045909c4557c32154457df3257b8"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a9fa4045909c4557c32154457df3257b8"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a9fa4045909c4557c32154457df3257b8">info</a> (const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a9fa4045909c4557c32154457df3257b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write info level log entry.  <a href="classLogging.html#a9fa4045909c4557c32154457df3257b8">More...</a><br /></td></tr>
-<tr class="separator:a9fa4045909c4557c32154457df3257b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98afac829a940d2861781fed5d897a7c"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a98afac829a940d2861781fed5d897a7c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a98afac829a940d2861781fed5d897a7c">warning</a> (const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a98afac829a940d2861781fed5d897a7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write warning level log entry.  <a href="classLogging.html#a98afac829a940d2861781fed5d897a7c">More...</a><br /></td></tr>
-<tr class="separator:a98afac829a940d2861781fed5d897a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd36980f9076ce92283057b7f5e84ac3"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:acd36980f9076ce92283057b7f5e84ac3"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#acd36980f9076ce92283057b7f5e84ac3">warning</a> (const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:acd36980f9076ce92283057b7f5e84ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write warning level log entry.  <a href="classLogging.html#acd36980f9076ce92283057b7f5e84ac3">More...</a><br /></td></tr>
-<tr class="separator:acd36980f9076ce92283057b7f5e84ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9eca3fc38f586624d6f5e3057c1955f9"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a9eca3fc38f586624d6f5e3057c1955f9"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">error</a> (const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a9eca3fc38f586624d6f5e3057c1955f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write error level log entry.  <a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">More...</a><br /></td></tr>
-<tr class="separator:a9eca3fc38f586624d6f5e3057c1955f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a303819f9a2c6a6590f8d81b7812168"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a5a303819f9a2c6a6590f8d81b7812168"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a5a303819f9a2c6a6590f8d81b7812168">error</a> (const std::string &amp;filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a5a303819f9a2c6a6590f8d81b7812168"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write error level log entry.  <a href="classLogging.html#a5a303819f9a2c6a6590f8d81b7812168">More...</a><br /></td></tr>
-<tr class="separator:a5a303819f9a2c6a6590f8d81b7812168"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a864a1a6d24d4bcfd9d9cdb5ca8362f01"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a864a1a6d24d4bcfd9d9cdb5ca8362f01">log_with_level</a> (<a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a> loglevel, const std::string &amp;filename, const std::string &amp;message)</td></tr>
-<tr class="memdesc:a864a1a6d24d4bcfd9d9cdb5ca8362f01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write log entry.  <a href="classLogging.html#a864a1a6d24d4bcfd9d9cdb5ca8362f01">More...</a><br /></td></tr>
-<tr class="separator:a864a1a6d24d4bcfd9d9cdb5ca8362f01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
-Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:a34acf8ad49f5b4f978d53894f639aa38"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a34acf8ad49f5b4f978d53894f639aa38">format_helper</a> (const std::string &amp;string_to_update, const size_t __attribute__((unused)) size)</td></tr>
-<tr class="memdesc:a34acf8ad49f5b4f978d53894f639aa38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard format_helper without parameters.  <a href="classLogging.html#a34acf8ad49f5b4f978d53894f639aa38">More...</a><br /></td></tr>
-<tr class="separator:a34acf8ad49f5b4f978d53894f639aa38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
-<tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">format_helper</a> (const std::string &amp;string_to_search, const size_t index_to_replace, T &amp;&amp;val, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="mdescLeft">&#160;</td><td class="mdescRight">format_helper with variadic parameters.  <a href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">More...</a><br /></td></tr>
-<tr class="separator:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a40fe836d9d3c27436f7a454a47973843">format</a> (const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a40fe836d9d3c27436f7a454a47973843"><td class="mdescLeft">&#160;</td><td class="mdescRight">format string with single token  <a href="classLogging.html#a40fe836d9d3c27436f7a454a47973843">More...</a><br /></td></tr>
-<tr class="separator:a40fe836d9d3c27436f7a454a47973843"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e7388a50f59f40cfb69ee27000ab240"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a5e7388a50f59f40cfb69ee27000ab240">init_logging</a> (const std::string &amp;logfile, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> max_level, bool to_stderr, bool to_syslog)</td></tr>
+<tr class="memdesc:a5e7388a50f59f40cfb69ee27000ab240"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the logging facility.  <a href="classLogging.html#a5e7388a50f59f40cfb69ee27000ab240">More...</a><br /></td></tr>
+<tr class="separator:a5e7388a50f59f40cfb69ee27000ab240"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d2938a2b4a502b58c43a895c593d738"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a9d2938a2b4a502b58c43a895c593d738"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">trace</a> (const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a9d2938a2b4a502b58c43a895c593d738"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write trace level log entry.  <a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">More...</a><br /></td></tr>
+<tr class="separator:a9d2938a2b4a502b58c43a895c593d738"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a663ec4391c599b4b0ebc1cf1bf007e45"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a663ec4391c599b4b0ebc1cf1bf007e45"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">debug</a> (const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a663ec4391c599b4b0ebc1cf1bf007e45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write debug level log entry.  <a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">More...</a><br /></td></tr>
+<tr class="separator:a663ec4391c599b4b0ebc1cf1bf007e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0aff9dffa025c0b3138a0890691e59e"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:ad0aff9dffa025c0b3138a0890691e59e"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">info</a> (const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:ad0aff9dffa025c0b3138a0890691e59e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write info level log entry.  <a href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">More...</a><br /></td></tr>
+<tr class="separator:ad0aff9dffa025c0b3138a0890691e59e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a442c637ecbac6edac3dc753ffb3625c6"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a442c637ecbac6edac3dc753ffb3625c6"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">warning</a> (const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a442c637ecbac6edac3dc753ffb3625c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write warning level log entry.  <a href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">More...</a><br /></td></tr>
+<tr class="separator:a442c637ecbac6edac3dc753ffb3625c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae48fc6adc12bc24c60d62eb5fbac1d86"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:ae48fc6adc12bc24c60d62eb5fbac1d86"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">error</a> (const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:ae48fc6adc12bc24c60d62eb5fbac1d86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write error level log entry.  <a href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">More...</a><br /></td></tr>
+<tr class="separator:ae48fc6adc12bc24c60d62eb5fbac1d86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a357f7c60a58b2de1677dca7baf49b985"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a357f7c60a58b2de1677dca7baf49b985">log_with_level</a> (<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> loglevel, const char *filename, const std::string &amp;message)</td></tr>
+<tr class="memdesc:a357f7c60a58b2de1677dca7baf49b985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write log entry.  <a href="classLogging.html#a357f7c60a58b2de1677dca7baf49b985">More...</a><br /></td></tr>
+<tr class="separator:a357f7c60a58b2de1677dca7baf49b985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afefe65bd1836a35e22c13ccadda5685d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#afefe65bd1836a35e22c13ccadda5685d">log_with_level</a> (<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> loglevel, const std::string &amp;filename, const std::string &amp;message)</td></tr>
+<tr class="memdesc:afefe65bd1836a35e22c13ccadda5685d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write log entry.  <a href="classLogging.html#afefe65bd1836a35e22c13ccadda5685d">More...</a><br /></td></tr>
+<tr class="separator:afefe65bd1836a35e22c13ccadda5685d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -183,10 +160,10 @@ friend&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 std::ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#aa6bdf96a54bb32956e209079c8d034cf">m_logfile</a></td></tr>
 <tr class="memdesc:aa6bdf96a54bb32956e209079c8d034cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log file object for writing to disk. <br /></td></tr>
 <tr class="separator:aa6bdf96a54bb32956e209079c8d034cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c2cb1e95b0fa69df597f2c3eb0f9935"><td class="memItemLeft" align="right" valign="top"><a id="a1c2cb1e95b0fa69df597f2c3eb0f9935"></a>
-const <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">level</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a1c2cb1e95b0fa69df597f2c3eb0f9935">m_max_level</a></td></tr>
-<tr class="memdesc:a1c2cb1e95b0fa69df597f2c3eb0f9935"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum level of log output to write. <br /></td></tr>
-<tr class="separator:a1c2cb1e95b0fa69df597f2c3eb0f9935"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3de6538a9cff4ba72f4927381329f04"><td class="memItemLeft" align="right" valign="top"><a id="ac3de6538a9cff4ba72f4927381329f04"></a>
+const <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#ac3de6538a9cff4ba72f4927381329f04">m_max_level</a></td></tr>
+<tr class="memdesc:ac3de6538a9cff4ba72f4927381329f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum level of log output to write. <br /></td></tr>
+<tr class="separator:ac3de6538a9cff4ba72f4927381329f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af82db93e73c186053462a91c9cd66b76"><td class="memItemLeft" align="right" valign="top"><a id="af82db93e73c186053462a91c9cd66b76"></a>
 const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#af82db93e73c186053462a91c9cd66b76">m_to_stderr</a></td></tr>
 <tr class="memdesc:af82db93e73c186053462a91c9cd66b76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to write log output to stderr. <br /></td></tr>
@@ -198,16 +175,37 @@ const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
+<tr class="memitem:a024af0510e5cb91674e3dee5a6af805c"><td class="memItemLeft" align="right" valign="top"><a id="a024af0510e5cb91674e3dee5a6af805c"></a>
+static <a class="el" href="classLogging.html">Logging</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a024af0510e5cb91674e3dee5a6af805c">m_logging</a></td></tr>
+<tr class="memdesc:a024af0510e5cb91674e3dee5a6af805c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference to self, <a class="el" href="classLogging.html" title="Logging facility">Logging</a> is a singleton. <br /></td></tr>
+<tr class="separator:a024af0510e5cb91674e3dee5a6af805c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdd2c268fa1c03a3c2b986f04e343fb3"><td class="memItemLeft" align="right" valign="top"><a id="acdd2c268fa1c03a3c2b986f04e343fb3"></a>
 static std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#acdd2c268fa1c03a3c2b986f04e343fb3">m_mutex</a></td></tr>
 <tr class="memdesc:acdd2c268fa1c03a3c2b986f04e343fb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access mutex. <br /></td></tr>
 <tr class="separator:acdd2c268fa1c03a3c2b986f04e343fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a34acf8ad49f5b4f978d53894f639aa38"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a34acf8ad49f5b4f978d53894f639aa38">format_helper</a> (const std::string &amp;string_to_update, const size_t __attribute__((unused)) size)</td></tr>
+<tr class="memdesc:a34acf8ad49f5b4f978d53894f639aa38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard format_helper without parameters.  <a href="classLogging.html#a34acf8ad49f5b4f978d53894f639aa38">More...</a><br /></td></tr>
+<tr class="separator:a34acf8ad49f5b4f978d53894f639aa38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">format_helper</a> (const std::string &amp;string_to_search, const size_t index_to_replace, T &amp;&amp;val, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="mdescLeft">&#160;</td><td class="mdescRight">format_helper with variadic parameters.  <a href="classLogging.html#a76ffaa1ccacaf9cf2d9dc86a65658590">More...</a><br /></td></tr>
+<tr class="separator:a76ffaa1ccacaf9cf2d9dc86a65658590"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a40fe836d9d3c27436f7a454a47973843"><td class="memTemplItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classLogging.html#a40fe836d9d3c27436f7a454a47973843">format</a> (const std::string &amp;format_string, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a40fe836d9d3c27436f7a454a47973843"><td class="mdescLeft">&#160;</td><td class="mdescRight">format string with single token  <a href="classLogging.html#a40fe836d9d3c27436f7a454a47973843">More...</a><br /></td></tr>
+<tr class="separator:a40fe836d9d3c27436f7a454a47973843"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb07e0318c860f142606c84fa99dec22"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#adb07e0318c860f142606c84fa99dec22">show</a> (<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> loglevel)</td></tr>
+<tr class="memdesc:adb07e0318c860f142606c84fa99dec22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if log entry should be displayed at the current log level.  <a href="classLogging.html#adb07e0318c860f142606c84fa99dec22">More...</a><br /></td></tr>
+<tr class="separator:adb07e0318c860f142606c84fa99dec22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a5cb822175215939e27ed125f0bc625bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogging_1_1Logger.html">Logger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#a5cb822175215939e27ed125f0bc625bb">Log</a> (<a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">level</a> loglevel, const std::string &amp;filename)</td></tr>
-<tr class="memdesc:a5cb822175215939e27ed125f0bc625bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make logger class our friend for our constructor.  <a href="classLogging.html#a5cb822175215939e27ed125f0bc625bb">More...</a><br /></td></tr>
-<tr class="separator:a5cb822175215939e27ed125f0bc625bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa594493d1a31ac4ae04b404910e8b853"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogging_1_1Logger.html">Logger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogging.html#aa594493d1a31ac4ae04b404910e8b853">Log</a> (<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a> loglevel, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa594493d1a31ac4ae04b404910e8b853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make logger class our friend for our constructor.  <a href="classLogging.html#aa594493d1a31ac4ae04b404910e8b853">More...</a><br /></td></tr>
+<tr class="separator:aa594493d1a31ac4ae04b404910e8b853"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classLogging.html" title="Logging facility">Logging</a> facility </p>
@@ -217,18 +215,18 @@ Friends</h2></td></tr>
 <p>The format specifier is the same as used in printf and sprintf.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> channels = 2;</div>
 <div class="line"><span class="keywordtype">int</span> sample_rate = 44100:</div>
-<div class="line"><a class="code" href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">Logging::debug</a>(filename, <span class="stringliteral">&quot;Audio %1 channels %2 KHz&quot;</span>, channels, sample_rate);</div>
-<div class="ttc" id="aclassLogging_html_a146e0d379961bb2bdc4d5f8053b5ced5"><div class="ttname"><a href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">Logging::debug</a></div><div class="ttdeci">static void debug(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00188">logging.h:188</a></div></div>
+<div class="line"><a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(filename, <span class="stringliteral">&quot;Audio %1 channels %2 KHz&quot;</span>, channels, sample_rate);</div>
+<div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00180">logging.h:180</a></div></div>
 </div><!-- fragment --><p>Prints "Audio 2 channels 44100 KHz".</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> channels = 2;</div>
 <div class="line"><span class="keywordtype">double</span> sample_rate = 44.1:</div>
-<div class="line"><a class="code" href="classLogging.html#a146e0d379961bb2bdc4d5f8053b5ced5">Logging::debug</a>(filename, <span class="stringliteral">&quot;Audio %1 %&lt;%.3f&gt;2 KHz&quot;</span>, channels == 2 ? <span class="stringliteral">&quot;stereo&quot;</span> : <span class="stringliteral">&quot;mono&quot;</span>, sample_rate);</div>
+<div class="line"><a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(filename, <span class="stringliteral">&quot;Audio %1 %&lt;%.3f&gt;2 KHz&quot;</span>, channels == 2 ? <span class="stringliteral">&quot;stereo&quot;</span> : <span class="stringliteral">&quot;mono&quot;</span>, sample_rate);</div>
 </div><!-- fragment --><p>Prints "Audio stereo 44.100 KHz". </p>
 
 <p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00075">75</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a7a137bd14e9ab75019822b8c3119bc3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a137bd14e9ab75019822b8c3119bc3a">&#9670;&nbsp;</a></span>level</h2>
+<a id="afedd719fe29d8c925e8246c0a7ab90fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afedd719fe29d8c925e8246c0a7ab90fc">&#9670;&nbsp;</a></span>LOGLEVEL</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +235,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a></td>
+          <td class="memname">enum <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">Logging::LOGLEVEL</a></td>
         </tr>
       </table>
   </td>
@@ -249,15 +247,15 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="classLogging.html" title="Logging facility">Logging</a> level types enum. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a7a137bd14e9ab75019822b8c3119bc3aadf23add0723043a76dda3d86c4a53abf"></a>LOGERROR&#160;</td><td class="fielddoc"><p>Error level. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="afedd719fe29d8c925e8246c0a7ab90fcadf23add0723043a76dda3d86c4a53abf"></a>LOGERROR&#160;</td><td class="fielddoc"><p>Error level. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a7a137bd14e9ab75019822b8c3119bc3aaa54958b19f8cf89c793d0093ed60d365"></a>LOGWARN&#160;</td><td class="fielddoc"><p>Warning level. </p>
+<tr><td class="fieldname"><a id="afedd719fe29d8c925e8246c0a7ab90fcaa54958b19f8cf89c793d0093ed60d365"></a>LOGWARN&#160;</td><td class="fielddoc"><p>Warning level. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a7a137bd14e9ab75019822b8c3119bc3aa2cc51af136473955bd58302d21eed12b"></a>LOGINFO&#160;</td><td class="fielddoc"><p>Info level. </p>
+<tr><td class="fieldname"><a id="afedd719fe29d8c925e8246c0a7ab90fca2cc51af136473955bd58302d21eed12b"></a>LOGINFO&#160;</td><td class="fielddoc"><p>Info level. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a7a137bd14e9ab75019822b8c3119bc3aab8f73513ec0f2b730dbee65fdb0d66fb"></a>LOGDEBUG&#160;</td><td class="fielddoc"><p>Debug level. </p>
+<tr><td class="fieldname"><a id="afedd719fe29d8c925e8246c0a7ab90fcab8f73513ec0f2b730dbee65fdb0d66fb"></a>LOGDEBUG&#160;</td><td class="fielddoc"><p>Debug level. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a7a137bd14e9ab75019822b8c3119bc3aabc556bb176a3964b482f0930b691aee0"></a>LOGTRACE&#160;</td><td class="fielddoc"><p>Error level. </p>
+<tr><td class="fieldname"><a id="afedd719fe29d8c925e8246c0a7ab90fcabc556bb176a3964b482f0930b691aee0"></a>LOGTRACE&#160;</td><td class="fielddoc"><p>Error level. </p>
 </td></tr>
 </table>
 
@@ -266,8 +264,8 @@ Friends</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8395c1893046dfe114321346e026d791"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8395c1893046dfe114321346e026d791">&#9670;&nbsp;</a></span>Logging()</h2>
+<a id="a8bb56694e8920881aac8e86f9125d590"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bb56694e8920881aac8e86f9125d590">&#9670;&nbsp;</a></span>Logging()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -284,7 +282,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">level</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td>
           <td class="paramname"><em>max_level</em>, </td>
         </tr>
         <tr>
@@ -323,22 +321,22 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If successful, returns 0; otherwise, returns a negative FFmpeg AVERROR value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00067">67</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00091">91</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00373">m_logfile</a>, and <a class="el" href="logging_8h_source.html#l00376">m_to_syslog</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00369">m_logfile</a>, and <a class="el" href="logging_8h_source.html#l00372">m_to_syslog</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00175">init_logging()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00192">init_logging()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a146e0d379961bb2bdc4d5f8053b5ced5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a146e0d379961bb2bdc4d5f8053b5ced5">&#9670;&nbsp;</a></span>debug() <span class="overload">[1/2]</span></h2>
+<a id="a663ec4391c599b4b0ebc1cf1bf007e45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a663ec4391c599b4b0ebc1cf1bf007e45">&#9670;&nbsp;</a></span>debug()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -346,7 +344,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">static void Logging::debug </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">const T&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
         </tr>
         <tr>
@@ -384,79 +382,21 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00188">188</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00180">180</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aab8f73513ec0f2b730dbee65fdb0d66fb">LOGDEBUG</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00208">log_with_level()</a>, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcab8f73513ec0f2b730dbee65fdb0d66fb">LOGDEBUG</a>, and <a class="el" href="logging_8h_source.html#l00353">show()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02470">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07598">FFmpeg_Transcoder::add_external_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02251">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00248">FFmpeg_Base::audio_info()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03758">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03372">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="fuseops_8cc_source.html#l00546">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00910">FFmpeg_Transcoder::get_hw_pix_fmt()</a>, <a class="el" href="fuseops_8cc_source.html#l01408">get_source_properties()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06473">FFmpeg_Transcoder::init_deinterlace_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02806">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="fuseops_8cc_source.html#l02181">kick_next()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00173">link_up()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="diskio_8cc_source.html#l00059">DiskIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="buffer_8cc_source.html#l00078">Buffer::open_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00853">FFmpeg_Transcoder::open_output_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02605">FFmpeg_Transcoder::open_output_filestreams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01105">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="cache__entry_8cc_source.html#l00348">Cache_Entry::outdated()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02293">parse_file()</a>, <a class="el" href="vcdparser_8cc_source.html#l00134">parse_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00275">FFmpeg_Base::subtitle_info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00140">thread_pool::tear_down()</a>, <a class="el" href="transcode_8cc_source.html#l00155">transcode_finish()</a>, <a class="el" href="transcode_8cc_source.html#l00250">transcoder_free()</a>, <a class="el" href="transcode_8cc_source.html#l00228">transcoder_init()</a>, <a class="el" href="transcode_8cc_source.html#l00354">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00223">FFmpeg_Base::video_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02470">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07603">FFmpeg_Transcoder::add_external_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02251">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00248">FFmpeg_Base::audio_info()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03758">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03372">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="fuseops_8cc_source.html#l00546">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00910">FFmpeg_Transcoder::get_hw_pix_fmt()</a>, <a class="el" href="fuseops_8cc_source.html#l01408">get_source_properties()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06478">FFmpeg_Transcoder::init_deinterlace_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02806">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="fuseops_8cc_source.html#l02185">kick_next()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00173">link_up()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="diskio_8cc_source.html#l00059">DiskIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="buffer_8cc_source.html#l00078">Buffer::open_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00853">FFmpeg_Transcoder::open_output_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02605">FFmpeg_Transcoder::open_output_filestreams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01105">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="cache__entry_8cc_source.html#l00353">Cache_Entry::outdated()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02297">parse_file()</a>, <a class="el" href="vcdparser_8cc_source.html#l00134">parse_vcd()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00275">FFmpeg_Base::subtitle_info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00140">thread_pool::tear_down()</a>, <a class="el" href="transcode_8cc_source.html#l00155">transcode_finish()</a>, <a class="el" href="transcode_8cc_source.html#l00250">transcoder_free()</a>, <a class="el" href="transcode_8cc_source.html#l00228">transcoder_init()</a>, <a class="el" href="transcode_8cc_source.html#l00354">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00223">FFmpeg_Base::video_info()</a>.</p>
 
 </div>
 </div>
-<a id="a2dfbf79ac37ff24286b79dbc7070cee2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dfbf79ac37ff24286b79dbc7070cee2">&#9670;&nbsp;</a></span>debug() <span class="overload">[2/2]</span></h2>
+<a id="ae48fc6adc12bc24c60d62eb5fbac1d86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae48fc6adc12bc24c60d62eb5fbac1d86">&#9670;&nbsp;</a></span>error()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Logging::debug </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>format_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Write debug level log entry. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00199">199</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
-
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aab8f73513ec0f2b730dbee65fdb0d66fb">LOGDEBUG</a>.</p>
-
-</div>
-</div>
-<a id="a9eca3fc38f586624d6f5e3057c1955f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9eca3fc38f586624d6f5e3057c1955f9">&#9670;&nbsp;</a></span>error() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -464,7 +404,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">static void Logging::error </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">const T&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
         </tr>
         <tr>
@@ -502,69 +442,11 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00257">257</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00237">237</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aadf23add0723043a76dda3d86c4a53abf">LOGERROR</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00208">log_with_level()</a>, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcadf23add0723043a76dda3d86c4a53abf">LOGERROR</a>, and <a class="el" href="logging_8h_source.html#l00353">show()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02578">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02470">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07598">FFmpeg_Transcoder::add_external_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07740">FFmpeg_Transcoder::add_external_subtitle_streams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03997">FFmpeg_Transcoder::add_samples_to_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02391">FFmpeg_Transcoder::add_stream_copy()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02251">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03196">FFmpeg_Transcoder::alloc_picture()</a>, <a class="el" href="blurayparser_8cc_source.html#l00062">audio_stream_info()</a>, <a class="el" href="cache_8cc_source.html#l00268">Cache::begin_transaction()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00369">check_cuesheet()</a>, <a class="el" href="cache_8cc_source.html#l00227">Cache::check_min_version()</a>, <a class="el" href="buffer_8cc_source.html#l00565">Buffer::clear()</a>, <a class="el" href="cache_8cc_source.html#l00196">Cache::column_exists()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03958">FFmpeg_Transcoder::convert_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04775">FFmpeg_Transcoder::create_audio_frame()</a>, <a class="el" href="blurayparser_8cc_source.html#l00433">create_bluray_virtualfile()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00119">create_cuesheet_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="cache_8cc_source.html#l00316">Cache::create_table_cache_entry()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03215">FFmpeg_Transcoder::decode()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03269">FFmpeg_Transcoder::decode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03758">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03582">FFmpeg_Transcoder::decode_subtitle()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03372">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00177">FFmpeg_Base::dict_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04262">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04340">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04637">FFmpeg_Transcoder::encode_subtitle()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="cache_8cc_source.html#l00284">Cache::end_transaction()</a>, <a class="el" href="fuseops_8cc_source.html#l00867">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l01100">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l01297">ffmpegfs_release()</a>, <a class="el" href="fuseops_8cc_source.html#l01925">find_original()</a>, <a class="el" href="buffer_8cc_source.html#l00537">Buffer::flush()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05092">FFmpeg_Transcoder::flush_delayed_audio()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05122">FFmpeg_Transcoder::flush_delayed_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07532">FFmpeg_Transcoder::foreach_subtitle_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00910">FFmpeg_Transcoder::get_hw_pix_fmt()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06818">FFmpeg_Transcoder::hwdevice_ctx_add_ref()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06799">FFmpeg_Transcoder::hwdevice_ctx_create()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06955">FFmpeg_Transcoder::hwframe_copy_from_hw()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06976">FFmpeg_Transcoder::hwframe_copy_to_hw()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06850">FFmpeg_Transcoder::hwframe_ctx_set()</a>, <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02926">FFmpeg_Transcoder::init_audio_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04183">FFmpeg_Transcoder::init_audio_output_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03926">FFmpeg_Transcoder::init_converted_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06473">FFmpeg_Transcoder::init_deinterlace_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02806">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06193">FFmpeg_Transcoder::input_read()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00282">link_down()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00173">link_up()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="buffer_8cc_source.html#l00346">Buffer::map_file()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00770">FFmpeg_Transcoder::open_albumarts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00687">FFmpeg_Transcoder::open_bestmatch_audio()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00882">FFmpeg_Transcoder::open_bestmatch_decoder()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00943">FFmpeg_Transcoder::open_decoder()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00853">FFmpeg_Transcoder::open_output_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02605">FFmpeg_Transcoder::open_output_filestreams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01105">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00726">FFmpeg_Transcoder::open_subtitles()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00211">FFmpeg_Base::opt_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06220">FFmpeg_Transcoder::output_write()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00272">parse_cuesheet()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02293">parse_file()</a>, <a class="el" href="cache_8cc_source.html#l00133">Cache::prepare_stmts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05229">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="blurayio_8cc_source.html#l00177">BlurayIO::read()</a>, <a class="el" href="dvdio_8cc_source.html#l00555">DvdIO::read()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04112">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="cache_8cc_source.html#l00740">Cache::read_info()</a>, <a class="el" href="buffer_8cc_source.html#l00605">Buffer::reserve()</a>, <a class="el" href="cache_8cc_source.html#l00300">Cache::rollback_transaction()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06239">FFmpeg_Transcoder::seek()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06617">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05046">FFmpeg_Transcoder::skip_decoded_frames()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06695">FFmpeg_Transcoder::stack_seek_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06711">FFmpeg_Transcoder::stack_seek_segment()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05509">FFmpeg_Transcoder::start_new_segment()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00156">stop_timer()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03652">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="cache_8cc_source.html#l00167">Cache::table_exists()</a>, <a class="el" href="transcode_8cc_source.html#l00228">transcoder_init()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, <a class="el" href="buffer_8cc_source.html#l00422">Buffer::unmap_file()</a>, <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>, <a class="el" href="blurayparser_8cc_source.html#l00194">video_stream_info()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03157">FFmpeg_Transcoder::write_output_file_header()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04851">FFmpeg_Transcoder::write_output_file_trailer()</a>.</p>
-
-</div>
-</div>
-<a id="a5a303819f9a2c6a6590f8d81b7812168"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a303819f9a2c6a6590f8d81b7812168">&#9670;&nbsp;</a></span>error() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Logging::error </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>format_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Write error level log entry. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00268">268</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
-
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aadf23add0723043a76dda3d86c4a53abf">LOGERROR</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02578">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02470">FFmpeg_Transcoder::add_albumart_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07603">FFmpeg_Transcoder::add_external_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07745">FFmpeg_Transcoder::add_external_subtitle_streams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03997">FFmpeg_Transcoder::add_samples_to_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02391">FFmpeg_Transcoder::add_stream_copy()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02251">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03196">FFmpeg_Transcoder::alloc_picture()</a>, <a class="el" href="blurayparser_8cc_source.html#l00062">audio_stream_info()</a>, <a class="el" href="cache_8cc_source.html#l00268">Cache::begin_transaction()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00369">check_cuesheet()</a>, <a class="el" href="cache_8cc_source.html#l00227">Cache::check_min_version()</a>, <a class="el" href="buffer_8cc_source.html#l00565">Buffer::clear()</a>, <a class="el" href="cache_8cc_source.html#l00196">Cache::column_exists()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03958">FFmpeg_Transcoder::convert_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04775">FFmpeg_Transcoder::create_audio_frame()</a>, <a class="el" href="blurayparser_8cc_source.html#l00433">create_bluray_virtualfile()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00119">create_cuesheet_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="cache_8cc_source.html#l00316">Cache::create_table_cache_entry()</a>, <a class="el" href="vcdparser_8cc_source.html#l00059">create_vcd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03215">FFmpeg_Transcoder::decode()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03269">FFmpeg_Transcoder::decode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03758">FFmpeg_Transcoder::decode_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03582">FFmpeg_Transcoder::decode_subtitle()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03372">FFmpeg_Transcoder::decode_video_frame()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00177">FFmpeg_Base::dict_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04262">FFmpeg_Transcoder::encode_audio_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04340">FFmpeg_Transcoder::encode_image_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04637">FFmpeg_Transcoder::encode_subtitle()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="cache_8cc_source.html#l00284">Cache::end_transaction()</a>, <a class="el" href="fuseops_8cc_source.html#l00867">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l01100">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l01297">ffmpegfs_release()</a>, <a class="el" href="fuseops_8cc_source.html#l01929">find_original()</a>, <a class="el" href="buffer_8cc_source.html#l00537">Buffer::flush()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05092">FFmpeg_Transcoder::flush_delayed_audio()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05122">FFmpeg_Transcoder::flush_delayed_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l07537">FFmpeg_Transcoder::foreach_subtitle_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00910">FFmpeg_Transcoder::get_hw_pix_fmt()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06823">FFmpeg_Transcoder::hwdevice_ctx_add_ref()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06804">FFmpeg_Transcoder::hwdevice_ctx_create()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06960">FFmpeg_Transcoder::hwframe_copy_from_hw()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06981">FFmpeg_Transcoder::hwframe_copy_to_hw()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06855">FFmpeg_Transcoder::hwframe_ctx_set()</a>, <a class="el" href="buffer_8cc_source.html#l00164">Buffer::init()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02926">FFmpeg_Transcoder::init_audio_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04183">FFmpeg_Transcoder::init_audio_output_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03926">FFmpeg_Transcoder::init_converted_samples()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06478">FFmpeg_Transcoder::init_deinterlace_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02806">FFmpeg_Transcoder::init_resampler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06193">FFmpeg_Transcoder::input_read()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00282">link_down()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00173">link_up()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="buffer_8cc_source.html#l00346">Buffer::map_file()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00770">FFmpeg_Transcoder::open_albumarts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00687">FFmpeg_Transcoder::open_bestmatch_audio()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00882">FFmpeg_Transcoder::open_bestmatch_decoder()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00943">FFmpeg_Transcoder::open_decoder()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00853">FFmpeg_Transcoder::open_output_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02605">FFmpeg_Transcoder::open_output_filestreams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01105">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00726">FFmpeg_Transcoder::open_subtitles()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00211">FFmpeg_Base::opt_set_with_check()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06220">FFmpeg_Transcoder::output_write()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00272">parse_cuesheet()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02297">parse_file()</a>, <a class="el" href="cache_8cc_source.html#l00133">Cache::prepare_stmts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05229">FFmpeg_Transcoder::process_single_fr()</a>, <a class="el" href="blurayio_8cc_source.html#l00177">BlurayIO::read()</a>, <a class="el" href="dvdio_8cc_source.html#l00555">DvdIO::read()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04112">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="cache_8cc_source.html#l00740">Cache::read_info()</a>, <a class="el" href="buffer_8cc_source.html#l00605">Buffer::reserve()</a>, <a class="el" href="cache_8cc_source.html#l00300">Cache::rollback_transaction()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06239">FFmpeg_Transcoder::seek()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06622">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05046">FFmpeg_Transcoder::skip_decoded_frames()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06700">FFmpeg_Transcoder::stack_seek_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06716">FFmpeg_Transcoder::stack_seek_segment()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05509">FFmpeg_Transcoder::start_new_segment()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00156">stop_timer()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03652">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="cache_8cc_source.html#l00167">Cache::table_exists()</a>, <a class="el" href="transcode_8cc_source.html#l00228">transcoder_init()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, <a class="el" href="buffer_8cc_source.html#l00422">Buffer::unmap_file()</a>, <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>, <a class="el" href="blurayparser_8cc_source.html#l00194">video_stream_info()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03157">FFmpeg_Transcoder::write_output_file_header()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04851">FFmpeg_Transcoder::write_output_file_trailer()</a>.</p>
 
 </div>
 </div>
@@ -599,7 +481,7 @@ template&lt;typename... Args&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -614,9 +496,9 @@ template&lt;typename... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Contents of format_string with all tokens replaced. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00358">358</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00342">342</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>.</p>
 
 </div>
 </div>
@@ -663,7 +545,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -681,9 +563,9 @@ template&lt;typename T , typename... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Contents of string_to_search with all tokens replaced. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00304">304</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00288">288</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>.</p>
 
 </div>
 </div>
@@ -716,7 +598,7 @@ template&lt;typename T , typename... Args&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -731,9 +613,9 @@ template&lt;typename T , typename... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns original string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00190">190</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00218">218</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="logging_8h_source.html#l00188">debug()</a>, <a class="el" href="logging_8h_source.html#l00257">error()</a>, <a class="el" href="logging_8h_source.html#l00358">format()</a>, <a class="el" href="logging_8h_source.html#l00304">format_helper()</a>, <a class="el" href="logging_8h_source.html#l00211">info()</a>, <a class="el" href="logging_8h_source.html#l00165">trace()</a>, and <a class="el" href="logging_8h_source.html#l00234">warning()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="logging_8h_source.html#l00180">debug()</a>, <a class="el" href="logging_8h_source.html#l00237">error()</a>, <a class="el" href="logging_8h_source.html#l00342">format()</a>, <a class="el" href="logging_8h_source.html#l00288">format_helper()</a>, <a class="el" href="logging_8h_source.html#l00199">info()</a>, <a class="el" href="logging_8h_source.html#l00161">trace()</a>, and <a class="el" href="logging_8h_source.html#l00218">warning()</a>.</p>
 
 </div>
 </div>
@@ -755,19 +637,21 @@ template&lt;typename T , typename... Args&gt; </div>
 <p>Check whether either failbit or badbit is set. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if either (or both) the failbit or the badbit error state flags are set for the stream. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00138">138</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00182">182</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00373">m_logfile</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00369">m_logfile</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00192">init_logging()</a>.</p>
 
 </div>
 </div>
-<a id="a61245156bad50e71fee169c78247172e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61245156bad50e71fee169c78247172e">&#9670;&nbsp;</a></span>info() <span class="overload">[1/2]</span></h2>
+<a id="ad0aff9dffa025c0b3138a0890691e59e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0aff9dffa025c0b3138a0890691e59e">&#9670;&nbsp;</a></span>info()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -775,7 +659,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">static void Logging::info </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">const T&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
         </tr>
         <tr>
@@ -813,74 +697,16 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00211">211</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00199">199</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2cc51af136473955bd58302d21eed12b">LOGINFO</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00208">log_with_level()</a>, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fca2cc51af136473955bd58302d21eed12b">LOGINFO</a>, and <a class="el" href="logging_8h_source.html#l00353">show()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00805">FFmpeg_Transcoder::can_copy_stream()</a>, <a class="el" href="fuseops_8cc_source.html#l01380">ffmpegfs_destroy()</a>, <a class="el" href="fuseops_8cc_source.html#l01331">ffmpegfs_init()</a>, <a class="el" href="thread__pool_8cc_source.html#l00125">thread_pool::init()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00282">link_down()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00173">link_up()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00068">maintenance_handler()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00249">master_check()</a>, <a class="el" href="vcdio_8cc_source.html#l00068">VcdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02605">FFmpeg_Transcoder::open_output_filestreams()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05509">FFmpeg_Transcoder::start_new_segment()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00156">stop_timer()</a>, <a class="el" href="transcode_8cc_source.html#l00082">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, and <a class="el" href="cache_8cc_source.html#l00355">Cache::upgrade_db()</a>.</p>
 
 </div>
 </div>
-<a id="a9fa4045909c4557c32154457df3257b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fa4045909c4557c32154457df3257b8">&#9670;&nbsp;</a></span>info() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Logging::info </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>format_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Write info level log entry. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00222">222</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
-
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aa2cc51af136473955bd58302d21eed12b">LOGINFO</a>.</p>
-
-</div>
-</div>
-<a id="a77721bbb1fdfcb27bd8c4c36cf1bd848"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77721bbb1fdfcb27bd8c4c36cf1bd848">&#9670;&nbsp;</a></span>init_logging()</h2>
+<a id="a5e7388a50f59f40cfb69ee27000ab240"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e7388a50f59f40cfb69ee27000ab240">&#9670;&nbsp;</a></span>init_logging()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -897,7 +723,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td>
           <td class="paramname"><em>max_level</em>, </td>
         </tr>
         <tr>
@@ -938,16 +764,16 @@ template&lt;typename... Args&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns true. On error, returns false. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>It will only fail if the file cannot be opened. Writing to stderr or syslog will never fail. errno is not set. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00175">175</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00192">192</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00067">Logging()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00182">GetFail()</a>, <a class="el" href="logging_8cc_source.html#l00091">Logging()</a>, and <a class="el" href="logging_8h_source.html#l00367">m_logging</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l01116">init_logging()</a>.</p>
 
 </div>
 </div>
-<a id="a864a1a6d24d4bcfd9d9cdb5ca8362f01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a864a1a6d24d4bcfd9d9cdb5ca8362f01">&#9670;&nbsp;</a></span>log_with_level()</h2>
+<a id="a357f7c60a58b2de1677dca7baf49b985"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a357f7c60a58b2de1677dca7baf49b985">&#9670;&nbsp;</a></span>log_with_level() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -958,7 +784,63 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">void Logging::log_with_level </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td>
+          <td class="paramname"><em>loglevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Write log entry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The level of log this message is for. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be nullptr. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>- Message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00208">208</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="logging_8h_source.html#l00180">debug()</a>, <a class="el" href="logging_8h_source.html#l00237">error()</a>, <a class="el" href="transcode_8cc_source.html#l01037">ffmpeg_log()</a>, <a class="el" href="logging_8h_source.html#l00199">info()</a>, <a class="el" href="logging_8h_source.html#l00161">trace()</a>, and <a class="el" href="logging_8h_source.html#l00218">warning()</a>.</p>
+
+</div>
+</div>
+<a id="afefe65bd1836a35e22c13ccadda5685d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afefe65bd1836a35e22c13ccadda5685d">&#9670;&nbsp;</a></span>log_with_level() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Logging::log_with_level </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td>
           <td class="paramname"><em>loglevel</em>, </td>
         </tr>
         <tr>
@@ -989,88 +871,67 @@ template&lt;typename... Args&gt; </div>
 <p>Write log entry. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The maximum level of log output to write. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The level of log this message is for. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>- Message to log. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00185">185</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00213">213</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00170">Log</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="logging_8h_source.html#l00188">debug()</a>, <a class="el" href="logging_8h_source.html#l00257">error()</a>, <a class="el" href="transcode_8cc_source.html#l01037">ffmpeg_log()</a>, <a class="el" href="logging_8h_source.html#l00211">info()</a>, <a class="el" href="logging_8h_source.html#l00165">trace()</a>, and <a class="el" href="logging_8h_source.html#l00234">warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00187">Log</a>.</p>
 
 </div>
 </div>
-<a id="a1a9dac8c040170d6ab1314a935eb999c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a9dac8c040170d6ab1314a935eb999c">&#9670;&nbsp;</a></span>trace() <span class="overload">[1/2]</span></h2>
+<a id="adb07e0318c860f142606c84fa99dec22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb07e0318c860f142606c84fa99dec22">&#9670;&nbsp;</a></span>show()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void Logging::trace </td>
+          <td class="memname">static bool Logging::show </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">LOGLEVEL</a>&#160;</td>
+          <td class="paramname"><em>loglevel</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>format_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Write trace level log entry. </p>
+<p>Check if log entry should be displayed at the current log level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be nullptr. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format string in FFmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- Log level of log entry. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>True, if entry should be be shown; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00165">165</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00353">353</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aabc556bb176a3964b482f0930b691aee0">LOGTRACE</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00367">m_logging</a>, and <a class="el" href="logging_8h_source.html#l00370">m_max_level</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02578">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="blurayparser_8cc_source.html#l00626">check_bluray()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00369">check_cuesheet()</a>, <a class="el" href="dvdparser_8cc_source.html#l00553">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00163">check_vcd()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06441">FFmpeg_Transcoder::close()</a>, <a class="el" href="cache_8cc_source.html#l01060">Cache::close()</a>, <a class="el" href="buffer_8cc_source.html#l00126">Buffer::close_file()</a>, <a class="el" href="blurayparser_8cc_source.html#l00433">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00232">FFmpeg_Transcoder::FFmpeg_Transcoder()</a>, <a class="el" href="fuseops_8cc_source.html#l00867">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00546">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00980">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01100">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l00273">ffmpegfs_readlink()</a>, <a class="el" href="fuseops_8cc_source.html#l01297">ffmpegfs_release()</a>, <a class="el" href="fuseops_8cc_source.html#l01263">ffmpegfs_statfs()</a>, <a class="el" href="fuseops_8cc_source.html#l02392">get_format()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="thread__pool_8cc_source.html#l00054">thread_pool::loop_function()</a>, <a class="el" href="buffer_8cc_source.html#l00346">Buffer::map_file()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00249">master_check()</a>, <a class="el" href="cache__entry_8cc_source.html#l00163">Cache_Entry::open()</a>, <a class="el" href="cache_8cc_source.html#l01042">Cache::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00770">FFmpeg_Transcoder::open_albumarts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="buffer_8cc_source.html#l00078">Buffer::open_file()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00231">parse_cuesheet_file()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00254">parse_cuesheet_text()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02293">parse_file()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l02017">print_params()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04938">FFmpeg_Transcoder::process_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04112">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="buffer_8cc_source.html#l00897">Buffer::reallocate()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">thread_pool::schedule_thread()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03652">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="transcode_8cc_source.html#l00082">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00354">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00329">transcoder_predict_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00470">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="buffer_8cc_source.html#l00422">Buffer::unmap_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01564">FFmpeg_Transcoder::update_codec()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02938">FFmpeg_Transcoder::update_format()</a>, <a class="el" href="cache__entry_8cc_source.html#l00063">Cache_Entry::~Cache_Entry()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00283">FFmpeg_Transcoder::~FFmpeg_Transcoder()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="logging_8h_source.html#l00180">debug()</a>, <a class="el" href="logging_8h_source.html#l00237">error()</a>, <a class="el" href="logging_8h_source.html#l00199">info()</a>, <a class="el" href="logging_8h_source.html#l00161">trace()</a>, and <a class="el" href="logging_8h_source.html#l00218">warning()</a>.</p>
 
 </div>
 </div>
-<a id="a9be7c1f8cc73e80b09121069f709e77e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9be7c1f8cc73e80b09121069f709e77e">&#9670;&nbsp;</a></span>trace() <span class="overload">[2/2]</span></h2>
+<a id="a9d2938a2b4a502b58c43a895c593d738"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d2938a2b4a502b58c43a895c593d738">&#9670;&nbsp;</a></span>trace()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1078,7 +939,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">static void Logging::trace </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramtype">const T&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
         </tr>
         <tr>
@@ -1116,19 +977,21 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00176">176</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00161">161</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aabc556bb176a3964b482f0930b691aee0">LOGTRACE</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00208">log_with_level()</a>, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcabc556bb176a3964b482f0930b691aee0">LOGTRACE</a>, and <a class="el" href="logging_8h_source.html#l00353">show()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02578">FFmpeg_Transcoder::add_albumart_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="blurayparser_8cc_source.html#l00626">check_bluray()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00369">check_cuesheet()</a>, <a class="el" href="dvdparser_8cc_source.html#l00553">check_dvd()</a>, <a class="el" href="vcdparser_8cc_source.html#l00163">check_vcd()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06441">FFmpeg_Transcoder::close()</a>, <a class="el" href="cache_8cc_source.html#l01060">Cache::close()</a>, <a class="el" href="buffer_8cc_source.html#l00126">Buffer::close_file()</a>, <a class="el" href="blurayparser_8cc_source.html#l00433">create_bluray_virtualfile()</a>, <a class="el" href="dvdparser_8cc_source.html#l00243">create_dvd_virtualfile()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00232">FFmpeg_Transcoder::FFmpeg_Transcoder()</a>, <a class="el" href="fuseops_8cc_source.html#l00867">ffmpegfs_fgetattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00546">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00980">ffmpegfs_open()</a>, <a class="el" href="fuseops_8cc_source.html#l01100">ffmpegfs_read()</a>, <a class="el" href="fuseops_8cc_source.html#l00308">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l00273">ffmpegfs_readlink()</a>, <a class="el" href="fuseops_8cc_source.html#l01297">ffmpegfs_release()</a>, <a class="el" href="fuseops_8cc_source.html#l01263">ffmpegfs_statfs()</a>, <a class="el" href="fuseops_8cc_source.html#l02396">get_format()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01607">FFmpeg_Transcoder::init_rescaler()</a>, <a class="el" href="thread__pool_8cc_source.html#l00054">thread_pool::loop_function()</a>, <a class="el" href="buffer_8cc_source.html#l00346">Buffer::map_file()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00249">master_check()</a>, <a class="el" href="cache__entry_8cc_source.html#l00163">Cache_Entry::open()</a>, <a class="el" href="cache_8cc_source.html#l01042">Cache::open()</a>, <a class="el" href="dvdio_8cc_source.html#l00088">DvdIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00770">FFmpeg_Transcoder::open_albumarts()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, <a class="el" href="buffer_8cc_source.html#l00078">Buffer::open_file()</a>, <a class="el" href="blurayparser_8cc_source.html#l00571">parse_bluray()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00231">parse_cuesheet_file()</a>, <a class="el" href="cuesheetparser_8cc_source.html#l00254">parse_cuesheet_text()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l02297">parse_file()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpegfs_8cc_source.html#l02017">print_params()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04938">FFmpeg_Transcoder::process_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04112">FFmpeg_Transcoder::read_decode_convert_and_store()</a>, <a class="el" href="buffer_8cc_source.html#l00897">Buffer::reallocate()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">thread_pool::schedule_thread()</a>, <a class="el" href="cache__maintenance_8cc_source.html#l00090">start_timer()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03652">FFmpeg_Transcoder::store_packet()</a>, <a class="el" href="transcode_8cc_source.html#l00082">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00354">transcoder_new()</a>, <a class="el" href="transcode_8cc_source.html#l00329">transcoder_predict_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00470">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="buffer_8cc_source.html#l00422">Buffer::unmap_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01564">FFmpeg_Transcoder::update_codec()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02938">FFmpeg_Transcoder::update_format()</a>, <a class="el" href="cache__entry_8cc_source.html#l00063">Cache_Entry::~Cache_Entry()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00283">FFmpeg_Transcoder::~FFmpeg_Transcoder()</a>.</p>
 
 </div>
 </div>
-<a id="a98afac829a940d2861781fed5d897a7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98afac829a940d2861781fed5d897a7c">&#9670;&nbsp;</a></span>warning() <span class="overload">[1/2]</span></h2>
+<a id="a442c637ecbac6edac3dc753ffb3625c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a442c637ecbac6edac3dc753ffb3625c6">&#9670;&nbsp;</a></span>warning()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T , typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1136,7 +999,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname">static void Logging::warning </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
+          <td class="paramtype">const T&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
         </tr>
         <tr>
@@ -1174,75 +1037,17 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00234">234</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00218">218</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aaa54958b19f8cf89c793d0093ed60d365">LOGWARN</a>.</p>
+<p class="reference">References <a class="el" href="logging_8cc_source.html#l00218">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00208">log_with_level()</a>, <a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fcaa54958b19f8cf89c793d0093ed60d365">LOGWARN</a>, and <a class="el" href="logging_8h_source.html#l00353">show()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06060">FFmpeg_Transcoder::calculate_predicted_filesize()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06324">FFmpeg_Transcoder::purge()</a>, <a class="el" href="dvdio_8cc_source.html#l00555">DvdIO::read()</a>, <a class="el" href="buffer_8cc_source.html#l00947">Buffer::remove_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06617">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="fuseops_8cc_source.html#l02219">sighandler()</a>, <a class="el" href="transcode_8cc_source.html#l00082">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00073">FFmpeg_Base::video_stream_setup()</a>.</p>
-
-</div>
-</div>
-<a id="acd36980f9076ce92283057b7f5e84ac3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd36980f9076ce92283057b7f5e84ac3">&#9670;&nbsp;</a></span>warning() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void Logging::warning </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>format_string</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Write warning level log entry. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format_string</td><td>- Format a string in FFmpegfs logger format. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>- 0 or more format arguments. See <a class="el" href="classLogging.html#format">format</a>. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="logging_8h_source.html#l00245">245</a> of file <a class="el" href="logging_8h_source.html">logging.h</a>.</p>
-
-<p class="reference">References <a class="el" href="logging_8cc_source.html#l00190">format_helper()</a>, <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>, and <a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3aaa54958b19f8cf89c793d0093ed60d365">LOGWARN</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06060">FFmpeg_Transcoder::calculate_predicted_filesize()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04457">FFmpeg_Transcoder::encode_video_frame()</a>, <a class="el" href="cache_8cc_source.html#l00575">Cache::load_index()</a>, <a class="el" href="blurayio_8cc_source.html#l00075">BlurayIO::open()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="dvdparser_8cc_source.html#l00428">parse_dvd()</a>, <a class="el" href="fuseops_8cc_source.html#l01485">prepare_script()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06324">FFmpeg_Transcoder::purge()</a>, <a class="el" href="dvdio_8cc_source.html#l00555">DvdIO::read()</a>, <a class="el" href="buffer_8cc_source.html#l00947">Buffer::remove_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06622">FFmpeg_Transcoder::send_filters()</a>, <a class="el" href="fuseops_8cc_source.html#l02223">sighandler()</a>, <a class="el" href="transcode_8cc_source.html#l00082">transcode_until()</a>, <a class="el" href="transcode_8cc_source.html#l00601">transcoder_read_frame()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>, and <a class="el" href="ffmpeg__base_8cc_source.html#l00073">FFmpeg_Base::video_stream_setup()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a5cb822175215939e27ed125f0bc625bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5cb822175215939e27ed125f0bc625bb">&#9670;&nbsp;</a></span>Log</h2>
+<a id="aa594493d1a31ac4ae04b404910e8b853"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa594493d1a31ac4ae04b404910e8b853">&#9670;&nbsp;</a></span>Log</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1253,7 +1058,7 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classLogging_1_1Logger.html">Logger</a> Log </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">Logging::LOGLEVEL</a>&#160;</td>
           <td class="paramname"><em>loglevel</em>, </td>
         </tr>
         <tr>
@@ -1278,15 +1083,15 @@ template&lt;typename... Args&gt; </div>
 <p>Make logger class our friend for our constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- Selected loglevel. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- If logging to file, use this file name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The level of log this message is for. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00170">170</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00187">187</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00185">log_with_level()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="logging_8cc_source.html#l00213">log_with_level()</a>.</p>
 
 </div>
 </div>

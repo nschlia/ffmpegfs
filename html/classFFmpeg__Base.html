@@ -140,6 +140,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a9f4f1cccd0202b75972f925cc63913bf"><td class="memItemLeft" align="right" valign="top">virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname</a> () const =0</td></tr>
 <tr class="memdesc:a9f4f1cccd0202b75972f925cc63913bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return destination filename. Must be implemented in child class.  <a href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">More...</a><br /></td></tr>
 <tr class="separator:a9f4f1cccd0202b75972f925cc63913bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4569284de85795502fd1c56323e991dc"><td class="memItemLeft" align="right" valign="top">virtual const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a4569284de85795502fd1c56323e991dc">virtname</a> () const =0</td></tr>
+<tr class="memdesc:a4569284de85795502fd1c56323e991dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return virtual filename. Must be implemented in child class.  <a href="classFFmpeg__Base.html#a4569284de85795502fd1c56323e991dc">More...</a><br /></td></tr>
+<tr class="separator:a4569284de85795502fd1c56323e991dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52c3caccc7f4135b9d89e1b269b80d77"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Base.html#a52c3caccc7f4135b9d89e1b269b80d77">pts_to_frame</a> (AVStream *stream, int64_t pts) const</td></tr>
 <tr class="memdesc:a52c3caccc7f4135b9d89e1b269b80d77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert PTS value to frame number.  <a href="classFFmpeg__Base.html#a52c3caccc7f4135b9d89e1b269b80d77">More...</a><br /></td></tr>
 <tr class="separator:a52c3caccc7f4135b9d89e1b269b80d77"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,7 +244,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00248">248</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01172">ffmpeg_rescale_q_rnd()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01511">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01552">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01532">format_samplerate()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00336">get_channels()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00180">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01172">ffmpeg_rescale_q_rnd()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01511">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01552">format_duration()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01532">format_samplerate()</a>, <a class="el" href="ffmpeg__base_8cc_source.html#l00336">get_channels()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00687">FFmpeg_Transcoder::open_bestmatch_audio()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>.</p>
 
@@ -353,7 +356,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00177">177</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00237">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02251">FFmpeg_Transcoder::add_subtitle_stream()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04878">FFmpeg_Transcoder::copy_metadata()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00308">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01105">FFmpeg_Transcoder::open_output_frame_set()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04938">FFmpeg_Transcoder::process_metadata()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02938">FFmpeg_Transcoder::update_format()</a>.</p>
 
@@ -433,7 +436,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00194">194</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00237">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
 
 </div>
 </div>
@@ -915,7 +918,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00211">211</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00257">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00237">Logging::error()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01143">ffmpeg_geterror()</a>, and <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01564">FFmpeg_Transcoder::update_codec()</a>.</p>
 
@@ -1166,7 +1169,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00275">275</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00180">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00726">FFmpeg_Transcoder::open_subtitles()</a>.</p>
 
@@ -1224,7 +1227,7 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00223">223</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00188">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01172">ffmpeg_rescale_q_rnd()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01511">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01552">format_duration()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00180">Logging::debug()</a>, <a class="el" href="classFFmpeg__Base.html#a9f4f1cccd0202b75972f925cc63913bf">destname()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01172">ffmpeg_rescale_q_rnd()</a>, <a class="el" href="classFFmpeg__Base.html#ab286a55ddff32db33af199b60145751b">filename()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01511">format_bitrate()</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01552">format_duration()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01359">get_codec_name()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00601">FFmpeg_Transcoder::open_bestmatch_video()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01263">FFmpeg_Transcoder::open_output()</a>.</p>
 
@@ -1296,9 +1299,39 @@ Protected Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__base_8cc_source.html#l00073">73</a> of file <a class="el" href="ffmpeg__base_8cc_source.html">ffmpeg_base.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00234">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00218">Logging::warning()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l01644">FFmpeg_Transcoder::add_stream()</a>.</p>
+
+</div>
+</div>
+<a id="a4569284de85795502fd1c56323e991dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4569284de85795502fd1c56323e991dc">&#9670;&nbsp;</a></span>virtname()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const char* FFmpeg_Base::virtname </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return virtual filename. Must be implemented in child class. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns filename. </dd></dl>
+
+<p>Implemented in <a class="el" href="classFFmpeg__Transcoder.html#aa09c2468c04eb793d4d006b6c79d4073">FFmpeg_Transcoder</a>.</p>
 
 </div>
 </div>

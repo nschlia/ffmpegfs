@@ -100,8 +100,10 @@ Version 2.11 is under development</h2>
 <li><b>Bugfix:</b> mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong error condition, could cause the application to crash or return stupid error messages.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/119">Issue #119</a>: Fixed problem that caused frame set generation to fail sometimes. Seems to be related to the nremap() issue.</li>
 <li>Generally revisited documentation, logging, and display texts. Improved grammar, formatting, and fixed quite a few typos that escaped all proofreading sessions.</li>
-<li>Changed FFmpeg API INFO and DEBUG level log output to FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.</li>
-<li>Reduce frequent memory reallocations when creating HLS segments to speed up processing.</li>
+<li>The FFmpeg API INFO and DEBUG level log output has been changed to the FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.</li>
+<li>Frequent memory reallocations when creating HLS segments have been reduced to speed up processing.</li>
+<li>Revised logging: Optimised processing to save CPU time by not formatting log entries that are not logged anyway at their log level.</li>
+<li>Revised logging: shorten file paths, remove mount, input, or cache paths. Log the additional portion only to reduce log file size and improve readability.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.10 has been released</h2>

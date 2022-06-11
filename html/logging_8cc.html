@@ -77,7 +77,7 @@ $(function() {
 <p>Log facilities implementation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="logging_8h_source.html">logging.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
 <code>#include &lt;cstdarg&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;syslog.h&gt;</code><br />
@@ -87,24 +87,30 @@ Include dependency graph for logging.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="logging_8cc__incl.png" border="0" usemap="#asrc_2logging_8cc" alt=""/></div>
 <map name="asrc_2logging_8cc" id="asrc_2logging_8cc">
-<area shape="rect" title="Log facilities implementation." alt="" coords="794,5,905,32"/>
-<area shape="rect" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="221,80,304,107"/>
-<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="625,80,741,107"/>
-<area shape="rect" title=" " alt="" coords="765,80,835,107"/>
-<area shape="rect" title=" " alt="" coords="860,80,940,107"/>
-<area shape="rect" title=" " alt="" coords="965,80,1041,107"/>
-<area shape="rect" title=" " alt="" coords="1065,80,1141,107"/>
-<area shape="rect" title=" " alt="" coords="5,155,56,181"/>
-<area shape="rect" title=" " alt="" coords="81,155,154,181"/>
-<area shape="rect" title=" " alt="" coords="179,155,253,181"/>
-<area shape="rect" title=" " alt="" coords="365,155,424,181"/>
-<area shape="rect" title=" " alt="" coords="277,155,341,181"/>
-<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="449,155,586,181"/>
-<area shape="rect" title=" " alt="" coords="611,155,669,181"/>
-<area shape="rect" title=" " alt="" coords="694,155,757,181"/>
-<area shape="rect" title=" " alt="" coords="781,155,824,181"/>
-<area shape="rect" title=" " alt="" coords="848,155,955,181"/>
-<area shape="rect" title=" " alt="" coords="979,155,1154,181"/>
+<area shape="rect" title="Log facilities implementation." alt="" coords="924,5,1035,32"/>
+<area shape="rect" href="logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="234,155,317,181"/>
+<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="777,80,870,107"/>
+<area shape="rect" title=" " alt="" coords="895,80,965,107"/>
+<area shape="rect" title=" " alt="" coords="990,80,1070,107"/>
+<area shape="rect" title=" " alt="" coords="1095,80,1171,107"/>
+<area shape="rect" title=" " alt="" coords="1195,80,1271,107"/>
+<area shape="rect" title=" " alt="" coords="290,229,341,256"/>
+<area shape="rect" title=" " alt="" coords="5,229,79,256"/>
+<area shape="rect" title=" " alt="" coords="103,229,178,256"/>
+<area shape="rect" title=" " alt="" coords="365,229,423,256"/>
+<area shape="rect" title=" " alt="" coords="202,229,266,256"/>
+<area shape="rect" title=" " alt="" coords="905,155,968,181"/>
+<area shape="rect" title=" " alt="" coords="993,155,1067,181"/>
+<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="765,155,881,181"/>
+<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="631,155,698,181"/>
+<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="1077,229,1215,256"/>
+<area shape="rect" title=" " alt="" coords="709,229,767,256"/>
+<area shape="rect" title=" " alt="" coords="792,229,855,256"/>
+<area shape="rect" title=" " alt="" coords="1239,229,1282,256"/>
+<area shape="rect" title=" " alt="" coords="1306,229,1413,256"/>
+<area shape="rect" title=" " alt="" coords="879,229,1053,256"/>
+<area shape="rect" title=" " alt="" coords="447,229,533,256"/>
+<area shape="rect" title=" " alt="" coords="557,229,685,256"/>
 </map>
 </div>
 </div>
@@ -183,8 +189,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9070a8c12d797cb7a97478f5ae6c9d94"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogging_1_1Logger.html">Logging::Logger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logging_8cc.html#a9070a8c12d797cb7a97478f5ae6c9d94">Log</a> (<a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a> loglevel, const std::string &amp;filename)</td></tr>
-<tr class="separator:a9070a8c12d797cb7a97478f5ae6c9d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20239b49ae1fd08333be1d2feea1eba5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogging_1_1Logger.html">Logging::Logger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logging_8cc.html#a20239b49ae1fd08333be1d2feea1eba5">Log</a> (<a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">Logging::LOGLEVEL</a> loglevel, const std::string &amp;filename)</td></tr>
+<tr class="separator:a20239b49ae1fd08333be1d2feea1eba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Log facilities implementation. </p>
@@ -194,8 +200,8 @@ Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'
 
 <p class="definition">Definition in file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a9070a8c12d797cb7a97478f5ae6c9d94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9070a8c12d797cb7a97478f5ae6c9d94">&#9670;&nbsp;</a></span>Log()</h2>
+<a id="a20239b49ae1fd08333be1d2feea1eba5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20239b49ae1fd08333be1d2feea1eba5">&#9670;&nbsp;</a></span>Log()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +209,7 @@ Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'
         <tr>
           <td class="memname"><a class="el" href="classLogging_1_1Logger.html">Logging::Logger</a> Log </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classLogging.html#a7a137bd14e9ab75019822b8c3119bc3a">Logging::level</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc">Logging::LOGLEVEL</a>&#160;</td>
           <td class="paramname"><em>loglevel</em>, </td>
         </tr>
         <tr>
@@ -221,13 +227,13 @@ Copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- Selected loglevel. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- If logging to file, use this file name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>- The level of log this message is for. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>- Name of the file for which this log entry was written. May be empty. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00170">170</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="logging_8cc_source.html#l00187">187</a> of file <a class="el" href="logging_8cc_source.html">logging.cc</a>.</p>
 
 </div>
 </div>

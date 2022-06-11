@@ -171,12 +171,12 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">if</span> (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \</div>
-<div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div>
-<div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div>
+<div class="line">{ <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">\</a></div>
+<div class="line"><a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div>
 <div class="line">    throw <span class="keyword">false</span>; \</div>
 <div class="line">    }</div>
 <div class="ttc" id="acache_8cc_html_a566d303f997c2fb61fc91d5af125dff0"><div class="ttname"><a href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a></div><div class="ttdeci">#define sqlite3_errstr(rc)</div><div class="ttdoc">If our version of SQLite hasn't go this function.</div><div class="ttdef"><b>Definition:</b> <a href="cache_8cc_source.html#l00042">cache.cc:42</a></div></div>
-<div class="ttc" id="aclassLogging_html_a9eca3fc38f586624d6f5e3057c1955f9"><div class="ttname"><a href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">Logging::error</a></div><div class="ttdeci">static void error(const char *filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00257">logging.h:257</a></div></div>
+<div class="ttc" id="aclassLogging_html_ae48fc6adc12bc24c60d62eb5fbac1d86"><div class="ttname"><a href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a></div><div class="ttdeci">static void error(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00237">logging.h:237</a></div></div>
 </div><!-- fragment -->
 <p>Bind numeric column to SQLite statement. </p>
 
@@ -210,8 +210,8 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">if</span> (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, <span class="keyword">nullptr</span>))) \</div>
-<div class="line">{ <a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">\</a></div>
-<div class="line"><a class="code" href="classLogging.html#a9eca3fc38f586624d6f5e3057c1955f9">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div>
+<div class="line">{ <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">\</a></div>
+<div class="line"><a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">    Logging::error</a>(m_cacheidx_file, <span class="stringliteral">&quot;SQLite3 select column #%1 error: %2\n%3&quot;</span>, idx, ret, <a class="code" href="cache_8cc.html#a566d303f997c2fb61fc91d5af125dff0">sqlite3_errstr</a>(ret)); \</div>
 <div class="line">    throw <span class="keyword">false</span>; \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->

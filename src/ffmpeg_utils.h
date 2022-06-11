@@ -716,15 +716,15 @@ std::string         replace_all(std::string str, const std::string& from, const 
  * @param[in] to - Replacement string.
  * @return Source string with all occurrences of from replaced with to.
  */
-std::string         replace_all(std::string * str, const std::string& from, const std::string& to);
+std::string         replace_all(std::string * str, const std::string& from, const std::string& to = "");
 /**
  * @brief Replace start of string from "from" to "to".
  * @param[inout] str - Source string.
  * @param[in] from - String to replace.
  * @param[in] to - Replacement string.
- * @return Source string with all from replaced with to.
+ * @return True if from has been replaced, false if not.
  */
-std::string         replace_start(std::string *str, const std::string& from, const std::string& to);
+bool                replace_start(std::string *str, const std::string& from, const std::string& to = "");
 /**
  * @brief Format a std::string sprintf-like.
  * @param[in] format - sprintf-like format string.

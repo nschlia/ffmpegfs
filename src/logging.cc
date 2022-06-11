@@ -32,7 +32,7 @@
  */
 
 #include "logging.h"
-#include "ffmpeg_utils.h"
+#include "ffmpegfs.h"
 
 #include <cstdarg>
 #include <iostream>
@@ -125,7 +125,32 @@ Logging::Logger::~Logger()
 
     if (!m_filename.empty())
     {
-        filename = "[" + m_filename + "] ";
+        filename = m_filename;
+
+        if (replace_start(&filename, params.m_basepath))
+        {
+            filename = "INPUT  [" + filename + "] ";
+        }
+
+        else if (replace_start(&filename, params.m_mountpath))
+        {
+            filename = "OUTPUT [" + filename + "] ";
+        }
+        else
+        {
+            std::string cachepath;
+
+            transcoder_cache_path(cachepath);
+
+            if (replace_start(&filename, cachepath + params.m_mountpath + params.m_basepath))
+            {
+                filename = "CACHE  [" + filename + "] ";
+            }
+            else
+            {
+                filename = "OTHER  [" + filename + "] ";
+            }
+        }
     }
 
     if (m_logging->m_to_syslog)

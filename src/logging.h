@@ -363,20 +363,20 @@ protected:
      * @param[in] filename - Name of the file for which this log entry was written. May be empty.
      */
     friend Logger Log(LOGLEVEL loglevel, const std::string & filename);
-    friend Logger;                                                      /**< @brief Make logger class our friend */
+    friend Logger;                                                          /**< @brief Make logger class our friend */
 
     static Logging*                 m_logging;
-    static std::recursive_mutex     m_mutex;                            /**< @brief Access mutex */
-    std::ofstream                   m_logfile;                          /**< @brief Log file object for writing to disk */
-    const LOGLEVEL                  m_max_level;                        /**< @brief The maximum level of log output to write. */
-    const bool                      m_to_stderr;                        /**< @brief Whether to write log output to stderr. */
-    const bool                      m_to_syslog;                        /**< @brief Whether to write log output to syslog. */
+    static std::recursive_mutex     m_mutex;                                /**< @brief Access mutex */
+    std::ofstream                   m_logfile;                              /**< @brief Log file object for writing to disk */
+    const LOGLEVEL                  m_max_level;                            /**< @brief The maximum level of log output to write. */
+    const bool                      m_to_stderr;                            /**< @brief Whether to write log output to stderr. */
+    const bool                      m_to_syslog;                            /**< @brief Whether to write log output to syslog. */
 };
 
-constexpr Logging::LOGLEVEL LOGERROR   = Logging::LOGLEVEL::LOGERROR;   /**< @brief Shorthand for log level ERROR */
-constexpr Logging::LOGLEVEL LOGWARN    = Logging::LOGLEVEL::LOGWARN;    /**< @brief Shorthand for log level WARNING */
-constexpr Logging::LOGLEVEL LOGINFO    = Logging::LOGLEVEL::LOGINFO;    /**< @brief Shorthand for log level INFO */
-constexpr Logging::LOGLEVEL LOGDEBUG   = Logging::LOGLEVEL::LOGDEBUG;   /**< @brief Shorthand for log level DEBUG */
-constexpr Logging::LOGLEVEL LOGTRACE   = Logging::LOGLEVEL::LOGTRACE;   /**< @brief Shorthand for log level TRACE */
+constexpr Logging::LOGLEVEL LOGERROR    = Logging::LOGLEVEL::LOGERROR;      /**< @brief Shorthand for log level ERROR */
+constexpr Logging::LOGLEVEL LOGWARN     = Logging::LOGLEVEL::LOGWARN;       /**< @brief Shorthand for log level WARNING */
+constexpr Logging::LOGLEVEL LOGINFO     = Logging::LOGLEVEL::LOGINFO;       /**< @brief Shorthand for log level INFO */
+constexpr Logging::LOGLEVEL LOGDEBUG    = Logging::LOGLEVEL::LOGDEBUG;      /**< @brief Shorthand for log level DEBUG */
+constexpr Logging::LOGLEVEL LOGTRACE    = Logging::LOGLEVEL::LOGTRACE;      /**< @brief Shorthand for log level TRACE */
 
 #endif

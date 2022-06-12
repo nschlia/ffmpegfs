@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2013 K. Henriksson
  * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
@@ -1087,6 +1087,75 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
     char * line;
     int line_size;
+    std::string category;
+
+    if (ptr != nullptr)
+    {
+        AVClass* avc = *(AVClass **)ptr;
+
+        switch (avc->category)
+        {
+        case AV_CLASS_CATEGORY_NA:
+        {
+            break;
+        }
+        case AV_CLASS_CATEGORY_INPUT:
+        {
+            category = "INPUT   ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_OUTPUT:
+        {
+            category = "OUTPUT  ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_MUXER:
+        {
+            category = "MUXER   ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_DEMUXER:
+        {
+            category = "DEMUXER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_ENCODER:
+        {
+            category = "ENCODER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_DECODER:
+        {
+            category = "DECODER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_FILTER:
+        {
+            category = "FILTER  ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_BITSTREAM_FILTER:
+        {
+            category = "BITFILT ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_SWSCALER:
+        {
+            category = "SWSCALE ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_SWRESAMPLER:
+        {
+            category = "SWRESAM ";
+            break;
+        }
+        default:
+        {
+            category = strsprintf("CAT %3i ", (long)avc->category);
+            break;
+        }
+        }
+    }
 
     va_copy(vl2, vl);
     av_log_default_callback(ptr, level, fmt, vl);
@@ -1112,7 +1181,14 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     va_end(vl2);
 #endif
 
-    Logging::log_with_level(ffmpegfs_level, "", line);
+    if (category.empty())
+    {
+        Logging::log_with_level(ffmpegfs_level, "", line);
+    }
+    else
+    {
+        Logging::log_with_level(ffmpegfs_level, "", category + line);
+    }
 
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
     av_free(line);

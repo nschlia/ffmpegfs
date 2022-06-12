@@ -129,12 +129,12 @@ Logging::Logger::~Logger()
 
         if (replace_start(&filename, params.m_basepath))
         {
-            filename = "INPUT  [" + filename + "] ";
+            filename = "INPUT   [" + filename + "] ";
         }
 
         else if (replace_start(&filename, params.m_mountpath))
         {
-            filename = "OUTPUT [" + filename + "] ";
+            filename = "OUTPUT  [" + filename + "] ";
         }
         else
         {
@@ -144,7 +144,7 @@ Logging::Logger::~Logger()
 
             if (replace_start(&filename, cachepath + params.m_mountpath + params.m_basepath))
             {
-                filename = "CACHE  [" + filename + "] ";
+                filename = "CACHE   [" + filename + "] ";
             }
             else
             {

@@ -1181,14 +1181,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
     va_end(vl2);
 #endif
 
-    if (category.empty())
-    {
-        Logging::log_with_level(ffmpegfs_level, "", line);
-    }
-    else
-    {
-        Logging::log_with_level(ffmpegfs_level, "", category + line);
-    }
+    Logging::log_with_level(ffmpegfs_level, "", category + line);
 
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
     av_free(line);

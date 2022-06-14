@@ -75,26 +75,36 @@ Web site: https://nschlia.github.io/ffmpegfs/
 
 FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video formats on the fly when opened and read.
 
-Currently supported output formats:
-
+### Audio Formats
 | Format | Description | Video | Audio |
 | ------------- | ------------- | ------------- | ------------- |
 | AIFF | Audio Interchange File Format || PCM 16 bit BE |
 | ALAC | Apple Lossless Audio Codec || ALAC |
-| BMP | Video to frameset |BMP|  |
 | FLAC | Free Lossless Audio |  | FLAC |
-| HLS | HTTP Live Streaming | H264 | AAC |
-| JPG | Video to frameset |JPEG|  |
-| MOV | QuickTime File Format | H264 | AAC |
 | MP3 | MPEG-2 Audio Layer III || MP3 |
+| Opus |Opus Audio|| Opus |
+| WAV | Waveform Audio File Format || PCM 16 bit LE |
+
+### Video Formats
+| Format | Description | Video | Audio |
+| ------------- | ------------- | ------------- | ------------- |
+| HLS | HTTP Live Streaming | H264 | AAC |
+| MOV | QuickTime File Format | H264 | AAC |
 | MP4 | MPEG-4 | H264 | AAC |
-| OGG|| Theora | Vorbis |
-| Opus ||| Opus |
-| PNG | Video to frameset |PNG|  |
+| OGG|Free Open Container Format| Theora | Vorbis |
 | ProRes | Apple ProRes | ProRes | PCM 16 bit LE |
 | TS | MPEG Transport Stream | H264 | AAC |
-| WAV | Waveform Audio File Format || PCM 16 bit LE |
-| WebM|| VP9 | Opus |
+| WebM|Free Open Web Media Project| VP9 | Opus |
+
+### Stills
+
+| Format | Description | Video | Audio |
+| ------------- | ------------- | ------------- | ------------- |
+| BMP | Video to frameset |BMP|  |
+| JPG | Video to frameset |JPEG|  |
+| PNG | Video to frameset |PNG|  |
+
+### What can it do?
 
 This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.
 

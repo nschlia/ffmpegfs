@@ -1185,7 +1185,7 @@ $(function() {
 <div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;        }</div>
 <div class="line"><a name="l01152"></a><span class="lineno"> 1152</span>&#160;        <span class="keywordflow">default</span>:</div>
 <div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;        {</div>
-<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;            category = <a class="code" href="ffmpeg__utils_8cc.html#a9e62c016d921ddcb3367c3cb05d2d022">strsprintf</a>(<span class="stringliteral">&quot;CAT %3i &quot;</span>, (<span class="keywordtype">long</span>)avc-&gt;category);</div>
+<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;            category = <a class="code" href="ffmpeg__utils_8cc.html#a9e62c016d921ddcb3367c3cb05d2d022">strsprintf</a>(<span class="stringliteral">&quot;CAT %3i &quot;</span>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(avc-&gt;category));</div>
 <div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;            <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l01156"></a><span class="lineno"> 1156</span>&#160;        }</div>
 <div class="line"><a name="l01157"></a><span class="lineno"> 1157</span>&#160;        }</div>
@@ -1215,41 +1215,34 @@ $(function() {
 <div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160;    va_end(vl2);</div>
 <div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160; </div>
-<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;    <span class="keywordflow">if</span> (category.empty())</div>
-<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;    {</div>
-<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;        <a class="code" href="classLogging.html#a357f7c60a58b2de1677dca7baf49b985">Logging::log_with_level</a>(ffmpegfs_level, <span class="stringliteral">&quot;&quot;</span>, line);</div>
-<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;    }</div>
-<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;    {</div>
-<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;        <a class="code" href="classLogging.html#a357f7c60a58b2de1677dca7baf49b985">Logging::log_with_level</a>(ffmpegfs_level, <span class="stringliteral">&quot;&quot;</span>, category + line);</div>
-<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;    }</div>
-<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160; </div>
-<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;<span class="preprocessor">#if (LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(55, 23, 0))</span></div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;    av_free(line);</div>
-<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;}</div>
-<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160; </div>
-<div class="line"><a name="l01198"></a><span class="lineno"><a class="line" href="ffmpegfs_8h.html#a9769c6d320fbff3c0a1af3a2dac24e70"> 1198</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="transcode_8cc.html#a9769c6d320fbff3c0a1af3a2dac24e70">init_logging</a>(<span class="keyword">const</span> std::string &amp;logfile, <span class="keyword">const</span> std::string &amp; max_level, <span class="keywordtype">bool</span> to_stderr, <span class="keywordtype">bool</span> to_syslog)</div>
-<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;{</div>
-<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::map&lt;const std::string, const Logging::LOGLEVEL, comp&gt; <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a> =</div>
-<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;    {</div>
-<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;        { <span class="stringliteral">&quot;ERROR&quot;</span>,      <a class="code" href="logging_8h.html#aeae62a199367aea6e5cf3b321ffb6978">LOGERROR</a> },</div>
-<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;        { <span class="stringliteral">&quot;WARNING&quot;</span>,    <a class="code" href="logging_8h.html#ab6d5320373a7f8c5da694edf85006c5e">LOGWARN</a> },</div>
-<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;        { <span class="stringliteral">&quot;INFO&quot;</span>,       <a class="code" href="logging_8h.html#af49f5e56e9ec450e12d7c14f535385ee">LOGINFO</a> },</div>
-<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;        { <span class="stringliteral">&quot;DEBUG&quot;</span>,      <a class="code" href="logging_8h.html#a39483ce1507c500d3d0d0470bda871b6">LOGDEBUG</a> },</div>
-<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;        { <span class="stringliteral">&quot;TRACE&quot;</span>,      <a class="code" href="logging_8h.html#a7853a188f8ef7e06f015a561ea1ed47e">LOGTRACE</a> },</div>
-<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;    };</div>
-<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160; </div>
-<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;    std::map&lt;const std::string, const Logging::LOGLEVEL, comp&gt;::const_iterator it = <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a>.find(max_level);</div>
-<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160; </div>
-<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;    <span class="keywordflow">if</span> (it == <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a>.cend())</div>
-<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;    {</div>
-<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;        std::fprintf(stderr, <span class="stringliteral">&quot;Invalid logging level string: %s\n&quot;</span>, max_level.c_str());</div>
-<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;    }</div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160; </div>
-<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classLogging.html#a5e7388a50f59f40cfb69ee27000ab240">Logging::init_logging</a>(logfile, it-&gt;second, to_stderr, to_syslog);</div>
-<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;}</div>
+<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;    <a class="code" href="classLogging.html#a357f7c60a58b2de1677dca7baf49b985">Logging::log_with_level</a>(ffmpegfs_level, <span class="stringliteral">&quot;&quot;</span>, category + line);</div>
+<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160; </div>
+<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;<span class="preprocessor">#if (LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(55, 23, 0))</span></div>
+<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;    av_free(line);</div>
+<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;}</div>
+<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160; </div>
+<div class="line"><a name="l01191"></a><span class="lineno"><a class="line" href="ffmpegfs_8h.html#a9769c6d320fbff3c0a1af3a2dac24e70"> 1191</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="transcode_8cc.html#a9769c6d320fbff3c0a1af3a2dac24e70">init_logging</a>(<span class="keyword">const</span> std::string &amp;logfile, <span class="keyword">const</span> std::string &amp; max_level, <span class="keywordtype">bool</span> to_stderr, <span class="keywordtype">bool</span> to_syslog)</div>
+<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;{</div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::map&lt;const std::string, const Logging::LOGLEVEL, comp&gt; <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a> =</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;    {</div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;        { <span class="stringliteral">&quot;ERROR&quot;</span>,      <a class="code" href="logging_8h.html#aeae62a199367aea6e5cf3b321ffb6978">LOGERROR</a> },</div>
+<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;        { <span class="stringliteral">&quot;WARNING&quot;</span>,    <a class="code" href="logging_8h.html#ab6d5320373a7f8c5da694edf85006c5e">LOGWARN</a> },</div>
+<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;        { <span class="stringliteral">&quot;INFO&quot;</span>,       <a class="code" href="logging_8h.html#af49f5e56e9ec450e12d7c14f535385ee">LOGINFO</a> },</div>
+<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;        { <span class="stringliteral">&quot;DEBUG&quot;</span>,      <a class="code" href="logging_8h.html#a39483ce1507c500d3d0d0470bda871b6">LOGDEBUG</a> },</div>
+<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;        { <span class="stringliteral">&quot;TRACE&quot;</span>,      <a class="code" href="logging_8h.html#a7853a188f8ef7e06f015a561ea1ed47e">LOGTRACE</a> },</div>
+<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;    };</div>
+<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160; </div>
+<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;    std::map&lt;const std::string, const Logging::LOGLEVEL, comp&gt;::const_iterator it = <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a>.find(max_level);</div>
+<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160; </div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;    <span class="keywordflow">if</span> (it == <a class="code" href="ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6">level_map</a>.cend())</div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;    {</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;        std::fprintf(stderr, <span class="stringliteral">&quot;Invalid logging level string: %s\n&quot;</span>, max_level.c_str());</div>
+<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;    }</div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160; </div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classLogging.html#a5e7388a50f59f40cfb69ee27000ab240">Logging::init_logging</a>(logfile, it-&gt;second, to_stderr, to_syslog);</div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;}</div>
 <div class="ttc" id="abuffer_8h_html"><div class="ttname"><a href="buffer_8h.html">buffer.h</a></div><div class="ttdoc">Buffer class.</div></div>
 <div class="ttc" id="abuffer_8h_html_a04884ae9d40f3e297c007bda4b91b5c7"><div class="ttname"><a href="buffer_8h.html#a04884ae9d40f3e297c007bda4b91b5c7">CACHE_FLAG_RO</a></div><div class="ttdeci">#define CACHE_FLAG_RO</div><div class="ttdoc">Mark cache file read-only.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_8h_source.html#l00049">buffer.h:49</a></div></div>
 <div class="ttc" id="abuffer_8h_html_add3a22822faa02f1d4d7191493f5243b"><div class="ttname"><a href="buffer_8h.html#add3a22822faa02f1d4d7191493f5243b">CACHE_CLOSE_DELETE</a></div><div class="ttdeci">#define CACHE_CLOSE_DELETE</div><div class="ttdoc">Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE.</div><div class="ttdef"><b>Definition:</b> <a href="buffer_8h_source.html#l00047">buffer.h:47</a></div></div>
@@ -1398,7 +1391,7 @@ $(function() {
 <div class="ttc" id="atranscode_8cc_html_a86de0eca78c4e84a591e83ead6fe4c23"><div class="ttname"><a href="transcode_8cc.html#a86de0eca78c4e84a591e83ead6fe4c23">transcoder_set_filesize</a></div><div class="ttdeci">bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational &amp;framerate)</div><div class="ttdoc">Set the file size.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00289">transcode.cc:289</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_a8f7737e72a5cd08de149c65bbafd7fe7"><div class="ttname"><a href="transcode_8cc.html#a8f7737e72a5cd08de149c65bbafd7fe7">transcoder_read</a></div><div class="ttdeci">bool transcoder_read(Cache_Entry *cache_entry, char *buff, size_t offset, size_t len, int *bytes_read, uint32_t segment_no)</div><div class="ttdoc">Read some bytes from the internal buffer and into the given buffer.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00470">transcode.cc:470</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_a96abbfc5e99e5a00673182237b58a7b0"><div class="ttname"><a href="transcode_8cc.html#a96abbfc5e99e5a00673182237b58a7b0">transcoder_cache_clear</a></div><div class="ttdeci">bool transcoder_cache_clear(void)</div><div class="ttdoc">Clear transcoder cache.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00753">transcode.cc:753</a></div></div>
-<div class="ttc" id="atranscode_8cc_html_a9769c6d320fbff3c0a1af3a2dac24e70"><div class="ttname"><a href="transcode_8cc.html#a9769c6d320fbff3c0a1af3a2dac24e70">init_logging</a></div><div class="ttdeci">bool init_logging(const std::string &amp;logfile, const std::string &amp;max_level, bool to_stderr, bool to_syslog)</div><div class="ttdoc">Inititalise logging facility.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l01198">transcode.cc:1198</a></div></div>
+<div class="ttc" id="atranscode_8cc_html_a9769c6d320fbff3c0a1af3a2dac24e70"><div class="ttname"><a href="transcode_8cc.html#a9769c6d320fbff3c0a1af3a2dac24e70">init_logging</a></div><div class="ttdeci">bool init_logging(const std::string &amp;logfile, const std::string &amp;max_level, bool to_stderr, bool to_syslog)</div><div class="ttdoc">Inititalise logging facility.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l01191">transcode.cc:1191</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_a9829a0962abb0def61a28bef699fb859"><div class="ttname"><a href="transcode_8cc.html#a9829a0962abb0def61a28bef699fb859">transcode_finish</a></div><div class="ttdeci">static int transcode_finish(Cache_Entry *cache_entry, FFmpeg_Transcoder &amp;transcoder)</div><div class="ttdoc">Close the input file and free everything but the initial buffer.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00155">transcode.cc:155</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_aa46f3dfbc96faf285238b7804e0525a6"><div class="ttname"><a href="transcode_8cc.html#aa46f3dfbc96faf285238b7804e0525a6">transcoder_init</a></div><div class="ttdeci">bool transcoder_init(void)</div><div class="ttdoc">Initialise transcoder, create cache.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00228">transcode.cc:228</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_aa5d36e6c898b599099ee24f3bc6b7585"><div class="ttname"><a href="transcode_8cc.html#aa5d36e6c898b599099ee24f3bc6b7585">transcoder_get_size</a></div><div class="ttdeci">size_t transcoder_get_size(Cache_Entry *cache_entry)</div><div class="ttdoc">Return size of output file, as computed by encoder.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00721">transcode.cc:721</a></div></div>

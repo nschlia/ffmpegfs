@@ -640,7 +640,7 @@ Future Objectives
 -----------------
 
 * Develop a Windows version
-* For more information, see [TODO] (TODO).
+* For more information, see [TODO](TODO).
 
 Demo Code
 ---------

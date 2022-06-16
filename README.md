@@ -11,7 +11,6 @@ FFmpegfs
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |                         | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml)|
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | gcc 9.3.0    | FFmpeg 4.2.4-1ubuntu0.1 | [![Docker Image](https://github.com/nschlia/ffmpegfs/actions/workflows/docker-image.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/docker-image.yml)|
 
-
 [![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
 
 News
@@ -19,20 +18,20 @@ News
 
 ### Version 2.11 is under development
 
-* **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream, another an audio stream only, the resulting files will be webm (for the video input) and mp3 for the audio only file.
-* **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Added --no_subtitles option to turn subtitles off.
+* **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.
+* **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Add --no_subtitles option to turn subtitles off.
 * **Bugfix:** Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.
-* **Bugfix:** Fix crash when DVD/Blu-ray should be transcoded to audio only.
-* **Bugfix:** If track performer is empty, try the album performer instead.
-* **Bugfix:** Failing to mount Fuse during "make check" went unnoticed as the result code (which was supposed to be 99) was actually 0. Now nonzero is returned.
-* **Bugfix:** The Docker build command contained a "make check" which actually failed altogether. Step has been removed, "make check" mounts Fuse but this requires privileges that do not exist during "docker build".
-* **Bugfix:** mremap() returns MAP_FAILED on error, not NULL. Fixed check for wrong error condition, could cause the application to crash or return stupid error messages.
-* **Bugfix:** [Issue #119](https://github.com/nschlia/ffmpegfs/issues/119): Fixed problem that caused frame set generation to fail sometimes. Seems to be related to the nremap() issue.
+* **Bugfix:** Fix a crash that occurs when a DVD/Blu-ray is transcoded to audio only.
+* **Bugfix:** If the track performer field in the cuesheet is blank, try album performer instead.
+* **Bugfix:** Failing to mount Fuse during "make check" went unnoticed as the result code (which was supposed to be 99) was actually 0. Return the correct result code, failing the operation as expected.
+* **Bugfix:** The Docker build command contained a "make check" which actually failed altogether. Step has been removed. "make check" mounts Fuse, but this requires privileges that do not exist during "docker build".
+* **Bugfix:** On error, mremap () returns MAP_FAILED rather than NULL. Fixed a check for incorrect error conditions, which could cause the application to crash or return illogical error messages.
+* **Bugfix:** [Issue #119](https://github.com/nschlia/ffmpegfs/issues/119): Fix a problem that caused frame set generation to fail sometimes. It seems to be related to the nremap() issue.
 * Generally revisited documentation, logging, and display texts. Improved grammar, formatting, and fixed quite a few typos that escaped all proofreading sessions.
 * The FFmpeg API INFO and DEBUG level log output has been changed to the FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.
 * Frequent memory reallocations when creating HLS segments have been reduced to speed up processing.
-* Revised logging: Optimised processing to save CPU time by not formatting log entries that are not logged anyway at their log level.
-* Revised logging: shorten file paths, remove mount, input, or cache paths. Log the additional portion only to reduce log file size and improve readability.
+* Optimised logging to save CPU time by not formatting log entries that are not written anyway at their log level.
+* Logging has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.
 * **Bugfix:** Add missing include headers to fix build with GCC 12 (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
 
 ### Version 2.10 has been released

@@ -160,11 +160,21 @@ to build FFmpeg.
 
 #### Building from tar ball
 
-Download the release archive:
+Download the latest release archive:
 
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.2/ffmpegfs-2.2.tar.gz
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.10/ffmpegfs-2.10.tar.gz
 
-You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
+You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available, because I keep forgetting to update this URL on a regular basis.
+
+Or use these commands, making sure to download the latest version:
+
+```
+curl -s https://api.github.com/repos/nschlia/ffmpegfs/releases/latest | \
+grep "browser_download_url.*gz" | \
+cut -d : -f 2,3 | \
+tr -d \" | \
+wget -i -
+```
 
 Then unpack and cd to the source directory. To build and install, run:
 
@@ -178,11 +188,21 @@ To build and run the test suite, do:
 
 This will test audio conversion, tagging and size prediction.
 
-NOTE: Image embedding is not yet implemented. The test has been disabled at the moment.
+*NOTE:* The test for image embedding is not implemented yet and has been disabled at the moment.
 
 #### Building from GIT
 
-If you want to build FFmpegfs yourself, for example, check out the latest version from GIT and be on the bleeding edge:
+To build from GIT, clone the latest version from Github and be on the bleeding edge:
+
+```
+git clone https://github.com/nschlia/ffmpegfs.git
+```
+
+Or from the mirror server:
+
+```
+git clone https://salsa.debian.org/nschlia/ffmpegfs.git
+```
 
 **If building from git, you'll need these additional prerequisites:**
 

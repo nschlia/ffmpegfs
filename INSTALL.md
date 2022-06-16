@@ -162,9 +162,9 @@ to build FFmpeg.
 
 Download the latest release archive:
 
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.10/ffmpegfs-2.10.tar.gz
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.11/ffmpegfs-2.11.tar.gz
 
-You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available, because I keep forgetting to update this URL on a regular basis.
+You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available, because I notoriously keep forgetting to update this URL on a regular basis.
 
 Or use these commands, making sure to download the latest version:
 

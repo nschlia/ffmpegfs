@@ -16,7 +16,7 @@ FFmpegfs
 News
 ----
 
-### Version 2.11 is under development
+### Version 2.11 has been released
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.
 * **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Add --no_subtitles option to turn subtitles off.
@@ -33,25 +33,6 @@ News
 * Optimised logging to save CPU time by not formatting log entries that are not written anyway at their log level.
 * Logging has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.
 * **Bugfix:** To fix the build with GCC 12, add the missing include headers (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
-
-### Version 2.10 has been released
-
-**New in in 2.10 (2022-04-26):**
-
-* **Feature:** [Issue #123](https://github.com/nschlia/ffmpegfs/issues/123): New command line option to hide files by extension. For example, --hide_extensions=jpg, png, cue would stop covers and cue sheets from showing up.
-* **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.
-* **Bugfix:** Fixed memory leak in encode_audio_frame().
-* **Bugfix:** [Issue #122](https://github.com/nschlia/ffmpegfs/issues/122): The last song was missing from the cuesheet files.
-* **Bugfix:** [Issue #129](https://github.com/nschlia/ffmpegfs/issues/129): Files remained zero size when previously transcoded.
-* **Bugfix:** [Issue #130](https://github.com/nschlia/ffmpegfs/issues/130): Fix file sizes can be incorrectly reported by ls but are correct when data is read.
-* **Bugfix:** Duration was not saved in cache SQLite database.
-* **Bugfix:** [Issue #131](https://github.com/nschlia/ffmpegfs/issues/131): Sometimes video parameters for some Blu-ray or DVD chapters cannot be detected by the FFmpeg API. Transcode then fails - fixed by using data from the Blu-ray directory or DVD IFO instead.
-* The lowest supported FFmpeg API version has been raised to 4.1.8 "al-Khwarizmi".
-* Dropped libavresample support, library was removed from the FFmpeg API after 3.4.9.
-* Deprecated previous channel layout API based on uint64 bitmasks.
-* Deprecated swr_alloc_set_opts() and swr_build_matrix().
-* Going to C++17 now: The packet queue has been recoded in C++17 to support external subtitle files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.
-* Using std::shared_ptr to ensure proper memory allocation/free.
 
 Future Objectives
 -----------------

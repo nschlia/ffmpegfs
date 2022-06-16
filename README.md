@@ -76,14 +76,14 @@ Web site: https://nschlia.github.io/ffmpegfs/
 FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video formats on the fly when opened and read.
 
 ### Audio Formats
-| Format | Description | Video | Audio |
-| ------------- | ------------- | ------------- | ------------- |
-| AIFF | Audio Interchange File Format || PCM 16 bit BE |
-| ALAC | Apple Lossless Audio Codec || ALAC |
-| FLAC | Free Lossless Audio |  | FLAC |
-| MP3 | MPEG-2 Audio Layer III || MP3 |
-| Opus |Opus Audio|| Opus |
-| WAV | Waveform Audio File Format || PCM 16 bit LE |
+| Format | Description | Audio |
+| ------------- | ------------- | ------------- |
+| AIFF | Audio Interchange File Format | PCM 16 bit BE |
+| ALAC | Apple Lossless Audio Codec | ALAC |
+| FLAC | Free Lossless Audio | FLAC |
+| MP3 | MPEG-2 Audio Layer III | MP3 |
+| Opus |Opus Audio| Opus |
+| WAV | Waveform Audio File Format | PCM 16 bit LE |
 
 ### Video Formats
 | Format | Description | Video | Audio |
@@ -98,11 +98,11 @@ FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video
 
 ### Stills
 
-| Format | Description | Video | Audio |
-| ------------- | ------------- | ------------- | ------------- |
-| BMP | Video to frameset |BMP|  |
-| JPG | Video to frameset |JPEG|  |
-| PNG | Video to frameset |PNG|  |
+| Format | Description | Video |
+| ------------- | ------------- | ------------- |
+| BMP | Video to frameset |BMP|
+| JPG | Video to frameset |JPEG|
+| PNG | Video to frameset |PNG|
 
 ### What can it do?
 

@@ -37,6 +37,7 @@ Important changes in 2.11 (2022-06-XX):
   entries that are not logged anyway at their log level.
 * Revised logging: shorten file paths, remove mount, input, or cache paths. Log the
   additional portion only to reduce log file size and improve readability.
+* Bugfix: Add missing include headers to fix build with GCC 12 (closes: #1012925).
 
 Important changes in 2.10 (2022-04-26):
 

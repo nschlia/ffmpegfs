@@ -66,7 +66,7 @@ $(function() {
 <div class="title">History </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2><a class="anchor" id="autotoc_md75"></a>
+<div class="textblock"><h2><a class="anchor" id="autotoc_md73"></a>
 Version 2.10 released</h2>
 <p><b>New in in 2.10 (2022-04-26):</b></p>
 <ul>
@@ -85,7 +85,7 @@ Version 2.10 released</h2>
 <li>Going C++17 now: The packet queue has been recoded in C++17 to support external subtitles files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.</li>
 <li>Using std::shared_ptr to ensure proper memory allocation/free.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md76"></a>
+<h2><a class="anchor" id="autotoc_md74"></a>
 Version 2.9 released</h2>
 <p><b>New in in 2.9 (2022-02-16):</b></p>
 <ul>
@@ -103,7 +103,7 @@ Version 2.9 released</h2>
 <li><b>Bugfix:</b> Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).</li>
 <li><b>Bugfix:</b> Removed QMake support, replaced with CMake.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md77"></a>
+<h2><a class="anchor" id="autotoc_md75"></a>
 Version 2.8 released</h2>
 <p><b>New in in 2.8 (2021-11-29):</b></p>
 <ul>
@@ -113,7 +113,7 @@ Version 2.8 released</h2>
 <li><b>Feature</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/105">Issue #105</a>: Added Free Lossless Audio Codec (FLAC) support. Activate with <em>&ndash;desttype=FLAC</em>.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/101">Issue #101</a>: Sample format for audio files can be selected via command line with <em>&ndash;audiosamplefmt</em>. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point. Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed. Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md78"></a>
+<h2><a class="anchor" id="autotoc_md76"></a>
 Version 2.7 released</h2>
 <p><b>New in in 2.7 (2021-11-08):</b></p>
 <ul>
@@ -121,13 +121,13 @@ Version 2.7 released</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/96">Issue #96</a>: Fixed potential buffer overrun and crash when reading corrupted input files.</li>
 <li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/99">Issue #99</a>: Report command line error if &ndash;desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, &ndash;desttype=aiff+mov would create MOV files out of any input. Correct would be &ndash;desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md79"></a>
+<h2><a class="anchor" id="autotoc_md77"></a>
 Version 2.6 released</h2>
 <p><b>New in 2.6 (2021-09-04):</b></p>
 <ul>
 <li>No new features, just a bugfix. See V2.4 for details.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md80"></a>
+<h2><a class="anchor" id="autotoc_md78"></a>
 Version 2.5 released</h2>
 <p><b>New in 2.5 (2021-06-18):</b></p>
 <ul>
@@ -144,13 +144,13 @@ Version 2.5 released</h2>
 <li><b>Note</b>: Which hardware en/decoder actually works depends on what your hardware supports.</li>
 <li><b>Call for testers</b>: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md81"></a>
+<h2><a class="anchor" id="autotoc_md79"></a>
 Version 2.4 released</h2>
 <p><b>New in 2.4 (2021-09-04):</b></p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/90">Issue #90</a>: Make sure that one keyframe gets inserted at the start of each HLS segment.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md82"></a>
+<h2><a class="anchor" id="autotoc_md80"></a>
 Version 2.3 released</h2>
 <p><b>New in 2.3 (2021-06-11):</b></p>
 <ul>
@@ -168,7 +168,7 @@ Version 2.3 released</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/87">Issue #87</a>: Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds).</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/88">Issue #88</a>: HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md83"></a>
+<h2><a class="anchor" id="autotoc_md81"></a>
 Version 2.2 released</h2>
 <p><b>New in 2.2 (2021-02-06):</b></p>
 <ul>
@@ -182,7 +182,7 @@ Version 2.2 released</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/74">Issue #74</a>: Album arts were only copied from MP3/4 sources. Removed restriction, if the input file contains an album art it will be copied to the target (if supported, of course, e.g., to mp3 or mp4. Ogg is not yet supported because embedding album arts in Ogg can only be done by an unofficial workaround).</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/71">Issue #71</a>: Virtual directories were missing dot and dot-dot nodes.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md84"></a>
+<h2><a class="anchor" id="autotoc_md82"></a>
 Version 2.1 released</h2>
 <p><b>New in 2.1 (2020-12-14):</b></p>
 <ul>

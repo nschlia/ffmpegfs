@@ -32,7 +32,7 @@ News
 * Frequent memory reallocations when creating HLS segments have been reduced to speed up processing.
 * Optimised logging to save CPU time by not formatting log entries that are not written anyway at their log level.
 * Logging has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.
-* **Bugfix:** Add missing include headers to fix build with GCC 12 (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
+* **Bugfix:** To fix the build with GCC 12, add the missing include headers (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
 
 ### Version 2.10 has been released
 

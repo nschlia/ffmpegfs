@@ -40,7 +40,8 @@ Important changes in 2.11 (2022-06-XX):
 * Logging has been revised to shorten file paths and remove mount, input, and
   cache paths. Log the additional portion only to reduce log file size and improve
   readability.
-* Bugfix: Add missing include headers to fix build with GCC 12 (closes: #1012925).
+* Bugfix: To fix the build with GCC 12, add the missing include headers
+  (closes: #1012925).
 
 Important changes in 2.10 (2022-04-26):
 

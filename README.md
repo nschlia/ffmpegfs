@@ -53,11 +53,12 @@ News
 * Going to C++17 now: The packet queue has been recoded in C++17 to support external subtitle files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.
 * Using std::shared_ptr to ensure proper memory allocation/free.
 
-## Planned Features
+Future Objectives
+-----------------
 
-* DASH support is on my list, but the format is complicated and I currently do not have the time for that. 
-* Currently I am preparing a Windows version, but this is going to take some time.
-* *Any ideas or wishes?* Create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
+*Any ideas or wishes?* Free to create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
+
+For more information, see [TODO](TODO).
 
 ## History
 
@@ -635,11 +636,6 @@ FFmpeg library:
 Please note that FFmpegfs is in active development, so the main branch may be unstable (but offers nice gimmicks). If you need a stable version, please get one (preferably the latest) release.
 
 Feel free to clone this project and add your own features. If they are interesting to others, they might be pushed back into this project. The same applies to bug fixes; if you discover a bug, you're welcome to fix it!
-
-Future Objectives
------------------
-
-* For more information, see [TODO](TODO).
 
 Demo Code
 ---------

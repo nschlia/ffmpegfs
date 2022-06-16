@@ -2,5 +2,6 @@ FFmpegfs TODOs
 ==============
 
 * I'll have many more ideas when I wake up and find them nice to have.
-* Any additional features that you may desire
-* Develop a Windows version
+* Any additional features that you may desire.
+* I am working on a Windows version.
+* DASH support is on my list, but the format is complicated and I currently do not have the time for that. 

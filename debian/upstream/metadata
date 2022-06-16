@@ -1,0 +1,9 @@
+Bug-Database: https://github.com/nschlia/ffmpegfs/issues
+Repository: https://github.com/nschlia/ffmpegfs.git
+Repository-Browse: https://github.com/nschlia/ffmpegfs
+Reference:
+  Authors: Norbert Schlia
+  Organization: Oblivion Software
+  Name: FFmpegfs - Fuse Multi Media Filesystem
+  Year: 2021
+  URL: https://github.com/nschlia/ffmpegfs/blob/master/README.md

@@ -1,0 +1,472 @@
+ffmpegfs (2.10-2) unstable; urgency=medium
+
+  * Drop MULTIFRAME_NODE typedef in favour of auto to avoid build fails under
+    arm/i386/mipsel.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sun, 15 May 2022 16:28:10 +0200
+
+ffmpegfs (2.10-1) unstable; urgency=medium
+
+  * Feature: Issue #123: New command line option to hide files by extension.
+    Example: --hide_extensions=jpg,png,cue would stop covers and cue sheets
+    from showing up.
+  * Feature: Issue #120: Added subtitle support. Subtitle streams can now also
+    be transcoded to the output files. Separate SRT or VTT files will be
+    incorporated as subtitle streams.
+  * Bugfix: Fixed memory leak in encode_audio_frame().
+  * Bugfix: Issue #122: Last song was missing from cuesheet files.
+  * Bugfix: Issue #129: Files remained zero size when previously transcoded.
+  * Bugfix: Issue #130: Fix file sizes can be incorrectly reported by ls but
+    are correct when data is read.
+  * Bugfix: Duration was not saved in cache SQLite database.
+  * Bugfix: Issue #131: Sometimes video parameters for some Bluray or DVD
+    chapters cannot be detected by FFmpeg API. Transcode then failes - fixed
+    by using data from the Bluray directory or DVD IFO instead.
+  * Lowest supported FFmpeg API version raised to 4.1.8 "al-Khwarizmi".
+  * Dropped libavresample support, library was removed from FFmpeg API after
+    3.4.9.
+  * Deprecated previous channel layout API based on uint64 bitmasks.
+  * Deprecated swr_alloc_set_opts() and swr_build_matrix().
+  * Going C++17 now: The packet queue has been recoded in C++17 to support
+    external subtitles files. As C++17 is required now, why not go all the way:
+    Starting to replace legacy C++ and somewhat C-like parts with real C++.
+  * Using std::shared_ptr to ensure proper memory allocation/free.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Tue, 26 Apr 2022 20:00:34 +0200
+
+ffmpegfs (2.9-1) unstable; urgency=medium
+
+  * Feature: Issue #97: Added options to chose different codecs. The audio codec
+    can be selected with --audiocodec, for videos use --videocodec.
+  * Feature: Issue #109: Allow user defined file extensions for source files. By
+    default, only standard extensions are accepted, i.e., mp4, ts, avi etc.
+    Arbitrary file extensions can be defined now, e.g. using
+    --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc
+    and so on.
+  * Feature: Issue #121: Added MKV support. New format can be selected with
+    --desttype=mkv.
+  * Bugfix: Issue #112: Fixed Docker detection.
+  * Bugfix: Issue #110: Docker build command failed, added missing libchardet
+    and allow libdvdread4 or *8 to be used, whatever available.
+  * Bugfix: Fixed crash when video had no audio.
+  * Bugfix: Issue #112: Fixed access problems with frame sets and HLS.
+  * Bugfix: Issue #119: Fixed problem that caused frame set generation to
+    sometimes fail.
+  * Bugfix: Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL
+    was required to have FFmpeg API accept the codec.
+  * Enhancement: Issue #67: Enhance file size prediction.
+  * Bugfix: Need to synchronise screen log. Concurrent entries by separate flags
+    created garbled output.
+  * Bugfix: Avoid creating an HLS segment number which is out of bounds
+    (higher than the expected number of segments).
+  * Enhancement: Removed QMake support, replaced with CMake.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 16 Feb 2022 20:17:02 +0100
+
+ffmpegfs (2.8-1) unstable; urgency=medium
+
+  * Bugfix: Issue #102: Not all SQL queries where case sensitive, causing cache
+    confusion. Several database entries were created, but only one was updated.
+    Made all queries case sensitive.
+  * Bugfix: Issue #91: Fixed HLS problems with cache causing garbled videos and
+    hick-ups in audio. Make sure that the cache is clean when transcoding
+    starts.
+    There should be no remains left, all segments must be created or recreated
+    anyway. Do not append to cache when writing. This caused cache files to
+    become larger and larger.
+  * Enhancement: Issue #103: If requested HLS segment is less than X
+    (adjustable) seconds away, discard seek request. Segment would be available
+    very soon anyway, and that seek makes a re-transcode necessary. Can be set
+    with --min_seek_time_diff. Defaults to 30 seconds.
+  * Feature: Issue #105: Added Free Lossless Audio Codec (FLAC) support.
+    Activate with *--desttype=FLAC*.
+  * Feature: Issue #101: Sample format for audio files can be selected via
+    command line with --audiosamplefmt. Possible values are 0 to use the
+    predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for
+    floating point.
+    Not all formats are supported by all destination types, selecting an invalid
+    format will be reported as error and a list of values printed.
+    Defaults to 0 (Use same as source or the predefined format of the
+    destination if source format is not possible).
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Mon, 29 Nov 2021 17:50:54 +0100
+
+ffmpegfs (2.7-1) unstable; urgency=medium
+
+  * Bugfix: Issue #92: Fixed crash when hardware decoding failed. The problem
+    is that the FFmpeg API very late reports that it cannot decode the file in
+    hardware. To find out about that, the source file must be decoded until the
+    first video frame is encountered.
+    It would be very time consuming to do this on every file (decode until it
+    is clear that the file is supported, then actually start transcoding it
+    from scratch). There is no feasible way to automatically handle the
+    situation. To get around this a --hwaccel_dec_blocked parameter has been
+    added.
+    If hardware decoding fails, check the log for a message similar this:
+    "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0."
+    If VP9 profile 0 is not supported, the parameter would be:
+    --hwaccel_dec_blocked=VP9:0
+    This will tell FFmpegfs to decode the file in software. To block VP9
+    as a whole, the parameter would be --hwaccel_dec_blocked=VP9. To block
+    both profile 0 and 1, use --hwaccel_dec_blocked=VP9:0:1.
+    The parameter can be repeated to block even more codecs.
+  * Bugfix: Issue #96: Fixed potential buffer overrun and crash when reading
+    corrupted input files.
+  * Enhancement: Issue #99: Report command line error if --desttype specifies
+    audio format first, or if the second format is not audio only. Avoid
+    misinterpretations. For example, --desttype=aiff+mov would create MOV
+    files out of any input. Correct would be --desttype=mov+aiff which will
+    create MOV files out of videos and AIFF from audio files, as expected.
+  * Closes: #998860: Point d/watch at releases.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Mon, 08 Nov 2021 19:41:12 +0100
+
+ffmpegfs (2.6-1) unstable; urgency=medium
+
+  * Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly
+    implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
+    - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
+    - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
+    - VAAPI: MJPEG and VC-9 do not work (yet).
+    - MMAL: H264, MPEG-2, MPEG-4 and VC1 decoding.
+    - OMX: H264 encoding.
+    - V4L2: H263, H264, H265, MPEG1/2/4, VC-1, VP8/9 encoding/decoding.
+  * Feature: Added unit tests for hardware acceleration. Failing tests will
+    report as SKIPPED and not fail the whole test.
+  * Note: Which hardware en/decoder actually works depends on what your hardware
+    supports.
+  * Call for testers: Have a CUDA capable graphics adapter and interested in
+    testing? Please write me an E-Mail.
+  * Bugfix: Issue #90: Make sure that one keyframe gets inserted at the start of
+    each HLS segment.
+  * Enhancement: Issue #80: Open input video codec only if target supports
+    video. Saves resources: no need to decode video frames if not used.
+  * Enhancement: Issue #81: If source format has no audio, and the target
+    supports no video (e.g.WAV/MP3), the files have shown up zero sized. These
+    will now not be visible when doing ls. When trying to open them "File not
+    found" will be returned.
+  * Added "configure --enable-debug" to create binaries with debug symbols.
+    Defaults to the optimised version.
+  * Feature: Issue #73: Cue sheet tracks now play "gapless" if played in order.
+    Whenever a track is started, the next track will automatically be transcoded
+    as well.
+  * Feature: Issue #66 and issue #82: Added cue sheet support. If a file with
+    cue extension is found with the same name as a media file or if a cue sheet
+    is embedded into it (a tag named CUESHEET), tracks defined in it will show
+    up in a virtual directory.
+  * Feature: Issue #83: Character conversion for cue sheet files. Automatically
+    detects the character encoding of the cue sheet. and converts as necessary.
+  * Feature: Issue #78: Duplicate ARTIST to ALBUMARTIST tag if empty
+  * Feature: Issue #79: Added Docker support.
+  * Fixed deprecation: 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
+    Deprecated av_init_packet()
+  * Fixed API compatibility: Many pointers made const as of 2021-04-27.
+    Although reasonable, this breaks API compatibility with versions older
+    than 59.0.100,
+  * Bugfix: find_original "fallback" method did not correctly handle the new
+    filename format (extension added, not the original one replaced).
+  * Bugfix: Issue #87: Segments are now properly separated, making sure that
+    e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not
+    40 seconds).
+  * Bugfix: Issue #88: HLS audio and video now stay in sync after longer
+    playback (more than 30 minutes) or after seek operations.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sat, 04 Sep 2021 20:59:50 +0200
+
+ffmpegfs (2.2-1) unstable; urgency=medium
+
+  * This is a maintenance release, bugfixes only.
+
+  * Bugfix: Issue #75: Fix crash when opening mp3 output with Dolphin.
+  * Bugfix: Issue #70: Possible crash in Buffer::init: Should not assert if
+            duration is 0 (and thus segment count 0). Report internal error and
+            go on.
+  * Bugfix: Issue #70: Do not set duration to 0 from cache but leave unchanged.
+            Caused HLS transcoding to fail if more than one transcoder was
+            concurrently started.
+  * Bugfix: Possible crash in transcoder_thread: Decoder object could have been
+            used after being freed.
+  * Bugfix: Stupid blooper. WAV and AIFF size was always calculated for a mono
+            file, thus for stereo files resulting in only half the correct size.
+  * Bugfix: Corrected documentation, "make checks" should read "make check",
+            funny this went unnoticed for over 3 years...
+  * Bugfix: Issue #74: Album arts were only copied from MP3/4 sources. Removed
+            restriction, if the input file contains an album art it will be
+            copied to the target (if supported, of course, e.g., to mp3 or mp4.
+            Ogg is not yet supported because embedding album arts in Ogg can
+            only be done by an unofficial workaround).
+  * Bugfix: Issue #71:: Virtual directories were missing dot and dot-dot nodes.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sat, 06 Feb 2021 12:42:09 +0100
+
+ffmpegfs (2.1-1) unstable; urgency=low
+
+  * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
+  * Feature: Implemented in 1.7, removed experimental state for --win_smb_fix
+             now. Windows seems to access the files on Samba drives starting
+             at the last 64K segment simply when the file is opened. Setting
+             --win_smb_fix=1 will ignore these attempts (not decode the file
+             up to this point).
+  * Feature: --win_smb_fix now defaults to 1 (fix on by default). Has no effect
+             if the drive is accessed directly or via Samba from Linux.
+  * Bugfix: Fixed grammatical error in text: It's "access to", not "access at".
+  * Bugfix: Did not transcode some source files with invalid DTS.
+  * Bugfix: Cosmetical - No need to log date/time twice in syslog.
+  * Bugfix: Cosmetical - Fix man page/online help for --recodesame parameter.
+  * Bugfix: Report correct segment duration
+  * Bugfix: Avoid crash if opening next HLS segment failed. Should not ignore
+            this, but report it instead and stop transcoding.
+  * Cosmetical: Log cache close action at trace level
+  * Cosmetical: Shorter log entry when opening cache files
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Thu, 17 Dec 2020 19:58:23 +0100
+
+ffmpegfs (2.0-1) unstable; urgency=low
+
+  * Feature: No new features, new release 2.0 after feature freeze.
+  * Bugfix: Issue #64 - Fixed playback stopping prematurely on some files.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sun, 13 Sep 2020 12:11:00 +0200
+
+ffmpegfs (1.98-3) unstable; urgency=low
+
+  * Added patch for cross build. (Closes: #958928)
+    ffmpegfs fails to cross build from source, because it uses AC_RUN_IFELSE
+    without an alternative for cross compilation. In this case,
+    AC_RUN_IFELSE is entirely unnecessary, because AC_CHECK_SIZEOF works.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sun, 26 Apr 2020 21:56:30 +0200
+
+ffmpegfs (1.98-2) unstable; urgency=low
+
+  * Removed -march command line option. (Closes: #958646)
+    Some architectures, namely powerpc ppc64 ppc64el, do not support the
+    -march command line option. Removed from Makefile.
+    Fixed upstream for 1.99 also.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Fri, 24 Apr 2020 09:58:33 +0100
+
+ffmpegfs (1.98-1) unstable; urgency=low
+
+  * Cool, there's an online revivew on Linux Uprising, you can read it here:
+    https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html
+  * Feature: HLS: Introducing direct segment access. If e.g. segment
+            no. 333 is opened, ffmpegfs will seek to this position and start
+            transcoding the segment immediately.
+  * Support: No longer creating a user/group ffmpegfs while "make install".
+            The user is not really required, just bloats the system's user
+            database.
+  * Support: Reduced quality of the test video to make the distribution
+            archive slimmer. A full HD (1920x1280) video at 60 frames per
+            second was a bit of an overkill anyway. 720x400 at 30 fps
+            should be enough for everybody.
+  * Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as
+             specified in the XDG Base Directory Specification). Falls back
+             to ${HOME:-~/.cache}/ffmpegfs if not defined. Only if executed
+             with root privileges, "/var/cache/ffmpegfs" will be used e.g.
+             if invoked via /etc/fstab entry).
+  * Feature: Changed PTS generation: For DVD/Bluray chapters they will not
+             start at 0 for each chapter, but at the real time the chapter
+             begins in its title. Fixes #51.
+  * Feature: Issue #52 - Added --audiochannels option to select a different
+             number of channels. Defaults to 2 (stereo), may be set to 1 to
+             create mono files. Set to 0 to keep the original number of
+             channels.
+  * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could
+            become much larger than expected. There's a strange FFmpeg API
+            behaviour behind that, added the solution used in ffmpeg.c to
+            fix.
+  * Bugfix: Issue #48 - Properly handle incorrectly authored DVDs with
+            missing SRI_END_OF_CELL marks after cells.
+  * Bugfix: Issue #49 - Avoid creating HLS last segments shorter than
+            200 ms, avoid stalls when the total playtime is a multiple of
+            the segment size, e.g. 10 seconds.
+  * Bugfix: Issue #54 - Made sure no duplicate filenames get created. This
+            changes the output name scheme, e.g. if two files xyz.ts and
+            xyz.wmv exist and the destination type is mp4, two output files
+            named xyz.ts.mp4 and xyz.wmv.mp4 appear. An additional file
+            xyz.mp4 will show up with its real name.
+            To continue using the old names, add --oldnamescheme=1 to the
+            command line.
+  * Bugfix: Online help and docs state --autocopy=OFF would turn the
+            function off, but this actually was NONE. Changed to match
+            documentation.
+  * Libav support has been dropped. There is not activity on
+    https://git.libav.org/?p=libav.git since 21.08.2019, and some features
+    that FFmpegfs required were already lagging behind FFmpeg API.
+    Supporting Libav already bound a lot of my time that I could better
+    spend on new features or fixes for FFmpegfs.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Thu, 16 Apr 2020 20:10:22 +0100
+
+ffmpegfs (1.10-2) unstable; urgency=low
+
+  * Bugfix: Fixed license in d/copyright (closes: #951657):
+            - Docs are under the GPL or the GFDL, not just the GFDL.
+              Updated d/copyright to reflect that.
+            - Listed INSTALL.md with the rest of the docs.
+            - Update copyright years to match src/ffmpegfs.cc and
+              src/ffmpegfs.h.
+            - Included ffmpegfs.1 to be under GPL or GFDL.
+  * Support: No longer creating a user/group ffmpegfs while "make install".
+             The user is not really required, just bloats the system's user
+             database.
+  * Support: Reduced quality of the test video to make the distribution archive
+             slimmer. A full HD (1920x1280) video at 60 frames per second was a
+             bit of an overkill anyway. 720x400 at 30 fps should be enough for
+             everybody.
+  * Feature: Cache dir changed to ${XDG_CACHE_HOME:-~/.cache}/ffmpegfs (as
+             specified in the XDG Base Directory Specification). Falls back to
+             ${HOME:-~/.cache}/ffmpegfs if not defined. Only if executed with
+             root privileges, "/var/cache/ffmpegfs" will be used (e.g. if
+             invoked via /etc/fstab entry).
+  * Bugfix: Issue #46 - Ensure the selected bitrate is used. Files could become
+            much larger than expected. There's a strange FFmpeg API behaviour
+            behind that, added the solution used in ffmpeg.c to fix.
+  * Known bug: Libav support for videos seems broken. Not sure if this will be
+               fixed or Libav be simply dropped.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Thu, 20 Feb 2020 14:09:23 +0100
+
+ffmpegfs (1.10-1) unstable; urgency=low
+
+  * make install no longer creates a user/group ffmpeg. Caused problems when
+    building packages for Debian. The cache directory /var/cache/ffmepgfs is
+    now created as user root, but the group is changed to users. If the data-
+    base ist created as root regular users will be denied access anyway.
+  * Created own recordings of raven.flac and nimmermehr.ogg (German version of
+    raven.flac) and put all under CC0 1.0 Universal (CC0 1.0). Added
+    license/copyright for test/srcdir/* into debian/copyright.
+  * Feature: Added checks for mov/mp4/prores/webm video format.
+  * Bugfix: Moved video deinterlace filtering before rescaling. Deinterlace does
+            not work properly on rescaled videos, what a surprise. Especially
+            caused strange results on Bluray sources, created blurred frames if
+            downscaled from HD to SD (or lower) before deinterlacing.
+  * Bugfix: Avoid EINVAL errors in case the cache file ends up at zero size.
+            Minor problem, but ugly.
+  * Bugfix: Cache structure was not properly initialised, causing invalid values
+            in the database.
+  * Bugfix: Skip corrupted and discarded video frames to avoid blurps.
+  * Bugfix: Corrected mistake in online help: clear-cache should be clear_cache
+            instead.
+  * Bugfix: Issue #43 - fix garbled first 12 frames. Enhanced overall picture
+            quality.
+  * Workaround: Issue #45 - fix garbled Bluray/DVD playback. Just a workaround,
+                the problem is somewhere else.
+  * Known bug: Libav support for videos seems broken. Not sure if this will be
+               fixed or Libav be simply dropped.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sun, 26 Jan 2020 16:16:03 +0100
+
+ffmpegfs (1.8-12) unstable; urgency=low
+
+  * Changed target to unstable
+  * Changed both license paragraphs in debian/copyright from plain
+    "GFDL" to "GFDL with no Invariant Sections".
+  * test/metadata.c rewritten and put under GPL.
+  * "2017-present" in debian/copyright changed to "2017-2020"
+  * Some copyright years for INSTALL.md are missing. Not a bug, there's a gap
+    because the old maintainer ended the (c) in 2014.
+  * Added missing (c) header to test/fpcompare.c.
+  * Created own recordings of raven.flac and nimmermehr.ogg (German version of
+    raven.flac) and put both into the public domain. Added license/copyright for
+    test/srcdir/* into debian/copyright.
+  * test/fpcompare.c had no copyright at all. fixed
+  * The license/copyright for test/srcdir/* needs to be in d/copyright. fixed
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Mon, 20 Jan 2020 22:02:03 +0100
+
+ffmpegfs (1.8-11) unstable; urgency=low
+
+  * debian/control: xxd, docbook-xsl and xsltproc were also missing...
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Tue, 03 Sep 2019 18:08:09 +0200
+
+ffmpegfs (1.8-10) unstable; urgency=low
+
+  * debian/copyright: Change GPL link to point at a specific version
+    (/usr/share/common-licenses/GPL-3).
+  * debian/control: Not libxml2-utils but docbook-xml instead.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Tue, 03 Sep 2019 15:48:41 +0200
+
+ffmpegfs (1.8-9) unstable; urgency=low
+
+  * debian/control: libavfilter-dev dependency was missing
+  * Obviously xmlint IS required, so readded check to configure.
+  * debian/control: Add libxml2-utils dependency for xmlint
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Fri, 30 Aug 2019 13:15:13 +0200
+
+ffmpegfs (1.8-8) unstable; urgency=low
+
+  * debian/copyright: Change GFDL link to point at a specific version
+    (/usr/share/common-licenses/GFDL-1.3).
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 28 Aug 2019 19:03:28 +0200
+
+ffmpegfs (1.8-7) unstable; urgency=low
+
+  * Removed trailing blanks from build files
+  * debian/copyright: Added hint for no invariant parts to GFDL
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 28 Aug 2019 19:03:28 +0200
+
+ffmpegfs (1.8-6) unstable; urgency=low
+
+  * Added missing build depends.
+  * Removed hardcoded shared libraries from debian/control.
+  * Extended the description in debian/control.
+  * Added GFDL license paragraph to debian/copyright.
+  * Removed commented out code and other unnecessary stuff from debian/rules.
+  * README.Debian was completely pointless, removed.
+  * debian/patches/series contained a pointless comment line, removed.
+  * debian/source/lintian-overrides was empty, removed.
+  * debian/source/options contained only comments, removed.
+  * Removed unused xmlint prerequisite from configure.
+  * Fixed more lintian warnings
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Thu, 01 Aug 2019 17:50:26 +0200
+
+ffmpegfs (1.8-5) unstable; urgency=low
+
+  * Updated package.
+  * Finally useless-autoreconf-build-depends
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 31 Jul 2019 22:44:46 +0200
+
+ffmpegfs (1.8-4) unstable; urgency=low
+
+  * Updated package.
+  * Fixed useless-autoreconf-build-depends
+  * Fixed testsuite-autopkgtest-missing
+  * Fixed file-contains-trailing-whitespace
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 31 Jul 2019 22:33:46 +0200
+
+ffmpegfs (1.8-3) unstable; urgency=low
+
+  * Updated package.
+  * Changed state to unstable, packet was officially released on Github.
+  * Cjhanged copyright url to https.
+  * Changed compat version to 10.
+  * Changed prio to optional.
+  * Updated readme.README.Debian.
+  * Updated copyright file.
+  * Updated watch file.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Wed, 31 Jul 2019 06:53:46 +0200
+
+ffmpegfs (1.8-2) UNRELEASED; urgency=low
+
+  * Updated package.
+  * Fixes several reports by lintian, starting with typos up to but not
+    limited to license problems.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Tue, 30 Jul 2019 06:53:46 +0200
+
+ffmpegfs (1.8-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #929153)
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sat, 18 May 2019 19:51:15 +0100

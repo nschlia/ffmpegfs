@@ -1,0 +1,51 @@
+Source: ffmpegfs
+Section: utils
+Priority: optional
+Maintainer: Norbert Schlia <nschlia@oblivion-software.de>
+Build-Depends:
+ asciidoc-base,
+ automake,
+ bc,
+ debhelper (>=13),
+ debhelper-compat (= 13),
+ libavfilter-dev,
+ libavcodec-dev,
+ libavformat-dev,
+ libavutil-dev,
+ libbluray-dev,
+ libchromaprint-dev,
+ libdvdnav-dev,
+ libdvdread-dev,
+ libfuse-dev,
+ libsqlite3-dev,
+ libswresample-dev,
+ libswscale-dev,
+ libcue-dev,
+ libchardet-dev,
+ libtool,
+ docbook-xml,
+ docbook-xsl,
+ xsltproc,
+ xxd,
+ w3m
+Standards-Version: 4.6.0.1
+Rules-Requires-Root: no
+Homepage: https://nschlia.github.io/ffmpegfs/
+Vcs-Git: https://salsa.debian.org/nschlia/ffmpegfs.git -b master
+Vcs-Browser: https://salsa.debian.org/nschlia/ffmpegfs
+
+Package: ffmpegfs
+Architecture: linux-any
+Multi-Arch: foreign
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends}
+Description: Fuse Multi Media Filesystem
+ A read-only FUSE filesystem which transcodes various audio and video formats
+ to MP4, WebM, and many more on the fly when opened and read using the FFmpeg
+ library, thus supporting a multitude of input formats and a variety of
+ common output formats.
+ .
+ This allows access to a multi-media file collection with software and/or
+ hardware which only understands one of the supported output formats, or
+ transcodes files through simple drag-and-drop in a file browser.

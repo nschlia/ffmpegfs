@@ -16,6 +16,8 @@ FFmpegfs
 News
 ----
 
+### Version 2.12 is under development
+
 ### Version 2.11 has been released
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.

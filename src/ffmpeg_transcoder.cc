@@ -5597,7 +5597,7 @@ int FFmpeg_Transcoder::start_new_segment()
     m_inhibit_stream_msk    = 0;
     m_insert_keyframe       = false;
 
-    Logging::info(virtname(), "Starting HLS segment no. %1/%2.", m_current_segment, m_virtualfile->get_segment_count());
+    Logging::info(virtname(), "Starting HLS segment no. %1 of %2.", m_current_segment, m_virtualfile->get_segment_count());
 
     if (!m_buffer->set_segment(m_current_segment, m_virtualfile->m_predicted_size / m_virtualfile->get_segment_count()))   /** @todo Set reasonable size here */
     {

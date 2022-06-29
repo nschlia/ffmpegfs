@@ -253,7 +253,7 @@ bool Buffer::init(bool erase_cache)
                 Logging::error(m_ci[0].m_cachefile, "INTERNAL ERROR: Buffer::init()! Frame count is zero (%1) %2", errno, strerror(errno));
                 throw false;
             }
-            assert(sizeof(IMAGE_FRAME) == 32);
+            static_assert(sizeof(IMAGE_FRAME) == 32, "sizeof(IMAGE_FRAME) must be 32 bytes");
 
             size_t filesize     = 0;
             bool isdefaultsize  = false;

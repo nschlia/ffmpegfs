@@ -1,4 +1,5 @@
 *.o
+*.su
 *.user
 .directory
 core

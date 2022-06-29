@@ -1142,7 +1142,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
     int loss = 0;
 
-    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA, &loss);
+    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
 
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
     {
@@ -2313,7 +2313,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     if (input_codec_ctx != nullptr && input_codec_ctx->subtitle_header != nullptr)
     {
         // ASS code assumes this buffer is null terminated so add extra byte.
-        output_codec_ctx->subtitle_header = static_cast<uint8_t *>(av_mallocz(static_cast<size_t>(input_codec_ctx->subtitle_header_size + 1)));
+        output_codec_ctx->subtitle_header = static_cast<uint8_t *>(av_mallocz(static_cast<size_t>(input_codec_ctx->subtitle_header_size) + 1));
         if (output_codec_ctx->subtitle_header == nullptr)
         {
             return AVERROR(ENOMEM);
@@ -3980,15 +3980,16 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
         if (!av_sample_fmt_is_planar(m_out.m_audio.m_codec_ctx->sample_fmt))
         {
             // Interleaved format
-            memcpy(converted_data[0], input_data[0], static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx.get())));
+            int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx.get());
+            memcpy(converted_data[0], input_data[0], static_cast<size_t>(samples));
         }
         else
         {
             // Planar format
-            size_t samples = static_cast<size_t>(in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt));
+            int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt);
             for (int n = 0; n < get_channels(m_out.m_audio.m_codec_ctx.get()); n++)
             {
-                memcpy(converted_data[n], input_data[n], samples);
+                memcpy(converted_data[n], input_data[n], static_cast<size_t>(samples));
             }
         }
     }

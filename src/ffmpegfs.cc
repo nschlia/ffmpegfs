@@ -155,69 +155,72 @@ FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 
 FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexcept
 {
-    m_basepath = other.m_basepath;
-    m_mountpath = other.m_mountpath;
+    if (this != &other) // Self assignment check
+    {
+        m_basepath = other.m_basepath;
+        m_mountpath = other.m_mountpath;
 
-    m_audio_codec = other.m_audio_codec;
-    m_video_codec = other.m_video_codec;
+        m_audio_codec = other.m_audio_codec;
+        m_video_codec = other.m_video_codec;
 
-    m_autocopy = other.m_autocopy;
-    m_recodesame = other.m_recodesame;
-    m_profile = other.m_profile;
-    m_level = other.m_level;
+        m_autocopy = other.m_autocopy;
+        m_recodesame = other.m_recodesame;
+        m_profile = other.m_profile;
+        m_level = other.m_level;
 
-    m_audiobitrate = other.m_audiobitrate;
-    m_audiosamplerate = other.m_audiosamplerate;
-    m_audiochannels = other.m_audiochannels;
-    m_sample_fmt = other.m_sample_fmt;
+        m_audiobitrate = other.m_audiobitrate;
+        m_audiosamplerate = other.m_audiosamplerate;
+        m_audiochannels = other.m_audiochannels;
+        m_sample_fmt = other.m_sample_fmt;
 
-    m_videobitrate = other.m_videobitrate;
-    m_videowidth = other.m_videowidth;
-    m_videoheight = other.m_videoheight;
-    m_deinterlace = other.m_deinterlace;
-    m_segment_duration = other.m_segment_duration;
-    m_min_seek_time_diff = other.m_min_seek_time_diff;
+        m_videobitrate = other.m_videobitrate;
+        m_videowidth = other.m_videowidth;
+        m_videoheight = other.m_videoheight;
+        m_deinterlace = other.m_deinterlace;
+        m_segment_duration = other.m_segment_duration;
+        m_min_seek_time_diff = other.m_min_seek_time_diff;
 
-    m_hwaccel_enc_API = other.m_hwaccel_enc_API;
-    m_hwaccel_enc_device_type = other.m_hwaccel_enc_device_type;
-    m_hwaccel_enc_device = other.m_hwaccel_enc_device;
-    m_hwaccel_dec_API = other.m_hwaccel_dec_API;
-    m_hwaccel_dec_device_type = other.m_hwaccel_dec_device_type;
-    m_hwaccel_dec_device = other.m_hwaccel_dec_device;
-    m_hwaccel_dec_blocked = other.m_hwaccel_dec_blocked;
+        m_hwaccel_enc_API = other.m_hwaccel_enc_API;
+        m_hwaccel_enc_device_type = other.m_hwaccel_enc_device_type;
+        m_hwaccel_enc_device = other.m_hwaccel_enc_device;
+        m_hwaccel_dec_API = other.m_hwaccel_dec_API;
+        m_hwaccel_dec_device_type = other.m_hwaccel_dec_device_type;
+        m_hwaccel_dec_device = other.m_hwaccel_dec_device;
+        m_hwaccel_dec_blocked = other.m_hwaccel_dec_blocked;
 
-    m_no_subtitles = other.m_no_subtitles;
+        m_no_subtitles = other.m_no_subtitles;
 
-    m_noalbumarts = other.m_noalbumarts;
+        m_noalbumarts = other.m_noalbumarts;
 
-    m_enablescript = other.m_enablescript;
-    m_scriptfile = other.m_scriptfile;
-    m_scriptsource = other.m_scriptsource;
+        m_enablescript = other.m_enablescript;
+        m_scriptfile = other.m_scriptfile;
+        m_scriptsource = other.m_scriptsource;
 
-    m_debug = other.m_debug;
-    m_log_maxlevel = other.m_log_maxlevel;
-    m_log_stderr = other.m_log_stderr;
-    m_log_syslog = other.m_log_syslog;
-    m_logfile = other.m_logfile;
+        m_debug = other.m_debug;
+        m_log_maxlevel = other.m_log_maxlevel;
+        m_log_stderr = other.m_log_stderr;
+        m_log_syslog = other.m_log_syslog;
+        m_logfile = other.m_logfile;
 
-    m_expiry_time = other.m_expiry_time;
-    m_max_inactive_suspend = other.m_max_inactive_suspend;
-    m_max_inactive_abort = other.m_max_inactive_abort;
-    m_prebuffer_size = other.m_prebuffer_size;
-    m_max_cache_size = other.m_max_cache_size;
-    m_min_diskspace = other.m_min_diskspace;
-    m_cachepath = other.m_cachepath;
-    m_disable_cache = other.m_disable_cache;
-    m_cache_maintenance = other.m_cache_maintenance;
-    m_prune_cache = other.m_prune_cache;
-    m_clear_cache = other.m_clear_cache;
-    m_max_threads = other.m_max_threads;
-    m_decoding_errors = other.m_decoding_errors;
-    m_min_dvd_chapter_duration = other.m_min_dvd_chapter_duration;
-    m_oldnamescheme = other.m_oldnamescheme;
-    *m_extensions = *other.m_extensions;
-    *m_hide_extensions = *other.m_hide_extensions;
-    m_win_smb_fix = other.m_win_smb_fix;
+        m_expiry_time = other.m_expiry_time;
+        m_max_inactive_suspend = other.m_max_inactive_suspend;
+        m_max_inactive_abort = other.m_max_inactive_abort;
+        m_prebuffer_size = other.m_prebuffer_size;
+        m_max_cache_size = other.m_max_cache_size;
+        m_min_diskspace = other.m_min_diskspace;
+        m_cachepath = other.m_cachepath;
+        m_disable_cache = other.m_disable_cache;
+        m_cache_maintenance = other.m_cache_maintenance;
+        m_prune_cache = other.m_prune_cache;
+        m_clear_cache = other.m_clear_cache;
+        m_max_threads = other.m_max_threads;
+        m_decoding_errors = other.m_decoding_errors;
+        m_min_dvd_chapter_duration = other.m_min_dvd_chapter_duration;
+        m_oldnamescheme = other.m_oldnamescheme;
+        *m_extensions = *other.m_extensions;
+        *m_hide_extensions = *other.m_hide_extensions;
+        m_win_smb_fix = other.m_win_smb_fix;
+    }
 
     return *this;
 }

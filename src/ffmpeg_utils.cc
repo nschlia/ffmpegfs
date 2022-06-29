@@ -1116,7 +1116,7 @@ const std::string & append_ext(std::string * filepath, const std::string & ext)
 
     found = filepath->rfind('.');
 
-    if (found == std::string::npos || strcasecmp(filepath->substr(found + 1), ext))
+    if (found == std::string::npos || strcasecmp(filepath->substr(found + 1), ext) != 0)
     {
         // No extension or different extension
         *filepath += '.' + ext;
@@ -1842,7 +1842,7 @@ int strcasecmp(const std::string & s1, const std::string & s2)
 template<typename ... Args>
 std::string strsprintf(const std::string& format, Args ... args)
 {
-    size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...) + 1); // Extra space for '\0'
+    size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...)) + 1; // Extra space for '\0'
     std::unique_ptr<char[]> buf(new(std::nothrow) char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside

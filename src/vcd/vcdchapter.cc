@@ -90,7 +90,7 @@ int VcdChapter::read(FILE *fpi, int track_no)
     }
 
     // Validate sync
-    if (memcmp(buffer, SYNC, sizeof(buffer)))
+    if (memcmp(buffer, SYNC, sizeof(buffer)) != 0)
     {
         return EIO;
     }

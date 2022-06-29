@@ -257,7 +257,7 @@ bool DvdIO::get_packet_size(const uint8_t *p, size_t peek, size_t *size) const
         {
             if (peek >= 14 && (p[4] >> 6) == 0x01)
             {
-                *size = static_cast<size_t>(14 + (p[13] & 0x07)); // Byte 13 Bit 0..2: Pack stuffing length
+                *size = 14 + static_cast<size_t>(p[13] & 0x07); // Byte 13 Bit 0..2: Pack stuffing length
                 return true;
             }
             else if (peek >= 12 && (p[4] >> 4) == 0x02)

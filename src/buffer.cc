@@ -425,42 +425,42 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
 
     Logging::trace(filename, "Unmapping cache file.");
 
-    void *  __p         = *p;
-    size_t  __filesize  = *filesize;
-    int     __fd        = *fd;
+    void *  _p         = *p;
+    size_t  _filesize  = *filesize;
+    int     _fd        = *fd;
 
     // Clear all variables
     *p          = nullptr;
     *filesize   = 0;
     *fd         = -1;
 
-    if (__p != nullptr)
+    if (_p != nullptr)
     {
-        if (munmap(__p, len ? len : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spits EINVAL error)
+        if (munmap(_p, len ? len : static_cast<size_t>(sysconf(_SC_PAGESIZE))) == -1) // Make sure we do not unmap a zero size file (spits EINVAL error)
         {
             Logging::error(filename, "Unmapping cache file failed: (%1) %2 Size: %3", errno, strerror(errno), len);
             success = false;
         }
     }
 
-    if (__fd != -1)
+    if (_fd != -1)
     {
-        if (__filesize)
+        if (_filesize)
         {
-            if (ftruncate(__fd, static_cast<off_t>(__filesize)) == -1)
+            if (ftruncate(_fd, static_cast<off_t>(_filesize)) == -1)
             {
-                Logging::error(filename, "Error calling ftruncate() to resize and close the cache file: (%1) %2 (fd = %3) Size: %5", errno, strerror(errno), __fd, __filesize);
+                Logging::error(filename, "Error calling ftruncate() to resize and close the cache file: (%1) %2 (fd = %3) Size: %5", errno, strerror(errno), _fd, _filesize);
                 success = false;
             }
-            ::close(__fd);
+            ::close(_fd);
         }
         else
         {
-            ::close(__fd);
+            ::close(_fd);
 
             if (unlink(filename.c_str()) && errno != ENOENT)    // Ignore if file does not exist
             {
-                Logging::error(filename, "Error removing the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), __fd);
+                Logging::error(filename, "Error removing the cache file: (%1) %2 (fd = %3)", errno, strerror(errno), _fd);
                 success = false;
             }
         }

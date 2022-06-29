@@ -1179,7 +1179,7 @@ protected:
      * @param[in] f - Funtion to be called for each file found
      * @return 0 on success, a negative AVERROR code on failure.
      */
-    int                         foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, std::function<int(const std::string &, const std::optional<std::string> &)> f);
+    int                         foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, const std::function<int (const std::string &, const std::optional<std::string> &)> & f);
 
 private:
     FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */

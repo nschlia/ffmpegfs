@@ -193,7 +193,7 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
         int width               = 0;
         int height              = 0;
         AVRational framerate    = { 0, 0 };
-        int interleaved         = 0;
+        bool interleaved        = false;
 
         newvirtualfile->m_duration                      = duration;
         newvirtualfile->m_cuesheet_track.m_duration     = duration;
@@ -368,7 +368,6 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
 
 int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t filler)
 {
-    std::string origfile(filename);     // Name of physical file
     std::string trackdir(filename);     // Tracks directory (with extra TRACKDIR extension)
     std::string cuesheet(filename);     // Cue sheet name (original name, extension replaced by .cue)
     struct stat stbuf;
@@ -380,7 +379,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
 
     try
     {
-        LPCVIRTUALFILE virtualfile = find_file_from_orig(origfile);
+        LPCVIRTUALFILE virtualfile = find_file_from_orig(filename);
 
         if (virtualfile == nullptr)
         {
@@ -390,7 +389,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
             throw -errno;
         }
 
-        if (lstat(origfile.c_str(), &stbuf) == -1)
+        if (lstat(filename.c_str(), &stbuf) == -1)
         {
             // Media file does not exist, can be ignored silently
             throw 0;
@@ -417,7 +416,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
 
                 if (virtualdir == nullptr)
                 {
-                    Logging::error(origfile, "INTERNAL ERROR: check_cuesheet()! virtualdir is NULL.");
+                    Logging::error(filename, "INTERNAL ERROR: check_cuesheet()! virtualdir is NULL.");
                     errno = EIO;
                     throw -errno;
                 }

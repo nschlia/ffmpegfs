@@ -533,13 +533,13 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
 void DvdIO::next_cell()
 {
     // Check if we're entering an angle block
-    if (m_cur_pgc->cell_playback[m_cur_cell].block_type == BLOCK_TYPE_ANGLE_BLOCK)
+    if (m_cur_pgc->cell_playback[m_cur_cell].block_type == static_cast<unsigned int>(BLOCK_TYPE_ANGLE_BLOCK))
     {
         m_cur_cell += m_angle_idx;
 
         for (int i = 0;; ++i)
         {
-            if (m_cur_pgc->cell_playback[m_cur_cell + i].block_mode == BLOCK_MODE_LAST_CELL)
+            if (m_cur_pgc->cell_playback[m_cur_cell + i].block_mode == static_cast<unsigned int>(BLOCK_MODE_LAST_CELL))
             {
                 m_next_cell = m_cur_cell + i + 1;
                 break;

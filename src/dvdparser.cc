@@ -274,13 +274,13 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         cell_playback_t *cell_playback = &cur_pgc->cell_playback[cell_no];
 
         // Only count normal cells and the first of an angle to avoid duplicate sizes
-        if (cell_playback->block_mode == BLOCK_MODE_NOT_IN_BLOCK || cell_playback->block_mode == BLOCK_MODE_FIRST_CELL)
+        if (cell_playback->block_mode == static_cast<unsigned int>(BLOCK_MODE_NOT_IN_BLOCK) || cell_playback->block_mode == static_cast<unsigned int>(BLOCK_MODE_FIRST_CELL))
         {
             size        += (cell_playback->last_sector - cell_playback->first_sector) * 2048;
             duration    += BCDtime(&cell_playback->playback_time);
         }
 
-        if (cell_playback->block_type == BLOCK_TYPE_ANGLE_BLOCK)
+        if (cell_playback->block_type == static_cast<unsigned int>(BLOCK_TYPE_ANGLE_BLOCK))
         {
             has_angles = true;
         }

@@ -2078,7 +2078,13 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
             std::string cachefile;
             std::string _origpath(origpath);
             remove_sep(&_origpath);
-            Buffer::make_cachefile_name(cachefile, _origpath + "." + segment_name, params.current_format(virtualfile)->fileext(), false);
+
+            std::string filename(_origpath);
+
+            filename.append(".");
+            filename.append(segment_name);
+
+            Buffer::make_cachefile_name(cachefile, filename, params.current_format(virtualfile)->fileext(), false);
 
             if (!lstat(cachefile.c_str(), &stbuf))
             {

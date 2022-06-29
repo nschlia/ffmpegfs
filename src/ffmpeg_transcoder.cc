@@ -7537,7 +7537,7 @@ int FFmpeg_Transcoder::map_in_to_out_stream(int in_stream_idx) const
     return (it->second);
 }
 
-inline int FFmpeg_Transcoder::foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, std::function<int(const std::string &, const std::optional<std::string> &)> f)
+inline int FFmpeg_Transcoder::foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, const std::function<int (const std::string &, const std::optional<std::string> &)> &f)
 {
     int ret = 0;
 

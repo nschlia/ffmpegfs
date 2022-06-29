@@ -141,7 +141,8 @@ AVFrame* FFmpeg_Frame::operator->()
 
 FFmpeg_Frame& FFmpeg_Frame::operator=(const FFmpeg_Frame & frame) noexcept
 {
-    if (m_frame != frame.m_frame)
+    // Do self assignment check
+    if (this != &frame && m_frame != frame.m_frame)
     {
         AVFrame *new_frame = av_frame_clone(frame.m_frame);
 

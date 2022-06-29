@@ -3623,7 +3623,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt,
     if (ret < 0)
     {
         Logging::error(filename(), "Could not decode subtitle (error '%1').", ffmpeg_geterror(ret).c_str());
-        throw ret;
+        return ret;
     }
 
     ret = avcodec_decode_subtitle2(codec_ctx, subtitle, &data_present, pkt);
@@ -5110,7 +5110,7 @@ int FFmpeg_Transcoder::flush_delayed_audio()
             if (ret < 0 && ret != AVERROR(EAGAIN))
             {
                 Logging::error(virtname(), "Could not encode audio frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                throw ret;
+                break;
             }
         }
         while (data_written);
@@ -5148,7 +5148,7 @@ int FFmpeg_Transcoder::flush_delayed_video()
             if (ret < 0 && ret != AVERROR(EAGAIN))
             {
                 Logging::error(virtname(), "Could not encode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                throw ret;
+                break;
             }
         }
         while (data_written);

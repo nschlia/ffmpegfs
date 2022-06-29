@@ -1014,7 +1014,8 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                         Logging::error(filename(), "Failed to create a %1 device for decoding (error %2).", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str(), ffmpeg_geterror(ret).c_str());
                         return ret;
                     }
-                    Logging::info(filename(), "Hardware decoder acceleration and frame buffering are active using codec '%1'.", input_codec->name);
+
+                    Logging::info(filename(), "Hardware decoder acceleration and frame buffering are active using codec '%1'.", (input_codec != nullptr) ? input_codec->name : "unknown");
 
                     m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
                 }

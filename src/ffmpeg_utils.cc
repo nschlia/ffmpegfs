@@ -1820,7 +1820,12 @@ std::string replace_all(std::string *str, const std::string& from, const std::st
 
 bool replace_start(std::string *str, const std::string& from, const std::string& to)
 {
+#if __cplusplus >= 202002L
+    // C++20 (and later) code
+    if (str->starts_with(from) == 0)
+#else
     if (str->find(from, 0) == 0)
+#endif
     {
         str->replace(0, from.length(), to);
         return true;

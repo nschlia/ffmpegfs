@@ -286,7 +286,7 @@ static bool link_down()
 
     Logging::info(nullptr, "Shutting " PACKAGE " inter-process link down.");
 
-    if (sem_close(sem))
+    if (sem != nullptr && sem_close(sem))
     {
         Logging::error(nullptr, "link_down(): sem_close error (%1) %2", errno, strerror(errno));
         success = false;

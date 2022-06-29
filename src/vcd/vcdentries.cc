@@ -175,6 +175,8 @@ int VcdEntries::scan_chapters()
     std::string fullname;
     struct stat stbuf;
 
+    memset(&stbuf, 0, sizeof(stbuf));
+
     if (!m_chapters.size())
     {
         return EIO;   // Fail safe only: Should not happen, at least 1 chapter is required.

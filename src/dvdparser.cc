@@ -251,7 +251,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
     AVRational framerate;
     int64_t duration        = 0;
     uint64_t size           = 0;
-    int interleaved         = 0;
+    bool interleaved        = false;
     int start_cell          = cur_pgc->program_map[pgn - 1] - 1;
     int end_cell            = 0;
 
@@ -264,7 +264,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
         end_cell    = cur_pgc->nr_of_cells;
     }
 
-    interleaved         = cur_pgc->cell_playback[start_cell].interleaved;
+    interleaved         = cur_pgc->cell_playback[start_cell].interleaved ? true : false;
     framerate           = dvd_frame_rate(&cur_pgc->cell_playback[start_cell].playback_time.frame_u);
 
     bool has_angles = false;

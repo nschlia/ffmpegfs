@@ -84,7 +84,7 @@ protected:
         struct PRORES_FRAMERATE                                     /**< @brief List of ProRes frame rates */
         {
             int                 m_framerate;                        /**< @brief Frame rate */
-            int                 m_interleaved;                      /**< @brief Format is interleaved */
+            bool                m_interleaved;                      /**< @brief Format is interleaved */
         }                       m_framerate[MAX_PRORES_FRAMERATE];  /**< @brief Array of frame rates */
         /**
          * Bitrates in MB/s
@@ -294,11 +294,11 @@ public:
      * @param[in] duration - File duration.
      * @param[in] width - Target video width.
      * @param[in] height- Target video height.
-     * @param[in] interleaved - 1 if target video is interleaved.
+     * @param[in] interleaved - True if target video is interleaved, false if not.
      * @param[in] framerate - Frame rate of target video.
      * @return On success, returns true; on failure, returns false.
      */
-    static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, int interleaved, const AVRational & framerate);
+    static bool                 video_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int width, int height, bool interleaved, const AVRational & framerate);
     /**
      * @brief Predict overhead in file size. This may (better will surely) be inaccurate.
      * @param[out] filesize - Predicted file size in bytes, including overhead.
@@ -774,11 +774,11 @@ protected:
      * @param[in] width - Video width in pixels.
      * @param[in] height - Video height in pixels.
      * @param[in] framerate - Video frame rate.
-     * @param[in] interleaved - If 1, video is interleaved; 0 if not.
+     * @param[in] interleaved - If true, video is interleaved; false if not.
      * @param[in] profile - Selected ProRes profile.
      * @return Bitrate in bit/s.
      */
-    static BITRATE              get_prores_bitrate(int width, int height, const AVRational &framerate, int interleaved, int profile);
+    static BITRATE              get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, int profile);
     /**
      * @brief Try to predict final file size.
      */

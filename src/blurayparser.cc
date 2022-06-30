@@ -45,7 +45,7 @@ extern "C" {
 }
 
 static bool audio_stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *channels, int *sample_rate);
-static bool video_stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, int *interleaved);
+static bool video_stream_info(const std::string &path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, bool *interleaved);
 static int  parse_find_best_audio_stream();
 static int  parse_find_best_video_stream();
 static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, const std::string & path, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool is_main_title, bool full_title, uint32_t title_idx, uint32_t chapter_idx);
@@ -188,10 +188,10 @@ static bool audio_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
  * @param[out] width - Width of video stream.
  * @param[out] height - Height of video stream.
  * @param[out] framerate - Frame rate of video stream.
- * @param[out] interleaved - 1: video stream is interleaved, 0: video stream is not interleaved.
+ * @param[out] interleaved - true: video stream is interleaved, false: video stream is not interleaved.
  * @return Returns true if stream has video, false if not.
  */
-static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, int *interleaved)
+static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, int *width, int *height, AVRational *framerate, bool *interleaved)
 {
     bool video = false;
 
@@ -245,49 +245,49 @@ static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
         {
             *width = 720;
             *height = 480;
-            *interleaved = 1;
+            *interleaved = true;
             break;
         }
         case BLURAY_VIDEO_FORMAT_576I:  // ITU-R BT.601-4
         {
             *width = 720;
             *height = 576;
-            *interleaved = 1;
+            *interleaved = true;
             break;
         }
         case BLURAY_VIDEO_FORMAT_480P:  // SMPTE 293M
         {
             *width = 720;
             *height = 480;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
         case BLURAY_VIDEO_FORMAT_1080I: // SMPTE 274M
         {
             *width = 1920;
             *height = 1080;
-            *interleaved = 1;
+            *interleaved = true;
             break;
         }
         case BLURAY_VIDEO_FORMAT_720P:  // SMPTE 296M
         {
             *height = 1280;
             *width = 720;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
         case BLURAY_VIDEO_FORMAT_1080P: // SMPTE 274M
         {
             *width = 1920;
             *height = 1080;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
         case BLURAY_VIDEO_FORMAT_576P:  // ITU-R BT.1358
         {
             *width = 720;
             *height = 576;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
             // Added with libluray change 14aa7e9c0 (hpi1 2017-08-28 09:50:43 +0300)
@@ -297,7 +297,7 @@ static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
         {
             *width = 3840;
             *height = 2160;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
 #endif
@@ -306,7 +306,7 @@ static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
             Logging::error(path, "Unknown video format %1. Assuming 1920x1080P - may be totally wrong.", ss->format);
             *width = 1920;
             *height = 1080;
-            *interleaved = 0;
+            *interleaved = false;
             break;
         }
         }
@@ -512,7 +512,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
         bool audio              = false;
 
-        int interleaved         = 0;
+        bool interleaved        = false;
 
         if (!bd_select_title(bd, title_idx))
         {

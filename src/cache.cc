@@ -1082,15 +1082,15 @@ bool Cache::prune_expired()
     std::vector<cache_key_t> keys;
     sqlite3_stmt * stmt;
     time_t now = time(nullptr);
-    char sql[1024];
+    std::string sql;
 
     Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
 
-    snprintf(sql, sizeof(sql) - 1, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
+    sql = strsprintf("SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
+    sqlite3_prepare(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr);
 
     int ret = 0;
     while ((ret = sqlite3_step(stmt)) == SQLITE_ROW)

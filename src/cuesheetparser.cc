@@ -150,16 +150,15 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
         duration            = *remainingduration;
     }
 
-    char title_buf[PATH_MAX + 1];
+    std::string virtfilename;
 
-    snprintf(title_buf, sizeof(title_buf) - 1, "%02d. %s - %s [%s].%s",
+    virtfilename = strsprintf("%02d. %s - %s [%s].%s",
              titleno,
              performer.c_str(),
              title.c_str(),
              replace_all(format_duration(duration), ":", "-").c_str(),
              ffmpeg_format[virtualfile->m_format_idx].fileext().c_str());
 
-    std::string virtfilename(title_buf);
     // Filenames can't contain '/' in POSIX etc.
     std::replace(virtfilename.begin(), virtfilename.end(), '/', '-');
 

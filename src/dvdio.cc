@@ -36,7 +36,7 @@
 #include "ffmpeg_utils.h"
 #include "logging.h"
 
-#include <string.h>
+#include <cstring>
 #include <cassert>
 
 #include <dvdread/dvd_reader.h>

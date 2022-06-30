@@ -39,7 +39,7 @@
 #include "vcdutils.h"
 #include "ffmpegfs.h"
 
-#include <string.h>
+#include <cstring>
 #include <sys/stat.h>
 
 #define VCD_SECTOR_SIZE 2352                /**< @brief Video CD sector size */

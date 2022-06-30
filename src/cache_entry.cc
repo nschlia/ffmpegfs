@@ -34,7 +34,7 @@
 #include "buffer.h"
 #include "logging.h"
 
-#include <string.h>
+#include <cstring>
 
 Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     : m_owner(owner)

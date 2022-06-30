@@ -31,8 +31,8 @@
 #include "vcdutils.h"
 #include "ffmpeg_utils.h"
 
-#include <string.h>
-#include <limits.h>
+#include <cstring>
+#include <climits>
 
 VcdChapter::VcdChapter(bool is_svcd) :
     m_is_svcd(is_svcd),

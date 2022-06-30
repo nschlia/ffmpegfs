@@ -38,7 +38,7 @@
 #include "vcdinfo.h"
 #include "vcdutils.h"
 
-#include <string.h>
+#include <cstring>
 #include <sys/stat.h>
 
 /**

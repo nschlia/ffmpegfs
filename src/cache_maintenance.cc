@@ -34,7 +34,7 @@
 #include "ffmpeg_utils.h"
 #include "logging.h"
 
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 #include <sys/shm.h>        /* shmat(), IPC_RMID        */
 #include <semaphore.h>      /* sem_open(), sem_destroy(), sem_wait().. */

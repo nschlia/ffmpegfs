@@ -54,7 +54,7 @@
 #include <set>
 
 #ifndef PATH_MAX
-#include <linux/limits.h>
+#include <climits>
 #endif
 
 #ifdef __cplusplus

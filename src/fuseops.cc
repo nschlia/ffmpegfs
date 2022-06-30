@@ -56,7 +56,7 @@
 #include <regex>
 #include <list>
 #include <cassert>
-#include <signal.h>
+#include <csignal>
 #include <cstring>
 
 typedef std::map<const std::string, VIRTUALFILE> FILENAME_MAP;      /**< @brief Map virtual file names to virtual file objects. */

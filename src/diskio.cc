@@ -33,7 +33,7 @@
 #include "ffmpegfs.h"
 #include "logging.h"
 
-#include <errno.h>
+#include <cerrno>
 
 DiskIO::DiskIO()
     : m_fpi(nullptr)

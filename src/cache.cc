@@ -1098,7 +1098,7 @@ bool Cache::prune_expired()
         const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
-        keys.push_back(std::make_pair(filename, desttype));
+        keys.emplace_back(filename, desttype);
 
         Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))).c_str());
     }
@@ -1162,7 +1162,7 @@ bool Cache::prune_cache_size()
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
         size_t size = static_cast<size_t>(sqlite3_column_int64(stmt, 2));
 
-        keys.push_back(std::make_pair(filename, desttype));
+        keys.emplace_back(filename, desttype);
         filesizes.push_back(size);
         total_size += size;
     }
@@ -1253,7 +1253,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
             const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
             size_t size = static_cast<size_t>(sqlite3_column_int64(stmt, 2));
 
-            keys.push_back(std::make_pair(filename, desttype));
+            keys.emplace_back(filename, desttype);
             filesizes.push_back(size);
         }
 
@@ -1333,7 +1333,7 @@ bool Cache::clear()
         const char *filename = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0));
         const char *desttype = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
 
-        keys.push_back(std::make_pair(filename, desttype));
+        keys.emplace_back(filename, desttype);
     }
 
     Logging::trace(m_cacheidx_file, "Clearing all %1 entries from cache...", keys.size());

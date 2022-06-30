@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
-#include <assert.h>
+#include <cassert>
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()

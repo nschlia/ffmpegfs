@@ -37,7 +37,7 @@
 #include "logging.h"
 
 #include <libbluray/bluray.h>
-#include <assert.h>
+#include <cassert>
 
 BlurayIO::BlurayIO()
     : m_bd(nullptr)

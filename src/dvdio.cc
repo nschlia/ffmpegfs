@@ -37,7 +37,7 @@
 #include "logging.h"
 
 #include <string.h>
-#include <assert.h>
+#include <cassert>
 
 #include <dvdread/dvd_reader.h>
 #include <dvdread/nav_read.h>

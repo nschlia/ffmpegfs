@@ -36,7 +36,7 @@
 #include "logging.h"
 
 #include <vector>
-#include <assert.h>
+#include <cassert>
 
 #ifndef HAVE_SQLITE_ERRSTR
 #define sqlite3_errstr(rc)  ""              /**< @brief If our version of SQLite hasn't go this function */

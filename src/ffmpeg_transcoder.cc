@@ -59,7 +59,7 @@ extern "C" {
 #include "aiff.h"
 #include "logging.h"
 
-#include <assert.h>
+#include <cassert>
 #include <unistd.h>
 #include <filesystem>
 

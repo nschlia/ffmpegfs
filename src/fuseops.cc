@@ -55,7 +55,7 @@
 #include <unistd.h>
 #include <regex>
 #include <list>
-#include <assert.h>
+#include <cassert>
 #include <signal.h>
 #include <cstring>
 

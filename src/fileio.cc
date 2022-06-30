@@ -43,7 +43,7 @@
 #include "blurayio.h"
 #endif // USE_LIBBLURAY
 
-//#include <assert.h>
+//#include <cassert>
 
 uint32_t VIRTUALFILE::get_segment_count() const
 {

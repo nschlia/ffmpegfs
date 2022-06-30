@@ -225,7 +225,7 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
     return *this;
 }
 
-bool FFMPEGFS_PARAMS::smart_transcode(void) const
+bool FFMPEGFS_PARAMS::smart_transcode() const
 {
     return (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN && ffmpeg_format[0].filetype() != ffmpeg_format[1].filetype());
 }
@@ -631,9 +631,9 @@ static int          get_value(const std::string & arg, STRINGSET *value);
 static int          get_value(const std::string & arg, double *value);
 
 static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
-static bool         set_defaults(void);
-static void         build_device_type_list(void);
-static void         print_params(void);
+static bool         set_defaults();
+static void         build_device_type_list();
+static void         print_params();
 static void         usage();
 
 /**
@@ -1730,10 +1730,8 @@ static int get_value(const std::string & arg, double *value)
  * @param[in] outargs - the current output argument list
  * @return -1 on error, 0 if arg is to be discarded, 1 if arg should be kept
  */
-static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs)
+static int ffmpegfs_opt_proc(void* /*data*/, const char* arg, int key, struct fuse_args *outargs)
 {
-    (void)data;
-
     switch (key)
     {
     case FUSE_OPT_KEY_NONOPT:
@@ -1981,7 +1979,7 @@ static int ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_a
  * @brief Set default values.
  * @return Returns true if options are OK, false if option combination is invalid.
  */
-static bool set_defaults(void)
+static bool set_defaults()
 {
     if (ffmpeg_format[0].video_codec() == AV_CODEC_ID_PRORES)
     {
@@ -1999,7 +1997,7 @@ static bool set_defaults(void)
  * Builds a list of device types supported by the current
  * FFmpeg libary.
  */
-static void build_device_type_list(void)
+static void build_device_type_list()
 {
     for (AVHWDeviceType device_type = AV_HWDEVICE_TYPE_NONE; (device_type = av_hwdevice_iterate_types(device_type)) != AV_HWDEVICE_TYPE_NONE;)
     {
@@ -2017,7 +2015,7 @@ static void build_device_type_list(void)
 /**
  * @brief Print currently selected parameters.
  */
-static void print_params(void)
+static void print_params()
 {
     std::string cachepath;
 

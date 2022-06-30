@@ -225,7 +225,7 @@ void transcoder_cache_path(std::string & path)
     append_sep(&path);
 }
 
-bool transcoder_init(void)
+bool transcoder_init()
 {
     if (cache == nullptr)
     {
@@ -247,7 +247,7 @@ bool transcoder_init(void)
     return true;
 }
 
-void transcoder_free(void)
+void transcoder_free()
 {
     Cache *p1 = cache;
     cache = nullptr;
@@ -733,12 +733,12 @@ size_t transcoder_buffer_tell(Cache_Entry* cache_entry, uint32_t segment_no)
     return cache_entry->m_buffer->tell(segment_no);
 }
 
-void transcoder_exit(void)
+void transcoder_exit()
 {
     thread_exit = true;
 }
 
-bool transcoder_cache_maintenance(void)
+bool transcoder_cache_maintenance()
 {
     if (cache != nullptr)
     {
@@ -750,7 +750,7 @@ bool transcoder_cache_maintenance(void)
     }
 }
 
-bool transcoder_cache_clear(void)
+bool transcoder_cache_clear()
 {
     if (cache != nullptr)
     {

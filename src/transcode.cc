@@ -306,12 +306,12 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
 
     if (!FFmpeg_Transcoder::audio_size(&filesize, current_format->audio_codec(), audio_bit_rate, duration, channels, sample_rate, sample_format))
     {
-        Logging::warning(cache_entry->virtname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->virtname(), "Unsupported audio codec '%1' for format %2.", get_codec_name(current_format->audio_codec(), false), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::video_size(&filesize, current_format->video_codec(), video_bit_rate, duration, width, height, interleaved, framerate))
     {
-        Logging::warning(cache_entry->virtname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), 0), current_format->desttype().c_str());
+        Logging::warning(cache_entry->virtname(), "Unsupported video codec '%1' for format %2.", get_codec_name(current_format->video_codec(), false), current_format->desttype().c_str());
     }
 
     if (!FFmpeg_Transcoder::total_overhead(&filesize, current_format->filetype()))

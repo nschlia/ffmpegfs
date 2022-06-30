@@ -866,11 +866,11 @@ bool DvdIO::is_nav_pack(const unsigned char *buffer) const
              buffer[0x403] == 0xbf &&
              buffer[0x406] == 0x01))
     {
-        return (1);
+        return true;
     }
     else
     {
-        return (0);
+        return false;
     }
 }
 

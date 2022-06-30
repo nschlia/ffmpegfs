@@ -747,14 +747,14 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     cache_info->m_videobitrate          = 0;
     cache_info->m_videowidth            = 0;
     cache_info->m_videoheight           = 0;
-    cache_info->m_deinterlace           = 0;
+    cache_info->m_deinterlace           = false;
     cache_info->m_duration              = 0;
     cache_info->m_predicted_filesize    = 0;
     cache_info->m_encoded_filesize      = 0;
     cache_info->m_video_frame_count     = 0;
     cache_info->m_segment_count         = 0;
     cache_info->m_result                = RESULTCODE_NONE;
-    cache_info->m_error                 = 0;
+    cache_info->m_error                 = false;
     cache_info->m_errno                 = 0;
     cache_info->m_averror               = 0;
     cache_info->m_creation_time         = 0;
@@ -869,7 +869,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
     try
     {
         int ret;
-        bool enable_ismv_dummy = 0;
+        bool enable_ismv_dummy = false;
 
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 22);
 

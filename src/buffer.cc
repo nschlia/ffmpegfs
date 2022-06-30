@@ -338,7 +338,7 @@ bool Buffer::segment_exists(uint32_t segment_no)
 
     if (!segment_count() || m_cur_ci == nullptr)
     {
-        return 0;
+        return false;
     }
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }

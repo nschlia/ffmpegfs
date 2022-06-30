@@ -121,6 +121,31 @@ wipe-all: doxy-clean distclean
 cppcheck:
 	cppcheck --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
 
+# android- 	Checks related to Android.
+# boost- 	Checks related to Boost library.
+# bugprone- 	Checks that target bugprone code constructs.
+CLANGCHECKS = bugprone-*,-bugprone-branch-clone
+# cert- 	Checks related to CERT Secure Coding Guidelines.
+CLANGCHECKS += ,cert-*,-cert-err09-cpp,-cert-err61-cpp
+# cppcoreguidelines- 	Checks related to C++ Core Guidelines.
+# clang-analyzer- 	Clang Static Analyzer checks.
+CLANGCHECKS += ,clang-analyzer-*
+# google- 	Checks related to Google coding conventions.
+# hicpp- 	Checks related to High Integrity C++ Coding Standard.
+# llvm- 	Checks related to the LLVM coding conventions.
+# misc- 	Checks that we didn’t have a better category for.
+# modernize- 	Checks that advocate usage of modern (currently “modern” means “C++11”) language constructs.
+CLANGCHECKS += ,modernize-*,-modernize-use-trailing-return-type
+# mpi- 	Checks related to MPI (Message Passing Interface).
+# performance- 	Checks that target performance-related issues.
+CLANGCHECKS += ,performance-*
+# readability- 	Checks that target readability-related issues that don’t relate to any particular coding style.
+
+CLANGTIDY = clang-tidy -extra-arg="--std=c++17" -warnings-as-errors='*' --checks='$(CLANGCHECKS)' --quiet
+
+lint:
+	$(CLANGTIDY) src/*.c* src/vcd/*.c* -- -Isrc -Isrc/vcd -I/usr/include/chardet -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -DUSE_LIBDVD -DUSE_LIBBLURAY -DUSE_LIBVCD -D_GNU_SOURCE > lint.log
+
 install-exec-hook:
 	@if [ -d "$(CACHEDIR)" ]; \
 	then \

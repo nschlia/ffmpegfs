@@ -53,10 +53,6 @@ FFmpeg_Subtitle::FFmpeg_Subtitle(int stream_index) :
   m_res = (get() != nullptr) ? 0 : AVERROR(ENOMEM);
 }
 
-FFmpeg_Subtitle::~FFmpeg_Subtitle()
-{
-}
-
 void FFmpeg_Subtitle::unref() noexcept
 {
     reset();

@@ -58,7 +58,7 @@ public:
     /**
      * @brief Destroy VcdEntries object
      */
-    virtual ~VcdEntries();
+    virtual ~VcdEntries() = default;
 
     /**
      * @brief Reset this object

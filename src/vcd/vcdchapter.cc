@@ -73,11 +73,6 @@ VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, 
 
 }
 
-VcdChapter::~VcdChapter()
-{
-
-}
-
 int VcdChapter::read(FILE *fpi, int track_no)
 {
     VCDMSF msf;

@@ -86,7 +86,7 @@ public:
     /**
      * @brief Destroy VcdChapter object
      */
-    virtual ~VcdChapter();
+    virtual ~VcdChapter() = default;
 
     /**
      * @brief Check if this is a Super Video CD.

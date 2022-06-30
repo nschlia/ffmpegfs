@@ -45,7 +45,7 @@ public:
     /**
      * @brief Destruct VcdInfo object
      */
-    virtual ~VcdInfo();
+    virtual ~VcdInfo() = default;
 
     /**
      * @brief Reset this object

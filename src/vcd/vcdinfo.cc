@@ -117,10 +117,6 @@ VcdInfo::VcdInfo()
     clear();
 }
 
-VcdInfo::~VcdInfo()
-{
-}
-
 void VcdInfo::clear()
 {
     m_disk_path.clear();

@@ -56,10 +56,6 @@ FFmpeg_Base::FFmpeg_Base()
 {
 }
 
-FFmpeg_Base::~FFmpeg_Base()
-{
-}
-
 #if !LAVC_DEP_AV_INIT_PACKET
 void FFmpeg_Base::init_packet(AVPacket *pkt) const
 {
@@ -437,7 +433,7 @@ int FFmpeg_Base::get_script_info(AVCodecContext *codec_ctx, int play_res_x, int 
 
     size_t size = static_cast<size_t>(snprintf(nullptr, 0, format,  play_res_x, play_res_y, font, font_size,
                                                primary_color, secondary_color, outline_color, back_color,
-                                               -bold, -italic, -underline, border_style, alignment) + 1); // Extra space for '\0'
+                                               -bold, -italic, -underline, border_style, alignment)) + 1; // Extra space for '\0'
 
     codec_ctx->subtitle_header = reinterpret_cast<uint8_t *>(av_malloc(size + 1));
 

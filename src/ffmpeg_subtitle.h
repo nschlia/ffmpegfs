@@ -50,7 +50,7 @@ public:
     /**
      * @brief Destruct FFmpeg_Subtitle object.
      */
-    virtual ~FFmpeg_Subtitle();
+    virtual ~FFmpeg_Subtitle() = default;
     /**
      * @brief Get result of last operation
      * @return Returns 0 if last operation was successful, or negative AVERROR value.

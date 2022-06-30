@@ -64,10 +64,6 @@ VcdEntries::VcdEntries()
     clear();
 }
 
-VcdEntries::~VcdEntries()
-{
-}
-
 void VcdEntries::clear()
 {
     m_file_date     = -1;

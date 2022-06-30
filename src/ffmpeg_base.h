@@ -52,7 +52,7 @@ public:
     /**
      * @brief Destruct FFmpeg_Base object.
      */
-    virtual ~FFmpeg_Base();
+    virtual ~FFmpeg_Base() = default;
 
 protected:
 #if !LAVC_DEP_AV_INIT_PACKET

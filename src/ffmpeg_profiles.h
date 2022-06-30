@@ -72,11 +72,11 @@ protected:
     /**
      * @brief Construct a FFmpeg_Profiles object.
      */
-    explicit FFmpeg_Profiles();
+    explicit FFmpeg_Profiles() = default;
     /**
      * @brief Destruct a FFmpeg_Profiles object.
      */
-    virtual ~FFmpeg_Profiles();
+    virtual ~FFmpeg_Profiles() = default;
 
 protected:
     static const PROFILE_LIST   m_profile[];            /**< @brief List of profile options */

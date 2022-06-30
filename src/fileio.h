@@ -262,7 +262,7 @@ public:
     /**
      * @brief Free #FileIO object
      */
-    virtual ~FileIO();
+    virtual ~FileIO() = default;
 
     /** @brief Allocate the correct object for type().
      *

@@ -63,11 +63,6 @@ FileIO::FileIO()
 
 }
 
-FileIO::~FileIO()
-{
-
-}
-
 FileIO * FileIO::alloc(VIRTUALTYPE type)
 {
     switch (type)

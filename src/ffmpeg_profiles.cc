@@ -21,9 +21,6 @@
 
 #include "ffmpeg_transcoder.h"
 
-FFmpeg_Profiles::FFmpeg_Profiles() {}
-FFmpeg_Profiles::~FFmpeg_Profiles() {}
-
 /**
  * @file ffmpeg_profiles.cc
  * @brief Make audience audience specific optimisations

@@ -434,7 +434,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 {
     BLURAY_CLIP_INFO     *clip = &ti->clips[0];
     BLURAY_TITLE_CHAPTER *chapter = &ti->chapters[chapter_idx];
-    char title_buf[PATH_MAX + 1];
+    std::string title_buf;
     int64_t duration;
 
     if (full_title)
@@ -447,7 +447,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02u. Title [%s]%s.%s",
+        strsprintf(title_buf, "%02u. Title [%s]%s.%s",
                  title_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),
                  is_main_title ? "+" : "",
@@ -463,7 +463,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             return true;
         }
 
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02u. Chapter %03u [%s]%s.%s",
+        strsprintf(title_buf, "%02u. Chapter %03u [%s]%s.%s",
                  title_idx + 1,
                  chapter_idx + 1,
                  replace_all(format_duration(duration), ":", "-").c_str(),

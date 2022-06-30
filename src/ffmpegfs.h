@@ -454,7 +454,7 @@ bool            check_hwaccel_dec_blocked(AVCodecID codec_id, int profile);
  * @param[in] off - Offset of the next entry or zero.
  * @return 1 if buffer is full, zero otherwise or if buf or filler is nullptr.
  */
-int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off);
+int             add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string & name, const struct stat *stbuf, off_t off);
 
 /**
  * @brief Make dot and double dot entries for a virtual directory.

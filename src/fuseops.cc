@@ -463,7 +463,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                     if (!(flags & VIRTUALFLAG_HIDDEN))
                     {
-                        if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
+                        if (add_fuse_entry(buf, filler, filename, &stbuf, 0))
                         {
                             break;
                         }
@@ -1471,7 +1471,7 @@ static LPVIRTUALFILE make_file(void *buf, fuse_fill_dir_t filler, VIRTUALTYPE ty
 
     init_stat(&stbuf, fsize, ftime, false);
 
-    if (add_fuse_entry(buf, filler, filename.c_str(), &stbuf, 0))
+    if (add_fuse_entry(buf, filler, filename, &stbuf, 0))
     {
         return nullptr;
     }
@@ -1858,7 +1858,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
                 }
             }
 
-            if (add_fuse_entry(buf, filler, destfile.c_str(), &stbuf, 0))
+            if (add_fuse_entry(buf, filler, destfile, &stbuf, 0))
             {
                 // break;
             }
@@ -2440,14 +2440,14 @@ static const FFmpegfs_Format * get_format(LPVIRTUALFILE newvirtualfile)
     return nullptr;
 }
 
-int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char * name, const struct stat *stbuf, off_t off)
+int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string & name, const struct stat *stbuf, off_t off)
 {
     if (buf == nullptr || filler == nullptr)
     {
         return 0;
     }
 
-    return filler(buf, name, stbuf, off);
+    return filler(buf, name.c_str(), stbuf, off);
 }
 
 int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)

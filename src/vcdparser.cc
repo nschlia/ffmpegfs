@@ -59,7 +59,7 @@ static bool create_vcd_virtualfile(const VcdEntries &vcd, const struct stat * st
 static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * statbuf, void * buf, fuse_fill_dir_t filler, bool full_title, int chapter_no)
 {
     const VcdChapter * chapter1 = vcd.get_chapter(chapter_no);
-    char title_buf[PATH_MAX + 1];
+    std::string title_buf;
     size_t size;
     int64_t duration;
 
@@ -67,13 +67,13 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     {
         size = static_cast<size_t>(chapter1->get_size());
         duration = chapter1->get_duration();
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
+        strsprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
     else
     {
         size = static_cast<size_t>(vcd.get_size());
         duration = vcd.get_duration();
-        snprintf(title_buf, sizeof(title_buf) - 1, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
+        strsprintf(title_buf, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
 
     std::string filename(title_buf);

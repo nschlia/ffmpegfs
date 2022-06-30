@@ -1839,15 +1839,6 @@ int strcasecmp(const std::string & s1, const std::string & s2)
     return ::strcasecmp(s1.c_str(), s2.c_str());
 }
 
-template<typename ... Args>
-std::string strsprintf(const std::string& format, Args ... args)
-{
-    size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...)) + 1; // Extra space for '\0'
-    std::unique_ptr<char[]> buf(new(std::nothrow) char[size]);
-    std::snprintf(buf.get(), size, format.c_str(), args ...);
-    return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
-}
-
 int reg_compare(const std::string & value, const std::string & pattern, std::regex::flag_type flag)
 {
     int reti;

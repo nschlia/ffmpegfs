@@ -135,7 +135,7 @@ CLANGCHECKS += ,clang-analyzer-*
 # llvm- 	Checks related to the LLVM coding conventions.
 # misc- 	Checks that we didn’t have a better category for.
 # modernize- 	Checks that advocate usage of modern (currently “modern” means “C++11”) language constructs.
-CLANGCHECKS += ,modernize-*,-modernize-use-trailing-return-type
+CLANGCHECKS += ,modernize-*,-modernize-use-trailing-return-type,-modernize-use-auto
 # mpi- 	Checks related to MPI (Message Passing Interface).
 # performance- 	Checks that target performance-related issues.
 CLANGCHECKS += ,performance-*

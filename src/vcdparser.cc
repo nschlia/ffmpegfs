@@ -67,13 +67,13 @@ static bool create_vcd_virtualfile(const VcdEntries & vcd, const struct stat * s
     {
         size = static_cast<size_t>(chapter1->get_size());
         duration = chapter1->get_duration();
-        strsprintf(title_buf, "%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
+        title_buf = strsprintf("%02d. Chapter %03d [%s].%s", chapter1->get_track_no(), chapter_no + 1, replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
     else
     {
         size = static_cast<size_t>(vcd.get_size());
         duration = vcd.get_duration();
-        strsprintf(title_buf, "%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
+        title_buf = strsprintf("%02d. Title [%s].%s", chapter1->get_track_no(), replace_all(format_duration(duration), ":", "-").c_str(), ffmpeg_format[0].fileext().c_str()); // can safely assume this a video
     }
 
     LPVIRTUALFILE virtualfile = nullptr;

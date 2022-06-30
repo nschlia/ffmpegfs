@@ -1222,8 +1222,7 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 
     if (lib_exists)
     {
-        strsprintf(info,
-                   "lib%-17s: %d.%d.%d\n",
+        info = strsprintf("lib%-17s: %d.%d.%d\n",
                    libname,
                    version_minor,
                    version_major,

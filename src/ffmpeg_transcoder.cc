@@ -4898,9 +4898,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                char buf[20];
-                sprintf(buf, "%i", m_virtualfile->m_cuesheet_track.m_trackno);
-                value = buf;
+                value = strsprintf("%i", m_virtualfile->m_cuesheet_track.m_trackno);
             }
         }
 
@@ -6510,8 +6508,9 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         }
 
         // buffer video source: the decoded frames from the decoder will be inserted here.
-        char args[1024];
-        snprintf(args, sizeof(args), "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+        std::string args;
+
+        args = strsprintf("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
                  codec_ctx->width, codec_ctx->height, pix_fmt,
                  time_base.num, time_base.den,
                  codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
@@ -6524,7 +6523,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         //
         //args.snprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
 
-        ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args, nullptr, m_filter_graph);
+        ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args.c_str(), nullptr, m_filter_graph);
         if (ret < 0)
         {
             Logging::error(virtname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret).c_str());

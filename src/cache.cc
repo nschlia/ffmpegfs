@@ -120,9 +120,9 @@ Cache::Cache()
 Cache::~Cache()
 {
     // Clean up memory
-    for (cache_t::iterator p = m_cache.begin(); p != m_cache.end(); ++p)
+    for (auto& [key, value] : m_cache)
     {
-        static_cast<Cache_Entry *>(p->second)->destroy();
+        value->destroy();
     }
 
     m_cache.clear();
@@ -1107,20 +1107,19 @@ bool Cache::prune_expired()
 
     if (ret == SQLITE_DONE)
     {
-        for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); ++it)
+        for (const auto& [key, value] : keys)
         {
-            const cache_key_t & key = *it;
-            Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.first.c_str(), key.second.c_str());
+            Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.c_str(), value.c_str());
 
-            cache_t::iterator p = m_cache.find(key);
+            cache_t::iterator p = m_cache.find(make_pair(key, value));
             if (p != m_cache.end())
             {
                 delete_entry(&p->second, CACHE_CLOSE_DELETE);
             }
 
-            if (delete_info(key.first, key.second))
+            if (delete_info(key, value))
             {
-                remove_cachefile(key.first, key.second);
+                remove_cachefile(key, value);
             }
         }
     }
@@ -1176,21 +1175,19 @@ bool Cache::prune_cache_size()
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); ++it)
+            for (const auto& [key, value] : keys)
             {
-                const cache_key_t & key = *it;
+                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.c_str(), value.c_str());
 
-                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
-
-                cache_t::iterator p = m_cache.find(key);
+                cache_t::iterator p = m_cache.find(make_pair(key, value));
                 if (p != m_cache.end())
                 {
                     delete_entry(&p->second, CACHE_CLOSE_DELETE);
                 }
 
-                if (delete_info(key.first, key.second))
+                if (delete_info(key, value))
                 {
-                    remove_cachefile(key.first, key.second);
+                    remove_cachefile(key, value);
                 }
 
                 total_size -= filesizes[n++];
@@ -1265,21 +1262,19 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
-            for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); ++it)
+            for (const auto& [key, value] : keys)
             {
-                const cache_key_t & key = *it;
+                Logging::trace(cachepath, "Pruning: %1 Type: %2", key.c_str(), value.c_str());
 
-                Logging::trace(cachepath, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
-
-                cache_t::iterator p = m_cache.find(key);
+                cache_t::iterator p = m_cache.find(make_pair(key, value));
                 if (p != m_cache.end())
                 {
                     delete_entry(&p->second, CACHE_CLOSE_DELETE);
                 }
 
-                if (delete_info(key.first, key.second))
+                if (delete_info(key, value))
                 {
-                    remove_cachefile(key.first, key.second);
+                    remove_cachefile(key, value);
                 }
 
                 free_bytes += filesizes[n++];
@@ -1345,21 +1340,19 @@ bool Cache::clear()
 
     if (ret == SQLITE_DONE)
     {
-        for (std::vector<cache_key_t>::const_iterator it = keys.cbegin(); it != keys.cend(); ++it)
+        for (const auto& [key, value] : keys)
         {
-            const cache_key_t & key = *it;
+            Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.c_str(), value.c_str());
 
-            Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.first.c_str(), key.second.c_str());
-
-            cache_t::iterator p = m_cache.find(key);
+            cache_t::iterator p = m_cache.find(make_pair(key, value));
             if (p != m_cache.end())
             {
                 delete_entry(&p->second, CACHE_CLOSE_DELETE);
             }
 
-            if (delete_info(key.first, key.second))
+            if (delete_info(key, value))
             {
-                remove_cachefile(key.first, key.second);
+                remove_cachefile(key, value);
             }
         }
     }

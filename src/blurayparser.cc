@@ -472,21 +472,19 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
 
     }
 
-    std::string filename(title_buf);
-
     LPVIRTUALFILE virtualfile = nullptr;
     if (!ffmpeg_format[0].is_multiformat())
     {
-        virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + filename, statbuf);
+        virtualfile = insert_file(VIRTUALTYPE_BLURAY, path + title_buf, statbuf);
     }
     else
     {
-        virtualfile = insert_dir(VIRTUALTYPE_BLURAY, path + filename, statbuf);
+        virtualfile = insert_dir(VIRTUALTYPE_BLURAY, path + title_buf, statbuf);
     }
 
     if (virtualfile == nullptr)
     {
-        Logging::error(path, "Failed to create virtual path: %1", (path + filename).c_str());
+        Logging::error(path, "Failed to create virtual path: %1", (path + title_buf).c_str());
         errno = EIO;
         return false;
     }

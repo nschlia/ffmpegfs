@@ -248,7 +248,7 @@ static bool is_passthrough(const std::string & ext)
     return (passthrough_set.find(ext) != passthrough_set.cend());
 }
 
-void init_fuse_ops(void)
+void init_fuse_ops()
 {
     memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
     ffmpegfs_ops.getattr  = ffmpegfs_getattr;

@@ -154,6 +154,6 @@ size_t          transcoder_buffer_tell(Cache_Entry* cache_entry, uint32_t segmen
  *
  * Send signal to exit transcoding (ending all transcoder threads).
  */
-void            transcoder_exit(void);
+void            transcoder_exit();
 
 #endif

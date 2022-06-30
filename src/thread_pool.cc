@@ -133,7 +133,7 @@ void thread_pool::init(unsigned int num_threads /*= 0*/)
 
     for(unsigned int i = 0; i < m_num_threads; i++)
     {
-        m_thread_pool.push_back(std::thread(&thread_pool::loop_function_starter, std::ref(*this)));
+        m_thread_pool.emplace_back(std::thread(&thread_pool::loop_function_starter, std::ref(*this)));
     }
 }
 

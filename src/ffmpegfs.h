@@ -157,7 +157,7 @@ extern struct FFMPEGFS_PARAMS
      * @brief Check for smart transcode mode
      * @return true if smart transcode is active, false if not
      */
-    bool                smart_transcode(void) const;
+    bool                smart_transcode() const;
 
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
@@ -260,7 +260,7 @@ extern thread_pool*     tp;
 /**
  * @brief Initialise FUSE operation structure.
  */
-void            init_fuse_ops(void);
+void            init_fuse_ops();
 
 /**
  * @brief Custom FFmpeg log function. Used with av_log_set_callback().
@@ -290,21 +290,21 @@ void            transcoder_cache_path(std::string & path);
  * @brief Initialise transcoder, create cache.
  * @return Returns true on success; false on error. Check errno for details.
  */
-bool            transcoder_init(void);
+bool            transcoder_init();
 /**
  * @brief Free transcoder.
  */
-void            transcoder_free(void);
+void            transcoder_free();
 /**
  * @brief Run cache maintenance.
  * @return Returns true on success; false on error. Check errno for details.
  */
-bool            transcoder_cache_maintenance(void);
+bool            transcoder_cache_maintenance();
 /**
  * @brief Clear transcoder cache.
  * @return Returns true on success; false on error. Check errno for details.
  */
-bool            transcoder_cache_clear(void);
+bool            transcoder_cache_clear();
 /**
  * @brief Add new virtual file to internal list.
  *

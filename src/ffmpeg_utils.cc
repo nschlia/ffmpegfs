@@ -2390,7 +2390,7 @@ void stat_set_size(struct stat *st, size_t size)
     st->st_blocks     = (st->st_size + 512 - 1) / 512;
 }
 
-bool detect_docker(void)
+bool detect_docker()
 {
     try
     {

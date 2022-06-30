@@ -1015,7 +1015,7 @@ void                stat_set_size(struct stat *st, size_t size);
  * @brief Detect if we are running under Docker.
  * @return Returns true, if running under Docker, or false if not.
  */
-bool                detect_docker(void);
+bool                detect_docker();
 
 /**
  * @brief Iterate through all elements in map and search for the passed element.

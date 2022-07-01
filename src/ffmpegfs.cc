@@ -710,7 +710,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         }
         else if (!reti)
         {
-            *bitrate = static_cast<BITRATE>(atol(data.c_str()));
+            *bitrate = static_cast<BITRATE>(std::stol(data));
             return 0;   // OK
         }
 
@@ -723,7 +723,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         }
         else if (!reti)
         {
-            *bitrate = static_cast<BITRATE>(atof(data.c_str()) * 1000);
+            *bitrate = static_cast<BITRATE>(std::stof(data) * 1000);
             return 0;   // OK
         }
 
@@ -736,7 +736,7 @@ static int get_bitrate(const std::string & arg, BITRATE *bitrate)
         }
         else if (!reti)
         {
-            *bitrate = static_cast<BITRATE>(atof(data.c_str()) * 1000000);
+            *bitrate = static_cast<BITRATE>(std::stof(data) * 1000000);
             return 0;   // OK
         }
 
@@ -778,7 +778,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
         }
         else if (!reti)
         {
-            *samplerate = atoi(data.c_str());
+            *samplerate = std::stoi(data);
             return 0;   // OK
         }
 
@@ -791,7 +791,7 @@ static int get_samplerate(const std::string & arg, int * samplerate)
         }
         else if (!reti)
         {
-            *samplerate = static_cast<int>(atof(data.c_str()) * 1000);
+            *samplerate = static_cast<int>(std::stof(data) * 1000);
             return 0;   // OK
         }
 
@@ -888,7 +888,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
         else if (!reti)
         {
-            *time = static_cast<time_t>(atol(data.c_str()));
+            *time = static_cast<time_t>(std::stol(data));
             return 0;   // OK
         }
 
@@ -901,7 +901,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
         else if (!reti)
         {
-            *time = static_cast<time_t>(atof(data.c_str()) * 60);
+            *time = static_cast<time_t>(std::stof(data) * 60);
             return 0;   // OK
         }
 
@@ -914,7 +914,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
         else if (!reti)
         {
-            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60);
+            *time = static_cast<time_t>(std::stof(data) * 60 * 60);
             return 0;   // OK
         }
 
@@ -927,7 +927,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
         else if (!reti)
         {
-            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24);
+            *time = static_cast<time_t>(std::stof(data) * 60 * 60 * 24);
             return 0;   // OK
         }
 
@@ -940,7 +940,7 @@ static int get_time(const std::string & arg, time_t *time)
         }
         else if (!reti)
         {
-            *time = static_cast<time_t>(atof(data.c_str()) * 60 * 60 * 24 * 7);
+            *time = static_cast<time_t>(std::stof(data) * 60 * 60 * 24 * 7);
             return 0;   // OK
         }
 
@@ -987,7 +987,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
         else if (!reti)
         {
-            *size = static_cast<size_t>(atol(data.c_str()));
+            *size = static_cast<size_t>(std::stol(data));
             return 0;   // OK
         }
 
@@ -1000,7 +1000,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
         else if (!reti)
         {
-            *size = static_cast<size_t>(atof(data.c_str()) * 1024);
+            *size = static_cast<size_t>(std::stof(data) * 1024);
             return 0;   // OK
         }
 
@@ -1013,7 +1013,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
         else if (!reti)
         {
-            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024);
+            *size = static_cast<size_t>(std::stof(data) * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -1026,7 +1026,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
         else if (!reti)
         {
-            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024);
+            *size = static_cast<size_t>(std::stof(data) * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -1039,7 +1039,7 @@ static int get_size(const std::string & arg, size_t *size)
         }
         else if (!reti)
         {
-            *size = static_cast<size_t>(atof(data.c_str()) * 1024 * 1024 * 1024 * 1024);
+            *size = static_cast<size_t>(std::stof(data) * 1024 * 1024 * 1024 * 1024);
             return 0;   // OK
         }
 
@@ -1552,7 +1552,7 @@ static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP 
         {
             nProfilesFound++;
             // Block codec and profile
-            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, std::atoi(profile.c_str())));
+            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, std::stoi(profile)));
         }
 
         if (!nProfilesFound)
@@ -1615,7 +1615,7 @@ static int get_value(const std::string & arg, int *value)
 
     if (pos != std::string::npos)
     {
-        *value = atoi(arg.substr(pos + 1).c_str());
+        *value = std::stoi(arg.substr(pos + 1));
 
         return 0;
     }
@@ -1712,7 +1712,7 @@ static int get_value(const std::string & arg, double *value)
 
     if (pos != std::string::npos)
     {
-        *value = atof(arg.substr(pos + 1).c_str());
+        *value = std::stof(arg.substr(pos + 1));
 
         return 0;
     }

@@ -4929,7 +4929,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                m_out.m_id3v1.m_title_no = static_cast<char>(atoi(value.c_str()));
+                m_out.m_id3v1.m_title_no = static_cast<char>(std::stoi(value));
             }
         }
     }

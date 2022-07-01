@@ -152,7 +152,7 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
 
     std::string virtfilename;
 
-    virtfilename = strsprintf("%02d. %s - %s [%s].%s",
+    strsprintf(&virtfilename, "%02d. %s - %s [%s].%s",
              titleno,
              performer.c_str(),
              title.c_str(),

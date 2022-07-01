@@ -4898,7 +4898,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
             }
             else if (!strcasecmp(tag->key, "TRACK"))
             {
-                value = strsprintf("%i", m_virtualfile->m_cuesheet_track.m_trackno);
+                strsprintf(&value, "%i", m_virtualfile->m_cuesheet_track.m_trackno);
             }
         }
 
@@ -6510,7 +6510,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         // buffer video source: the decoded frames from the decoder will be inserted here.
         std::string args;
 
-        args = strsprintf("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+        strsprintf(&args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
                  codec_ctx->width, codec_ctx->height, pix_fmt,
                  time_base.num, time_base.den,
                  codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));

@@ -1222,7 +1222,7 @@ static std::string ffmpeg_libinfo(bool lib_exists, __attribute__((unused)) unsig
 
     if (lib_exists)
     {
-        info = strsprintf("lib%-17s: %d.%d.%d\n",
+        strsprintf(&info, "lib%-17s: %d.%d.%d\n",
                    libname,
                    version_minor,
                    version_major,
@@ -1502,7 +1502,8 @@ std::string format_number(int64_t value)
         return "unset";
     }
 
-    return strsprintf("%" PRId64, value);
+    std::string buffer;
+    return strsprintf(&buffer, "%" PRId64, value);
 }
 
 std::string format_bitrate(BITRATE value)
@@ -1514,15 +1515,18 @@ std::string format_bitrate(BITRATE value)
 
     if (value > 1000000)
     {
-        return strsprintf("%.2f Mbps", static_cast<double>(value) / 1000000);
+        std::string buffer;
+        return strsprintf(&buffer, "%.2f Mbps", static_cast<double>(value) / 1000000);
     }
     else if (value > 1000)
     {
-        return strsprintf("%.1f kbps", static_cast<double>(value) / 1000);
+        std::string buffer;
+        return strsprintf(&buffer, "%.1f kbps", static_cast<double>(value) / 1000);
     }
     else
     {
-        return strsprintf("%" PRId64 " bps", value);
+        std::string buffer;
+        return strsprintf(&buffer, "%" PRId64 " bps", value);
     }
 }
 
@@ -1535,11 +1539,13 @@ std::string format_samplerate(int value)
 
     if (value < 1000)
     {
-        return strsprintf("%u Hz", value);
+        std::string buffer;
+        return strsprintf(&buffer, "%u Hz", value);
     }
     else
     {
-        return strsprintf("%.3f kHz", static_cast<double>(value) / 1000);
+        std::string buffer;
+        return strsprintf(&buffer, "%.3f kHz", static_cast<double>(value) / 1000);
     }
 }
 
@@ -1554,22 +1560,23 @@ std::string format_duration(int64_t value, uint32_t fracs /*= 3*/)
     }
 
     std::string buffer;
+    std::string duration;
     unsigned hours   = static_cast<unsigned>((value / AV_TIME_BASE) / (3600));
     unsigned mins    = static_cast<unsigned>(((value / AV_TIME_BASE) % 3600) / 60);
     unsigned secs    = static_cast<unsigned>((value / AV_TIME_BASE) % 60);
 
     if (hours)
     {
-        buffer = strsprintf("%02u:", hours);
+        duration = strsprintf(&buffer, "%02u:", hours);
     }
 
-    buffer += strsprintf("%02u:%02u", mins, secs);
+    duration += strsprintf(&buffer, "%02u:%02u", mins, secs);
     if (fracs)
     {
         unsigned decimals    = static_cast<unsigned>(value % AV_TIME_BASE);
-        buffer += strsprintf(".%0*u", sizeof(X(AV_TIME_BASE)) - 2, decimals).substr(0, fracs + 1);
+        duration += strsprintf(&buffer, ".%0*u", sizeof(X(AV_TIME_BASE)) - 2, decimals).substr(0, fracs + 1);
     }
-    return buffer;
+    return duration;
 }
 
 std::string format_time(time_t value)
@@ -1585,6 +1592,7 @@ std::string format_time(time_t value)
     }
 
     std::string buffer;
+    std::string time;
     int weeks;
     int days;
     int hours;
@@ -1603,25 +1611,25 @@ std::string format_time(time_t value)
 
     if (weeks)
     {
-        buffer = strsprintf("%iw ", weeks);
+        time = strsprintf(&buffer, "%iw ", weeks);
     }
     if (days)
     {
-        buffer += strsprintf("%id ", days);
+        time += strsprintf(&buffer, "%id ", days);
     }
     if (hours)
     {
-        buffer += strsprintf("%ih ", hours);
+        time += strsprintf(&buffer, "%ih ", hours);
     }
     if (mins)
     {
-        buffer += strsprintf("%im ", mins);
+        time += strsprintf(&buffer, "%im ", mins);
     }
     if (secs)
     {
-        buffer += strsprintf("%is ", secs);
+        time += strsprintf(&buffer, "%is ", secs);
     }
-    return buffer;
+    return time;
 }
 
 std::string format_size(uint64_t value)
@@ -1638,29 +1646,35 @@ std::string format_size(uint64_t value)
 
     if (value > 1024*1024*1024*1024LL)
     {
-        return strsprintf("%.3f TB", static_cast<double>(value) / (1024*1024*1024*1024LL));
+        std::string buffer;
+        return strsprintf(&buffer, "%.3f TB", static_cast<double>(value) / (1024*1024*1024*1024LL));
     }
     else if (value > 1024*1024*1024)
     {
-        return strsprintf("%.2f GB", static_cast<double>(value) / (1024*1024*1024));
+        std::string buffer;
+        return strsprintf(&buffer, "%.2f GB", static_cast<double>(value) / (1024*1024*1024));
     }
     else if (value > 1024*1024)
     {
-        return strsprintf("%.1f MB", static_cast<double>(value) / (1024*1024));
+        std::string buffer;
+        return strsprintf(&buffer, "%.1f MB", static_cast<double>(value) / (1024*1024));
     }
     else if (value > 1024)
     {
-        return strsprintf("%.1f KB", static_cast<double>(value) / (1024));
+        std::string buffer;
+        return strsprintf(&buffer, "%.1f KB", static_cast<double>(value) / (1024));
     }
     else
     {
-        return strsprintf("%" PRIu64 " bytes", value);
+        std::string buffer;
+        return strsprintf(&buffer, "%" PRIu64 " bytes", value);
     }
 }
 
 std::string format_size_ex(uint64_t value)
 {
-    return format_size(value) + strsprintf(" (%" PRIu64 " bytes)", value);
+    std::string buffer;
+    return format_size(value) + strsprintf(&buffer, " (%" PRIu64 " bytes)", value);
 }
 
 std::string format_result_size(size_t size_resulting, size_t size_predicted)
@@ -1681,13 +1695,15 @@ std::string format_result_size_ex(size_t size_resulting, size_t size_predicted)
 {
     if (size_resulting >= size_predicted)
     {
+        std::string buffer;
         size_t value = size_resulting - size_predicted;
-        return format_size(value) + strsprintf(" (%zu bytes)", value);
+        return format_size(value) + strsprintf(&buffer, " (%zu bytes)", value);
     }
     else
     {
+        std::string buffer;
         size_t value = size_predicted - size_resulting;
-        return "-" + format_size(value) + strsprintf(" (-%zu bytes)", value);
+        return "-" + format_size(value) + strsprintf(&buffer, " (-%zu bytes)", value);
     }
 }
 
@@ -2067,7 +2083,8 @@ bool check_ignore(size_t size, size_t offset)
 
 std::string make_filename(uint32_t file_no, const std::string & fileext)
 {
-    return strsprintf("%06u.%s", file_no, fileext.c_str());
+    std::string buffer;
+    return strsprintf(&buffer, "%06u.%s", file_no, fileext.c_str());
 }
 
 bool file_exists(const std::string & filename)

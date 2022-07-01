@@ -310,7 +310,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // Single chapter
             if (angles > 1)
             {
-                title_buf = strsprintf("%02d. Chapter %03d (Angle %d) [%s].%s",
+                strsprintf(&title_buf, "%02d. Chapter %03d (Angle %d) [%s].%s",
                         title_no,
                         chapter_no,
                         angle_no,
@@ -319,7 +319,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
             else
             {
-                title_buf = strsprintf("%02d. Chapter %03d [%s].%s",
+                strsprintf(&title_buf, "%02d. Chapter %03d [%s].%s",
                         title_no,
                         chapter_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
@@ -331,7 +331,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             // Full title
             if (angles > 1)
             {
-                title_buf = strsprintf("%02d. Title (Angle %d) [%s].%s",
+                strsprintf(&title_buf, "%02d. Title (Angle %d) [%s].%s",
                         title_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
@@ -339,7 +339,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
             }
             else
             {
-                title_buf = strsprintf("%02d. Title [%s].%s",
+                strsprintf(&title_buf, "%02d. Title [%s].%s",
                         title_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
                         ffmpeg_format[0].fileext().c_str());

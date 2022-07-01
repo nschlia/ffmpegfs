@@ -2058,7 +2058,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
                 "#EXT-X-STREAM-INF:PROGRAM-ID=1\n"
                 "index_0_av.m3u8\n";
 
-        index_0_av_contents = strsprintf("#EXTM3U\n"
+        strsprintf(&index_0_av_contents, "#EXTM3U\n"
                 "#EXT-X-TARGETDURATION:%i\n"
                 "#EXT-X-ALLOW-CACHE:YES\n"
                 "#EXT-X-PLAYLIST-TYPE:VOD\n"
@@ -2104,11 +2104,11 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 
             if (file_no < virtualfile->get_segment_count())
             {
-                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
+                strsprintf(&buffer, "#EXTINF:%.3f,\n", static_cast<double>(params.m_segment_duration) / AV_TIME_BASE);
             }
             else
             {
-                buffer = strsprintf("#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
+                strsprintf(&buffer, "#EXTINF:%.3f,\n", static_cast<double>(remaining_duration) / AV_TIME_BASE);
             }
 
             index_0_av_contents += buffer;

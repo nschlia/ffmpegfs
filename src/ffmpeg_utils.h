@@ -727,17 +727,20 @@ std::string         replace_all(std::string * str, const std::string& from, cons
 bool                replace_start(std::string *str, const std::string& from, const std::string& to = "");
 /**
  * @brief Format a std::string sprintf-like.
+ * @param[out] str - The pointer to std::string object where the resulting string is stored.
  * @param[in] format - sprintf-like format string.
  * @param[in] args - Arguments.
  * @return Returns the formatted string.
  */
 template<typename ... Args>
-std::string strsprintf(const std::string& format, Args ... args)
+const std::string & strsprintf(std::string *str, const std::string & format, Args ... args)
 {
     size_t size = static_cast<size_t>(snprintf(nullptr, 0, format.c_str(), args ...)) + 1; // Extra space for '\0'
     std::unique_ptr<char[]> buf(new(std::nothrow) char[size]);
     std::snprintf(buf.get(), size, format.c_str(), args ...);
-    return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+    str->clear();
+    str->insert(0, buf.get(), size - 1); // We don't want the '\0' inside
+    return *str;
 }
 /**
  * @brief strcasecmp() equivalent for std::string.

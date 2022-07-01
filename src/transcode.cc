@@ -1151,7 +1151,7 @@ void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
         }
         default:
         {
-            category = strsprintf("CAT %3i ", static_cast<int>(avc->category));
+            strsprintf(&category, "CAT %3i ", static_cast<int>(avc->category));
             break;
         }
         }

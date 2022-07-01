@@ -293,12 +293,12 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     }
 
     // Try to find direct match, prefer same as input stream
-    for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+    for (const auto & subtitle_codec : it->second.m_subtitle_codec)
     {
         // Also match AV_CODEC_ID_DVD_SUBTITLE to AV_CODEC_ID_DVB_SUBTITLE
-        if (*it2 == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && *it2 == AV_CODEC_ID_DVB_SUBTITLE))
+        if (subtitle_codec == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && subtitle_codec == AV_CODEC_ID_DVB_SUBTITLE))
         {
-            return *it2;
+            return subtitle_codec;
         }
     }
 
@@ -306,22 +306,22 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     if (is_text_codec(codec_id))
     {
         // Find a text based codec in the list
-        for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+        for (const auto & subtitle_codec : it->second.m_subtitle_codec)
         {
-            if (is_text_codec(*it2))
+            if (is_text_codec(subtitle_codec))
             {
-                return *it2;
+                return subtitle_codec;
             }
         }
     }
     else
     {
         // Find a bitmap based codec in the list
-        for (CODEC_VECT::const_iterator it2 = it->second.m_subtitle_codec.cbegin(); it2 != it->second.m_subtitle_codec.cend(); ++it2)
+        for (const auto & subtitle_codec : it->second.m_subtitle_codec)
         {
-            if (!is_text_codec(*it2))
+            if (!is_text_codec(subtitle_codec))
             {
-                return *it2;
+                return subtitle_codec;
             }
         }
     }

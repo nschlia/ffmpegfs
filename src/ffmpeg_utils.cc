@@ -127,14 +127,14 @@ Format_Options::Format_Options()
 }
 
 Format_Options::Format_Options(
-        const std::string & format_name,
-        const std::string & fileext,
-        const FORMAT_MAP &  format,
-        bool                albumart_supported
+        std::string format_name,
+        std::string fileext,
+        FORMAT_MAP  format,
+        bool        albumart_supported
         )
-    : m_format_name(format_name)
-    , m_fileext(fileext)
-    , m_format_map(format)
+    : m_format_name(std::move(format_name))
+    , m_fileext(std::move(fileext))
+    , m_format_map(std::move(format))
     , m_albumart_supported(albumart_supported)
 {
 

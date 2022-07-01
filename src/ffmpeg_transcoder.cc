@@ -1322,9 +1322,9 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
     }
 
-    for (StreamRef_map::const_iterator it = m_out.m_subtitle.cbegin(); it != m_out.m_subtitle.cend(); ++it)
+    for (const auto & [key, value] : m_out.m_subtitle)
     {
-        subtitle_info(true, m_out.m_format_ctx, it->second.m_stream);
+        subtitle_info(true, m_out.m_format_ctx, value.m_stream);
     }
 
     // Open for read/write
@@ -1384,13 +1384,13 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         }
     }
 
-    for (StreamRef_map::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    for (auto & [key, value] : m_out.m_subtitle)
     {
-        StreamRef * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(it->first));
+        StreamRef * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(key));
         if (out_streamref != nullptr)
         {
-            it->second.m_start_time                 = it->second.m_stream->start_time;
-            out_streamref->m_start_time             = ffmpeg_rescale_q_rnd(it->second.m_stream->start_time, it->second.m_stream->time_base, out_streamref->m_stream->time_base);
+            value.m_start_time                      = value.m_stream->start_time;
+            out_streamref->m_start_time             = ffmpeg_rescale_q_rnd(value.m_stream->start_time, value.m_stream->time_base, out_streamref->m_stream->time_base);
             out_streamref->m_stream->start_time     = out_streamref->m_start_time;
         }
     }
@@ -2734,11 +2734,11 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (!params.m_noalbumarts && m_current_format->albumart_supported())
     {
-        for (size_t n = 0; n < m_in.m_album_art.size(); n++)
+        for (auto & album_art : m_in.m_album_art)
         {
             int ret;
 
-            ret = add_albumart_stream(m_in.m_album_art.at(n).m_codec_ctx.get());
+            ret = add_albumart_stream(album_art.m_codec_ctx.get());
             if (ret < 0)
             {
                 return ret;
@@ -2775,9 +2775,9 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
 int FFmpeg_Transcoder::add_subtitle_streams()
 {
-    for (StreamRef_map::iterator it = m_in.m_subtitle.begin(); it != m_in.m_subtitle.end(); ++it)
+    for (auto & [key, value] : m_in.m_subtitle)
     {
-        AVCodecID codec_id = m_current_format->subtitle_codec(it->second.m_stream->codecpar->codec_id); // Get matching output codec
+        AVCodecID codec_id = m_current_format->subtitle_codec(value.m_stream->codecpar->codec_id); // Get matching output codec
 
         if (codec_id == AV_CODEC_ID_NONE)
         {
@@ -2785,7 +2785,7 @@ int FFmpeg_Transcoder::add_subtitle_streams()
             continue;
         }
 
-        if (map_in_to_out_stream(it->second.m_stream_idx) != INVALID_STREAM)
+        if (map_in_to_out_stream(value.m_stream_idx) != INVALID_STREAM)
         {
             // Already existing
             continue;
@@ -2795,7 +2795,7 @@ int FFmpeg_Transcoder::add_subtitle_streams()
 
         int ret;
 
-        ret = add_subtitle_stream(codec_id, it->second);
+        ret = add_subtitle_stream(codec_id, value);
         if (ret < 0)
         {
             return ret;

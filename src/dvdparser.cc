@@ -215,9 +215,9 @@ static int64_t BCDtime(const dvd_time_t * dvd_time)
     time[3] = dvd_time->frame_u & 0x3F;     // Number of frame
 
     // convert BCD (two digits) to binary
-    for (int i = 0; i < 4; i++)
+    for (long & tm : time)
     {
-        time[i] = ((time[i] & 0xf0) >> 4) * 10 + (time[i] & 0x0f);
+        tm = ((tm & 0xf0) >> 4) * 10 + (tm & 0x0f);
     }
 
     return (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + static_cast<int64_t>(static_cast<double>(AV_TIME_BASE * time[3]) / av_q2d(framerate)));

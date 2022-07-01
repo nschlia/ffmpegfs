@@ -379,9 +379,9 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                 }
 
                 // Process files
-                for (std::map<const std::string, struct stat>::iterator it = files.begin(); it != files.end(); ++it)
+                for (auto& [key, value] : files)
                 {
-                    std::string origname(it->first);
+                    std::string origname(key);
 
                     if (is_blocked(origname))
                     {
@@ -389,8 +389,8 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                     }
 
                     std::string origfile;
-                    std::string filename(it->first);
-                    struct stat & stbuf = it->second;
+                    std::string filename(key);
+                    struct stat & stbuf = value;
                     int flags = 0;
 
                     origfile = origpath + origname;

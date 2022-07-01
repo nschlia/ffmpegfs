@@ -2255,7 +2255,7 @@ static std::string get_number(const char *path, uint32_t *value)
     // Get frame number
     remove_path(&filename);
 
-    *value = static_cast<uint32_t>(atoi(filename.c_str())); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
+    *value = static_cast<uint32_t>(std::stoi(filename)); // Extract frame or segment number. May be more fancy in the future. Currently just get number from filename part.
 
     return filename;
 }

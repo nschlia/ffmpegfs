@@ -294,11 +294,10 @@ public:
      * @param[in] format - Format options: Possible audio/video codecs and sample formats
      * @param[in] albumart_supported - true if album arts are supported (eg. mp3) or false if not (e.g. wav, aiff
      */
-    Format_Options(
-            const std::string & format_name,
-            const std::string & fileext,
-            const FORMAT_MAP &  format,
-            bool                albumart_supported
+    Format_Options(std::string format_name,
+            std::string fileext,
+            FORMAT_MAP format,
+            bool albumart_supported
             );
 
     /**

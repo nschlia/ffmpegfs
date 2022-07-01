@@ -6511,9 +6511,9 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         std::string args;
 
         strsprintf(&args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
-                 codec_ctx->width, codec_ctx->height, pix_fmt,
-                 time_base.num, time_base.den,
-                 codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
+                   codec_ctx->width, codec_ctx->height, pix_fmt,
+                   time_base.num, time_base.den,
+                   codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
 
         //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
         //if (fr.num && fr.den)
@@ -7760,10 +7760,26 @@ int FFmpeg_Transcoder::add_external_subtitle_streams()
 
         std::regex regex(regex_string, std::regex::ECMAScript);
 
-        ret = foreach_subtitle_file(file.parent_path(), regex, 0, std::bind(&FFmpeg_Transcoder::add_external_subtitle_stream, this, std::placeholders::_1, std::placeholders::_2));
+        //ret = foreach_subtitle_file(
+        //            file.parent_path(),
+        //            regex,
+        //            0,
+        //            std::bind(&FFmpeg_Transcoder::add_external_subtitle_stream, this, std::placeholders::_1, std::placeholders::_2));
 
-        // Ugly lambda would also be possible
-        //ret = foreach_subititle_file(
+        fprintf(stderr, "XXX\n");
+        // clang-tidy now recommends a lambda
+        ret = foreach_subtitle_file(
+                    file.parent_path(),
+                    regex,
+                    0,
+                    [this](const std::string & subtitle_file, const std::optional<std::string> & language)
+        {
+            add_external_subtitle_stream(std::forward<decltype(subtitle_file)>(subtitle_file), std::forward<decltype(language)>(language));
+            return 0;
+        });
+
+        // Ugly, but a lambda would also be possible
+        //ret = foreach_subtitle_file(
         //            file.parent_path(),
         //            regex,
         //            0,

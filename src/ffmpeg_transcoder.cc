@@ -5662,6 +5662,11 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
         }
     }
 
+    if (match < 0)
+    {
+        return 0;
+    }
+
     width   = m_prores_bitrate[match].m_width;
     height  = m_prores_bitrate[match].m_height;
 

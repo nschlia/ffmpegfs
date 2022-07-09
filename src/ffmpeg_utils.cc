@@ -2515,3 +2515,12 @@ std::string implode(const STRINGSET & s)
     str.pop_back();
     return str;
 }
+
+void save_free(void **p)
+{
+    void * tmp = __atomic_exchange_n(p, nullptr, __ATOMIC_RELEASE);
+    if (tmp != nullptr)
+    {
+        free(tmp);
+    }
+}

@@ -1079,4 +1079,23 @@ typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set 
  */
 std::string         implode(const STRINGSET & s);
 
+/**
+ * @brief Savely delete memory: Pointer will be set to nullptr before deleted is actually called.
+ * @param[inout] p - Pointer to delete
+ */
+template<class T>
+void save_delete(T **p)
+{
+    T * tmp = __atomic_exchange_n(p, nullptr, __ATOMIC_RELEASE);
+    if (tmp != nullptr)
+    {
+        delete tmp;
+    }
+}
+
+/**
+ * @brief Savely free memory: Pointer will be set to nullptr before it is actually freed.
+ * @param[inout] p - Pointer to delete
+ */
+void save_free(void **p);
 #endif

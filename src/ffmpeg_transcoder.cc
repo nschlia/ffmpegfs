@@ -6419,8 +6419,7 @@ bool FFmpeg_Transcoder::close_input_file()
         if (m_close_fileio && m_fileio != nullptr)
         {
             m_fileio->close();
-            delete m_fileio;
-            m_fileio = nullptr;
+            save_delete(&m_fileio);
         }
 
         if (m_in.m_format_ctx->pb != nullptr)

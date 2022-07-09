@@ -1390,8 +1390,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     if (tp != nullptr)
     {
         tp->tear_down();
-        delete tp;
-        tp = nullptr;
+        save_delete(&tp);
     }
 
     script_file.clear();

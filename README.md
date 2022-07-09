@@ -18,6 +18,10 @@ News
 
 ### Version 2.12 is under development
 
+- **Bugfix:** A potential crash under rare circumstances in get_prores_bitrate() has been fixed. Array access out-of-bounds could occur if best match resolution could not be determined.
+- **Bugfix:** Fixed several unlikely, but potential crashes when subtitle decoding failed or delayed video/audio packets could not be encoded.
+- **Bugfix:** The application could crash after an internal error. Should never happen, though. Fixed anyway.
+
 ### Version 2.11 has been released
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.

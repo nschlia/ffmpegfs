@@ -126,7 +126,7 @@ cppcheck:
 # bugprone- 	Checks that target bugprone code constructs.
 CLANGCHECKS = bugprone-*,-bugprone-branch-clone
 # cert- 	Checks related to CERT Secure Coding Guidelines.
-CLANGCHECKS += ,cert-*,-cert-err09-cpp,-cert-err61-cpp
+CLANGCHECKS += ,cert-*,-cert-err09-cpp,-cert-err61-cpp,-cert-err58-cpp
 # cppcoreguidelines- 	Checks related to C++ Core Guidelines.
 # clang-analyzer- 	Clang Static Analyzer checks.
 CLANGCHECKS += ,clang-analyzer-*
@@ -136,6 +136,7 @@ CLANGCHECKS += ,clang-analyzer-*
 # misc- 	Checks that we didn’t have a better category for.
 # modernize- 	Checks that advocate usage of modern (currently “modern” means “C++11”) language constructs.
 CLANGCHECKS += ,modernize-*,-modernize-use-trailing-return-type,-modernize-use-auto
+CLANGCHECKS += ,-modernize-use-using
 # mpi- 	Checks related to MPI (Message Passing Interface).
 # performance- 	Checks that target performance-related issues.
 CLANGCHECKS += ,performance-*

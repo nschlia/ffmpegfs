@@ -1798,13 +1798,13 @@ void exepath(std::string * path)
 
 std::string &ltrim(std::string &s)
 {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not_fn(std::ptr_fun<int, int>(std::isspace))));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not_fn(std::function<int(int)>(isspace))));
     return s;
 }
 
 std::string &rtrim(std::string &s)
 {
-    s.erase(std::find_if(s.rbegin(), s.rend(), std::not_fn(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not_fn(std::function<int(int)>(isspace))).base(), s.end());
     return s;
 }
 

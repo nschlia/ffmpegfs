@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -195,7 +195,7 @@ $(function() {
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; <a class="code" href="classthread__pool.html#a41ca77ce102fc695559ecf7fc36b5e23">m_num_threads</a>; i++)</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <a class="code" href="classthread__pool.html#a9f862a5bbdf2d5ebad2976dac59f7061">m_thread_pool</a>.push_back(std::thread(&amp;<a class="code" href="classthread__pool.html#ab865b54c896a6e111e833f69cb4761d5">thread_pool::loop_function_starter</a>, std::ref(*<span class="keyword">this</span>)));</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <a class="code" href="classthread__pool.html#a9f862a5bbdf2d5ebad2976dac59f7061">m_thread_pool</a>.emplace_back(std::thread(&amp;<a class="code" href="classthread__pool.html#ab865b54c896a6e111e833f69cb4761d5">thread_pool::loop_function_starter</a>, std::ref(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>

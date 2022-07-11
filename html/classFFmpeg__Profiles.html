@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -86,16 +86,6 @@ Inheritance diagram for FFmpeg_Profiles:</div>
 <area shape="rect" href="classFFmpeg__Transcoder.html" title="The FFmpeg_Transcoder class." alt="" coords="5,80,159,107"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for FFmpeg_Profiles:</div>
-<div class="dyncontent">
-<div class="center"><img src="classFFmpeg__Profiles__coll__graph.png" border="0" usemap="#aFFmpeg__Profiles_coll__map" alt="Collaboration graph"/></div>
-<map name="aFFmpeg__Profiles_coll__map" id="aFFmpeg__Profiles_coll__map">
-<area shape="rect" title="The FFmpeg_Profiles class." alt="" coords="53,213,184,240"/>
-<area shape="rect" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles." alt="" coords="5,124,232,151"/>
-<area shape="rect" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options." alt="" coords="22,5,215,47"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -119,6 +109,10 @@ typedef <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">PROF
 typedef <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">PROFILE_OPTION</a> const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a6cfb233e140c53383918469a3352d422">LPCPROFILE_OPTION</a></td></tr>
 <tr class="memdesc:a6cfb233e140c53383918469a3352d422"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to const version of <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options.">PROFILE_OPTION</a>. <br /></td></tr>
 <tr class="separator:a6cfb233e140c53383918469a3352d422"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c96ed075fd81ebc334ad2a0e89bc114"><td class="memItemLeft" align="right" valign="top"><a id="a8c96ed075fd81ebc334ad2a0e89bc114"></a>
+typedef std::vector&lt; <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html">PROFILE_OPTION</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a8c96ed075fd81ebc334ad2a0e89bc114">PROFILE_OPTION_VEC</a></td></tr>
+<tr class="memdesc:a8c96ed075fd81ebc334ad2a0e89bc114"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structFFmpeg__Profiles_1_1PROFILE__OPTION.html" title="Profiles options.">PROFILE_OPTION</a> array. <br /></td></tr>
+<tr class="separator:a8c96ed075fd81ebc334ad2a0e89bc114"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a2ef652afd91c83b2b49e061c3bd758"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html">FFmpeg_Profiles::PROFILE_LIST</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a3a2ef652afd91c83b2b49e061c3bd758">PROFILE_LIST</a></td></tr>
 <tr class="memdesc:a3a2ef652afd91c83b2b49e061c3bd758"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of profiles.  <a href="classFFmpeg__Profiles.html#a3a2ef652afd91c83b2b49e061c3bd758">More...</a><br /></td></tr>
 <tr class="separator:a3a2ef652afd91c83b2b49e061c3bd758"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,24 +124,28 @@ typedef <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html">PROFIL
 typedef <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html">PROFILE_LIST</a> const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#af0ed84799f2ed3c0a660187d8d802fce">LPCPROFILE_LIST</a></td></tr>
 <tr class="memdesc:af0ed84799f2ed3c0a660187d8d802fce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to const version of <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles.">PROFILE_LIST</a>. <br /></td></tr>
 <tr class="separator:af0ed84799f2ed3c0a660187d8d802fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8ad43ac884f0e3fae960f01876f2993"><td class="memItemLeft" align="right" valign="top"><a id="ae8ad43ac884f0e3fae960f01876f2993"></a>
+typedef std::vector&lt; <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html">PROFILE_LIST</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#ae8ad43ac884f0e3fae960f01876f2993">PROFILE_LIST_VEC</a></td></tr>
+<tr class="memdesc:ae8ad43ac884f0e3fae960f01876f2993"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html" title="List of profiles.">PROFILE_LIST</a> array. <br /></td></tr>
+<tr class="separator:ae8ad43ac884f0e3fae960f01876f2993"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:abbc0b71b742c17b74666b86358ebdc4a"><td class="memItemLeft" align="right" valign="top"><a id="abbc0b71b742c17b74666b86358ebdc4a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#abbc0b71b742c17b74666b86358ebdc4a">FFmpeg_Profiles</a> ()</td></tr>
-<tr class="memdesc:abbc0b71b742c17b74666b86358ebdc4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class.">FFmpeg_Profiles</a> object. <br /></td></tr>
-<tr class="separator:abbc0b71b742c17b74666b86358ebdc4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dd1eabf41cc06a4239e309ea48fccbd"><td class="memItemLeft" align="right" valign="top"><a id="a9dd1eabf41cc06a4239e309ea48fccbd"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a9dd1eabf41cc06a4239e309ea48fccbd">~FFmpeg_Profiles</a> ()</td></tr>
-<tr class="memdesc:a9dd1eabf41cc06a4239e309ea48fccbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destruct a <a class="el" href="classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class.">FFmpeg_Profiles</a> object. <br /></td></tr>
-<tr class="separator:a9dd1eabf41cc06a4239e309ea48fccbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30b90c7ff56ccd6a163722fc863eeb72"><td class="memItemLeft" align="right" valign="top"><a id="a30b90c7ff56ccd6a163722fc863eeb72"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a30b90c7ff56ccd6a163722fc863eeb72">FFmpeg_Profiles</a> ()=default</td></tr>
+<tr class="memdesc:a30b90c7ff56ccd6a163722fc863eeb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class.">FFmpeg_Profiles</a> object. <br /></td></tr>
+<tr class="separator:a30b90c7ff56ccd6a163722fc863eeb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6ac01be367c9344f6f4f182784665ce"><td class="memItemLeft" align="right" valign="top"><a id="ae6ac01be367c9344f6f4f182784665ce"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#ae6ac01be367c9344f6f4f182784665ce">~FFmpeg_Profiles</a> ()=default</td></tr>
+<tr class="memdesc:ae6ac01be367c9344f6f4f182784665ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destruct a <a class="el" href="classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class.">FFmpeg_Profiles</a> object. <br /></td></tr>
+<tr class="separator:ae6ac01be367c9344f6f4f182784665ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
-<tr class="memitem:a6eb164df3aa9510cf0e3eaa726662422"><td class="memItemLeft" align="right" valign="top"><a id="a6eb164df3aa9510cf0e3eaa726662422"></a>
-static const <a class="el" href="structFFmpeg__Profiles_1_1PROFILE__LIST.html">PROFILE_LIST</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a6eb164df3aa9510cf0e3eaa726662422">m_profile</a> []</td></tr>
-<tr class="memdesc:a6eb164df3aa9510cf0e3eaa726662422"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of profile options. <br /></td></tr>
-<tr class="separator:a6eb164df3aa9510cf0e3eaa726662422"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68eb2f1bbf72bad333158246539d2b8f"><td class="memItemLeft" align="right" valign="top"><a id="a68eb2f1bbf72bad333158246539d2b8f"></a>
+static const <a class="el" href="classFFmpeg__Profiles.html#ae8ad43ac884f0e3fae960f01876f2993">PROFILE_LIST_VEC</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__Profiles.html#a68eb2f1bbf72bad333158246539d2b8f">m_profile</a></td></tr>
+<tr class="memdesc:a68eb2f1bbf72bad333158246539d2b8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of profile options. <br /></td></tr>
+<tr class="separator:a68eb2f1bbf72bad333158246539d2b8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class.">FFmpeg_Profiles</a> class. </p>

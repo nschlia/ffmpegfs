@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -109,9 +109,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 struct <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES__FRAMERATE.html">FFmpeg_Transcoder::PRORES_BITRATE::PRORES_FRAMERATE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#a200cba6f42f1c01121a72d0675fa0b07">m_framerate</a> [<a class="el" href="ffmpeg__transcoder_8h.html#a23a169dcafbfb923cc55a919ba9ef022">MAX_PRORES_FRAMERATE</a>]</td></tr>
 <tr class="memdesc:a200cba6f42f1c01121a72d0675fa0b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of frame rates. <br /></td></tr>
 <tr class="separator:a200cba6f42f1c01121a72d0675fa0b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79fd57a78d79f49b409d139be00915de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#a79fd57a78d79f49b409d139be00915de">m_bitrate</a> [6]</td></tr>
-<tr class="memdesc:a79fd57a78d79f49b409d139be00915de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitrate of this format.  <a href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#a79fd57a78d79f49b409d139be00915de">More...</a><br /></td></tr>
-<tr class="separator:a79fd57a78d79f49b409d139be00915de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf8ee07cb180e56a4d5dd5326db9d5b8"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, 6 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#abf8ee07cb180e56a4d5dd5326db9d5b8">m_bitrate</a></td></tr>
+<tr class="memdesc:abf8ee07cb180e56a4d5dd5326db9d5b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitrates for this format.  <a href="structFFmpeg__Transcoder_1_1PRORES__BITRATE.html#abf8ee07cb180e56a4d5dd5326db9d5b8">More...</a><br /></td></tr>
+<tr class="separator:abf8ee07cb180e56a4d5dd5326db9d5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Predicted bitrates for Apple Prores, see <a href="https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf">https://www.apple.com/final-cut-pro/docs/Apple_ProRes_White_Paper.pdf</a>. </p>
@@ -119,24 +119,22 @@ struct <a class="el" href="structFFmpeg__Transcoder_1_1PRORES__BITRATE_1_1PRORES
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8h_source.html#l00080">80</a> of file <a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a79fd57a78d79f49b409d139be00915de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79fd57a78d79f49b409d139be00915de">&#9670;&nbsp;</a></span>m_bitrate</h2>
+<a id="abf8ee07cb180e56a4d5dd5326db9d5b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf8ee07cb180e56a4d5dd5326db9d5b8">&#9670;&nbsp;</a></span>m_bitrate</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int FFmpeg_Transcoder::PRORES_BITRATE::m_bitrate[6]</td>
+          <td class="memname">std::array&lt;int, 6&gt; FFmpeg_Transcoder::PRORES_BITRATE::m_bitrate</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Bitrate of this format. </p>
+<p>Bitrates for this format. </p>
 <p>Bitrates in MB/s 0: ProRes 422 Proxy 1: ProRes 422 LT 2: ProRes 422 standard 3: ProRes 422 HQ 4: ProRes 4444 (no alpha) 5: ProRes 4444 XQ (no alpha) </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__transcoder_8h_source.html#l00098">98</a> of file <a class="el" href="ffmpeg__transcoder_8h_source.html">ffmpeg_transcoder.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05639">FFmpeg_Transcoder::get_prores_bitrate()</a>.</p>
 
 </div>
 </div>

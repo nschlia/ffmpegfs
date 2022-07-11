@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -115,57 +115,52 @@ $(function() {
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <a class="code" href="classFFmpeg__Subtitle.html#a57752ce7cfc1310fc67f721b63ba1e32">m_res</a> = (get() != <span class="keyword">nullptr</span>) ? 0 : AVERROR(ENOMEM);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a1431102e02407b1f16895a5c214779f1">   56</a></span>&#160;<a class="code" href="classFFmpeg__Subtitle.html#a1431102e02407b1f16895a5c214779f1">FFmpeg_Subtitle::~FFmpeg_Subtitle</a>()</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">   56</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">FFmpeg_Subtitle::unref</a>() noexcept</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;{</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">   60</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">FFmpeg_Subtitle::unref</a>() noexcept</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    reset();</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">   65</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">FFmpeg_Subtitle::res</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFFmpeg__Subtitle.html#a57752ce7cfc1310fc67f721b63ba1e32">m_res</a>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a4c61aeead1dd49e3648014e91425396a">   70</a></span>&#160;FFmpeg_Subtitle::operator AVSubtitle*()</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;{</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">return</span> get();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a1a128adbb8434ff6e447e3718ada64ad">   75</a></span>&#160;FFmpeg_Subtitle::operator <span class="keyword">const</span> AVSubtitle*() <span class="keyword">const</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> get();</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">   80</a></span>&#160;AVSubtitle* <a class="code" href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">FFmpeg_Subtitle::operator-&gt;</a>()</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;{</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> get();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">   85</a></span>&#160;AVSubtitle* <a class="code" href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">FFmpeg_Subtitle::alloc_subtitle</a>()</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;{</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>AVSubtitle *<span class="keyword">&gt;</span>(av_mallocz(<span class="keyword">sizeof</span>(AVSubtitle)));</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">   90</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">FFmpeg_Subtitle::delete_subtitle</a>(AVSubtitle *subtitle)</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;{</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (subtitle != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        avsubtitle_free(subtitle);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        av_free(subtitle);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    reset();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">   61</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">FFmpeg_Subtitle::res</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFFmpeg__Subtitle.html#a57752ce7cfc1310fc67f721b63ba1e32">m_res</a>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a4c61aeead1dd49e3648014e91425396a">   66</a></span>&#160;FFmpeg_Subtitle::operator AVSubtitle*()</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;{</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">return</span> get();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a1a128adbb8434ff6e447e3718ada64ad">   71</a></span>&#160;FFmpeg_Subtitle::operator <span class="keyword">const</span> AVSubtitle*() <span class="keyword">const</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">return</span> get();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">   76</a></span>&#160;AVSubtitle* <a class="code" href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">FFmpeg_Subtitle::operator-&gt;</a>()</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">return</span> get();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">   81</a></span>&#160;AVSubtitle* <a class="code" href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">FFmpeg_Subtitle::alloc_subtitle</a>()</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;{</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>AVSubtitle *<span class="keyword">&gt;</span>(av_mallocz(<span class="keyword">sizeof</span>(AVSubtitle)));</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">   86</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">FFmpeg_Subtitle::delete_subtitle</a>(AVSubtitle *subtitle)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;{</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (subtitle != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        avsubtitle_free(subtitle);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        av_free(subtitle);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
 <div class="ttc" id="aclassFFmpeg__Subtitle_html"><div class="ttname"><a href="classFFmpeg__Subtitle.html">FFmpeg_Subtitle</a></div><div class="ttdoc">The FFmpeg_Subtitle class.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8h_source.html#l00042">ffmpeg_subtitle.h:43</a></div></div>
 <div class="ttc" id="aclassFFmpeg__Subtitle_html_a06c626018966a150ed2031eb1bf2a3c5"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a06c626018966a150ed2031eb1bf2a3c5">FFmpeg_Subtitle::FFmpeg_Subtitle</a></div><div class="ttdeci">FFmpeg_Subtitle(int stream_index=INVALID_STREAM)</div><div class="ttdoc">Construct FFmpeg_Subtitle object.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00048">ffmpeg_subtitle.cc:48</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_a1431102e02407b1f16895a5c214779f1"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a1431102e02407b1f16895a5c214779f1">FFmpeg_Subtitle::~FFmpeg_Subtitle</a></div><div class="ttdeci">virtual ~FFmpeg_Subtitle()</div><div class="ttdoc">Destruct FFmpeg_Subtitle object.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00056">ffmpeg_subtitle.cc:56</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_a4ddabde848b204fbd8c5d86952422cf8"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">FFmpeg_Subtitle::unref</a></div><div class="ttdeci">void unref() noexcept</div><div class="ttdoc">Unreference underlying frame. Synonym for shared_ptr::reset().</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00060">ffmpeg_subtitle.cc:60</a></div></div>
+<div class="ttc" id="aclassFFmpeg__Subtitle_html_a4ddabde848b204fbd8c5d86952422cf8"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a4ddabde848b204fbd8c5d86952422cf8">FFmpeg_Subtitle::unref</a></div><div class="ttdeci">void unref() noexcept</div><div class="ttdoc">Unreference underlying frame. Synonym for shared_ptr::reset().</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00056">ffmpeg_subtitle.cc:56</a></div></div>
 <div class="ttc" id="aclassFFmpeg__Subtitle_html_a57752ce7cfc1310fc67f721b63ba1e32"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a57752ce7cfc1310fc67f721b63ba1e32">FFmpeg_Subtitle::m_res</a></div><div class="ttdeci">int m_res</div><div class="ttdoc">0 if last operation was successful, or negative AVERROR value</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8h_source.html#l00091">ffmpeg_subtitle.h:91</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_a6aa3038885afdeda0dc7e5385cd261b0"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">FFmpeg_Subtitle::delete_subtitle</a></div><div class="ttdeci">static void delete_subtitle(AVSubtitle *subtitle)</div><div class="ttdoc">Delete a subtitle.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00090">ffmpeg_subtitle.cc:90</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_a8040d56ab7f49471bf091d8228458676"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">FFmpeg_Subtitle::operator-&gt;</a></div><div class="ttdeci">AVSubtitle * operator-&gt;()</div><div class="ttdoc">operator -&gt;: Do as if we were a pointer to AVSubtitle</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00080">ffmpeg_subtitle.cc:80</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_a9c86e949fde9c1d99919f9541e73f614"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">FFmpeg_Subtitle::res</a></div><div class="ttdeci">int res() const</div><div class="ttdoc">Get result of last operation.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00065">ffmpeg_subtitle.cc:65</a></div></div>
-<div class="ttc" id="aclassFFmpeg__Subtitle_html_aa077610310690f4c5c0bc315e32c0b59"><div class="ttname"><a href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">FFmpeg_Subtitle::alloc_subtitle</a></div><div class="ttdeci">AVSubtitle * alloc_subtitle()</div><div class="ttdoc">Allocate a subtitle.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00085">ffmpeg_subtitle.cc:85</a></div></div>
+<div class="ttc" id="aclassFFmpeg__Subtitle_html_a6aa3038885afdeda0dc7e5385cd261b0"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a6aa3038885afdeda0dc7e5385cd261b0">FFmpeg_Subtitle::delete_subtitle</a></div><div class="ttdeci">static void delete_subtitle(AVSubtitle *subtitle)</div><div class="ttdoc">Delete a subtitle.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00086">ffmpeg_subtitle.cc:86</a></div></div>
+<div class="ttc" id="aclassFFmpeg__Subtitle_html_a8040d56ab7f49471bf091d8228458676"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a8040d56ab7f49471bf091d8228458676">FFmpeg_Subtitle::operator-&gt;</a></div><div class="ttdeci">AVSubtitle * operator-&gt;()</div><div class="ttdoc">operator -&gt;: Do as if we were a pointer to AVSubtitle</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00076">ffmpeg_subtitle.cc:76</a></div></div>
+<div class="ttc" id="aclassFFmpeg__Subtitle_html_a9c86e949fde9c1d99919f9541e73f614"><div class="ttname"><a href="classFFmpeg__Subtitle.html#a9c86e949fde9c1d99919f9541e73f614">FFmpeg_Subtitle::res</a></div><div class="ttdeci">int res() const</div><div class="ttdoc">Get result of last operation.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00061">ffmpeg_subtitle.cc:61</a></div></div>
+<div class="ttc" id="aclassFFmpeg__Subtitle_html_aa077610310690f4c5c0bc315e32c0b59"><div class="ttname"><a href="classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59">FFmpeg_Subtitle::alloc_subtitle</a></div><div class="ttdeci">AVSubtitle * alloc_subtitle()</div><div class="ttdoc">Allocate a subtitle.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__subtitle_8cc_source.html#l00081">ffmpeg_subtitle.cc:81</a></div></div>
 <div class="ttc" id="affmpeg__subtitle_8h_html"><div class="ttname"><a href="ffmpeg__subtitle_8h.html">ffmpeg_subtitle.h</a></div><div class="ttdoc">FFmpeg AVSubtitle extension.</div></div>
 <div class="ttc" id="affmpeg__utils_8h_html"><div class="ttname"><a href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a></div><div class="ttdoc">Various FFmpegfs utility functions.</div></div>
 </div><!-- fragment --></div><!-- contents -->

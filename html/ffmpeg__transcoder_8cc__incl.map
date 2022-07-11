@@ -17,10 +17,10 @@
 <area shape="rect" id="node41" href="$wave_8h.html" title="WAVE file structures https://wavefilegem.com/how_wave_files_work.html." alt="" coords="2246,80,2315,107"/>
 <area shape="rect" id="node43" href="$aiff_8h.html" title="AIFF file structures http://paulbourke.net/dataformats/audio/." alt="" coords="2167,80,2221,107"/>
 <area shape="rect" id="node44" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="2442,155,2525,181"/>
-<area shape="rect" id="node47" title=" " alt="" coords="2339,80,2414,107"/>
-<area shape="rect" id="node48" title=" " alt="" coords="2438,80,2513,107"/>
-<area shape="rect" id="node49" title=" " alt="" coords="2537,80,2627,107"/>
-<area shape="rect" id="node50" title=" " alt="" coords="2652,80,2864,107"/>
+<area shape="rect" id="node47" title=" " alt="" coords="2339,80,2409,107"/>
+<area shape="rect" id="node48" title=" " alt="" coords="2433,80,2507,107"/>
+<area shape="rect" id="node49" title=" " alt="" coords="2531,80,2622,107"/>
+<area shape="rect" id="node50" title=" " alt="" coords="2647,80,2859,107"/>
 <area shape="rect" id="node14" href="$ffmpeg__base_8h.html" title="FFmpeg transcoder base." alt="" coords="1559,155,1677,181"/>
 <area shape="rect" id="node21" href="$ffmpeg__frame_8h.html" title="FFmpeg AVFrame extension." alt="" coords="1247,155,1373,181"/>
 <area shape="rect" id="node22" href="$ffmpeg__subtitle_8h.html" title="FFmpeg AVSubtitle extension." alt="" coords="1397,155,1535,181"/>

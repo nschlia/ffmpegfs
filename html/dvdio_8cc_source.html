@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -98,8 +98,8 @@ $(function() {
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a>&quot;</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="logging_8h.html">logging.h</a>&quot;</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;assert.h&gt;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;cstring&gt;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;cassert&gt;</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;dvdread/dvd_reader.h&gt;</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;dvdread/nav_read.h&gt;</span></div>
@@ -317,7 +317,7 @@ $(function() {
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        {</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            <span class="keywordflow">if</span> (peek &gt;= 14 &amp;&amp; (p[4] &gt;&gt; 6) == 0x01)</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                *<a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a> = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(14 + (p[13] &amp; 0x07)); <span class="comment">// Byte 13 Bit 0..2: Pack stuffing length</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                *<a class="code" href="classDvdIO.html#a3296f250a1cb328ed717bf1d4d094c7f">size</a> = 14 + <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(p[13] &amp; 0x07); <span class="comment">// Byte 13 Bit 0..2: Pack stuffing length</span></div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            }</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (peek &gt;= 12 &amp;&amp; (p[4] &gt;&gt; 4) == 0x02)</div>
@@ -593,13 +593,13 @@ $(function() {
 <div class="line"><a name="l00533"></a><span class="lineno"><a class="line" href="classDvdIO.html#a63ca4b24ab86eba257b3c40d678221d1">  533</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDvdIO.html#a63ca4b24ab86eba257b3c40d678221d1">DvdIO::next_cell</a>()</div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;{</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <span class="comment">// Check if we&#39;re entering an angle block</span></div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].block_type == BLOCK_TYPE_ANGLE_BLOCK)</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a>].block_type == <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(BLOCK_TYPE_ANGLE_BLOCK))</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    {</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;        <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> += <a class="code" href="classDvdIO.html#abd7cfdf775b01360d0fe470980819fe9">m_angle_idx</a>;</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0;; ++i)</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        {</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> + i].block_mode == BLOCK_MODE_LAST_CELL)</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classDvdIO.html#aa4721c9fd49e43f3fa7248f767062cc8">m_cur_pgc</a>-&gt;cell_playback[<a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> + i].block_mode == <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(BLOCK_MODE_LAST_CELL))</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            {</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;                <a class="code" href="classDvdIO.html#a6cbaae9cae07aaad4de7d86d4e0ec824">m_next_cell</a> = <a class="code" href="classDvdIO.html#a11b4663d0729dc96ea092508642489ae">m_cur_cell</a> + i + 1;</div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;                <span class="keywordflow">break</span>;</div>
@@ -926,11 +926,11 @@ $(function() {
 <div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;             buffer[0x403] == 0xbf &amp;&amp;</div>
 <div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;             buffer[0x406] == 0x01))</div>
 <div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    {</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;        <span class="keywordflow">return</span> (1);</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    }</div>
 <div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;    {</div>
-<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;        <span class="keywordflow">return</span> (0);</div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;    }</div>
 <div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;}</div>
 <div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160; </div>
@@ -985,9 +985,9 @@ $(function() {
 <div class="ttc" id="aclassDvdIO_html_aef93a45e0e9df880ca818d2b55fae5b6"><div class="ttname"><a href="classDvdIO.html#aef93a45e0e9df880ca818d2b55fae5b6">DvdIO::tell</a></div><div class="ttdeci">virtual size_t tell() const override</div><div class="ttdoc">Get current read position.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00719">dvdio.cc:719</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_af30e37799e6ebc4f21ce99a4e024d791"><div class="ttname"><a href="classDvdIO.html#af30e37799e6ebc4f21ce99a4e024d791">DvdIO::demux_pes</a></div><div class="ttdeci">size_t demux_pes(uint8_t *out, const uint8_t *in, size_t len) const</div><div class="ttdoc">Extract only the interesting portion of the VOB input stream.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00391">dvdio.cc:391</a></div></div>
 <div class="ttc" id="aclassDvdIO_html_af42be3bf2ae7ce4eddee6ae3363e69d0"><div class="ttname"><a href="classDvdIO.html#af42be3bf2ae7ce4eddee6ae3363e69d0">DvdIO::duration</a></div><div class="ttdeci">virtual int64_t duration() const override</div><div class="ttdoc">Get the duration of the file, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8cc_source.html#l00709">dvdio.cc:709</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a175ab839cce4af8b15749e31fd596e00"><div class="ttname"><a href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a></div><div class="ttdeci">const std::string &amp; path() const</div><div class="ttdoc">Path to source file (without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00126">fileio.cc:126</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00121">fileio.cc:121</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00104">fileio.cc:104</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a175ab839cce4af8b15749e31fd596e00"><div class="ttname"><a href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a></div><div class="ttdeci">const std::string &amp; path() const</div><div class="ttdoc">Path to source file (without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00121">fileio.cc:121</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00116">fileio.cc:116</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00099">fileio.cc:99</a></div></div>
 <div class="ttc" id="aclassLogging_html_a442c637ecbac6edac3dc753ffb3625c6"><div class="ttname"><a href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">Logging::warning</a></div><div class="ttdeci">static void warning(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write warning level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00218">logging.h:218</a></div></div>
 <div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00180">logging.h:180</a></div></div>
 <div class="ttc" id="aclassLogging_html_a9d2938a2b4a502b58c43a895c593d738"><div class="ttname"><a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a></div><div class="ttdeci">static void trace(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write trace level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00161">logging.h:161</a></div></div>

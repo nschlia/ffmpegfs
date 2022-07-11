@@ -18,5 +18,5 @@ var searchData=
   ['buffer_5fwatermark_87',['buffer_watermark',['../classBuffer.html#af40aa3d2d92dbae336dca9de9705c927',1,'Buffer']]],
   ['bufsize_88',['bufsize',['../classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc',1,'DiskIO::bufsize()'],['../classDvdIO.html#a5b2b769e2a3360d5c048349818242967',1,'DvdIO::bufsize()'],['../classFileIO.html#a9ef072d7a6f475c0b185c3912d828342',1,'FileIO::bufsize()'],['../classVcdIO.html#aece33d96d2947255af2bb4852109a61e',1,'VcdIO::bufsize()'],['../classBuffer.html#ac456bcebc29eb15860d2ec2a49b41b00',1,'Buffer::bufsize()'],['../classBlurayIO.html#aaf43d32b53a930cbc171ea2a13ed3a6c',1,'BlurayIO::bufsize()']]],
   ['bug_20list_89',['Bug List',['../bug.html',1,'']]],
-  ['build_5fdevice_5ftype_5flist_90',['build_device_type_list',['../ffmpegfs_8cc.html#a1cafc926531bc7fa71036ed0d05b8908',1,'ffmpegfs.cc']]]
+  ['build_5fdevice_5ftype_5flist_90',['build_device_type_list',['../ffmpegfs_8cc.html#abc4a9bb733e9b55c5ad4e3b492fd9d11',1,'ffmpegfs.cc']]]
 ];

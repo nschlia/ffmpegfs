@@ -1,10 +1,11 @@
 <map id="src/vcd/vcdinfo.cc" name="src/vcd/vcdinfo.cc">
-<area shape="rect" id="node1" title="S/VCD VcdInfo class implementation." alt="" coords="156,5,295,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="116,229,175,256"/>
+<area shape="rect" id="node1" title="S/VCD VcdInfo class implementation." alt="" coords="171,5,310,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="134,229,193,256"/>
 <area shape="rect" id="node3" title=" " alt="" coords="29,80,121,107"/>
-<area shape="rect" id="node4" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="145,80,228,107"/>
-<area shape="rect" id="node6" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="223,155,308,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="303,80,374,107"/>
-<area shape="rect" id="node8" title=" " alt="" coords="399,80,484,107"/>
-<area shape="rect" id="node5" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="92,155,199,181"/>
+<area shape="rect" id="node4" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="146,80,229,107"/>
+<area shape="rect" id="node6" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="253,80,338,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="362,80,429,107"/>
+<area shape="rect" id="node9" title=" " alt="" coords="453,80,538,107"/>
+<area shape="rect" id="node5" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="110,155,217,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="291,155,347,181"/>
 </map>

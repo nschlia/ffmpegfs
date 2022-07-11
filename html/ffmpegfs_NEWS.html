@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -68,10 +68,20 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
-<div class="line">* FFmpegfs has been added to Debian 11 Bullseye and Ubuntu 20.04 and Debian 10</div>
-<div class="line">  Buster Backports. See INSTALL.md &quot;Installation from repository&quot; for details.</div>
-<div class="line">* Cool, there&#39;s an online review on Linux Uprising, you can read it here:</div>
-<div class="line">  https://www.linuxuprising.com/2020/03/ffmpegfs-is-fuse-based-filesystem-for.html</div>
+<div class="line">Important changes in 2.12 (2022-07-XX):</div>
+<div class="line"> </div>
+<div class="line">* The code has been run through clang-tidy to identify bug-prone or inefficient</div>
+<div class="line">  code, and to find parts that could be modernised to C++17. Several issues could</div>
+<div class="line">  be resolved. Sometimes, many lines of code could be replaced by a few. Some</div>
+<div class="line">  parts run far more inefficiently than before. C++17 is cool. I need to get a</div>
+<div class="line">  t-shirt.</div>
+<div class="line">* Bugfix: A potential crash under rare circumstances in get_prores_bitrate() has</div>
+<div class="line">  been fixed. Array access out-of-bounds could occur if best match resolution</div>
+<div class="line">  could not be determined.</div>
+<div class="line">* Bugfix: Fixed several unlikely, but potential crashes when subtitle decoding</div>
+<div class="line">  failed or delayed video/audio packets could not be encoded.</div>
+<div class="line">* The application could crash after an internal error. It should never happen,</div>
+<div class="line">  though. Fixed anyway.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.11 (2022-06-16):</div>
 <div class="line"> </div>

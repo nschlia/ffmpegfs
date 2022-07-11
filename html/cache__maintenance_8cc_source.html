@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -96,7 +96,7 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a>&quot;</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="logging_8h.html">logging.h</a>&quot;</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;signal.h&gt;</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;csignal&gt;</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;sys/shm.h&gt;</span>        <span class="comment">/* shmat(), IPC_RMID        */</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;semaphore.h&gt;</span>      <span class="comment">/* sem_open(), sem_destroy(), sem_wait().. */</span></div>
@@ -130,7 +130,7 @@ $(function() {
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a076a973bb9631a8e8a5fe1452f01f0bc">master</a>)</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    {</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Running periodic cache maintenance.&quot;</span>);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="ffmpegfs_8h.html#a138350f4248a6dfa3afe5eee6b63d24d">transcoder_cache_maintenance</a>();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <a class="code" href="ffmpegfs_8h.html#aebae3dec0e78bdcd14cc4721f5b6efeb">transcoder_cache_maintenance</a>();</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
@@ -318,7 +318,7 @@ $(function() {
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Shutting &quot;</span> PACKAGE <span class="stringliteral">&quot; inter-process link down.&quot;</span>);</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">if</span> (sem_close(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>))</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> != <span class="keyword">nullptr</span> &amp;&amp; sem_close(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>))</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    {</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): sem_close error (%1) %2&quot;</span>, errno, strerror(errno));</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        success = <span class="keyword">false</span>;</div>
@@ -411,10 +411,10 @@ $(function() {
 <div class="ttc" id="aclassLogging_html_a9d2938a2b4a502b58c43a895c593d738"><div class="ttname"><a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a></div><div class="ttdeci">static void trace(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write trace level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00161">logging.h:161</a></div></div>
 <div class="ttc" id="aclassLogging_html_ad0aff9dffa025c0b3138a0890691e59e"><div class="ttname"><a href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a></div><div class="ttdeci">static void info(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write info level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00199">logging.h:199</a></div></div>
 <div class="ttc" id="aclassLogging_html_ae48fc6adc12bc24c60d62eb5fbac1d86"><div class="ttname"><a href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a></div><div class="ttdeci">static void error(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00237">logging.h:237</a></div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_a875d699aa7bd5502a777ac266967f660"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a875d699aa7bd5502a777ac266967f660">format_time</a></div><div class="ttdeci">std::string format_time(time_t value)</div><div class="ttdoc">Format a time in format &quot;w d m s&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01578">ffmpeg_utils.cc:1578</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_a875d699aa7bd5502a777ac266967f660"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a875d699aa7bd5502a777ac266967f660">format_time</a></div><div class="ttdeci">std::string format_time(time_t value)</div><div class="ttdoc">Format a time in format &quot;w d m s&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01580">ffmpeg_utils.cc:1580</a></div></div>
 <div class="ttc" id="affmpeg__utils_8h_html"><div class="ttname"><a href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a></div><div class="ttdoc">Various FFmpegfs utility functions.</div></div>
 <div class="ttc" id="affmpegfs_8h_html"><div class="ttname"><a href="ffmpegfs_8h.html">ffmpegfs.h</a></div><div class="ttdoc">Main include for FFmpegfs project.</div></div>
-<div class="ttc" id="affmpegfs_8h_html_a138350f4248a6dfa3afe5eee6b63d24d"><div class="ttname"><a href="ffmpegfs_8h.html#a138350f4248a6dfa3afe5eee6b63d24d">transcoder_cache_maintenance</a></div><div class="ttdeci">bool transcoder_cache_maintenance(void)</div><div class="ttdoc">Run cache maintenance.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00741">transcode.cc:741</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_aebae3dec0e78bdcd14cc4721f5b6efeb"><div class="ttname"><a href="ffmpegfs_8h.html#aebae3dec0e78bdcd14cc4721f5b6efeb">transcoder_cache_maintenance</a></div><div class="ttdeci">bool transcoder_cache_maintenance()</div><div class="ttdoc">Run cache maintenance.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00741">transcode.cc:741</a></div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Provide various log facilities to stderr, disk or syslog.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

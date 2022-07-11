@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -81,34 +81,35 @@ $(function() {
 <code>#include &quot;<a class="el" href="vcdentries_8h_source.html">vcdentries.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;sys/stat.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for vcdentries.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="vcdentries_8cc__incl.png" border="0" usemap="#asrc_2vcd_2vcdentries_8cc" alt=""/></div>
 <map name="asrc_2vcd_2vcdentries_8cc" id="asrc_2vcd_2vcdentries_8cc">
-<area shape="rect" title="S/VCD VcdEntries class implementation." alt="" coords="373,5,531,32"/>
-<area shape="rect" title=" " alt="" coords="5,229,64,256"/>
-<area shape="rect" title=" " alt="" coords="139,80,231,107"/>
-<area shape="rect" href="vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="401,80,503,107"/>
-<area shape="rect" href="vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="11,80,96,107"/>
-<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="620,80,713,107"/>
-<area shape="rect" title=" " alt="" coords="1044,229,1129,256"/>
-<area shape="rect" title=" " alt="" coords="958,80,1029,107"/>
-<area shape="rect" href="vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="307,155,413,181"/>
-<area shape="rect" title=" " alt="" coords="730,229,793,256"/>
-<area shape="rect" title=" " alt="" coords="819,155,882,181"/>
-<area shape="rect" title=" " alt="" coords="629,155,704,181"/>
-<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="438,155,554,181"/>
-<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="728,155,795,181"/>
-<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="418,229,555,256"/>
-<area shape="rect" title=" " alt="" coords="580,229,639,256"/>
-<area shape="rect" title=" " alt="" coords="663,229,705,256"/>
-<area shape="rect" title=" " alt="" coords="88,229,195,256"/>
-<area shape="rect" title=" " alt="" coords="219,229,394,256"/>
-<area shape="rect" title=" " alt="" coords="817,229,868,256"/>
-<area shape="rect" title=" " alt="" coords="892,229,1020,256"/>
+<area shape="rect" title="S/VCD VcdEntries class implementation." alt="" coords="671,5,830,32"/>
+<area shape="rect" title=" " alt="" coords="85,229,144,256"/>
+<area shape="rect" title=" " alt="" coords="1003,80,1095,107"/>
+<area shape="rect" href="vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="433,80,535,107"/>
+<area shape="rect" href="vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="72,155,157,181"/>
+<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="704,80,797,107"/>
+<area shape="rect" title=" " alt="" coords="1084,229,1169,256"/>
+<area shape="rect" title=" " alt="" coords="1120,80,1187,107"/>
+<area shape="rect" href="vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="332,155,439,181"/>
+<area shape="rect" title=" " alt="" coords="770,229,833,256"/>
+<area shape="rect" title=" " alt="" coords="5,229,61,256"/>
+<area shape="rect" title=" " alt="" coords="675,155,738,181"/>
+<area shape="rect" title=" " alt="" coords="853,155,928,181"/>
+<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="469,155,585,181"/>
+<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="763,155,829,181"/>
+<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="458,229,595,256"/>
+<area shape="rect" title=" " alt="" coords="620,229,679,256"/>
+<area shape="rect" title=" " alt="" coords="703,229,745,256"/>
+<area shape="rect" title=" " alt="" coords="168,229,235,256"/>
+<area shape="rect" title=" " alt="" coords="259,229,434,256"/>
+<area shape="rect" title=" " alt="" coords="857,229,908,256"/>
+<area shape="rect" title=" " alt="" coords="932,229,1060,256"/>
 </map>
 </div>
 </div>
@@ -131,9 +132,9 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ac4270e26101181161f70087391253c26"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdentries_8cc.html#ac4270e26101181161f70087391253c26">SYNC</a> [12] = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' }</td></tr>
-<tr class="memdesc:ac4270e26101181161f70087391253c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00)  <a href="vcdentries_8cc.html#ac4270e26101181161f70087391253c26">More...</a><br /></td></tr>
-<tr class="separator:ac4270e26101181161f70087391253c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f19aae4074927cf2e1a177a1179a15d"><td class="memItemLeft" align="right" valign="top">const std::array&lt; char, 12 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdentries_8cc.html#a6f19aae4074927cf2e1a177a1179a15d">SYNC</a> = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' }</td></tr>
+<tr class="memdesc:a6f19aae4074927cf2e1a177a1179a15d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00)  <a href="vcdentries_8cc.html#a6f19aae4074927cf2e1a177a1179a15d">More...</a><br /></td></tr>
+<tr class="separator:a6f19aae4074927cf2e1a177a1179a15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>S/VCD <a class="el" href="classVcdEntries.html" title="Video CD entries.">VcdEntries</a> class implementation. </p>
@@ -143,14 +144,14 @@ From BullysPLayer Copyright (C) 1984-2022 by Oblivion Software/Norbert Schlia </
 
 <p class="definition">Definition in file <a class="el" href="vcdentries_8cc_source.html">vcdentries.cc</a>.</p>
 </div><h2 class="groupheader">Variable Documentation</h2>
-<a id="ac4270e26101181161f70087391253c26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4270e26101181161f70087391253c26">&#9670;&nbsp;</a></span>SYNC</h2>
+<a id="a6f19aae4074927cf2e1a177a1179a15d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f19aae4074927cf2e1a177a1179a15d">&#9670;&nbsp;</a></span>SYNC</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char SYNC[12] = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' }</td>
+          <td class="memname">const std::array&lt;char, 12&gt; SYNC = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' }</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -160,7 +161,7 @@ From BullysPLayer Copyright (C) 1984-2022 by Oblivion Software/Norbert Schlia </
 
 <p class="definition">Definition at line <a class="el" href="vcdentries_8cc_source.html#l00052">52</a> of file <a class="el" href="vcdentries_8cc_source.html">vcdentries.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdchapter_8cc_source.html#l00081">VcdChapter::read()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00172">VcdEntries::scan_chapters()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdchapter_8cc_source.html#l00076">VcdChapter::read()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00168">VcdEntries::scan_chapters()</a>.</p>
 
 </div>
 </div>

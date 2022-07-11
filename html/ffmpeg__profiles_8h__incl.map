@@ -1,11 +1,12 @@
 <map id="src/ffmpeg_profiles.h" name="src/ffmpeg_profiles.h">
-<area shape="rect" id="node1" title="FFmpeg encoder profiles." alt="" coords="287,5,447,32"/>
-<area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="309,80,425,107"/>
+<area shape="rect" id="node1" title="FFmpeg encoder profiles." alt="" coords="325,5,485,32"/>
+<area shape="rect" id="node2" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="347,80,463,107"/>
 <area shape="rect" id="node3" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,155,143,181"/>
 <area shape="rect" id="node4" title=" " alt="" coords="167,155,226,181"/>
 <area shape="rect" id="node5" title=" " alt="" coords="251,155,313,181"/>
 <area shape="rect" id="node6" title=" " alt="" coords="338,155,397,181"/>
 <area shape="rect" id="node7" title=" " alt="" coords="421,155,463,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="487,155,594,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="619,155,793,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="487,155,543,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="567,155,634,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="659,155,833,181"/>
 </map>

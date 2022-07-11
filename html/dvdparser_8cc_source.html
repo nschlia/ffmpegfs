@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -245,7 +245,7 @@ $(function() {
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
 <div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="dvdparser_8cc.html#a42340401b3eae010e3913439fd3e6058">  203</a></span>&#160;<span class="keyword">static</span> int64_t <a class="code" href="dvdparser_8cc.html#a42340401b3eae010e3913439fd3e6058">BCDtime</a>(<span class="keyword">const</span> dvd_time_t * dvd_time)</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;{</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    int64_t time[4];</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    std::array&lt;int64_t, 4&gt; time;</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    AVRational  framerate = <a class="code" href="dvdparser_8cc.html#a546edd44f72c3b6078cf40d298439062">dvd_frame_rate</a>(&amp;dvd_time-&gt;frame_u);</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">if</span> (!framerate.den)</div>
@@ -258,9 +258,9 @@ $(function() {
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    time[3] = dvd_time-&gt;frame_u &amp; 0x3F;     <span class="comment">// Number of frame</span></div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="comment">// convert BCD (two digits) to binary</span></div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 4; i++)</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> &amp; tm : time)</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    {</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        time[i] = ((time[i] &amp; 0xf0) &gt;&gt; 4) * 10 + (time[i] &amp; 0x0f);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        tm = ((tm &amp; 0xf0) &gt;&gt; 4) * 10 + (tm &amp; 0x0f);</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordflow">return</span> (AV_TIME_BASE * (time[0] * 3600 + time[1] * 60 + time[2]) + <span class="keyword">static_cast&lt;</span>int64_t<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(AV_TIME_BASE * time[3]) / av_q2d(framerate)));</div>
@@ -277,7 +277,7 @@ $(function() {
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    AVRational framerate;</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    int64_t duration        = 0;</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    uint64_t size           = 0;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">int</span> interleaved         = 0;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">bool</span> interleaved        = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keywordtype">int</span> start_cell          = cur_pgc-&gt;program_map[pgn - 1] - 1;</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordtype">int</span> end_cell            = 0;</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
@@ -290,7 +290,7 @@ $(function() {
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        end_cell    = cur_pgc-&gt;nr_of_cells;</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    }</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    interleaved         = cur_pgc-&gt;cell_playback[start_cell].interleaved;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    interleaved         = cur_pgc-&gt;cell_playback[start_cell].interleaved ? true : <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    framerate           = <a class="code" href="dvdparser_8cc.html#a546edd44f72c3b6078cf40d298439062">dvd_frame_rate</a>(&amp;cur_pgc-&gt;cell_playback[start_cell].playback_time.frame_u);</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordtype">bool</span> has_angles = <span class="keyword">false</span>;</div>
@@ -300,13 +300,13 @@ $(function() {
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        cell_playback_t *cell_playback = &amp;cur_pgc-&gt;cell_playback[cell_no];</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="comment">// Only count normal cells and the first of an angle to avoid duplicate sizes</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordflow">if</span> (cell_playback-&gt;block_mode == BLOCK_MODE_NOT_IN_BLOCK || cell_playback-&gt;block_mode == BLOCK_MODE_FIRST_CELL)</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordflow">if</span> (cell_playback-&gt;block_mode == <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(BLOCK_MODE_NOT_IN_BLOCK) || cell_playback-&gt;block_mode == <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(BLOCK_MODE_FIRST_CELL))</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        {</div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            size        += (cell_playback-&gt;last_sector - cell_playback-&gt;first_sector) * 2048;</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            duration    += <a class="code" href="dvdparser_8cc.html#a42340401b3eae010e3913439fd3e6058">BCDtime</a>(&amp;cell_playback-&gt;playback_time);</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        }</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordflow">if</span> (cell_playback-&gt;block_type == BLOCK_TYPE_ANGLE_BLOCK)</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordflow">if</span> (cell_playback-&gt;block_type == <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(BLOCK_TYPE_ANGLE_BLOCK))</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        {</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            has_angles = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        }</div>
@@ -327,7 +327,7 @@ $(function() {
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// Split file if chapter has several angles</span></div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> angle_idx = 0; angle_idx &lt; angles; angle_idx++)</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        <span class="keywordtype">char</span> title_buf[PATH_MAX + 1];</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        std::string title_buf;</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordtype">int</span> angle_no        = angle_idx + 1;</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <span class="comment">// can safely assume this a video</span></div>
@@ -336,20 +336,20 @@ $(function() {
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            <span class="comment">// Single chapter</span></div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keywordflow">if</span> (angles &gt; 1)</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            {</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                snprintf(title_buf, <span class="keyword">sizeof</span>(title_buf) - 1, <span class="stringliteral">&quot;%02d. Chapter %03d (Angle %d) [%s].%s&quot;</span>,</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                <a class="code" href="ffmpeg__utils_8h.html#a95e1f046890aaa2cbef435ff42992587">strsprintf</a>(&amp;title_buf, <span class="stringliteral">&quot;%02d. Chapter %03d (Angle %d) [%s].%s&quot;</span>,</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                        title_no,</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                        chapter_no,</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                        angle_no,</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                        <a class="code" href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a>(<a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration), <span class="stringliteral">&quot;:&quot;</span>, <span class="stringliteral">&quot;-&quot;</span>).c_str(),</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a>[0].fileext().c_str());</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a>[0].fileext().c_str());</div>
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            }</div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            {</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                snprintf(title_buf, <span class="keyword">sizeof</span>(title_buf) - 1, <span class="stringliteral">&quot;%02d. Chapter %03d [%s].%s&quot;</span>,</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                <a class="code" href="ffmpeg__utils_8h.html#a95e1f046890aaa2cbef435ff42992587">strsprintf</a>(&amp;title_buf, <span class="stringliteral">&quot;%02d. Chapter %03d [%s].%s&quot;</span>,</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                        title_no,</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                        chapter_no,</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                        <a class="code" href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a>(<a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration), <span class="stringliteral">&quot;:&quot;</span>, <span class="stringliteral">&quot;-&quot;</span>).c_str(),</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a>[0].fileext().c_str());</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a>[0].fileext().c_str());</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;            }</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        }</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        <span class="keywordflow">else</span></div>
@@ -357,239 +357,237 @@ $(function() {
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;            <span class="comment">// Full title</span></div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            <span class="keywordflow">if</span> (angles &gt; 1)</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            {</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                snprintf(title_buf, <span class="keyword">sizeof</span>(title_buf) - 1, <span class="stringliteral">&quot;%02d. Title (Angle %d) [%s].%s&quot;</span>,</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                <a class="code" href="ffmpeg__utils_8h.html#a95e1f046890aaa2cbef435ff42992587">strsprintf</a>(&amp;title_buf, <span class="stringliteral">&quot;%02d. Title (Angle %d) [%s].%s&quot;</span>,</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                        title_no,</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                        angle_no,</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                        <a class="code" href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a>(<a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration), <span class="stringliteral">&quot;:&quot;</span>, <span class="stringliteral">&quot;-&quot;</span>).c_str(),</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a>[0].fileext().c_str());</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a>[0].fileext().c_str());</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;            }</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;            <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;            {</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                snprintf(title_buf, <span class="keyword">sizeof</span>(title_buf) - 1, <span class="stringliteral">&quot;%02d. Title [%s].%s&quot;</span>,</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                <a class="code" href="ffmpeg__utils_8h.html#a95e1f046890aaa2cbef435ff42992587">strsprintf</a>(&amp;title_buf, <span class="stringliteral">&quot;%02d. Title [%s].%s&quot;</span>,</div>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                        title_no,</div>
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                        <a class="code" href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a>(<a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration), <span class="stringliteral">&quot;:&quot;</span>, <span class="stringliteral">&quot;-&quot;</span>).c_str(),</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a>[0].fileext().c_str());</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                        <a class="code" href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a>[0].fileext().c_str());</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;            }</div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        }</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        std::string filename(title_buf);</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a>[0].is_multiformat())</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        {</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;            virtualfile = <a class="code" href="ffmpegfs_8h.html#ab98414d54d6585ea5d4e99d268d8bf7f">insert_file</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, path + filename, statbuf);</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        }</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        {</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;            virtualfile = <a class="code" href="ffmpegfs_8h.html#a2b9827e8de0a310419eb175c350e6b0b">insert_dir</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, path + filename, statbuf);</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        }</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">if</span> (virtualfile == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        {</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Failed to create virtual path: %1&quot;</span>, (path + filename).c_str());</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;            errno = EIO;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        }</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160; </div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="ffmpegfs_8h.html#ab0b9db4444cc84b796a0e6dd95c64684">add_fuse_entry</a>(buf, filler, title_buf, &amp;virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">m_st</a>, 0))</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        {</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;            <span class="comment">// break;</span></div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        <span class="comment">// DVD is video format anyway</span></div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a495a4e63d94f387107df875e8652c9fc">m_format_idx</a>       = 0;</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        <span class="comment">// Mark title/chapter/angle</span></div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a1b5e15926751c4334777d0062fc0934a">m_full_title</a>       = full_title;</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a670aac95cacea3d6754548f2aff7f522">m_title_no</a>   = title_no;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a85529e76ca0fefb61687830772560717">m_chapter_no</a> = chapter_no;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a34673f4d13803fb94cfc543f1492ab68">m_angle_no</a>   = angle_no;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160; </div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="transcode_8cc.html#aeaf746244e3f08933d0c1ed855915207">transcoder_cached_filesize</a>(virtualfile, &amp;virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">m_st</a>))</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;        {</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> = duration;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            <a class="code" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a> video_bit_rate = 8*1024*1024;   <span class="comment">// In case the real bitrate cannot be calculated later, assume 8 Mbit video bitrate</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            <span class="keywordflow">if</span> (duration)</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            {</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;                video_bit_rate      = <span class="keyword">static_cast&lt;</span><a class="code" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a><span class="keyword">&gt;</span>(size * 8LL * AV_TIME_BASE / <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(duration));   <span class="comment">// calculate bitrate in bps</span></div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            }</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a>[0].is_multiformat())</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        {</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            virtualfile = <a class="code" href="ffmpegfs_8h.html#ab98414d54d6585ea5d4e99d268d8bf7f">insert_file</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, path + title_buf, statbuf);</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;            virtualfile = <a class="code" href="ffmpegfs_8h.html#a2b9827e8de0a310419eb175c350e6b0b">insert_dir</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>, path + title_buf, statbuf);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        }</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        <span class="keywordflow">if</span> (virtualfile == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        {</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Failed to create virtual path: %1&quot;</span>, (path + title_buf).c_str());</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            errno = EIO;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        }</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="ffmpegfs_8h.html#a54bb346872f71912835f3c490f931935">add_fuse_entry</a>(buf, filler, title_buf, &amp;virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">m_st</a>, 0))</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        {</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;            <span class="comment">// break;</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        }</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        <span class="comment">// DVD is video format anyway</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#aac07bc10af5d0980ae8ac656a0a3bc25">m_format_idx</a>       = 0;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        <span class="comment">// Mark title/chapter/angle</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a1b5e15926751c4334777d0062fc0934a">m_full_title</a>       = full_title;</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a670aac95cacea3d6754548f2aff7f522">m_title_no</a>   = title_no;</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a85529e76ca0fefb61687830772560717">m_chapter_no</a> = chapter_no;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a13ea53dfe484496bc27060e71d249b6b">m_dvd</a>.<a class="code" href="structVIRTUALFILE_1_1DVD__CHAPTER.html#a34673f4d13803fb94cfc543f1492ab68">m_angle_no</a>   = angle_no;</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="transcode_8cc.html#aeaf746244e3f08933d0c1ed855915207">transcoder_cached_filesize</a>(virtualfile, &amp;virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">m_st</a>))</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        {</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> = duration;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;            <a class="code" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a> video_bit_rate = 8*1024*1024;   <span class="comment">// In case the real bitrate cannot be calculated later, assume 8 Mbit video bitrate</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            <span class="keywordflow">if</span> (duration)</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            {</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                video_bit_rate      = <span class="keyword">static_cast&lt;</span><a class="code" href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a><span class="keyword">&gt;</span>(size * 8LL * AV_TIME_BASE / <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(duration));   <span class="comment">// calculate bitrate in bps</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;            }</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>, <span class="stringliteral">&quot;Video %1 %2x%3@%&lt;%5.2f&gt;4%5 fps %6 [%7]&quot;</span>, <a class="code" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>(video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a26296aeec692a04132282a67ca5658ba">m_video_bit_rate</a>).c_str(), video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>, av_q2d(framerate), interleaved ? <span class="stringliteral">&quot;i&quot;</span> : <span class="stringliteral">&quot;p&quot;</span>, <a class="code" href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a>(size).c_str(), <a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration).c_str());</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160; </div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>, <span class="stringliteral">&quot;Video %1 %2x%3@%&lt;%5.2f&gt;4%5 fps %6 [%7]&quot;</span>, <a class="code" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>(video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a26296aeec692a04132282a67ca5658ba">m_video_bit_rate</a>).c_str(), video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>, av_q2d(framerate), interleaved ? <span class="stringliteral">&quot;i&quot;</span> : <span class="stringliteral">&quot;p&quot;</span>, <a class="code" href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a>(size).c_str(), <a class="code" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration).c_str());</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160; </div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">m_width</a>        = video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>;</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">m_height</a>       = video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">m_framerate</a>    = framerate;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160; </div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;            <span class="keywordflow">if</span> (audio_stream &gt; -1)</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            {</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;                <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>, <span class="stringliteral">&quot;Audio Channels %1 Sample Rate %2&quot;</span>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>);</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a555fd3516f41df2635b7593d823361b0">m_channels</a>     = audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>;</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;                virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a0241541a5d6e2728c5e5a43ed7c4e0e8">m_sample_rate</a>  = audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>;</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            }</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">m_width</a>        = video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>;</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">m_height</a>       = video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>;</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">m_framerate</a>    = framerate;</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            <span class="keywordflow">if</span> (audio_stream &gt; -1)</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            {</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>, <span class="stringliteral">&quot;Audio Channels %1 Sample Rate %2&quot;</span>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>);</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;                virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a555fd3516f41df2635b7593d823361b0">m_channels</a>     = audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>;</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;                virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a0241541a5d6e2728c5e5a43ed7c4e0e8">m_sample_rate</a>  = audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;            }</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            <a class="code" href="transcode_8cc.html#a4b4a6f7de7c8e817105ab07d331936a8">transcoder_set_filesize</a>(virtualfile, duration, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#ad8ceeef99dfdff8f24f3e1253a5ed930">m_audio_bit_rate</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>, AV_SAMPLE_FMT_NONE, video_bit_rate, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>, interleaved, framerate);</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160; </div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            <a class="code" href="transcode_8cc.html#a86de0eca78c4e84a591e83ead6fe4c23">transcoder_set_filesize</a>(virtualfile, duration, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#ad8ceeef99dfdff8f24f3e1253a5ed930">m_audio_bit_rate</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>, AV_SAMPLE_FMT_NONE, video_bit_rate, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>, video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>, interleaved, framerate);</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">m_video_frame_count</a>    = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a>       = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(size);</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        }</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    }</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160; </div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;}</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
-<div class="line"><a name="l00428"></a><span class="lineno"><a class="line" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">  428</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a>(<span class="keyword">const</span> std::string &amp; path, <span class="keyword">const</span> <span class="keyword">struct</span> stat *statbuf, <span class="keywordtype">void</span> *buf, fuse_fill_dir_t filler)</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;{</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    dvd_reader_t *dvd;</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    ifo_handle_t *ifo_file;</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    tt_srpt_t *tt_srpt;</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    <span class="keywordtype">int</span> titles;</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">m_video_frame_count</a>    = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(av_rescale_q(duration, av_get_time_base_q(), av_inv_q(framerate)));</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            virtualfile-&gt;<a class="code" href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">m_predicted_size</a>       = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(size);</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        }</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    }</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160; </div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;}</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160; </div>
+<div class="line"><a name="l00426"></a><span class="lineno"><a class="line" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">  426</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a>(<span class="keyword">const</span> std::string &amp; path, <span class="keyword">const</span> <span class="keyword">struct</span> stat *statbuf, <span class="keywordtype">void</span> *buf, fuse_fill_dir_t filler)</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;{</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    dvd_reader_t *dvd;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    ifo_handle_t *ifo_file;</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    tt_srpt_t *tt_srpt;</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    <span class="keywordtype">int</span> titles;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160; </div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(path, <span class="stringliteral">&quot;Parsing the DVD.&quot;</span>);</div>
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160; </div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(path, <span class="stringliteral">&quot;Parsing the DVD.&quot;</span>);</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160; </div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    dvd = DVDOpen(path.c_str());</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    <span class="keywordflow">if</span> (dvd == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    {</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Couldn&#39;t open the DVD.&quot;</span>);</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <span class="keywordflow">return</span> ENOENT;</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    }</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    ifo_file = ifoOpen(dvd, 0);</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <span class="keywordflow">if</span> (ifo_file == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    {</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Can&#39;t open VMG info for the DVD.&quot;</span>);</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        DVDClose(dvd);</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        <span class="keywordflow">return</span> -EINVAL;</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    }</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    tt_srpt = ifo_file-&gt;tt_srpt;</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;    dvd = DVDOpen(path.c_str());</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    <span class="keywordflow">if</span> (dvd == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    {</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Couldn&#39;t open the DVD.&quot;</span>);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        <span class="keywordflow">return</span> ENOENT;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    }</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    ifo_file = ifoOpen(dvd, 0);</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    <span class="keywordflow">if</span> (ifo_file == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    {</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Can&#39;t open VMG info for the DVD.&quot;</span>);</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        DVDClose(dvd);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;        <span class="keywordflow">return</span> -EINVAL;</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    }</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    tt_srpt = ifo_file-&gt;tt_srpt;</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160; </div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    titles = tt_srpt-&gt;nr_of_srpts;</div>
 <div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160; </div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    titles = tt_srpt-&gt;nr_of_srpts;</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(path, <span class="stringliteral">&quot;There are %1 titles on this DVD.&quot;</span>, titles);</div>
 <div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160; </div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(path, <span class="stringliteral">&quot;There are %1 titles on this DVD.&quot;</span>, titles);</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160; </div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> title_idx = 0; title_idx &lt; titles &amp;&amp; success; ++title_idx)</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    {</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;        ifo_handle_t *vts_file;</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;        <span class="keywordtype">int</span> vtsnum      = tt_srpt-&gt;title[title_idx].title_set_nr;</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        <span class="keywordtype">int</span> ttnnum      = tt_srpt-&gt;title[title_idx].vts_ttn;</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;        <span class="keywordtype">int</span> chapters    = tt_srpt-&gt;title[title_idx].nr_of_ptts;</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;        <span class="keywordtype">int</span> angles      = tt_srpt-&gt;title[title_idx].nr_of_angles;</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160; </div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;Title: %1 VTS: %2 TTN: %3&quot;</span>, title_idx + 1, vtsnum, ttnnum);</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;DVD title has %1 chapters and %2 angles.&quot;</span>, chapters, angles);</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160; </div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;        vts_file = ifoOpen(dvd, vtsnum);</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;        <span class="keywordflow">if</span> (vts_file == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;        {</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Can&#39;t open info file for title %1.&quot;</span>, vtsnum);</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;            DVDClose(dvd);</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;            <span class="keywordflow">return</span> -EINVAL;</div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;        }</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160; </div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;        <span class="comment">// Set reasonable defaults</span></div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        <a class="code" href="structAUDIO__SETTINGS.html">AUDIO_SETTINGS</a> audio_settings;</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#ad8ceeef99dfdff8f24f3e1253a5ed930">m_audio_bit_rate</a>   = 256000;</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>         = 2;</div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>      = 48000;</div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;        <span class="keywordtype">int</span> audio_stream = 0;</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160; </div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;        <a class="code" href="structVIDEO__SETTINGS.html">VIDEO_SETTINGS</a> video_settings;</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a26296aeec692a04132282a67ca5658ba">m_video_bit_rate</a>   = 8000000;</div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>            = 720;</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>           = 576;</div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160; </div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;        <span class="keywordflow">if</span> (vts_file-&gt;vtsi_mat)</div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;        {</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;            audio_stream = <a class="code" href="dvdparser_8cc.html#ac9baf91679a9e422818be34ff1e39072">dvd_find_best_audio_stream</a>(vts_file-&gt;vtsi_mat, &amp;audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, &amp;audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>);</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> title_idx = 0; title_idx &lt; titles &amp;&amp; success; ++title_idx)</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    {</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;        ifo_handle_t *vts_file;</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;        <span class="keywordtype">int</span> vtsnum      = tt_srpt-&gt;title[title_idx].title_set_nr;</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;        <span class="keywordtype">int</span> ttnnum      = tt_srpt-&gt;title[title_idx].vts_ttn;</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;        <span class="keywordtype">int</span> chapters    = tt_srpt-&gt;title[title_idx].nr_of_ptts;</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        <span class="keywordtype">int</span> angles      = tt_srpt-&gt;title[title_idx].nr_of_angles;</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160; </div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;Title: %1 VTS: %2 TTN: %3&quot;</span>, title_idx + 1, vtsnum, ttnnum);</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;DVD title has %1 chapters and %2 angles.&quot;</span>, chapters, angles);</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160; </div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        vts_file = ifoOpen(dvd, vtsnum);</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;        <span class="keywordflow">if</span> (vts_file == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;        {</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Can&#39;t open info file for title %1.&quot;</span>, vtsnum);</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;            DVDClose(dvd);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;            <span class="keywordflow">return</span> -EINVAL;</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;        }</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160; </div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;        <span class="comment">// Set reasonable defaults</span></div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;        <a class="code" href="structAUDIO__SETTINGS.html">AUDIO_SETTINGS</a> audio_settings;</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#ad8ceeef99dfdff8f24f3e1253a5ed930">m_audio_bit_rate</a>   = 256000;</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>         = 2;</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;        audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>      = 48000;</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;        <span class="keywordtype">int</span> audio_stream = 0;</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160; </div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;        <a class="code" href="structVIDEO__SETTINGS.html">VIDEO_SETTINGS</a> video_settings;</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a26296aeec692a04132282a67ca5658ba">m_video_bit_rate</a>   = 8000000;</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a>            = 720;</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;        video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a>           = 576;</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;        <span class="keywordflow">if</span> (vts_file-&gt;vtsi_mat)</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;        {</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;            audio_stream = <a class="code" href="dvdparser_8cc.html#ac9baf91679a9e422818be34ff1e39072">dvd_find_best_audio_stream</a>(vts_file-&gt;vtsi_mat, &amp;audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aceae5da201b9d1405eae7f31f520033f">m_channels</a>, &amp;audio_settings.<a class="code" href="structAUDIO__SETTINGS.html#aa3d4bd3bb62e486a68e686259239683c">m_sample_rate</a>);</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160; </div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;            video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a> = (vts_file-&gt;vtsi_mat-&gt;vts_video_attr.video_format != 0) ? 576 : 480;</div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160; </div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;            video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a> = (vts_file-&gt;vtsi_mat-&gt;vts_video_attr.video_format != 0) ? 576 : 480;</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160; </div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;            <span class="keywordflow">switch</span>(vts_file-&gt;vtsi_mat-&gt;vts_video_attr.picture_size)</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;            <span class="keywordflow">switch</span>(vts_file-&gt;vtsi_mat-&gt;vts_video_attr.picture_size)</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;            {</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;            <span class="keywordflow">case</span> 0:</div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;            {</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;            <span class="keywordflow">case</span> 0:</div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;            {</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 720;</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;            }</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;            <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;            {</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 704;</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;            }</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;            <span class="keywordflow">case</span> 2:</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;            {</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 352;</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;            }</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;            <span class="keywordflow">case</span> 3:</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;            {</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 352;</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a> /= 2;</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;            }</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;            <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;            {</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;                <a class="code" href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">Logging::warning</a>(path, <span class="stringliteral">&quot;DVD video contains invalid picture size attribute.&quot;</span>);</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;            }</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;            }</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;        }</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;        <span class="comment">// Add separate chapters</span></div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> chapter_idx = 0; chapter_idx &lt; chapters &amp;&amp; success; ++chapter_idx)</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        {</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;            success = <a class="code" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>(vts_file, path, statbuf, buf, filler, <span class="keyword">false</span>, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        }</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160; </div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        <span class="keywordflow">if</span> (success &amp;&amp; chapters &gt; 1)</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        {</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;            <span class="comment">// If more than 1 chapter, add full title as well</span></div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;            success = <a class="code" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>(vts_file, path, statbuf, buf, filler, <span class="keyword">true</span>, title_idx, 0, 1, ttnnum, audio_stream, audio_settings, video_settings);</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;        }</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;        ifoClose(vts_file);</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    }</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    ifoClose(ifo_file);</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    DVDClose(dvd);</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160; </div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    <span class="keywordflow">if</span> (success)</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    {</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;        <span class="keywordflow">return</span> titles;    <span class="comment">// Number of titles on disk</span></div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    }</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    {</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;        <span class="keywordflow">return</span> -errno;</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;    }</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;}</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160; </div>
-<div class="line"><a name="l00553"></a><span class="lineno"><a class="line" href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">  553</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">check_dvd</a>(<span class="keyword">const</span> std::string &amp; path, <span class="keywordtype">void</span> *buf, fuse_fill_dir_t filler)</div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;{</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    std::string _path(path);</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    <span class="keyword">struct </span>stat stbuf;</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <span class="keywordtype">int</span> res = 0;</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 720;</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;            }</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;            <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;            {</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 704;</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;            }</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;            <span class="keywordflow">case</span> 2:</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;            {</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 352;</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;            }</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;            <span class="keywordflow">case</span> 3:</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;            {</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a805cc05415f844ebbd92d0e6a56f435f">m_width</a> = 352;</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;                video_settings.<a class="code" href="structVIDEO__SETTINGS.html#a2374f09d0ee04e60df02588507ebbb4d">m_height</a> /= 2;</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;            }</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;            <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;            {</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                <a class="code" href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">Logging::warning</a>(path, <span class="stringliteral">&quot;DVD video contains invalid picture size attribute.&quot;</span>);</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;            }</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;            }</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;        }</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160; </div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;        <span class="comment">// Add separate chapters</span></div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> chapter_idx = 0; chapter_idx &lt; chapters &amp;&amp; success; ++chapter_idx)</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;        {</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;            success = <a class="code" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>(vts_file, path, statbuf, buf, filler, <span class="keyword">false</span>, title_idx, chapter_idx, angles, ttnnum, audio_stream, audio_settings, video_settings);</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        }</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160; </div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        <span class="keywordflow">if</span> (success &amp;&amp; chapters &gt; 1)</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        {</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;            <span class="comment">// If more than 1 chapter, add full title as well</span></div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;            success = <a class="code" href="dvdparser_8cc.html#a492e2e1960310e6b55fa7d7b83ecc931">create_dvd_virtualfile</a>(vts_file, path, statbuf, buf, filler, <span class="keyword">true</span>, title_idx, 0, 1, ttnnum, audio_stream, audio_settings, video_settings);</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;        }</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160; </div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;        ifoClose(vts_file);</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    }</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    ifoClose(ifo_file);</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    DVDClose(dvd);</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160; </div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    <span class="keywordflow">if</span> (success)</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    {</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;        <span class="keywordflow">return</span> titles;    <span class="comment">// Number of titles on disk</span></div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    }</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    {</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;        <span class="keywordflow">return</span> -errno;</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    }</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;}</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160; </div>
+<div class="line"><a name="l00551"></a><span class="lineno"><a class="line" href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">  551</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">check_dvd</a>(<span class="keyword">const</span> std::string &amp; path, <span class="keywordtype">void</span> *buf, fuse_fill_dir_t filler)</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;{</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;    std::string _path(path);</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    <span class="keyword">struct </span>stat stbuf;</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    <span class="keywordtype">int</span> res = 0;</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160; </div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <a class="code" href="ffmpeg__utils_8cc.html#afd997ff71619fc1c81e162c059ce4541">append_sep</a>(&amp;_path);</div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160; </div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;    <a class="code" href="ffmpeg__utils_8cc.html#afd997ff71619fc1c81e162c059ce4541">append_sep</a>(&amp;_path);</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160; </div>
-<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    <span class="keywordflow">if</span> (stat((_path + <span class="stringliteral">&quot;VIDEO_TS.IFO&quot;</span>).c_str(), &amp;stbuf) == 0 || stat((_path + <span class="stringliteral">&quot;VIDEO_TS/VIDEO_TS.IFO&quot;</span>).c_str(), &amp;stbuf) == 0)</div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;    {</div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="ffmpegfs_8h.html#aaccd4c147efa346efcbb3c4fbb1e0a1a">check_path</a>(_path))</div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;        {</div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(_path, <span class="stringliteral">&quot;DVD detected.&quot;</span>);</div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;            res = <a class="code" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a>(_path, &amp;stbuf, buf, filler);</div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(_path, <span class="stringliteral">&quot;%1 titles were discovered.&quot;</span>, res);</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;        }</div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        {</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;            res = <a class="code" href="ffmpegfs_8h.html#a757570119497576827529b07c0aa4147">load_path</a>(_path, &amp;stbuf, buf, filler);</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        }</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160; </div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        <a class="code" href="ffmpegfs_8h.html#a1b72338352a37192db01c6a43b67a5be">add_dotdot</a>(buf, filler, &amp;stbuf, 0);</div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    }</div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;    <span class="keywordflow">return</span> res;</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;}</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160; </div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;    <span class="keywordflow">if</span> (stat((_path + <span class="stringliteral">&quot;VIDEO_TS.IFO&quot;</span>).c_str(), &amp;stbuf) == 0 || stat((_path + <span class="stringliteral">&quot;VIDEO_TS/VIDEO_TS.IFO&quot;</span>).c_str(), &amp;stbuf) == 0)</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;    {</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="ffmpegfs_8h.html#aaccd4c147efa346efcbb3c4fbb1e0a1a">check_path</a>(_path))</div>
+<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;        {</div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(_path, <span class="stringliteral">&quot;DVD detected.&quot;</span>);</div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;            res = <a class="code" href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a>(_path, &amp;stbuf, buf, filler);</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;            <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(_path, <span class="stringliteral">&quot;%1 titles were discovered.&quot;</span>, res);</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;        }</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;        {</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;            res = <a class="code" href="ffmpegfs_8h.html#a757570119497576827529b07c0aa4147">load_path</a>(_path, &amp;stbuf, buf, filler);</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        }</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        <a class="code" href="ffmpegfs_8h.html#a1b72338352a37192db01c6a43b67a5be">add_dotdot</a>(buf, filler, &amp;stbuf, 0);</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;    }</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;    <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;}</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160; </div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
 <div class="ttc" id="aclassLogging_html_a442c637ecbac6edac3dc753ffb3625c6"><div class="ttname"><a href="classLogging.html#a442c637ecbac6edac3dc753ffb3625c6">Logging::warning</a></div><div class="ttdeci">static void warning(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write warning level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00218">logging.h:218</a></div></div>
 <div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00180">logging.h:180</a></div></div>
 <div class="ttc" id="aclassLogging_html_a9d2938a2b4a502b58c43a895c593d738"><div class="ttname"><a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a></div><div class="ttdeci">static void trace(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write trace level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00161">logging.h:161</a></div></div>
@@ -602,27 +600,28 @@ $(function() {
 <div class="ttc" id="advdparser_8cc_html_a546edd44f72c3b6078cf40d298439062"><div class="ttname"><a href="dvdparser_8cc.html#a546edd44f72c3b6078cf40d298439062">dvd_frame_rate</a></div><div class="ttdeci">static AVRational dvd_frame_rate(const uint8_t *ptr)</div><div class="ttdoc">Get the frame rate of the DVD. Can be 25 fps (PAL) or 29.97 (NTCS).</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00168">dvdparser.cc:168</a></div></div>
 <div class="ttc" id="advdparser_8cc_html_a8a7656707ef403c09d8a50711eabed76"><div class="ttname"><a href="dvdparser_8cc.html#a8a7656707ef403c09d8a50711eabed76">LPVIDEO_SETTINGS</a></div><div class="ttdeci">VIDEO_SETTINGS * LPVIDEO_SETTINGS</div><div class="ttdoc">Pointer version of VIDEO_SETTINGS.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00063">dvdparser.cc:63</a></div></div>
 <div class="ttc" id="advdparser_8cc_html_aab42e835e95b6eca7addbff679c10dd9"><div class="ttname"><a href="dvdparser_8cc.html#aab42e835e95b6eca7addbff679c10dd9">AUDIO_SETTINGS</a></div><div class="ttdeci">struct AUDIO_SETTINGS AUDIO_SETTINGS</div><div class="ttdoc">Audio stream settings.</div></div>
-<div class="ttc" id="advdparser_8cc_html_ac92617b2e791c1899cec8fc8277c18a7"><div class="ttname"><a href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">check_dvd</a></div><div class="ttdeci">int check_dvd(const std::string &amp;path, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Get number of titles on DVD.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00553">dvdparser.cc:553</a></div></div>
+<div class="ttc" id="advdparser_8cc_html_ac92617b2e791c1899cec8fc8277c18a7"><div class="ttname"><a href="dvdparser_8cc.html#ac92617b2e791c1899cec8fc8277c18a7">check_dvd</a></div><div class="ttdeci">int check_dvd(const std::string &amp;path, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Get number of titles on DVD.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00551">dvdparser.cc:551</a></div></div>
 <div class="ttc" id="advdparser_8cc_html_ac9baf91679a9e422818be34ff1e39072"><div class="ttname"><a href="dvdparser_8cc.html#ac9baf91679a9e422818be34ff1e39072">dvd_find_best_audio_stream</a></div><div class="ttdeci">static int dvd_find_best_audio_stream(const vtsi_mat_t *vtsi_mat, int *best_channels, int *best_sample_frequency)</div><div class="ttdoc">Locate best matching audio stream.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00078">dvdparser.cc:78</a></div></div>
-<div class="ttc" id="advdparser_8cc_html_ae4cba40b0b1282b135badb16cbf44e33"><div class="ttname"><a href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a></div><div class="ttdeci">static int parse_dvd(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Parse DVD directory and get all DVD titles and chapters as virtual files.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00428">dvdparser.cc:428</a></div></div>
+<div class="ttc" id="advdparser_8cc_html_ae4cba40b0b1282b135badb16cbf44e33"><div class="ttname"><a href="dvdparser_8cc.html#ae4cba40b0b1282b135badb16cbf44e33">parse_dvd</a></div><div class="ttdeci">static int parse_dvd(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Parse DVD directory and get all DVD titles and chapters as virtual files.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00426">dvdparser.cc:426</a></div></div>
 <div class="ttc" id="advdparser_8cc_html_aec8ce7cca41cd4bb2aceb4a5d25bd117"><div class="ttname"><a href="dvdparser_8cc.html#aec8ce7cca41cd4bb2aceb4a5d25bd117">VIDEO_SETTINGS</a></div><div class="ttdeci">struct VIDEO_SETTINGS VIDEO_SETTINGS</div><div class="ttdoc">Video stream settings.</div></div>
 <div class="ttc" id="advdparser_8h_html"><div class="ttname"><a href="dvdparser_8h.html">dvdparser.h</a></div><div class="ttdoc">DVD parser.</div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_a2752625a2c8322c18eee3fabbcc24176"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a></div><div class="ttdeci">std::string format_duration(int64_t value, uint32_t fracs)</div><div class="ttdoc">Format a time in format HH:MM:SS.fract.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01552">ffmpeg_utils.cc:1552</a></div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_a92e160970289c98aafa793d05782edfb"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a></div><div class="ttdeci">std::string format_bitrate(BITRATE value)</div><div class="ttdoc">Format a bit rate.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01511">ffmpeg_utils.cc:1511</a></div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_ad417af55b0608ec2aa3efc36db9aca71"><div class="ttname"><a href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a></div><div class="ttdeci">std::string format_size(uint64_t value)</div><div class="ttdoc">Format size.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01630">ffmpeg_utils.cc:1630</a></div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_ade329db2e28df4b3fe979a8b5e21eeae"><div class="ttname"><a href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a></div><div class="ttdeci">std::string replace_all(std::string str, const std::string &amp;from, const std::string &amp;to)</div><div class="ttdoc">Same as std::string replace(), but replaces all occurrences.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01807">ffmpeg_utils.cc:1807</a></div></div>
-<div class="ttc" id="affmpeg__utils_8cc_html_afd997ff71619fc1c81e162c059ce4541"><div class="ttname"><a href="ffmpeg__utils_8cc.html#afd997ff71619fc1c81e162c059ce4541">append_sep</a></div><div class="ttdeci">const std::string &amp; append_sep(std::string *path)</div><div class="ttdoc">Add / to the path if required.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00986">ffmpeg_utils.cc:986</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_a2752625a2c8322c18eee3fabbcc24176"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a></div><div class="ttdeci">std::string format_duration(int64_t value, uint32_t fracs)</div><div class="ttdoc">Format a time in format HH:MM:SS.fract.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01553">ffmpeg_utils.cc:1553</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_a92e160970289c98aafa793d05782edfb"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a></div><div class="ttdeci">std::string format_bitrate(BITRATE value)</div><div class="ttdoc">Format a bit rate.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01507">ffmpeg_utils.cc:1507</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_ad417af55b0608ec2aa3efc36db9aca71"><div class="ttname"><a href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a></div><div class="ttdeci">std::string format_size(uint64_t value)</div><div class="ttdoc">Format size.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01633">ffmpeg_utils.cc:1633</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_ade329db2e28df4b3fe979a8b5e21eeae"><div class="ttname"><a href="ffmpeg__utils_8cc.html#ade329db2e28df4b3fe979a8b5e21eeae">replace_all</a></div><div class="ttdeci">std::string replace_all(std::string str, const std::string &amp;from, const std::string &amp;to)</div><div class="ttdoc">Same as std::string replace(), but replaces all occurrences.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01818">ffmpeg_utils.cc:1818</a></div></div>
+<div class="ttc" id="affmpeg__utils_8cc_html_afd997ff71619fc1c81e162c059ce4541"><div class="ttname"><a href="ffmpeg__utils_8cc.html#afd997ff71619fc1c81e162c059ce4541">append_sep</a></div><div class="ttdeci">const std::string &amp; append_sep(std::string *path)</div><div class="ttdoc">Add / to the path if required.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00982">ffmpeg_utils.cc:982</a></div></div>
 <div class="ttc" id="affmpeg__utils_8h_html"><div class="ttname"><a href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a></div><div class="ttdoc">Various FFmpegfs utility functions.</div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_a17468d10f0c67a4ee7b38aab09d9e096"><div class="ttname"><a href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a></div><div class="ttdeci">#define BITRATE</div><div class="ttdoc">For FFmpeg bit rate is an int.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00145">ffmpeg_utils.h:145</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a17468d10f0c67a4ee7b38aab09d9e096"><div class="ttname"><a href="ffmpeg__utils_8h.html#a17468d10f0c67a4ee7b38aab09d9e096">BITRATE</a></div><div class="ttdeci">#define BITRATE</div><div class="ttdoc">For FFmpeg bit rate is an int.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00146">ffmpeg_utils.h:146</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_a95e1f046890aaa2cbef435ff42992587"><div class="ttname"><a href="ffmpeg__utils_8h.html#a95e1f046890aaa2cbef435ff42992587">strsprintf</a></div><div class="ttdeci">const std::string &amp; strsprintf(std::string *str, const std::string &amp;format, Args ... args)</div><div class="ttdoc">Format a std::string sprintf-like.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00738">ffmpeg_utils.h:738</a></div></div>
 <div class="ttc" id="affmpegfs_8cc_html_a3e114cb4e37c86270217dd3437265fb3"><div class="ttname"><a href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a></div><div class="ttdeci">FFMPEGFS_PARAMS params</div><div class="ttdoc">FFmpegfs command line parameters.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpegfs_8cc_source.html#l00072">ffmpegfs.cc:72</a></div></div>
-<div class="ttc" id="affmpegfs_8cc_html_a5702aed40f9c18b1df81ad4cee058c3a"><div class="ttname"><a href="ffmpegfs_8cc.html#a5702aed40f9c18b1df81ad4cee058c3a">ffmpeg_format</a></div><div class="ttdeci">FFmpegfs_Format ffmpeg_format[2]</div><div class="ttdoc">Two FFmpegfs_Format infos, 0: video file, 1: audio file.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpegfs_8cc_source.html#l00071">ffmpegfs.cc:71</a></div></div>
+<div class="ttc" id="affmpegfs_8cc_html_acdf09d2ec42853d806bfb702360ed813"><div class="ttname"><a href="ffmpegfs_8cc.html#acdf09d2ec42853d806bfb702360ed813">ffmpeg_format</a></div><div class="ttdeci">FFMPEGFS_FORMAT_ARR ffmpeg_format</div><div class="ttdoc">Two FFmpegfs_Format infos, 0: video file, 1: audio file.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpegfs_8cc_source.html#l00071">ffmpegfs.cc:71</a></div></div>
 <div class="ttc" id="affmpegfs_8h_html"><div class="ttname"><a href="ffmpegfs_8h.html">ffmpegfs.h</a></div><div class="ttdoc">Main include for FFmpegfs project.</div></div>
-<div class="ttc" id="affmpegfs_8h_html_a1b72338352a37192db01c6a43b67a5be"><div class="ttname"><a href="ffmpegfs_8h.html#a1b72338352a37192db01c6a43b67a5be">add_dotdot</a></div><div class="ttdeci">int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)</div><div class="ttdoc">Make dot and double dot entries for a virtual directory.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l02447">fuseops.cc:2447</a></div></div>
-<div class="ttc" id="affmpegfs_8h_html_a2b9827e8de0a310419eb175c350e6b0b"><div class="ttname"><a href="ffmpegfs_8h.html#a2b9827e8de0a310419eb175c350e6b0b">insert_dir</a></div><div class="ttdeci">LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string &amp;virtdir, const struct stat *stbuf, int flags=VIRTUALFLAG_NONE)</div><div class="ttdoc">Add new virtual directory to the internal list. If the file already exists, it will be updated.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01746">fuseops.cc:1746</a></div></div>
-<div class="ttc" id="affmpegfs_8h_html_a757570119497576827529b07c0aa4147"><div class="ttname"><a href="ffmpegfs_8h.html#a757570119497576827529b07c0aa4147">load_path</a></div><div class="ttdeci">int load_path(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Load a path with virtual files for FUSE.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01788">fuseops.cc:1788</a></div></div>
-<div class="ttc" id="affmpegfs_8h_html_aaccd4c147efa346efcbb3c4fbb1e0a1a"><div class="ttname"><a href="ffmpegfs_8h.html#aaccd4c147efa346efcbb3c4fbb1e0a1a">check_path</a></div><div class="ttdeci">bool check_path(const std::string &amp;path)</div><div class="ttdoc">Check if the path has already been parsed. Only useful if for DVD, Blu-ray or VCD where it is guarant...</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01781">fuseops.cc:1781</a></div></div>
-<div class="ttc" id="affmpegfs_8h_html_ab0b9db4444cc84b796a0e6dd95c64684"><div class="ttname"><a href="ffmpegfs_8h.html#ab0b9db4444cc84b796a0e6dd95c64684">add_fuse_entry</a></div><div class="ttdeci">int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const char *name, const struct stat *stbuf, off_t off)</div><div class="ttdoc">Wrapper to the Fuse filler function.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l02437">fuseops.cc:2437</a></div></div>
-<div class="ttc" id="affmpegfs_8h_html_ab98414d54d6585ea5d4e99d268d8bf7f"><div class="ttname"><a href="ffmpegfs_8h.html#ab98414d54d6585ea5d4e99d268d8bf7f">insert_file</a></div><div class="ttdeci">LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string &amp;virtfile, const struct stat *stbuf, int flags=VIRTUALFLAG_NONE)</div><div class="ttdoc">Add new virtual file to internal list.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01667">fuseops.cc:1667</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_a1b72338352a37192db01c6a43b67a5be"><div class="ttname"><a href="ffmpegfs_8h.html#a1b72338352a37192db01c6a43b67a5be">add_dotdot</a></div><div class="ttdeci">int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)</div><div class="ttdoc">Make dot and double dot entries for a virtual directory.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l02452">fuseops.cc:2452</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_a2b9827e8de0a310419eb175c350e6b0b"><div class="ttname"><a href="ffmpegfs_8h.html#a2b9827e8de0a310419eb175c350e6b0b">insert_dir</a></div><div class="ttdeci">LPVIRTUALFILE insert_dir(VIRTUALTYPE type, const std::string &amp;virtdir, const struct stat *stbuf, int flags=VIRTUALFLAG_NONE)</div><div class="ttdoc">Add new virtual directory to the internal list. If the file already exists, it will be updated.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01745">fuseops.cc:1745</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_a54bb346872f71912835f3c490f931935"><div class="ttname"><a href="ffmpegfs_8h.html#a54bb346872f71912835f3c490f931935">add_fuse_entry</a></div><div class="ttdeci">int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string &amp;name, const struct stat *stbuf, off_t off)</div><div class="ttdoc">Wrapper to the Fuse filler function.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l02442">fuseops.cc:2442</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_a757570119497576827529b07c0aa4147"><div class="ttname"><a href="ffmpegfs_8h.html#a757570119497576827529b07c0aa4147">load_path</a></div><div class="ttdeci">int load_path(const std::string &amp;path, const struct stat *statbuf, void *buf, fuse_fill_dir_t filler)</div><div class="ttdoc">Load a path with virtual files for FUSE.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01787">fuseops.cc:1787</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_aaccd4c147efa346efcbb3c4fbb1e0a1a"><div class="ttname"><a href="ffmpegfs_8h.html#aaccd4c147efa346efcbb3c4fbb1e0a1a">check_path</a></div><div class="ttdeci">bool check_path(const std::string &amp;path)</div><div class="ttdoc">Check if the path has already been parsed. Only useful if for DVD, Blu-ray or VCD where it is guarant...</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01780">fuseops.cc:1780</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_ab98414d54d6585ea5d4e99d268d8bf7f"><div class="ttname"><a href="ffmpegfs_8h.html#ab98414d54d6585ea5d4e99d268d8bf7f">insert_file</a></div><div class="ttdeci">LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string &amp;virtfile, const struct stat *stbuf, int flags=VIRTUALFLAG_NONE)</div><div class="ttdoc">Add new virtual file to internal list.</div><div class="ttdef"><b>Definition:</b> <a href="fuseops_8cc_source.html#l01666">fuseops.cc:1666</a></div></div>
 <div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a></div><div class="ttdeci">@ VIRTUALTYPE_DVD</div><div class="ttdoc">DVD file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00096">fileio.h:96</a></div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Provide various log facilities to stderr, disk or syslog.</div></div>
 <div class="ttc" id="astructAUDIO__SETTINGS_html"><div class="ttname"><a href="structAUDIO__SETTINGS.html">AUDIO_SETTINGS</a></div><div class="ttdoc">Audio stream settings.</div><div class="ttdef"><b>Definition:</b> <a href="dvdparser_8cc_source.html#l00047">dvdparser.cc:48</a></div></div>
@@ -645,13 +644,13 @@ $(function() {
 <div class="ttc" id="astructVIRTUALFILE_html_a268782e2bf4d90052dde498c63128f9e"><div class="ttname"><a href="structVIRTUALFILE.html#a268782e2bf4d90052dde498c63128f9e">VIRTUALFILE::m_predicted_size</a></div><div class="ttdeci">size_t m_predicted_size</div><div class="ttdoc">Use this as the size instead of computing it over and over.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00153">fileio.h:153</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a415f212c36e6f13c1d180ddbe3111359"><div class="ttname"><a href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">VIRTUALFILE::m_width</a></div><div class="ttdeci">int m_width</div><div class="ttdoc">Video width - Filled in for the DVD/Blu-ray directory.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00245">fileio.h:245</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a45ba86461820fb7529effe3dbb644c56"><div class="ttname"><a href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">VIRTUALFILE::m_height</a></div><div class="ttdeci">int m_height</div><div class="ttdoc">Video height - Filled in for the DVD/Blu-ray directory.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00246">fileio.h:246</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_html_a495a4e63d94f387107df875e8652c9fc"><div class="ttname"><a href="structVIRTUALFILE.html#a495a4e63d94f387107df875e8652c9fc">VIRTUALFILE::m_format_idx</a></div><div class="ttdeci">int m_format_idx</div><div class="ttdoc">Index into params.format[] array.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00145">fileio.h:145</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a555fd3516f41df2635b7593d823361b0"><div class="ttname"><a href="structVIRTUALFILE.html#a555fd3516f41df2635b7593d823361b0">VIRTUALFILE::m_channels</a></div><div class="ttdeci">int m_channels</div><div class="ttdoc">Audio channels - Filled in for the DVD/Blu-ray directory.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00242">fileio.h:242</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a7ada4d231f0daaa221c3550ebb2ec28e"><div class="ttname"><a href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">VIRTUALFILE::m_framerate</a></div><div class="ttdeci">AVRational m_framerate</div><div class="ttdoc">Video frame rate - Filled in for the DVD/Blu-ray directory.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00247">fileio.h:247</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a9350bd52b2a01e77078de59f745722dc"><div class="ttname"><a href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">VIRTUALFILE::m_st</a></div><div class="ttdeci">struct stat m_st</div><div class="ttdoc">stat structure with size etc.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00148">fileio.h:149</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html_aac07bc10af5d0980ae8ac656a0a3bc25"><div class="ttname"><a href="structVIRTUALFILE.html#aac07bc10af5d0980ae8ac656a0a3bc25">VIRTUALFILE::m_format_idx</a></div><div class="ttdeci">size_t m_format_idx</div><div class="ttdoc">Index into params.format[] array.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00145">fileio.h:145</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_ace2529c71e1d1422aa932fcdfe3a3d4f"><div class="ttname"><a href="structVIRTUALFILE.html#ace2529c71e1d1422aa932fcdfe3a3d4f">VIRTUALFILE::m_video_frame_count</a></div><div class="ttdeci">uint32_t m_video_frame_count</div><div class="ttdoc">Number of frames in video or 0 if not a video.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00154">fileio.h:154</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_afd8b2f75b21fafbdd6d593a3723343a4"><div class="ttname"><a href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">VIRTUALFILE::m_duration</a></div><div class="ttdeci">int64_t m_duration</div><div class="ttdoc">Track/chapter duration, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00152">fileio.h:152</a></div></div>
-<div class="ttc" id="atranscode_8cc_html_a86de0eca78c4e84a591e83ead6fe4c23"><div class="ttname"><a href="transcode_8cc.html#a86de0eca78c4e84a591e83ead6fe4c23">transcoder_set_filesize</a></div><div class="ttdeci">bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, int interleaved, const AVRational &amp;framerate)</div><div class="ttdoc">Set the file size.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00289">transcode.cc:289</a></div></div>
+<div class="ttc" id="atranscode_8cc_html_a4b4a6f7de7c8e817105ab07d331936a8"><div class="ttname"><a href="transcode_8cc.html#a4b4a6f7de7c8e817105ab07d331936a8">transcoder_set_filesize</a></div><div class="ttdeci">bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, bool interleaved, const AVRational &amp;framerate)</div><div class="ttdoc">Set the file size.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00289">transcode.cc:289</a></div></div>
 <div class="ttc" id="atranscode_8cc_html_aeaf746244e3f08933d0c1ed855915207"><div class="ttname"><a href="transcode_8cc.html#aeaf746244e3f08933d0c1ed855915207">transcoder_cached_filesize</a></div><div class="ttdeci">bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)</div><div class="ttdoc">Simply get encoded file size (do not create the whole encoder/decoder objects)</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00262">transcode.cc:262</a></div></div>
 <div class="ttc" id="atranscode_8h_html"><div class="ttname"><a href="transcode_8h.html">transcode.h</a></div><div class="ttdoc">File transcoder interface (for use with by FUSE)</div></div>
 </div><!-- fragment --></div><!-- contents -->

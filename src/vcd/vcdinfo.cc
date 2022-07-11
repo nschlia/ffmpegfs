@@ -53,7 +53,7 @@ typedef struct VCDINFO
      *
      * This ID is CD type dependant: VIDEO_CD, SUPERVCD or HQ-VCD. It is always 8 bytes long.
      */
-    char    m_ID[8];
+    char    m_ID[8];            // NOLINT(modernize-avoid-c-arrays)
     /**
      * @brief 1 Byte: CD type
      *
@@ -73,7 +73,7 @@ typedef struct VCDINFO
      *
      * The album ID is the name of this album.
      */
-    char    m_albumid[16];
+    char    m_albumid[16];      // NOLINT(modernize-avoid-c-arrays)
     /**
      * @brief 2 Byte: Number of CDs in set
      *
@@ -91,7 +91,7 @@ typedef struct VCDINFO
      *
      * The meaning of these flags is unknown to me.
      */
-    char    m_palflags[98];
+    char    m_palflags[98];     // NOLINT(modernize-avoid-c-arrays)
 
     // reserved1:
     // restriction:

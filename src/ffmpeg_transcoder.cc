@@ -4851,7 +4851,7 @@ time_t FFmpeg_Transcoder::mtime() const
 }
 
 template <size_t size>
-const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string & in) const
+const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string & in) const  // NOLINT(modernize-avoid-c-arrays)
 {
     memset(out, ' ', size);
     memcpy(out, in.c_str(), std::min(size, in.size()));

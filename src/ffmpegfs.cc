@@ -289,7 +289,7 @@ enum
 /**
  * FUSE option descriptions
  */
-static struct fuse_opt ffmpegfs_opts[] =
+static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
 {
     // Output type
     FUSE_OPT_KEY("--desttype=%s",                   KEY_DESTTYPE),

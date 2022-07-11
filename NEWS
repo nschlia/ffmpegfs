@@ -2,6 +2,11 @@ FFmpegfs NEWS
 
 Important changes in 2.12 (2022-07-XX):
 
+* The code has been run through clang-tidy to identify bug-prone or inefficient
+  code, and to find parts that could be modernised to C++17. Several issues could
+  be resolved. Sometimes, many lines of code could be replaced by a few. Some
+  parts run far more inefficiently than before. C++17 is cool. I need to get a
+  t-shirt.
 * Bugfix: A potential crash under rare circumstances in get_prores_bitrate() has
   been fixed. Array access out-of-bounds could occur if best match resolution
   could not be determined.

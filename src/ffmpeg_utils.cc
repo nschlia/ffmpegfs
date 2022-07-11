@@ -289,7 +289,7 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     }
 
     // Try to find direct match, prefer same as input stream
-    for (const auto & subtitle_codec : it->second.m_subtitle_codec)
+    for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
     {
         // Also match AV_CODEC_ID_DVD_SUBTITLE to AV_CODEC_ID_DVB_SUBTITLE
         if (subtitle_codec == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && subtitle_codec == AV_CODEC_ID_DVB_SUBTITLE))
@@ -302,7 +302,7 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     if (is_text_codec(codec_id))
     {
         // Find a text based codec in the list
-        for (const auto & subtitle_codec : it->second.m_subtitle_codec)
+        for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
         {
             if (is_text_codec(subtitle_codec))
             {
@@ -313,7 +313,7 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     else
     {
         // Find a bitmap based codec in the list
-        for (const auto & subtitle_codec : it->second.m_subtitle_codec)
+        for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
         {
             if (!is_text_codec(subtitle_codec))
             {

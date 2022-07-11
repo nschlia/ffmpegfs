@@ -2720,7 +2720,7 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
 
     if (!params.m_noalbumarts && m_current_format->albumart_supported())
     {
-        for (auto & album_art : m_in.m_album_art)
+        for (StreamRef & album_art : m_in.m_album_art)
         {
             int ret;
 

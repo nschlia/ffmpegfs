@@ -33,6 +33,7 @@
 #include "vcdchapter.h"
 
 #include <vector>
+#include <array>
 
 /** @brief Video CD entries
  */
@@ -138,10 +139,9 @@ protected:
      * @brief Seek for sync bytes.
      * @param[in] fpi - file pointer of open file
      * @param[in] sync - sync bytes
-     * @param[in] len - length of sync bytes
      * @return Returns SEEKRES result code.
      */
-    SEEKRES                     seek_sync(FILE *fpi, const char * sync, int len) const;
+    SEEKRES                     seek_sync(FILE *fpi, const std::array<char, 12> & sync) const;
 
 protected:
     // Common data

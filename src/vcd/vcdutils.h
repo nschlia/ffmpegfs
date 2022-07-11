@@ -31,6 +31,7 @@
 #pragma once
 
 #include <string>
+#include <array>
 
 /** Convert BCD value to hex
  */
@@ -107,7 +108,7 @@ typedef struct VCDENTRIES
 typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version of VCDENTRY */
 #pragma pack(pop)
 
-extern const char SYNC[12];                 /**< @brief Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) */
+extern const std::array<char, 12> SYNC;     /**< @brief Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) */
 
 /** @namespace VCDUTILS
  *  @brief Video CD utility functions

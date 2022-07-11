@@ -318,13 +318,6 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 
     m_virtualfile       = virtualfile;
 
-    // Make sure this is set!
-    if (m_virtualfile->m_format_idx < 0)
-    {
-        Logging::error(filename(), "INTERNAL ERROR: open_input_file()! format_idx not set.");
-        return AVERROR(EINVAL);
-    }
-
     m_mtime             = m_virtualfile->m_st.st_mtime;
     m_current_format    = params.current_format(m_virtualfile);
 
@@ -5708,7 +5701,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
         return 0;
     }
 
-    return m_prores_bitrate[match].m_bitrate[profile] * (1000 * 1000);
+    return m_prores_bitrate[match].m_bitrate[static_cast<size_t>(profile)] * (1000 * 1000);
 }
 
 bool FFmpeg_Transcoder::audio_size(size_t *filesize, AVCodecID codec_id, BITRATE bit_rate, int64_t duration, int channels, int sample_rate, AVSampleFormat sample_format)
@@ -6503,9 +6496,6 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 
         m_filter_graph = avfilter_graph_alloc();
 
-        AVBufferSinkParams buffer_sink_params;
-        enum AVPixelFormat pixel_fmts[3];
-
         if (outputs == nullptr || inputs == nullptr || m_filter_graph == nullptr)
         {
             throw static_cast<int>(AVERROR(ENOMEM));
@@ -6540,10 +6530,13 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 
         // buffer video sink: to terminate the filter chain.
 
+        AVBufferSinkParams buffer_sink_params;
+        std::array<enum AVPixelFormat, 3> pixel_fmts;
+
         pixel_fmts[0] = pix_fmt;
         pixel_fmts[1] = AV_PIX_FMT_NONE;
 
-        buffer_sink_params.pixel_fmts = pixel_fmts;
+        buffer_sink_params.pixel_fmts = pixel_fmts.data();
 
         ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, &buffer_sink_params, m_filter_graph);
 
@@ -6557,7 +6550,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-        ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
+        ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts.data(), AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
 #pragma GCC diagnostic pop
 
         if (ret < 0)

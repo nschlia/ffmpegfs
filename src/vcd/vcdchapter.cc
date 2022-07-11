@@ -76,16 +76,16 @@ VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, 
 int VcdChapter::read(FILE *fpi, int track_no)
 {
     VCDMSF msf;
-    char buffer[sizeof(SYNC)];
+    std::array<char, SYNC.size()> buffer;
 
     // Read first sync
-    if (fread(&buffer, 1, sizeof(buffer), fpi) != sizeof(buffer))
+    if (fread(&buffer, 1, buffer.size(), fpi) != buffer.size())
     {
         return ferror(fpi);
     }
 
     // Validate sync
-    if (memcmp(buffer, SYNC, sizeof(buffer)) != 0)
+    if (buffer != SYNC)
     {
         return EIO;
     }

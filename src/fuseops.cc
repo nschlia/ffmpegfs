@@ -76,7 +76,7 @@ static int                          make_hls_fileset(void * buf, fuse_fill_dir_t
 static int                          kick_next(LPVIRTUALFILE virtualfile);
 static void                         sighandler(int signum);
 static std::string                  get_number(const char *path, uint32_t *value);
-static int                          guess_format_idx(const std::string & filepath);
+static size_t                       guess_format_idx(const std::string & filepath);
 static int                          parse_file(LPVIRTUALFILE newvirtualfile);
 static const FFmpegfs_Format * 		get_format(LPVIRTUALFILE newvirtualfile);
 static int                          selector(const struct dirent * de);
@@ -2264,7 +2264,7 @@ static std::string get_number(const char *path, uint32_t *value)
  * @param[in] filepath - Name of the file, path my be included, but not required.
  * @return Index 0 or 1
  */
-static int guess_format_idx(const std::string & filepath)
+static size_t guess_format_idx(const std::string & filepath)
 {
     const AVOutputFormat* oformat = ::av_guess_format(nullptr, filepath.c_str(), nullptr);
 

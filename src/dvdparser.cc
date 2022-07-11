@@ -202,7 +202,7 @@ static AVRational dvd_frame_rate(const uint8_t * ptr)
  */
 static int64_t BCDtime(const dvd_time_t * dvd_time)
 {
-    int64_t time[4];
+    std::array<int64_t, 4> time;
     AVRational  framerate = dvd_frame_rate(&dvd_time->frame_u);
 
     if (!framerate.den)

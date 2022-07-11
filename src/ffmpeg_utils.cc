@@ -1140,9 +1140,9 @@ std::string ffmpeg_geterror(int errnum)
 {
     if (errnum < 0)
     {
-        char error[AV_ERROR_MAX_STRING_SIZE];
-        av_strerror(errnum, error, AV_ERROR_MAX_STRING_SIZE);
-        return error;
+        std::array<char, AV_ERROR_MAX_STRING_SIZE + 1> error;
+        av_strerror(errnum, error.data(), error.size() - 1);
+        return error.data();
     }
     else
     {
@@ -1783,11 +1783,11 @@ std::string fourcc_make_string(std::string * buf, uint32_t fourcc)
 
 void exepath(std::string * path)
 {
-    char result[PATH_MAX + 1] = "";
-    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    std::array<char, PATH_MAX + 1> result;
+    ssize_t count = readlink("/proc/self/exe", result.data(), result.size() - 1);
     if (count != -1)
     {
-        *path = dirname(result);
+        *path = dirname(result.data());
         append_sep(path);
     }
     else
@@ -1975,11 +1975,11 @@ std::vector<std::string> split(const std::string& input, const std::string & reg
 
 std::string sanitise_filepath(std::string * filepath)
 {
-    char resolved_name[PATH_MAX + 1];
+    std::array<char, PATH_MAX + 1> resolved_name;
 
-    if (realpath(filepath->c_str(), resolved_name) != nullptr)
+    if (realpath(filepath->c_str(), resolved_name.data()) != nullptr)
     {
-        *filepath = resolved_name;
+        *filepath = resolved_name.data();
         return *filepath;
     }
 
@@ -2056,22 +2056,27 @@ size_t get_disk_free(std::string & path)
 
 bool check_ignore(size_t size, size_t offset)
 {
-    size_t blocksize[] = { 0x2000, 0x8000, 0x10000, 0 };
+    std::array<size_t, 3> blocksize_arr = { 0x2000, 0x8000, 0x10000 };
     bool ignore = false;
 
-    for (int n = 0; blocksize[n] && !ignore; n++)
+    for (const size_t & blocksize: blocksize_arr)
     {
         size_t rest;
         bool match;
 
-        match = !(offset % blocksize[n]);           // Must be multiple of block size
+        match = !(offset % blocksize);              // Must be multiple of block size
         if (!match)
         {
             continue;
         }
 
-        rest = size % offset;                       // Calculate rest. Cast OK, offset can never be < 0.
-        ignore = match && (rest < blocksize[n]);    // Ignore of rest is less than block size
+        rest = size % offset;                       // Calculate rest.
+        ignore = match && (rest < blocksize);       // Ignore of rest is less than block size
+
+        if (ignore)
+        {
+            break;
+        }
     }
 
     return ignore;
@@ -2196,11 +2201,11 @@ int get_encoding (const char * str, std::string & encoding)
 
 int read_file(const std::string & path, std::string & result)
 {
-    const char UTF_8_BOM[3]     = { '\xEF', '\xBB', '\xBF' };
-    const char UTF_16_BE_BOM[2] = { '\xFE', '\xFF' };
-    const char UTF_16_LE_BOM[2] = { '\xFF', '\xFE' };
-    const char UTF_32_BE_BOM[4] = { '\x00', '\x00', '\xFE', '\xFF' };
-    const char UTF_32_LE_BOM[4] = { '\xFF', '\xFE', '\x00', '\x00' };
+    constexpr std::array<char, 3> UTF_8_BOM     = { '\xEF', '\xBB', '\xBF' };
+    constexpr std::array<char, 2> UTF_16_BE_BOM = { '\xFE', '\xFF' };
+    constexpr std::array<char, 2> UTF_16_LE_BOM = { '\xFF', '\xFE' };
+    constexpr std::array<char, 4> UTF_32_BE_BOM = { '\x00', '\x00', '\xFE', '\xFF' };
+    constexpr std::array<char, 4> UTF_32_LE_BOM = { '\xFF', '\xFE', '\x00', '\x00' };
 
     std::ifstream ifs;
     ENCODING encoding = ENCODING_ASCII;
@@ -2225,41 +2230,41 @@ int read_file(const std::string & path, std::string & result)
         }
 
         // Read the bottom mark
-        char BOM[4];
-        ifs.read((char*)&BOM, sizeof(BOM));
+        std::array<char, 4> BOM;
+        ifs.read(BOM.data(), BOM.size());
 
         // If you feel tempted to reorder these checks please note
         // that UTF_32_LE_BOM must be done before UTF_16_LE_BOM to
         // avoid misdetection :)
-        if (!memcmp(BOM, UTF_32_LE_BOM, sizeof(UTF_32_LE_BOM)))
+        if (!memcmp(BOM.data(), UTF_32_LE_BOM.data(), UTF_32_LE_BOM.size()))
         {
             // The file contains UTF-32LE BOM
             encoding = ENCODING_UTF32LE_BOM;
-            ifs.seekg(sizeof(UTF_32_LE_BOM));
+            ifs.seekg(UTF_32_LE_BOM.size());
         }
-        else if (!memcmp(BOM, UTF_32_BE_BOM, sizeof(UTF_32_BE_BOM)))
+        else if (!memcmp(BOM.data(), UTF_32_BE_BOM.data(), UTF_32_BE_BOM.size()))
         {
             // The file contains UTF-32BE BOM
             encoding = ENCODING_UTF32BE_BOM;
-            ifs.seekg(sizeof(UTF_32_BE_BOM));
+            ifs.seekg(UTF_32_BE_BOM.size());
         }
-        else if (!memcmp(BOM, UTF_16_LE_BOM, sizeof(UTF_16_LE_BOM)))
+        else if (!memcmp(BOM.data(), UTF_16_LE_BOM.data(), UTF_16_LE_BOM.size()))
         {
             // The file contains UTF-16LE BOM
             encoding = ENCODING_UTF16LE_BOM;
-            ifs.seekg(sizeof(UTF_16_LE_BOM));
+            ifs.seekg(UTF_16_LE_BOM.size());
         }
-        else if (!memcmp(BOM, UTF_16_BE_BOM, sizeof(UTF_16_BE_BOM)))
+        else if (!memcmp(BOM.data(), UTF_16_BE_BOM.data(), UTF_16_BE_BOM.size()))
         {
             // The file contains UTF-16BE BOM
             encoding = ENCODING_UTF16BE_BOM;
-            ifs.seekg(sizeof(UTF_16_BE_BOM));
+            ifs.seekg(UTF_16_BE_BOM.size());
         }
-        else if (!memcmp(BOM, UTF_8_BOM, sizeof(UTF_8_BOM)))
+        else if (!memcmp(BOM.data(), UTF_8_BOM.data(), UTF_8_BOM.size()))
         {
             // The file contains UTF-8 BOM
             encoding = ENCODING_UTF8_BOM;
-            ifs.seekg(sizeof(UTF_8_BOM));
+            ifs.seekg(UTF_8_BOM.size());
         }
         else
         {

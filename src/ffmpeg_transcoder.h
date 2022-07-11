@@ -95,7 +95,7 @@ protected:
          * 4: ProRes 4444 (no alpha)
          * 5: ProRes 4444 XQ (no alpha)
          */
-        int                     m_bitrate[6];                       /**< @brief Bitrate of this format */
+        std::array<int, 6>		m_bitrate;                       	/**< @brief Bitrates for this format */
     } PRORES_BITRATE, *LPPRORES_BITRATE;                            /**< @brief Pointer version of PRORES_BITRATE */
     typedef PRORES_BITRATE const * LPCPRORES_BITRATE;               /**< @brief Pointer to const version of PRORES_BITRATE */
 

@@ -68,8 +68,8 @@ extern "C" {
 
 #include "ffmpeg_utils.h"
 
-FFmpegfs_Format ffmpeg_format[2];                       /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
-FFMPEGFS_PARAMS params;                                 /**< @brief FFmpegfs command line parameters */
+FFMPEGFS_FORMAT_ARR ffmpeg_format;                      /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
+FFMPEGFS_PARAMS     params;                             /**< @brief FFmpegfs command line parameters */
 
 FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     : m_basepath("")                                    // required parameter
@@ -232,7 +232,7 @@ bool FFMPEGFS_PARAMS::smart_transcode() const
 
 const FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const
 {
-    if (virtualfile == nullptr || virtualfile->m_format_idx < 0 || virtualfile->m_format_idx > 1)
+    if (virtualfile == nullptr || virtualfile->m_format_idx > 1)
     {
         return nullptr;
     }
@@ -612,7 +612,7 @@ static int          get_samplerate(const std::string & arg, int * samplerate);
 static int          get_sampleformat(const std::string & arg, SAMPLE_FMT * sample_fmt);
 static int          get_time(const std::string & arg, time_t *time);
 static int          get_size(const std::string & arg, size_t *size);
-static int          get_desttype(const std::string & arg, FFmpegfs_Format format[2]);
+static int          get_desttype(const std::string & arg, FFMPEGFS_FORMAT_ARR & format);
 static int          get_audiocodec(const std::string & arg, AVCodecID *audio_codec);
 static int          get_videocodec(const std::string & arg, AVCodecID *video_codec);
 static int          get_autocopy(const std::string & arg, AUTOCOPY *autocopy);
@@ -630,7 +630,7 @@ static int          get_value(const std::string & arg, STRINGSET *value);
 //static int          get_value(const std::string & arg, std::optional<std::string> *value);
 static int          get_value(const std::string & arg, double *value);
 
-static int          ffmpegfs_opt_proc(void* data, const char* arg, int key, struct fuse_args *outargs);
+static int          ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg, int key, struct fuse_args *outargs);
 static bool         set_defaults();
 static void         build_device_type_list();
 static void         print_params();
@@ -1060,7 +1060,7 @@ static int get_size(const std::string & arg, size_t *size)
  * Index 1: Selected audio format.
  * @return Returns 0 if found; if not found returns -1.
  */
-static int get_desttype(const std::string & arg, FFmpegfs_Format format[2])
+static int get_desttype(const std::string & arg, FFMPEGFS_FORMAT_ARR & format)
 {
     size_t pos = arg.find('=');
 

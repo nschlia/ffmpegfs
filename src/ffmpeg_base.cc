@@ -298,16 +298,16 @@ std::string FFmpeg_Base::get_sample_fmt_name(AVSampleFormat sample_fmt)
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
 std::string FFmpeg_Base::get_channel_layout_name(const AVChannelLayout * ch_layout)
 {
-    char buffer[1024];
-    av_channel_layout_describe(ch_layout, buffer, sizeof(buffer) - 1);
-    return buffer;
+    std::array<char, 1024> buffer;
+    av_channel_layout_describe(ch_layout, buffer.data(), buffer.size() - 1);
+    return buffer.data();
 }
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 std::string FFmpeg_Base::get_channel_layout_name(int nb_channels, uint64_t channel_layout)
 {
-    char buffer[1024];
-    av_get_channel_layout_string(buffer, sizeof(buffer) - 1, nb_channels, channel_layout);
-    return buffer;
+    std::array<char, 1024> buffer;
+    av_get_channel_layout_string(buffer.data(), buffer.size() - 1, nb_channels, channel_layout);
+    return buffer.data();
 }
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 

@@ -137,7 +137,7 @@ typedef enum HWACCELAPI
 typedef std::multimap<AVCodecID, int> HWACCEL_BLOCKED_MAP;      /**< @brief Map command line option to AVCodecID */
 
 // Format
-extern FFmpegfs_Format  ffmpeg_format[2];                       /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
+extern FFMPEGFS_FORMAT_ARR ffmpeg_format;                       /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
 
 /**
  * @brief Global program parameters

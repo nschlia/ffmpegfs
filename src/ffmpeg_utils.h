@@ -52,6 +52,7 @@
 #include <vector>
 #include <regex>
 #include <set>
+#include <array>
 
 #ifndef PATH_MAX
 #include <climits>
@@ -511,6 +512,8 @@ protected:
     std::string                 m_desttype;         /**< @brief Destination type: mp4, mp3 or other */
     FILETYPE                    m_filetype;         /**< @brief File type, MP3, MP4, OPUS etc. */
 };
+
+typedef std::array<FFmpegfs_Format, 2> FFMPEGFS_FORMAT_ARR;         /**< @brief Array of FFmpegfs formats. There are two, for audio and video */
 
 /**
  * @brief Add / to the path if required

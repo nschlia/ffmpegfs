@@ -49,7 +49,7 @@
 /**
   * Sync bytes for a Video CD sector.
   */
-const char SYNC[12]              = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' };
+const std::array<char, 12> SYNC = { '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00' };
 /**
   * Sync bytes for a Video CD picture start.
   */
@@ -219,14 +219,14 @@ int VcdEntries::scan_chapters()
                 }
 
                 // Locate the first sync bytes
-                SEEKRES res = seek_sync(fpi, SYNC, sizeof(SYNC));
+                SEEKRES res = seek_sync(fpi, SYNC);
 
                 if (res != SEEKRES_FOUND)
                 {
                     throw static_cast<int>(EIO);
                 }
 
-                first_sync = ftell(fpi) - static_cast<int64_t>(sizeof(SYNC));
+                first_sync = ftell(fpi) - static_cast<int64_t>(SYNC.size());
             }
 
             int64_t total_chunks    = (stbuf.st_size - first_sync) / VCD_SECTOR_SIZE;
@@ -319,7 +319,7 @@ int VcdEntries::scan_chapters()
     return 0;
 }
 
-VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const char * sync, int len) const
+VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const std::array<char, 12> & sync) const
 {
     char ch;
 
@@ -329,21 +329,21 @@ VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const char * sync, int len)
         return SEEKRES_NOTFOUND;
     }
 
-    for (int n = 0; n < len; n++)
+    for (size_t n = 1; n <= sync.size(); n++)
     {
-        if (ch != *(sync + n))
+        if (ch != sync[n - 1])
         {
-            if (n > 0)
+            if (n > 1)
             {
                 // Restart check
-                n = -1;
+                n = 0;
                 continue;
             }
 
-            n = -1;
+            n = 0;
         }
 
-        if (n == len - 1)
+        if (n == sync.size())
         {
             // Found!
             break;

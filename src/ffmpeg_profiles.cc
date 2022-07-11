@@ -176,478 +176,346 @@
  */
 
 // ****************************************************************************************************************
-// MP4 Container
-// ****************************************************************************************************************
-
-/**
- *  @brief No opimisations, just plain mp4. MP4 codec options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_default[] =
-{
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
-    { "profile",                "high",                     0,  0 },
-    { "level",                  "3.1",                      0,  0 },
-
-    // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief No optimisations, just plain mp4. MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_default[] =
-{
-    { "movflags",               "+faststart",               0, OPT_ALL },
-    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
-    { "movflags",               "+empty_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief Firefox profile: MP4 codec options.
- * Use: -movflags +empty_moov @n
- *       -frag_duration 1000000  (for audio files only) @n
- * GOOD: Starts immediately while still decoding.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ff[] =
-{
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
-    { "profile",              "high",                       0,  0 },
-    { "level",                "3.1",                        0,  0 },
-
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Firefox profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ff[] =
-{
-    { "frag_duration",          "1000000",                  0, OPT_AUDIO },     // microsenconds
-    { "movflags",               "+empty_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief MS Edge profile: MP4 codec options.
- * Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
- * GOOD: Starts immediately while still decoding.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_edge[] =
-{
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief MS Edge profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_edge[] =
-{
-    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
-    { "movflags",               "+empty_moov",              0, OPT_ALL },
-    { "movflags",               "+separate_moof",           0, OPT_ALL },
-    { "movflags",               "+faststart",               0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief MS Internet Explorer profile: MP4 codec options.
- * Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
- * NOT GOOD: Starts when decode is complete.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_ie[] =
-{
-    // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
-    { "profile",              "high",                       0,  0 },
-    { "level",                "3.1",                        0,  0 },
-
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief MS Internet Explorer profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_ie[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief Google Chrome profile: MP4 codec options.
- * NOT GOOD: Starts when decode is complete.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_chrome[] =
-{
-
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Google Chrome profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_chrome[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief Apple Safari profile: MP4 codec options.
- * Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
- * NOT GOOD: Starts when decode is complete. Makes crazy things, stops, jumps, gaga. Comes from the inventors of MP4...
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_safari[] =
-{
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Apple Safari profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_safari[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief Opera profile: MP4 codec options.
- * NOT GOOD: Starts when decode is complete.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_opera[] =
-{
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Opera profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_opera[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ----------------------------------------------------------------------------------------------------------------
-
-/**
- *  @brief Maxthon profile: MP4 codec options.
- * NOT GOOD: Starts when decode is complete.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_codec_maxthon[] =
-{
-    // -profile:v high -level 3.1 (Partially or totally overwritten by profile!)
-    { "profile",              "high",                       0,  0 },
-    { "level",                "3.1",                        0,  0 },
-
-    // Set speed (changes profile!)
-    { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Maxthon profile: MP4 format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mp4_format_maxthon[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ****************************************************************************************************************
-// HLS/ts container
-// ****************************************************************************************************************
-
-/**
- *  @brief HLS/ts codec options.
- */
-/*static*/ const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_codec_default[] =
-{
-    { "profile",                "high",                     0,  0 },
-    { "level",                  "3.1",                      0,  0 },
-
-    // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
-
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief No optimisations, just plain ts. ts format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_hls_format_default[] =
-{
-    //{ "flags",                  "+cgop",                    0,  0 },
-    { "movflags",               "+faststart",               0, OPT_ALL },
-    { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
-    { "movflags",               "+empty_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ****************************************************************************************************************
-// MOV container
-// ****************************************************************************************************************
-
-/**
- *  @brief Basic MOV profile: MOV codec options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_codec[] =
-{
-    // Set speed (changes profile!)
-    { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief Basic MOV profile: MOV format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_mov_format[] =
-{
-    { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ****************************************************************************************************************
-// ProRes/MOV container
-// ****************************************************************************************************************
-
-/**
- *  @brief ProRes profile: ProRes/MOV codec options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_codec[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief ProRes profile: ProRes/MOV format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_prores_format[] =
-{
-    { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ****************************************************************************************************************
-// ProRes/ALAC container
-// ****************************************************************************************************************
-
-/**
- *  @brief ALAC profile: ProRes/ALAC codec options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_codec[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief ALAC profile: ProRes/ALAC format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_alac_format[] =
-{
-    { "movflags",               "+delay_moov",              0, OPT_ALL },
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/*
- * *******************************************************************************************************************
- *
- * webm
- * ====
- *
- * https://trac.ffmpeg.org/wiki/Encode/VP9
- *
- * Controlling Speed and Quality
- * =============================
- *
- * libvpx-vp9 has two main control knobs for speed and quality:
- *
- * Deadline / Quality
- *
- *  -deadline can be set to realtime, good, or best. For legacy reasons, the option is also accessible with -quality in ffmpeg.
- *
- * good is the default and recommended for most applications.
- * best is recommended if you have lots of time and want the best compression efficiency.
- * realtime is recommended for live / fast encoding.
- *
- * CPU Utilization / Speed
- * =======================
- *
- *  -cpu-used sets how efficient the compression will be. For legacy reasons, the option is also accessible with -speed in ffmpeg.
- *
- * When the deadline/quality parameter is good or best, values for -cpu-used can be set between 0 and 5. The default is 0.
- * Using 1 or 2 will increase encoding speed at the expense of having some impact on quality and rate control accuracy.
- * 4 or 5 will turn off rate distortion optimization, having even more of an impact on quality.
- *
- * When the deadline/quality is set to realtime, the encoder will try to hit a particular CPU utilization target, and encoding quality
- * will depend on CPU speed and the complexity of the clip that you are encoding. See ​the vpx documentation for more info. In this case,
- * the valid values for -cpu-used are between 0 and 15, where the CPU utilization target (in per cent) is calculated as
- * (100*(16-cpu-used)/16)%.
- *
- * *******************************************************************************************************************
- *
- */
-
-/**
- *  @brief WebM codec options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_codec_default[] =
-{
-    { "deadline",               "realtime",                 0,  OPT_SW_ONLY },
-
-    { "cpu-used",               "8",                        0,  OPT_SW_ONLY },
-
-    //    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1
-    //      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25
-    //      -c:a libopus -b:a 64k -f webm out.webm
-
-    //    Most of the current VP9 decoders use tile-based, multi-threaded decoding. In order for the decoders to take advantage
-    //    of multiple cores, the encoder must set tile-columns and frame-parallel.
-    //    Setting auto-alt-ref and lag-in-frames >= 12 will turn on VP9's alt-ref frames, a VP9 feature that enhances quality.
-    //    speed 4 tells VP9 to encode really fast, sacrificing quality. Useful to speed up the first pass.
-    //    speed 1 is a good speed vs. quality compromise. Produces output quality typically very close to speed 0, but usually encodes much faster.
-    //    Multi-threaded encoding may be used if -threads > 1 and -tile-columns > 0.
-
-    //{ "threads",                "8",                        0,  OPT_SW_ONLY },
-    //{ "speed",                  "4",                        0,  OPT_SW_ONLY },
-    { "tile-columns",           "6",                        0,  OPT_SW_ONLY },
-    { "frame-parallel",         "1",                        0,  OPT_SW_ONLY },
-    { "auto-alt-ref",           "1",                        0,  OPT_SW_ONLY },
-    { "lag-in-frames",          "25",                       0,  OPT_SW_ONLY },
-
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-/**
- *  @brief WebM format options.
- */
-static const FFmpeg_Profiles::PROFILE_OPTION m_option_webm_format_default[] =
-{
-    { nullptr,                  nullptr,                    0,  0 }
-};
-
-// ****************************************************************************************************************
 // Profiles
 // ****************************************************************************************************************
 
-const FFmpeg_Profiles::PROFILE_LIST FFmpeg_Profiles::m_profile[] =
+const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
 {
-    // MP4
+    // ****************************************************************************************************************
+    // MP4 Container
+    // ****************************************************************************************************************
     {
         FILETYPE_MP4,
         PROFILE_DEFAULT,
-        m_option_mp4_codec_default,
-        m_option_mp4_format_default
+        //! @brief No opimisations, just plain mp4. MP4 codec options.
+        {
+            // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
+            { "profile",                "high",                     0,  0 },
+            { "level",                  "3.1",                      0,  0 },
+
+            // Set speed (changes profile!)
+            { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
+        },
+        //! @brief No optimisations, just plain mp4. MP4 format options.
+        {
+            { "movflags",               "+faststart",               0, OPT_ALL },
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "movflags",               "+empty_moov",              0, OPT_ALL },
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_FF,
-        m_option_mp4_codec_ff,
-        m_option_mp4_format_ff
+        //! @brief Firefox profile: MP4 codec options.
+        //!  Use: -movflags +empty_moov @n
+        //!       -frag_duration 1000000  (for audio files only) @n
+        //!  GOOD: Starts immediately while still decoding.
+        {
+            // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
+            { "profile",              "high",                       0,  0 },
+            { "level",                "3.1",                        0,  0 },
+
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //
+        //  @brief Firefox profile: MP4 format options.
+        //
+        {
+            { "frag_duration",          "1000000",                  0, OPT_AUDIO },     // microsenconds
+            { "movflags",               "+empty_moov",              0, OPT_ALL },
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_EDGE,
-        m_option_mp4_codec_edge,
-        m_option_mp4_format_edge
+        //!
+        //! @brief MS Edge profile: MP4 codec options.
+        //! Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
+        //! GOOD: Starts immediately while still decoding.
+        //!
+        {
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief MS Edge profile: MP4 format options.
+        //!
+        {
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "movflags",               "+empty_moov",              0, OPT_ALL },
+            { "movflags",               "+separate_moof",           0, OPT_ALL },
+            { "movflags",               "+faststart",               0, OPT_ALL },
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_IE,
-        m_option_mp4_codec_ie,
-        m_option_mp4_format_ie
+        //!
+        //! @brief MS Internet Explorer profile: MP4 codec options.
+        //!
+        //! Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
+        //! NOT GOOD: Only starts after decode is complete.
+        //!
+        {
+            // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7 (Partially or totally overwritten by profile!)
+            { "profile",              "high",                       0,  0 },
+            { "level",                "3.1",                        0,  0 },
+
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief MS Internet Explorer profile: MP4 format options.
+        //!
+        {
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_CHROME,
-        m_option_mp4_codec_chrome,
-        m_option_mp4_format_chrome
+        //!
+        //! @brief Google Chrome profile: MP4 codec options.
+        //!
+        //! NOT GOOD: Only starts after decode is complete.
+        //!
+        {
+
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief Google Chrome profile: MP4 format options.
+        //!
+        {
+        },
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_SAFARI,
-        m_option_mp4_codec_safari,
-        m_option_mp4_format_safari
+        //!
+        //! @brief Apple Safari profile: MP4 codec options.
+        //! Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
+        //! NOT GOOD: Only starts after decode is complete. Makes crazy things, stops, jumps, gaga. Comes from the inventors of MP4...
+        //!
+        {
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief Apple Safari profile: MP4 format options.
+        //!
+        {
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_OPERA,
-        m_option_mp4_codec_opera,
-        m_option_mp4_format_opera
+        //!
+        //! @brief Opera profile: MP4 codec options.
+        //!
+        //! NOT GOOD: Only starts after decode is complete.
+        //!
+        {
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief Opera profile: MP4 format options.
+        //!
+        {
+        }
     },
+    // ----------------------------------------------------------------------------------------------------------------
     {
         FILETYPE_MP4,
         PROFILE_MP4_MAXTHON,
-        m_option_mp4_codec_maxthon,
-        m_option_mp4_format_maxthon
+        //!
+        //! @brief Maxthon profile: MP4 codec options.
+        //!
+        //! NOT GOOD: Only starts after decode is complete.
+        //!
+        {
+            // -profile:v high -level 3.1 (Partially or totally overwritten by profile!)
+            { "profile",              "high",                       0,  0 },
+            { "level",                "3.1",                        0,  0 },
+
+            // Set speed (changes profile!)
+            { "preset",               "ultrafast",                  0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief Maxthon profile: MP4 format options.
+        //!
+        {
+        }
     },
 
-    // MOV
+    // ****************************************************************************************************************
+    // MOV container
+    // ****************************************************************************************************************
+
     {
         FILETYPE_MOV,
         PROFILE_MOV_DEFAULT,
-        m_option_mov_codec,
-        m_option_mov_format
+        //!
+        //! @brief Basic MOV profile: MOV codec options.
+        //!
+        {
+            // Set speed (changes profile!)
+            { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief Basic MOV profile: MOV format options.
+        //!
+        {
+            { "movflags",               "+delay_moov",              0, OPT_ALL },
+        }
     },
 
-    // MOV/ProRes
+    // ****************************************************************************************************************
+    // ProRes/MOV container
+    // ****************************************************************************************************************
+
     {
         FILETYPE_PRORES,
         PROFILE_PRORES_DEFAULT,
-        m_option_prores_codec,
-        m_option_prores_format
+        //!
+        //! @brief ProRes profile: ProRes/MOV codec options.
+        //!
+        {
+        },
+        //!
+        //! @brief ProRes profile: ProRes/MOV format options.
+        //!
+        {
+            { "movflags",               "+delay_moov",              0, OPT_ALL },
+        }
     },
 
-    // MOV/ALAC (Apple Lossless Audio Coding)
+    // ****************************************************************************************************************
+    // ProRes/ALAC container
+    // ****************************************************************************************************************
+
     {
         FILETYPE_ALAC,
         PROFILE_ALAC_DEFAULT,
-        m_option_alac_codec,
-        m_option_alac_format
+        //!
+        //! @brief ALAC profile: ProRes/ALAC codec options.
+        //!
+        {
+        },
+        //!
+        //! @brief ALAC profile: ProRes/ALAC format options.
+        //!
+        {
+            { "movflags",               "+delay_moov",              0, OPT_ALL },
+        }
+
     },
 
-    // HLS/ts
+    // ****************************************************************************************************************
+    // HLS/ts container
+    // ****************************************************************************************************************
+
     {
         FILETYPE_HLS,
         PROFILE_HLS_DEFAULT,
-        m_option_hls_codec_default,
-        m_option_hls_format_default
-    },
+        //!
+        //! @brief HLS/ts codec options.
+        //!
+        {
+            { "profile",                "high",                     0,  0 },
+            { "level",                  "3.1",                      0,  0 },
 
-    // WebM
+            // Set speed (changes profile!)
+            { "preset",                 "ultrafast",                0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief No optimisations, just plain ts. ts format options.
+        //!
+        {
+            //{ "flags",                  "+cgop",                    0,  0 },
+            { "movflags",               "+faststart",               0, OPT_ALL },
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "movflags",               "+empty_moov",              0, OPT_ALL },
+        }
+    },
+    //!
+    //! *******************************************************************************************************************
+    //!
+    //! webm
+    //! ====
+    //!
+    //! https://trac.ffmpeg.org/wiki/Encode/VP9
+    //!
+    //! Controlling Speed and Quality
+    //! =============================
+    //!
+    //! libvpx-vp9 has two main control knobs for speed and quality:
+    //!
+    //! Deadline / Quality
+    //!
+    //!  -deadline can be set to realtime, good, or best. For legacy reasons, the option is also accessible with -quality in ffmpeg.
+    //!
+    //! good is the default and recommended for most applications.
+    //! best is recommended if you have lots of time and want the best compression efficiency.
+    //! realtime is recommended for live / fast encoding.
+    //!
+    //! CPU Utilization / Speed
+    //! =======================
+    //!
+    //!  -cpu-used sets how efficient the compression will be. For legacy reasons, the option is also accessible with -speed in ffmpeg.
+    //!
+    //! When the deadline/quality parameter is good or best, values for -cpu-used can be set between 0 and 5. The default is 0.
+    //! Using 1 or 2 will increase encoding speed at the expense of having some impact on quality and rate control accuracy.
+    //! 4 or 5 will turn off rate distortion optimization, having even more of an impact on quality.
+    //!
+    //! When the deadline/quality is set to realtime, the encoder will try to hit a particular CPU utilization target, and encoding quality
+    //! will depend on CPU speed and the complexity of the clip that you are encoding. See ​the vpx documentation for more info. In this case,
+    //! the valid values for -cpu-used are between 0 and 15, where the CPU utilization target (in per cent) is calculated as
+    //! (100*(16-cpu-used)/16)%.
+    //!
+    //! *******************************************************************************************************************
+    //!
     {
         FILETYPE_WEBM,
         PROFILE_WEBM_DEFAULT,
-        m_option_webm_codec_default,
-        m_option_webm_format_default
-    },
+        //!
+        //! @brief WebM codec options.
+        //!
+        {
+            { "deadline",               "realtime",                 0,  OPT_SW_ONLY },
 
-    // Must be last entry
-    {
-        FILETYPE_UNKNOWN,
-        PROFILE_INVALID,
-        nullptr,
-        nullptr
+            { "cpu-used",               "8",                        0,  OPT_SW_ONLY },
+
+            //    ffmpeg -i <source> -c:v libvpx-vp9 -pass 2 -b:v 1000K -threads 8 -speed 1
+            //      -tile-columns 6 -frame-parallel 1 -auto-alt-ref 1 -lag-in-frames 25
+            //      -c:a libopus -b:a 64k -f webm out.webm
+
+            //    Most of the current VP9 decoders use tile-based, multi-threaded decoding. In order for the decoders to take advantage
+            //    of multiple cores, the encoder must set tile-columns and frame-parallel.
+            //    Setting auto-alt-ref and lag-in-frames >= 12 will turn on VP9's alt-ref frames, a VP9 feature that enhances quality.
+            //    speed 4 tells VP9 to encode really fast, sacrificing quality. Useful to speed up the first pass.
+            //    speed 1 is a good speed vs. quality compromise. Produces output quality typically very close to speed 0, but usually encodes much faster.
+            //    Multi-threaded encoding may be used if -threads > 1 and -tile-columns > 0.
+
+            //{ "threads",                "8",                        0,  OPT_SW_ONLY },
+            //{ "speed",                  "4",                        0,  OPT_SW_ONLY },
+            { "tile-columns",           "6",                        0,  OPT_SW_ONLY },
+            { "frame-parallel",         "1",                        0,  OPT_SW_ONLY },
+            { "auto-alt-ref",           "1",                        0,  OPT_SW_ONLY },
+            { "lag-in-frames",          "25",                       0,  OPT_SW_ONLY },
+        },
+        //!
+        //! @brief WebM format options.
+        //!
+        {
+        }
     }
 };

@@ -78,7 +78,7 @@ extern "C" {
 
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
-const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
+const std::vector<FFmpeg_Transcoder::PRORES_BITRATE> FFmpeg_Transcoder::m_prores_bitrate =
 {
     // SD
     {	720,	486,	{ {	24,	false }                   },	{	10,     23,     34,     50,     75,     113     }	},
@@ -151,34 +151,32 @@ const FFmpeg_Transcoder::PRORES_BITRATE FFmpeg_Transcoder::m_prores_bitrate[] =
     {	8192,	4320,	{ {	25,	false }                   },	{	649,	1460,	2097,	3146,	4719,	7078	}	},
     {	8192,	4320,	{ {	30,	false }                   },	{	778,	1750,	2514,	3771,	5657,	8485	}	},
     {	8192,	4320,	{ {	50,	false }                   },	{	1298,	2920,	4194,	6291,	9437,	14156	}	},
-    {	8192,	4320,	{ {	60,	false }                   },	{	1556,	3500,	5028,	7542,	11313,	16970	}	},
-    // That's it
-    {   0,     0,       {                                 },	{	0 }	},
+    {	8192,	4320,	{ {	60,	false }                   },	{	1556,	3500,	5028,	7542,	11313,	16970	}	}
 };
-
+						
 const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
 {
     { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },          ///< VAAPI uses the NV12 pix format
-    #if 0
+#if 0
     { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - Cuda pix_fmt: to be added.
     { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - VDPAU pix_fmt: to be added.
     { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_QSV },           ///< @todo HWACCEL - QSV pix_fmt untested: Seems to be AV_PIX_FMT_P010 or AV_PIX_FMT_QSV. To be added.
     { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - OpenCL pix_fmt: Seems to be AV_PIX_FMT_OPENCL or AV_PIX_FMT_NV12. To be added.
-    #if HAVE_VULKAN_HWACCEL
+#if HAVE_VULKAN_HWACCEL
     { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt: to be added.
-    #endif // HAVE_VULKAN_HWACCEL
-    #if __APPLE__
+#endif // HAVE_VULKAN_HWACCEL
+#if __APPLE__
     { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< Videotoolbox pix_fmt: MacOS acceleration APIs not supported
-    #endif // __APPLE__
-    #if __ANDROID__
+#endif // __APPLE__
+#if __ANDROID__
     { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC },    ///< Mediacodec pix_fmt: Android acceleration APIs not supported
-    #endif // __ANDROID__
-    #if _WIN32
+#endif // __ANDROID__
+#if _WIN32
     { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< DRM prime pix_fmt: Windows acceleration APIs not supported
     { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< DXVA2 pix_fmt: Windows acceleration APIs not supported
     { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< D3D11VA pix_fmt: Windows acceleration APIs not supported
-    #endif // _WIN32
-    #endif
+#endif // _WIN32
+#endif
 };
 
 FFmpeg_Transcoder::StreamRef::StreamRef() :
@@ -1555,25 +1553,20 @@ bool FFmpeg_Transcoder::get_video_size(int *output_width, int *output_height) co
     return (input_width > *output_width || input_height > *output_height);
 }
 
-int FFmpeg_Transcoder::update_codec(void *opt, LPCPROFILE_OPTION profile_option) const
+int FFmpeg_Transcoder::update_codec(void *opt, const PROFILE_OPTION_VEC& profile_option_vec) const
 {
     int ret = 0;
 
-    if (profile_option == nullptr)
+    for (const PROFILE_OPTION & profile_option : profile_option_vec)
     {
-        return 0;
-    }
-
-    for (LPCPROFILE_OPTION p = profile_option; p->m_key != nullptr; p++)
-    {
-        if ((m_hwaccel_enable_enc_buffering && p->m_options & OPT_SW_ONLY) || (!m_hwaccel_enable_enc_buffering && p->m_options & OPT_HW_ONLY))
+        if ((m_hwaccel_enable_enc_buffering && profile_option.m_options & OPT_SW_ONLY) || (!m_hwaccel_enable_enc_buffering && profile_option.m_options & OPT_HW_ONLY))
         {
             continue;
         }
 
-        Logging::trace(virtname(), "Profile codec option -%1%2%3.", p->m_key, *p->m_value ? " " : "", p->m_value);
+        Logging::trace(virtname(), "Profile codec option -%1%2%3.", profile_option.m_key, *profile_option.m_value ? " " : "", profile_option.m_value);
 
-        ret = opt_set_with_check(opt, p->m_key, p->m_value, p->m_flags, virtname());
+        ret = opt_set_with_check(opt, profile_option.m_key, profile_option.m_value, profile_option.m_flags, virtname());
         if (ret < 0)
         {
             break;
@@ -1586,11 +1579,11 @@ int FFmpeg_Transcoder::prepare_codec(void *opt, FILETYPE filetype) const
 {
     int ret = 0;
 
-    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
+    for (const PROFILE_LIST & profile : m_profile)
     {
-        if (m_profile[n].m_filetype == filetype && m_profile[n].m_profile == params.m_profile)
+        if (profile.m_filetype == filetype && profile.m_profile == params.m_profile)
         {
-            ret = update_codec(opt, m_profile[n].m_option_codec);
+            ret = update_codec(opt, profile.m_option_codec);
             break;
         }
     }
@@ -2929,32 +2922,27 @@ int FFmpeg_Transcoder::init_audio_fifo()
     return 0;
 }
 
-int FFmpeg_Transcoder::update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const
+int FFmpeg_Transcoder::update_format(AVDictionary** dict, const PROFILE_OPTION_VEC &option_vec) const
 {
     int ret = 0;
 
-    if (option == nullptr)
+    for (const PROFILE_OPTION & option : option_vec)
     {
-        return 0;
-    }
-
-    for (LPCPROFILE_OPTION p = option; p->m_key != nullptr; p++)
-    {
-        if ((p->m_options & OPT_AUDIO) && stream_exists(m_out.m_video.m_stream_idx))
+        if ((option.m_options & OPT_AUDIO) && stream_exists(m_out.m_video.m_stream_idx))
         {
             // Option for audio only, but file contains video stream
             continue;
         }
 
-        if ((p->m_options & OPT_VIDEO) && !stream_exists(m_out.m_video.m_stream_idx))
+        if ((option.m_options & OPT_VIDEO) && !stream_exists(m_out.m_video.m_stream_idx))
         {
             // Option for video, but file contains no video stream
             continue;
         }
 
-        Logging::trace(virtname(), "Profile format option -%1%2%3.",  p->m_key, *p->m_value ? " " : "", p->m_value);
+        Logging::trace(virtname(), "Profile format option -%1%2%3.",  option.m_key, *option.m_value ? " " : "", option.m_value);
 
-        ret = dict_set_with_check(dict, p->m_key, p->m_value, p->m_flags, virtname());
+        ret = dict_set_with_check(dict, option.m_key, option.m_value, option.m_flags, virtname());
         if (ret < 0)
         {
             break;
@@ -2967,11 +2955,11 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
 {
     int ret = 0;
 
-    for (int n = 0; m_profile[n].m_profile != PROFILE_INVALID; n++)
+    for (const PROFILE_LIST & profile : m_profile)
     {
-        if (m_profile[n].m_filetype == filetype && m_profile[n].m_profile == params.m_profile)
+        if (profile.m_filetype == filetype && profile.m_profile == params.m_profile)
         {
-            ret = update_format(dict, m_profile[n].m_option_format);
+            ret = update_format(dict, profile.m_option_format);
             break;
         }
     }
@@ -5632,11 +5620,11 @@ int FFmpeg_Transcoder::start_new_segment()
 BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, int profile)
 {
     unsigned int mindist;
-    int match = -1;
+    size_t match = UINT_MAX;
 
     // Find best match resolution
     mindist = UINT_MAX;
-    for (int i = 0; m_prores_bitrate[i].m_width; i++)
+    for (size_t i = 0; i < m_prores_bitrate.size(); i++)
     {
         unsigned int x = static_cast<unsigned int>(width - m_prores_bitrate[i].m_width);
         unsigned int y = static_cast<unsigned int>(height - m_prores_bitrate[i].m_height);
@@ -5655,7 +5643,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
         }
     }
 
-    if (match < 0)
+    if (match == UINT_MAX)
     {
         return 0;
     }
@@ -5666,10 +5654,10 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
     // Find best match framerate
     double framerateX = av_q2d(framerate);
     mindist = UINT_MAX;
-    for (int i = match; width == m_prores_bitrate[i].m_width && height == m_prores_bitrate[i].m_height; i++)
+    for (size_t i = match; width == m_prores_bitrate[i].m_width && height == m_prores_bitrate[i].m_height; i++)
     {
         unsigned int dist = UINT_MAX;
-        for (int j = 0; j < MAX_PRORES_FRAMERATE && m_prores_bitrate[i].m_framerate[j].m_framerate; j++)
+        for (size_t j = 0; j < MAX_PRORES_FRAMERATE && m_prores_bitrate[i].m_framerate[j].m_framerate; j++)
         {
             unsigned int x = static_cast<unsigned int>(framerateX - m_prores_bitrate[i].m_framerate[j].m_framerate);
             unsigned int y = static_cast<unsigned int>(interleaved - m_prores_bitrate[i].m_framerate[j].m_interleaved);
@@ -5696,7 +5684,7 @@ BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRat
         }
     }
 
-    if (match < 0)
+    if (match == UINT_MAX)
     {
         return 0;
     }

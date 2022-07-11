@@ -460,10 +460,10 @@ protected:
     /**
      * @brief Prepare codec options.
      * @param[in] opt - Codec private data.
-     * @param[in] profile_option - Selected profile option.
+     * @param[in] profile_option_vec - Selected profile option.
      * @return On success, returns 0; on error, a negative AVERROR value.
      */
-    int                         update_codec(void *opt, LPCPROFILE_OPTION profile_option) const;
+    int                         update_codec(void *opt, const PROFILE_OPTION_VEC & profile_option_vec) const;
     /**
      * @brief Prepare codec options for a file type.
      * @param[in] opt - Codec private data.
@@ -559,10 +559,10 @@ protected:
     /**
      * @brief Update format options
      * @param[in] dict - Dictionary to update.
-     * @param[in] option - Profile option to set.
+     * @param[in] option_vec - Profile option to set.
      * @return On success, returns 0; on error, a negative AVERROR value.
      */
-    int                         update_format(AVDictionary** dict, LPCPROFILE_OPTION option) const;
+    int                         update_format(AVDictionary** dict, const PROFILE_OPTION_VEC & option_vec) const;
     /**
      * @brief Prepare format optimisations
      * @param[in] dict - Dictionary to update.
@@ -1232,7 +1232,7 @@ private:
     uint32_t                    m_reset_pts;                    /**< @brief We have to reset audio/video pts to the new position */
     uint32_t                    m_fake_frame_no;                /**< @brief The MJEPG codec requires monotonically growing PTS values so we fake some to avoid them going backwards after seeks */
 
-    static const PRORES_BITRATE m_prores_bitrate[];             /**< @brief ProRes bitrate table. Used for file size prediction. */
+    static const std::vector<PRORES_BITRATE> m_prores_bitrate;	/**< @brief ProRes bitrate table. Used for file size prediction. */
 
     // Hardware acceleration
     static const DEVICETYPE_MAP m_devicetype_map;               /**< @brief List of AVPixelFormats mapped to hardware acceleration types */

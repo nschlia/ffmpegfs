@@ -42,31 +42,35 @@
 class FFmpeg_Profiles
 {
 public:
-#define OPT_ALL         0x00000000                      /**< @brief All files */
-#define OPT_AUDIO       0x00000001                      /**< @brief For audio only files */
-#define OPT_VIDEO       0x00000002                      /**< @brief For videos (not audio only) */
-#define OPT_SW_ONLY     0x00000004                      /**< @brief Use this option for software encoding only */
-#define OPT_HW_ONLY     0x00000008                      /**< @brief Use this option for hardware encoding only */
+#define OPT_ALL         0x00000000                          /**< @brief All files */
+#define OPT_AUDIO       0x00000001                          /**< @brief For audio only files */
+#define OPT_VIDEO       0x00000002                          /**< @brief For videos (not audio only) */
+#define OPT_SW_ONLY     0x00000004                          /**< @brief Use this option for software encoding only */
+#define OPT_HW_ONLY     0x00000008                          /**< @brief Use this option for hardware encoding only */
 
-    typedef struct PROFILE_OPTION                       /**< @brief Profiles options */
+    typedef struct PROFILE_OPTION                           /**< @brief Profiles options */
     {
-        const char *            m_key;                  /**< @brief Key, see av_opt_set() and av_dict_set() FFmpeg API function */
-        const char *            m_value;                /**< @brief Value, see av_opt_set() and av_dict_set() FFmpeg API function */
-        const int               m_flags;                /**< @brief Flags, see av_opt_set() and av_dict_set() FFmpeg API function */
-        const int               m_options;              /**< @brief One of the OPT_* flags */
-    } PROFILE_OPTION;                                   /**< @brief Profile option */
-    typedef PROFILE_OPTION * LPPROFILE_OPTION;          /**< @brief Pointer version of PROFILE_OPTION */
-    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;   /**< @brief Pointer to const version of PROFILE_OPTION */
+        const char *            m_key;                      /**< @brief Key, see av_opt_set() and av_dict_set() FFmpeg API function */
+        const char *            m_value;                    /**< @brief Value, see av_opt_set() and av_dict_set() FFmpeg API function */
+        const int               m_flags;                    /**< @brief Flags, see av_opt_set() and av_dict_set() FFmpeg API function */
+        const int               m_options;                  /**< @brief One of the OPT_* flags */
+    } PROFILE_OPTION;                                       /**< @brief Profile option */
+    typedef PROFILE_OPTION * LPPROFILE_OPTION;              /**< @brief Pointer version of PROFILE_OPTION */
+    typedef PROFILE_OPTION const * LPCPROFILE_OPTION;       /**< @brief Pointer to const version of PROFILE_OPTION */
 
-    typedef struct PROFILE_LIST                         /**< @brief List of profiles */
+    typedef std::vector<PROFILE_OPTION> PROFILE_OPTION_VEC; /**< @brief PROFILE_OPTION array */
+
+    typedef struct PROFILE_LIST                             /**< @brief List of profiles */
     {
-        FILETYPE                m_filetype;             /**< @brief File type this option set is for */
-        PROFILE                 m_profile;              /**< @brief One of PROFILE_ */
-        LPCPROFILE_OPTION       m_option_codec;         /**< @brief av_opt_set() options */
-        LPCPROFILE_OPTION       m_option_format;        /**< @brief av_dict_set() options */
-    } PROFILE_LIST;                                     /**< @brief Profile list */
-    typedef PROFILE_LIST * LPPROFILE_LIST;              /**< @brief Pointer version of PROFILE_LIST */
-    typedef PROFILE_LIST const * LPCPROFILE_LIST;       /**< @brief Pointer to const version of PROFILE_LIST */
+        FILETYPE                    m_filetype;             /**< @brief File type this option set is for */
+        PROFILE                     m_profile;              /**< @brief One of PROFILE_ */
+        const PROFILE_OPTION_VEC    m_option_codec;         /**< @brief av_opt_set() options */
+        const PROFILE_OPTION_VEC    m_option_format;        /**< @brief av_dict_set() options */
+    } PROFILE_LIST;                                         /**< @brief Profile list */
+    typedef PROFILE_LIST * LPPROFILE_LIST;                  /**< @brief Pointer version of PROFILE_LIST */
+    typedef PROFILE_LIST const * LPCPROFILE_LIST;           /**< @brief Pointer to const version of PROFILE_LIST */
+
+    typedef std::vector<PROFILE_LIST> PROFILE_LIST_VEC;     /**< @brief PROFILE_LIST array */
 
 protected:
     /**
@@ -79,7 +83,7 @@ protected:
     virtual ~FFmpeg_Profiles() = default;
 
 protected:
-    static const PROFILE_LIST   m_profile[];            /**< @brief List of profile options */
+    static const PROFILE_LIST_VEC   m_profile;              /**< @brief List of profile options */
 };
 
 #endif // FFMPEG_PROFILES_H

@@ -108,22 +108,26 @@ public:
       */
     typedef struct
     {
-        const char *    name;                       /**< @brief Table name */
-        const char *    primary_key;                /**< @brief Primary key of table */
+        const char *    name;                               /**< @brief Table name */
+        const char *    primary_key;                        /**< @brief Primary key of table */
     } TABLE_DEF;
-    typedef TABLE_DEF const *LPCTABLE_DEF;          /**< @brief Pointer version of TABLE_DEF */
-    typedef TABLE_DEF *LPTABLE_DEF;                 /**< @brief Pointer to const version of TABLE_DEF */
+    typedef TABLE_DEF const *LPCTABLE_DEF;                  /**< @brief Pointer version of TABLE_DEF */
+    typedef TABLE_DEF *LPTABLE_DEF;                         /**< @brief Pointer to const version of TABLE_DEF */
 
     /**
       * @brief Column definition of sql table
       */
     typedef struct
     {
-        const char *    name;                       /**< @brief Column name */
-        const char *    type;                       /**< @brief Column type (INT, CHAR etc) */
+        const char *    name;                               /**< @brief Column name */
+        const char *    type;                               /**< @brief Column type (INT, CHAR etc) */
     } TABLE_COLUMNS;
-    typedef TABLE_COLUMNS const *LPCTABLE_COLUMNS;  /**< @brief Pointer version of TABLE_COLUMNS */
-    typedef TABLE_COLUMNS *LPTABLE_COLUMNS;         /**< @brief Pointer to const version of TABLE_COLUMNS */
+    typedef TABLE_COLUMNS const *LPCTABLE_COLUMNS;          /**< @brief Pointer version of TABLE_COLUMNS */
+    typedef TABLE_COLUMNS *LPTABLE_COLUMNS;                 /**< @brief Pointer to const version of TABLE_COLUMNS */
+
+    typedef std::vector<TABLE_COLUMNS> TABLECOLUMNS_VEC;    /**< @brief Table columns array */
+    typedef TABLECOLUMNS_VEC const *LPCTABLECOLUMNS_VEC;    /**< @brief Pointer version of TABLECOLUMNS_VEC */
+    typedef TABLECOLUMNS_VEC *LPTABLECOLUMNS_VEC;           /**< @brief Pointer to const version of TABLECOLUMNS_VEC */
 
     friend class Cache_Entry;
 
@@ -300,10 +304,9 @@ protected:
     bool                    rollback_transaction();
     /**
      * @brief Create cache_entry table
-     * @return
      * @return Returns true on success; false on error.
      */
-    bool                    create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS columns[]);
+    bool                    create_table_cache_entry(LPCTABLE_DEF table, const TABLECOLUMNS_VEC & columns);
     /*
      */
     /**
@@ -318,11 +321,11 @@ private:
     static const
     TABLE_DEF               m_table_cache_entry;            /**< @brief Definition and indexes of table "cache_entry" */
     static const
-    TABLE_COLUMNS           m_columns_cache_entry[];        /**< @brief Columns of table "cache_entry" */
+    TABLECOLUMNS_VEC        m_columns_cache_entry;          /**< @brief Columns of table "cache_entry" */
     static const
     TABLE_DEF               m_table_version;                /**< @brief Definition and indexes of table "version" */
     static const
-    TABLE_COLUMNS           m_columns_version[];            /**< @brief Columns of table "version" */
+    TABLECOLUMNS_VEC        m_columns_version;              /**< @brief Columns of table "version" */
 
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_cacheidx_file;                /**< @brief Name of SQLite cache index database */

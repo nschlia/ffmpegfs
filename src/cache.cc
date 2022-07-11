@@ -54,7 +54,7 @@ const Cache::TABLE_DEF Cache::m_table_cache_entry =
     "PRIMARY KEY(`filename`,`desttype`)"
 };
 
-const Cache::TABLE_COLUMNS Cache::m_columns_cache_entry[] =
+const Cache::TABLECOLUMNS_VEC Cache::m_columns_cache_entry =
 {
     //
     // Primary key: filename + desttype
@@ -86,9 +86,7 @@ const Cache::TABLE_COLUMNS Cache::m_columns_cache_entry[] =
     { "creation_time",      "DATETIME NOT NULL" },
     { "access_time",        "DATETIME NOT NULL" },
     { "file_time",          "DATETIME NOT NULL" },
-    { "file_size",          "UNSIGNED BIG INT NOT NULL" },
-    // Stop
-    { nullptr,              nullptr }
+    { "file_size",          "UNSIGNED BIG INT NOT NULL" }
 };
 
 const Cache::TABLE_DEF Cache::m_table_version =
@@ -101,12 +99,10 @@ const Cache::TABLE_DEF Cache::m_table_version =
     nullptr
 };
 
-const Cache::TABLE_COLUMNS Cache::m_columns_version[] =
+const Cache::TABLECOLUMNS_VEC Cache::m_columns_version =
 {
     { "db_version_major",   "INTEGER NOT NULL" },
-    { "db_version_minor",   "INTEGER NOT NULL" },
-    // Stop
-    { nullptr,              nullptr }
+    { "db_version_minor",   "INTEGER NOT NULL" }
 };
 
 Cache::Cache()
@@ -313,7 +309,7 @@ bool Cache::rollback_transaction()
     return true;
 }
 
-bool Cache::create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS columns[])
+bool Cache::create_table_cache_entry(LPCTABLE_DEF table, const TABLECOLUMNS_VEC & columns)
 {
     char *errmsg = nullptr;
     std::string sql;
@@ -323,16 +319,17 @@ bool Cache::create_table_cache_entry(LPCTABLE_DEF table, const TABLE_COLUMNS col
     sql += table->name;
     sql += "` (\n";
 
-    for (LPCTABLE_COLUMNS col = columns; col->name != nullptr; col++)
+    int i = 0;
+    for (const TABLE_COLUMNS & col : columns)
     {
-        sql += "`";
-        sql += col->name;
-        sql += "` ";
-        sql += col->type;
-        if ((col + 1)->name != nullptr)
+        if (i++)
         {
             sql += ",\n";
         }
+        sql += "`";
+        sql += col.name;
+        sql += "` ";
+        sql += col.type;
     }
 
     if (table->primary_key != nullptr)
@@ -434,15 +431,15 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             std::string columns;
             int ret;
 
-            for (LPCTABLE_COLUMNS col = m_columns_cache_entry; col->name != nullptr; col++)
+            for (const TABLE_COLUMNS & col : m_columns_cache_entry)
             {
-                columns += "`";
-                columns += col->name;
-                columns += "`";
-                if ((col + 1)->name != nullptr)
+                if (!columns.empty())
                 {
                     columns += ",";
                 }
+                columns += "`";
+                columns += col.name;
+                columns += "`";
             }
 
             sql = "INSERT INTO `";

@@ -138,15 +138,15 @@ int64_t VcdChapter::get_duration() const
 
 std::string VcdChapter::get_filename() const
 {
-    char buffer[PATH_MAX + 1];
+    std::string buffer;
 
     if (m_is_svcd)
     {
-        snprintf(buffer, sizeof(buffer) - 1, "MPEG2/AVSEQ%02i.MPG", m_track_no - 1);
+        strsprintf(&buffer, "MPEG2/AVSEQ%02i.MPG", m_track_no - 1);
     }
     else
     {
-        snprintf(buffer, sizeof(buffer) - 1, "MPEGAV/AVSEQ%02i.DAT", m_track_no - 1);
+        strsprintf(&buffer, "MPEGAV/AVSEQ%02i.DAT", m_track_no - 1);
     }
     return buffer;
 }

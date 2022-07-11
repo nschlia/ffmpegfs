@@ -1730,7 +1730,7 @@ static int get_value(const std::string & arg, double *value)
  * @param[in] outargs - the current output argument list
  * @return -1 on error, 0 if arg is to be discarded, 1 if arg should be kept
  */
-static int ffmpegfs_opt_proc(void* /*data*/, const char* arg, int key, struct fuse_args *outargs)
+static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg, int key, struct fuse_args *outargs)
 {
     switch (key)
     {

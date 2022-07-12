@@ -424,7 +424,7 @@ Defaults to: *0 (no minimum space)*
 *--cachepath*=DIR, *-o cachepath*=DIR::
 Sets the disc cache directory to 'DIR'. If it does not already exist, it will be created. The user running FFmpegfs must have write access to the location.
 +
-Defaults to: *${XDG_CACHE_HOME:-~/.cache}/ffmpegfs* (as specified in the XDG Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not defined. If executed with root privileges, "/var/cache/ffmpegfs" will be used.
+Defaults to: *$\{XDG_CACHE_HOME:-\~/.cache}/ffmpegfs* (as specified in the XDG Base Directory Specification). Falls back to $\{HOME:-~/.cache}/ffmpegfs if not defined. If executed with root privileges, "/var/cache/ffmpegfs" will be used.
 
 *--disable_cache*, -o *disable_cache*::
 Disable the cache functionality completely.

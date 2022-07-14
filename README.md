@@ -105,33 +105,6 @@ Selecting *HLS* creates a directory with TS segments together with an M3U playli
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
 
-Supported Linux Distributions
------------------------------
-
-Tested with:
-
-| Distribution | FFmpeg Version | Remarks | Result |
-|---|---|---|---|
-| **Daily build** | N-107143-g56419428a8 |  | OK |
-| **Debian 9 Stretch** | 3.2.8-1~deb9u1 |  | OK |
-| **Debian 10 Buster** | 4.1.6-1~deb10u1 |  | OK |
-| **Debian 11 Bullseye** | 4.3.2-0+deb11u2 |  | OK |
-| **Debian 12 Bookworm** | 5.0.1 | | OK |
-| **Raspbian 10 Buster** | 4.1.6-1~deb10u1+rpt1 |  | OK |
-| **Raspbian 11 Bullseye** | 4.3.2-0+rpt3+deb11u2 | Added subtitle support | OK |
-| **Ubuntu 16.04.3 LTS** | 2.8.11-0ubuntu0.16.04.1 |  | OK |
-| **Ubuntu 17.10** | 3.3.4-2 |  | OK |
-| **Ubuntu 20.04 LTS** | 4.2.2-1ubuntu1 |  | OK |
-| **Suse 42** | 3.3.4 | See notes below | not OK |
-| **Red Hat 7**| FFmpeg must be compiled from sources |  | OK |
-| **Funtoo 7.3.1** | 3.4.1 | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK |
-
-**Suse** does not provide proprietary formats like AAC and H264, so the distribution of FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.
-
-See https://en.opensuse.org/Restricted_formats.
-
-**Tips on other operating systems and distributions, such as Mac or other nixes, are welcome.**
-
 Usage
 -----
 
@@ -630,6 +603,33 @@ Demo Code
 ---------
 
 See https://github.com/video-dev/hls.js/ for the HLS player and demo code.
+
+Supported Linux Distributions
+-----------------------------
+
+Tested with:
+
+| Distribution             | FFmpeg Version                       | Remarks                                                      | Result |
+| ------------------------ | ------------------------------------ | ------------------------------------------------------------ | ------ |
+| **Daily build**          | N-107143-g56419428a8                 |                                                              | OK     |
+| **Debian 9 Stretch**     | 3.2.8-1~deb9u1                       |                                                              | OK     |
+| **Debian 10 Buster**     | 4.1.6-1~deb10u1                      |                                                              | OK     |
+| **Debian 11 Bullseye**   | 4.3.2-0+deb11u2                      |                                                              | OK     |
+| **Debian 12 Bookworm**   | 5.0.1                                |                                                              | OK     |
+| **Raspbian 10 Buster**   | 4.1.6-1~deb10u1+rpt1                 |                                                              | OK     |
+| **Raspbian 11 Bullseye** | 4.3.2-0+rpt3+deb11u2                 | Added subtitle support                                       | OK     |
+| **Ubuntu 16.04.3 LTS**   | 2.8.11-0ubuntu0.16.04.1              |                                                              | OK     |
+| **Ubuntu 17.10**         | 3.3.4-2                              |                                                              | OK     |
+| **Ubuntu 20.04 LTS**     | 4.2.2-1ubuntu1                       |                                                              | OK     |
+| **Suse 42**              | 3.3.4                                | See notes below                                              | not OK |
+| **Red Hat 7**            | FFmpeg must be compiled from sources |                                                              | OK     |
+| **Funtoo 7.3.1**         | 3.4.1                                | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK     |
+
+**Suse** does not provide proprietary formats like AAC and H264, so the distribution of FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.
+
+See https://en.opensuse.org/Restricted_formats.
+
+**Tips on other operating systems and distributions, such as Mac or other nixes, are welcome.**
 
 Authors
 -------

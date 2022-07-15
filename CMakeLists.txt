@@ -262,6 +262,8 @@ list(APPEND SOURCES
     Makefile.am
     NEWS
     README.md
+    PROBLEMS.md
+    FEATURES.md
     sql/ffmpegfs.sql
     src/Makefile.am
     src/makehelp.sh
@@ -592,8 +594,10 @@ add_custom_command(
     COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/manpages.html" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "HTML_EXTRA_FILES       += ffmpegfs.1.htmlhelp/docbook-xsl.css" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "INPUT                  += README.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
-    COMMAND @echo "INPUT	           += INSTALL.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT	          += INSTALL.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "INPUT                  += HISTORY.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT                  += FEATURES.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
+    COMMAND @echo "INPUT                  += PROBLEMS.md" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "EXAMPLE_PATH           += NEWS" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "EXAMPLE_PATH           += TODO" >> ${CMAKE_BINARY_DIR}/doxyfile.inc
     COMMAND @echo "EXAMPLE_PATH           += COPYING" >> ${CMAKE_BINARY_DIR}/doxyfile.inc

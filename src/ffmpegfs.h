@@ -50,7 +50,9 @@
  *
  * @li [Read me!](README.md)
  * @li [Man Pages](manpages.html)
+ * @li [Features](FEATURES.md)
  * @li [History](HISTORY.md)
+ * @li [Fixing Problems](PROBLEMS.md)
  * @li [Installation instructions](INSTALL.md)
  * @li @ref todo
  * @li @ref bug

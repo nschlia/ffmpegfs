@@ -214,7 +214,7 @@ Set the required diskspace on the cachepath mount. If the remaining space falls 
 <span class="strong"><strong>--cachepath</strong></span>=DIR, <span class="strong"><strong>-o cachepath</strong></span>=DIR
 </span></dt><dd><p class="simpara">
 Sets the disc cache directory to <span class="emphasis"><em>DIR</em></span>. If it does not already exist, it will be created. The user running FFmpegfs must have write access to the location.
-</p><p class="simpara"></p></dd><dt><span class="term">
+</p><p class="simpara">Defaults to: <span class="strong"><strong>${XDG_CACHE_HOME:-~/.cache}/ffmpegfs</strong></span> (as specified in the XDG Base Directory Specification). Falls back to ${HOME:-~/.cache}/ffmpegfs if not defined. If executed with root privileges, "/var/cache/ffmpegfs" will be used.</p></dd><dt><span class="term">
 <span class="strong"><strong>--disable_cache</strong></span>, -o <span class="strong"><strong>disable_cache</strong></span>
 </span></dt><dd><p class="simpara">
 Disable the cache functionality completely.

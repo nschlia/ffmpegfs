@@ -48,7 +48,7 @@
  * This allows access to a multi-media file collection with software and/or hardware which only understands
  * one of the supported output formats, or transcodes files through simple drag-and-drop in a file browser.
  *
- * FFmpegfs can be download [from Github](https://github.com/nschlia/ffmpegfs).
+ * FFmpegfs can be downloaded [from Github](https://github.com/nschlia/ffmpegfs).
  *
  * @section ffmpeg_documentation FFmpegfs Documentation
  *

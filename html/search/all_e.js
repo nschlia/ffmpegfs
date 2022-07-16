@@ -1,7 +1,7 @@
 var searchData=
 [
   ['oldhandler_930',['oldHandler',['../fuseops_8cc.html#a751f2746b37ca950207ec5d4f904adf8',1,'fuseops.cc']]],
-  ['online_20news_20list_931',['Online NEWS list',['../ffmpegfs_NEWS.html',1,'']]],
+  ['online_20news_20list_931',['Online News List',['../ffmpegfs_NEWS.html',1,'']]],
   ['online_20todo_20list_932',['Online TODO List',['../ffmpegfs_TODO.html',1,'']]],
   ['open_933',['open',['../classBlurayIO.html#a2aaef823df7a6dbbd9377a947a0b6c79',1,'BlurayIO::open()'],['../classVcdIO.html#a4f307154f1b83ae60e513846718db434',1,'VcdIO::open()'],['../classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10',1,'FileIO::open()'],['../classDiskIO.html#a719c925a2430fba13d0ed3928ad5761e',1,'DiskIO::open()'],['../classCache.html#a1eb8ef8d7c26bf16f6bc8c43590ae902',1,'Cache::open()'],['../classDvdIO.html#ab7c00ddd49cb420515e5da8ca23d060c',1,'DvdIO::open()'],['../classBuffer.html#aed7175a89728134d1b9a56a3f0fbd58f',1,'Buffer::open()'],['../classCache__Entry.html#a01555933f10ccba187f7562addc3efc3',1,'Cache_Entry::open()']]],
   ['open_5falbumarts_934',['open_albumarts',['../classFFmpeg__Transcoder.html#a0c9bf0428b8c28d8c09e748ed987c1aa',1,'FFmpeg_Transcoder']]],

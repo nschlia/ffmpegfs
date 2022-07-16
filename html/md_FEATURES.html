@@ -67,7 +67,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>The hardware acceleration feature depends heavily on the hardware used. As this is a personal project, I cannot go out and buy and test all possible devices. So I'll have to rely on you to report your issues so we can iron them out. Even different hardware supporting the same API may behave differently. Sometimes the format range is not the same, sometimes subfeatures are missing, and so on.</p>
-<h1><a class="anchor" id="autotoc_md65"></a>
+<h1><a class="anchor" id="autotoc_md68"></a>
 How It Works</h1>
 <p>Acceleration is done by specialised graphics adapters. The FFmpeg API can use several types using a range of APIs. As of today, even cheap on-board chips can do hardware acceleration.</p>
 <p>Here is an incomplete list.</p>
@@ -87,9 +87,9 @@ How It Works</h1>
 <li>MMAL: Decoding on Raspberry (H.264, MPEG-2, MPEG-4, VC-1. Requires key to unlock.)</li>
 </ul>
 <p>More information can be found at <a href="https://trac.ffmpeg.org/wiki/HWAccelIntro">https://trac.ffmpeg.org/wiki/HWAccelIntro</a>.</p>
-<h1><a class="anchor" id="autotoc_md66"></a>
+<h1><a class="anchor" id="autotoc_md69"></a>
 Current Implementation</h1>
-<h2><a class="anchor" id="autotoc_md67"></a>
+<h2><a class="anchor" id="autotoc_md70"></a>
 Supported Hardware Acceleration APIs</h2>
 <p>These APIs are implemented and tested. VAAPI mostly targets Intel hardware, but there are other hardware vendors that offer support now. MMAL and OpenMAX are supported by Raspberry PI boards.</p>
 <table class="markdownTable">
@@ -104,7 +104,7 @@ Supported Hardware Acceleration APIs</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><b>OMX</b>   </td><td class="markdownTableBodyNone">x   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OpenMAX (Open Media Acceleration)   </td><td class="markdownTableBodyNone"><a href="https://en.wikipedia.org/wiki/OpenMAX">https://en.wikipedia.org/wiki/OpenMAX</a>   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md68"></a>
+<h3><a class="anchor" id="autotoc_md71"></a>
 Tested On</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -122,7 +122,7 @@ Raspberry Pi 3 Model B Plus Rev 1.3   </td><td class="markdownTableBodyNone"><br
 ARMv7 Processor rev 5 (v7l)<br  />
 ARMv7 Processor rev 4 (v7l)   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">OpenMAX/MMAL   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md69"></a>
+<h1><a class="anchor" id="autotoc_md72"></a>
 Planned Hardware Acceleration APIs</h1>
 <p>There are several more APIs that could be added. Currently, this is not possible due to a lack of hardware.</p>
 <table class="markdownTable">
@@ -143,7 +143,7 @@ Planned Hardware Acceleration APIs</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><b>VULKAN</b>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone">Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil &gt;= 56.30.100   </td><td class="markdownTableBodyNone"><a href="https://en.wikipedia.org/wiki/Vulkan_(API)">https://en.wikipedia.org/wiki/Vulkan_(API)</a>   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md70"></a>
+<h1><a class="anchor" id="autotoc_md73"></a>
 Hardware Encoding</h1>
 <p>This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may be possible that other APIs work, but this has not been confirmed yet.</p>
 <p>To enable hardware support, use these parameters respectively (of course, use only one):</p>
@@ -168,7 +168,7 @@ Hardware Encoding</h1>
 <li>If no bitrate is set, try ICQ, then CQP.</li>
 </ul>
 <p>At the moment, this is hardwired into the code. None of these values can be controlled now by the command line. This is planned, of course, but not implemented in the current version yet.</p>
-<h1><a class="anchor" id="autotoc_md71"></a>
+<h1><a class="anchor" id="autotoc_md74"></a>
 Hardware Decoding</h1>
 <p>This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be possible that other APIs work, but this has not been confirmed yet.</p>
 <p>To enable hardware support, use these parameters respectively (of course, use only one):</p>
@@ -180,18 +180,18 @@ Hardware Decoding</h1>
 </ul>
 <p>On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable.</p>
 <p>The decoding part is a bit tricky. If encoding is set to hardware, and this hardware is there and capable of encoding, it will work. If hardware decoding is possible, it depends on the source file. Therefore, the file needs to be checked first and then it needs to be decided if hardware acceleration can be used or if a fallback to software is required. FFmpeg requires that to be set via the command line, but FFmpegfs must be able to decide that automatically.</p>
-<h2><a class="anchor" id="autotoc_md72"></a>
+<h2><a class="anchor" id="autotoc_md75"></a>
 TODOs</h2>
 <p>Doing both de- and encoding in hardware can make costly transfers of frames between software and hardware memory unneccessary.</p>
 <p>It is not clear, at the moment, if it is possible to keep the frames in hardware as FFmpegfs does some processing with the frames (for example, rescaling or deinterlacing), which probably cannot be done without transferring buffers from hardware to software memory and vice versa. We'll see.</p>
 <p>As seen above, selecting a target bitrate turns out to be a bit tricky. I'll have to work out a way to reach the desired bitrate in any case (no matter if the hardware supports CQP, VBR, CBR, ICQ, or AVBR).</p>
 <p>On the other hand, everything seems to work and there are no show stoppers in sight. Sheesh, wiping the sweat off my chin :)</p>
-<h1><a class="anchor" id="autotoc_md73"></a>
+<h1><a class="anchor" id="autotoc_md76"></a>
 HTTP Live Streaming</h1>
 <p>FFmpegfs supports HLS (HTTP Live Streaming). FFmpegfs will create transport stream (ts) segments and the required m3u8 playlists. For your convenience, it will also offer a virtual test.html file that can playback the segments using the hls.js library (see <a href="https://github.com/video-dev/hls.js/">https://github.com/video-dev/hls.js/</a>).</p>
 <p>To use the new HLS feature, invoke FFmpegfs with: </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out -o allow_other,ro,desttype=hls
 </pre><p> Please note that this will only work over http because most browsers refuse to load multimedia files from the local file system, so you need to publish the directory on a web server. Security restrictions prevent direct playback from a disk. Simply navigate to the directory and open test.html.</p>
-<h1><a class="anchor" id="autotoc_md74"></a>
+<h1><a class="anchor" id="autotoc_md77"></a>
 Cue Sheets</h1>
 <p>Cue sheets, or cue sheet files, were first introduced for the CDRWIN CD/DVD burning software. Basically, they are used to define a CD or DVD track layout. Today, they are supported by a wide range of optical disk authoring applications and, moreover, media players.</p>
 <p>When a media file is accompanied by a cue sheet, its contents are read and a virtual directory with separate tracks is created. The cue sheet file must have the same name but the extension ".cue" instead. It can also be embedded into the media file.</p>
@@ -207,7 +207,7 @@ Cue Sheets</h1>
  myfile.mp4.tracks/
  myfile.ogv.tracks/
 </pre><p> Tracks defined in the cue sheet will show up in the *.tracks subdirectories.</p>
-<h1><a class="anchor" id="autotoc_md75"></a>
+<h1><a class="anchor" id="autotoc_md78"></a>
 Selecting Audio and Video Codecs</h1>
 <p>Some new codec combinations are now possible (the default codecs are in bold):</p>
 <table class="markdownTable">
@@ -224,7 +224,7 @@ Selecting Audio and Video Codecs</h1>
 </table>
 <p>For audio, the codec can be selected with &ndash;audiocodec. For videos, use &ndash;videocodec. Without these parameters, FFmpegfs will use the codecs as before (no change).</p>
 <p>Please note that hardware acceleration might not work, e.g., my hardware encoder supports H264 but not H265. So even though H265 creates much smaller files, it takes 10 times longer to transcode.</p>
-<h1><a class="anchor" id="autotoc_md76"></a>
+<h1><a class="anchor" id="autotoc_md79"></a>
 Building A Docker Container</h1>
 <p>FFmpegfs can run under Docker. A Dockerfile is provided to build a container for FFmpegfs. Change to the "docker" directory and run </p><pre class="fragment"> docker build --build-arg BRANCH=master -t nschlia/ffmpegfs .
 </pre><p> Depending on the machine speed, this will take quite a while. After the command is completed, the container can be started with </p><pre class="fragment"> docker run --rm \
@@ -238,7 +238,7 @@ Building A Docker Container</h1>
       nschlia/ffmpegfs \
       -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 </pre><p> Of course, */path/to/source* must be changed to a directory with multi-media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired.</p>
-<h1><a class="anchor" id="autotoc_md77"></a>
+<h1><a class="anchor" id="autotoc_md80"></a>
 Auto Copy</h1>
 <p>"Auto copy" performs intelligent stream copy. For example, if transcoding a transport stream that already represents a H264 video and/or AAC audio stream, it is possible to simply repackage it to an mp4 container without recoding.</p>
 <p>This is very efficient because it does not require as much computing as de- and encoding, and it also does not degrade quality because the original file remains essentially unchanged.</p>
@@ -254,7 +254,7 @@ Auto Copy</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ALWAYS   </td><td class="markdownTableBodyNone">auto copy whenever possible, even if the target file becomes larger.   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md78"></a>
+<h1><a class="anchor" id="autotoc_md81"></a>
 Smart Transcoding</h1>
 <p>Smart transcoding can create different output formats for video and audio files. For example, video files can be converted to ProRes and audio files to AIFF. Of course, combinations like MP4/MP3 or WebM/WAV are possible but do not make sense, as MP4 or WebM work perfectly with audio-only content.</p>
 <p>To use the new feature, simply specify a video and audio file type, separated by a "+" sign. For example, <em>&ndash;desttype=mov+aiff</em> will convert video files to Apple Quicktime MOV and audio only files to AIFF. This can be handy if the results are consumed, for example, by some Apple editing software, which is very picky about the input format.</p>
@@ -264,7 +264,7 @@ Smart Transcoding</h1>
 <li>Smart transcoding currently determines the output format by taking the input format type into account, e.g., an MP3 would be recoded to AIFF, an MP4 to MOV even if the input MP4 does not contain a video stream.</li>
 </ol>
 <p>The input format should be scanned for streams and the output selected appropriately: An MP4 with video should be transcoded to MOV, an MP4 with audio only to AIFF. See <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md79"></a>
+<h1><a class="anchor" id="autotoc_md82"></a>
 Transcoding To Frame Images</h1>
 <p>To transcode a video to frame images, set the destination type to JPG, PNG, or BMP. This will convert videos into virtual folders with one image for each frame.</p>
 <div class="fragment"><div class="line">$ ls /storage/videos</div>
@@ -278,12 +278,12 @@ Transcoding To Frame Images</h1>
 <div class="line">  ...</div>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00001.png</div>
 <div class="line">  /mnt/ffmpegfs/video1.mov/00002.png</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md80"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md83"></a>
 A Few Words On ProRes</h1>
 <p>Apple's ProRes is a so-called intermediate format, intended for post-production editing. It combines the highest possible quality while still saving some disk space and not requiring high-performance disk systems. On the other hand, this means that ProRes encoded videos will become quite large—for example, a 60-minute video may require up to 25 GB.</p>
 <p>It is not for target audience use, and certainly not suitable for internet streaming.</p>
 <p>Also, please keep in mind that when using lossy source input formats, the quality will not get better, but the files can be fed into software like Final Cut Pro, which only accepts a small number of input formats.</p>
-<h1><a class="anchor" id="autotoc_md81"></a>
+<h1><a class="anchor" id="autotoc_md84"></a>
 Transcoding Subtitles</h1>
 <p>Closed captions are converted to the output files, if possible. There are two general subtitle formats: text and bitmap. Subtitle transcoding is currently only possible from text to text or bitmap to bitmap. It may be relatively easy to convert text to bitmap, but not vice versa. This would require some sort of OCR and could become arbitrarily complex. That may work well for Latin alphabets, but there are others. Guess what would happen with Georgian, Indian, Chinese, or Arabic...</p>
 <table class="markdownTable">
@@ -301,7 +301,7 @@ Transcoding Subtitles</h1>
 <td class="markdownTableBodyNone">MKV   </td><td class="markdownTableBodyNone">DVB Subtitles   </td><td class="markdownTableBodyNone">Bitmap   </td></tr>
 </table>
 <p>Matroska (MKV) supports a wide range of subtitle formats, both text and bitmap. FFmpegfs automatically selects the best matching output codec. MKV would be the best choice to cover all input subtitle formats.</p>
-<h2><a class="anchor" id="autotoc_md82"></a>
+<h2><a class="anchor" id="autotoc_md85"></a>
 External Subtitle Files</h2>
 <p>Subtitles can reside in separate files. These must have the same filename but the extension "srt" for ASS/SubRip or "vtt" for WebVTT. The language can be defined with a second level extension, e.g. "mediafile.en.srt" would define the contents as "English". There is no convention for the language name, so it could even be the full language name like "mediafile.french.srt" or similar.</p>
 <p>Example</p>
@@ -331,7 +331,7 @@ External Subtitle Files</h2>
 <ul>
 <li>Maybe FFmpeg could convert text to bitmap for TS/HLS if the input format is not bitmapped.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md83"></a>
+<h1><a class="anchor" id="autotoc_md86"></a>
 MP4 Format Profiles</h1>
 <p>The MP4 container has several derivative formats that are not compatible with all target audiences. To successfully feed the resulting files into, for example, MS Edge, the subformat must be different than for Firefox, unfortunately.</p>
 <p>The &ndash;profile option allows you to select the format.</p>

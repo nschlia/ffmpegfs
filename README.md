@@ -103,34 +103,34 @@ Only formats that can be read while being written to can be used as output. Whil
 
 ### What can it do?
 
-This can let you use a multi media file collection with software and/or hardware which only understands one of the supported output formats, or transcode files through simple drag-and-drop in a file browser.
+You can use a collection of several media files with software and/or hardware that only supports one of the permitted output formats or convert files using simple drag-and-drop operations in a file browser with FFmpegfs.
 
-For live streaming, select *WebM* or *MP4* for best results. If video transcoding is not required, *MP3* will also do, but *WebM* and *MP4* create better results. The *OGG* encoder is not fast enough for real-time recoding of files.
+Choose WebM or MP4 for live streaming for the best results. While *MP3* will work if video transcoding is not needed, *WebM* and *MP4* produce superior results. The *OGG* encoder is too slow for real-time file recoding.
 
-When a destination *JPG*, *PNG*, or *BMP* is chosen, all frames of a video source file will be presented in a virtual directory named after the source file. Audio will not be available.
+All the frames from a video source file will be displayed in a virtual directory called after the source file when a destination of *JPG*, *PNG*, or *BMP* is selected. Audio will not be available.
 
-Selecting *HLS* creates a directory with TS segments together with an M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.
+By choosing *HLS*, TS segments and an M3U playlist (master.m3u8 and index 0 av.m3u8) are created in a directory. A generated hls.html file that can be accessed in a browser can also be used to play the segments.
 
-Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [problems](PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output) for details.
+Please be aware that since most browsers cannot open the files from disc due to restrictions, they must be on a web server. For further information, see [problems](PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output).
 
 Installation Instructions
 -------------------------
 
-You'll find a rather extensive explanation under [install](INSTALL.md).
+A rather detailed description can be found under [install] (INSTALL.md).
 
 Fixing Problems
 ---------------
 
-This section has grown too large and has been moved to a separate file. See [problems](PROBLEMS.md) for details.
+This part has been transferred to a different file because it has gotten too big. Details can be found in [problems](PROBLEMS.md).
 
 Usage
 -----
 
-Mount your file system like this:
+Mount your file system as follows:
 
     ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 
-For example, to run FFmpegfs as a daemon and encode to MPEG-4:
+To use FFmpegfs as a daemon and encode to MPEG-4, for instance:
 
     ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
 
@@ -138,35 +138,35 @@ This will run FFmpegfs in the foreground and print the log output to the screen:
 
     ffmpegfs -f --log_stderr --audiobitrate=256K --videobitrate=1.5M --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
 
-In recent versions of FUSE the same can be achieved with the following entry in `/etc/fstab`:
+With the following entry in "/etc/fstab," the same result can be obtained with more recent versions of FUSE:
 
     ffmpegfs#/mnt/music /mnt/ffmpegfs fuse allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
 
-Another (more modern) form of this command:
+Another (more current) way to express this command:
 
     /mnt/music /mnt/ffmpegfs fuse.ffmpegfs allow_other,ro,audiobitrate=256K,videobitrate=2000000,desttype=mp4 0 0
 
 At this point, files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will show up as `/mnt/ffmpegfs/**.mp4`.
 
-Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. If the source bitrate is lower, it will not be scaled up but rather left at the lower value.
+Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. The source bitrate will not be scaled up if it is lower; it will remain at the lower value.
 
-Note that the "allow_other" option by default can only be used by root. You must either run FFmpegfs as root or better yet, add a "user_allow_other" key to /etc/fuse.conf.
+Keep in mind that only root can, by default, utilise the "allow other" option. Either use the "user allow other" key in /etc/fuse.conf or run FFmpegfs as root.
 
-"allow_other" is required to allow any user access to the mount. By default, this is only possible for the user who launched FFmpegfs.
+Any user must have "allow other" enabled in order to access the mount. By default, only the user who initiated FFmpegfs has access to this.
 
 Examples:
 
     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache
 
-Run FFmpegfs transcoding files from /test/in to /test/out, logging up to a chatty TRACE level to stderr. The cache resides in test/cache. All directories are under the current user's home directory.
+Transcode files using FFmpegfs from test/in to test/out while logging to stderr at a noisy TRACE level. The cache resides in test/cache. All directories are under the current user's home directory.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 
-Similar to the preceding, but limit the video width to 640 pixels. Larger videos will be scaled down, preserving the aspect ratio. Smaller videos will not be scaled up.
+Similar to the previous, but with a 640-pixel maximum video width. The aspect ratio will be maintained when scaling down larger videos. Videos that are smaller won't be scaled up.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 
-Enable deinterlacing for enhanced image quality.
+Deinterlacing can be enabled for better image quality.
 
 ## More About Features
 
@@ -175,53 +175,58 @@ There is a [feature list](FEATURES.md) with detailed explanations.
 How It Works
 ------------
 
-When a file is opened, the decoder and encoder are initialised, and the file metadata is read. At this time, the final file size can be determined approximately. This works well for MP3, AIFF, or WAV output files, but only fair-to-good for MP4 or WebM because the actual size heavily depends on the content encoded.
+The decoder and encoder are initialised when a file is opened, and the file's metadata is also read. At this point, a rough estimate of the total file size can be made. Because the actual size greatly depends on the material encoded, this technique works fair-to-good for MP4 or WebM output files but works well for MP3, AIFF, or WAV output files.
 
-As the file is read, it is transcoded into an internal per-file buffer. This buffer continues to grow while the file is being read until the whole file is transcoded. Once decoded, the file is kept in a disk buffer and can be accessed very quickly.
+The file is transcoded as it is being read and stored in a private per-file buffer. This buffer keeps expanding as the file is read until the entire file has been transcoded. After being decoded, the file is stored in a disc buffer and is readily accessible.
 
-Transcoding is done in an extra thread, so if other processes access the same file, they will share the same transcoded data, saving CPU time. If all processes close the file before its end, transcoding will continue for some time. If the file is accessed again before the timeout, transcoding will continue. If not, it will stop, and the chunk created so far will be discarded to save disk space.
+Other processes will share the same transcoded data if they access the same file because transcoding is done in a single additional thread, which saves CPU time. Transcoding will continue for a while if all processes close the file before it is finished. Transcoding will resume if the file is viewed once more before the timer expires. If not, it will halt and delete the current chunk to free up storage space.
 
-Seeking within a file will cause the file to be transcoded up to the seek point (if not already done). This is not usually a problem since most programmes will read a file from start to finish. Futzure enhancements may provide true random seeking (but if this is feasible, it is not yet clear due to restrictions to positioning inside compressed streams). This already works when HLS streaming is selected. FFmpegfs simply skips to the requested segment.
+A file will be transcoded up to the seek point when you seek within it (if not already done). Since the majority of programmes will read a file from beginning to end, this is typically not a problem. Future upgrades might offer actual random seeking (but if this is feasible, it is not yet clear due to restrictions to positioning inside compressed streams). When HLS streaming is chosen, this already functions. The requested segment is immediately skipped to by FFmpegfs.
 
-MP3: ID3 version 2.4 and 1.1 tags are created from the comments in the source file. They are located at the start and end of the file, respectively.
+**MP3:** The source file's comments are used to generate ID3 version 2.4 and 1.1 tags. They are correspondingly at the beginning and the end of the file.
 
-MP4: The same applies to meta atoms in MP4 containers.
+**MP4:** The same is true for meta atoms contained in MP4 containers.
 
-MP3 target only: A special optimisation is made so that applications which scan for id3v1 tags do not have to wait for the whole file to be transcoded before reading the tag. This *dramatically* speeds up such applications.
+**WAV:** The estimated size of the WAV file will be included in a pro forma WAV header. When the file is complete, this header will be changed. Though most current gamers apparently disregard this information and continue to play the file, it does not seem required.
 
-WAV: A pro format WAV header will be created with estimates of the WAV file size. This header will be replaced when the file is finished. It does not seem necessary, though, as most modern players obviously ignore this information and play the file anyway.
+Only for MP3 targets: A particular optimization has been done so that programmes that look for id3v1 tags don't have to wait for the entire file to be transcoded before reading the tag. This accelerates these apps *dramatically*.
 
 About Output Formats
 --------------------
 
-A few words about the supported output formats: There is not much to say about the MP3 output as these are regular constant bitrate (CBR) MP3 files with no strings attached. They should be played well by any modern player.
+A few remarks regarding the output formats that are supported:
 
-MP4 files are special, though, as regular MP4s are not quite suited for live streaming. The reason is that the start block of an MP4 contains a field with the size of the compressed data section. Suffice it to say that this field cannot be filled in until the size is known, which means compression must be completed first, a file seek done to the beginning, and the size atom updated. 
+Since these are plain vanilla constant bitrate (CBR) MP3 files, there isn't much to say about the MP3 output. Any modern player should be able to play them well.
 
-For a continuous live stream, that size will never be known. For our transcoded files, one would have to wait for the whole file to be recoded to get that value. If that was not enough, some important pieces of information are located at the end of the file, including meta tags with artist, album, etc. Also, there is only one big data block, a fact that hampers random seeking inside the contents without having the complete data section.
+However, MP4 files are unique because standard MP4s aren't really ideal for live broadcasting. The start block of an MP4 has a field with the size of the compressed data section, which is the cause. It suffices to say that until the size is known, compression must be finished, a file seek must be performed to the beginning, and the size atom updated.
 
-Subsequently, many applications will go to the end of an MP4 to read important information before going back to the head of the file and starting playing. This will break the whole transcode-on-demand idea of FFmpegfs.
+That size is unknown for a live stream that is ongoing. To obtain that value for our transcoded files, one would need to wait for the entire file to be recoded. As if that weren't enough, the file's final section contains some crucial details, such as meta tags for the artist, album, etc. Additionally, the fact that there is just one enormous data block makes it difficult to do random searches among the contents without access to the entire data section.
 
-To get around the restriction, several extensions have been developed, one of which is called "faststart", which relocates the aforementioned meta data from the end to the beginning of the MP4. Additionally, the size field can be left empty (0). isml (smooth live streaming) is another extension.
+Many programmes will then read the crucial information from the end of an MP4 before returning to the file's head and beginning playback. This will destroy FFmpegfs' entire transcode-on-demand concept.
 
-For direct-to-stream transcoding, several new features in MP4 need to be active (ISMV, faststart, separate_moof/empty_moov to name a few) which are not implemented in older versions of FFmpeg (or if available, not working properly).
+Several extensions have been created to work around the restriction, including "faststart," which moves the aforementioned meta data from the end to the beginning of the MP4 file. Additionally, it is possible to omit the size field (0). An further plugin is isml (smooth live streaming).
 
-By default, faststart files will be created with an empty size field so that the file can be started to be written out at once instead of encoding it as a whole before this is possible. Encoding it completely would mean it would take some time before playback could start.
+Older versions of FFmpeg do not support several new MP4 features that are required for direct-to-stream transcoding, like ISMV, faststart, separate moof/empty moov, to mention a few (or if available, not working properly).
 
-The data part is divided into chunks of about 1 second each, all with their own header, so it is possible to fill in the size fields early enough.
+Faststart files are produced by default with an empty size field so that the file can be started to be written out at once rather than having to be encoded as a complete first. It would take some time before playback could begin if it were fully encoded. The data part is divided into chunks of about 1 second each, all with their own header, so it is possible to fill in the size fields early enough.
 
-As a drawback, not all players support the format, or play it with strange side effects. VLC plays the file, but updates the time display every few seconds only. When streamed over HTML5 video tags, sometimes there will be no total time shown, but that is OK, as long as the file plays. Playback can not be positioned past the current playback position, only backwards.
+One disadvantage is that not all players agree with the format, or they play it with odd side effects. VLC only refreshes the time display every several seconds while playing the file. There may not always be a complete duration displayed while streaming using HTML5 video tags, but that is fine as long as the content plays. Playback can only move backwards from the current playback position.
 
-But that's the price of starting playback fast.
+
+However, that is the cost of commencing playback quickly.
 
 Development
 -----------
 
-FFmpegfs uses Git for revision control. You can obtain the full repository here:
+Git is the revision control system used by FFmpegfs. The complete repository is available here:
 
-  git clone https://github.com/nschlia/ffmpegfs.git
+`git clone https://github.com/nschlia/ffmpegfs.git`
 
-FFmpegfs is written in a little bit of C and mostly C++17. It uses the following libraries:
+or the mirror:
+
+`git clone https://salsa.debian.org/nschlia/ffmpegfs.git`
+
+FFmpegfs is composed primarily of C++17 with a small amount of C. The following libraries are utilised:
 
 \* [FUSE](http://fuse.sourceforge.net/)
 
@@ -229,14 +234,14 @@ FFmpeg library:
 
 \* [FFmpeg](https://www.FFmpeg.org/)
 
-Please note that FFmpegfs is in active development, so the main branch may be unstable (but offers nice gimmicks). If you need a stable version, please get one (preferably the latest) release.
+Please be aware that the main branch of FFmpegfs may not be stable as it is still under active development (but offers nice gimmicks). Get a release if you require a stable version, ideally the most recent.
 
-Feel free to clone this project and add your own features. If they are interesting to others, they might be pushed back into this project. The same applies to bug fixes; if you discover a bug, you're welcome to fix it!
+You are welcome to clone this project and add new features. They might be brought back into this project if additional people find them intriguing. The same holds true for bug fixes; if you find a bug, feel free to patch it!
 
 Supported Linux Distributions
 -----------------------------
 
-Tested with:
+FFmpegfs has been tested with:
 
 | Distribution             | FFmpeg Version                       | Remarks                                                      | Result |
 | ------------------------ | ------------------------------------ | ------------------------------------------------------------ | ------ |

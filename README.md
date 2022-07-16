@@ -1,17 +1,11 @@
 FFmpegfs
 ========
 
-| Branch | Compiler | FFmpeg | Host OS | CPU | Build State |
-| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.1.0 | 5.0.1 | Debian 12 | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-latest%29) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1 | 4.3.2  | Debian 11 | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 9.3.0 | 4.2.4 | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.4 | Debian 11 | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-arm32%29) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.3.2  | Debian 11 | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.2.4 | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |                         |                         |                         | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml)|
+FFmpegfs is a read-only FUSE filesystem which transcodes various audio and video formats to MP4, WebM, and many more on the fly when opened and read using the FFmpeg library, thus supporting a multitude of input formats and a variety of common output formats.
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
+This allows access to a multi-media file collection with software and/or hardware which only understands one of the supported output formats, or transcodes files through simple drag-and-drop in a file browser.
+
+Web site: https://nschlia.github.io/ffmpegfs/
 
 News
 ----
@@ -41,30 +35,44 @@ News
 * Logging has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.
 * **Bugfix:** To fix the build with GCC 12, add the missing include headers (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
 
-Future Objectives
------------------
-
-*Any ideas or wishes?* Free to create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
-
-For more information, see [TODO](TODO).
-
-## History
+## Full History
 
 See [history](HISTORY.md) for details.
 
-Installation Instructions
--------------------------
+## Code Status
 
-You'll find a rather extensive explanation under [install](INSTALL.md).
+| Branch                                                    | Compiler     | FFmpeg | Host OS      | CPU    | Build State                                                  |
+| --------------------------------------------------------- | ------------ | ------ | ------------ | ------ | ------------------------------------------------------------ |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.1.0   | 5.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-latest%29) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 9.3.0    | 4.2.4  | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.4  | Debian 11    | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-arm32%29) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.2.4  | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |        |              |        | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
 
-About
+[![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
+
+Supported Formats
 -----
 
-Web site: https://nschlia.github.io/ffmpegfs/
+### Input
 
-FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video formats on the fly when opened and read.
+Making a full list of the formats the FFmpeg API supports would be somewhat pointless.  See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea, .
 
-### Audio Formats
+Unfortunately, it also depends on the codecs that have been compiled into the library; use this command to find out: 
+
+```
+ffmpeg -formats
+```
+
+A list of the available codecs will be created as a result. 
+
+### Output
+
+Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions. 
+
+#### Audio Formats
 | Format | Description | Audio |
 | ------------- | ------------- | ------------- |
 | AIFF | Audio Interchange File Format | PCM 16 bit BE |
@@ -74,7 +82,7 @@ FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video
 | Opus |Opus Audio| Opus |
 | WAV | Waveform Audio File Format | PCM 16 bit LE |
 
-### Video Formats
+#### Video Formats
 | Format | Description | Video | Audio |
 | ------------- | ------------- | ------------- | ------------- |
 | HLS | HTTP Live Streaming | H264 | AAC |
@@ -85,7 +93,7 @@ FFmpegfs is a read-only FUSE filesystem which transcodes between audio and video
 | TS | MPEG Transport Stream | H264 | AAC |
 | WebM|Free Open Web Media Project| VP9 | Opus |
 
-### Stills
+#### Stills
 
 | Format | Description | Video |
 | ------------- | ------------- | ------------- |
@@ -104,6 +112,16 @@ When a destination *JPG*, *PNG*, or *BMP* is chosen, all frames of a video sourc
 Selecting *HLS* creates a directory with TS segments together with an M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.
 
 Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [FIXING PROBLEMS](README.md#fixing-problems) for details.
+
+Installation Instructions
+-------------------------
+
+You'll find a rather extensive explanation under [install](INSTALL.md).
+
+Fixing Problems
+---------------
+
+This section has grown too large and has been moved to a separate file. See [problems](PROBLEMS.md) for details.
 
 Usage
 -----
@@ -196,11 +214,6 @@ As a drawback, not all players support the format, or play it with strange side 
 
 But that's the price of starting playback fast.
 
-Fixing Problems
----------------
-
-This section has grown too large and has been moved to a separate file. See [problems](PROBLEMS.md) for details.
-
 Development
 -----------
 
@@ -246,6 +259,13 @@ Tested with:
 See https://en.opensuse.org/Restricted_formats.
 
 **Tips on other operating systems and distributions, such as Mac or other nixes, are welcome.**
+
+Future Objectives
+-----------------
+
+*Any ideas or wishes?* Free to create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
+
+For more information, see [TODO](TODO).
 
 Authors
 -------

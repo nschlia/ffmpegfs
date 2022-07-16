@@ -41,34 +41,42 @@
  *
  * @section ffmpeg_introduction Introduction to FFmpegfs
  *
- * FFmpegfs: A read-only FUSE filesystem which transcodes various audio and video formats
- * to MP4, WebM, and many more on the fly when opened and read.
+ * FFmpegfs is a read-only FUSE filesystem which transcodes various audio and video formats to MP4, WebM,
+ * and many more on the fly when opened and read using the FFmpeg library, thus supporting a multitude of
+ * input formats and a variety of common output formats.
  *
- * FFmpegfs can be download [here](https://github.com/nschlia/ffmpegfs).
+ * This allows access to a multi-media file collection with software and/or hardware which only understands
+ * one of the supported output formats, or transcodes files through simple drag-and-drop in a file browser.
  *
- * @section ffmpeg_documentation Documentation
+ * FFmpegfs can be download [from Github](https://github.com/nschlia/ffmpegfs).
  *
- * @li [Read me!](README.md)
- * @li [Man Pages](manpages.html)
- * @li [Features](FEATURES.md)
- * @li [History](HISTORY.md)
- * @li [Fixing Problems](PROBLEMS.md)
+ * @section ffmpeg_documentation FFmpegfs Documentation
+ *
+ * @li [Introduction](README.md)
+ * @li [**Man Pages**](manpages.html)
+ * @li [Features In Detail](FEATURES.md)
+ * @li [Revision History](HISTORY.md)
  * @li [Installation instructions](INSTALL.md)
+ * @li [Fixing Problems](PROBLEMS.md)
  * @li @ref todo
  * @li @ref bug
  * @li @ref ffmpegfs_NEWS
  * @li @ref ffmpegfs_TODO
+ *
+ * @section ffmpeg_licences Licenses
+ *
  * @li @ref ffmpegfs_COPYING
  * @li @ref ffmpegfs_COPYING.DOC
  * @li @ref ffmpegfs_COPYING.CC0
  *
- * @section ffmpegfs_external External links
+ * @section ffmpegfs_external External Links
  *
- * @li [FFmpeg Homepages](https://www.ffmpeg.org/) @n
+ * @li [**FFmpegfs on Github**](https://github.com/nschlia/ffmpegfs)
+ * @li [**FFmpeg Homepages**](https://www.ffmpeg.org/)
  */
 
 /**
- * @page ffmpegfs_NEWS Online NEWS list
+ * @page ffmpegfs_NEWS Online News List
  *
  * \include NEWS
  *

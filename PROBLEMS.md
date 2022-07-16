@@ -2,7 +2,7 @@
 
 ## General problems accessing a file
 
-Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get an "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system. 
+Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get an "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system.
 
 What you will have to do is refer to the syslog, system journal, or to the FFmpeg log itself, optionally at a higher verbosity. If you are unable to resolve the problem yourself, feel free to create [an issue](https://github.com/nschlia/ffmpegfs/issues), stating what you have done and what has happened. Do not forget to add logs (preferably at a higher verbosity) and, if possible, a description of how to recreate the issue. A demo file that causes the error would be helpful as well.
 
@@ -59,4 +59,4 @@ NFS arbitrarily sends the correct file, or one that is cut or padded like SAMBA.
 
 As of yet, there seems to be no way around that. Maybe NFS or SAMBA can be configured to cope with that, but how to is unknown to me.
 
- 
+

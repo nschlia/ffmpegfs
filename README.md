@@ -60,17 +60,17 @@ Supported Formats
 
 Making a full list of the formats the FFmpeg API supports would be somewhat pointless.  See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea, .
 
-Unfortunately, it also depends on the codecs that have been compiled into the library; use this command to find out: 
+Unfortunately, it also depends on the codecs that have been compiled into the library; use this command to find out:
 
 ```
 ffmpeg -formats
 ```
 
-A list of the available codecs will be created as a result. 
+A list of the available codecs will be created as a result.
 
 ### Output
 
-Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions. 
+Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions.
 
 #### Audio Formats
 | Format | Description | Audio |

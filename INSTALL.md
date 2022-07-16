@@ -17,7 +17,7 @@ Newer FFmpegfs versions can be installed on Debian 11 Bullseye from Bullseye Bac
 To enable Bullseye Backports:
 
      echo "deb http://deb.debian.org/debian bullseye-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
-    
+
      sudo apt-get update
 
 To install FFmpegfs from backports, run `apt-get install ffmpegfs/bullseye-backports` or `apt-get install -t bullseye-backports ffmpegfs`.
@@ -33,7 +33,7 @@ FFmpegfs can be installed on Debian 10 Buster from Buster Backports and sid (whi
 To enable Buster Backports:
 
      echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
-    
+
      sudo apt-get update
 
 Then install FFmpegfs:
@@ -80,7 +80,7 @@ Please read the "Supported Linux Distributions" chapter in README.md for details
 **On Debian:**
 
     apt-get install gcc g++ make pkg-config asciidoc-base w3m
-    
+
     apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
 
 To get DVD support:
@@ -102,7 +102,7 @@ To "make check" (run test suite):
 **On Suse** (please read notes before continuing):
 
     zypper install gcc gcc-c++
-    
+
     zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel libchardet-devel
 
 To get DVD support:
@@ -118,7 +118,7 @@ Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
 **On Red Hat:**
 
     yum install gcc g++
-    
+
     yum install fuse-devel sqlite-devel libcue-devel libchardet-devel
 
 To get DVD support:
@@ -258,7 +258,7 @@ The help can be created in doc or html format by running
 
 respectively.
 
-Building FFmpeg 
+Building FFmpeg
 -------------------------------
 
 ### Building FFmpeg with optimisations
@@ -383,14 +383,14 @@ Running "make help-pdf" fails like this:
     $ make -s help-pdf
       GEN      ffmpegfs.1.pdf
     a2x: ERROR: "fop"   -fo "ffmpegfs.1.fo" -pdf "ffmpegfs.1.pdf" returned non-zero exit status 127
-    
+
     make: *** [Makefile:918: ffmpegfs.1.pdf] Error 1
 
 This happens when "fop" is missing, a command line wrapper for the Java version of fop.
 
      apt-get install fop
 
-That should do it. 
+That should do it.
 
 ### libbluray fails to load libbluray.jar
 

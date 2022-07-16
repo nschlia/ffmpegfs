@@ -107,7 +107,7 @@ If your system supports VAAPI:
 
 - It could be possible that the rendering device on your system goes by a different name than the default "/dev/dri/renderD128". You can use the --hwaccel_enc_device parameter to set it.
 
-On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable. 
+On slow machines like the Raspberry, this should give an extra kick and also relieve the CPU from load. On faster machines, this impact may be smaller, yet noticeable.
 
 The decoding part is a bit tricky. If encoding is set to hardware, and this hardware is there and capable of encoding, it will work. If hardware decoding is possible, it depends on the source file. Therefore, the file needs to be checked first and then it needs to be decided if hardware acceleration can be used or if a fallback to software is required. FFmpeg requires that to be set via the command line, but FFmpegfs must be able to decide that automatically.
 
@@ -195,7 +195,7 @@ Depending on the machine speed, this will take quite a while. After the command 
           nschlia/ffmpegfs \
           -f --log_stderr --audiobitrate=256K -o allow_other,ro,desttype=mp3,log_maxlevel=INFO
 
-Of course, */path/to/source* must be changed to a directory with multi-media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired. 
+Of course, */path/to/source* must be changed to a directory with multi-media files and */path/to/output* to where the converted files should be visible. The output type may be changed to MP4 or whatever is desired.
 
 Auto Copy
 =========
@@ -291,7 +291,7 @@ Example
 
 **TODO:**
 
-* Maybe FFmpeg could convert text to bitmap for TS/HLS if the input format is not bitmapped. 
+* Maybe FFmpeg could convert text to bitmap for TS/HLS if the input format is not bitmapped.
 
 MP4 Format Profiles
 ==================

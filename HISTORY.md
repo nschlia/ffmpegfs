@@ -30,7 +30,7 @@ History
 * **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
 * **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
 * **Bugfix:** Fixed crash when video had no audio.
-* **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed access problems with frame sets and HLS. 
+* **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed access problems with frame sets and HLS.
 * **Bugfix:** Issue #119: Fixed problem that caused frame set generation to sometimes fail.
 * **Bugfix:** Fixed JPG frame set generation. Suddenly FF_COMPLIANCE_UNOFFICIAL was required to have FFmpeg API accept the codec.
 * **Enhancement:** [Issue #67](https://github.com/nschlia/ffmpegfs/issues/67): Enhanced file size prediction.
@@ -107,14 +107,14 @@ History
   Deprecated av_init_packet()
 * **Fixed API compatitibility:** Many pointers made const as of 2021-04-27. Although reasonable, this breaks API compatibility with versions older than 59.0.100,
 * **Bugfix:** find_original "fallback" method did not correctly handle the new filename format (extension added, not the original one replaced).
-* **Bugfix:** [Issue #87](https://github.com/nschlia/ffmpegfs/issues/87): Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds). 
-* **Bugfix:** [Issue #88](https://github.com/nschlia/ffmpegfs/issues/88): HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations. 
+* **Bugfix:** [Issue #87](https://github.com/nschlia/ffmpegfs/issues/87): Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds).
+* **Bugfix:** [Issue #88](https://github.com/nschlia/ffmpegfs/issues/88): HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations.
 
 ### Version 2.2 released
 
 **New in 2.2 (2021-02-06):**
 
-* **Note**: This is planned as a maintenance version, no new features but bug fixes only. 
+* **Note**: This is planned as a maintenance version, no new features but bug fixes only.
 * **Bugfix:** [Issue #75](https://github.com/nschlia/ffmpegfs/issues/75): Fix crash when opening mp3 output with Dolphin.
 * **Bugfix**: Possible crash in transcoder_thread: Decoder object could have been used after being freed.
 * **Bugfix:** Stupid blooper. WAV and AIFF size was always calculated for a mono file, thus for stereo files only half the correct size.

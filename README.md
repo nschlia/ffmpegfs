@@ -111,7 +111,7 @@ When a destination *JPG*, *PNG*, or *BMP* is chosen, all frames of a video sourc
 
 Selecting *HLS* creates a directory with TS segments together with an M3U playlist (index_0_av.m3u8 and master.m3u8). There is also a hls.html that can be opened in a browser to play the segments.
 
-Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [problems](PROBLEMS.md) for details.
+Please note that the files must be on a web server because restrictions prevent most browsers from opening the files from disk. See [problems](PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output) for details.
 
 Installation Instructions
 -------------------------

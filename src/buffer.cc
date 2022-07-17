@@ -873,22 +873,30 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
+    size_t segment_size = size(segment_no);
+
+    if (ci->m_buffer_size != segment_size)
+    {
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
+        errno = ESPIPE; // Comes from size()
+        return false;
+    }
+
     bool success = true;
 
-    assert(ci->m_buffer_size == size(segment_no));
-    if (size(segment_no) >= offset)
+    if (segment_size >= offset)
     {
-        if (size(segment_no) < offset + bufsize)
+        if (segment_size < offset + bufsize)
         {
-            bufsize = size(segment_no) - offset - 1;
+            bufsize = segment_size - offset - 1;
         }
 
         memcpy(out_data, ci->m_buffer + offset, bufsize);
     }
     else
     {
-        errno = ESPIPE; // Changed from ENOMEM because this was misleading.
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! size(segment_no) < offset - Size: %1 Offset: %2", size(segment_no), offset);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! size(segment_no) < offset - Segment: %1 Size: %2 Offset: %3", segment_no, segment_size, offset);
+        errno = ESPIPE;
         success = false;
     }
 

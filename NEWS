@@ -15,6 +15,10 @@ Important changes in 2.12 (2022-07-XX):
   been fixed.
 * Bugfix: An internal problem could cause the application to crash. Should never
   happen, though. Fixed anyway.
+* Bugfix: Sometimes, the last segment's estimated size was incredibly small - about
+  2 bytes. Each segment should have the same predicted size as is is calculated
+  simply by dividing the projected size of the entire file by the number of 
+  segments. Following transcoding, the size was accurate. 
 
 Important changes in 2.11 (2022-06-16):
 

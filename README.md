@@ -12,10 +12,10 @@ News
 
 ### Version 2.12 is under development
 
-- The code has been run through clang-tidy to identify bug-prone or inefficient code, and to find parts that could be modernised to C++17. Several issues could be resolved. Sometimes, many lines of code could be replaced by a few. Some parts run far more inefficiently than before. C++17 is cool. I need to get a t-shirt.
-- **Bugfix:** A potential crash under rare circumstances in get_prores_bitrate() has been fixed. Array access out-of-bounds could occur if best match resolution could not be determined.
-- **Bugfix:** Fixed several unlikely, but potential crashes when subtitle decoding failed or delayed video/audio packets could not be encoded.
-- **Bugfix:** The application could crash after an internal error. Should never happen, though. Fixed anyway.
+- The code has been run thtough clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt. 
+- **Bugfix:** In get prores bitrate(), a crash that might have happened in unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.
+- **Bugfix:** Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.
+- **Bugfix:** An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.
 
 ### Version 2.11 has been released
 

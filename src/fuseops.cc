@@ -2091,14 +2091,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
             }
             else
             {
-                if (file_no < virtualfile->get_segment_count())
-                {
-                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                }
-                else
-                {
-                    make_file(buf, filler, virtualfile->m_type, origpath, segment_name, remaining_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
-                }
+                make_file(buf, filler, virtualfile->m_type, origpath, segment_name, segment_size, virtualfile->m_st.st_ctime, VIRTUALFLAG_HLS);
             }
 
             if (file_no < virtualfile->get_segment_count())

@@ -609,7 +609,7 @@ bool Buffer::reserve(size_t size)
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = ENOMEM;
-        //Logging::error(m_cur_ci->m_cachefile, "Error in resize(): (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR in resize()");
         return false;
     }
 
@@ -888,6 +888,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
     else
     {
         errno = ESPIPE; // Changed from ENOMEM because this was misleading.
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! size(segment_no) < offset - Size: %1 Offset: %2", size(segment_no), offset);
         success = false;
     }
 

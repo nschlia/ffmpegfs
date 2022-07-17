@@ -2066,7 +2066,6 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 
         int64_t remaining_duration  = virtualfile->m_duration % params.m_segment_duration;
         size_t  segment_size        = virtualfile->m_predicted_size / virtualfile->get_segment_count();
-        size_t  remaining_size      = virtualfile->m_predicted_size % virtualfile->get_segment_count();
 
         for (uint32_t file_no = 1; file_no <= virtualfile->get_segment_count(); file_no++)
         {

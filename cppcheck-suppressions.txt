@@ -16,6 +16,3 @@ unusedStructMember:src/vcd/vcdinfo.cc
 ctunullpointer:src/fuseops.cc
 nullPointer:src/fuseops.cc
 noExplicitConstructor:src/ffmpeg_frame.h
-
-// TEMP
-knownConditionTrueFalse

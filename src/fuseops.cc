@@ -673,7 +673,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     remove_filename(&pathonly);
 
 #ifdef USE_LIBVCD
-                    if (res <= 0)
+                    //if (res <= 0) Not necessary here, will always be true
                     {
                         // Returns -errno or number or titles on VCD
                         res = check_vcd(pathonly);

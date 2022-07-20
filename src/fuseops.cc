@@ -1134,6 +1134,12 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     // This is a virtual file
     bool success = true;
 
+    if (virtualfile == nullptr)
+    {
+        errno = EINVAL;
+        Logging::error(origpath.c_str(), "read: INTERNAL ERROR! virtualfile == NULL");
+        return -errno;
+    }
 
     switch (virtualfile->m_type)
     {

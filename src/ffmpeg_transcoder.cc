@@ -842,6 +842,11 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 
 int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
+    if (buffer == nullptr)
+    {
+        Logging::error(virtname(), "INTERNAL ERROR! buffer == nullptr in open_output_file()");
+        return AVERROR(EINVAL);
+    }
 
     m_out.m_filetype    = m_current_format->filetype();
 

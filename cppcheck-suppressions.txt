@@ -8,7 +8,6 @@ readdirCalled
 // This is just annoying.
 assertWithSideEffect
 unusedFunction
-unknownMacro
 missingInclude
 
 // File specific suppressions

@@ -146,9 +146,6 @@ const char *get_media_type_string(enum AVMediaType media_type);
 #define BITRATE int                                                                 /**< @brief For FFmpeg bit rate is an int. */
 #endif
 
-#define STRINGIFY(x) #x                                                             /**< @brief Stringification helper for STRINGIFY. Not to be used separately. */
-#define TOSTRING(x) STRINGIFY(x)                                                    /**< @brief Convert a macro argument into a string constant */
-
 #define SAFE_VALUE(p, v, d)     (((p) != nullptr) ? (p)->v : d)                     /**< @brief Access struct/class pointer safely, return default if nullptr */
 
 /**

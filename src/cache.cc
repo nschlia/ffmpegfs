@@ -42,6 +42,9 @@
 #define sqlite3_errstr(rc)  ""              /**< @brief If our version of SQLite hasn't go this function */
 #endif // HAVE_SQLITE_ERRSTR
 
+#define STRINGIFY(x) #x                                                             /**< @brief Stringification helper for STRINGIFY. Not to be used separately. */
+#define TOSTRING(x) STRINGIFY(x)                                                    /**< @brief Convert a macro argument into a string constant */
+
 const Cache::TABLE_DEF Cache::m_table_cache_entry =
 {
     //

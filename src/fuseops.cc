@@ -1137,7 +1137,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     if (virtualfile == nullptr)
     {
         errno = EINVAL;
-        Logging::error(origpath.c_str(), "read: INTERNAL ERROR! virtualfile == NULL");
+        Logging::error(origpath.c_str(), "read: INTERNAL ERROR: ffmpegfs_read()! virtualfile == NULL");
         return -errno;
     }
 

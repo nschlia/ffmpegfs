@@ -608,7 +608,7 @@ bool Buffer::reserve(size_t size)
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = ENOMEM;
-        Logging::error(nullptr, "INTERNAL ERROR in resize()");
+        Logging::error(nullptr, "INTERNAL ERROR: Buffer::reserve()!");
         return false;
     }
 
@@ -876,7 +876,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     if (ci->m_buffer_size != segment_size)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
         errno = ESPIPE; // Comes from size()
         return false;
     }
@@ -894,7 +894,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR! size(segment_no) < offset - Segment: %1 Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) < offset - Segment: %1 Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
         success = false;
     }

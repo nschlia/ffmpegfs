@@ -1,6 +1,8 @@
 // Why would I change a const member function to static when it is not to be used outside the class???
 functionStatic
-// readdir_r is deprecated; use readdir(3) instead.
+// Why on Earth should I replace a range based loop with an algorithm? What's the benefit to replace a c++17 built-in with code?
+useStlAlgorithm
+// readdir_r is deprecated; use readdir(3) instead. The warning is brainless.
 // See https://man7.org/linux/man-pages/man3/readdir_r.3.html#DESCRIPTION
 readdirCalled
 // This is just annoying.
@@ -9,6 +11,7 @@ unusedFunction
 unknownMacro
 missingInclude
 
+// File specific suppressions
 unusedStructMember:src/vcd/vcdinfo.cc
 ctunullpointer:src/fuseops.cc
 nullPointer:src/fuseops.cc

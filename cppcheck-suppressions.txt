@@ -5,10 +5,11 @@ useStlAlgorithm
 // readdir_r is deprecated; use readdir(3) instead. The warning is brainless.
 // See https://man7.org/linux/man-pages/man3/readdir_r.3.html#DESCRIPTION
 readdirCalled
+// Do not complain about not found standard headers
+missingInclude
 // This is just annoying.
 assertWithSideEffect
 unusedFunction
-missingInclude
 
 // File specific suppressions
 unusedStructMember:src/vcd/vcdinfo.cc

@@ -608,7 +608,7 @@ bool Buffer::reserve(size_t size)
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
         errno = ENOMEM;
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR in resize()");
+        Logging::error(nullptr, "INTERNAL ERROR in resize()");
         return false;
     }
 

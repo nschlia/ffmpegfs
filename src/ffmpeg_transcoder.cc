@@ -59,7 +59,6 @@ extern "C" {
 #include "aiff.h"
 #include "logging.h"
 
-#include <cassert>
 #include <unistd.h>
 #include <filesystem>
 
@@ -843,7 +842,6 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 
 int FFmpeg_Transcoder::open_output_file(Buffer *buffer)
 {
-    assert(buffer != nullptr);
 
     m_out.m_filetype    = m_current_format->filetype();
 
@@ -1157,7 +1155,6 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         }
         default:
         {
-            assert(false);
             break;
         }
         }
@@ -1192,7 +1189,6 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
     default:
     {
-        assert(false);
         break;
     }
     }

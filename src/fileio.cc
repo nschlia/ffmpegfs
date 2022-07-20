@@ -43,8 +43,6 @@
 #include "blurayio.h"
 #endif // USE_LIBBLURAY
 
-//#include <cassert>
-
 uint32_t VIRTUALFILE::get_segment_count() const
 {
     if (m_duration && params.m_segment_duration)

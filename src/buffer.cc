@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
-#include <cassert>
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
@@ -1086,7 +1085,6 @@ Buffer::LPCACHEINFO Buffer::cacheinfo(uint32_t segment_no)
     {
         segment_no--;
 
-        assert(segment_no < segment_count());
         if (segment_no >= segment_count())
         {
             return nullptr;
@@ -1103,7 +1101,6 @@ Buffer::LPCCACHEINFO Buffer::const_cacheinfo(uint32_t segment_no) const
     {
         segment_no--;
 
-        assert(segment_no < m_ci.size());
         if (segment_no >= m_ci.size())
         {
             return nullptr;

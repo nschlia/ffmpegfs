@@ -37,7 +37,6 @@
 #include "logging.h"
 
 #include <cstring>
-#include <cassert>
 
 #include <dvdread/dvd_reader.h>
 #include <dvdread/nav_read.h>
@@ -750,14 +749,12 @@ int DvdIO::seek(int64_t offset, int whence)
     switch (whence)
     {
     case SEEK_SET:
-        assert(offset >= 0);
         abs_offset = static_cast<size_t>(offset);
         break;
     case SEEK_CUR:
         abs_offset += cur_pos;
         break;
     case SEEK_END:
-        assert(offset >= 0);
         abs_offset = size() - abs_offset;
         break;
     default:

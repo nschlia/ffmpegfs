@@ -55,7 +55,6 @@
 #include <unistd.h>
 #include <regex>
 #include <list>
-#include <cassert>
 #include <csignal>
 #include <cstring>
 
@@ -819,8 +818,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                     return -EBADF;
                 }
 
-                assert(virtualfile->m_origfile == origpath);
-
                 if (!transcoder_cached_filesize(virtualfile, stbuf))
                 {
                     Cache_Entry* cache_entry = transcoder_new(virtualfile, false);
@@ -849,7 +846,6 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
-        assert(false);
         break;
     }
     }
@@ -895,7 +891,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     }
 
     // This is a virtual file
-    assert(virtualfile != nullptr);
 
     bool no_check = false;
 
@@ -963,7 +958,6 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
-        assert(false);
         break;
     }
     }
@@ -1080,7 +1074,6 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
-        assert(false);
         break;
     }
     }
@@ -1141,7 +1134,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     // This is a virtual file
     bool success = true;
 
-    assert(virtualfile != nullptr);
 
     switch (virtualfile->m_type)
     {
@@ -1239,7 +1231,6 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     case VIRTUALTYPE_PASSTHROUGH:
     case VIRTUALTYPE_BUFFER:
     {
-        assert(false);
         break;
     }
     }
@@ -2219,8 +2210,6 @@ static int kick_next(LPVIRTUALFILE virtualfile)
  */
 static void sighandler(int signum)
 {
-    assert(signum == SIGINT);
-
     if (signum == SIGINT)
     {
         Logging::warning(nullptr, "Caught SIGINT, shutting down now...");

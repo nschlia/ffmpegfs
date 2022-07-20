@@ -8,7 +8,6 @@ readdirCalled
 // Do not complain about not found standard headers
 missingInclude
 // This is just annoying.
-assertWithSideEffect
 unusedFunction
 
 // File specific suppressions

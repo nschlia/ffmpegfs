@@ -213,7 +213,7 @@ git clone https://salsa.debian.org/nschlia/ffmpegfs.git
 
 For those who are lazy like me, simply copy and issue this command to get all the prerequisites:
 
-    apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+    apt-get install gcc g++ make pkg-config autoconf automake asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
 
 FFmpegfs uses the GNU build system, so you'll need to run first:
 

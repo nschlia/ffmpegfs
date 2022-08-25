@@ -393,6 +393,16 @@ This happens when "fop" is missing, a command line wrapper for the Java version 
 
 That should do it.
 
+### Make reports xmllint" --nonet --noout --valid "/home/jenkins/dev/ffmpegfs/ffmpegfs.1.xml" returned non-zero exit
+
+To find out more, run "make V=1".  If you see something like (sic) "validity error : Validation failed: no DTD found !", this means that xmlint cannot access a DTD file because it is run with the --nonet option.
+
+This can be solved by 
+
+     apt-get install docbook-xml
+
+which will make the required files available offline.
+
 ### libbluray fails to load libbluray.jar
 
 When you see this message while accessing blurays:

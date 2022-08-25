@@ -373,9 +373,9 @@ Fix it by installing (or similar):
 
 You are missing out on asciidoc. To install it, do (or similar):
 
-     apt-get install asciidoc
+     apt-get install asciidoc-base
 
-That should fix it. You may just install asciidoc-base to save disc space.
+That should fix it.
 
 ### "make help-pdf" reports "non-zero exit status 127"
 

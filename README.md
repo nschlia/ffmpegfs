@@ -61,7 +61,7 @@ Supported Formats
 
 Making a full list of the formats the FFmpeg API supports would be somewhat pointless.  See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea.
 
-Unfortunately, it also depends on the codecs that have been compiled into the library; use this command to find out:
+Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out: 
 
 ```
 ffmpeg -formats

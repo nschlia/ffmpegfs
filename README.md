@@ -117,7 +117,7 @@ Please be aware that since most browsers cannot open the files from disc due to 
 Installation Instructions
 -------------------------
 
-A rather detailed description can be found under [install] (INSTALL.md).
+A rather detailed description can be found under [install](INSTALL.md).
 
 Fixing Problems
 ---------------

@@ -127,7 +127,7 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
 
     if (m_angle_idx >= ti->angle_count)
     {
-        Logging::warning(bdpath, "The angle %1 is greate than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
+        Logging::warning(bdpath, "The angle %1 is greater than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
         m_angle_idx = 0;
     }
 

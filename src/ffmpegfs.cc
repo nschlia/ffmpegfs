@@ -1821,7 +1821,7 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
         std::printf("%-20s: %s\n", PACKAGE_NAME " Version", FFMPEFS_VERSION);
         std::printf("%s", ffmpeg_libinfo().c_str());
 
-        std::printf("\nFFMpeg capabilities\n\n");
+        std::printf("\nFFMpeg Capabilities\n\n");
 
         show_caps(0);
 

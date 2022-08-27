@@ -20,11 +20,11 @@ News
 
 **New in in 2.12 (2022-08-27):**
 
-- The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt. 
+- The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.
 - **Bugfix:** In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.
 - **Bugfix:** Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.
 - **Bugfix:** An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.
-- **Bugfix:** Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate. 
+- **Bugfix:** Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate.
 
 ## Full History
 
@@ -51,7 +51,7 @@ Supported Formats
 
 Making a full list of the formats the FFmpeg API supports would be somewhat pointless.  See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea.
 
-Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out: 
+Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out:
 
 ```
 ffmpeg -formats

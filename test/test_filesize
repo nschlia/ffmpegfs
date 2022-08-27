@@ -66,7 +66,7 @@ elif [ "${DESTTYPE}" == "ts" ];
 then
     # ts
     check_filesize "raven_e.flac" 489113 811408
-    check_filesize "raven_d.ogg" 351126 545388 
+    check_filesize "raven_d.ogg" 351126 545388
 elif [ "${DESTTYPE}" == "flac" ];
 then
     # flac

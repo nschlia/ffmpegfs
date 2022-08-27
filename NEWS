@@ -18,7 +18,7 @@ Important changes in 2.12 (2022-08-27):
 * Bugfix: Sometimes, the last segment's estimated size was incredibly small -
   about 2 bytes. Each segment should have the same predicted size as it is
   calculated simply by dividing the projected size of the entire file by the
-  number of segments. Following transcoding, the size was accurate.  
+  number of segments. Following transcoding, the size was accurate.
 
 Important changes in 2.11 (2022-06-16):
 
@@ -160,14 +160,14 @@ Important changes in 2.7 (2021-11-08):
   misinterpretations. For example, --desttype=aiff+mov would create MOV
   files out of any input. Correct would be --desttype=mov+aiff which will
   create MOV files out of videos and AIFF from audio files, as expected.
-  
+
 Important changes in 2.6 (2021-09-04):
 
-* No new features, just a bugfix. See V2.4 for details. 
+* No new features, just a bugfix. See V2.4 for details.
 
 Important changes in 2.5 (2021-06-18)
 
-* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly 
+* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly
   implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.
   - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).
   - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.
@@ -241,7 +241,7 @@ This is a maintenance release, bugfixes only.
 * Bugfix: Issue #71:: Virtual directories were missing dot and dot-dot nodes.
 
 Important changes in 2.1 (2020-12-14)
-  
+
 * Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
 * Feature: Implemented in 1.7, removed experimental state for --win_smb_fix now.
            Windows seems to access the files on Samba drives starting at the last 64K segment

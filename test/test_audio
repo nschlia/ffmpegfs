@@ -15,9 +15,9 @@ check_audio() {
     EXPECTED="$3"
 
     cp -v "${DIRNAME}/${TGTFILE}" /dev/null > /dev/null
- 
+
     RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "${DIRNAME}/${TGTFILE}")"
-    
+
     SIZE=$(stat -c %s "${DIRNAME}/${TGTFILE}")
     echo "File  : ${TGTFILE}"
     echo "Result: ${RESULT} (expected ${EXPECTED})"

@@ -397,7 +397,7 @@ That should do it.
 
 To find out more, run "make V=1".  If you see something like (sic) "validity error : Validation failed: no DTD found !", this means that xmlint cannot access a DTD file because it is run with the --nonet option.
 
-This can be solved by 
+This can be solved by
 
      apt-get install docbook-xml
 

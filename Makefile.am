@@ -1,5 +1,5 @@
 # Definitions for sub-makes
-if DEBUG 
+if DEBUG
 export OPTIMISATION = -DDEBUG -ggdb
 else
 export OPTIMISATION = -DNDEBUG -Ofast -g
@@ -117,7 +117,7 @@ clean-local: doxy-clean
 
 # Really clean up everything
 wipe-all: doxy-clean distclean
-	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in test/.deps src/Makefile.in src/config.h.in src/.deps src/vcd/.deps src/config.h.in ffmpegfs.layout 
+	rm -Rf autom4te.cache configure config aclocal.m4 Makefile.in test/Makefile.in test/.deps src/Makefile.in src/config.h.in src/.deps src/vcd/.deps src/config.h.in ffmpegfs.layout
 
 # Run cppcheck
 cppcheck:

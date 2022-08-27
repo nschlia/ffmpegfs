@@ -152,7 +152,7 @@ const std::vector<FFmpeg_Transcoder::PRORES_BITRATE> FFmpeg_Transcoder::m_prores
     {	8192,	4320,	{ {	50,	false }                   },	{	1298,	2920,	4194,	6291,	9437,	14156	}	},
     {	8192,	4320,	{ {	60,	false }                   },	{	1556,	3500,	5028,	7542,	11313,	16970	}	}
 };
-						
+
 const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
 {
     { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },          ///< VAAPI uses the NV12 pix format

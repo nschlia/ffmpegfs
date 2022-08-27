@@ -19,7 +19,7 @@ else
     echo "$(basename -- "$0") DESTTYPE embedded   Check embedded cue sheet file"
     exit 1
 fi
-    
+
 . "${BASH_SOURCE%/*}/funcs.sh" "$1" 99 "$2"
 
 XDIRNAME="${DIRNAME}/cuesheet/${TESTDIR}"

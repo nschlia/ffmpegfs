@@ -261,14 +261,14 @@ This sets the height of the transcoded video.
 +
 When the video is rescaled, the aspect ratio is preserved if --width is not set at the same time.
 +
-Defaults to: *keep source video height* 
+Defaults to: *keep source video height*
 
 *--videowidth*=WIDTH, -o *videowidth*=WIDTH::
 This sets the width of the transcoded video.
 +
 When the video is rescaled, the aspect ratio is preserved if --height is not set at the same time.
 +
-Defaults to: *keep source video width* 
+Defaults to: *keep source video width*
 
 *--deinterlace*, -o *deinterlace*::
 Deinterlace video if necessary while transcoding.

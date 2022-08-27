@@ -3,7 +3,7 @@ ffmpegfs (2.12-1) unstable; urgency=medium
   * The code has been run through clang-tidy to identify bug-prone or
     inefficient code, and to find parts that could be modernised to C++17.
     Several issues could be resolved. Sometimes, many lines of code could be
-    replaced by a few. Some parts run far more inefficiently than before. C++17
+    replaced by a few. Some parts run far more efficiently than before. C++17
     is cool. I need to get a t-shirt.
   * Bugfix: In get prores bitrate(), a crash that might have happened under
     unusual circumstances has been corrected. If the best match resolution

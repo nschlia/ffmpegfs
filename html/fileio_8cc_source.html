@@ -105,112 +105,110 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="blurayio_8h.html">blurayio.h</a>&quot;</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBBLURAY</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//#include &lt;cassert&gt;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">   48</a></span>&#160;uint32_t <a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">VIRTUALFILE::get_segment_count</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> &amp;&amp; <a class="code" href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a>.<a class="code" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">m_segment_duration</a>)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>((<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> - 200000) / <a class="code" href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a>.<a class="code" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">m_segment_duration</a>) + 1;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">   60</a></span>&#160;<a class="code" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO::FileIO</a>()</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    : m_virtualfile(nullptr)</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">   46</a></span>&#160;uint32_t <a class="code" href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">VIRTUALFILE::get_segment_count</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> &amp;&amp; <a class="code" href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a>.<a class="code" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">m_segment_duration</a>)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>((<a class="code" href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">m_duration</a> - 200000) / <a class="code" href="ffmpegfs_8cc.html#a3e114cb4e37c86270217dd3437265fb3">params</a>.<a class="code" href="structFFMPEGFS__PARAMS.html#a716625301e24c3d4f76d9c0a403887dd">m_segment_duration</a>) + 1;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">   58</a></span>&#160;<a class="code" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO::FileIO</a>()</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    : m_virtualfile(nullptr)</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">   66</a></span>&#160;<a class="code" href="classFileIO.html">FileIO</a> * <a class="code" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">FileIO::alloc</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> type)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;{</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">switch</span> (<a class="code" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">   64</a></span>&#160;<a class="code" href="classFileIO.html">FileIO</a> * <a class="code" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">FileIO::alloc</a>(<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> type)</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;{</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">switch</span> (<a class="code" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>:</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>:</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDiskIO.html">DiskIO</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor">#ifdef USE_LIBVCD</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a216ce6e555d22eba5b793f3b7fe9081d">VIRTUALTYPE_VCD</a>:</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classVcdIO.html">VcdIO</a>;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBVCD</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#ifdef USE_LIBDVD</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDvdIO.html">DvdIO</a>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#ifdef USE_LIBBLURAY</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805aced62b04e062f8e282ba110fcd117547">VIRTUALTYPE_BLURAY</a>:</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classBlurayIO.html">BlurayIO</a>;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBBLURAY</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">default</span>:</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDiskIO.html">DiskIO</a>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">   99</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a>(<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile)</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;{</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a> = <a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a> != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="comment">// Store path to original file without file name for fast access</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a> = <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <a class="code" href="ffmpeg__utils_8cc.html#a6c874ce9c4af45f171a70ab203eb9444">remove_filename</a>(&amp;<a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>.clear();</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">  116</a></span>&#160;<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> <a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a>()</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;{</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">  121</a></span>&#160;<span class="keyword">const</span> std::string &amp; <a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">  126</a></span>&#160;<span class="keyword">const</span> std::string &amp; <a class="code" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">FileIO::filename</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a> == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> std::string empty;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">return</span> empty;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;}</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDiskIO.html">DiskIO</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#ifdef USE_LIBVCD</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a216ce6e555d22eba5b793f3b7fe9081d">VIRTUALTYPE_VCD</a>:</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classVcdIO.html">VcdIO</a>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBVCD</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#ifdef USE_LIBDVD</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a6d0fe2ff16baf99056582a9215b3b615">VIRTUALTYPE_DVD</a>:</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDvdIO.html">DvdIO</a>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBDVD</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#ifdef USE_LIBBLURAY</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">case</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805aced62b04e062f8e282ba110fcd117547">VIRTUALTYPE_BLURAY</a>:</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classBlurayIO.html">BlurayIO</a>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// USE_LIBBLURAY</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">default</span>:</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">new</span>(std::nothrow) <a class="code" href="classDiskIO.html">DiskIO</a>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;}</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">   97</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a>(<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile)</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;{</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a> = <a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a> != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="comment">// Store path to original file without file name for fast access</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a> = <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <a class="code" href="ffmpeg__utils_8cc.html#a6c874ce9c4af45f171a70ab203eb9444">remove_filename</a>(&amp;<a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    }</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>.clear();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">  114</a></span>&#160;<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> <a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a>()</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">  119</a></span>&#160;<span class="keyword">const</span> std::string &amp; <a class="code" href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a209f045ef3278301c48786789c692e89">m_path</a>;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">  124</a></span>&#160;<span class="keyword">const</span> std::string &amp; <a class="code" href="classFileIO.html#afcea64fae124756c68302ed355cc457f">FileIO::filename</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a> == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> std::string empty;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordflow">return</span> empty;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">m_virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">m_destfile</a>;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;}</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160; </div>
 <div class="ttc" id="ablurayio_8h_html"><div class="ttname"><a href="blurayio_8h.html">blurayio.h</a></div><div class="ttdoc">Blu-ray I/O.</div></div>
 <div class="ttc" id="abuffer_8h_html"><div class="ttname"><a href="buffer_8h.html">buffer.h</a></div><div class="ttdoc">Buffer class.</div></div>
 <div class="ttc" id="aclassBlurayIO_html"><div class="ttname"><a href="classBlurayIO.html">BlurayIO</a></div><div class="ttdoc">Blu-ray I/O class.</div><div class="ttdef"><b>Definition:</b> <a href="blurayio_8h_source.html#l00048">blurayio.h:49</a></div></div>
 <div class="ttc" id="aclassDiskIO_html"><div class="ttname"><a href="classDiskIO.html">DiskIO</a></div><div class="ttdoc">Disk file I/O class.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8h_source.html#l00041">diskio.h:42</a></div></div>
 <div class="ttc" id="aclassDvdIO_html"><div class="ttname"><a href="classDvdIO.html">DvdIO</a></div><div class="ttdoc">DVD I/O class.</div><div class="ttdef"><b>Definition:</b> <a href="dvdio_8h_source.html#l00047">dvdio.h:48</a></div></div>
 <div class="ttc" id="aclassFileIO_html"><div class="ttname"><a href="classFileIO.html">FileIO</a></div><div class="ttdoc">Base class for I/O.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00255">fileio.h:256</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a175ab839cce4af8b15749e31fd596e00"><div class="ttname"><a href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a></div><div class="ttdeci">const std::string &amp; path() const</div><div class="ttdoc">Path to source file (without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00121">fileio.cc:121</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a175ab839cce4af8b15749e31fd596e00"><div class="ttname"><a href="classFileIO.html#a175ab839cce4af8b15749e31fd596e00">FileIO::path</a></div><div class="ttdeci">const std::string &amp; path() const</div><div class="ttdoc">Path to source file (without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00119">fileio.cc:119</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a209f045ef3278301c48786789c692e89"><div class="ttname"><a href="classFileIO.html#a209f045ef3278301c48786789c692e89">FileIO::m_path</a></div><div class="ttdeci">std::string m_path</div><div class="ttdoc">Source path (directory without file name)</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00369">fileio.h:369</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00116">fileio.cc:116</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00114">fileio.cc:114</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a52cdddb47894f9d6a903c1723852de6b"><div class="ttname"><a href="classFileIO.html#a52cdddb47894f9d6a903c1723852de6b">FileIO::m_virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE m_virtualfile</div><div class="ttdoc">Virtual file object of current file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00370">fileio.h:370</a></div></div>
-<div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00099">fileio.cc:99</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00097">fileio.cc:97</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a6b56f0b1fcf994ff403335463d0eca9b"><div class="ttname"><a href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">FileIO::type</a></div><div class="ttdeci">virtual VIRTUALTYPE type() const =0</div><div class="ttdoc">Get type of the virtual file.</div></div>
-<div class="ttc" id="aclassFileIO_html_a8b0d602c3461181e12c05f655dea5018"><div class="ttname"><a href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO::FileIO</a></div><div class="ttdeci">FileIO()</div><div class="ttdoc">Create FileIO object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00060">fileio.cc:60</a></div></div>
-<div class="ttc" id="aclassFileIO_html_ab67ef47f0295909426a82d9fb29afa9e"><div class="ttname"><a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">FileIO::alloc</a></div><div class="ttdeci">static FileIO * alloc(VIRTUALTYPE type)</div><div class="ttdoc">Allocate the correct object for type().</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00066">fileio.cc:66</a></div></div>
-<div class="ttc" id="aclassFileIO_html_afcea64fae124756c68302ed355cc457f"><div class="ttname"><a href="classFileIO.html#afcea64fae124756c68302ed355cc457f">FileIO::filename</a></div><div class="ttdeci">const std::string &amp; filename() const</div><div class="ttdoc">Get source filename.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00126">fileio.cc:126</a></div></div>
+<div class="ttc" id="aclassFileIO_html_a8b0d602c3461181e12c05f655dea5018"><div class="ttname"><a href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO::FileIO</a></div><div class="ttdeci">FileIO()</div><div class="ttdoc">Create FileIO object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00058">fileio.cc:58</a></div></div>
+<div class="ttc" id="aclassFileIO_html_ab67ef47f0295909426a82d9fb29afa9e"><div class="ttname"><a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">FileIO::alloc</a></div><div class="ttdeci">static FileIO * alloc(VIRTUALTYPE type)</div><div class="ttdoc">Allocate the correct object for type().</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00064">fileio.cc:64</a></div></div>
+<div class="ttc" id="aclassFileIO_html_afcea64fae124756c68302ed355cc457f"><div class="ttname"><a href="classFileIO.html#afcea64fae124756c68302ed355cc457f">FileIO::filename</a></div><div class="ttdeci">const std::string &amp; filename() const</div><div class="ttdoc">Get source filename.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00124">fileio.cc:124</a></div></div>
 <div class="ttc" id="aclassVcdIO_html"><div class="ttname"><a href="classVcdIO.html">VcdIO</a></div><div class="ttdoc">Video CD and Super Video CD I/O class.</div><div class="ttdef"><b>Definition:</b> <a href="vcdio_8h_source.html#l00045">vcdio.h:46</a></div></div>
 <div class="ttc" id="adiskio_8h_html"><div class="ttname"><a href="diskio_8h.html">diskio.h</a></div><div class="ttdoc">Direct disk I/O.</div></div>
 <div class="ttc" id="advdio_8h_html"><div class="ttname"><a href="dvdio_8h.html">dvdio.h</a></div><div class="ttdoc">DVD I/O.</div></div>
@@ -227,7 +225,7 @@ $(function() {
 <div class="ttc" id="astructVIRTUALFILE_html"><div class="ttname"><a href="structVIRTUALFILE.html">VIRTUALFILE</a></div><div class="ttdoc">Virtual file definition.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00118">fileio.h:119</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a2251539300ecfd0668e1c69699953270"><div class="ttname"><a href="structVIRTUALFILE.html#a2251539300ecfd0668e1c69699953270">VIRTUALFILE::m_destfile</a></div><div class="ttdeci">std::string m_destfile</div><div class="ttdoc">Name and path of destination file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00146">fileio.h:146</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_a2e3f8f80c58a330a8829daa0c215f40e"><div class="ttname"><a href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">VIRTUALFILE::m_origfile</a></div><div class="ttdeci">std::string m_origfile</div><div class="ttdoc">Sanitised name and path of original file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00148">fileio.h:148</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_html_acafb54e5e1d87feeb3386b30a39ee23a"><div class="ttname"><a href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">VIRTUALFILE::get_segment_count</a></div><div class="ttdeci">uint32_t get_segment_count() const</div><div class="ttdoc">Number of HLS segments in set.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00048">fileio.cc:48</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html_acafb54e5e1d87feeb3386b30a39ee23a"><div class="ttname"><a href="structVIRTUALFILE.html#acafb54e5e1d87feeb3386b30a39ee23a">VIRTUALFILE::get_segment_count</a></div><div class="ttdeci">uint32_t get_segment_count() const</div><div class="ttdoc">Number of HLS segments in set.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00046">fileio.cc:46</a></div></div>
 <div class="ttc" id="astructVIRTUALFILE_html_afd8b2f75b21fafbdd6d593a3723343a4"><div class="ttname"><a href="structVIRTUALFILE.html#afd8b2f75b21fafbdd6d593a3723343a4">VIRTUALFILE::m_duration</a></div><div class="ttdeci">int64_t m_duration</div><div class="ttdoc">Track/chapter duration, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00152">fileio.h:152</a></div></div>
 <div class="ttc" id="avcdio_8h_html"><div class="ttname"><a href="vcdio_8h.html">vcdio.h</a></div><div class="ttdoc">Video CD and Super Video CD I/O.</div></div>
 </div><!-- fragment --></div><!-- contents -->

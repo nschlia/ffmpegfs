@@ -72,31 +72,20 @@ $(function() {
 <h1><a class="anchor" id="autotoc_md2"></a>
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
-Version 2.12 is under development</h2>
+Version 2.13 is under development</h2>
+<p><b>New in in 2.13 (2022-08-XX):</b></p>
 <ul>
-<li>The code has been run through clang-tidy to identify bug-prone or inefficient code, and to find parts that could be modernised to C++17. Several issues could be resolved. Sometimes, many lines of code could be replaced by a few. Some parts run far more inefficiently than before. C++17 is cool. I need to get a t-shirt.</li>
-<li><b>Bugfix:</b> A potential crash under rare circumstances in get_prores_bitrate() has been fixed. Array access out-of-bounds could occur if best match resolution could not be determined.</li>
-<li><b>Bugfix:</b> Fixed several unlikely, but potential crashes when subtitle decoding failed or delayed video/audio packets could not be encoded.</li>
-<li><b>Bugfix:</b> The application could crash after an internal error. Should never happen, though. Fixed anyway.</li>
+<li>No changes made yet.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
-Version 2.11 has been released</h2>
+Version 2.12 has been released</h2>
+<p><b>New in in 2.12 (2022-08-27):</b></p>
 <ul>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>: Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with &ndash;destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.</li>
-<li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/137">Issue #137</a>: Add &ndash;no_subtitles option to turn subtitles off.</li>
-<li><b>Bugfix:</b> Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.</li>
-<li><b>Bugfix:</b> Fix a crash that occurs when a DVD/Blu-ray is transcoded to audio only.</li>
-<li><b>Bugfix:</b> If the track performer field in the cuesheet is blank, try album performer instead.</li>
-<li><b>Bugfix:</b> Failing to mount Fuse during "make check" went unnoticed as the result code (which was supposed to be 99) was actually 0. Return the correct result code, failing the operation as expected.</li>
-<li><b>Bugfix:</b> The Docker build command contained a "make check" which actually failed altogether. Step has been removed. "make check" mounts Fuse, but this requires privileges that do not exist during "docker build".</li>
-<li><b>Bugfix:</b> On error, mremap () returns MAP_FAILED rather than NULL. Fixed a check for incorrect error conditions, which could cause the application to crash or return illogical error messages.</li>
-<li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/119">Issue #119</a>: Fix a problem that caused frame set generation to fail sometimes. It seems to be related to the nremap() issue.</li>
-<li>Generally revisited documentation, logging, and display texts. Improved grammar, formatting, and fixed quite a few typos that escaped all proofreading sessions.</li>
-<li>The FFmpeg API INFO and DEBUG level log output has been changed to the FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.</li>
-<li>Frequent memory reallocations when creating HLS segments have been reduced to speed up processing.</li>
-<li>Optimised logging to save CPU time by not formatting log entries that are not written anyway at their log level.</li>
-<li><a class="el" href="classLogging.html" title="Logging facility">Logging</a> has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.</li>
-<li><b>Bugfix:</b> To fix the build with GCC 12, add the missing include headers (closes: <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925">#1012925</a>).</li>
+<li>The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.</li>
+<li><b>Bugfix:</b> In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.</li>
+<li><b>Bugfix:</b> Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.</li>
+<li><b>Bugfix:</b> An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.</li>
+<li><b>Bugfix:</b> Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Full History</h1>
@@ -126,8 +115,8 @@ Code Status</h1>
 Supported Formats</h1>
 <h2><a class="anchor" id="autotoc_md8"></a>
 Input</h2>
-<p>Making a full list of the formats the FFmpeg API supports would be somewhat pointless. See <a href="https://ffmpeg.org/ffmpeg-formats.html#Demuxers">Demuxers</a> on FFmpeg's home pages and <a href="https://en.wikipedia.org/wiki/FFmpeg#Supported_formats">Supported Formats</a> on Wikipedia to get an idea, .</p>
-<p>Unfortunately, it also depends on the codecs that have been compiled into the library; use this command to find out:</p>
+<p>Making a full list of the formats the FFmpeg API supports would be somewhat pointless. See <a href="https://ffmpeg.org/ffmpeg-formats.html#Demuxers">Demuxers</a> on FFmpeg's home pages and <a href="https://en.wikipedia.org/wiki/FFmpeg#Supported_formats">Supported Formats</a> on Wikipedia to get an idea.</p>
+<p>Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out:</p>
 <div class="fragment"><div class="line">ffmpeg -formats</div>
 </div><!-- fragment --><p>A list of the available codecs will be created as a result.</p>
 <h2><a class="anchor" id="autotoc_md9"></a>

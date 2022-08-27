@@ -1,7 +1,7 @@
 <map id="src/cache_entry.h" name="src/cache_entry.h">
-<area shape="rect" id="node1" title="Cache entry" alt="" coords="210,5,345,32"/>
-<area shape="rect" id="node2" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="5,80,107,107"/>
-<area shape="rect" id="node3" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="131,80,271,107"/>
-<area shape="rect" id="node4" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="296,80,411,107"/>
-<area shape="rect" id="node5" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="435,80,562,107"/>
+<area shape="rect" id="node1" title="Cache entry" alt="" coords="203,5,327,32"/>
+<area shape="rect" id="node2" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="5,80,103,107"/>
+<area shape="rect" id="node3" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="127,80,258,107"/>
+<area shape="rect" id="node4" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="283,80,391,107"/>
+<area shape="rect" id="node5" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="415,80,533,107"/>
 </map>

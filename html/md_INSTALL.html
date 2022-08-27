@@ -177,8 +177,9 @@ Building from GIT</h3>
 <li>automake</li>
 <li>asciidoc (or at least asciidoc-base to save disk space)</li>
 <li>w3m</li>
+<li>docbook-xml</li>
 </ul>
-<p>For those who are lazy like me, simply copy and issue this command to get all the prerequisites: </p><pre class="fragment">apt-get install gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz
+<p>For those who are lazy like me, simply copy and issue this command to get all the prerequisites: </p><pre class="fragment">apt-get install gcc g++ make pkg-config autoconf automake asciidoc-base docbook-xml xsltproc w3m libchromaprint-dev bc doxygen graphviz
 </pre><p> FFmpegfs uses the GNU build system, so you'll need to run first: </p><pre class="fragment">./autogen.sh
 </pre><p> If you are downloading a release, this has already been done for you. To build and install, run: </p><pre class="fragment">./configure
 make
@@ -268,8 +269,8 @@ systemctl restart apache2
 <p>Fix it by installing (or similar): </p><pre class="fragment"> apt-get install bc
 </pre> <h2><a class="anchor" id="autotoc_md47"></a>
 Make reports "/bin/sh: a2x: command not found"</h2>
-<p>You are missing out on asciidoc. To install it, do (or similar): </p><pre class="fragment"> apt-get install asciidoc
-</pre><p> That should fix it. You may just install asciidoc-base to save disc space.</p>
+<p>You are missing out on asciidoc. To install it, do (or similar): </p><pre class="fragment"> apt-get install asciidoc-base
+</pre><p> That should fix it.</p>
 <h2><a class="anchor" id="autotoc_md48"></a>
 "make help-pdf" reports "non-zero exit status 127"</h2>
 <p>Running "make help-pdf" fails like this: </p><pre class="fragment">$ make -s help-pdf
@@ -280,11 +281,16 @@ make: *** [Makefile:918: ffmpegfs.1.pdf] Error 1
 </pre><p> This happens when "fop" is missing, a command line wrapper for the Java version of fop. </p><pre class="fragment"> apt-get install fop
 </pre><p> That should do it.</p>
 <h2><a class="anchor" id="autotoc_md49"></a>
+Make reports xmllint" --nonet --noout --valid "/home/jenkins/dev/ffmpegfs/ffmpegfs.1.xml" returned non-zero exit</h2>
+<p>To find out more, run "make V=1". If you see something like (sic) "validity error : Validation failed: no DTD found !", this means that xmlint cannot access a DTD file because it is run with the &ndash;nonet option.</p>
+<p>This can be solved by </p><pre class="fragment"> apt-get install docbook-xml
+</pre><p> which will make the required files available offline.</p>
+<h2><a class="anchor" id="autotoc_md50"></a>
 libbluray fails to load libbluray.jar</h2>
 <p>When you see this message while accessing blurays: </p><pre class="fragment">bdj.c:340: libbluray-j2se-0.9.3.jar not found.
 bdj.c:466: BD-J check: Failed to load libbluray.jar
 </pre><p> To get rid of this message, simply install "libbluray-bdj". This will make it go away. Though not necessary, as to read the Blu-ray tracks, Java support is not required, so this is simply cosmetical.</p>
-<h1><a class="anchor" id="autotoc_md50"></a>
+<h1><a class="anchor" id="autotoc_md51"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2022 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>

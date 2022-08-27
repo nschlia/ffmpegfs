@@ -68,20 +68,25 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.12 (2022-07-XX):</div>
+<div class="line">Important changes in 2.12 (2022-08-27):</div>
 <div class="line"> </div>
-<div class="line">* The code has been run through clang-tidy to identify bug-prone or inefficient</div>
-<div class="line">  code, and to find parts that could be modernised to C++17. Several issues could</div>
-<div class="line">  be resolved. Sometimes, many lines of code could be replaced by a few. Some</div>
-<div class="line">  parts run far more inefficiently than before. C++17 is cool. I need to get a</div>
-<div class="line">  t-shirt.</div>
-<div class="line">* Bugfix: A potential crash under rare circumstances in get_prores_bitrate() has</div>
-<div class="line">  been fixed. Array access out-of-bounds could occur if best match resolution</div>
-<div class="line">  could not be determined.</div>
-<div class="line">* Bugfix: Fixed several unlikely, but potential crashes when subtitle decoding</div>
-<div class="line">  failed or delayed video/audio packets could not be encoded.</div>
-<div class="line">* The application could crash after an internal error. It should never happen,</div>
-<div class="line">  though. Fixed anyway.</div>
+<div class="line">* The code has been run through clang-tidy to identify bug-prone or</div>
+<div class="line">  inefficient code, and to find parts that could be modernised to C++17.</div>
+<div class="line">  Several issues could be resolved. Sometimes, many lines of code could be</div>
+<div class="line">  replaced by a few. Some parts run far more inefficiently than before. C++17</div>
+<div class="line">  is cool. I need to get a t-shirt.</div>
+<div class="line">* Bugfix: In get prores bitrate(), a crash that might have happened under</div>
+<div class="line">  unusual circumstances has been corrected. If the best match resolution</div>
+<div class="line">  could not be found, array access out-of-bounds could happen.</div>
+<div class="line">* Bugfix: Several unlikely, but potential problems that could have happened</div>
+<div class="line">  when subtitle decoding failed or delayed video/audio packets couldn&#39;t be</div>
+<div class="line">  decoded have been fixed.</div>
+<div class="line">* Bugfix: An internal problem could cause the application to crash. Should</div>
+<div class="line">  never happen, though. Fixed anyway.</div>
+<div class="line">* Bugfix: Sometimes, the last segment&#39;s estimated size was incredibly small -</div>
+<div class="line">  about 2 bytes. Each segment should have the same predicted size as it is</div>
+<div class="line">  calculated simply by dividing the projected size of the entire file by the</div>
+<div class="line">  number of segments. Following transcoding, the size was accurate.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.11 (2022-06-16):</div>
 <div class="line"> </div>
@@ -223,14 +228,14 @@ $(function() {
 <div class="line">  misinterpretations. For example, --desttype=aiff+mov would create MOV</div>
 <div class="line">  files out of any input. Correct would be --desttype=mov+aiff which will</div>
 <div class="line">  create MOV files out of videos and AIFF from audio files, as expected.</div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.6 (2021-09-04):</div>
 <div class="line"> </div>
-<div class="line">* No new features, just a bugfix. See V2.4 for details. </div>
+<div class="line">* No new features, just a bugfix. See V2.4 for details.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.5 (2021-06-18)</div>
 <div class="line"> </div>
-<div class="line">* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly </div>
+<div class="line">* Feature: Issue #63 - Hardware acceleration for encoding/decoding is partly</div>
 <div class="line">  implemented, VAAPI/MMAL/OMX/V4L2 are currently available only.</div>
 <div class="line">  - Supported hardware: V4L2/VAAPI (Intel) and V4L2/MMAL/OMX (Raspberry).</div>
 <div class="line">  - VAAPI: H264, H265/HEVC, MPEG-2 and VP-8 decoding and H264 encoding.</div>
@@ -304,7 +309,7 @@ $(function() {
 <div class="line">* Bugfix: Issue #71:: Virtual directories were missing dot and dot-dot nodes.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.1 (2020-12-14)</div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">* Feature: Add BLURAY_VIDEO_FORMAT_2160P (UHD)</div>
 <div class="line">* Feature: Implemented in 1.7, removed experimental state for --win_smb_fix now.</div>
 <div class="line">           Windows seems to access the files on Samba drives starting at the last 64K segment</div>

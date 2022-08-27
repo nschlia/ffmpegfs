@@ -1,9 +1,9 @@
 <map id="src/diskio.h" name="src/diskio.h">
-<area shape="rect" id="node1" title="Direct disk I/O." alt="" coords="181,5,277,32"/>
-<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class." alt="" coords="196,80,263,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,155,91,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="115,155,173,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="198,155,261,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="285,155,336,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="360,155,488,181"/>
+<area shape="rect" id="node1" title="Direct disk I/O." alt="" coords="174,5,263,32"/>
+<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class." alt="" coords="189,80,249,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,155,85,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="110,155,165,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="189,155,248,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="273,155,319,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="344,155,456,181"/>
 </map>

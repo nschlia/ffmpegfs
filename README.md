@@ -10,6 +10,12 @@ Web site: https://nschlia.github.io/ffmpegfs/
 News
 ----
 
+### Version 2.13 is under development
+
+**New in in 2.13 (2022-08-XX):**
+
+- No changes made yet.
+
 ### Version 2.12 has been released
 
 **New in in 2.12 (2022-08-27):**

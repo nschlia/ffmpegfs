@@ -59,7 +59,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 #set(CMAKE_VERBOSE_MAKEFILE ON) # Enable if you are curious. Make builds very slow...
 
-project(ffmpegfs VERSION 2.12)
+project(ffmpegfs VERSION 2.13)
 
 # Project metadata
 set(PROJECT_VENDOR      "Oblivion Software/Norbert Schlia")

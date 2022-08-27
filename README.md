@@ -10,31 +10,15 @@ Web site: https://nschlia.github.io/ffmpegfs/
 News
 ----
 
-### Version 2.12 is under development
+### Version 2.12 has been released
+
+**New in in 2.12 (2022-08-27):**
 
 - The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt. 
 - **Bugfix:** In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.
 - **Bugfix:** Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.
 - **Bugfix:** An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.
 - **Bugfix:** Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate. 
-
-### Version 2.11 has been released
-
-* **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.
-* **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Add --no_subtitles option to turn subtitles off.
-* **Bugfix:** Smart encode selected the video format for cue sheet tracks, regardless of the input format. This has been fixed now.
-* **Bugfix:** Fix a crash that occurs when a DVD/Blu-ray is transcoded to audio only.
-* **Bugfix:** If the track performer field in the cuesheet is blank, try album performer instead.
-* **Bugfix:** Failing to mount Fuse during "make check" went unnoticed as the result code (which was supposed to be 99) was actually 0. Return the correct result code, failing the operation as expected.
-* **Bugfix:** The Docker build command contained a "make check" which actually failed altogether. Step has been removed. "make check" mounts Fuse, but this requires privileges that do not exist during "docker build".
-* **Bugfix:** On error, mremap () returns MAP_FAILED rather than NULL. Fixed a check for incorrect error conditions, which could cause the application to crash or return illogical error messages.
-* **Bugfix:** [Issue #119](https://github.com/nschlia/ffmpegfs/issues/119): Fix a problem that caused frame set generation to fail sometimes. It seems to be related to the nremap() issue.
-* Generally revisited documentation, logging, and display texts. Improved grammar, formatting, and fixed quite a few typos that escaped all proofreading sessions.
-* The FFmpeg API INFO and DEBUG level log output has been changed to the FFmpegfs DEBUG level. What FFmpeg considers "INFO" is far too chatty.
-* Frequent memory reallocations when creating HLS segments have been reduced to speed up processing.
-* Optimised logging to save CPU time by not formatting log entries that are not written anyway at their log level.
-* Logging has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.
-* **Bugfix:** To fix the build with GCC 12, add the missing include headers (closes: [#1012925](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925)).
 
 ## Full History
 

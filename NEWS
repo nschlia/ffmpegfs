@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.12 (2022-07-XX):
+Important changes in 2.12 (2022-08-27):
 
 * The code has been run through clang-tidy to identify bug-prone or inefficient
   code, and to find parts that could be modernised to C++17. Several issues could

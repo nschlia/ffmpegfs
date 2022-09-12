@@ -51,7 +51,6 @@ The majority of browsers forbid playing back files from disc. You may put them i
 
 If you are using SAMBA or NFS and songs don't play all the way through, you're in trouble.
 
-
 It occurs when files are transcoded live, but never when a file is retrieved from cache. This is because the final size seldom comes out exactly as expected. Size information is only available up front when a cached file is returned.
 
 If the outcome is smaller than expected, SAMBA fills files with zeros; if the outcome is larger than expected, SAMBA chops off the remaining data.

@@ -49,7 +49,7 @@ Building FFmpegfs yourself
 
 ### Prerequisites
 
-FFmpegfs uses the FFmpeg lib for decoding and encoding. It requires the following libraries:
+For encoding and decoding, FFmpegfs utilises the FFmpeg multi media framework. The following libraries are necessary:
 
 * gcc and g++ compilers
 * fuse (>= 2.6.0)
@@ -73,9 +73,9 @@ For optional Blu-ray support, you need the following libraries:
 
 * libbluray (>= 0.6.2)
 
-The commands to install just the first prerequisites follow.
+The commands to only install the first set of prerequisites come next.
 
-Please read the "Supported Linux Distributions" chapter in README.md for details.
+For more information, see the "Supported Linux Distributions" chapter in README.md.
 
 **On Debian:**
 
@@ -91,11 +91,11 @@ To get Blu-ray support:
 
     apt-get install libbluray-dev
 
-To "make doxy" (build Doxygen documentation):
+To use "make doxy" (build Doxygen documentation):
 
     apt-get install doxygen graphviz curl
 
-To "make check" (run test suite):
+To use "make check" (run test suite):
 
     apt-get install libchromaprint-dev bc
 
@@ -160,13 +160,13 @@ to build FFmpeg.
 
 #### Building from tar ball
 
-Download the latest release archive:
+Get the most recent release archive here:
 
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.11/ffmpegfs-2.11.tar.gz
+    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.12/ffmpegfs-2.12.tar.gz
 
-You may check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available, because I notoriously keep forgetting to update this URL on a regular basis.
+As I frequently fail to update this URL, you can check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
 
-Or use these commands, making sure to download the latest version:
+Alternatively, utilise these instructions, being sure to download the most recent version: 
 
 ```
 curl -s https://api.github.com/repos/nschlia/ffmpegfs/releases/latest | \
@@ -176,23 +176,21 @@ tr -d \" | \
 wget -i -
 ```
 
-Then unpack and cd to the source directory. To build and install, run:
+Unpack the file, and then cd to the source directory. To build and install, run:
 
     ./configure
     make
     make install
 
-To build and run the test suite, do:
+Build and execute the test suite by doing:
 
     make check
 
 This will test audio conversion, tagging and size prediction.
 
-*NOTE:* The test for image embedding is not implemented yet and has been disabled at the moment.
-
 #### Building from GIT
 
-To build from GIT, clone the latest version from Github and be on the bleeding edge:
+Clone the most recent version from Github to build from GIT and stay up to date:
 
 ```
 git clone https://github.com/nschlia/ffmpegfs.git

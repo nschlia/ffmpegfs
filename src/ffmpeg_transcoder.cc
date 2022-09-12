@@ -4584,10 +4584,12 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                     m_out.m_last_mux_dts    = (pkt->dts != AV_NOPTS_VALUE) ? pkt->dts : (pkt->pts - pkt->duration);
                 }
 
+#if FF_API_PKT_DURATION
                 if (frame != nullptr && !pkt->duration)
                 {
                     pkt->duration = frame->pkt_duration;
                 }
+#endif
 
                 // Write packet to buffer
                 ret = store_packet(pkt, AVMEDIA_TYPE_VIDEO);

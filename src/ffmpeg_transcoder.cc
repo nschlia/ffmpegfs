@@ -156,26 +156,26 @@ const std::vector<FFmpeg_Transcoder::PRORES_BITRATE> FFmpeg_Transcoder::m_prores
 const FFmpeg_Transcoder::DEVICETYPE_MAP FFmpeg_Transcoder::m_devicetype_map =
 {
     { AV_HWDEVICE_TYPE_VAAPI,           AV_PIX_FMT_NV12 },          ///< VAAPI uses the NV12 pix format
-#if 0
+    #if 0
     { AV_HWDEVICE_TYPE_CUDA,            AV_PIX_FMT_CUDA },          ///< @todo HWACCEL - Cuda pix_fmt: to be added.
     { AV_HWDEVICE_TYPE_VDPAU,           AV_PIX_FMT_YUV420P },       ///< @todo HWACCEL - VDPAU pix_fmt: to be added.
     { AV_HWDEVICE_TYPE_QSV,             AV_PIX_FMT_QSV },           ///< @todo HWACCEL - QSV pix_fmt untested: Seems to be AV_PIX_FMT_P010 or AV_PIX_FMT_QSV. To be added.
     { AV_HWDEVICE_TYPE_OPENCL,          AV_PIX_FMT_OPENCL },        ///< @todo HWACCEL - OpenCL pix_fmt: Seems to be AV_PIX_FMT_OPENCL or AV_PIX_FMT_NV12. To be added.
-#if HAVE_VULKAN_HWACCEL
+    #if HAVE_VULKAN_HWACCEL
     { AV_HWDEVICE_TYPE_VULKAN,          AV_PIX_FMT_VULKAN },        ///< @todo HWACCEL - Vulkan pix_fmt: to be added.
-#endif // HAVE_VULKAN_HWACCEL
-#if __APPLE__
+    #endif // HAVE_VULKAN_HWACCEL
+    #if __APPLE__
     { AV_HWDEVICE_TYPE_VIDEOTOOLBOX,    AV_PIX_FMT_VIDEOTOOLBOX },  ///< Videotoolbox pix_fmt: MacOS acceleration APIs not supported
-#endif // __APPLE__
-#if __ANDROID__
+    #endif // __APPLE__
+    #if __ANDROID__
     { AV_HWDEVICE_TYPE_MEDIACODEC,      AV_PIX_FMT_MEDIACODEC },    ///< Mediacodec pix_fmt: Android acceleration APIs not supported
-#endif // __ANDROID__
-#if _WIN32
+    #endif // __ANDROID__
+    #if _WIN32
     { AV_HWDEVICE_TYPE_DRM,             AV_PIX_FMT_DRM_PRIME },     ///< DRM prime pix_fmt: Windows acceleration APIs not supported
     { AV_HWDEVICE_TYPE_DXVA2,           AV_PIX_FMT_DXVA2_VLD },     ///< DXVA2 pix_fmt: Windows acceleration APIs not supported
     { AV_HWDEVICE_TYPE_D3D11VA,         AV_PIX_FMT_D3D11VA_VLD },   ///< D3D11VA pix_fmt: Windows acceleration APIs not supported
-#endif // _WIN32
-#endif
+    #endif // _WIN32
+    #endif
 };
 
 FFmpeg_Transcoder::StreamRef::StreamRef() :

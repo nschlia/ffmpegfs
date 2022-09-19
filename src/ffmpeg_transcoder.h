@@ -236,7 +236,7 @@ public:
     time_t                      mtime() const;
     /**
      * @brief Get the file duration.
-     * @return Returns the file in AV_TIME_BASE units.
+     * @return Returns the duration of the file in AV_TIME_BASE units.
      */
     int64_t                     duration() const;
     /**

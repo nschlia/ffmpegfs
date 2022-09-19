@@ -843,7 +843,7 @@ static int transcoder_thread(void *arg)
         thread_data->m_initialised = true;
 
         unlocked = false;
-        if (!params.m_prebuffer_size || transcoder.is_frameset())
+        if ((!params.m_prebuffer_size && !params.m_prebuffer_time) || transcoder.is_frameset())
         {
             // Unlock frame set from beginning
             unlocked = true;
@@ -852,7 +852,14 @@ static int transcoder_thread(void *arg)
         }
         else
         {
-            Logging::debug(cache_entry->virtname(), "Pre-buffering up to %1 bytes.", params.m_prebuffer_size);
+            if (params.m_prebuffer_time)
+            {
+                Logging::debug(cache_entry->virtname(), "Pre-buffering up to %1.", format_time(params.m_prebuffer_time).c_str());
+            }
+            if (params.m_prebuffer_size)
+            {
+                Logging::debug(cache_entry->virtname(), "Pre-buffering up to %1.", format_size(params.m_prebuffer_size).c_str());
+            }
         }
 
         while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
@@ -907,7 +914,7 @@ static int transcoder_thread(void *arg)
                 throw (static_cast<int>(errno));
             }
 
-            if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size)
+            if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size && transcoder.pts() > static_cast<int64_t>(params.m_prebuffer_time) * AV_TIME_BASE)
             {
                 unlocked = true;
                 Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
@@ -917,7 +924,7 @@ static int transcoder_thread(void *arg)
 
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
             {
-                if (!unlocked && params.m_prebuffer_size)
+                if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
                 {
                     unlocked = true;
                     thread_data->m_lock_guard = true;
@@ -941,7 +948,7 @@ static int transcoder_thread(void *arg)
             }
         }
 
-        if (!unlocked && params.m_prebuffer_size)
+        if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
         {
             Logging::debug(cache_entry->virtname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
             thread_data->m_lock_guard = true;

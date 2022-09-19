@@ -7791,3 +7791,17 @@ int FFmpeg_Transcoder::add_external_subtitle_streams()
 
     return ret;
 }
+
+int64_t FFmpeg_Transcoder::pts() const
+{
+    MULTIFRAME_MAP::const_reverse_iterator it = m_frame_map.crbegin();
+
+    if (it != m_frame_map.crend())
+    {
+        return it->first;
+    }
+    else
+    {
+        return 0;
+    }
+}

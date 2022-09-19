@@ -404,8 +404,17 @@ While being accessed, the file is transcoded in the background to the target for
 +
 Defaults to: *30 seconds*
 
+*--prebuffer_time*=TIME, *-o prebuffer_time*=TIME::
+Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags.
+Both options must be met if prebuffer time and prebuffer size are specified.
++
+Set to 0 to disable pre-buffering.
++
+Defaults to: *no prebuffer time*
+
 *--prebuffer_size*=SIZE, *-o prebuffer_size*=SIZE::
-Files will be decoded until the buffer contains this many bytes, allowing playback to start smoothly without lags.
+Files will be decoded until the specified number of bytes is present in the buffer, allowing playback to start smoothly without lags.
+Both options must be met if prebuffer size and prebuffer time are specified.
 +
 Set to 0 to disable pre-buffering.
 +
@@ -440,6 +449,8 @@ Defaults to: *1 hour*
 
 *--prune_cache*::
 Prune the cache immediately according to the above settings at application start up.
++
+Defaults to: *Do not prune cache*
 
 *--clear_cache*, *-o clear_cache*::
 On startup, clear the cache. All previously transcoded files will be deleted.

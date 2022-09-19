@@ -366,6 +366,12 @@ public:
      */
     int                         flush_delayed_subtitles();
 
+    /**
+     * @brief Get PTS (presentation time stamp) of decoded audio/video so far.
+     * @return Returns the PTS (presentation time stamp) of decoded audio/video so far in AV_TIME_BASE units.
+     */
+    int64_t                     pts() const;
+
 protected:
     /**
      * @brief Copy data from audio FIFO to frame buffer.
@@ -401,7 +407,7 @@ protected:
      * @todo Add text to bitmap conversion.
      * @return On success, returns 0; on error, a negative AVERROR value.
      */
-    int open_subtitles();
+    int                         open_subtitles();
     /**
      * @brief open_albumarts
      * @return On success, returns 0; on error, a negative AVERROR value.

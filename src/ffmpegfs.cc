@@ -123,6 +123,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_expiry_time((60*60*24 /* d */) * 7)             // default: 1 week)
     , m_max_inactive_suspend(15)                        // default: 15 seconds
     , m_max_inactive_abort(30)                          // default: 30 seconds
+    , m_prebuffer_time(0)                               // default: no prebuffer time
     , m_prebuffer_size(100 /* KB */ * 1024)             // default: 100 KB
     , m_max_cache_size(0)                               // default: no limit
     , m_min_diskspace(0)                                // default: no minimum
@@ -205,6 +206,7 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
         m_expiry_time = other.m_expiry_time;
         m_max_inactive_suspend = other.m_max_inactive_suspend;
         m_max_inactive_abort = other.m_max_inactive_abort;
+        m_prebuffer_time = other.m_prebuffer_time;
         m_prebuffer_size = other.m_prebuffer_size;
         m_max_cache_size = other.m_max_cache_size;
         m_min_diskspace = other.m_min_diskspace;
@@ -262,6 +264,7 @@ enum
     KEY_EXPIRY_TIME,
     KEY_MAX_INACTIVE_SUSPEND_TIME,
     KEY_MAX_INACTIVE_ABORT_TIME,
+    KEY_PREBUFFER_TIME,
     KEY_PREBUFFER_SIZE,
     KEY_MAX_CACHE_SIZE,
     KEY_MIN_DISKSPACE_SIZE,
@@ -364,6 +367,8 @@ static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
     FUSE_OPT_KEY("max_inactive_suspend=%s",         KEY_MAX_INACTIVE_SUSPEND_TIME),
     FUSE_OPT_KEY("--max_inactive_abort=%s",         KEY_MAX_INACTIVE_ABORT_TIME),
     FUSE_OPT_KEY("max_inactive_abort=%s",           KEY_MAX_INACTIVE_ABORT_TIME),
+    FUSE_OPT_KEY("--prebuffer_time=%s",             KEY_PREBUFFER_TIME),
+    FUSE_OPT_KEY("prebuffer_time=%s",               KEY_PREBUFFER_TIME),
     FUSE_OPT_KEY("--prebuffer_size=%s",             KEY_PREBUFFER_SIZE),
     FUSE_OPT_KEY("prebuffer_size=%s",               KEY_PREBUFFER_SIZE),
     FUSE_OPT_KEY("--max_cache_size=%s",             KEY_MAX_CACHE_SIZE),
@@ -1927,6 +1932,10 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
     {
         return get_time(arg, &params.m_max_inactive_abort);
     }
+    case KEY_PREBUFFER_TIME:
+    {
+        return get_time(arg, &params.m_prebuffer_time);
+    }
     case KEY_PREBUFFER_SIZE:
     {
         return get_size(arg, &params.m_prebuffer_size);
@@ -2102,7 +2111,8 @@ static void print_params()
     Logging::trace(nullptr, "Expiry Time       : %1", format_time(params.m_expiry_time).c_str());
     Logging::trace(nullptr, "Inactivity Suspend: %1", format_time(params.m_max_inactive_suspend).c_str());
     Logging::trace(nullptr, "Inactivity Abort  : %1", format_time(params.m_max_inactive_abort).c_str());
-    Logging::trace(nullptr, "Pre-buffer size   : %1", format_size(params.m_prebuffer_size).c_str());
+    Logging::trace(nullptr, "Pre-buffer Time   : %1", format_time(params.m_prebuffer_time).c_str());
+    Logging::trace(nullptr, "Pre-buffer Size   : %1", format_size(params.m_prebuffer_size).c_str());
     Logging::trace(nullptr, "Max. Cache Size   : %1", format_size(params.m_max_cache_size).c_str());
     Logging::trace(nullptr, "Min. Disk Space   : %1", format_size(params.m_min_diskspace).c_str());
     Logging::trace(nullptr, "Cache Path        : %1", cachepath.c_str());

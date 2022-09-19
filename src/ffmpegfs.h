@@ -233,7 +233,8 @@ extern struct FFMPEGFS_PARAMS
     time_t                  m_expiry_time;                  /**< @brief Time (seconds) after which an cache entry is deleted */
     time_t                  m_max_inactive_suspend;         /**< @brief Time (seconds) that must elapse without access until transcoding is suspended */
     time_t                  m_max_inactive_abort;           /**< @brief Time (seconds) that must elapse without access until transcoding is aborted */
-    size_t                  m_prebuffer_size;               /**< @brief Number of bytes that will be decoded before it can be accessed */
+    time_t                  m_prebuffer_time;               /**< @brief Playing time that will be decoded before the output can be accessed */
+    size_t                  m_prebuffer_size;               /**< @brief Number of bytes that will be decoded before the output can be accessed */
     size_t                  m_max_cache_size;               /**< @brief Max. cache size in MB. When exceeded, oldest entries will be pruned */
     size_t                  m_min_diskspace;                /**< @brief Min. diskspace required for cache */
     std::string             m_cachepath;                    /**< @brief Disk cache path, defaults to $XDG_CACHE_HOME */

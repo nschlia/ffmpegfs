@@ -1125,7 +1125,7 @@ bool Cache::prune_expired()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -1202,7 +1202,7 @@ bool Cache::prune_cache_size()
         }
         else
         {
-            Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
     }
 
@@ -1288,7 +1288,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         }
         else
         {
-            Logging::error(cachepath, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(cachepath, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
         }
 
         sqlite3_finalize(stmt);
@@ -1358,7 +1358,7 @@ bool Cache::clear()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);

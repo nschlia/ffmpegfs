@@ -16,7 +16,7 @@ ffmpegfs (2.12-1) unstable; urgency=medium
   * Bugfix: Sometimes, the last segment's estimated size was incredibly small -
     about 2 bytes. Each segment should have the same predicted size as it is
     calculated simply by dividing the projected size of the entire file by the
-    number of segments. Following transcoding, the size was accurate.  
+    number of segments. Following transcoding, the size was accurate.
 
  -- Norbert Schlia <nschlia@oblivion-software.de>  Sat, 27 Aug 2022 17:08:02 +0200
 

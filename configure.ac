@@ -196,19 +196,19 @@ AM_COND_IF([USE_LIBVCD],
 # Check for doxygen. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN";
-   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support. If you intend to use "make doxy" you should install it.])
+   then AC_MSG_WARN([Doxygen not found, continuing without Doxygen support. Installing it is recommended if you plan to use "make doxy".])
 fi
 
 # Check for curl. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([CURL], [curl])
 if test -z "$CURL";
-   then AC_MSG_WARN([curl not found - continuing without curl support. If you intend to use "make doxy" you should install it.])
+   then AC_MSG_WARN([curl not found, continuing without curl support. Installing it is recommended if you plan to use "make doxy".])
 fi
 
 # Check for dot (graphviz). If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([GRAPHVIZ], [dot])
 if test -z "$GRAPHVIZ";
-   then AC_MSG_WARN([dot not found - continuing without graphviz support. If you intend to use "make doxy" you should install it.])
+   then AC_MSG_WARN([dot not found, continuing without graphviz support. Installing it is recommended if you plan to use "make doxy".])
 fi
 
 AC_ARG_ENABLE([debug],
@@ -248,7 +248,7 @@ AC_OUTPUT
 
 # Hints on options
 AM_COND_IF([HINT_LIBDVD],
-           [AC_MSG_NOTICE([HINT: To enable DVD suport install the libdvdread development packages. See INSTALL.md for details.])])
+           [AC_MSG_NOTICE([HINT: Install the libdvdread development packages to enable DVD support. For details, refer to INSTALL.md.])])
 AM_COND_IF([HINT_LIBBLURAY],
-           [AC_MSG_NOTICE([HINT: To enable Blu-ray suport install the libbluray development package. See INSTALL.md for details.])])
+           [AC_MSG_NOTICE([HINT: Install the libbluray development package to enable Blu-ray support. For details, refer to INSTALL.md.])])
 

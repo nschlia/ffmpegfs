@@ -32,6 +32,8 @@
 #ifndef FFMPEG_FRAME_H
 #define FFMPEG_FRAME_H
 
+#pragma once
+
 struct AVFrame;
 
 /**

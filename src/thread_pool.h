@@ -32,6 +32,8 @@
 #ifndef THREAD_POOL_H
 #define THREAD_POOL_H
 
+#pragma once
+
 #include <iostream>
 #include <thread>
 #include <vector>

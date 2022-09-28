@@ -32,6 +32,8 @@
 #ifndef FFMPEG_SUBTITLE_H
 #define FFMPEG_SUBTITLE_H
 
+#pragma once
+
 #include <memory>
 
 struct AVSubtitle;

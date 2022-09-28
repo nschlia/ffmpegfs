@@ -34,6 +34,8 @@
 #ifndef FFMPEG_COMPAT_H
 #define FFMPEG_COMPAT_H
 
+#pragma once
+
 /**
  * FFmpeg compatibility layer: Maintain support for older versions while removing
  * deprecated functions as needed.

@@ -53,6 +53,12 @@
 // libswresample (>= 3.3.100)
 
 /**
+  * 2022-07-xx - xxxxxxxxxx - lavu 57.30.100 - frame.h
+  *   Add AVFrame.duration, deprecate AVFrame.pkt_duration.
+  */
+#define LAVU_DEP_PKT_DURATION               (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 30, 0))
+
+/**
  * 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
  *   Deprecated av_init_packet(). Once removed, sizeof(AVPacket) will
  *   no longer be a part of the public ABI.

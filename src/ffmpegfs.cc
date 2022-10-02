@@ -136,6 +136,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
+    , m_include_extensions(new STRINGSET)
     , m_hide_extensions(new STRINGSET)                  // default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
@@ -149,6 +150,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other)
 FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 {
     delete m_hwaccel_dec_blocked;
+    delete m_include_extensions;
     delete m_hide_extensions;
 }
 
@@ -217,6 +219,7 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
         m_decoding_errors = other.m_decoding_errors;
         m_min_dvd_chapter_duration = other.m_min_dvd_chapter_duration;
         m_oldnamescheme = other.m_oldnamescheme;
+        *m_include_extensions = *other.m_include_extensions;
         *m_hide_extensions = *other.m_hide_extensions;
         m_win_smb_fix = other.m_win_smb_fix;
     }
@@ -277,6 +280,7 @@ enum
     KEY_HWACCEL_DECODER_API,
     KEY_HWACCEL_DECODER_DEVICE,
     KEY_HWACCEL_DECODER_BLOCKED,
+    KEY_INCLUDE_EXTENSIONS,
     KEY_HIDE_EXTENSIONS
 };
 
@@ -388,6 +392,8 @@ static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
     FFMPEGFS_OPT("min_dvd_chapter_duration=%u",     m_min_dvd_chapter_duration, 0),
     FFMPEGFS_OPT("--oldnamescheme=%u",              m_oldnamescheme, 0),
     FFMPEGFS_OPT("oldnamescheme=%u",                m_oldnamescheme, 0),
+    FUSE_OPT_KEY("--include_extensions=%s",         KEY_INCLUDE_EXTENSIONS),
+    FUSE_OPT_KEY("include_extensions=%s",           KEY_INCLUDE_EXTENSIONS),
     FUSE_OPT_KEY("--hide_extensions=%u",            KEY_HIDE_EXTENSIONS),
     FUSE_OPT_KEY("hide_extensions=%u",              KEY_HIDE_EXTENSIONS),
     // Experimental
@@ -1662,7 +1668,6 @@ static int get_value(const std::string & arg, STRINGSET *value)
     {
         std::vector<std::string> v = split(arg.substr(pos + 1), ",");
 
-        value->clear();
         value->insert(v.begin(), v.end());
 
         return 0;
@@ -1965,6 +1970,10 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
 
         return 0;
     }
+    case KEY_INCLUDE_EXTENSIONS:
+    {
+        return get_value(arg, params.m_include_extensions);
+    }
     case KEY_HIDE_EXTENSIONS:
     {
         return get_value(arg, params.m_hide_extensions);
@@ -2058,6 +2067,7 @@ static void print_params()
     Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
+    Logging::trace(nullptr, "Include Extensions: %1", implode(*params.m_include_extensions).c_str());
     Logging::trace(nullptr, "Hide Extensions   : %1", implode(*params.m_hide_extensions).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
     Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));

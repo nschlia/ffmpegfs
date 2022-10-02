@@ -1541,6 +1541,11 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
         return false;
     }
 
+    if (!include_list_ext(ext))
+    {
+        return false;
+    }
+
     VIRTUALFILE newvirtualfile;
 
     newvirtualfile.m_origfile = origpath + *virtualpath;

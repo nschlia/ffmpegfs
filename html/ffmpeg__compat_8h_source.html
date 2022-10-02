@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -94,21 +94,25 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#ifndef FFMPEG_COMPAT_H</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#define FFMPEG_COMPAT_H</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">// FFmpeg 4.1.8 &quot;al-Khwarizmi&quot; or newer:</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">// libavutil (&gt;= 56.22.100)</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// libavcodec (&gt;= 58.35.100)</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">// libavformat (&gt;= 58.20.100)</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">// libavfilter (&gt;= 7.40.101)</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// libswscale (&gt;= 5.3.100)</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">// libswresample (&gt;= 3.3.100)</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#a2f316a56dc8cae3fddabfa478c424f0a">   71</a></span>&#160;<span class="preprocessor">#define LAVC_DEP_AV_INIT_PACKET             (LIBAVCODEC_VERSION_INT &gt;= AV_VERSION_INT(58, 133, 0))</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#aa1f9296f823825cb17205d59fd6dcb5d">  109</a></span>&#160;<span class="preprocessor">#define IF_DECLARED_CONST                   (LIBAVCODEC_VERSION_INT &gt;= AV_VERSION_INT(59, 0, 0))</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#afea7ecac7e819ef6fb0cac5f19df9867">  116</a></span>&#160;<span class="preprocessor">#define LAVU_DEP_OLD_CHANNEL_LAYOUT         (LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(57, 24, 0))</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#a50e86f07bdf5a2b364fda58881d8158c">  122</a></span>&#160;<span class="preprocessor">#define SWR_DEP_ALLOC_SET_OPTS              (LIBSWRESAMPLE_VERSION_INT &gt;= AV_VERSION_INT(4, 5, 0))</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// FFMPEG_COMPAT_H</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">// FFmpeg 4.1.8 &quot;al-Khwarizmi&quot; or newer:</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">// libavutil (&gt;= 56.22.100)</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">// libavcodec (&gt;= 58.35.100)</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// libavformat (&gt;= 58.20.100)</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">// libavfilter (&gt;= 7.40.101)</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">// libswscale (&gt;= 5.3.100)</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// libswresample (&gt;= 3.3.100)</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#a3857e6749b0b25b74f9429af2798f4a5">   59</a></span>&#160;<span class="preprocessor">#define LAVU_DEP_PKT_DURATION               (LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(57, 30, 0))</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#a2f316a56dc8cae3fddabfa478c424f0a">   79</a></span>&#160;<span class="preprocessor">#define LAVC_DEP_AV_INIT_PACKET             (LIBAVCODEC_VERSION_INT &gt;= AV_VERSION_INT(58, 133, 0))</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#aa1f9296f823825cb17205d59fd6dcb5d">  117</a></span>&#160;<span class="preprocessor">#define IF_DECLARED_CONST                   (LIBAVCODEC_VERSION_INT &gt;= AV_VERSION_INT(59, 0, 0))</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#afea7ecac7e819ef6fb0cac5f19df9867">  124</a></span>&#160;<span class="preprocessor">#define LAVU_DEP_OLD_CHANNEL_LAYOUT         (LIBAVUTIL_VERSION_INT &gt;= AV_VERSION_INT(57, 24, 0))</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="ffmpeg__compat_8h.html#a50e86f07bdf5a2b364fda58881d8158c">  130</a></span>&#160;<span class="preprocessor">#define SWR_DEP_ALLOC_SET_OPTS              (LIBSWRESAMPLE_VERSION_INT &gt;= AV_VERSION_INT(4, 5, 0))</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// FFMPEG_COMPAT_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

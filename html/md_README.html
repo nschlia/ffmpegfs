@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -73,9 +73,10 @@ $(function() {
 News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Version 2.13 is under development</h2>
-<p><b>New in in 2.13 (2022-08-XX):</b></p>
+<p><b>New in in 2.13 (2022-10-XX):</b></p>
 <ul>
-<li>No changes made yet.</li>
+<li><b>Feature:</b> Added &ndash;prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags. Works similar to &ndash;prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.</li>
+<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
 Version 2.12 has been released</h2>

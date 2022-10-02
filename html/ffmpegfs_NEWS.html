@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -68,12 +68,28 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
+<div class="line">Important changes in 2.13 (2022-10-XX):</div>
+<div class="line"> </div>
+<div class="line">* Added --prebuffer_time parameter. Files will be decoded until the  buffer</div>
+<div class="line">  contains the specified playing time, allowing playback to start smoothly</div>
+<div class="line">  without lags. Works similar to --prebuffer_size but gives better control</div>
+<div class="line">  because it does not depend on the bit rate. An example: when set to</div>
+<div class="line">  25 seconds for HLS transcoding, this will make sure that at least 2 complete</div>
+<div class="line">  segments will be available once the file is released and visible.</div>
+<div class="line">* Bugfix: Closes #139: Additional files could be added using the —extensions</div>
+<div class="line">  parameter. However, this is no longer necessary; in the past, a file&#39;s</div>
+<div class="line">  extension determined whether or not it would be transcoded. Files with</div>
+<div class="line">  unknown extensions would be ignored. The extension is no longer important</div>
+<div class="line">  because FFmpegfs now examines all input files and recognises transcodable</div>
+<div class="line">  files by the format.</div>
+<div class="line">  The outdated —extensions argument was removed without substitution.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.12 (2022-08-27):</div>
 <div class="line"> </div>
 <div class="line">* The code has been run through clang-tidy to identify bug-prone or</div>
 <div class="line">  inefficient code, and to find parts that could be modernised to C++17.</div>
 <div class="line">  Several issues could be resolved. Sometimes, many lines of code could be</div>
-<div class="line">  replaced by a few. Some parts run far more inefficiently than before. C++17</div>
+<div class="line">  replaced by a few. Some parts run far more efficiently than before. C++17</div>
 <div class="line">  is cool. I need to get a t-shirt.</div>
 <div class="line">* Bugfix: In get prores bitrate(), a crash that might have happened under</div>
 <div class="line">  unusual circumstances has been corrected. If the best match resolution</div>

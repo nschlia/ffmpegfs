@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -245,9 +245,13 @@ time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#abecd375a0b49f388529778116ac0f141">m_max_inactive_abort</a></td></tr>
 <tr class="memdesc:abecd375a0b49f388529778116ac0f141"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time (seconds) that must elapse without access until transcoding is aborted. <br /></td></tr>
 <tr class="separator:abecd375a0b49f388529778116ac0f141"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ff74cdfd929b55e4149d548845138bc"><td class="memItemLeft" align="right" valign="top"><a id="a6ff74cdfd929b55e4149d548845138bc"></a>
+time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a6ff74cdfd929b55e4149d548845138bc">m_prebuffer_time</a></td></tr>
+<tr class="memdesc:a6ff74cdfd929b55e4149d548845138bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Playing time that will be decoded before the output can be accessed. <br /></td></tr>
+<tr class="separator:a6ff74cdfd929b55e4149d548845138bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a670f308975c808f26d515e4ea9dcbf81"><td class="memItemLeft" align="right" valign="top"><a id="a670f308975c808f26d515e4ea9dcbf81"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a670f308975c808f26d515e4ea9dcbf81">m_prebuffer_size</a></td></tr>
-<tr class="memdesc:a670f308975c808f26d515e4ea9dcbf81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of bytes that will be decoded before it can be accessed. <br /></td></tr>
+<tr class="memdesc:a670f308975c808f26d515e4ea9dcbf81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of bytes that will be decoded before the output can be accessed. <br /></td></tr>
 <tr class="separator:a670f308975c808f26d515e4ea9dcbf81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d8b042aa2af35e9b7e27b663131a5ac"><td class="memItemLeft" align="right" valign="top"><a id="a9d8b042aa2af35e9b7e27b663131a5ac"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a9d8b042aa2af35e9b7e27b663131a5ac">m_max_cache_size</a></td></tr>
@@ -293,10 +297,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a301db9d4e3b378380316767d4ba2d588">m_oldnamescheme</a></td></tr>
 <tr class="memdesc:a301db9d4e3b378380316767d4ba2d588"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use old output name scheme, can create duplicate filenames. <br /></td></tr>
 <tr class="separator:a301db9d4e3b378380316767d4ba2d588"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7130f94adaca63c743d5656a7bb0734d"><td class="memItemLeft" align="right" valign="top"><a id="a7130f94adaca63c743d5656a7bb0734d"></a>
-<a class="el" href="ffmpeg__utils_8h.html#abfeb030f49b84926ac892e305ab3a8c9">STRINGSET</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a7130f94adaca63c743d5656a7bb0734d">m_extensions</a></td></tr>
-<tr class="memdesc:a7130f94adaca63c743d5656a7bb0734d"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of supplementary file extensions. Must be a pointer as the fuse API cannot handle advanced c++ objects. <br /></td></tr>
-<tr class="separator:a7130f94adaca63c743d5656a7bb0734d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a925df539c1ec6c07dd74e52d0f4ea1"><td class="memItemLeft" align="right" valign="top"><a id="a6a925df539c1ec6c07dd74e52d0f4ea1"></a>
 <a class="el" href="ffmpeg__utils_8h.html#abfeb030f49b84926ac892e305ab3a8c9">STRINGSET</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFFMPEGFS__PARAMS.html#a6a925df539c1ec6c07dd74e52d0f4ea1">m_hide_extensions</a></td></tr>
 <tr class="memdesc:a6a925df539c1ec6c07dd74e52d0f4ea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of extensions to block/hide. Must be a pointer as the fuse API cannot handle advanced c++ objects. <br /></td></tr>
@@ -366,11 +366,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to format. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00233">233</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00232">232</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06139">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="fuseops_8cc_source.html#l00545">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00307">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l02388">get_format()</a>, <a class="el" href="buffer_8cc_source.html#l00163">Buffer::init()</a>, <a class="el" href="fuseops_8cc_source.html#l01784">load_path()</a>, <a class="el" href="fuseops_8cc_source.html#l02024">make_hls_fileset()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00305">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="transcode_8cc_source.html#l00470">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00039">Cache_Entry::Cache_Entry()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06143">FFmpeg_Transcoder::encode_finish()</a>, <a class="el" href="fuseops_8cc_source.html#l00545">ffmpegfs_getattr()</a>, <a class="el" href="fuseops_8cc_source.html#l00307">ffmpegfs_readdir()</a>, <a class="el" href="fuseops_8cc_source.html#l02350">get_format()</a>, <a class="el" href="buffer_8cc_source.html#l00163">Buffer::init()</a>, <a class="el" href="fuseops_8cc_source.html#l01746">load_path()</a>, <a class="el" href="fuseops_8cc_source.html#l01986">make_hls_fileset()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00305">FFmpeg_Transcoder::open_input_file()</a>, <a class="el" href="transcode_8cc_source.html#l00470">transcoder_read()</a>, <a class="el" href="transcode_8cc_source.html#l00289">transcoder_set_filesize()</a>, and <a class="el" href="transcode_8cc_source.html#l00770">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -407,7 +407,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to new <a class="el" href="classFFmpeg__Frame.html" title="The FFmpeg_Frame class.">FFmpeg_Frame</a> object. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00156">156</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00155">155</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8h_source.html#l00187">m_basepath</a>.</p>
 
@@ -431,11 +431,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <p>Check for smart transcode mode. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if smart transcode is active, false if not </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00228">228</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpegfs_8cc_source.html#l00227">227</a> of file <a class="el" href="ffmpegfs_8cc_source.html">ffmpegfs.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="ffmpegfs_8cc_source.html#l00071">ffmpeg_format</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01925">find_original()</a>, <a class="el" href="fuseops_8cc_source.html#l02388">get_format()</a>, <a class="el" href="fuseops_8cc_source.html#l02254">guess_format_idx()</a>, and <a class="el" href="fuseops_8cc_source.html#l01530">virtual_name()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01887">find_original()</a>, <a class="el" href="fuseops_8cc_source.html#l02350">get_format()</a>, and <a class="el" href="fuseops_8cc_source.html#l02216">guess_format_idx()</a>.</p>
 
 </div>
 </div>

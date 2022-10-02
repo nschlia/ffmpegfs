@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FFmpegfs Fuse Multi Media Filesystem
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -92,7 +92,7 @@ Other Distributions</h2>
 Building FFmpegfs yourself</h1>
 <h2><a class="anchor" id="autotoc_md32"></a>
 Prerequisites</h2>
-<p>FFmpegfs uses the FFmpeg lib for decoding and encoding. It requires the following libraries:</p>
+<p>For encoding and decoding, FFmpegfs utilises the FFmpeg multi media framework. The following libraries are necessary:</p>
 <ul>
 <li>gcc and g++ compilers</li>
 <li>fuse (&gt;= 2.6.0)</li>
@@ -116,15 +116,15 @@ Prerequisites</h2>
 <ul>
 <li>libbluray (&gt;= 0.6.2)</li>
 </ul>
-<p>The commands to install just the first prerequisites follow.</p>
-<p>Please read the "Supported Linux Distributions" chapter in README.md for details.</p>
+<p>The commands to only install the first set of prerequisites come next.</p>
+<p>For more information, see the "Supported Linux Distributions" chapter in README.md.</p>
 <p><b>On Debian:</b> </p><pre class="fragment">apt-get install gcc g++ make pkg-config asciidoc-base w3m
 
 apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
 </pre><p> To get DVD support: </p><pre class="fragment">apt-get install libdvdread-dev libdvdnav-dev
 </pre><p> To get Blu-ray support: </p><pre class="fragment">apt-get install libbluray-dev
-</pre><p> To "make doxy" (build Doxygen documentation): </p><pre class="fragment">apt-get install doxygen graphviz curl
-</pre><p> To "make check" (run test suite): </p><pre class="fragment">apt-get install libchromaprint-dev bc
+</pre><p> To use "make doxy" (build Doxygen documentation): </p><pre class="fragment">apt-get install doxygen graphviz curl
+</pre><p> To use "make check" (run test suite): </p><pre class="fragment">apt-get install libchromaprint-dev bc
 </pre><p> <b>On Suse</b> (please read notes before continuing): </p><pre class="fragment">zypper install gcc gcc-c++
 
 zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel libchardet-devel
@@ -151,23 +151,22 @@ emerge media-video/ffmpeg
 Building FFmpegfs from source code</h2>
 <h3><a class="anchor" id="autotoc_md34"></a>
 Building from tar ball</h3>
-<p>Download the latest release archive: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.11/ffmpegfs-2.11.tar.gz
-</pre><p> You may check <a href="https://github.com/nschlia/ffmpegfs/releases">https://github.com/nschlia/ffmpegfs/releases</a> to see if there are newer releases available, because I notoriously keep forgetting to update this URL on a regular basis.</p>
-<p>Or use these commands, making sure to download the latest version:</p>
+<p>Get the most recent release archive here: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.12/ffmpegfs-2.12.tar.gz
+</pre><p> As I frequently fail to update this URL, you can check <a href="https://github.com/nschlia/ffmpegfs/releases">https://github.com/nschlia/ffmpegfs/releases</a> to see if there are newer releases available.</p>
+<p>Alternatively, utilise these instructions, being sure to download the most recent version:</p>
 <div class="fragment"><div class="line">curl -s https://api.github.com/repos/nschlia/ffmpegfs/releases/latest | \</div>
 <div class="line">grep &quot;browser_download_url.*gz&quot; | \</div>
 <div class="line">cut -d : -f 2,3 | \</div>
 <div class="line">tr -d \&quot; | \</div>
 <div class="line">wget -i -</div>
-</div><!-- fragment --><p>Then unpack and cd to the source directory. To build and install, run: </p><pre class="fragment">./configure
+</div><!-- fragment --><p>Unpack the file, and then cd to the source directory. To build and install, run: </p><pre class="fragment">./configure
 make
 make install
-</pre><p> To build and run the test suite, do: </p><pre class="fragment">make check
+</pre><p> Build and execute the test suite by doing: </p><pre class="fragment">make check
 </pre><p> This will test audio conversion, tagging and size prediction.</p>
-<p><em>NOTE:</em> The test for image embedding is not implemented yet and has been disabled at the moment.</p>
 <h3><a class="anchor" id="autotoc_md35"></a>
 Building from GIT</h3>
-<p>To build from GIT, clone the latest version from Github and be on the bleeding edge:</p>
+<p>Clone the most recent version from Github to build from GIT and stay up to date:</p>
 <div class="fragment"><div class="line">git clone https://github.com/nschlia/ffmpegfs.git</div>
 </div><!-- fragment --><p>Or from the mirror server:</p>
 <div class="fragment"><div class="line">git clone https://salsa.debian.org/nschlia/ffmpegfs.git</div>

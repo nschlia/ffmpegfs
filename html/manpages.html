@@ -199,9 +199,15 @@ While being accessed, the file is transcoded to the target format in the backgro
 </span></dt><dd><p class="simpara">
 While being accessed, the file is transcoded in the background to the target format. When the client quits, transcoding will continue until this time out, then the transcoder thread quits.
 </p><p class="simpara">Defaults to: <span class="strong"><strong>30 seconds</strong></span></p></dd><dt><span class="term">
+<span class="strong"><strong>--prebuffer_time</strong></span>=TIME, <span class="strong"><strong>-o prebuffer_time</strong></span>=TIME
+</span></dt><dd><p class="simpara">
+Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags.
+Both options must be met if prebuffer time and prebuffer size are specified.
+</p><p class="simpara">Set to 0 to disable pre-buffering.</p><p class="simpara">Defaults to: <span class="strong"><strong>no prebuffer time</strong></span></p></dd><dt><span class="term">
 <span class="strong"><strong>--prebuffer_size</strong></span>=SIZE, <span class="strong"><strong>-o prebuffer_size</strong></span>=SIZE
 </span></dt><dd><p class="simpara">
-Files will be decoded until the buffer contains this many bytes, allowing playback to start smoothly without lags.
+Files will be decoded until the specified number of bytes is present in the buffer, allowing playback to start smoothly without lags.
+Both options must be met if prebuffer size and prebuffer time are specified.
 </p><p class="simpara">Set to 0 to disable pre-buffering.</p><p class="simpara">Defaults to: <span class="strong"><strong>100 KB</strong></span></p></dd><dt><span class="term">
 <span class="strong"><strong>--max_cache_size</strong></span>=SIZE, <span class="strong"><strong>-o max_cache_size</strong></span>=SIZE
 </span></dt><dd><p class="simpara">
@@ -224,9 +230,9 @@ Disable the cache functionality completely.
 Starts cache maintenance in <span class="emphasis"><em>TIME</em></span> intervals. This will enforce the expery_time, max_cache_size and min_diskspace settings. Do not set it too low as this can slow down transcoding.
 </p><p class="simpara">Only one FFmpegfs process will do the maintenance by becoming the master. If that process exits, another will take over, so that one will always do the maintenance.</p><p class="simpara">Defaults to: <span class="strong"><strong>1 hour</strong></span></p></dd><dt><span class="term">
 <span class="strong"><strong>--prune_cache</strong></span>
-</span></dt><dd>
+</span></dt><dd><p class="simpara">
 Prune the cache immediately according to the above settings at application start up.
-</dd><dt><span class="term">
+</p><p class="simpara">Defaults to: <span class="strong"><strong>Do not prune cache</strong></span></p></dd><dt><span class="term">
 <span class="strong"><strong>--clear_cache</strong></span>, <span class="strong"><strong>-o clear_cache</strong></span>
 </span></dt><dd><p class="simpara">
 On startup, clear the cache. All previously transcoded files will be deleted.

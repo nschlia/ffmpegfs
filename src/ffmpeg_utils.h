@@ -1073,11 +1073,20 @@ bool                is_blocked(const std::string & filename);
 typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set of strings, sorted/search case insensitive */
 
 /**
- * @brief Combine set of strings into comma separated list.
+ * @brief Combine array of strings into comma separated list.
  * @param[in] s - std::set object to combine
  * @return List of strings, separated by commas.
  */
-std::string         implode(const STRINGSET & s);
+template<class T>
+std::string implode(const T &s)
+{
+    std::ostringstream stream;
+    std::copy(s.begin(), s.end(), std::ostream_iterator<std::string>(stream, ","));
+    std::string str(stream.str());
+    // Remove trailing ,
+    str.pop_back();
+    return str;
+}
 
 /**
  * @brief Savely delete memory: Pointer will be set to nullptr before deleted is actually called.

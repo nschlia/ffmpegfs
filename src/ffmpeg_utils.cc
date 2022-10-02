@@ -2511,16 +2511,6 @@ bool is_blocked(const std::string & filename)
     return (params.m_hide_extensions->find(ext) != params.m_hide_extensions->cend());
 }
 
-std::string implode(const STRINGSET & s)
-{
-    std::ostringstream stream;
-    std::copy(s.begin(), s.end(), std::ostream_iterator<std::string>(stream, ","));
-    std::string str(stream.str());
-    // Remove trailing ,
-    str.pop_back();
-    return str;
-}
-
 void save_free(void **p)
 {
     void * tmp = __atomic_exchange_n(p, nullptr, __ATOMIC_RELEASE);

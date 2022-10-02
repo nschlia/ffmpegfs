@@ -53,7 +53,6 @@
 
 #include <dirent.h>
 #include <unistd.h>
-#include <regex>
 #include <list>
 #include <csignal>
 #include <cstring>

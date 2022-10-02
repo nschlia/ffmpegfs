@@ -1053,11 +1053,6 @@ const std::string & remove_ext(std::string *filepath)
     return *filepath;
 }
 
-bool include_list_ext(const std::string & ext)
-{
-    return (params.m_include_extensions->empty() || params.m_include_extensions->find(ext) != params.m_include_extensions->cend());
-}
-
 bool find_ext(std::string * ext, const std::string & filename)
 {
     size_t found;
@@ -2488,6 +2483,11 @@ const std::string & regex_escape(std::string * str)
     replace_all(str, ".", "[.]");
 
     return *str;
+}
+
+bool include_list_ext(const std::string & ext)
+{
+    return (params.m_include_extensions->empty() || params.m_include_extensions->find(ext) != params.m_include_extensions->cend());
 }
 
 bool is_blocked(const std::string & filename)

@@ -550,12 +550,6 @@ const std::string & remove_path(std::string *filepath);
  */
 const std::string & remove_ext(std::string *filepath);
 /**
- * @brief Find extension in include list, if existing.
- * @param[in] ext - Extension, if found.
- * @return Returns true if extension was found, false if there was none
- */
-bool                include_list_ext(const std::string & ext);
-/**
  * @brief Find extension in filename, if existing.
  * @param[in] ext - Extension, if found.
  * @param[in] filename - Filename to inspect.
@@ -1063,6 +1057,12 @@ int                 get_audio_props(AVFormatContext *format_ctx, int *channels, 
  */
 const std::string & regex_escape(std::string *str);
 
+/**
+ * @brief Find extension in include list, if existing.
+ * @param[in] ext - Extension, if found.
+ * @return Returns true if extension was found, false if there was none
+ */
+bool                include_list_ext(const std::string & ext);
 /**
  * @brief Check if filename should be hidden from output path
  * @param[in] filename - Name to check

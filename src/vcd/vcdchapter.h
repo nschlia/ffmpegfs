@@ -25,10 +25,10 @@
  * From BullysPLayer Copyright (C) 1984-2022 by Oblivion Software/Norbert Schlia
  */
 
-#pragma once
-
 #ifndef VCDCHAPTER_H
 #define VCDCHAPTER_H
+
+#pragma once
 
 #include <string>
 

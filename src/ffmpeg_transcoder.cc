@@ -7747,7 +7747,6 @@ int FFmpeg_Transcoder::add_external_subtitle_streams()
         regex_escape(&stem);
 
         std::string regex_string("^(" + stem + "[.])(.*)([.]srt|[.]vtt)|^(" + stem + ")([.]srt|[.]vtt)");   // filename.srt/vtt or filename.lang.srt/vtt
-
         std::regex regex(regex_string, std::regex::ECMAScript);
 
         //ret = foreach_subtitle_file(

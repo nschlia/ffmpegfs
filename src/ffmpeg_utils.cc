@@ -60,7 +60,6 @@ extern "C" {
 #include <codecvt>
 #include <vector>
 #include <cstring>
-#include <iterator>
 #include <functional>
 
 #include <iconv.h>
@@ -73,6 +72,7 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wpedantic"
 #include <chardet.h>
 #pragma GCC diagnostic pop
+#include <fnmatch.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -2485,9 +2485,17 @@ const std::string & regex_escape(std::string * str)
     return *str;
 }
 
-bool include_list_ext(const std::string & ext)
+bool is_selected(const std::string & ext)
 {
-    return (params.m_include_extensions->empty() || params.m_include_extensions->find(ext) != params.m_include_extensions->cend());
+    if (params.m_include_extensions->empty())
+    {
+        // If set is empty, allow all extensions
+        return true;
+    }
+
+    auto is_match = [ext](const std::string & regex_string) { return (fnmatch(regex_string.c_str(), ext.c_str(), 0) == 0); };
+
+    return (find_if(begin(*params.m_include_extensions), end(*params.m_include_extensions), is_match) != end(*params.m_include_extensions));
 }
 
 bool is_blocked(const std::string & filename)
@@ -2507,8 +2515,10 @@ bool is_blocked(const std::string & filename)
         return true;
     }
 
+    auto is_match = [ext](const std::string & regex_string) { return (fnmatch(regex_string.c_str(), ext.c_str(), 0) == 0); };
+
     // Check block list
-    return (params.m_hide_extensions->find(ext) != params.m_hide_extensions->cend());
+    return (find_if(begin(*params.m_hide_extensions), end(*params.m_hide_extensions), is_match) != end(*params.m_hide_extensions));
 }
 
 void save_free(void **p)

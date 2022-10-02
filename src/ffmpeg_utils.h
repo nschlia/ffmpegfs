@@ -53,6 +53,7 @@
 #include <regex>
 #include <set>
 #include <array>
+#include <iterator>
 
 #ifndef PATH_MAX
 #include <climits>
@@ -1062,7 +1063,7 @@ const std::string & regex_escape(std::string *str);
  * @param[in] ext - Extension, if found.
  * @return Returns true if extension was found, false if there was none
  */
-bool                include_list_ext(const std::string & ext);
+bool                is_selected(const std::string & ext);
 /**
  * @brief Check if filename should be hidden from output path
  * @param[in] filename - Name to check
@@ -1070,7 +1071,7 @@ bool                include_list_ext(const std::string & ext);
  */
 bool                is_blocked(const std::string & filename);
 
-typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set of strings, sorted/search case insensitive */
+typedef std::vector<std::string> MATCHVEC;                     /**< @brief Array of strings, sorted/search case insensitive */
 
 /**
  * @brief Combine array of strings into comma separated list.

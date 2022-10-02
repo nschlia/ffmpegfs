@@ -54,6 +54,7 @@ extern "C" {
 #include <sys/sysinfo.h>
 #include <sqlite3.h>
 #include <unistd.h>
+#include <fnmatch.h>
 
 #include <iostream>
 
@@ -136,8 +137,8 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
-    , m_include_extensions(new STRINGSET)
-    , m_hide_extensions(new STRINGSET)                  // default: empty list
+    , m_include_extensions(new MATCHVEC)				// default: empty list
+    , m_hide_extensions(new MATCHVEC)                  	// default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
@@ -631,7 +632,7 @@ static int          get_codec(const std::string & codec, AVCodecID *codec_id);
 static int          get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP **hwaccel_dec_blocked);
 static int          get_value(const std::string & arg, int *value);
 static int          get_value(const std::string & arg, std::string *value);
-static int          get_value(const std::string & arg, STRINGSET *value);
+static int          get_value(const std::string & arg, MATCHVEC *value);
 //static int          get_value(const std::string & arg, std::optional<std::string> *value);
 static int          get_value(const std::string & arg, double *value);
 
@@ -1660,7 +1661,7 @@ static int get_value(const std::string & arg, std::string *value)
  * @param[in] value - Upon return, contains a set of the values after the "=" sign.
  * @return Returns 0 if valid; if invalid returns -1.
  */
-static int get_value(const std::string & arg, STRINGSET *value)
+static int get_value(const std::string & arg, MATCHVEC *value)
 {
     size_t pos = arg.find('=');
 
@@ -1668,7 +1669,19 @@ static int get_value(const std::string & arg, STRINGSET *value)
     {
         std::vector<std::string> v = split(arg.substr(pos + 1), ",");
 
-        value->insert(v.begin(), v.end());
+        for (const std::string & str : v)
+        {
+            int res = fnmatch(str.c_str(), "", 0);
+
+            if (res != 0 && res != FNM_NOMATCH)
+            {
+                std::fprintf(stderr, "INVALID PARAMETER (%s): Error in wildcard pattern\n", str.c_str());
+
+                return -1;
+            }
+        }
+
+        value->insert(value->end(), v.begin(), v.end());
 
         return 0;
     }

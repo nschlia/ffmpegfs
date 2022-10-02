@@ -12,6 +12,9 @@ Important changes in 2.13 (2022-10-XX):
   added. A comma-separated list of extensions is specified by the
   --include_extensions parameter. These file extensions are the only ones that
   will be transcoded.
+  The entries support shell wildcard patterns.
+* Feature: The --hide_extensions parameter syntax has been extended. The
+  entries now support shell wildcard patterns.
 * Bugfix: Closes #139: Additional files could be added using the --extensions
   parameter. However, this is no longer necessary; in the past, a file's
   extension determined whether or not it would be transcoded. Files with

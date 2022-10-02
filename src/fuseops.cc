@@ -1540,7 +1540,7 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
         return false;
     }
 
-    if (!include_list_ext(ext))
+    if (!is_selected(ext))
     {
         return false;
     }

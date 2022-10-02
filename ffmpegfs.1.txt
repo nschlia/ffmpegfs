@@ -161,6 +161,7 @@ Defaults to: *HQ*
 
 *--hide_extensions*=LIST, *-ohide_extensions*=LIST::
 Set a list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
+The entries support shell wildcard patterns.
 +
 Example: --hide_extensions=jpg,png,cue to stop covers and cue sheets from showing up.
 +

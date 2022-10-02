@@ -19,6 +19,9 @@
 # Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
 # --------------------------------------------------------------------------
 
+set(PROJECT_FPCOMPARE   "fpcompare")
+set(PROJECT_METADATA    "metadata")
+
 set(formats_video
     mov
     mp4
@@ -114,24 +117,32 @@ ADD_TEST(NAME test_cuesheet_file COMMAND test_cuesheet_file)
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -R test_)
 
 # Build audio comparator required by tests
-add_executable(fpcompare fpcompare.c)
-target_link_libraries(fpcompare chromaprint avcodec avformat avutil swresample sqlite3)
-target_compile_definitions(fpcompare PUBLIC
+add_executable(${PROJECT_FPCOMPARE} fpcompare.c)
+target_link_libraries(${PROJECT_FPCOMPARE} chromaprint avcodec avformat avutil swresample sqlite3)
+# Debug library
+target_include_directories(${PROJECT_FPCOMPARE} BEFORE PUBLIC "$ENV{HOME}/dev/builds/ffmpeg/include")
+target_link_directories(${PROJECT_FPCOMPARE} BEFORE PRIVATE "$ENV{HOME}/dev/builds/ffmpeg/lib")
+
+target_compile_definitions(${PROJECT_FPCOMPARE} PUBLIC
     -D_FILE_OFFSET_BITS=64
     -DHAVE_CONFIG_H
     -D_GNU_SOURCE
 )
-add_dependencies(check fpcompare)
+add_dependencies(check ${PROJECT_FPCOMPARE})
 
 # Build metadata extractor required by tests
-add_executable(metadata metadata.c)
-target_link_libraries(metadata avcodec avformat avutil swresample sqlite3)
-target_compile_definitions(metadata PUBLIC
+add_executable(${PROJECT_METADATA} metadata.c)
+target_link_libraries(${PROJECT_METADATA} avcodec avformat avutil swresample sqlite3)
+# Debug library
+target_include_directories(${PROJECT_METADATA} BEFORE PUBLIC "$ENV{HOME}/dev/builds/ffmpeg/include")
+target_link_directories(${PROJECT_METADATA} BEFORE PRIVATE "$ENV{HOME}/dev/builds/ffmpeg/lib")
+
+target_compile_definitions(${PROJECT_METADATA} PUBLIC
     -D_FILE_OFFSET_BITS=64
     -DHAVE_CONFIG_H
     -D_GNU_SOURCE
 )
-add_dependencies(check metadata)
+add_dependencies(check ${PROJECT_METADATA})
 
 # Main binary required by tests
 add_dependencies(check ${PROJECT_NAME})

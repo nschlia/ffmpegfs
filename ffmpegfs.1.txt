@@ -159,15 +159,6 @@ Set level for output if available. 'NAME' can be:
 +
 Defaults to: *HQ*
 
-*--extensions*=LIST, *-oextensions*=LIST::
-Set a list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.
-+
-Example: --extensions=xxx,abc,yxz,aaa
-+
-Set a list of extra file extensions recognised as input files. 'LIST' can contain one or more entries, separated by commas.Take care to select extensions that can actually be converted. Specifying something like --extensions=txt would make FFmpegfs attempt to transcode text files, resulting in error messages, making these files inaccessible.
-+
-Defaults to: Use the default set as defined by FFmpeg.
-
 *--hide_extensions*=LIST, *-ohide_extensions*=LIST::
 Set a list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
 +

@@ -29,6 +29,10 @@
 #   cmake --build . --target dist-gzip
 # or
 #   make dist-gzip
+#
+# Note:
+# The install target function clumsily inserts each worthless file it
+# discovers in the source directory.
 # --------------------------------------------------------------------------
 # Install package:
 #   cmake --build . --target install
@@ -40,16 +44,16 @@
 # or
 #   make uninstall
 #
-# Note that this will only work if you kept the install_manifest.txt
-# file created during install. Sorry, but this is by design.
+# Keep in mind that this will only function if you kept the install manifest.txt
+# file that was created during install. Sorry, but this is by design.
 #
-# What? Am I serious? Yes.
+# What? Is this for real? Yes.
 #
 # https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#can-i-do-make-uninstall-with-cmake
 #
-# The cmake people think that a file, once installed, should stay there
-# forever. There is work around code available only which will not work if
-# install_manifest.txt does not exist.
+# The Cmake team believes that once a file is installed, should stay there
+# forever.  There is workaround code available, but it won't function without
+# the original install manifest.txt.
 # --------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.5)

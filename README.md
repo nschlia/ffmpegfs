@@ -12,7 +12,7 @@ News
 
 ### Version 2.13 is under development
 
-**New in in 2.13 (2022-09-XX):**
+**New in in 2.13 (2022-10-XX):**
 
 - **Feature** Added --prebuffer_time parameter. Files will be decoded until the  buffer contains the specified playing time, allowing playback to start
  smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.

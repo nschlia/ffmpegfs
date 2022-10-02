@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.13 (2022-09-XX):
+Important changes in 2.13 (2022-10-XX):
 
 * Added --prebuffer_time parameter. Files will be decoded until the  buffer contains
   he specified playing time, allowing playback to start smoothly without lags. Works

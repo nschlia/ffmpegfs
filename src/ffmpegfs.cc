@@ -137,7 +137,7 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
     , m_extensions(new STRINGSET)
-    , m_hide_extensions(new STRINGSET)
+    , m_hide_extensions(new STRINGSET)                  // default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }

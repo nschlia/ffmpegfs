@@ -1073,7 +1073,7 @@ bool                is_blocked(const std::string & filename);
 typedef std::set<std::string, comp> STRINGSET;                  /**< @brief Set of strings, sorted/search case insensitive */
 
 /**
- * @brief Conbine set of strings into comma separated list.
+ * @brief Combine set of strings into comma separated list.
  * @param[in] s - std::set object to combine
  * @return List of strings, separated by commas.
  */

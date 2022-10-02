@@ -2500,8 +2500,8 @@ bool is_blocked(const std::string & filename)
     }
 
     // These are blocked by default, they confuse players like VLC or mpv which
-    // auto load them. As they get incorporated by FFmpegfs they would end up
-    // as duplicates.
+    // auto load them. As they get incorporated as subtitle tracks by FFmpegfs
+    // they would end up as duplicates.
     if (!strcasecmp(ext, "srt") || !strcasecmp(ext, "vtt"))
     {
         return true;

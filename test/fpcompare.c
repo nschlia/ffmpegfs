@@ -94,12 +94,29 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     }
     codec_ctx_opened = 1;
 
-    if (codec_ctx->channels <= 0) {
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 24, 0))
+    int channels = codec_ctx->ch_layout.nb_channels;
+#else
+    int channels = codec_ctx->channels;
+#endif
+
+    if (channels <= 0) {
         fprintf(stderr, "ERROR: no channels found in the audio stream\n");
         goto done;
     }
 
     if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
+#if (LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT(4, 5, 0))
+        int ret = swr_alloc_set_opts2(&swr_ctx,
+                                      &codec_ctx->ch_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
+                                      &codec_ctx->ch_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
+                                      0, NULL);
+        if (ret < 0)
+        {
+            fprintf(stderr, "ERROR: couldn't allocate audio resampler\n");
+            return ret;
+        }
+#else
         swr_ctx = swr_alloc_set_opts(NULL,
                                      (int64_t)codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
                                      (int64_t)codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
@@ -108,6 +125,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
             fprintf(stderr, "ERROR: couldn't allocate audio resampler\n");
             goto done;
         }
+#endif
         if (swr_init(swr_ctx) < 0) {
             fprintf(stderr, "ERROR: couldn't initialize the audio resampler\n");
             goto done;
@@ -116,8 +134,8 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
 
     *duration = (int)(stream->time_base.num * stream->duration / stream->time_base.den);
 
-    remaining = max_length * codec_ctx->channels * codec_ctx->sample_rate;
-    chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, codec_ctx->channels);
+    remaining = max_length * channels * codec_ctx->sample_rate;
+    chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, channels);
     frame = av_frame_alloc();
 
     while (1) {
@@ -144,7 +162,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                         max_dst_nb_samples = frame->nb_samples;
                         av_freep(&dst_data);
                         if (av_samples_alloc(&dst_data, NULL,
-                                             codec_ctx->channels, max_dst_nb_samples,
+                                             channels, max_dst_nb_samples,
                                              AV_SAMPLE_FMT_S16, 0) < 0) {
                             fprintf(stderr, "ERROR: couldn't allocate audio converter buffer\n");
                             goto done;
@@ -161,7 +179,7 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
                     samples = (int16_t*)frame->data[0];
                 }
 
-                length = MIN(remaining, frame->nb_samples * codec_ctx->channels);
+                length = MIN(remaining, frame->nb_samples * channels);
                 if (!chromaprint_feed(chromaprint_ctx, samples, length)) {
                     goto done;
                 }
@@ -229,6 +247,7 @@ int main(int argc, char **argv)
         }
         else if (!strcmp(arg, "-version") || !strcmp(arg, "-v")) {
             printf("fpcalc version %s\n", chromaprint_get_version());
+            free(file_names);
             return 0;
         }
         //else if (!strcmp(arg, "-raw")) {
@@ -254,6 +273,7 @@ int main(int argc, char **argv)
 
     if (num_file_names != 2) {
         printf("usage: %s [OPTIONS] FILE1 FILE2\n\n", argv[0]);
+        free(file_names);
         return 2;
     }
 

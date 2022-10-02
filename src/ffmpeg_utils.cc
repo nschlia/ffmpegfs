@@ -1053,11 +1053,6 @@ const std::string & remove_ext(std::string *filepath)
     return *filepath;
 }
 
-bool allow_list_ext(const std::string & ext)
-{
-    return (params.m_extensions->find(ext) != params.m_extensions->cend());
-}
-
 bool find_ext(std::string * ext, const std::string & filename)
 {
     size_t found;

@@ -247,7 +247,6 @@ extern struct FFMPEGFS_PARAMS
     int                     m_decoding_errors;              /**< @brief Break transcoding on decoding error */
     int                     m_min_dvd_chapter_duration;     /**< @brief Min. DVD chapter duration. Shorter chapters will be ignored. */
     int                     m_oldnamescheme;                /**< @brief Use old output name scheme, can create duplicate filenames */
-    STRINGSET*              m_extensions;                   /**< @brief List of supplementary file extensions. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
     STRINGSET*              m_hide_extensions;              /**< @brief Set of extensions to block/hide. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
     // Experimental options
     int                     m_win_smb_fix;                  /**< @brief Experimental Windows fix for access to EOF at file open */

@@ -550,12 +550,6 @@ const std::string & remove_path(std::string *filepath);
  */
 const std::string & remove_ext(std::string *filepath);
 /**
- * @brief Find extension in allowlist, if existing.
- * @param[in] ext - Extension, if found.
- * @return Returns true if extension was found, false if there was none
- */
-bool                allow_list_ext(const std::string & ext);
-/**
  * @brief Find extension in filename, if existing.
  * @param[in] ext - Extension, if found.
  * @param[in] filename - Filename to inspect.

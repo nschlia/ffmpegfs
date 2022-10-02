@@ -136,7 +136,6 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
-    , m_extensions(new STRINGSET)
     , m_hide_extensions(new STRINGSET)                  // default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
@@ -150,7 +149,6 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other)
 FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 {
     delete m_hwaccel_dec_blocked;
-    delete m_extensions;
     delete m_hide_extensions;
 }
 
@@ -219,7 +217,6 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
         m_decoding_errors = other.m_decoding_errors;
         m_min_dvd_chapter_duration = other.m_min_dvd_chapter_duration;
         m_oldnamescheme = other.m_oldnamescheme;
-        *m_extensions = *other.m_extensions;
         *m_hide_extensions = *other.m_hide_extensions;
         m_win_smb_fix = other.m_win_smb_fix;
     }
@@ -255,7 +252,6 @@ enum
     KEY_AUDIO_SAMPLERATE,
     KEY_AUDIO_CHANNELS,
     KEY_AUDIO_SAMPLE_FMT,
-    KEY_EXTENSIONS,
     KEY_VIDEO_BITRATE,
     KEY_SEGMENT_DURATION,
     KEY_MIN_SEEK_TIME_DIFF,
@@ -319,8 +315,6 @@ static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
     FUSE_OPT_KEY("audiochannels=%s",                KEY_AUDIO_CHANNELS),
     FUSE_OPT_KEY("--audiosamplefmt=%s",             KEY_AUDIO_SAMPLE_FMT),
     FUSE_OPT_KEY("audiosamplefmt=%s",               KEY_AUDIO_SAMPLE_FMT),
-    FUSE_OPT_KEY("--extensions=%s",                 KEY_EXTENSIONS),
-    FUSE_OPT_KEY("extensions=%s",                   KEY_EXTENSIONS),
     // Video
     FUSE_OPT_KEY("--videobitrate=%s",               KEY_VIDEO_BITRATE),
     FUSE_OPT_KEY("videobitrate=%s",                 KEY_VIDEO_BITRATE),
@@ -1876,10 +1870,6 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
     {
         return get_sampleformat(arg, &params.m_sample_fmt);
     }
-    case KEY_EXTENSIONS:
-    {
-        return get_value(arg, params.m_extensions);
-    }
     case KEY_SCRIPTFILE:
     {
         return get_value(arg, &params.m_scriptfile);
@@ -2068,7 +2058,6 @@ static void print_params()
     Logging::trace(nullptr, "Recode to same fmt: %1", get_recodesame_text(params.m_recodesame).c_str());
     Logging::trace(nullptr, "Profile           : %1", get_profile_text(params.m_profile).c_str());
     Logging::trace(nullptr, "Level             : %1", get_level_text(params.m_level).c_str());
-    Logging::trace(nullptr, "Extra Extensions  : %1", implode(*params.m_extensions).c_str());
     Logging::trace(nullptr, "Hide Extensions   : %1", implode(*params.m_hide_extensions).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
     Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));

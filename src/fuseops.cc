@@ -1541,44 +1541,6 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
         return false;
     }
 
-    if (allow_list_ext(ext))
-    {
-        const FFmpegfs_Format *ffmpegfs_format = nullptr;
-
-        if (!params.smart_transcode())
-        {
-            // Not smart encoding: use first format (video file)
-            ffmpegfs_format = &ffmpeg_format[0];
-        }
-        else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
-        {
-            // We have an audio track
-            ffmpegfs_format = &ffmpeg_format[1];
-        }
-
-        if (ffmpegfs_format != nullptr)
-        {
-            // Could determine format
-            if (params.m_oldnamescheme)
-            {
-                // Old filename scheme, creates duplicates
-                replace_ext(virtualpath, ffmpegfs_format->fileext());
-            }
-            else
-            {
-                // New name scheme
-                append_ext(virtualpath, ffmpegfs_format->fileext());
-            }
-
-            if (current_format != nullptr)
-            {
-                *current_format = ffmpegfs_format;
-            }
-
-            return true;
-        }
-    }
-
     VIRTUALFILE newvirtualfile;
 
     newvirtualfile.m_origfile = origpath + *virtualpath;

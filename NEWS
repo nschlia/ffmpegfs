@@ -8,6 +8,13 @@ Important changes in 2.13 (2022-10-XX):
   because it does not depend on the bit rate. An example: when set to
   25 seconds for HLS transcoding, this will make sure that at least 2 complete
   segments will be available once the file is released and visible.
+* Bugfix: Closes #139: Additional files could be added using the —extensions
+  parameter. However, this is no longer necessary; in the past, a file's
+  extension determined whether or not it would be transcoded. Files with
+  unknown extensions would be ignored. The extension is no longer important
+  because FFmpegfs now examines all input files and recognises transcodable
+  files by the format.
+  The outdated —extensions argument was removed without substitution.
 
 Important changes in 2.12 (2022-08-27):
 

@@ -48,7 +48,7 @@ AC_CHECK_SIZEOF([off_t])
 #AC_CHECK_SIZEOF([size_t]
 
 AS_IF([test "$ac_cv_sizeof_int" -lt 4],
-    AC_MSG_ERROR([Integer type 'int' must be at least 4 bytes in size.]))
+    AC_MSG_ERROR([The size of an integer of type "int" must be at least 4 bytes.]))
 
 dnl Figure out which format string to use for time_t
 AC_CHECK_SIZEOF([time_t],,[#include <time.h>])
@@ -96,12 +96,12 @@ AC_SEARCH_LIBS([sqlite3_expanded_sql], [sqlite3], [AC_DEFINE([HAVE_SQLITE_EXPAND
 # Check for a2x (convert asciidoc to another format)
 AC_PATH_PROG(A2X, a2x)
 AC_CHECK_PROG(HAVE_A2X, a2x, "yes", "no")
-AS_IF([test "$HAVE_A2X" == "yes"], [], AC_MSG_ERROR([Missing a2x. Please install asciidoc (or at least asciidoc-base to save disk space) to fix.]))
+AS_IF([test "$HAVE_A2X" == "yes"], [], [AC_MSG_ERROR([a2x could not be found. Install asciidoc to fix. Or asciidoc-base instead to save disc space.])])
 
 # Check for w3m (html -> text)
 AC_PATH_PROG(W3M, w3m)
 AC_CHECK_PROG(HAVE_W3M, w3m, "yes", "no")
-AS_IF([test "$HAVE_W3M" == "yes"], [], AC_MSG_ERROR([Missing w3m. Please install w3m to fix.]))
+AS_IF([test "$HAVE_W3M" == "yes"], [], [AC_MSG_ERROR([w3m could not be found. To fix, kindly install.])])
 
 dnl FFMPEG support checks
 
@@ -196,19 +196,19 @@ AM_COND_IF([USE_LIBVCD],
 # Check for doxygen. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN";
-   then AC_MSG_WARN([Doxygen not found, continuing without Doxygen support. Installing it is recommended if you plan to use "make doxy".])
+   then AC_MSG_WARN([Doxygen could not be found; we must continue without it. It is advised to be installed if you intend to use "make doxy".])
 fi
 
 # Check for curl. If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([CURL], [curl])
 if test -z "$CURL";
-   then AC_MSG_WARN([curl not found, continuing without curl support. Installing it is recommended if you plan to use "make doxy".])
+   then AC_MSG_WARN([curl could not be found; we must continue without it. It is advised to be installed if you intend to use "make doxy".])
 fi
 
 # Check for dot (graphviz). If not installed, go on, but make doxy won't work.
 AC_CHECK_PROGS([GRAPHVIZ], [dot])
 if test -z "$GRAPHVIZ";
-   then AC_MSG_WARN([dot not found, continuing without graphviz support. Installing it is recommended if you plan to use "make doxy".])
+   then AC_MSG_WARN([dot could not be found; we must continue without it. It is advised to be installed if you intend to use "make doxy".])
 fi
 
 AC_ARG_ENABLE([debug],
@@ -248,7 +248,7 @@ AC_OUTPUT
 
 # Hints on options
 AM_COND_IF([HINT_LIBDVD],
-           [AC_MSG_NOTICE([HINT: Install the libdvdread development packages to enable DVD support. For details, refer to INSTALL.md.])])
+           [AC_MSG_NOTICE([HINT: For DVD support, install the libdvdread development packages. Consult INSTALL.md for more information.])])
 AM_COND_IF([HINT_LIBBLURAY],
-           [AC_MSG_NOTICE([HINT: Install the libbluray development package to enable Blu-ray support. For details, refer to INSTALL.md.])])
+           [AC_MSG_NOTICE([HINT: For Blu-ray support, install the libbluray development package. Consult INSTALL.md for more information. ])])
 

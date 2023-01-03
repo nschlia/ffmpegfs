@@ -123,7 +123,7 @@ PKG_CHECK_MODULES(LIBBLURAY libbluray>=0.6.2)
 FIND_PACKAGE(Doxygen
     COMPONENTS dot)
 IF (NOT DOXYGEN_FOUND)
-    message( WARNING "Doxygen not found - continuing without Doxygen support. If you intend to use \"make doxy\" you should install it.")
+    message( WARNING "Doxygen could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
 ENDIF (NOT DOXYGEN_FOUND)
 
 # Check for curl binary. If not installed, go on, but make doxy won't work.
@@ -131,7 +131,7 @@ find_program (CURL curl)
 IF (NOT CURL-NOTFOUND)
     message("-- Found curl: ${CURL}")
 ELSE (NOT CURL-NOTFOUND)
-    message( WARNING "curl not found - continuing without curl support. If you intend to use \"make doxy\" you should install it.")
+    message( WARNING "curl could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
 ENDIF (NOT CURL-NOTFOUND)
 
 # Header checks

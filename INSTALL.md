@@ -2,7 +2,7 @@ Installation Instructions for FFmpegfs
 ======================================
 
 Installation from the repository
-----------------------------
+--------------------------------
 
 ### Debian Bullseye
 

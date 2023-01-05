@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Original author K. Henriksson @n
- * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
  *
  * @author K. Henriksson, Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2017 Original author K. Henriksson @n
- * Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #ifndef LOGGING_H

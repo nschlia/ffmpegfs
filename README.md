@@ -294,7 +294,7 @@ See https://www.ffmpeg.org/legal.html for details.
 Copyright
 ---------
 
-This fork with FFmpeg support copyright \(C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de).
+This fork with FFmpeg support copyright \(C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de).
 
 Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
 

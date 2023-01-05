@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2008 David Collett @n
  * Copyright (C) 2008-2013 K. Henriksson @n
- * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  * @author Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2006-2008 David Collett @n
  * Copyright (C) 2008-2013 K. Henriksson @n
- * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #ifndef TRANSCODE_H

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006-2008 David Collett
  * Copyright (C) 2008-2012 K. Henriksson
- * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  * @author Norbert Schlia (nschlia@oblivion-software.de)
  * @copyright Copyright (C) 2006-2008 David Collett @n
  * Copyright (C) 2008-2013 K. Henriksson @n
- * Copyright (C) 2017-2022 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
+ * Copyright (C) 2017-2023 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)
  */
 
 #ifdef __cplusplus
@@ -2158,7 +2158,7 @@ int main(int argc, char *argv[])
     if (getppid() == getpgid(0))
     {
         std::printf("%s V%s\n", PACKAGE_NAME, FFMPEFS_VERSION);
-        std::printf("Copyright (C) 2017-2022 Norbert Schlia (nschlia@oblivion-software.de)\n"
+        std::printf("Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)\n"
                     "David Collett (2006-2008) and K. Henriksson (2008-2012)\n\n");
     }
 

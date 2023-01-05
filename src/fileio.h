@@ -155,7 +155,7 @@ typedef struct VIRTUALFILE
 
     bool                    m_has_audio;                            /**< @brief True if file has an audio track */
     bool                    m_has_video;                            /**< @brief True if file has a video track */
-    bool                    m_has_subtitle;                            /**< @brief True if file has a subtitle track */
+    bool                    m_has_subtitle;                         /**< @brief True if file has a subtitle track */
 
     std::vector<char>       m_file_contents;                        /**< @brief Buffer for virtual files */
 

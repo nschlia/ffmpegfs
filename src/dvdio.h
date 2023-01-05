@@ -150,7 +150,7 @@ private:
      * @brief Close virtual file.
      * Non-virtual version to be safely called from constructor/destructor
      */
-    void            _close();
+    void            pvt_close();
 
     /**
      * @brief Do a rough check if this is really a navigation packet.

@@ -71,7 +71,7 @@ DvdIO::DvdIO()
 
 DvdIO::~DvdIO()
 {
-    _close();
+    pvt_close();
 }
 
 VIRTUALTYPE DvdIO::type() const
@@ -798,10 +798,10 @@ bool DvdIO::eof() const
 
 void DvdIO::close()
 {
-    _close();
+    pvt_close();
 }
 
-void DvdIO::_close()
+void DvdIO::pvt_close()
 {
     ifo_handle_t *  vts_file = m_vts_file;
     if (vts_file != nullptr)

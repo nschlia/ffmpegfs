@@ -43,7 +43,7 @@ DiskIO::DiskIO()
 
 DiskIO::~DiskIO()
 {
-    _close();
+    pvt_close();
 }
 
 VIRTUALTYPE DiskIO::type() const
@@ -119,10 +119,10 @@ bool DiskIO::eof() const
 
 void DiskIO::close()
 {
-    _close();
+    pvt_close();
 }
 
-void DiskIO::_close()
+void DiskIO::pvt_close()
 {
     FILE *fpi = m_fpi;
     if (fpi != nullptr)

@@ -102,7 +102,7 @@ AC_PATH_PROG(W3M, w3m)
 AC_CHECK_PROG(HAVE_W3M, w3m, "yes", "no")
 AS_IF([test "$HAVE_W3M" == "yes"], [], [AC_MSG_ERROR([w3m could not be found. To fix, kindly install.])])
 
-dnl FFMPEG support checks
+dnl FFmpeg support checks
 
 # FFmpeg 4.1.8 "al-Khwarizmi"
 #
@@ -152,7 +152,7 @@ AC_ARG_WITH([libdvd],
   [],
   [with_libdvd=check])
 
-# Removed dependency, library not used
+# Dependency removed, library not used
 #AS_CASE(["$with_libdvd"],
 #  [yes], [PKG_CHECK_MODULES([libdvdnav], [dvdnav >= 5.0.0], [HAVE_LIBDVDNAV=1])],
 #  [no], [],

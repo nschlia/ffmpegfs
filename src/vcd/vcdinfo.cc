@@ -27,7 +27,9 @@
  * From BullysPLayer Copyright (C) 1984-2023 by Oblivion Software/Norbert Schlia
  */
 
-#include <string>
+#include "ffmpegfs.h"
+#include "vcdinfo.h"
+#include "vcdutils.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -35,9 +37,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include "vcdinfo.h"
-#include "vcdutils.h"
-
+#include <string>
 #include <cstring>
 #include <sys/stat.h>
 

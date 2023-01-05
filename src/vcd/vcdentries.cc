@@ -27,17 +27,15 @@
  * From BullysPLayer Copyright (C) 1984-2023 by Oblivion Software/Norbert Schlia
  */
 
-#include <string>
+#include "ffmpegfs.h"
+#include "vcdentries.h"
+#include "vcdutils.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <arpa/inet.h>
 #endif
-
-#include "vcdentries.h"
-#include "vcdutils.h"
-#include "ffmpegfs.h"
 
 #include <cstring>
 #include <sys/stat.h>
@@ -238,7 +236,7 @@ int VcdEntries::scan_chapters()
             while (first <= last)
             {
                 VcdChapter buffer(m_chapters[chapter_no].get_is_svcd());
-                __off_t file_pos = static_cast<__off_t>(first_sync + middle * VCD_SECTOR_SIZE);
+                long int file_pos = static_cast<long int>(first_sync + middle * VCD_SECTOR_SIZE);
 
                 if (fseek(fpi, file_pos, SEEK_SET))
                 {

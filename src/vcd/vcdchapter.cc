@@ -27,11 +27,11 @@
  * From BullysPLayer Copyright (C) 1984-2023 by Oblivion Software/Norbert Schlia
  */
 
+#include "ffmpegfs.h"
 #include "vcdchapter.h"
 #include "vcdutils.h"
 #include "ffmpeg_utils.h"
 
-#include <cstring>
 #include <climits>
 
 VcdChapter::VcdChapter(bool is_svcd) :

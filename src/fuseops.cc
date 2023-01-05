@@ -34,7 +34,6 @@
  */
 
 #include "transcode.h"
-//#include "ffmpeg_utils.h"
 #include "cache_maintenance.h"
 #include "logging.h"
 #ifdef USE_LIBVCD

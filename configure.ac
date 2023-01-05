@@ -28,7 +28,6 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDC
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT32_T
 AC_TYPE_OFF_T

@@ -67,19 +67,19 @@ AS_IF([test "$ac_cv_sizeof_pthread_t" = "$ac_cv_sizeof_long"],
   [AC_MSG_RESULT(int)
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["x"], [format string for pthread_t])])
 
-# Checks for packages which use pkg-config.
-PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
-PKG_CHECK_MODULES([libcue], [libcue >= 2.2.1])
-PKG_CHECK_MODULES([chardet], [chardet >= 1.0.4])
-
 # Large file support
 AC_SYS_LARGEFILE
 
 # Define POSIX standard conformance
 AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
 
-# This is because the first PKG_CHECK_MODULES call is inside a conditional.
+# This is because there are PKG_CHECK_MODULES calls is inside a conditional.
 PKG_PROG_PKG_CONFIG
+
+# Checks for packages which use pkg-config.
+PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
+PKG_CHECK_MODULES([chardet], [chardet >= 1.0.4])
+PKG_CHECK_MODULES([libcue], [libcue >= 2.2.1])
 
 # Checks for sqlite3
 # API misses a lot of functionality if not fairly recent

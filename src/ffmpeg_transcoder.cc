@@ -7757,7 +7757,7 @@ int FFmpeg_Transcoder::add_external_subtitle_streams()
 
         // clang-tidy now recommends a lambda
         ret = foreach_subtitle_file(
-                    file.parent_path(),
+                    file.parent_path().string(),
                     regex,
                     0,
                     [this](const std::string & subtitle_file, const std::optional<std::string> & language)

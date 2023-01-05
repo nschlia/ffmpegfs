@@ -44,7 +44,9 @@
 #define FFMPEFS_VERSION     PACKAGE_VERSION "-" EXTRA_VERSION   /**< @brief FFmpegfs version number */
 #endif
 
-#define __STDC_FORMAT_MACROS                                    /**< @brief Force PRId64 defines */
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS 1                                  /**< @brief Force PRId64 defines */
+#endif // !__STDC_FORMAT_MACROS
 
 #include "ffmpeg_compat.h"
 

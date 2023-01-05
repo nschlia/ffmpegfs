@@ -60,4 +60,6 @@ mkdoxy
 # Eclipse Project
 /.cproject
 /.settings
+# All backup files
+*~
 

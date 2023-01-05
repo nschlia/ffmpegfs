@@ -99,7 +99,14 @@
 
 #define FUSE_USE_VERSION 26             /**< @brief Requested minimum FUSE version */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <fuse.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include <stdarg.h>
 
 #include "ffmpeg_utils.h"

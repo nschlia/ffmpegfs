@@ -55,7 +55,6 @@ extern "C" {
 #include <sqlite3.h>
 #include <unistd.h>
 #include <fnmatch.h>
-
 #include <iostream>
 
 #ifdef USE_LIBBLURAY
@@ -292,7 +291,12 @@ enum
 
 /**
  * FUSE option descriptions
+ *
+ * Need to ignore annoying warnings caused by fuse.h
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
 {
     // Output type
@@ -422,6 +426,7 @@ static struct fuse_opt ffmpegfs_opts[] =    // NOLINT(modernize-avoid-c-arrays)
     FUSE_OPT_KEY("debug",                           KEY_KEEP_OPT),
     FUSE_OPT_END
 };
+#pragma GCC diagnostic pop
 
 typedef std::map<const std::string, const AUTOCOPY, comp> AUTOCOPY_MAP;         /**< @brief Map command line option to AUTOCOPY enum */
 typedef std::map<const std::string, const PROFILE, comp> PROFILE_MAP;           /**< @brief Map command line option to PROFILE enum */

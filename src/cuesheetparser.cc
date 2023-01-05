@@ -388,13 +388,13 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
             throw -errno;
         }
 
-        if (lstat(filename.c_str(), &stbuf) == -1)
+        if (stat(filename.c_str(), &stbuf) == -1)
         {
             // Media file does not exist, can be ignored silently
             throw 0;
         }
 
-        if (lstat(cuesheet.c_str(), &stbuf) != -1)
+        if (stat(cuesheet.c_str(), &stbuf) != -1)
         {
             // Cue sheet file exists, preferrably use its contents
             if (!check_path(trackdir))

@@ -84,7 +84,7 @@ public:
     /**
      * @brief Open a virtual file
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open
-     * @return Upon successful completion, #open() returns 0. @n
+     * @return Upon successful completion, #openio() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
     virtual int     openio(LPVIRTUALFILE virtualfile) override;

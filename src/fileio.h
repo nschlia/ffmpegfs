@@ -286,7 +286,7 @@ public:
     virtual size_t  	bufsize() const = 0;
     /** @brief Open a virtual file.
      * @param[in] virtualfile - LPCVIRTUALFILE of file to open.
-     * @return Upon successful completion, #open() returns 0. @n
+     * @return Upon successful completion, #openio() returns 0. @n
      * On error, a nonzero value is returned and errno is set to indicate the error.
      */
     virtual int         openio(LPVIRTUALFILE virtualfile) = 0;

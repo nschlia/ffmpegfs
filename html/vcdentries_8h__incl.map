@@ -1,7 +1,8 @@
 <map id="src/vcd/vcdentries.h" name="src/vcd/vcdentries.h">
-<area shape="rect" id="node1" title="S/VCD VcdEntries class." alt="" coords="85,5,225,32"/>
-<area shape="rect" id="node2" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="5,80,101,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="125,80,184,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,80,259,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="26,155,81,181"/>
+<area shape="rect" id="node1" title="S/VCD VcdEntries class." alt="" coords="109,5,249,32"/>
+<area shape="rect" id="node2" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="29,80,125,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="149,80,208,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="232,80,283,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,155,67,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="91,155,146,181"/>
 </map>

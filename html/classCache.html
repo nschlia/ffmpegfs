@@ -141,12 +141,12 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#af8b171a6c49d88d3ba179477484b9d48">~Cache</a> ()</td></tr>
 <tr class="memdesc:af8b171a6c49d88d3ba179477484b9d48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destruct <a class="el" href="classCache.html" title="The Cache class.">Cache</a> object. <br /></td></tr>
 <tr class="separator:af8b171a6c49d88d3ba179477484b9d48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCache__Entry.html">Cache_Entry</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a1eb8ef8d7c26bf16f6bc8c43590ae902">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> virtualfile)</td></tr>
-<tr class="memdesc:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open cache entry.  <a href="classCache.html#a1eb8ef8d7c26bf16f6bc8c43590ae902">More...</a><br /></td></tr>
-<tr class="separator:a1eb8ef8d7c26bf16f6bc8c43590ae902"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaaa761aa07314098a97ac13963ed006"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#acaaa761aa07314098a97ac13963ed006">close</a> (<a class="el" href="classCache__Entry.html">Cache_Entry</a> **cache_entry, int flags=<a class="el" href="buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0">CACHE_CLOSE_NOOPT</a>)</td></tr>
-<tr class="memdesc:acaaa761aa07314098a97ac13963ed006"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a cache entry.  <a href="classCache.html#acaaa761aa07314098a97ac13963ed006">More...</a><br /></td></tr>
-<tr class="separator:acaaa761aa07314098a97ac13963ed006"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09729b4e50c4f6db05a0cce7740437fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCache__Entry.html">Cache_Entry</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a09729b4e50c4f6db05a0cce7740437fc">openio</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> virtualfile)</td></tr>
+<tr class="memdesc:a09729b4e50c4f6db05a0cce7740437fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open cache entry.  <a href="classCache.html#a09729b4e50c4f6db05a0cce7740437fc">More...</a><br /></td></tr>
+<tr class="separator:a09729b4e50c4f6db05a0cce7740437fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe055fda19f4bd2213cd0344259375d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#abe055fda19f4bd2213cd0344259375d2">closeio</a> (<a class="el" href="classCache__Entry.html">Cache_Entry</a> **cache_entry, int flags=<a class="el" href="buffer_8h.html#ae6bbe3443d78677335623b58e90dfbf0">CACHE_CLOSE_NOOPT</a>)</td></tr>
+<tr class="memdesc:abe055fda19f4bd2213cd0344259375d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a cache entry.  <a href="classCache.html#abe055fda19f4bd2213cd0344259375d2">More...</a><br /></td></tr>
+<tr class="separator:abe055fda19f4bd2213cd0344259375d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a5e16f13d67ba31c847e3bd3e3db2abf7">load_index</a> ()</td></tr>
 <tr class="memdesc:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load cache index from disk.  <a href="classCache.html#a5e16f13d67ba31c847e3bd3e3db2abf7">More...</a><br /></td></tr>
 <tr class="separator:a5e16f13d67ba31c847e3bd3e3db2abf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -403,14 +403,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 
 </div>
 </div>
-<a id="acaaa761aa07314098a97ac13963ed006"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acaaa761aa07314098a97ac13963ed006">&#9670;&nbsp;</a></span>close()</h2>
+<a id="abe055fda19f4bd2213cd0344259375d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe055fda19f4bd2213cd0344259375d2">&#9670;&nbsp;</a></span>closeio()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool Cache::close </td>
+          <td class="memname">bool Cache::closeio </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classCache__Entry.html">Cache_Entry</a> **&#160;</td>
           <td class="paramname"><em>cache_entry</em>, </td>
@@ -886,14 +886,14 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Cache_Entry</b></td>
 
 </div>
 </div>
-<a id="a1eb8ef8d7c26bf16f6bc8c43590ae902"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1eb8ef8d7c26bf16f6bc8c43590ae902">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a09729b4e50c4f6db05a0cce7740437fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09729b4e50c4f6db05a0cce7740437fc">&#9670;&nbsp;</a></span>openio()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCache__Entry.html">Cache_Entry</a> * Cache::open </td>
+          <td class="memname"><a class="el" href="classCache__Entry.html">Cache_Entry</a> * Cache::openio </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a>&#160;</td>
           <td class="paramname"><em>virtualfile</em></td><td>)</td>

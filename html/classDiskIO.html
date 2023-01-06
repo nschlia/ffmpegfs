@@ -108,12 +108,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a96f349ffe26a826b642c119cca6de3dc"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">bufsize</a> () const override</td></tr>
 <tr class="memdesc:a96f349ffe26a826b642c119cca6de3dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ideal buffer size.  <a href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">More...</a><br /></td></tr>
 <tr class="separator:a96f349ffe26a826b642c119cca6de3dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a719c925a2430fba13d0ed3928ad5761e"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a719c925a2430fba13d0ed3928ad5761e">open</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>) override</td></tr>
-<tr class="memdesc:a719c925a2430fba13d0ed3928ad5761e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file.  <a href="classDiskIO.html#a719c925a2430fba13d0ed3928ad5761e">More...</a><br /></td></tr>
-<tr class="separator:a719c925a2430fba13d0ed3928ad5761e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc78ff2b8417bfc5be35026f169f939b"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#acc78ff2b8417bfc5be35026f169f939b">read</a> (void *data, size_t <a class="el" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">size</a>) override</td></tr>
-<tr class="memdesc:acc78ff2b8417bfc5be35026f169f939b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="classDiskIO.html#acc78ff2b8417bfc5be35026f169f939b">More...</a><br /></td></tr>
-<tr class="separator:acc78ff2b8417bfc5be35026f169f939b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a3c4ed61f6d68cd736b7118136625ce"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">openio</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>) override</td></tr>
+<tr class="memdesc:a0a3c4ed61f6d68cd736b7118136625ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a file.  <a href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">More...</a><br /></td></tr>
+<tr class="separator:a0a3c4ed61f6d68cd736b7118136625ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2e22cf99e15ae8246ef58ee46747fd3"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">readio</a> (void *data, size_t <a class="el" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">size</a>) override</td></tr>
+<tr class="memdesc:ad2e22cf99e15ae8246ef58ee46747fd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from file.  <a href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">More...</a><br /></td></tr>
+<tr class="separator:ad2e22cf99e15ae8246ef58ee46747fd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75ac9a7c711b4e1873e45380766f0df0"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">error</a> () const override</td></tr>
 <tr class="memdesc:a75ac9a7c711b4e1873e45380766f0df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get last error.  <a href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">More...</a><br /></td></tr>
 <tr class="separator:a75ac9a7c711b4e1873e45380766f0df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,10 +132,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5a7111203a8d613af0777db12a022be1"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">eof</a> () const override</td></tr>
 <tr class="memdesc:a5a7111203a8d613af0777db12a022be1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if at end of file.  <a href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">More...</a><br /></td></tr>
 <tr class="separator:a5a7111203a8d613af0777db12a022be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68b2c9348d9aa971a10c6f715bf20570"><td class="memItemLeft" align="right" valign="top"><a id="a68b2c9348d9aa971a10c6f715bf20570"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a68b2c9348d9aa971a10c6f715bf20570">close</a> () override</td></tr>
-<tr class="memdesc:a68b2c9348d9aa971a10c6f715bf20570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. <br /></td></tr>
-<tr class="separator:a68b2c9348d9aa971a10c6f715bf20570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad6e6557cda58a2fea92cab0de8cf404"><td class="memItemLeft" align="right" valign="top"><a id="aad6e6557cda58a2fea92cab0de8cf404"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">closeio</a> () override</td></tr>
+<tr class="memdesc:aad6e6557cda58a2fea92cab0de8cf404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. <br /></td></tr>
+<tr class="separator:aad6e6557cda58a2fea92cab0de8cf404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
 <tr class="memitem:a8b0d602c3461181e12c05f655dea5018 inherit pub_methods_classFileIO"><td class="memItemLeft" align="right" valign="top"><a id="a8b0d602c3461181e12c05f655dea5018"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a8b0d602c3461181e12c05f655dea5018">FileIO</a> ()</td></tr>
@@ -164,10 +164,10 @@ FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a9e9347bfc40487f2351203a05aa6ea0d"><td class="memItemLeft" align="right" valign="top"><a id="a9e9347bfc40487f2351203a05aa6ea0d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#a9e9347bfc40487f2351203a05aa6ea0d">_close</a> ()</td></tr>
-<tr class="memdesc:a9e9347bfc40487f2351203a05aa6ea0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. Non-virtual version to be safely called from constructor/destructor. <br /></td></tr>
-<tr class="separator:a9e9347bfc40487f2351203a05aa6ea0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad711ba800d6a0c073192830a098d4bad"><td class="memItemLeft" align="right" valign="top"><a id="ad711ba800d6a0c073192830a098d4bad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">pvt_close</a> ()</td></tr>
+<tr class="memdesc:ad711ba800d6a0c073192830a098d4bad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close virtual file. Non-virtual version to be safely called from constructor/destructor. <br /></td></tr>
+<tr class="separator:ad711ba800d6a0c073192830a098d4bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -317,8 +317,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a719c925a2430fba13d0ed3928ad5761e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a719c925a2430fba13d0ed3928ad5761e">&#9670;&nbsp;</a></span>open()</h2>
+<a id="a0a3c4ed61f6d68cd736b7118136625ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a3c4ed61f6d68cd736b7118136625ce">&#9670;&nbsp;</a></span>openio()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -327,7 +327,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int DiskIO::open </td>
+          <td class="memname">int DiskIO::openio </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a>&#160;</td>
           <td class="paramname"><em>virtualfile</em></td><td>)</td>
@@ -348,10 +348,10 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#a719c925a2430fba13d0ed3928ad5761e" title="Open a file.">open()</a> returns 0. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce" title="Open a file.">openio()</a> returns 0. <br  />
 On error, an nonzero value is returned and errno is set to indicate the error. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#ac6f8d683c47d7b37a8d20351f084af10">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#ac493dfa50e5cbc392c29feaccf4d9ce4">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="diskio_8cc_source.html#l00059">59</a> of file <a class="el" href="diskio_8cc_source.html">diskio.cc</a>.</p>
 
@@ -359,8 +359,8 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 </div>
 </div>
-<a id="acc78ff2b8417bfc5be35026f169f939b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc78ff2b8417bfc5be35026f169f939b">&#9670;&nbsp;</a></span>read()</h2>
+<a id="ad2e22cf99e15ae8246ef58ee46747fd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2e22cf99e15ae8246ef58ee46747fd3">&#9670;&nbsp;</a></span>readio()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -369,7 +369,7 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t DiskIO::read </td>
+          <td class="memname">size_t DiskIO::readio </td>
           <td>(</td>
           <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -401,12 +401,12 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#acc78ff2b8417bfc5be35026f169f939b" title="Read data from file.">read()</a> returns the number of bytes read. <br  />
+<dl class="section return"><dt>Returns</dt><dd>Upon successful completion, <a class="el" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3" title="Read data from file.">readio()</a> returns the number of bytes read. <br  />
 This may be less than size. <br  />
 On error, the value 0 is returned and errno is set to indicate the error. <br  />
 If at end of file, 0 may be returned by errno not set. <a class="el" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0" title="Get last error.">error()</a> will return 0 if at EOF. </dd></dl>
 
-<p>Implements <a class="el" href="classFileIO.html#afe9ad83e019855f655e4c69c3a282f26">FileIO</a>.</p>
+<p>Implements <a class="el" href="classFileIO.html#a4b032367f4419b94afaad96a2c2d38d1">FileIO</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="diskio_8cc_source.html#l00077">77</a> of file <a class="el" href="diskio_8cc_source.html">diskio.cc</a>.</p>
 
@@ -503,7 +503,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p class="reference">References <a class="el" href="diskio_8h_source.html#l00125">m_fpi</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="diskio_8cc_source.html#l00077">read()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="diskio_8cc_source.html#l00077">readio()</a>.</p>
 
 </div>
 </div>

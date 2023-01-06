@@ -73,7 +73,7 @@ VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, 
 
 }
 
-int VcdChapter::read(FILE *fpi, int track_no)
+int VcdChapter::readio(FILE *fpi, int track_no)
 {
     VCDMSF msf;
     std::array<char, SYNC.size()> buffer;

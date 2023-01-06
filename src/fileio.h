@@ -289,16 +289,16 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, a nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int         open(LPVIRTUALFILE virtualfile) = 0;
+    virtual int         openio(LPVIRTUALFILE virtualfile) = 0;
     /** @brief Read data from a file.
      * @param[out] data - A buffer to store read bytes in. It must be large enough to hold up to size bytes.
      * @param[in] size - The number of bytes to read.
-     * @return Upon successful completion, #read() returns the number of bytes read. @n
+     * @return Upon successful completion, #readio() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
      * If at the end of the file, 0 may be returned but errno is not set. error() will return 0 if at EOF.
      */
-    virtual size_t      read(void *data, size_t size) = 0;
+    virtual size_t      readio(void *data, size_t size) = 0;
     /**
      * @brief Get last error.
      * @return errno value of last error.
@@ -342,7 +342,7 @@ public:
     /**
      * @brief Close virtual file.
      */
-    virtual void        close() = 0;
+    virtual void        closeio() = 0;
     /**
      * @brief Get virtual file object
      * @return Current virtual file object or nullptr if unset.

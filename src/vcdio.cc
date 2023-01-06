@@ -65,7 +65,7 @@ size_t VcdIO::bufsize() const
     return (32 * 1024);
 }
 
-int VcdIO::open(LPVIRTUALFILE virtualfile)
+int VcdIO::openio(LPVIRTUALFILE virtualfile)
 {
     std::string src_filename;
 
@@ -102,7 +102,7 @@ int VcdIO::open(LPVIRTUALFILE virtualfile)
     return seek(0, SEEK_SET);
 }
 
-size_t VcdIO::read(void * data, size_t size)
+size_t VcdIO::readio(void * data, size_t size)
 {
     if (static_cast<size_t>(ftell(m_fpi)) + size > m_end_pos)
     {
@@ -196,7 +196,7 @@ bool VcdIO::eof() const
     return ((feof(m_fpi) || (static_cast<uint64_t>(ftell(m_fpi)) >= m_end_pos)) ? true : false);
 }
 
-void VcdIO::close()
+void VcdIO::closeio()
 {
     pvt_close();
 }

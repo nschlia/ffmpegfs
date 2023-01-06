@@ -84,7 +84,7 @@ size_t DvdIO::bufsize() const
     return sizeof(m_data);
 }
 
-int DvdIO::open(LPVIRTUALFILE virtualfile)
+int DvdIO::openio(LPVIRTUALFILE virtualfile)
 {
     int pgc_id;
     int ttn;
@@ -208,7 +208,7 @@ int DvdIO::open(LPVIRTUALFILE virtualfile)
     m_size = 0;
     size_t bytes_read;
 
-    while ((bytes_read = read(nullptr, ULONG_MAX)) != 0 && !eof())
+    while ((bytes_read = readio(nullptr, ULONG_MAX)) != 0 && !eof())
     {
         m_size += bytes_read;
     }
@@ -551,7 +551,7 @@ void DvdIO::next_cell()
     }
 }
 
-size_t DvdIO::read(void * data, size_t size)
+size_t DvdIO::readio(void * data, size_t size)
 {
     size_t cur_output_size;
     size_t result_len = 0;
@@ -777,7 +777,7 @@ int DvdIO::seek(int64_t offset, int whence)
 
     size_t total_read = 0;
     size_t bytes_read;
-    while ((bytes_read = read(nullptr, abs_offset - total_read - cur_pos)) != 0 && total_read < abs_offset && !eof())
+    while ((bytes_read = readio(nullptr, abs_offset - total_read - cur_pos)) != 0 && total_read < abs_offset && !eof())
     {
         total_read += bytes_read;
     }
@@ -796,7 +796,7 @@ bool DvdIO::eof() const
     return m_is_eof;
 }
 
-void DvdIO::close()
+void DvdIO::closeio()
 {
     pvt_close();
 }

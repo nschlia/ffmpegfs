@@ -148,7 +148,7 @@ public:
      * @param[in] virtualfile - VIRTUALFILE struct of a file.
      * @return On success, returns pointer to a Cache_Entry. On error, returns nullptr.
      */
-    Cache_Entry *           open(LPVIRTUALFILE virtualfile);
+    Cache_Entry *           openio(LPVIRTUALFILE virtualfile);
     /**
      * @brief Close a cache entry.
      *
@@ -158,7 +158,7 @@ public:
      * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true if the object was deleted; false if not.
      */
-    bool                    close(Cache_Entry **cache_entry, int flags = CACHE_CLOSE_NOOPT);
+    bool                    closeio(Cache_Entry **cache_entry, int flags = CACHE_CLOSE_NOOPT);
     /**
      * @brief Load cache index from disk.
      * @return Returns true on success; false on error.

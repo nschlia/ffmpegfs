@@ -205,7 +205,7 @@ protected:
      * @param[in] track_no - Track number 1...
      * @return
      */
-    int         read(FILE *fpi, int track_no);
+    int         readio(FILE *fpi, int track_no);
 
 protected:
     bool        m_is_svcd;                              /**< @brief true for SVCD, false for VCD */

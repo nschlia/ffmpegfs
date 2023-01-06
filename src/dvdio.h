@@ -87,19 +87,19 @@ public:
      * @return Upon successful completion, #open() returns 0. @n
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int     open(LPVIRTUALFILE virtualfile) override;
+    virtual int     openio(LPVIRTUALFILE virtualfile) override;
     /**
      * @brief Read data from file
      * @param[out] data - buffer to store read bytes in. Must be large enough to hold up to size bytes.
      * Special case: If set to nullptr as many bytes as possible are "read" (and discarded). Can be used
      * to determine the net file size of the virtual stream.
      * @param[in] size - number of bytes to read
-     * @return Upon successful completion, #read() returns the number of bytes read. @n
+     * @return Upon successful completion, #readio() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
      * If at end of file, 0 may be returned by errno not set. error() will return 0 if at EOF.
      */
-    virtual size_t  read(void *data, size_t size) override;
+    virtual size_t  readio(void *data, size_t size) override;
     /**
      * @brief Get last error.
      * @return errno value of last error.
@@ -143,7 +143,7 @@ public:
     /**
      * @brief Close virtual file.
      */
-    virtual void    close() override;
+    virtual void    closeio() override;
 
 private:
     /**
@@ -222,7 +222,7 @@ protected:
     int             m_chapter_idx;                              /**< @brief Chapter index (chapter number - 1) */
     int             m_angle_idx;                                /**< @brief Selected angle index (angle number -1) */
 
-    unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];            /**< @brief Buffer for read() data */
+    unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];            /**< @brief Buffer for readio() data */
     unsigned char   m_buffer[1024 * DVD_VIDEO_LB_LEN];          /**< @brief Buffer for data extracted from VOB file */
 
     int64_t         m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */

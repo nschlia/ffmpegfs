@@ -50,7 +50,6 @@ extern "C" {
 
 #include <iostream>
 #include <libgen.h>
-#include <unistd.h>
 #include <algorithm>
 #include <wordexp.h>
 #include <memory>
@@ -73,6 +72,7 @@ extern "C" {
 #include <chardet.h>
 #pragma GCC diagnostic pop
 #include <fnmatch.h>
+#include <unistd.h>
 
 #ifdef __cplusplus
 extern "C" {

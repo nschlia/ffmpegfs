@@ -87,7 +87,7 @@ public:
      * @param[in] create_cache - If true, the cache will be created if it does not yet exist.
      * @return On success returns true; on error returns false and errno contains the error code.
      */
-    bool                    open(bool create_cache = true);
+    bool                    openio(bool create_cache = true);
     /**
      * @brief Flush current memory cache to disk.
      * @return On success returns true; on error returns false and errno contains the error code.
@@ -200,7 +200,7 @@ public:
      * @param[in] flags - one of the CACHE_CLOSE_* flags
      * @return Returns true if entry may be deleted, false if still in use.
      */
-    bool                    close(int flags);
+    bool                    closeio(int flags);
     /**
      * @brief Update read counter.
      */

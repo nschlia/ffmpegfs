@@ -51,7 +51,6 @@
 #include "cache_entry.h"
 
 #include <dirent.h>
-#include <unistd.h>
 #include <list>
 #include <csignal>
 #include <cstring>

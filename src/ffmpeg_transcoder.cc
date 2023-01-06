@@ -188,7 +188,7 @@ FFmpeg_Transcoder::StreamRef::StreamRef() :
 }
 FFmpeg_Transcoder::StreamRef::~StreamRef()
 {
-    close();
+    reset();
 }
 
 template< typename T >
@@ -219,7 +219,7 @@ void FFmpeg_Transcoder::StreamRef::set_codec_ctx(AVCodecContext *codec_ctx)
     }
 }
 
-void FFmpeg_Transcoder::StreamRef::close()
+void FFmpeg_Transcoder::StreamRef::reset()
 {
     m_codec_ctx.reset();
 }
@@ -280,7 +280,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
 FFmpeg_Transcoder::~FFmpeg_Transcoder()
 {
     // Close files and resample context
-    close();
+    closeio();
 
     Logging::trace(nullptr, "The FFmpeg transcoder object was destroyed.");
 }
@@ -375,7 +375,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
         return AVERROR(orgerrno);
     }
 
-    ret = m_fileio->open(m_virtualfile);
+    ret = m_fileio->openio(m_virtualfile);
     if (ret)
     {
         return AVERROR(ret);
@@ -1079,7 +1079,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 // Free hardware device contexts if open
                 hwdevice_ctx_free(&m_hwaccel_dec_device_ctx);
 
-                m_in.m_video.close();
+                m_in.m_video.reset();
 
                 // Try again with a software decoder
                 continue;
@@ -3021,11 +3021,11 @@ int FFmpeg_Transcoder::create_fake_wav_header() const
 
     // Write updated wav header
     buffer->seek(0, SEEK_SET);
-    buffer->write(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
+    buffer->writeio(reinterpret_cast<uint8_t*>(&wav_header), sizeof(WAV_HEADER));
 
     // Write updated data header
     buffer->seek(static_cast<long>(read_offset), SEEK_SET);
-    buffer->write(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
+    buffer->writeio(reinterpret_cast<uint8_t*>(&data_header), sizeof(WAV_DATA_HEADER));
 
     // Restore write position
     buffer->seek(static_cast<long>(current_offset), SEEK_SET);
@@ -3125,11 +3125,11 @@ int FFmpeg_Transcoder::create_fake_aiff_header() const
 
     // Write updated AIFF header
     buffer->seek(0, SEEK_SET);
-    buffer->write(reinterpret_cast<uint8_t*>(&form_chunk), sizeof(form_chunk));
+    buffer->writeio(reinterpret_cast<uint8_t*>(&form_chunk), sizeof(form_chunk));
 
     // Write updated data header
     buffer->seek(static_cast<long>(read_offset), SEEK_SET);
-    buffer->write(reinterpret_cast<uint8_t*>(&sounddata_chunk), sizeof(sounddata_chunk));
+    buffer->writeio(reinterpret_cast<uint8_t*>(&sounddata_chunk), sizeof(sounddata_chunk));
 
     // Restore write position
     buffer->seek(static_cast<long>(current_offset), SEEK_SET);
@@ -6197,7 +6197,7 @@ int FFmpeg_Transcoder::input_read(void * opaque, unsigned char * data, int size)
         return AVERROR_EOF;
     }
 
-    int read = static_cast<int>(io->read(reinterpret_cast<char *>(data), static_cast<size_t>(size)));
+    int read = static_cast<int>(io->readio(reinterpret_cast<char *>(data), static_cast<size_t>(size)));
 
     if (read != size && io->error())
     {
@@ -6218,7 +6218,7 @@ int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int siz
         return AVERROR(EINVAL);
     }
 
-    int written = static_cast<int>(buffer->write(static_cast<const uint8_t*>(data), static_cast<size_t>(size)));
+    int written = static_cast<int>(buffer->writeio(static_cast<const uint8_t*>(data), static_cast<size_t>(size)));
     if (written != size)
     {
         // Write error
@@ -6357,8 +6357,8 @@ bool FFmpeg_Transcoder::close_output_file()
     m_sws_ctx = nullptr;
 
     // Close output file
-    m_out.m_audio.close();
-    m_out.m_video.close();
+    m_out.m_audio.reset();
+    m_out.m_video.reset();
 
     m_out.m_album_art.clear();
     m_out.m_subtitle.clear();
@@ -6392,8 +6392,8 @@ bool FFmpeg_Transcoder::close_input_file()
 {
     bool closed = false;
 
-    m_in.m_audio.close();
-    m_in.m_video.close();
+    m_in.m_audio.reset();
+    m_in.m_video.reset();
 
     m_in.m_album_art.clear();
     m_in.m_subtitle.clear();
@@ -6404,7 +6404,7 @@ bool FFmpeg_Transcoder::close_input_file()
 
         if (m_close_fileio && m_fileio != nullptr)
         {
-            m_fileio->close();
+            m_fileio->closeio();
             save_delete(&m_fileio);
         }
 
@@ -6429,7 +6429,7 @@ bool FFmpeg_Transcoder::close_input_file()
     return closed;
 }
 
-void FFmpeg_Transcoder::close()
+void FFmpeg_Transcoder::closeio()
 {
     bool closed = false;
 

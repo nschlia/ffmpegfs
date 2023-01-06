@@ -261,7 +261,7 @@ void transcoder_free()
 
 bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 {
-    Cache_Entry* cache_entry = cache->open(virtualfile);
+    Cache_Entry* cache_entry = cache->openio(virtualfile);
     if (cache_entry == nullptr)
     {
         return false;
@@ -288,7 +288,7 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 
 bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, bool interleaved, const AVRational &framerate)
 {
-    Cache_Entry* cache_entry = cache->open(virtualfile);
+    Cache_Entry* cache_entry = cache->openio(virtualfile);
     if (cache_entry == nullptr)
     {
         Logging::error(nullptr, "Out of memory getting file size.");
@@ -343,7 +343,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 
         Logging::trace(transcoder.filename(), "Predicted transcoded size of %1.", format_size_ex(transcoder.predicted_filesize()).c_str());
 
-        transcoder.close();
+        transcoder.closeio();
 
         success = true;
     }
@@ -354,7 +354,7 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     // Allocate transcoder structure
-    Cache_Entry* cache_entry = cache->open(virtualfile);
+    Cache_Entry* cache_entry = cache->openio(virtualfile);
     if (cache_entry == nullptr)
     {
         return nullptr;
@@ -366,7 +366,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     {
         cache_entry->lock();
 
-        if (!cache_entry->open(begin_transcode))
+        if (!cache_entry->openio(begin_transcode))
         {
             throw static_cast<int>(errno);
         }
@@ -459,7 +459,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     {
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();
-        cache->close(&cache_entry, CACHE_CLOSE_DELETE);
+        cache->closeio(&cache_entry, CACHE_CLOSE_DELETE);
         cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
         errno = orgerrno;         // Restore last errno
     }
@@ -715,7 +715,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
 void transcoder_delete(Cache_Entry* cache_entry)
 {
-    cache->close(&cache_entry);
+    cache->closeio(&cache_entry);
 }
 
 size_t transcoder_get_size(Cache_Entry* cache_entry)
@@ -791,7 +791,7 @@ static int transcoder_thread(void *arg)
 
         Logging::info(cache_entry->filename(), "Transcoding to %1.", params.current_format(cache_entry->virtualfile())->desttype().c_str());
 
-        if (!cache_entry->open())
+        if (!cache_entry->openio())
         {
             throw (static_cast<int>(errno));
         }
@@ -976,7 +976,7 @@ static int transcoder_thread(void *arg)
         thread_data->m_cond.notify_all();           // unlock main thread
     }
 
-    transcoder.close();
+    transcoder.closeio();
 
     if (timeout || thread_exit || transcoder.have_seeked())
     {
@@ -1032,7 +1032,7 @@ static int transcoder_thread(void *arg)
         }
     }
 
-    cache->close(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
+    cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
 
     delete thread_data;
 

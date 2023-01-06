@@ -155,19 +155,19 @@ public:
      * @return Upon successful completion, #open() returns 0.
      * On error, an nonzero value is returned and errno is set to indicate the error.
      */
-    virtual int             open(LPVIRTUALFILE virtualfile) override;
+    virtual int             openio(LPVIRTUALFILE virtualfile) override;
     /**
      * @brief Not implemented.
      * @param[out] data - unused
      * @param[in] size - unused
      * @return Always returns 0 and errno is EPERM.
      */
-    virtual size_t          read(void *data, size_t size) override;
+    virtual size_t          readio(void *data, size_t size) override;
     /**
     * @brief Write image data for the frame number into the buffer.
      * @param[out] data - Buffer to read data in.
      * @param[in] frame_no - Number of the frame to write.
-     * @return Upon successful completion, #read() returns the number of bytes read. @n
+     * @return Upon successful completion, #readio() returns the number of bytes read. @n
      * This may be less than size. @n
      * On error, the value 0 is returned and errno is set to indicate the error. @n
      * If at the end of the file, 0 may be returned by errno not set. error() will return 0 if at EOF. @n
@@ -248,14 +248,14 @@ public:
     /**
      * @brief Close buffer.
      */
-    virtual void            close() override;
+    virtual void            closeio() override;
     /**
      * @brief Write data to the current position in the buffer. The position pointer will be updated.
      * @param[in] data - Buffer with data to write.
      * @param[in] length - Length of buffer to write.
      * @return Returns the bytes written to the buffer. If less than length, this indicates an error. Consult errno for details.
      */
-    size_t                  write(const uint8_t* data, size_t length);
+    size_t                  writeio(const uint8_t* data, size_t length);
     /**
     * @brief Write image data for the frame number into the buffer.
      * @param[in] data - Buffer with data to write.

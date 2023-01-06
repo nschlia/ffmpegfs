@@ -243,7 +243,7 @@ int VcdEntries::scan_chapters()
                     throw static_cast<int>(ferror(fpi));
                 }
 
-                int orgerrno = buffer.read(fpi, last_track_no);
+                int orgerrno = buffer.readio(fpi, last_track_no);
                 if (orgerrno)
                 {
                     throw static_cast<int>(orgerrno);
@@ -282,7 +282,7 @@ int VcdEntries::scan_chapters()
                 throw static_cast<int>(ferror(fpi));
             }
 
-            int orgerrno = buffer.read(fpi, last_track_no);
+            int orgerrno = buffer.readio(fpi, last_track_no);
             if (orgerrno)
             {
                 throw static_cast<int>(orgerrno);

@@ -1014,7 +1014,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
 
     bool deleted = false;
 
-    if ((*cache_entry)->close(flags))
+    if ((*cache_entry)->closeio(flags))
     {
         // If CACHE_CLOSE_FREE is set, also free memory
         if (CACHE_CHECK_BIT(CACHE_CLOSE_FREE, flags))
@@ -1029,7 +1029,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
     return deleted;
 }
 
-Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
+Cache_Entry *Cache::openio(LPVIRTUALFILE virtualfile)
 {
     Cache_Entry* cache_entry = nullptr;
     cache_t::const_iterator p = m_cache.find(make_pair(virtualfile->m_destfile, params.current_format(virtualfile)->desttype()));
@@ -1047,7 +1047,7 @@ Cache_Entry *Cache::open(LPVIRTUALFILE virtualfile)
     return cache_entry;
 }
 
-bool Cache::close(Cache_Entry **cache_entry, int flags /*= CACHE_CLOSE_NOOPT*/)
+bool Cache::closeio(Cache_Entry **cache_entry, int flags /*= CACHE_CLOSE_NOOPT*/)
 {
     if ((*cache_entry) == nullptr)
     {

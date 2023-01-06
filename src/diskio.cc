@@ -56,7 +56,7 @@ size_t DiskIO::bufsize() const
     return (100 /* KB */ * 1024);
 }
 
-int DiskIO::open(LPVIRTUALFILE virtualfile)
+int DiskIO::openio(LPVIRTUALFILE virtualfile)
 {
     set_virtualfile(virtualfile);
 
@@ -74,7 +74,7 @@ int DiskIO::open(LPVIRTUALFILE virtualfile)
     }
 }
 
-size_t DiskIO::read(void * data, size_t size)
+size_t DiskIO::readio(void * data, size_t size)
 {
     return fread(data, 1, size, m_fpi);
 }
@@ -117,7 +117,7 @@ bool DiskIO::eof() const
     return feof(m_fpi) ? true : false;
 }
 
-void DiskIO::close()
+void DiskIO::closeio()
 {
     pvt_close();
 }

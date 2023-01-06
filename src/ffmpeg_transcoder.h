@@ -114,7 +114,7 @@ protected:
         /**
          * @brief Close (reset) AVCodecContext pointer
          */
-        void close();
+        void reset();
 
     public:
         std::shared_ptr<AVCodecContext> m_codec_ctx;                /**< @brief AVCodecContext for this encoder stream */
@@ -228,7 +228,7 @@ public:
     /**
      * @brief Close transcoder, free all ressources.
      */
-    void                        close();
+    void                        closeio();
     /**
      * @brief Get last modification time of file.
      * @return Modification time (seconds since epoch)

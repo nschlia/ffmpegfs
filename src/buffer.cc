@@ -61,7 +61,7 @@ size_t Buffer::bufsize() const
     return 0;   // Not applicable
 }
 
-int Buffer::open(LPVIRTUALFILE virtualfile)
+int Buffer::openio(LPVIRTUALFILE virtualfile)
 {
     if (virtualfile == nullptr)
     {
@@ -638,7 +638,7 @@ bool Buffer::reserve(size_t size)
     return true;
 }
 
-size_t Buffer::write(const uint8_t* data, size_t length)
+size_t Buffer::writeio(const uint8_t* data, size_t length)
 {
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
@@ -687,7 +687,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
 
         // Write image
         seek(static_cast<long>(old_image_frame->m_offset), SEEK_SET);
-        bytes_written = write(data, old_image_frame->m_size);
+        bytes_written = writeio(data, old_image_frame->m_size);
         if (bytes_written != old_image_frame->m_size)
         {
             return 0;
@@ -704,7 +704,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
 
         // Write image
         seek(static_cast<long>(new_image_frame.m_offset), SEEK_SET);
-        bytes_written = write(data, new_image_frame.m_size);
+        bytes_written = writeio(data, new_image_frame.m_size);
         if (bytes_written != new_image_frame.m_size)
         {
             return 0;
@@ -966,7 +966,7 @@ bool Buffer::remove_file(const std::string & filename)
     }
 }
 
-size_t Buffer::read(void * /*data*/, size_t /*size*/)
+size_t Buffer::readio(void * /*data*/, size_t /*size*/)
 {
     // Not implemented
     errno = EPERM;
@@ -1015,7 +1015,7 @@ bool Buffer::eof(uint32_t segment_no) const
     return (tell(segment_no) == size(segment_no));
 }
 
-void Buffer::close()
+void Buffer::closeio()
 {
     release();
 }

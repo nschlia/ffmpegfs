@@ -71,7 +71,7 @@ size_t BlurayIO::bufsize() const
     return sizeof(m_data);
 }
 
-int BlurayIO::open(LPVIRTUALFILE virtualfile)
+int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 {
     const char *bdpath = nullptr;
     uint32_t title_count;
@@ -173,7 +173,7 @@ int BlurayIO::open(LPVIRTUALFILE virtualfile)
     return 0;
 }
 
-size_t BlurayIO::read(void * data, size_t size)
+size_t BlurayIO::readio(void * data, size_t size)
 {
     size_t result_len = 0;
 
@@ -303,7 +303,7 @@ bool BlurayIO::eof() const
     return (m_cur_pos >= m_end_pos);
 }
 
-void BlurayIO::close()
+void BlurayIO::closeio()
 {
     pvt_close();
 }

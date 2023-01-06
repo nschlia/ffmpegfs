@@ -52,7 +52,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
     if (m_buffer != nullptr)
     {
-        m_buffer->open(virtualfile);
+        m_buffer->openio(virtualfile);
     }
 
     clear();
@@ -160,7 +160,7 @@ bool Cache_Entry::update_access(bool update_database /*= false*/)
     }
 }
 
-bool Cache_Entry::open(bool create_cache /*= true*/)
+bool Cache_Entry::openio(bool create_cache /*= true*/)
 {
     if (m_buffer == nullptr)
     {
@@ -216,7 +216,7 @@ void Cache_Entry::close_buffer(int flags)
     }
 }
 
-bool Cache_Entry::close(int flags)
+bool Cache_Entry::closeio(int flags)
 {
     write_info();
 

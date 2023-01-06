@@ -47,8 +47,8 @@
 
 
 #define MS              *1000000L   /**< @brief 1 millisecond = 1,000,000 Nanoseconds */
-#define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is avaiable */
-#define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is avaiable */
+#define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is available */
+#define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is available */
 
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread

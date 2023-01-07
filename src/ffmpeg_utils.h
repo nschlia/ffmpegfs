@@ -825,7 +825,7 @@ int                 reg_compare(const std::string &value, const std::string &pat
  * @brief Expand path, e.g., expand ~/ to home directory.
  * @param[out] tgt - Expanded source path.
  * @param[in] src - Path to expand.
- * @return Omn success, returns expanded source path.
+ * @return On success, returns expanded source path.
  */
 const std::string & expand_path(std::string *tgt, const std::string &src);
 /**

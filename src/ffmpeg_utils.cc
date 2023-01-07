@@ -1978,7 +1978,7 @@ std::string sanitise_filepath(std::string * filepath)
         return *filepath;
     }
 
-    // realpath has the strange feature to remove a traling slash if there.
+    // realpath has the strange feature to remove a trailing slash if there.
     // To mimick its behaviour, if realpath fails, at least remove it.
     std::string _filepath(*filepath);
     remove_sep(&_filepath);

@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.13 (2022-10-XX):
+Important changes in 2.13 (2023-01-XX):
 
 * Added --prebuffer_time parameter. Files will be decoded until the buffer
   contains the specified playing time, allowing playback to start smoothly
@@ -22,6 +22,8 @@ Important changes in 2.13 (2022-10-XX):
   because FFmpegfs now examines all input files and recognises transcodable
   files by the format.
   The outdated --extensions argument was removed without substitution.
+* Bugfix: Fix crash when implode() function was called with an empty string.
+  Happend with Windows GCC 11.3.0 only.
 
 Important changes in 2.12 (2022-08-27):
 

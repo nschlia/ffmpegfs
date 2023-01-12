@@ -77,9 +77,9 @@ AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
 PKG_PROG_PKG_CONFIG
 
 # Checks for packages which use pkg-config.
-PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 PKG_CHECK_MODULES([chardet], [chardet >= 1.0.4])
-PKG_CHECK_MODULES([libcue], [libcue >= 2.2.1])
+PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
+PKG_CHECK_MODULES([libcue], [libcue >= 2.1.0])
 
 # Checks for sqlite3
 # API misses a lot of functionality if not fairly recent

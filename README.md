@@ -20,6 +20,7 @@ News
 - **Feature:** The --hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.
 - **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. 
 The outdated *—extensions* argument was removed without substitution.
+- **Bugfix:** Fixed crash when implode() function was called with an empty string. Happened with Windows GCC 11.3.0 only.
 
 ### Version 2.12 has been released
 

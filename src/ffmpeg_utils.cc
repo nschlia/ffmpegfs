@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)
  *
  * This program is free software; you can redistribute it and/or modify

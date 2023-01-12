@@ -505,22 +505,25 @@ $(function() {
 <div class="line"><a name="l01087"></a><span class="lineno"> 1087</span>&#160;    std::copy(s.begin(), s.end(), std::ostream_iterator&lt;std::string&gt;(stream, <span class="stringliteral">&quot;,&quot;</span>));</div>
 <div class="line"><a name="l01088"></a><span class="lineno"> 1088</span>&#160;    std::string str(stream.str());</div>
 <div class="line"><a name="l01089"></a><span class="lineno"> 1089</span>&#160;    <span class="comment">// Remove trailing ,</span></div>
-<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;    str.pop_back();</div>
-<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;    <span class="keywordflow">return</span> str;</div>
-<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;}</div>
-<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160; </div>
-<div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a name="l01099"></a><span class="lineno"><a class="line" href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314"> 1099</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314">save_delete</a>(T **p)</div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;{</div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;    T * tmp = __atomic_exchange_n(p, <span class="keyword">nullptr</span>, __ATOMIC_RELEASE);</div>
-<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;    <span class="keywordflow">if</span> (tmp != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;    {</div>
-<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;        <span class="keyword">delete</span> tmp;</div>
-<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;    }</div>
-<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;}</div>
-<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160; </div>
-<div class="line"><a name="l01112"></a><span class="lineno"> 1112</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ffmpeg__utils_8h.html#aa3628d67a6e01616d5f738d4aac25dc1">save_free</a>(<span class="keywordtype">void</span> **p);</div>
-<div class="line"><a name="l01113"></a><span class="lineno"> 1113</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l01090"></a><span class="lineno"> 1090</span>&#160;    <span class="keywordflow">if</span> (str.size())</div>
+<div class="line"><a name="l01091"></a><span class="lineno"> 1091</span>&#160;    {</div>
+<div class="line"><a name="l01092"></a><span class="lineno"> 1092</span>&#160;        str.pop_back();</div>
+<div class="line"><a name="l01093"></a><span class="lineno"> 1093</span>&#160;    }</div>
+<div class="line"><a name="l01094"></a><span class="lineno"> 1094</span>&#160;    <span class="keywordflow">return</span> str;</div>
+<div class="line"><a name="l01095"></a><span class="lineno"> 1095</span>&#160;}</div>
+<div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160; </div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l01102"></a><span class="lineno"><a class="line" href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314"> 1102</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314">save_delete</a>(T **p)</div>
+<div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;{</div>
+<div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;    T * tmp = __atomic_exchange_n(p, <span class="keyword">nullptr</span>, __ATOMIC_RELEASE);</div>
+<div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;    <span class="keywordflow">if</span> (tmp != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;    {</div>
+<div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;        <span class="keyword">delete</span> tmp;</div>
+<div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;    }</div>
+<div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;}</div>
+<div class="line"><a name="l01110"></a><span class="lineno"> 1110</span>&#160; </div>
+<div class="line"><a name="l01115"></a><span class="lineno"> 1115</span>&#160;<span class="keywordtype">void</span> <a class="code" href="ffmpeg__utils_8h.html#aa3628d67a6e01616d5f738d4aac25dc1">save_free</a>(<span class="keywordtype">void</span> **p);</div>
+<div class="line"><a name="l01116"></a><span class="lineno"> 1116</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassFFmpegfs__Format_html"><div class="ttname"><a href="classFFmpegfs__Format.html">FFmpegfs_Format</a></div><div class="ttdoc">The FFmpegfs_Format class.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00391">ffmpeg_utils.h:392</a></div></div>
 <div class="ttc" id="aclassFFmpegfs__Format_html_a00e5c92b14e8554d62c816a754df5eeb"><div class="ttname"><a href="classFFmpegfs__Format.html#a00e5c92b14e8554d62c816a754df5eeb">FFmpegfs_Format::desttype</a></div><div class="ttdeci">const std::string &amp; desttype() const</div><div class="ttdoc">Get destination type.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00892">ffmpeg_utils.cc:892</a></div></div>
 <div class="ttc" id="aclassFFmpegfs__Format_html_a0cc8ad4bc8774a0a2fe14269eec61627"><div class="ttname"><a href="classFFmpegfs__Format.html#a0cc8ad4bc8774a0a2fe14269eec61627">FFmpegfs_Format::is_audio_codec_supported</a></div><div class="ttdeci">bool is_audio_codec_supported(AVCodecID codec_id) const</div><div class="ttdoc">Check if audio codec/file format combination is supported.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00952">ffmpeg_utils.cc:952</a></div></div>
@@ -673,7 +676,7 @@ $(function() {
 <div class="ttc" id="affmpeg__utils_8h_html_afd66b9e47cfd370e3af3b23369bcb1e6"><div class="ttname"><a href="ffmpeg__utils_8h.html#afd66b9e47cfd370e3af3b23369bcb1e6">ffmpeg_geterror</a></div><div class="ttdeci">std::string ffmpeg_geterror(int errnum)</div><div class="ttdoc">Get FFmpeg error string for errnum. Internally calls av_strerror().</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01134">ffmpeg_utils.cc:1134</a></div></div>
 <div class="ttc" id="affmpeg__utils_8h_html_afd997ff71619fc1c81e162c059ce4541"><div class="ttname"><a href="ffmpeg__utils_8h.html#afd997ff71619fc1c81e162c059ce4541">append_sep</a></div><div class="ttdeci">const std::string &amp; append_sep(std::string *path)</div><div class="ttdoc">Add / to the path if required.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l00982">ffmpeg_utils.cc:982</a></div></div>
 <div class="ttc" id="affmpeg__utils_8h_html_afe6adc9fa61cd71af02c687341c90d62"><div class="ttname"><a href="ffmpeg__utils_8h.html#afe6adc9fa61cd71af02c687341c90d62">remove_path</a></div><div class="ttdeci">const std::string &amp; remove_path(std::string *filepath)</div><div class="ttdoc">Remove path from filename. Handy basename alternative.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01027">ffmpeg_utils.cc:1027</a></div></div>
-<div class="ttc" id="affmpeg__utils_8h_html_aff6a230afbacf53a3899c5e203daa314"><div class="ttname"><a href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314">save_delete</a></div><div class="ttdeci">void save_delete(T **p)</div><div class="ttdoc">Savely delete memory: Pointer will be set to nullptr before deleted is actually called.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l01099">ffmpeg_utils.h:1099</a></div></div>
+<div class="ttc" id="affmpeg__utils_8h_html_aff6a230afbacf53a3899c5e203daa314"><div class="ttname"><a href="ffmpeg__utils_8h.html#aff6a230afbacf53a3899c5e203daa314">save_delete</a></div><div class="ttdeci">void save_delete(T **p)</div><div class="ttdoc">Savely delete memory: Pointer will be set to nullptr before deleted is actually called.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l01102">ffmpeg_utils.h:1102</a></div></div>
 <div class="ttc" id="astructFormat__Options_1_1__tagFORMAT_html"><div class="ttname"><a href="structFormat__Options_1_1__tagFORMAT.html">Format_Options::_tagFORMAT</a></div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00275">ffmpeg_utils.h:276</a></div></div>
 <div class="ttc" id="astructFormat__Options_1_1__tagFORMAT_html_a0e047343d222d2fbb4b502909fe8f531"><div class="ttname"><a href="structFormat__Options_1_1__tagFORMAT.html#a0e047343d222d2fbb4b502909fe8f531">Format_Options::_tagFORMAT::m_video_codec</a></div><div class="ttdeci">CODEC_VECT m_video_codec</div><div class="ttdoc">AVCodec used for video encoding.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00277">ffmpeg_utils.h:277</a></div></div>
 <div class="ttc" id="astructFormat__Options_1_1__tagFORMAT_html_ae712f6db82831d954948b50d4e55cc34"><div class="ttname"><a href="structFormat__Options_1_1__tagFORMAT.html#ae712f6db82831d954948b50d4e55cc34">Format_Options::_tagFORMAT::m_subtitle_codec</a></div><div class="ttdeci">CODEC_VECT m_subtitle_codec</div><div class="ttdoc">AVCodec used for subtitle encoding.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8h_source.html#l00279">ffmpeg_utils.h:279</a></div></div>

@@ -1263,9 +1263,11 @@ static int ffmpegfs_statfs(const char *path, struct statvfs *stbuf)
     append_basepath(&origpath, path);
 
     // passthrough for regular files
-    if (statvfs(origpath.c_str(), stbuf) == 0)
+    if (!origpath.empty() && statvfs(origpath.c_str(), stbuf) == 0)
     {
-        return -errno;
+        errno = 0;  // Just to make sure - reset any error
+
+        return 0;
     }
     else
     {

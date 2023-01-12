@@ -1087,7 +1087,10 @@ std::string implode(const T &s)
     std::copy(s.begin(), s.end(), std::ostream_iterator<std::string>(stream, ","));
     std::string str(stream.str());
     // Remove trailing ,
-    str.pop_back();
+    if (str.size())
+    {
+        str.pop_back();
+    }
     return str;
 }
 

@@ -17,6 +17,8 @@
 # On Debian systems, the complete text of the GNU General Public License
 # Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
 
+set -e
+
 sed '1,/OPTIONS/d;/General\/FUSE options/,$d' ../ffmpegfs.1.text > ffmpegfshelp
 xxd -i ffmpegfshelp > $1
 rm ffmpegfshelp

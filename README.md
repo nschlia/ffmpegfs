@@ -10,6 +10,12 @@ Web site: https://nschlia.github.io/ffmpegfs/
 News
 ----
 
+### Windows Version
+
+A Windows version of FFmpegfs has frequently been requested; see Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
+
+The Windows version is currently being worked on. Unbelievably, this would-be operating system does not support expanding the length of a memory mapped file; hence, it is once again the last screw that gets jammed. Alas, the cache class makes considerable use of dynamically growing memory-mapped files. I'll have to come up with a fix for that issue.
+
 ### Version 2.13 is under development
 
 **New in in 2.13 (2023-01-XX):**

@@ -148,7 +148,7 @@ Logging::Logger::~Logger()
             }
             else
             {
-                filename = "OTHER  [" + filename + "] ";
+                filename = "OTHER   [" + filename + "] ";
             }
         }
     }

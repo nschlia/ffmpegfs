@@ -31,12 +31,7 @@
 #include "vcdentries.h"
 #include "vcdutils.h"
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
 #include <arpa/inet.h>
-#endif
-
 #include <cstring>
 #include <sys/stat.h>
 

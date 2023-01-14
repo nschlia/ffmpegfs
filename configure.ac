@@ -22,7 +22,7 @@ AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
 CFLAGS=""
 CXXFLAGS=""
 
-# Checks for programs.
+# Checks for programs
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB

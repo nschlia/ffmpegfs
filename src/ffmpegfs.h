@@ -102,7 +102,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include <fuse.h>
+#pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
 #endif
@@ -143,7 +147,7 @@ typedef enum HWACCELAPI
     HWACCELAPI_MEDIACODEC,          /**< MediaCodec API   not supported */
 #endif
 #if _WIN32
-// Windows acceleration APIs not supported
+    // Windows acceleration APIs not supported
     HWACCELAPI_DRM,                 /**< DRM              not supported */
     HWACCELAPI_DXVA2,               /**< DXVA2            not supported */
     HWACCELAPI_D3D11VA,             /**< D3D11VA          not supported */

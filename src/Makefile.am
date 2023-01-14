@@ -5,7 +5,20 @@ AM_CPPFLAGS = $(fuse_CFLAGS)
 
 bin_PROGRAMS = ffmpegfs
 ffmpegfs_SOURCES = ffmpegfs.cc ffmpegfs.h fuseops.cc transcode.cc transcode.h cache.cc cache.h buffer.cc buffer.h logging.cc logging.h cache_entry.cc cache_entry.h cache_maintenance.cc cache_maintenance.h id3v1tag.h aiff.h wave.h cuesheetparser.cc cuesheetparser.h diskio.cc diskio.h fileio.cc fileio.h ffmpeg_compat.h ffmpeg_profiles.h thread_pool.cc thread_pool.h
-ffmpegfs_LDADD = $(libcue_LIBS) $(fuse_LIBS) -lrt -lstdc++fs
+ffmpegfs_LDADD = $(libcue_LIBS) $(fuse_LIBS) -lstdc++fs
+ffmpegfs_LDFLAGS =
+if WINDOWS
+ffmpegfs_LDADD += -lws2_32 -liconv -L../win/ffmpeg/lib64 -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lswresample -lswscale
+ffmpegfs_LDFLAGS += -mconsole -Wl,-subsystem,console
+#ffmpegfs_LDFLAGS += -mwindows -Wl,-subsystem,windows
+#ffmpegfs_LDFLAGS += -mconsole
+#-mconsole -mcygwin -mno-cygwin -mdll
+#-mnop-fun-dllimport  -mthread -municode  -mwin32  -mwindows
+#-fno-set-stack-executable
+ffmpegfs_SOURCES += ../win/src/mman.c
+else
+ffmpegfs_LDADD += -lrt
+endif
 
 ffmpegfs_SOURCES += ffmpeg_base.cc ffmpeg_base.h ffmpeg_transcoder.cc ffmpeg_transcoder.h ffmpeg_utils.cc ffmpeg_utils.h ffmpeg_profiles.cc ffmpeg_frame.h ffmpeg_frame.cc ffmpeg_subtitle.h ffmpeg_subtitle.cc
 ffmpegfs_LDADD += $(libavcodec_LIBS) $(libavutil_LIBS) $(libavformat_LIBS) $(libswscale_LIBS) $(libavfilter_LIBS) $(libswresample_LIBS)

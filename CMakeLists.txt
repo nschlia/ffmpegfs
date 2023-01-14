@@ -58,6 +58,15 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+# Detect MinGW
+execute_process(COMMAND uname OUTPUT_VARIABLE uname)
+if (uname MATCHES "^MSYS" OR uname MATCHES "^MINGW")
+    message("This is MSYS")
+    SET(ISMYS 		true)
+else()
+    SET(ISMYS 		false)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -96,64 +105,70 @@ INCLUDE(FindPkgConfig)
 
 set(CONFIGURE_ARGS " ") # TODO: Mimic this
 
-PKG_CHECK_MODULES(SQLITE3 REQUIRED sqlite3>=3.7.13)
-CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_errstr         "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_ERRSTR)
-CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_db_cacheflush  "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_CACHEFLUSH)
-CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_expanded_sql   "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_EXPANDED_SQL)
+if (NOT WIN32)
+    PKG_CHECK_MODULES(SQLITE3 REQUIRED sqlite3>=3.7.13)
+    CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_errstr         "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_ERRSTR)
+    CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_db_cacheflush  "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_CACHEFLUSH)
+    CHECK_LIBRARY_EXISTS(sqlite3 sqlite3_expanded_sql   "/lib;/usr/lib;/usr/local/lib"  HAVE_SQLITE_EXPANDED_SQL)
 
-PKG_CHECK_MODULES(FUSE REQUIRED fuse>=2.6.0)
-PKG_CHECK_MODULES(LIBCUE REQUIRED libcue>=2.2.1)
-PKG_CHECK_MODULES(CHARDET REQUIRED chardet>=1.0.4)
+    PKG_CHECK_MODULES(LIBCUE REQUIRED libcue>=2.2.1)
+    if (ISMYS)
+            PKG_CHECK_MODULES(CHARDET REQUIRED uchardet>=0.0.7)
+    ELSE (ISMYS)
+            PKG_CHECK_MODULES(FUSE REQUIRED fuse>=2.6.0)
+            PKG_CHECK_MODULES(CHARDET REQUIRED chardet>=1.0.4)
 
-PKG_CHECK_MODULES(LIBAVUTIL REQUIRED libavutil>=54.3.0)
-PKG_CHECK_MODULES(LIBAVCODEC REQUIRED libavcodec>=56.1.0)
-PKG_CHECK_MODULES(LIBAVFORMAT REQUIRED libavformat>=56.1.0)
-PKG_CHECK_MODULES(LIBSWSCALE REQUIRED libswscale>=3.0.0)
-PKG_CHECK_MODULES(LIBAVFILTER REQUIRED libavfilter>=5.40.0)
-PKG_CHECK_MODULES(LIBSWRESAMPLE libswresample>=2.0.0)
-IF (LIBAVUTIL_FOUND AND LIBAVCODEC_FOUND AND LIBAVFORMAT_FOUND AND LIBSWSCALE_FOUND AND LIBAVFILTER_FOUND AND LIBSWRESAMPLE_FOUND)
-    message( "--   Sufficiently recent FFmpeg library version found." )
-    set(HAVE_FFMPEG 1)
-ENDIF (LIBAVUTIL_FOUND AND LIBAVCODEC_FOUND AND LIBAVFORMAT_FOUND AND LIBSWSCALE_FOUND AND LIBAVFILTER_FOUND AND LIBSWRESAMPLE_FOUND)
+            PKG_CHECK_MODULES(LIBAVUTIL REQUIRED libavutil>=54.3.0)
+            PKG_CHECK_MODULES(LIBAVCODEC REQUIRED libavcodec>=56.1.0)
+            PKG_CHECK_MODULES(LIBAVFORMAT REQUIRED libavformat>=56.1.0)
+            PKG_CHECK_MODULES(LIBSWSCALE REQUIRED libswscale>=3.0.0)
+            PKG_CHECK_MODULES(LIBAVFILTER REQUIRED libavfilter>=5.40.0)
+            PKG_CHECK_MODULES(LIBSWRESAMPLE libswresample>=2.0.0)
+            IF (LIBAVUTIL_FOUND AND LIBAVCODEC_FOUND AND LIBAVFORMAT_FOUND AND LIBSWSCALE_FOUND AND LIBAVFILTER_FOUND AND LIBSWRESAMPLE_FOUND)
+                message( "--   Sufficiently recent FFmpeg library version found." )
+                set(HAVE_FFMPEG 1)
+            ENDIF (LIBAVUTIL_FOUND AND LIBAVCODEC_FOUND AND LIBAVFORMAT_FOUND AND LIBSWSCALE_FOUND AND LIBAVFILTER_FOUND AND LIBSWRESAMPLE_FOUND)
+    ENDIF(ISMYS)
 
-PKG_CHECK_MODULES(LIBDVDREAD dvdread>=5.0.0)
-PKG_CHECK_MODULES(LIBBLURAY libbluray>=0.6.2)
+    PKG_CHECK_MODULES(LIBDVDREAD dvdread>=5.0.0)
+    PKG_CHECK_MODULES(LIBBLURAY libbluray>=0.6.2)
 
-# Check for doxygen. If not installed, go on, but make doxy won't work.
-FIND_PACKAGE(Doxygen
-    COMPONENTS dot)
-IF (NOT DOXYGEN_FOUND)
-    message( WARNING "Doxygen could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
-ENDIF (NOT DOXYGEN_FOUND)
+    # Check for doxygen. If not installed, go on, but make doxy won't work.
+    FIND_PACKAGE(Doxygen
+        COMPONENTS dot)
+    IF (NOT DOXYGEN_FOUND)
+        message( WARNING "Doxygen could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
+    ENDIF (NOT DOXYGEN_FOUND)
 
-# Check for curl binary. If not installed, go on, but make doxy won't work.
-find_program (CURL curl)
-IF (NOT CURL-NOTFOUND)
-    message("-- Found curl: ${CURL}")
-ELSE (NOT CURL-NOTFOUND)
-    message( WARNING "curl could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
-ENDIF (NOT CURL-NOTFOUND)
+    # Check for curl binary. If not installed, go on, but make doxy won't work.
+    find_program (CURL curl)
+    IF (NOT CURL-NOTFOUND)
+        message("-- Found curl: ${CURL}")
+    ELSE (NOT CURL-NOTFOUND)
+        message( WARNING "curl could not be found; we must continue without it. It is advised to be installed if you intend to use \"make doxy\".")
+    ENDIF (NOT CURL-NOTFOUND)
 
-# Header checks
-CHECK_INCLUDE_FILES ("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
-IF (STDC_HEADERS)
-    MESSAGE (STATUS "ANSI C header files - found")
-    SET (STDC_HEADERS 1 CACHE INTERNAL "System has ANSI C header files")
-    SET (HAVE_STDLIB_H 1 CACHE INTERNAL "Have include stdlib.h")
-    SET (HAVE_STDARG_H 1 CACHE INTERNAL "Have include stdarg.h")
-    SET (HAVE_STRING_H 1 CACHE INTERNAL "Have include string.h")
-    SET (HAVE_FLOAT_H 1 CACHE INTERNAL "Have include float.h")
-ELSE (STDC_HEADERS)
-    MESSAGE (STATUS "ANSI C header files - not found")
-    SET (STDC_HEADERS 0 CACHE INTERNAL "System has ANSI C header files")
-ENDIF (STDC_HEADERS)
-CHECK_INCLUDE_FILE("inttypes.h"     HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
-CHECK_INCLUDE_FILE("stdint.h"       HAVE_STDINT_H)
-CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
-CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
-CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
+    # Header checks
+    CHECK_INCLUDE_FILES ("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
+    IF (STDC_HEADERS)
+        MESSAGE (STATUS "ANSI C header files - found")
+        SET (STDC_HEADERS 1 CACHE INTERNAL "System has ANSI C header files")
+        SET (HAVE_STDLIB_H 1 CACHE INTERNAL "Have include stdlib.h")
+        SET (HAVE_STDARG_H 1 CACHE INTERNAL "Have include stdarg.h")
+        SET (HAVE_STRING_H 1 CACHE INTERNAL "Have include string.h")
+        SET (HAVE_FLOAT_H 1 CACHE INTERNAL "Have include float.h")
+    ELSE (STDC_HEADERS)
+        MESSAGE (STATUS "ANSI C header files - not found")
+        SET (STDC_HEADERS 0 CACHE INTERNAL "System has ANSI C header files")
+    ENDIF (STDC_HEADERS)
+    CHECK_INCLUDE_FILE("inttypes.h"     HAVE_INTTYPES_H)
+    CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
+    CHECK_INCLUDE_FILE("stdint.h"       HAVE_STDINT_H)
+    CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
+    CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
+    CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
+    CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
+endif (NOT WIN32)
 
 CHECK_TYPE_SIZE("int"               SIZEOF_INT)
 CHECK_TYPE_SIZE("long"              SIZEOF_LONG)
@@ -251,6 +266,18 @@ set(HEADERS
     src/wave.h
     src/thread_pool.h
 )
+
+if (WIN32)
+    list(APPEND SOURCES
+        win/src/mman.c
+    )
+
+    list(APPEND HEADERS
+        win/include/sys/mman.h
+    )
+
+    include_directories(AFTER "C:/cygwin64/usr/include/fuse")
+endif (WIN32)
 
 # Other files
 #test/addtest
@@ -625,6 +652,11 @@ add_dependencies(doxy help-html)
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src/ ${CMAKE_CURRENT_SOURCE_DIR}/src/ /usr/include/fuse/ /usr/include/chardet/)
 # Debug library
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC "$ENV{HOME}/dev/builds/ffmpeg/include")
+if (ISMYS)
+	target_include_directories(${PROJECT_NAME} BEFORE PUBLIC "src/win/win64/ffmpeg/dev/include")
+	target_include_directories(${PROJECT_NAME} BEFORE PUBLIC "src/win/win64/winfsp/inc/fuse")
+	target_include_directories(${PROJECT_NAME} BEFORE PUBLIC "src/win/include")
+ENDIF(ISMYS)
 target_link_directories(${PROJECT_NAME} BEFORE PRIVATE "$ENV{HOME}/dev/builds/ffmpeg/lib")
 
 set(FLAGS "-Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic -Wall")

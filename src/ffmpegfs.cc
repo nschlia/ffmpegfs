@@ -47,6 +47,10 @@ extern "C" {
 }
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "ffmpegfs.h"
 #include "logging.h"
 #include "ffmpegfshelp.h"
@@ -2260,6 +2264,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+#ifndef __CYGWIN__
+    // No requirement for Windows, must be drive letter in fact
     if (params.m_mountpath.front() != '/')
     {
         std::fprintf(stderr, "INVALID PARAMETER: mountpath must be an absolute path.\n\n");
@@ -2271,6 +2277,7 @@ int main(int argc, char *argv[])
         std::fprintf(stderr, "INVALID PARAMETER: mountpath is not a valid directory: %s\n\n", params.m_mountpath.c_str());
         return 1;
     }
+#endif  // !__CYGWIN__
 
     // Check if sample format is supported
     for (const FFmpegfs_Format & fmt : ffmpeg_format)

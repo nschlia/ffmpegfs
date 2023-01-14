@@ -618,6 +618,7 @@ bool Buffer::reserve(size_t size)
         return true;
     }
 
+#ifdef HAVE_MREMAP
     m_cur_ci->m_buffer = static_cast<uint8_t*>(mremap(m_cur_ci->m_buffer, m_cur_ci->m_buffer_size, size, MREMAP_MAYMOVE));
     if (m_cur_ci->m_buffer == MAP_FAILED)
     {
@@ -634,6 +635,33 @@ bool Buffer::reserve(size_t size)
         Logging::error(m_cur_ci->m_cachefile, "Error calling ftruncate() to resize the file: (%1) %2 (fd = %3)", errno, strerror(errno), m_cur_ci->m_fd);
         return false;
     }
+#else   // !HAVE_MREMAP
+    size_t buffer_watermark = m_cur_ci->m_buffer_watermark;
+
+    // No mremap() available, so close and reopen file
+    if (!unmap_file(m_cur_ci->m_cachefile, &m_cur_ci->m_fd, &m_cur_ci->m_buffer, m_cur_ci->m_buffer_size, &buffer_watermark))
+    {
+        return false;
+    }
+
+    size_t filesize     = size;
+    bool isdefaultsize  = true;
+    uint8_t *p          = nullptr;
+
+    if (!map_file(m_cur_ci->m_cachefile, &m_cur_ci->m_fd, &p, &filesize, &isdefaultsize, static_cast<off_t>(filesize), false))
+    {
+        return false;
+    }
+
+    //if (!isdefaultsize)
+    //{
+    //    m_cur_ci->m_buffer_pos = m_cur_ci->m_buffer_watermark = filesize;
+    //}
+
+    m_cur_ci->m_buffer_size       = filesize;
+    m_cur_ci->m_buffer            = static_cast<uint8_t*>(p);
+
+#endif   // !HAVE_MREMAP
 
     return true;
 }

@@ -6,8 +6,8 @@ export OPTIMISATION = -DNDEBUG -Ofast -g
 endif
 
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
-export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
-export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
 if ENABLE_EXTRA_VERSION
 export AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
 export AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
@@ -21,7 +21,7 @@ dist_man_MANS = ffmpegfs.1
 
 MAINTAINERCLEANFILES = ffmpegfs.1
 
-EXTRA_DIST = INSTALL.md README.md HISTORY.md PROBLEMS.md FEATURES.md ffmpegfs.1.txt src/makehelp.sh
+EXTRA_DIST = INSTALL.md README.md HISTORY.md PROBLEMS.md FEATURES.md ffmpegfs.1.txt WINDOWS.md src/makehelp.sh
 
 #CLEANFILES =
 
@@ -89,6 +89,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "INPUT                  += HISTORY.md" >> doxyfile.inc
 	@echo "INPUT                  += PROBLEMS.md" >> doxyfile.inc
 	@echo "INPUT                  += FEATURES.md" >> doxyfile.inc
+	@echo "INPUT                  += WINDOWS.md" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += NEWS" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += TODO" >> doxyfile.inc
 	@echo "EXAMPLE_PATH           += COPYING" >> doxyfile.inc

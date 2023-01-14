@@ -1113,4 +1113,23 @@ void save_delete(T **p)
  * @param[inout] p - Pointer to delete
  */
 void save_free(void **p);
+
+#ifdef __CYGWIN__
+
+#include <sys/cygwin.h>
+
+/**
+ * @brief Inbound Win32 path to POSIX path conversion. Stick to the relative path of the incoming path.
+ * @param[in] win32 - Windows path to convert
+ * @return Path for POSIX
+ */
+std::string win2posix(const char * win32);
+/**
+ * @brief Inbound POSIX path to Win32 path conversion. Stick to the relative path of the incoming path.
+ * @param[in] posix - POSIX path to convert
+ * @return Path for Windows
+ */
+std::string posix2win(const char * posix);
+#endif  // __CYGWIN__
+
 #endif

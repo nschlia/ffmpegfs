@@ -2,7 +2,7 @@
 
 # Sets up package and initializes build system.
 AC_PREREQ(2.57)
-AC_INIT([FFMPEGFS], [2.13])
+AC_INIT([FFMPEGFS], [2.20])
 AC_CONFIG_SRCDIR([src/ffmpegfs.cc])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([config])
@@ -67,6 +67,23 @@ AS_IF([test "$ac_cv_sizeof_pthread_t" = "$ac_cv_sizeof_long"],
   [AC_MSG_RESULT(int)
    AC_DEFINE([FFMPEGFS_FORMAT_PTHREAD_T], ["x"], [format string for pthread_t])])
 
+# Function checks
+AC_CHECK_FUNC([mremap], [AC_DEFINE([HAVE_MREMAP], ["1"], [Have a mremap() function])])
+
+# For Windows, we need to replace some libraries with own builds
+case $host in
+  *-*-mingw32* | *-*-cygwin* | *-*-windows*)
+    AC_MSG_NOTICE([Detected Windows build])
+    use_local_libs=yes
+    ;;
+  *)
+    use_local_libs=no
+    ;;
+esac
+AM_CONDITIONAL([WINDOWS],[test "x${use_local_libs}" = xyes])
+AM_CONDITIONAL([MINGW],[test *-*-mingw32*])
+AM_CONDITIONAL([CYGWIN],[test *-*-cygwin*])
+
 # Large file support
 AC_SYS_LARGEFILE
 
@@ -77,6 +94,25 @@ AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
 PKG_PROG_PKG_CONFIG
 
 # Checks for packages which use pkg-config.
+#PKG_CHECK_MODULES([FOO], [libfoo], [have_libfoo=yes], [have_libfoo=no])
+if test "x${use_local_libs}" = xyes ; then
+    AC_MSG_NOTICE([Using own FFMpeg libraries])
+    WIN_DIR="../win/"
+    WIN_CPPFLAGS="-I../win/include -L/usr/lib"
+    WIN_LDFLAGS=""
+    
+    # Need to tell pkg-config where to find the Fuse library
+    export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig
+else
+    # Use pre-installed package
+    WIN_DIR=""
+    WIN_CPPFLAGS=""
+    WIN_LDFLAGS=""
+fi
+
+AC_SUBST(WIN_CPPFLAGS)
+AC_SUBST(WIN_LDFLAGS)
+
 PKG_CHECK_MODULES([chardet], [chardet >= 1.0.4])
 PKG_CHECK_MODULES([fuse], [fuse >= 2.6.0])
 PKG_CHECK_MODULES([libcue], [libcue >= 2.1.0])
@@ -125,24 +161,32 @@ dnl FFmpeg support checks
 #
 # May work with older versions but this is not guaranteed.
 
-PKG_CHECK_MODULES([libavutil], [libavutil >= 56.22.100],
-    [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 58.35.100],
+if test "x${use_local_libs}" = xyes ; then
+    AC_MSG_NOTICE([TODO: lokale FFmpeg library])
+    WIN_CPPFLAGS="${WIN_CPPFLAGS} -I${WIN_DIR}/ffmpeg/include -DWIN_FFMPEG=1"
+    #WIN_LDFLAGS="${WIN_LDFLAGS}"
+else
+    AC_MSG_CHECKING([Doing FFmpeg support checks])
+
+    PKG_CHECK_MODULES([libavutil], [libavutil >= 56.22.100],
+        [PKG_CHECK_MODULES([libavcodec], [libavcodec >= 58.35.100],
         [PKG_CHECK_MODULES([libavformat], [libavformat >= 58.20.100],
             [PKG_CHECK_MODULES([libavfilter], [libavfilter >= 7.40.101],
-                [PKG_CHECK_MODULES([libswscale], [libswscale >= 5.3.100],
-                    [PKG_CHECK_MODULES([libswresample], [libswresample >= 3.3.100],
-                        [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
-                    )
-                    ]
+            [PKG_CHECK_MODULES([libswscale], [libswscale >= 5.3.100],
+                [PKG_CHECK_MODULES([libswresample], [libswresample >= 3.3.100],
+                [AC_DEFINE([HAVE_FFMPEG], [1], [Use FFMPEG libraries.])]
                 )
                 ]
             )
             ]
+            )
+            ]
+        )
+        ]
         )
         ]
     )
-    ]
-)
+fi
 
 # Optional libraries
 dnl Check for libdvdread

@@ -55,8 +55,8 @@ Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungk
 # cd install
 ~/install # wget https://github.com/Joungkyun/libchardet/releases/download/1.0.6/libchardet-1.0.6.tar.bz2
 Length: 435028 (425K) [application/octet-stream]
-Saving to: ‘libchardet-1.0.6.tar.bz2’
-2023-01-07 12:19:06 (6.41 MB/s) - ‘libchardet-1.0.6.tar.bz2’ saved [435028/435028]
+Saving to: â€˜libchardet-1.0.6.tar.bz2â€™
+2023-01-07 12:19:06 (6.41 MB/s) - â€˜libchardet-1.0.6.tar.bz2â€™ saved [435028/435028]
 ~/install # tar -xf libchardet-1.0.6.tar.bz2
 ~/install # cd libchardet-1.0.6
 ~/install # ./configure
@@ -69,7 +69,7 @@ As of yet I could not successfully build it. Bluray support will not be availabl
 
 #### Get The Windows FFmpeg Binaries
 
-Look at the download page of the [FFmpeg Homepages] (https://ffmpeg.org/download.html#build-windows) to obtain pre-built Windows binaries. Download it right away, for instance, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip).
+Look at the download page of the [FFmpeg Homepages](https://ffmpeg.org/download.html#build-windows) to obtain pre-built Windows binaries. Download it right away, for instance, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip).
 
 Should you feel lucky and want to build the binaries yourself, you may also use FFmpeg Windows Build Helpers, which can be obtained [here](https://github.com/rdp/ffmpeg-windows-build-helpers).
 

@@ -166,7 +166,7 @@ Get the most recent release archive here:
 
 As I frequently fail to update this URL, you can check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
 
-Alternatively, utilise these instructions, being sure to download the most recent version: 
+Alternatively, utilise these instructions, being sure to download the most recent version:
 
 ```
 curl -s https://api.github.com/repos/nschlia/ffmpegfs/releases/latest | \

@@ -68,6 +68,15 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
+<div class="line">Important changes in 2.14 (2023-01-XX):</div>
+<div class="line"> </div>
+<div class="line">* Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved</div>
+<div class="line">  memory management by allocating several times the average size of</div>
+<div class="line">  allocations far. This prevents obtaining tiny portions over and over again.</div>
+<div class="line">  Additionally, after the file is opened, grabbing the entire expected memory</div>
+<div class="line">  block rather than doing a tiny allocation initially, followed by a larger</div>
+<div class="line">  allocation.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.13 (2023-01-15):</div>
 <div class="line"> </div>
 <div class="line">* Added --prebuffer_time parameter. Files will be decoded until the buffer</div>

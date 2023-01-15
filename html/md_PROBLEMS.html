@@ -66,14 +66,14 @@ $(function() {
 <div class="title">Fixing Problems </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md66"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md67"></a>
 General problems accessing a file</h1>
 <p>Due to the nature in which FFmpegfs works, if anything goes wrong, it can only report a general error. That means, when there is a problem accessing a file, copying or opening it, you will get an "Invalid argument" or "Operation not permitted". Not really informative. There is no way to pass the original result code through the file system.</p>
 <p>What you will have to do is refer to the syslog, system journal, or to the FFmpeg log itself, optionally at a higher verbosity. If you are unable to resolve the problem yourself, feel free to create <a href="https://github.com/nschlia/ffmpegfs/issues">an issue</a>, stating what you have done and what has happened. Do not forget to add logs (preferably at a higher verbosity) and, if possible, a description of how to recreate the issue. It would also be helpful to have an example of the media file that is generating the error. Copyrighted material should never be sent, nevertheless.</p>
-<h1><a class="anchor" id="autotoc_md67"></a>
+<h1><a class="anchor" id="autotoc_md68"></a>
 Transcoding too slow</h1>
 <p>Slow transcoding can be caused by a variety of factors, including a slow CPU or network issues. This might help with decoding and encoding speed: <a href="INSTALL.md#building-ffmpeg-with-optimisations">Building FFmpeg with optimisations</a>.</p>
-<h1><a class="anchor" id="autotoc_md68"></a>
+<h1><a class="anchor" id="autotoc_md69"></a>
 Lock ups when accessed through Samba</h1>
 <p>When accessed from a Samba drive, the pending read can lock the whole share, causing Windows Explorer and even KDE Dolphin to freeze. Any access from the same machine to that share is blocked. Even "ls" is not possible and blocks until the data is returned.</p>
 <p>It seems others had the same problem:</p>
@@ -82,12 +82,12 @@ Lock ups when accessed through Samba</h1>
 level2 oplocks = no
 aio read size = 1
 </pre><p> The "aio read size" parameter may be moved to the share config: </p><pre class="fragment">aio read size = 1
-</pre> <h1><a class="anchor" id="autotoc_md69"></a>
+</pre> <h1><a class="anchor" id="autotoc_md70"></a>
 rsync, Beyond Compare and other tools</h1>
 <p>Some copy tools do not get along very well with dynamically generated files, as in <a href="https://github.com/nschlia/ffmpegfs/issues/22">Issue #23: Partial transcode of some files</a>.</p>
 <p>Under Linux, it is best to use (optionally with the -r parameter) </p><pre class="fragment">    cp -uv /path/to/source /path/to/target
 </pre><p> This will copy all missing or changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Beyond Compare and similar tools might simply copy the anticipated size and not react to size changes.</p>
-<h1><a class="anchor" id="autotoc_md70"></a>
+<h1><a class="anchor" id="autotoc_md71"></a>
 Open hls.html from disk to play HLS output.</h1>
 <p>The majority of browsers forbid playing back files from disc. You may put them into a website directory, however sometimes https must be used in order to allow playback.</p>
 <p><b>To enable disk playback in Firefox:</b></p>
@@ -95,7 +95,7 @@ Open hls.html from disk to play HLS output.</h1>
 <li>Open about:config</li>
 <li>Set security.fileuri.strict_origin_policy to false.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md71"></a>
+<h1><a class="anchor" id="autotoc_md72"></a>
 Songs get cut short</h1>
 <p>If you are using SAMBA or NFS and songs don't play all the way through, you're in trouble.</p>
 <p>It occurs when files are transcoded live, but never when a file is retrieved from cache. This is because the final size seldom comes out exactly as expected. Size information is only available up front when a cached file is returned.</p>

@@ -1,4 +1,4 @@
-EXTRA_DIST = $(wildcard scripts/*)
+EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/bin64/readme.txt ../win/ffmpeg/bin/readme.txt ../win/ffmpeg/include/readme.txt ../win/ffmpeg/lib64/readme.txt ../win/ffmpeg/lib/readme.txt
 
 # Add fuse
 AM_CPPFLAGS = $(fuse_CFLAGS)
@@ -15,7 +15,7 @@ ffmpegfs_LDFLAGS += -mconsole -Wl,-subsystem,console
 #-mconsole -mcygwin -mno-cygwin -mdll
 #-mnop-fun-dllimport  -mthread -municode  -mwin32  -mwindows
 #-fno-set-stack-executable
-ffmpegfs_SOURCES += ../win/src/mman.c
+ffmpegfs_SOURCES += ../win/src/mman.c ../win/include/sys/mman.h
 else
 ffmpegfs_LDADD += -lrt
 endif

@@ -16,9 +16,9 @@ A Windows version of FFmpegfs has frequently been requested; see Issue [#76](htt
 
 To get what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
-### Version 2.13 is under development
+### Version 2.13 has been released
 
-**New in in 2.13 (2023-01-XX):**
+**New in in 2.13 (2023-01-15):**
 
 - **Feature:** Added --prebuffer_time parameter. Files will be decoded until the  buffer contains the specified playing time, allowing playback to start
  smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
@@ -27,16 +27,6 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. 
 The outdated *—extensions* argument was removed without substitution.
 - **Bugfix:** Fixed crash when implode() function was called with an empty string. Happened with Windows GCC 11.3.0 only.
-
-### Version 2.12 has been released
-
-**New in in 2.12 (2022-08-27):**
-
-- The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.
-- **Bugfix:** In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.
-- **Bugfix:** Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.
-- **Bugfix:** An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.
-- **Bugfix:** Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate.
 
 ## Full History
 

@@ -16,6 +16,14 @@ A Windows version of FFmpegfs has frequently been requested; see Issue [#76](htt
 
 To get what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
+### Version 2.14 under development
+
+**New in in 2.14 (2023-01-XX):**
+
+- Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
+
+  Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+
 ### Version 2.13 has been released
 
 **New in in 2.13 (2023-01-15):**
@@ -24,7 +32,7 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
  smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
 - **Feature:** Closes [#140](https://github.com/nschlia/ffmpegfs/issues/140): Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the *—include_extensions* parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.
 - **Feature:** The --hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.
-- **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. 
+- **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format.
 The outdated *—extensions* argument was removed without substitution.
 - **Bugfix:** Fixed crash when implode() function was called with an empty string. Happened with Windows GCC 11.3.0 only.
 

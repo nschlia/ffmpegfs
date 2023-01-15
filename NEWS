@@ -1,5 +1,14 @@
 FFmpegfs NEWS
 
+Important changes in 2.14 (2023-01-XX):
+
+* Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved
+  memory management by allocating several times the average size of
+  allocations far. This prevents obtaining tiny portions over and over again.
+  Additionally, after the file is opened, grabbing the entire expected memory
+  block rather than doing a tiny allocation initially, followed by a larger
+  allocation.
+
 Important changes in 2.13 (2023-01-15):
 
 * Added --prebuffer_time parameter. Files will be decoded until the buffer

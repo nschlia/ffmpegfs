@@ -1236,18 +1236,11 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     m_out.m_audio.m_stream                  = nullptr;
 
     // Open for read/write
-    if (!buffer->open_file(0, CACHE_FLAG_RW))
-    {
-        return AVERROR(EPERM);
-    }
-
     // Pre-allocate the predicted file size to reduce memory reallocations
     size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
-    if (buffer->size() < buffsize && !buffer->reserve(buffsize))
+    if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
     {
-        int orgerrno = errno;
-        Logging::error(virtname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        return AVERROR(orgerrno);
+        return AVERROR(EPERM);
     }
 
     return 0;
@@ -1320,18 +1313,11 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     }
 
     // Open for read/write
-    if (!buffer->open_file(0, CACHE_FLAG_RW))
-    {
-        return AVERROR(EPERM);
-    }
-
     // Pre-allocate the predicted file size to reduce memory reallocations
     size_t buffsize = predicted_filesize();
-    if (buffer->size() < buffsize && !buffer->reserve(buffsize))
+    if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
     {
-        int orgerrno = errno;
-        Logging::error(virtname(), "Error pre-allocating %1 bytes buffer: (%2) %3", buffsize, errno, strerror(errno));
-        return AVERROR(orgerrno);
+        return AVERROR(EPERM);
     }
 
     ret = process_output();

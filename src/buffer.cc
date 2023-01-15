@@ -74,7 +74,7 @@ int Buffer::openio(LPVIRTUALFILE virtualfile)
     return 0;
 }
 
-bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
+bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 {
     uint32_t index = segment_no;
     if (index)
@@ -104,7 +104,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
     bool isdefaultsize  = false;
     uint8_t *p          = nullptr;
 
-    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, 0, (flags & CACHE_FLAG_RW) ? true : false))
+    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, defaultsize, (flags & CACHE_FLAG_RW) ? true : false))
     {
         return false;
     }
@@ -116,6 +116,8 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
 
     m_ci[index].m_buffer_size       = filesize;
     m_ci[index].m_buffer            = static_cast<uint8_t*>(p);
+    m_ci[index].m_buffer_write_size = 0;
+    m_ci[index].m_buffer_writes     = 0;
 
     ++m_cur_open;   // track open files
 
@@ -235,6 +237,8 @@ bool Buffer::init(bool erase_cache)
             m_ci[index].m_buffer_pos        = 0;
             m_ci[index].m_buffer_watermark  = 0;
             m_ci[index].m_buffer_size       = 0;
+            m_ci[index].m_buffer_write_size = 0;
+            m_ci[index].m_buffer_writes     = 0;
 
             if (erase_cache)
             {
@@ -275,11 +279,13 @@ bool Buffer::init(bool erase_cache)
         {
             for (uint32_t index = 0; index < segment_count(); index++)
             {
-                m_ci[index].m_fd                  = -1;
-                m_ci[index].m_buffer              = nullptr;
-                m_ci[index].m_buffer_pos          = 0;
-                m_ci[index].m_buffer_watermark    = 0;
-                m_ci[index].m_buffer_size         = 0;
+                m_ci[index].m_fd                = -1;
+                m_ci[index].m_buffer            = nullptr;
+                m_ci[index].m_buffer_pos        = 0;
+                m_ci[index].m_buffer_watermark  = 0;
+                m_ci[index].m_buffer_size       = 0;
+                m_ci[index].m_buffer_write_size = 0;
+                m_ci[index].m_buffer_writes     = 0;
             }
         }
     }
@@ -302,7 +308,7 @@ bool Buffer::set_segment(uint32_t segment_no, size_t size)
         return false;
     }
 
-    if (!open_file(segment_no, CACHE_FLAG_RW))
+    if (!open_file(segment_no, CACHE_FLAG_RW, size))
     {
         return false;
     }
@@ -342,11 +348,18 @@ bool Buffer::segment_exists(uint32_t segment_no)
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const
+bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
 {
     bool success = true;
 
-    Logging::trace(filename, "Mapping cache file.");
+    if (!defaultsize)
+    {
+        Logging::trace(filename, "Mapping cache file.");
+    }
+    else
+    {
+        Logging::error(filename, "Mapping cache file. Size %1", defaultsize);
+    }
 
     try
     {
@@ -371,22 +384,22 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
             throw false;
         }
 
-        if (!sb.st_size || *isdefaultsize)
+        if (!sb.st_size || defaultsize)
         {
             // If file is empty or did not exist set file size to default
 
             if (!defaultsize)
             {
-                defaultsize = sysconf(_SC_PAGESIZE);
+                defaultsize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
             }
 
-            if (ftruncate(*fd, defaultsize) == -1)
+            if (ftruncate(*fd, static_cast<off_t>(defaultsize)) == -1)
             {
                 Logging::error(filename, "Error calling ftruncate() to 'stretch' the file: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
                 throw false;
             }
 
-            *filesize       = static_cast<size_t>(defaultsize);
+            *filesize       = defaultsize;
             *isdefaultsize  = true;
         }
         else
@@ -571,10 +584,12 @@ bool Buffer::clear()
     {
         LPCACHEINFO ci = &m_ci[n];
 
-        ci->m_buffer_pos          = 0;
-        ci->m_buffer_watermark    = 0;
-        ci->m_buffer_size         = 0;
-        ci->m_seg_finished        = false;
+        ci->m_buffer_pos        = 0;
+        ci->m_buffer_watermark  = 0;
+        ci->m_buffer_size       = 0;
+        ci->m_seg_finished      = false;
+        ci->m_buffer_write_size = 0;
+        ci->m_buffer_writes     = 0;
 
         if (ci->m_fd != -1)
         {
@@ -683,6 +698,9 @@ size_t Buffer::writeio(const uint8_t* data, size_t length)
     }
     else
     {
+        m_cur_ci->m_buffer_write_size += length;
+        m_cur_ci->m_buffer_writes++;
+
         memcpy(write_ptr, data, length);
         increment_pos(length);
     }
@@ -934,14 +952,26 @@ bool Buffer::reallocate(size_t newsize)
 {
     if (newsize > size())
     {
-        size_t oldsize = size();
+        if (m_cur_ci->m_buffer_writes)
+        {
+            size_t alloc_size = newsize - size();
+            size_t write_avg = m_cur_ci->m_buffer_write_size / m_cur_ci->m_buffer_writes;
+            size_t write_size = 5 * write_avg;
+            if (write_size > alloc_size)
+            {
+                alloc_size = write_size;
+
+                newsize = size() + alloc_size;
+
+            }
+        }
+
+        Logging::trace(filename(), "Buffer reallocate: %1 -> %2 (Diff %3).", size(), newsize, newsize - size());
 
         if (!reserve(newsize))
         {
             return false;
         }
-
-        Logging::trace(filename(), "Buffer reallocate: %1 -> %2.", oldsize, newsize);
     }
     return true;
 }

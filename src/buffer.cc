@@ -74,7 +74,7 @@ int Buffer::openio(LPVIRTUALFILE virtualfile)
     return 0;
 }
 
-bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
+bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 {
     uint32_t index = segment_no;
     if (index)
@@ -104,7 +104,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags)
     bool isdefaultsize  = false;
     uint8_t *p          = nullptr;
 
-    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, 0, (flags & CACHE_FLAG_RW) ? true : false))
+    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, defaultsize, (flags & CACHE_FLAG_RW) ? true : false))
     {
         return false;
     }
@@ -308,7 +308,7 @@ bool Buffer::set_segment(uint32_t segment_no, size_t size)
         return false;
     }
 
-    if (!open_file(segment_no, CACHE_FLAG_RW))
+    if (!open_file(segment_no, CACHE_FLAG_RW, size))
     {
         return false;
     }
@@ -348,11 +348,18 @@ bool Buffer::segment_exists(uint32_t segment_no)
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const
+bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
 {
     bool success = true;
 
-    Logging::trace(filename, "Mapping cache file.");
+    if (!defaultsize)
+    {
+        Logging::trace(filename, "Mapping cache file.");
+    }
+    else
+    {
+        Logging::error(filename, "Mapping cache file. Size %1", defaultsize);
+    }
 
     try
     {
@@ -377,22 +384,22 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
             throw false;
         }
 
-        if (!sb.st_size || *isdefaultsize)
+        if (!sb.st_size || defaultsize)
         {
             // If file is empty or did not exist set file size to default
 
             if (!defaultsize)
             {
-                defaultsize = sysconf(_SC_PAGESIZE);
+                defaultsize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
             }
 
-            if (ftruncate(*fd, defaultsize) == -1)
+            if (ftruncate(*fd, static_cast<off_t>(defaultsize)) == -1)
             {
                 Logging::error(filename, "Error calling ftruncate() to 'stretch' the file: (%1) %2 (fd = %3)", errno, strerror(errno), *fd);
                 throw false;
             }
 
-            *filesize       = static_cast<size_t>(defaultsize);
+            *filesize       = defaultsize;
             *isdefaultsize  = true;
         }
         else

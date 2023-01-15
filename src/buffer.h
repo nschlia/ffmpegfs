@@ -350,10 +350,11 @@ public:
     /**
      * @brief Open the cache file if not already open.
      * @param[in] segment_no - [0..n-1] Index of segment file number.
-     * @param[in] flags - CACHE_FLAG_* options
+     * @param[in] flags - CACHE_FLAG_* options.
+     * @param[in] defaultsize - If nonzero, after opening, the file will be resized to this value. Works on writeable files only.
      * @return Returns true if the operation was successful or the file was already open; false otherwise.
      */
-    bool                    open_file(uint32_t segment_no, uint32_t flags);
+    bool                    open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize = 0);
     /**
      * @brief If it hasn't already been done, close the cache file.
      * @param[in] segment_no - [0..n-1] Index of segment file number.
@@ -419,7 +420,7 @@ private:
      * @param[out] truncate - If true, when the file is opened, it is truncated.
      * @return Returns true if successful and fd, p, filesize, and isdefaultsize are filled in, or false on error.
      */
-    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, off_t defaultsize, bool truncate) const;
+    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const;
     /**
      * @brief Unmap memory from the file.
      * @param[in] filename - Name of cache file to unmap.

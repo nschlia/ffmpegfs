@@ -90,6 +90,9 @@ public:
         size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
         // Flags
         uint32_t                m_flags;                        /**< @brief CACHE_FLAG_* options */
+        // Statistics
+        size_t                  m_buffer_write_size;            /**< @brief Sum of bytes written to the buffer */
+        unsigned int            m_buffer_writes;                /**< @brief Total number of writes to the buffer */
     } CACHEINFO, *LPCACHEINFO;                                  /**< @brief Pointer version of CACHEINFO */
     typedef CACHEINFO const * LPCCACHEINFO;                     /**< @brief Pointer to const version of CACHEINFO */
 

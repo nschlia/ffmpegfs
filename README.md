@@ -10,11 +10,11 @@ Web site: https://nschlia.github.io/ffmpegfs/
 News
 ----
 
-### Windows Version
+### Version 2.20 under development
 
-A Windows version of FFmpegfs has frequently been requested; see Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
+**New in in 2.20 (2023-01-XX):**
 
-To get what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
+- Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76): Added Windows support, see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. Currently no pre-compiled binaries are available.
 
 ### Version 2.14 under development
 

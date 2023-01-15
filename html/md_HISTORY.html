@@ -66,7 +66,17 @@ $(function() {
 <div class="title">History </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2><a class="anchor" id="autotoc_md53"></a>
+<div class="textblock"><h2><a class="anchor" id="autotoc_md52"></a>
+Version 2.13 has been released</h2>
+<p><b>New in in 2.13 (2023-01-15):</b></p>
+<ul>
+<li><b>Feature:</b> Added &ndash;prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags. Works similar to &ndash;prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.</li>
+<li><b>Feature:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/140">#140</a>: Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the <em>—include_extensions</em> parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.</li>
+<li><b>Feature:</b> The &ndash;hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.</li>
+<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
+<li><b>Bugfix:</b> Fixed crash when <a class="el" href="ffmpeg__utils_8h.html#a46d38ea5258c96af692914e3098e5bad" title="Combine array of strings into comma separated list.">implode()</a> function was called with an empty string. Happened with Windows GCC 11.3.0 only.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md53"></a>
 Version 2.12 released</h2>
 <p><b>New in in 2.12 (2022-08-27):</b></p>
 <ul>

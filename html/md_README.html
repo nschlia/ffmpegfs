@@ -74,10 +74,10 @@ News</h1>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Windows Version</h2>
 <p>A Windows version of FFmpegfs has frequently been requested; see Issue <a href="https://github.com/nschlia/ffmpegfs/issues/76">#76</a> for more information. In essence, this failed because Windows doesn't support Fuse. I discovered <a href="https://winfsp.dev/">WinFSP</a>, which offers everything necessary.</p>
-<p>The Windows version is currently being worked on. Unbelievably, this would-be operating system does not support expanding the length of a memory mapped file; hence, it is once again the last screw that gets jammed. Alas, the cache class makes considerable use of dynamically growing memory-mapped files. I'll have to come up with a fix for that issue.</p>
+<p>To get what's been done so far, checkout the <a href="https://github.com/nschlia/ffmpegfs/tree/windows">windows</a> branch.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
-Version 2.13 is under development</h2>
-<p><b>New in in 2.13 (2023-01-XX):</b></p>
+Version 2.13 has been released</h2>
+<p><b>New in in 2.13 (2023-01-15):</b></p>
 <ul>
 <li><b>Feature:</b> Added &ndash;prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags. Works similar to &ndash;prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.</li>
 <li><b>Feature:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/140">#140</a>: Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the <em>—include_extensions</em> parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.</li>
@@ -85,20 +85,10 @@ Version 2.13 is under development</h2>
 <li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
 <li><b>Bugfix:</b> Fixed crash when <a class="el" href="ffmpeg__utils_8h.html#a46d38ea5258c96af692914e3098e5bad" title="Combine array of strings into comma separated list.">implode()</a> function was called with an empty string. Happened with Windows GCC 11.3.0 only.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md5"></a>
-Version 2.12 has been released</h2>
-<p><b>New in in 2.12 (2022-08-27):</b></p>
-<ul>
-<li>The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.</li>
-<li><b>Bugfix:</b> In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.</li>
-<li><b>Bugfix:</b> Several unlikely, but potential problems that could have happened when subtitle decoding failed or delayed video/audio packets couldn't be decoded have been fixed.</li>
-<li><b>Bugfix:</b> An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.</li>
-<li><b>Bugfix:</b> Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate.</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md6"></a>
+<h1><a class="anchor" id="autotoc_md5"></a>
 Full History</h1>
 <p>See <a class="el" href="md_HISTORY.html">history</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Code Status</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -119,18 +109,18 @@ Code Status</h1>
 <td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/tree/master">master</a>   </td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"></td><td class="markdownTableBodyNone"><a href="https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml"><img src="https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg" alt="CodeQL" style="pointer-events: none;" class="inline"/></a>   </td></tr>
 </table>
 <p><a href="https://repology.org/project/ffmpegfs/versions"><img src="https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4" alt="Packaging status" style="pointer-events: none;" class="inline"/></a></p>
-<h1><a class="anchor" id="autotoc_md8"></a>
+<h1><a class="anchor" id="autotoc_md7"></a>
 Supported Formats</h1>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 Input</h2>
 <p>Making a full list of the formats the FFmpeg API supports would be somewhat pointless. See <a href="https://ffmpeg.org/ffmpeg-formats.html#Demuxers">Demuxers</a> on FFmpeg's home pages and <a href="https://en.wikipedia.org/wiki/FFmpeg#Supported_formats">Supported Formats</a> on Wikipedia to get an idea.</p>
 <p>Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out:</p>
 <div class="fragment"><div class="line">ffmpeg -formats</div>
 </div><!-- fragment --><p>A list of the available codecs will be created as a result.</p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 Output</h2>
 <p>Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions.</p>
-<h3><a class="anchor" id="autotoc_md11"></a>
+<h3><a class="anchor" id="autotoc_md10"></a>
 Audio Formats</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -148,7 +138,7 @@ Audio Formats</h3>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">WAV   </td><td class="markdownTableBodyNone">Waveform Audio File Format   </td><td class="markdownTableBodyNone">PCM 16 bit LE   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md12"></a>
+<h3><a class="anchor" id="autotoc_md11"></a>
 Video Formats</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -168,7 +158,7 @@ Video Formats</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">WebM   </td><td class="markdownTableBodyNone">Free Open Web Media Project   </td><td class="markdownTableBodyNone">VP9   </td><td class="markdownTableBodyNone">Opus   </td></tr>
 </table>
-<h3><a class="anchor" id="autotoc_md13"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 Stills</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -180,20 +170,20 @@ Stills</h3>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">PNG   </td><td class="markdownTableBodyNone">Video to frameset   </td><td class="markdownTableBodyNone">PNG   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 What can it do?</h2>
 <p>You can use a collection of several media files with software and/or hardware that only supports one of the permitted output formats or convert files using simple drag-and-drop operations in a file browser with FFmpegfs.</p>
 <p>Choose WebM or MP4 for live streaming for the best results. While <em>MP3</em> will work if video transcoding is not needed, <em>WebM</em> and <em>MP4</em> produce superior results. The <em>OGG</em> encoder is too slow for real-time file recoding.</p>
 <p>All the frames from a video source file will be displayed in a virtual directory called after the source file when a destination of <em>JPG</em>, <em>PNG</em>, or <em>BMP</em> is selected. Audio will not be available.</p>
 <p>By choosing <em>HLS</em>, TS segments and an M3U playlist (master.m3u8 and index 0 av.m3u8) are created in a directory. A generated hls.html file that can be accessed in a browser can also be used to play the segments.</p>
 <p>Please be aware that since most browsers cannot open the files from disc due to restrictions, they must be on a web server. For further information, see <a href="PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output">problems</a>.</p>
-<h1><a class="anchor" id="autotoc_md15"></a>
+<h1><a class="anchor" id="autotoc_md14"></a>
 Installation Instructions</h1>
 <p>A rather detailed description can be found under <a class="el" href="md_INSTALL.html">install</a>.</p>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md15"></a>
 Fixing Problems</h1>
 <p>This part has been transferred to a different file because it has gotten too big. Details can be found in <a class="el" href="md_PROBLEMS.html">problems</a>.</p>
-<h1><a class="anchor" id="autotoc_md17"></a>
+<h1><a class="anchor" id="autotoc_md16"></a>
 Usage</h1>
 <p>Mount your file system as follows: </p><pre class="fragment">ffmpegfs [--audiobitrate bitrate] [--videobitrate bitrate] musicdir mountpoint [-o fuse_options]
 </pre><p> To use FFmpegfs as a daemon and encode to MPEG-4, for instance: </p><pre class="fragment">ffmpegfs --audiobitrate=256K --videobitrate=1.5M /mnt/music /mnt/ffmpegfs -o allow_other,ro,desttype=mp4
@@ -208,10 +198,10 @@ Usage</h1>
 </pre><p> Transcode files using FFmpegfs from test/in to test/out while logging to stderr at a noisy TRACE level. The cache resides in test/cache. All directories are under the current user's home directory. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 </pre><p> Similar to the previous, but with a 640-pixel maximum video width. The aspect ratio will be maintained when scaling down larger videos. Videos that are smaller won't be scaled up. </p><pre class="fragment"> ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,deinterlace
 </pre><p> Deinterlacing can be enabled for better image quality.</p>
-<h1><a class="anchor" id="autotoc_md18"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 More About Features</h1>
 <p>There is a <a class="el" href="md_FEATURES.html">feature list</a> with detailed explanations.</p>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<h1><a class="anchor" id="autotoc_md18"></a>
 How It Works</h1>
 <p>The decoder and encoder are initialised when a file is opened, and the file's metadata is also read. At this point, a rough estimate of the total file size can be made. Because the actual size greatly depends on the material encoded, this technique works fair-to-good for MP4 or WebM output files but works well for MP3, AIFF, or WAV output files.</p>
 <p>The file is transcoded as it is being read and stored in a private per-file buffer. This buffer keeps expanding as the file is read until the entire file has been transcoded. After being decoded, the file is stored in a disc buffer and is readily accessible.</p>
@@ -221,7 +211,7 @@ How It Works</h1>
 <p><b>MP4:</b> The same is true for meta atoms contained in MP4 containers.</p>
 <p><b>WAV:</b> The estimated size of the WAV file will be included in a pro forma WAV header. When the file is complete, this header will be changed. Though most current gamers apparently disregard this information and continue to play the file, it does not seem required.</p>
 <p>Only for MP3 targets: A particular optimization has been done so that programmes that look for id3v1 tags don't have to wait for the entire file to be transcoded before reading the tag. This accelerates these apps <em>dramatically</em>.</p>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 About Output Formats</h1>
 <p>A few remarks regarding the output formats that are supported:</p>
 <p>Since these are plain vanilla constant bitrate (CBR) MP3 files, there isn't much to say about the MP3 output. Any modern player should be able to play them well.</p>
@@ -233,7 +223,7 @@ About Output Formats</h1>
 <p>Faststart files are produced by default with an empty size field so that the file can be started to be written out at once rather than having to be encoded as a complete first. It would take some time before playback could begin if it were fully encoded. The data part is divided into chunks of about 1 second each, all with their own header, so it is possible to fill in the size fields early enough.</p>
 <p>One disadvantage is that not all players agree with the format, or they play it with odd side effects. VLC only refreshes the time display every several seconds while playing the file. There may not always be a complete duration displayed while streaming using HTML5 video tags, but that is fine as long as the content plays. Playback can only move backwards from the current playback position.</p>
 <p>However, that is the cost of commencing playback quickly.</p>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md20"></a>
 Development</h1>
 <p>Git is the revision control system used by FFmpegfs. The complete repository is available here:</p>
 <p><code>git clone <a href="https://github.com/nschlia/ffmpegfs.git">https://github.com/nschlia/ffmpegfs.git</a></code></p>
@@ -249,7 +239,7 @@ Development</h1>
 </ul>
 <p>Please be aware that the main branch of FFmpegfs may not be stable as it is still under active development (but offers nice gimmicks). Get a release if you require a stable version, ideally the most recent.</p>
 <p>You are welcome to clone this project and add new features. They might be brought back into this project if additional people find them intriguing. The same holds true for bug fixes; if you find a bug, feel free to patch it!</p>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md21"></a>
 Supported Linux Distributions</h1>
 <p>FFmpegfs has been tested with:</p>
 <table class="markdownTable">
@@ -285,24 +275,24 @@ Supported Linux Distributions</h1>
 <p><b>Suse</b> does not provide proprietary formats like AAC and H264, so the distribution of FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.</p>
 <p>See <a href="https://en.opensuse.org/Restricted_formats">https://en.opensuse.org/Restricted_formats</a>.</p>
 <p><b>Tips on other operating systems and distributions, such as Mac or other nixes, are welcome.</b></p>
-<h1><a class="anchor" id="autotoc_md23"></a>
+<h1><a class="anchor" id="autotoc_md22"></a>
 Future Objectives</h1>
 <p><em>Any ideas or wishes?</em> Free to create <a href="https://github.com/nschlia/ffmpegfs/issues">an issue</a> and let me know. Some great features started this way!</p>
 <p>For more information, see [TODO](TODO).</p>
-<h1><a class="anchor" id="autotoc_md24"></a>
+<h1><a class="anchor" id="autotoc_md23"></a>
 Authors</h1>
 <p>This fork with FFmpeg support has been maintained by Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>) since 2017 to date.</p>
 <p>Based on work by K. Henriksson (from 2008 to 2017) and the original author, David Collett (from 2006 to 2008).</p>
 <p>Much thanks to them for the original work and giving me a good head start!</p>
-<h1><a class="anchor" id="autotoc_md25"></a>
+<h1><a class="anchor" id="autotoc_md24"></a>
 License</h1>
 <p>This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found <a href="http://www.gnu.org/licenses/gpl-3.0.html">online</a> or in the COPYING file.</p>
 <p>This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found <a href="http://www.gnu.org/licenses/fdl-1.3.html">online</a> or in the COPYING.DOC file.</p>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<h1><a class="anchor" id="autotoc_md25"></a>
 FFmpeg License</h1>
 <p>FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.</p>
 <p>See <a href="https://www.ffmpeg.org/legal.html">https://www.ffmpeg.org/legal.html</a> for details.</p>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md26"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2023 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>

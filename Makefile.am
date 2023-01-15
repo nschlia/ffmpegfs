@@ -21,7 +21,7 @@ dist_man_MANS = ffmpegfs.1
 
 MAINTAINERCLEANFILES = ffmpegfs.1
 
-EXTRA_DIST = INSTALL.md README.md HISTORY.md PROBLEMS.md FEATURES.md ffmpegfs.1.txt WINDOWS.md src/makehelp.sh
+EXTRA_DIST = INSTALL.md README.md HISTORY.md PROBLEMS.md FEATURES.md WINDOWS.md COPYING.CC0 ffmpegfs.1.txt src/makehelp.sh
 
 #CLEANFILES =
 

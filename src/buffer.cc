@@ -262,7 +262,7 @@ bool Buffer::init(bool erase_cache)
             bool isdefaultsize  = false;
             uint8_t *p          = nullptr;
 
-            if (!map_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &p, &filesize, &isdefaultsize, static_cast<off_t>(sizeof(IMAGE_FRAME)) * virtualfile()->m_video_frame_count, false))
+            if (!map_file(m_ci[0].m_cachefile_idx, &m_ci[0].m_fd_idx, &p, &filesize, &isdefaultsize, sizeof(IMAGE_FRAME) * virtualfile()->m_video_frame_count, false))
             {
                 throw false;
             }

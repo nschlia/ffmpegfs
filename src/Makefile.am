@@ -16,6 +16,7 @@ ffmpegfs_LDFLAGS += -mconsole -Wl,-subsystem,console
 #-mnop-fun-dllimport  -mthread -municode  -mwin32  -mwindows
 #-fno-set-stack-executable
 ffmpegfs_SOURCES += ../win/src/mman.c ../win/include/sys/mman.h
+CFLAGS += -Wno-unused-parameter
 else
 ffmpegfs_LDADD += -lrt
 endif

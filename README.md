@@ -5,6 +5,8 @@ FFmpegfs is a read-only FUSE filesystem which transcodes various audio and video
 
 This allows access to a multi-media file collection with software and/or hardware which only understands one of the supported output formats, or transcodes files through simple drag-and-drop in a file browser.
 
+Both a Linux and Windows version are available. The Linux version performs better and requires less administration. The package managers of Linux distros, such as the Debian-based APT (Advanced Packaging Tool) or the Arch User Repository (AUR) for Arch Linux and Manjaro, can be used to install it. The benefit of the Windows version is that it can run on a single system alongside Windows apps.
+
 Web site: https://nschlia.github.io/ffmpegfs/
 
 News
@@ -15,6 +17,9 @@ News
 **New in in 2.20 (2023-01-XX):**
 
 - Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76): Added Windows support, see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. Currently no pre-compiled binaries are available.
+- TODO: Prepare "make install" for Cygwin
+- TODO: Prepare "make binaries" or however this should be called to create a directory with all Windows distribution binaries.
+- TODO: Create Windows installer
 
 ### Version 2.14 under development
 

@@ -663,7 +663,7 @@ bool Buffer::reserve(size_t size)
     bool isdefaultsize  = true;
     uint8_t *p          = nullptr;
 
-    if (!map_file(m_cur_ci->m_cachefile, &m_cur_ci->m_fd, &p, &filesize, &isdefaultsize, static_cast<off_t>(filesize), false))
+    if (!map_file(m_cur_ci->m_cachefile, &m_cur_ci->m_fd, &p, &filesize, &isdefaultsize, filesize, false))
     {
         return false;
     }

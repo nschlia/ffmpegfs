@@ -5,8 +5,7 @@ A Windows version of FFmpegfs has frequently been requested; see Issue [#76](htt
 
 Finally, I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary, and for free. It needs Cygwin, which was once merely a crutch but is today extremely powerful. 
 
-FFmpegfs can be built and operated under Windows, however doing so is not recommended.
-On the same hardware as if transcoding were being done under Linux, the performance is heartbreaking.
+FFmpegfs can be built and operated under Windows, however doing so is not recommended. On the same hardware as if transcoding were being done under Linux, the performance is heartbreaking.
 
 However, you may now use it under Windows if you wish to. 
 
@@ -91,3 +90,19 @@ After then, all else is just running...
 # ./configure
 # make
 ```
+
+To able to run ffmpegfs.exe from the command prompt, add the binaries directory to the path (use win/ffmpeg/bin:win/ffmpeg/bin for 32 bit binaries):
+
+```
+export PATH=$PATH:win/ffmpeg/bin:win/ffmpeg/bin64
+```
+
+#### Troubleshooting
+
+When ffmepgfs.exe refuses to run with the following message:
+
+```
+ "link_up(): shmget error (88) Function not implemented" -> Cygserver not running
+```
+
+**Cygserver** is not running or not installed. See "Install WinFSP Support For Cygwin" above how to fix that.

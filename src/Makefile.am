@@ -66,3 +66,13 @@ BUILT_SOURCES = ../ffmpegfs.1.text ffmpegfshelp.h
 # sed in makefiles is a menace so we use a helper script
 ffmpegfshelp.h: ../ffmpegfs.1.text
 	$(srcdir)/makehelp.sh $@
+	
+if WINDOWS
+export:
+	@rm -Rf ../export
+	@mkdir -p ../export
+	@cp -vp $(bin_PROGRAMS) ../export/
+	@export PATH=$PATH:../win/ffmpeg/bin$(LBITS)
+	@ldd $(bin_PROGRAMS) | grep -o -P '(?<= => ).*(?= \(0x[0-9a-fA-F]+\)$$)' | egrep -vi "/SYSTEM32/|/SysWOW64/|/Program Files" | sort -u | xargs -I{} -n1 cp -vp '{}' ../export/
+endif
+

@@ -91,6 +91,14 @@ After then, all else is just running...
 # make
 ```
 
+Call to generate a "export" directory with the necessary binaries.
+
+```
+# make export
+```
+
+By doing this, all DLLs needed to launch ffmpegfs.exe without first installing Cygwin will be exported.
+
 Adding the binaries directory to the path will allow you to execute ffmpegfs.exe from the command prompt (use win/ffmpeg/bin32 for 32 bit binaries):
 
 ```

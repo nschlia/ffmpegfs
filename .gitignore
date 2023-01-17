@@ -64,6 +64,7 @@ gh-pages/
 Makefile
 Makefile.in
 mkdoxy
+/export
 
 # All backup files
 *~

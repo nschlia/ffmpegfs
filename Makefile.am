@@ -49,7 +49,7 @@ help-html: ffmpegfs.1.htmlhelp
 # Remove absolutely every generated file
 .PHONY: squeaky-clean
 squeaky-clean: maintainer-clean
-	rm -rf aclocal.m4 autom4te.cache config config.log configure ffmpegfs.1 ffmpegfs.1.hhc ffmpegfs.1.hhp ffmpegfs.1.htmlhelp ffmpegfs.1.pdf ffmpegfs.1.text ffmpegfs.layout Makefile.in src/config.h.in src/.deps src/ffmpegfshelp.h src/Makefile.in src/vcd/.deps test/.deps test/Makefile.in
+	rm -rf aclocal.m4 autom4te.cache config config.log configure ffmpegfs.1 ffmpegfs.1.hhc ffmpegfs.1.hhp ffmpegfs.1.htmlhelp ffmpegfs.1.pdf ffmpegfs.1.text ffmpegfs.layout Makefile.in src/config.h.in src/.deps src/ffmpegfshelp.h src/Makefile.in src/vcd/.deps test/.deps test/Makefile.in  export
 
 dist-hook:
 if NOCHANGELOG
@@ -67,6 +67,11 @@ else
 endif
 
 SRCS =  $(OBJS:.o=.c)
+
+if WINDOWS
+export: all
+	cd src && $(MAKE) $(AM_MAKEFLAGS) export
+endif
 
 #.PHONY: all distclean doxy cppcheck
 

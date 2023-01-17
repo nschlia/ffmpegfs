@@ -76,9 +76,9 @@ Only the corresponding binaries and libraries are required if you only want to b
 
 | Directory          | To Copy There              |
 | ------------------ | -------------------------- |
-| win/ffmpeg/bin     | 32 bit binaries            |
+| win/ffmpeg/bin32   | 32 bit binaries            |
 | win/ffmpeg/bin64   | 64 bit binaries            |
-| win/ffmpeg/lib     | 32 bit libraries           |
+| win/ffmpeg/lib32   | 32 bit libraries           |
 | win/ffmpeg/lib64   | 64 bit libraries           |
 | win/ffmpeg/include | FFmpeg development headers |
 
@@ -91,10 +91,10 @@ After then, all else is just running...
 # make
 ```
 
-To able to run ffmpegfs.exe from the command prompt, add the binaries directory to the path (use win/ffmpeg/bin:win/ffmpeg/bin for 32 bit binaries):
+Adding the binaries directory to the path will allow you to execute ffmpegfs.exe from the command prompt (use win/ffmpeg/bin32 for 32 bit binaries):
 
 ```
-export PATH=$PATH:win/ffmpeg/bin:win/ffmpeg/bin64
+export PATH=$PATH:win/ffmpeg/bin64
 ```
 
 #### Troubleshooting

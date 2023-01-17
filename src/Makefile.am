@@ -1,6 +1,6 @@
 LBITS := $(shell getconf LONG_BIT)
 
-EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/bin64/readme.txt ../win/ffmpeg/bin32/readme.txt ../win/ffmpeg/include/readme.txt ../win/ffmpeg/lib64/readme.txt ../win/ffmpeg32/lib/readme.txt
+EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/bin64/readme.txt ../win/ffmpeg/bin32/readme.txt ../win/ffmpeg/include/readme.txt ../win/ffmpeg/lib64/readme.txt ../win/ffmpeg/lib32/readme.txt
 
 # Add fuse
 AM_CPPFLAGS = $(fuse_CFLAGS)

@@ -68,21 +68,3 @@ mkdoxy
 # All backup files
 *~
 
-# Gnulib generated files
-/confdefs.h
-/lib/alloca.h
-/lib/ctype.h
-/lib/fnmatch.h
-/lib/inttypes.h
-/lib/limits.h
-/lib/locale.h
-/lib/stdint.h
-/lib/stdlib.h
-/lib/string.h
-/lib/sys/types.h
-/lib/unistd.h
-/lib/wchar.h
-/lib/wctype.h
-/lib/libgnu.a
-/lib/signal.h
-/lib/fcntl.h

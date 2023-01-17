@@ -1,3 +1,5 @@
+LBITS := $(shell getconf LONG_BIT)
+
 EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/bin64/readme.txt ../win/ffmpeg/bin32/readme.txt ../win/ffmpeg/include/readme.txt ../win/ffmpeg/lib64/readme.txt ../win/ffmpeg32/lib/readme.txt
 
 # Add fuse
@@ -8,7 +10,7 @@ ffmpegfs_SOURCES = ffmpegfs.cc ffmpegfs.h fuseops.cc transcode.cc transcode.h ca
 ffmpegfs_LDADD = $(libcue_LIBS) $(fuse_LIBS) -lstdc++fs
 ffmpegfs_LDFLAGS =
 if WINDOWS
-ffmpegfs_LDADD += -lws2_32 -liconv -L../win/ffmpeg/lib64 -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lswresample -lswscale
+ffmpegfs_LDADD += -lws2_32 -liconv -L../win/ffmpeg/lib$(LBITS) -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lswresample -lswscale
 ffmpegfs_LDFLAGS += -mconsole -Wl,-subsystem,console
 #ffmpegfs_LDFLAGS += -mwindows -Wl,-subsystem,windows
 #ffmpegfs_LDFLAGS += -mconsole

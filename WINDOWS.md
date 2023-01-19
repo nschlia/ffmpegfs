@@ -27,7 +27,7 @@ In order to activate Fuse support please follow the instructions  on https://win
 
 #### Install Packages From Cygwin Setup
 
-The necessary build environment will be made available by installing **gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, and wget** via Cygwin setup. If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles. 
+The necessary build environment will be made available by installing **git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, and wget** via Cygwin setup. If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles. 
 
 ***libiconv-devel, libcue-devel*** and ***libsqlite3-devel*** are further required.
 

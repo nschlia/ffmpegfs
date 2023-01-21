@@ -4,7 +4,7 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
-ls -l "${DIRNAME}"
+ls -w 1000 -m "${DIRNAME}"
 
 # Use -w 1000  to ensure all in one line
 if [ "${FILEEXT}" == "mp4" ]

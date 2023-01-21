@@ -1,3 +1,5 @@
+LBITS := $(shell getconf LONG_BIT)
+
 TESTS=\
 test_audio_aiff \
 test_audio_alac \
@@ -77,3 +79,10 @@ fpcompare_SOURCES = fpcompare.c
 fpcompare_LDADD = -lchromaprint -lavcodec -lavformat -lavutil $(libswresample_LIBS)
 metadata_SOURCES = metadata.c
 metadata_LDADD =  -lavcodec -lavformat -lavutil $(libswresample_LIBS)
+
+fpcompare_LDFLAGS =
+if WINDOWS
+fpcompare_LDADD += -lswresample -L../win/ffmpeg/lib$(LBITS)
+fpcompare_LDFLAGS += -mconsole -Wl,-subsystem,console
+metadata_LDADD += -L../win/ffmpeg/lib$(LBITS)
+endif

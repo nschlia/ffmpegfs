@@ -3,3 +3,4 @@ metadata
 /CMakeFiles/
 /*.cmake
 /Testing/
+/*.exe

@@ -32,6 +32,10 @@
 
 #include <chromaprint.h>
 
+#ifdef __CYGWIN__
+#include <sys/cygwin.h>
+#endif  // __CYGWIN__
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -57,7 +61,13 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
         file_name = "pipe:0";
     }
 
+#ifndef __CYGWIN__
     if (avformat_open_input(&format_ctx, file_name, NULL, NULL) != 0) {
+#else
+    char win32[PATH_MAX];
+    cygwin_conv_path(CCP_POSIX_TO_WIN_A | CCP_RELATIVE, file_name, win32, sizeof(win32) - 1);
+    if (avformat_open_input(&format_ctx, win32, NULL, NULL) != 0) {
+#endif
         fprintf(stderr, "ERROR: couldn't open the file\n");
         goto done;
     }

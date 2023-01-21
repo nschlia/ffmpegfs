@@ -25,6 +25,10 @@
 #include <libavutil/dict.h>
 #include <libavutil/ffversion.h>
 
+#ifdef __CYGWIN__
+#include <sys/cygwin.h>
+#endif  // __CYGWIN__
+
 int main (int argc, char **argv)
 {
     if (argc != 2)
@@ -48,7 +52,13 @@ int main (int argc, char **argv)
 
     const char *filename = argv[1];
     AVFormatContext *format_ctx = NULL;
+#ifndef __CYGWIN__
     int ret = avformat_open_input(&format_ctx, filename, NULL, NULL);
+#else
+    char win32[PATH_MAX];
+    cygwin_conv_path(CCP_POSIX_TO_WIN_A | CCP_RELATIVE, filename, win32, sizeof(win32) - 1);
+    int ret = avformat_open_input(&format_ctx, win32, NULL, NULL);
+#endif
     if (ret)
     {
         char error[AV_ERROR_MAX_STRING_SIZE];

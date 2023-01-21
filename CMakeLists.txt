@@ -295,6 +295,7 @@ list(APPEND SOURCES
     README.md
     PROBLEMS.md
     FEATURES.md
+    WINDOWS.md
     sql/ffmpegfs.sql
     src/Makefile.am
     src/makehelp.sh

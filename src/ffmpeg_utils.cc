@@ -2534,56 +2534,43 @@ void save_free(void **p)
 
 #include <sys/cygwin.h>
 
-//CCP_POSIX_TO_WIN_A      /* from is char *posix, to is char *win32       */
-//CCP_POSIX_TO_WIN_W,     /* from is char *posix, to is wchar_t *win32    */
-//CCP_WIN_A_TO_POSIX,     /* from is char *win32, to is char *posix       */
-//CCP_WIN_W_TO_POSIX,     /* from is wchar_t *win32, to is char *posix    */
-
 std::string win2posix(const char * win32)
 {
-    std::string out(win32);
+    ssize_t size = cygwin_conv_path(CCP_WIN_A_TO_POSIX | CCP_RELATIVE, win32, NULL, 0);
 
-    /* Conversion from incoming Win32 path given as wchar_t *win32 to POSIX path.
-   If incoming path is a relative path, stick to it.  First ask how big
-   the output buffer has to be and allocate space dynamically. */
-
-    ssize_t size;
-    size = cygwin_conv_path (CCP_WIN_A_TO_POSIX | CCP_RELATIVE, win32, NULL, 0);
     if (size < 0)
-        perror ("cygwin_conv_path");
-    else
     {
-        char *posix;
-        posix = (char *) malloc (size);
-        if (cygwin_conv_path (CCP_WIN_A_TO_POSIX | CCP_RELATIVE, win32, posix, size))
-            perror ("cygwin_conv_path");
-        out = posix;
-        free(posix);
+        return win32;   // Error, return original
     }
-    return out;
+
+    std::vector<char> posix;
+
+    posix.reserve(static_cast<size_t>(size));
+    if (cygwin_conv_path(CCP_WIN_A_TO_POSIX | CCP_RELATIVE, win32, posix.data(), static_cast<size_t>(size)))
+    {
+        return win32;   // Error, return original
+    }
+
+    return posix.data();
 }
 
 std::string posix2win(const char * posix)
 {
-    std::string out(posix);
+    ssize_t size = cygwin_conv_path(CCP_POSIX_TO_WIN_A | CCP_RELATIVE, posix, NULL, 0);
 
-    /* Conversion from incoming Win32 path given as wchar_t *win32 to POSIX path.
-   If incoming path is a relative path, stick to it.  First ask how big
-   the output buffer has to be and allocate space dynamically. */
-
-    ssize_t size;
-    size = cygwin_conv_path (CCP_POSIX_TO_WIN_A | CCP_RELATIVE, posix, NULL, 0);
     if (size < 0)
-        perror ("cygwin_conv_path");
-    else
     {
-        char *win32;
-        win32 = (char *) malloc (size);
-        if (cygwin_conv_path (CCP_POSIX_TO_WIN_A | CCP_RELATIVE, posix, win32, size))
-            perror ("cygwin_conv_path");
-        out = win32;
-        free(win32);
+        return posix;   // Error, return original
     }
-    return out;
+
+    std::vector<char> win32;
+
+    win32.reserve(static_cast<size_t>(size));
+    if (cygwin_conv_path(CCP_POSIX_TO_WIN_A | CCP_RELATIVE, posix, win32.data(), static_cast<size_t>(size)))
+    {
+        return posix;   // Error, return original
+    }
+
+    return win32.data();
 }
 #endif  // __CYGWIN__

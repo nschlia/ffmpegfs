@@ -458,7 +458,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
       */
 
     // Open the input file to read from it.
+#ifndef __CYGWIN__
     ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
+#else
+    ret = avformat_open_input(&m_in.m_format_ctx, posix2win(filename()).c_str(), infmt, &opt);
+#endif
     if (ret < 0)
     {
         Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());

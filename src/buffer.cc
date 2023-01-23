@@ -956,7 +956,7 @@ bool Buffer::reallocate(size_t newsize)
         {
             size_t alloc_size = newsize - size();
             size_t write_avg = m_cur_ci->m_buffer_write_size / m_cur_ci->m_buffer_writes;
-            size_t write_size = 5 * write_avg;
+            size_t write_size = PREALLOC_FACTOR * write_avg;
             if (write_size > alloc_size)
             {
                 alloc_size = write_size;

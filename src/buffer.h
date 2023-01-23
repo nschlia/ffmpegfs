@@ -54,6 +54,14 @@
  */
 class Buffer : public FileIO
 {
+    /**
+     * @brief PREALLOC_FACTOR - Number of elements allocated on reallocate calls
+     * Number of elements allocated on reallocate calls. The buffer keeps track of the
+     * typical buffer write size. To prevent repeated reallocations, reallocate()
+     * attempts to set aside enough memory for PREALLOC FACTOR average elements whenever
+     * it is invoked.
+     */
+    static constexpr int PREALLOC_FACTOR = 5;
 public:
     /**
      * @brief Structure to hold current cache state

@@ -157,7 +157,7 @@ static bool stop_timer()
 {
     Logging::info(nullptr, "Stopping the maintenance timer.");
 
-    if (timer_delete(timerid) == -1)
+    if (timer_delete(timerid) == -1 && errno)
     {
         Logging::error(nullptr, "stop_timer(): timer_delete failed: (%1) %2", errno, strerror(errno));
         return false;

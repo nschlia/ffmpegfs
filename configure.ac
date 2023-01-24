@@ -175,7 +175,7 @@ dnl FFmpeg support checks
 
 if test "x${use_local_libs}" = xyes ; then
     AC_MSG_NOTICE([TODO: lokale FFmpeg library])
-    WIN_CPPFLAGS="${WIN_CPPFLAGS} -I${WIN_DIR}/ffmpeg/include -DWIN_FFMPEG=1"
+    WIN_CPPFLAGS="${WIN_CPPFLAGS} -I${WIN_DIR}/ffmpeg/win$BIT_WIDTH/include -DWIN_FFMPEG=1"
     #WIN_LDFLAGS="${WIN_LDFLAGS}"
 else
     AC_MSG_CHECKING([Doing FFmpeg support checks])

@@ -1,6 +1,6 @@
 LBITS := $(shell getconf LONG_BIT)
 
-EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/bin64/readme.txt ../win/ffmpeg/bin32/readme.txt ../win/ffmpeg/include/readme.txt ../win/ffmpeg/lib64/readme.txt ../win/ffmpeg/lib32/readme.txt
+EXTRA_DIST = $(wildcard scripts/*) ../win/ffmpeg/win64/bin/readme.txt ../win/ffmpeg/win32/bin/readme.txt ../win/ffmpeg/win64/include/readme.txt ../win/ffmpeg/win32/include/readme.txt ../win/ffmpeg/win64/lib/readme.txt ../win/ffmpeg/win32/lib/readme.txt
 
 # Add fuse
 AM_CPPFLAGS = $(fuse_CFLAGS)
@@ -10,7 +10,7 @@ ffmpegfs_SOURCES = ffmpegfs.cc ffmpegfs.h fuseops.cc transcode.cc transcode.h ca
 ffmpegfs_LDADD = $(libcue_LIBS) $(fuse_LIBS) -lstdc++fs
 ffmpegfs_LDFLAGS =
 if WINDOWS
-ffmpegfs_LDADD += -lws2_32 -liconv -L../win/ffmpeg/lib$(LBITS) -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lswresample -lswscale
+ffmpegfs_LDADD += -lws2_32 -liconv -L../win/ffmpeg/win$(LBITS)/lib -lavcodec -lavdevice -lavfilter -lavformat -lavutil -lswresample -lswscale
 ffmpegfs_LDFLAGS += -mconsole -Wl,-subsystem,console
 #ffmpegfs_LDFLAGS += -mwindows -Wl,-subsystem,windows
 #ffmpegfs_LDFLAGS += -mconsole
@@ -72,7 +72,7 @@ export:
 	@rm -Rf ../export
 	@mkdir -p ../export
 	@cp -vp $(bin_PROGRAMS) ../export/
-	@export PATH=$PATH:../win/ffmpeg/bin$(LBITS)
+	@export PATH=$PATH:../win/ffmpeg/win$(LBITS)/bin
 	@ldd $(bin_PROGRAMS) | grep -o -P '(?<= => ).*(?= \(0x[0-9a-fA-F]+\)$$)' | egrep -vi "/SYSTEM32/|/SysWOW64/|/Program Files" | sort -u | xargs -I{} -n1 cp -vp '{}' ../export/
 endif
 

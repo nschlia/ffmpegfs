@@ -74,13 +74,14 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 
 Only the corresponding binaries and libraries are required if you only want to build a 64 or 32 bit version of FFmpegfs. 
 
-| Directory          | To Copy There              |
-| ------------------ | -------------------------- |
-| win/ffmpeg/bin32   | 32 bit binaries            |
-| win/ffmpeg/bin64   | 64 bit binaries            |
-| win/ffmpeg/lib32   | 32 bit libraries           |
-| win/ffmpeg/lib64   | 64 bit libraries           |
-| win/ffmpeg/include | FFmpeg development headers |
+| Directory                | Bit Width | To Copy There       |
+| ------------------------ | ------------------------------- |
+| win/ffmpeg/win32/bin     |        32 | Binaries            |
+| win/ffmpeg/win32/include |        32 | Development headers |
+| win/ffmpeg/win32/lib     |        32 | Libraries           |
+| win/ffmpeg/win64/bin     |        64 | Binaries            |
+| win/ffmpeg/win64/include |        64 | Development headers |
+| win/ffmpeg/win64/lib     |        64 | Libraries           |
 
 #### Build The Binaries For FFmpegfs
 

@@ -82,7 +82,7 @@ metadata_LDADD =  -lavcodec -lavformat -lavutil $(libswresample_LIBS)
 
 fpcompare_LDFLAGS =
 if WINDOWS
-fpcompare_LDADD += -lswresample -L../win/ffmpeg/lib$(LBITS)
+fpcompare_LDADD += -lswresample -L../win/ffmpeg/win$(LBITS)/lib
 fpcompare_LDFLAGS += -mconsole -Wl,-subsystem,console
-metadata_LDADD += -L../win/ffmpeg/lib$(LBITS)
+metadata_LDADD += -L../win/ffmpeg/win$(LBITS)/lib
 endif

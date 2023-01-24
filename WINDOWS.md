@@ -99,16 +99,13 @@ Call to generate a "export" directory with the necessary binaries.
 
 By doing this, all DLLs needed to launch ffmpegfs.exe without first installing Cygwin will be exported.
 
-Adding the binaries directory to the path will allow you to execute ffmpegfs.exe from the command prompt:
+You will be able to run ffmpegfs.exe from the command prompt after running the setenv script.
 
 ```
-export PATH=$PATH:`pwd`/win/ffmpeg/bin64
+# . setenv
 ```
 
-Notes
-
-* Run in the root of the build directory, otherwise the path will be wrong. 
-* Use win/ffmpeg/bin32 for 32 bit binaries.
+To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched. 
 
 #### Troubleshooting
 

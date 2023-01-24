@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ $0 == $BASH_SOURCE ];
+then
+	echo Use the \"dot space script\" calling syntax to execute this script:
+	echo
+	echo . $(basename -- $BASH_SOURCE)
+	exit 1
+fi
+
+echo Setting up environment for testing
+
+SCRIPTPATH="$(dirname $(realpath $BASH_SOURCE))"
+
+if [ $(uname -m) == "x86_64" ];
+then
+	BIT_WIDTH=64
+elif [ $(uname -m) == "i686" ];
+then
+	BIT_WIDTH=32
+else
+	echo Unable to determine bit width. \"uname -m\" returned $(uname -m).
+	exit 1
+fi
+
+LIBDIR=/win/ffmpeg/win${BIT_WIDTH}/bin
+
+# Append library directory, but only once
+if [[ "${PATH}" != *"${LIBDIR}"* ]]; then
+  	echo "Appending library directory to PATH"
+	export PATH=$PATH:${SCRIPTPATH}${LIBDIR}
+fi
+

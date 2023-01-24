@@ -63,16 +63,16 @@ libchromaprint-devel, bc
 Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. When a newer version becomes available, you may use it. V1.0.6 was in use at the time this was written. 
 
 ```
-# mkdir install
-# cd install
-~/install # wget https://github.com/Joungkyun/libchardet/releases/download/1.0.6/libchardet-1.0.6.tar.bz2
+$ mkdir install
+$ cd install
+~/install $ wget https://github.com/Joungkyun/libchardet/releases/download/1.0.6/libchardet-1.0.6.tar.bz2
 Length: 435028 (425K) [application/octet-stream]
-Saving to: ‘libchardet-1.0.6.tar.bz2’
-2023-01-07 12:19:06 (6.41 MB/s) - ‘libchardet-1.0.6.tar.bz2’ saved [435028/435028]
-~/install # tar -xf libchardet-1.0.6.tar.bz2
-~/install # cd libchardet-1.0.6
-~/install # ./configure
-~/install # make install
+Saving to: 'libchardet-1.0.6.tar.bz2'
+2023-01-07 12:19:06 (6.41 MB/s) - 'libchardet-1.0.6.tar.bz2' saved [435028/435028]
+~/install $ tar -xf libchardet-1.0.6.tar.bz2
+~/install $ cd libchardet-1.0.6
+~/install $ ./configure
+~/install $ make install
 ```
 
 Regrettably, Cygwin does not offer *libbluray*, which is optionally necessary to enable Bluray support.
@@ -104,14 +104,14 @@ Only the corresponding binaries and libraries are required if you only want to b
 After then, all else is just running... 
 
 ```
-# ./configure
-# make
+$ ./configure
+$ make
 ```
 
 Call to generate a "export" directory with the necessary binaries.
 
 ```
-# make export
+$ make export
 ```
 
 By doing this, all DLLs needed to launch ffmpegfs.exe without first installing Cygwin will be exported.
@@ -119,7 +119,7 @@ By doing this, all DLLs needed to launch ffmpegfs.exe without first installing C
 You will be able to run ffmpegfs.exe from the command prompt after running the setenv script.
 
 ```
-# . setenv
+$ . setenv
 ```
 
 To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched. 

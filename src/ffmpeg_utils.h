@@ -1116,8 +1116,6 @@ void save_free(void **p);
 
 #ifdef __CYGWIN__
 
-#include <sys/cygwin.h>
-
 /**
  * @brief Inbound Win32 path to POSIX path conversion. Stick to the relative path of the incoming path.
  * @param[in] win32 - Windows path to convert

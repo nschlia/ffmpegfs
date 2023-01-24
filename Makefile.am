@@ -6,8 +6,8 @@ export OPTIMISATION = -DNDEBUG -Ofast -g
 endif
 
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
-export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
-export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH)
+export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH)
 if ENABLE_EXTRA_VERSION
 export AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
 export AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
@@ -127,7 +127,7 @@ wipe-all: doxy-clean distclean
 
 # Run cppcheck
 cppcheck:
-	cppcheck --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
+	cppcheck --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="XXX" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" -DBIT_WIDTH=$(BIT_WIDTH) src/ src/vcd/
 
 # android- 	Checks related to Android.
 # boost- 	Checks related to Boost library.
@@ -153,7 +153,7 @@ CLANGCHECKS += ,performance-*
 CLANGTIDY = clang-tidy -extra-arg="--std=c++17" -warnings-as-errors='*' --checks='$(CLANGCHECKS)' --quiet
 
 lint:
-	$(CLANGTIDY) src/*.c* src/vcd/*.c* -- -Isrc -Isrc/vcd -I/usr/include/chardet -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -DUSE_LIBDVD -DUSE_LIBBLURAY -DUSE_LIBVCD -D_GNU_SOURCE > lint.log
+	$(CLANGTIDY) src/*.c* src/vcd/*.c* -- -Isrc -Isrc/vcd -I/usr/include/chardet -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -DUSE_LIBDVD -DUSE_LIBBLURAY -DUSE_LIBVCD -D_GNU_SOURCE -DBIT_WIDTH=$(BIT_WIDTH) > lint.log
 
 install-exec-hook:
 	@if [ -d "$(CACHEDIR)" ]; \

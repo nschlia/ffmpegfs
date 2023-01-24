@@ -17,6 +17,18 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 # AC_CANONICAL_HOST is needed to access the 'host_os' variable
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
+BIT_WIDTH=""
+AS_CASE([$host_cpu],
+        [x86_64|aarch64*|mips64*|ppc64*|sparc64],
+        [
+            BIT_WIDTH="64"
+        ],
+        [i?86|arm*|mips*|ppc*|sparc],
+        [
+            BIT_WIDTH="32"
+        ])
+
+AC_SUBST([BIT_WIDTH])
 
 # compiler flags
 CFLAGS=""

@@ -27,12 +27,25 @@ In order to activate Fuse support please follow the instructions  on https://win
 
 #### Install Packages From Cygwin Setup
 
-The necessary build environment will be made available by installing **git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libchromaprint-devel, bc, and wget** via Cygwin setup. If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles. 
+The necessary build environment will be made available by installing via Cygwin setup.
+```
+git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libiconv-devel, libcue-devel,  libsqlite3-devel, wget
+```
+If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles.
+To get DVD support:
+```
+libdvdread-devel
+```
+To get Blu-ray support see "Install Libraries Missing From Setup".
 
-***libiconv-devel, libcue-devel*** and ***libsqlite3-devel*** are further required.
-
-***libdvdread-devel*** is optional to enable DVD support.
-
+To use "make doxy" (build Doxygen documentation):
+```
+doxygen, graphviz, curl
+```
+To use "make check" (run test suite):
+```
+libchromaprint-devel, bc
+```
 **Cygserver** is required to execute FFmpegfs. See https://cygwin.com/cygwin-ug-net/using-cygserver.html for further information.
 
 * You need to install ***cygrunsrv***. You will find it under the "Admin" category in the Cygwin setup utility.

@@ -81,7 +81,10 @@ As of yet I could not successfully build it. Bluray support will not be availabl
 
 #### Get The Windows FFmpeg Binaries
 
-Look at the download page of the [FFmpeg Homepages](https://ffmpeg.org/download.html#build-windows) to obtain pre-built Windows binaries. Download it right away, for instance, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip).
+Look at the download page of the [FFmpeg Homepages](https://ffmpeg.org/download.html#build-windows) to obtain pre-built Windows binaries.
+
+Download it, for example, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip), place it in win/ffmpeg/win64/
+and then unpack it. This will automatically place all files in the appropriate directories.
 
 Should you feel lucky and want to build the binaries yourself, you may also use FFmpeg Windows Build Helpers, which can be obtained [here](https://github.com/rdp/ffmpeg-windows-build-helpers).
 

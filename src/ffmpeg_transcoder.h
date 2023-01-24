@@ -968,7 +968,6 @@ protected:
     /**
      * @brief Free (remove reference) to hardware device context
      * @param[inout] hwaccel_device_ctx - Hardware device context to free
-     * @return 0 on success, a negative AVERROR code on failure.
      */
     void                        hwdevice_ctx_free(AVBufferRef **hwaccel_device_ctx);
     /**

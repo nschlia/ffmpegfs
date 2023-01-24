@@ -56,7 +56,8 @@
  * @li [**Man Pages**](manpages.html)
  * @li [Features In Detail](FEATURES.md)
  * @li [Revision History](HISTORY.md)
- * @li [Installation instructions](INSTALL.md)
+ * @li [Linux Installation Instructions](INSTALL.md)
+ * @li [Windows Installation Instructions](WINDOWS.md)
  * @li [Fixing Problems](PROBLEMS.md)
  * @li @ref todo
  * @li @ref bug
@@ -169,7 +170,6 @@ extern struct FFMPEGFS_PARAMS
     /**
      * @brief Make copy from other FFMPEGFS_PARAMS object.
      * @param[in] other - Reference to source FFmpeg_Frame object.
-     * @return Reference to new FFmpeg_Frame object.
      */
     FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other);
     ~FFMPEGFS_PARAMS(); // Do not make virtual, breaks fuse API compatibility!

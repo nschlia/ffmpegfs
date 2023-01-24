@@ -97,8 +97,6 @@ public:
      * @param[in] max_level - The maximum level of log output to write.
      * @param[in] to_stderr - Whether to write log output to stderr.
      * @param[in] to_syslog - Whether to write log output to syslog.
-     *
-     * @return If successful, returns 0; otherwise, returns a negative FFmpeg AVERROR value.
      */
     explicit Logging(const std::string & logfile, LOGLEVEL max_level, bool to_stderr, bool to_syslog);
 

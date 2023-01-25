@@ -8,6 +8,8 @@ Important changes in 2.14 (2023-01-XX):
   Additionally, after the file is opened, grabbing the entire expected memory
   block rather than doing a tiny allocation initially, followed by a larger
   allocation.
+* Checking folders to see if they can be transcoded is completely pointless.
+  Directories are now immediately skipped.
 
 Important changes in 2.13 (2023-01-15):
 

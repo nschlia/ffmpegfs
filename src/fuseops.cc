@@ -569,7 +569,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         const FFmpegfs_Format *current_format = nullptr;
         std::string filename(origpath);
 
-        if (virtual_name(&filename, "", &current_format))
+        if (S_ISREG(stbuf->st_mode) && virtual_name(&filename, "", &current_format))
         {
             if (!current_format->is_multiformat())
             {
@@ -597,7 +597,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         else
         {
             // Pass-through for regular files
-            Logging::trace(origpath, "getattr: Treating existing file as passthrough.");
+            Logging::trace(origpath, "getattr: Treating existing file/directory as passthrough.");
             errno = 0;
             return 0;
         }

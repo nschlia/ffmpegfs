@@ -23,6 +23,7 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
 - Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
 
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+- Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 
 ### Version 2.13 has been released
 

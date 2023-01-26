@@ -8,7 +8,6 @@ Important changes in 2.20 (2023-01-XX):
 * A "make export" option has been added, which gathers all necessary binaries
   to run FFmpegfs without needing to install Cygwin. They can be found in the
   export directory.
-* TODO: Prepare "make install" for Cygwin.
 * TODO: Create Windows installer.
 
 Important changes in 2.14 (2023-01-XX):

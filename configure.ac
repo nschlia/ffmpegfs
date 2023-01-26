@@ -112,9 +112,6 @@ if test "x${use_local_libs}" = xyes ; then
     WIN_DIR="../win/"
     WIN_CPPFLAGS="-I../win/include -L/usr/lib"
     WIN_LDFLAGS=""
-    
-    # Need to tell pkg-config where to find the Fuse library
-    export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig:/usr/local/lib/pkgconfig
 else
     # Use pre-installed package
     WIN_DIR=""

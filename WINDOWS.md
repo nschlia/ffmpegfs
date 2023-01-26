@@ -71,7 +71,7 @@ Saving to: 'libchardet-1.0.6.tar.bz2'
 2023-01-07 12:19:06 (6.41 MB/s) - 'libchardet-1.0.6.tar.bz2' saved [435028/435028]
 ~/install $ tar -xf libchardet-1.0.6.tar.bz2
 ~/install $ cd libchardet-1.0.6
-~/install $ ./configure
+~/install $ ./configure --prefix=/usr
 ~/install $ make install
 ```
 

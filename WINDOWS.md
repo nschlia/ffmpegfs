@@ -92,9 +92,6 @@ Only the corresponding binaries and libraries are required if you only want to b
 
 | Directory                | Bit Width | To Copy There       |
 | ------------------------ | --------- | ------------------- |
-| win/ffmpeg/win32/bin     |        32 | Binaries            |
-| win/ffmpeg/win32/include |        32 | Development headers |
-| win/ffmpeg/win32/lib     |        32 | Libraries           |
 | win/ffmpeg/win64/bin     |        64 | Binaries            |
 | win/ffmpeg/win64/include |        64 | Development headers |
 | win/ffmpeg/win64/lib     |        64 | Libraries           |
@@ -123,6 +120,9 @@ $ . setenv
 ```
 
 To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched. 
+
+#### A 32 Bit Version?
+A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.
 
 #### Troubleshooting
 

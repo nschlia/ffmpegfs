@@ -18,7 +18,7 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
 
 ### Version 2.14 under development
 
-**New in in 2.14 (2023-01-XX):**
+**New in in 2.14 (2023-02-XX):**
 
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.

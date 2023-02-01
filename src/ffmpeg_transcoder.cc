@@ -7792,3 +7792,9 @@ int64_t FFmpeg_Transcoder::pts() const
         return 0;
     }
 }
+
+uint32_t FFmpeg_Transcoder::last_seek_frame_no() const
+{
+    return m_last_seek_frame_no;
+}
+

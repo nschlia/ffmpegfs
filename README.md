@@ -22,6 +22,7 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
 
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+- **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for sencond process.
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 

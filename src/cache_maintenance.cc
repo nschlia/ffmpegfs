@@ -221,23 +221,13 @@ static bool link_up()
     }
 
     // Also create inter-process semaphore.
-    // First try to open existing semaphore.
-    sem = sem_open(SEM_OPEN_FILE, 0, 0, 0);
+    sem = sem_open(const_cast<const char *>(SEM_OPEN_FILE), O_CREAT, 0777, 1);
 
     if (sem == SEM_FAILED)
     {
-        if (errno == ENOENT)
-        {
-            // If semaphore does not exist, then try to create one.
-            sem = sem_open(const_cast<const char *>(SEM_OPEN_FILE), O_CREAT | O_EXCL, 0777, 1);
-        }
-
-        if (sem == SEM_FAILED)
-        {
-            Logging::error(nullptr, "link_up(): sem_open error (%1) %2", errno, strerror(errno));
-            link_down();
-            return false;
-        }
+        Logging::error(nullptr, "link_up(): sem_open error (%1) %2", errno, strerror(errno));
+        link_down();
+        return false;
     }
 
     return true;

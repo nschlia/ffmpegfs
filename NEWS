@@ -8,6 +8,8 @@ Important changes in 2.14 (2023-01-XX):
   Additionally, after the file is opened, grabbing the entire expected memory
   block rather than doing a tiny allocation initially, followed by a larger
   allocation.
+* Bugfix: Avoid race condition causing the inter-process semaphore creation
+  to fail for sencond process.
 * Optimisation: To avoid reallocations, save enough space in the cache buffer
   to hold the entire frame set.
 * Optimisation: Checking folders to see if they can be transcoded is completely

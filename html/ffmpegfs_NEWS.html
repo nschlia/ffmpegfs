@@ -68,14 +68,23 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.14 (2023-01-XX):</div>
+<div class="line">Important changes in 2.14 (2023-02-XX):</div>
 <div class="line"> </div>
-<div class="line">* Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved</div>
-<div class="line">  memory management by allocating several times the average size of</div>
+<div class="line">* Bugfix: Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141):</div>
+<div class="line">  Improved memory management by allocating several times the average size of</div>
 <div class="line">  allocations far. This prevents obtaining tiny portions over and over again.</div>
 <div class="line">  Additionally, after the file is opened, grabbing the entire expected memory</div>
 <div class="line">  block rather than doing a tiny allocation initially, followed by a larger</div>
 <div class="line">  allocation.</div>
+<div class="line">* Bugfix: Avoid race condition causing the inter-process semaphore creation</div>
+<div class="line">  to fail for sencond process.</div>
+<div class="line">* Optimisation: When reopening after invalidating the cache, the size</div>
+<div class="line">  remained at 0. The original size now is once more reserved in order to</div>
+<div class="line">  prevent reallocations.</div>
+<div class="line">* Optimisation: To avoid reallocations, save enough space in the cache buffer</div>
+<div class="line">  to hold the entire frame set.</div>
+<div class="line">* Optimisation: Checking folders to see if they can be transcoded is completely</div>
+<div class="line">  pointless. Directories are now immediately skipped.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.13 (2023-01-15):</div>
 <div class="line"> </div>

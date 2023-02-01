@@ -260,137 +260,127 @@ $(function() {
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="comment">// Also create inter-process semaphore.</span></div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="comment">// First try to open existing semaphore.</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> = sem_open(<a class="code" href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a>, 0, 0, 0);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> == SEM_FAILED)</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordflow">if</span> (errno == ENOENT)</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            <span class="comment">// If semaphore does not exist, then try to create one.</span></div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> = sem_open(<span class="keyword">const_cast&lt;</span><span class="keyword">const </span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(<a class="code" href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a>), O_CREAT | O_EXCL, 0777, 1);</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        }</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> == SEM_FAILED)</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        {</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_up(): sem_open error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            <a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>();</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        }</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> = sem_open(<span class="keyword">const_cast&lt;</span><span class="keyword">const </span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(<a class="code" href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a>), O_CREAT, 0777, 1);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> == SEM_FAILED)</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_up(): sem_open error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>();</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;}</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">  239</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">master_check</a>()</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;{</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    pid_t pid_self = getpid();</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;}</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00249"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">  249</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">master_check</a>()</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;{</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    pid_t pid_self = getpid();</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordflow">if</span> (*<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a> == pid_self)</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    {</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;The process with PID %1 is already master.&quot;</span>, pid_self);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    }</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    sem_wait(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>);</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="comment">// Check if master process still exists</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordtype">int</span> master_running = (getpgid(*<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>) &gt;= 0);</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Master with PID %1 is %2 running.&quot;</span>, *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>, master_running ? <span class="stringliteral">&quot;still&quot;</span> : <span class="stringliteral">&quot;NOT&quot;</span>);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordflow">if</span> (!master_running)</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    {</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Master with PID %1 is gone. PID %2 taking over as new master.&quot;</span>, *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>, pid_self);</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <span class="comment">// Register us as master</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a> = pid_self;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        <a class="code" href="cache__maintenance_8cc.html#a076a973bb9631a8e8a5fe1452f01f0bc">master</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    }</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    sem_post(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>);</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;}</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">  282</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>()</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;{</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keyword">struct </span>shmid_ds buf;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Shutting &quot;</span> PACKAGE <span class="stringliteral">&quot; inter-process link down.&quot;</span>);</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> != <span class="keyword">nullptr</span> &amp;&amp; sem_close(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>))</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): sem_close error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    }</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="comment">// shared memory detach</span></div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordflow">if</span> (shmdt (<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>))</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmdt error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">if</span> (shmctl(<a class="code" href="cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430">shmid</a>, IPC_STAT, &amp;buf))</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmctl error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    {</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        <span class="keywordflow">if</span> (!buf.shm_nattch)</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        {</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keywordflow">if</span> (shmctl (<a class="code" href="cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430">shmid</a>, IPC_RMID, <span class="keyword">nullptr</span>))</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            {</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmctl error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">if</span> (*<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a> == pid_self)</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    {</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;The process with PID %1 is already master.&quot;</span>, pid_self);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    sem_wait(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="comment">// Check if master process still exists</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordtype">int</span> master_running = (getpgid(*<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>) &gt;= 0);</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <a class="code" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Master with PID %1 is %2 running.&quot;</span>, *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>, master_running ? <span class="stringliteral">&quot;still&quot;</span> : <span class="stringliteral">&quot;NOT&quot;</span>);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordflow">if</span> (!master_running)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Master with PID %1 is gone. PID %2 taking over as new master.&quot;</span>, *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>, pid_self);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="comment">// Register us as master</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        *<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a> = pid_self;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <a class="code" href="cache__maintenance_8cc.html#a076a973bb9631a8e8a5fe1452f01f0bc">master</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    }</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    sem_post(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;}</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">  272</a></span>&#160;<span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>()</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;{</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keyword">struct </span>shmid_ds buf;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <a class="code" href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Shutting &quot;</span> PACKAGE <span class="stringliteral">&quot; inter-process link down.&quot;</span>);</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a> != <span class="keyword">nullptr</span> &amp;&amp; sem_close(<a class="code" href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a>))</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    {</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): sem_close error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    }</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    <span class="comment">// shared memory detach</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">if</span> (shmdt (<a class="code" href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a>))</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmdt error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordflow">if</span> (shmctl(<a class="code" href="cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430">shmid</a>, IPC_STAT, &amp;buf))</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmctl error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    }</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    {</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        <span class="keywordflow">if</span> (!buf.shm_nattch)</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        {</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            <span class="keywordflow">if</span> (shmctl (<a class="code" href="cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430">shmid</a>, IPC_RMID, <span class="keyword">nullptr</span>))</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            {</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): shmctl error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            <span class="comment">// unlink prevents the semaphore existing forever</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            <span class="comment">// if a crash occurs during the execution</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            <span class="keywordflow">if</span> (sem_unlink(<a class="code" href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a>))</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            {</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): sem_unlink error (%1) %2&quot;</span>, errno, strerror(errno));</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            }</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    }</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="comment">// unlink prevents the semaphore existing forever</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            <span class="comment">// if a crash occurs during the execution</span></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            <span class="keywordflow">if</span> (sem_unlink(<a class="code" href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a>))</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            {</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                <a class="code" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;link_down(): sem_unlink error (%1) %2&quot;</span>, errno, strerror(errno));</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            }</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        }</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    }</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordflow">return</span> success;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;}</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">  330</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">start_cache_maintenance</a>(time_t interval)</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;{</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="comment">// Start link</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#a8c6bf784b22ece87ea6d0269e89f11be">link_up</a>())</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    {</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    }</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="comment">// Now start timer</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="cache__maintenance_8cc.html#a4d465a59603f2d9616c8b0330f70215b">start_timer</a>(interval);</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;}</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordflow">return</span> success;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;}</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">  320</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">start_cache_maintenance</a>(time_t interval)</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;{</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="comment">// Start link</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#a8c6bf784b22ece87ea6d0269e89f11be">link_up</a>())</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    {</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// Now start timer</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="cache__maintenance_8cc.html#a4d465a59603f2d9616c8b0330f70215b">start_timer</a>(interval);</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;}</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160; </div>
+<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">  332</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">stop_cache_maintenance</a>()</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;{</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="comment">// Stop timer first</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#acba3883e059cebf9445860ecd82883a2">stop_timer</a>())</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    {</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    }</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160; </div>
-<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">  342</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">stop_cache_maintenance</a>()</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;{</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keywordtype">bool</span> success = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="comment">// Stop timer first</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#acba3883e059cebf9445860ecd82883a2">stop_timer</a>())</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    {</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    }</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160; </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="comment">// Now shut down link</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>())</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    {</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        success = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    }</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">return</span> success;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;}</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="comment">// Now shut down link</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a>())</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        success = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">return</span> success;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}</div>
 <div class="ttc" id="acache__maintenance_8cc_html_a076a973bb9631a8e8a5fe1452f01f0bc"><div class="ttname"><a href="cache__maintenance_8cc.html#a076a973bb9631a8e8a5fe1452f01f0bc">master</a></div><div class="ttdeci">static bool master</div><div class="ttdoc">If true, we are master.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00053">cache_maintenance.cc:53</a></div></div>
-<div class="ttc" id="acache__maintenance_8cc_html_a154b0ef3adcccf5e2911b8683dd2ed95"><div class="ttname"><a href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">stop_cache_maintenance</a></div><div class="ttdeci">bool stop_cache_maintenance()</div><div class="ttdoc">Stop cache maintenance timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00342">cache_maintenance.cc:342</a></div></div>
+<div class="ttc" id="acache__maintenance_8cc_html_a154b0ef3adcccf5e2911b8683dd2ed95"><div class="ttname"><a href="cache__maintenance_8cc.html#a154b0ef3adcccf5e2911b8683dd2ed95">stop_cache_maintenance</a></div><div class="ttdeci">bool stop_cache_maintenance()</div><div class="ttdoc">Stop cache maintenance timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00332">cache_maintenance.cc:332</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a2694a39dfd1fa087ca6f9f391c91dae7"><div class="ttname"><a href="cache__maintenance_8cc.html#a2694a39dfd1fa087ca6f9f391c91dae7">CLOCKID</a></div><div class="ttdeci">#define CLOCKID</div><div class="ttdoc">Use real time clock here.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00042">cache_maintenance.cc:42</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a38ff4e8521d24425d268ff7b08f594f9"><div class="ttname"><a href="cache__maintenance_8cc.html#a38ff4e8521d24425d268ff7b08f594f9">maintenance_handler</a></div><div class="ttdeci">static void maintenance_handler(int sig, __attribute__((unused)) siginfo_t *si, __attribute__((unused)) void *uc)</div><div class="ttdoc">Run maintenance handler.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00068">cache_maintenance.cc:68</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a3e7dd1c4ea1eaddd39d1d1b6a45b89c6"><div class="ttname"><a href="cache__maintenance_8cc.html#a3e7dd1c4ea1eaddd39d1d1b6a45b89c6">mask</a></div><div class="ttdeci">static sigset_t mask</div><div class="ttdoc">Process mask for timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00047">cache_maintenance.cc:47</a></div></div>
@@ -398,23 +388,23 @@ $(function() {
 <div class="ttc" id="acache__maintenance_8cc_html_a5c905d8d60d9e4d58e9a4a5ec07ec44c"><div class="ttname"><a href="cache__maintenance_8cc.html#a5c905d8d60d9e4d58e9a4a5ec07ec44c">sem</a></div><div class="ttdeci">static sem_t * sem</div><div class="ttdoc">Semaphore used to synchronise between master and slave processes.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00050">cache_maintenance.cc:50</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a70948cafa12ca0e8650df988ea65efa1"><div class="ttname"><a href="cache__maintenance_8cc.html#a70948cafa12ca0e8650df988ea65efa1">SIGMAINT</a></div><div class="ttdeci">#define SIGMAINT</div><div class="ttdoc">Map maintenance signal.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00043">cache_maintenance.cc:43</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a73f7eedd21818bd59742a4c00ec6c912"><div class="ttname"><a href="cache__maintenance_8cc.html#a73f7eedd21818bd59742a4c00ec6c912">SEM_OPEN_FILE</a></div><div class="ttdeci">#define SEM_OPEN_FILE</div><div class="ttdoc">Shared semaphore name, should be unique system wide.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00045">cache_maintenance.cc:45</a></div></div>
-<div class="ttc" id="acache__maintenance_8cc_html_a79a361698b51db81378f58a818f78301"><div class="ttname"><a href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a></div><div class="ttdeci">static bool link_down()</div><div class="ttdoc">Set system wide inter process link down.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00282">cache_maintenance.cc:282</a></div></div>
+<div class="ttc" id="acache__maintenance_8cc_html_a79a361698b51db81378f58a818f78301"><div class="ttname"><a href="cache__maintenance_8cc.html#a79a361698b51db81378f58a818f78301">link_down</a></div><div class="ttdeci">static bool link_down()</div><div class="ttdoc">Set system wide inter process link down.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00272">cache_maintenance.cc:272</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a7c22bf62313ce4f2bbe148ca7ba2abd3"><div class="ttname"><a href="cache__maintenance_8cc.html#a7c22bf62313ce4f2bbe148ca7ba2abd3">timerid</a></div><div class="ttdeci">static timer_t timerid</div><div class="ttdoc">Timer id.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00048">cache_maintenance.cc:48</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_a8c6bf784b22ece87ea6d0269e89f11be"><div class="ttname"><a href="cache__maintenance_8cc.html#a8c6bf784b22ece87ea6d0269e89f11be">link_up</a></div><div class="ttdeci">static bool link_up()</div><div class="ttdoc">Set system wide inter process link up.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00173">cache_maintenance.cc:173</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_ac8807d215d2ee6d9779d76aeb1147430"><div class="ttname"><a href="cache__maintenance_8cc.html#ac8807d215d2ee6d9779d76aeb1147430">shmid</a></div><div class="ttdeci">static int shmid</div><div class="ttdoc">Shared memory segment ID.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00051">cache_maintenance.cc:51</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_acba3883e059cebf9445860ecd82883a2"><div class="ttname"><a href="cache__maintenance_8cc.html#acba3883e059cebf9445860ecd82883a2">stop_timer</a></div><div class="ttdeci">static bool stop_timer()</div><div class="ttdoc">Stop the maintenance timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00156">cache_maintenance.cc:156</a></div></div>
-<div class="ttc" id="acache__maintenance_8cc_html_adfde130954054836ec27342fcaa44945"><div class="ttname"><a href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">start_cache_maintenance</a></div><div class="ttdeci">bool start_cache_maintenance(time_t interval)</div><div class="ttdoc">Start cache maintenance timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00330">cache_maintenance.cc:330</a></div></div>
+<div class="ttc" id="acache__maintenance_8cc_html_adfde130954054836ec27342fcaa44945"><div class="ttname"><a href="cache__maintenance_8cc.html#adfde130954054836ec27342fcaa44945">start_cache_maintenance</a></div><div class="ttdeci">bool start_cache_maintenance(time_t interval)</div><div class="ttdoc">Start cache maintenance timer.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00320">cache_maintenance.cc:320</a></div></div>
 <div class="ttc" id="acache__maintenance_8cc_html_af28eac8786d3062f4417d3749912ee80"><div class="ttname"><a href="cache__maintenance_8cc.html#af28eac8786d3062f4417d3749912ee80">pid_master</a></div><div class="ttdeci">static pid_t * pid_master</div><div class="ttdoc">PID of master process.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00052">cache_maintenance.cc:52</a></div></div>
-<div class="ttc" id="acache__maintenance_8cc_html_afc73beaf30e668486f0f1ef004ae7f4e"><div class="ttname"><a href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">master_check</a></div><div class="ttdeci">static void master_check()</div><div class="ttdoc">Check if a master is already running. We become master if not.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00249">cache_maintenance.cc:249</a></div></div>
+<div class="ttc" id="acache__maintenance_8cc_html_afc73beaf30e668486f0f1ef004ae7f4e"><div class="ttname"><a href="cache__maintenance_8cc.html#afc73beaf30e668486f0f1ef004ae7f4e">master_check</a></div><div class="ttdeci">static void master_check()</div><div class="ttdoc">Check if a master is already running. We become master if not.</div><div class="ttdef"><b>Definition:</b> <a href="cache__maintenance_8cc_source.html#l00239">cache_maintenance.cc:239</a></div></div>
 <div class="ttc" id="acache__maintenance_8h_html"><div class="ttname"><a href="cache__maintenance_8h.html">cache_maintenance.h</a></div><div class="ttdoc">Cache maintenance</div></div>
-<div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00180">logging.h:180</a></div></div>
-<div class="ttc" id="aclassLogging_html_a9d2938a2b4a502b58c43a895c593d738"><div class="ttname"><a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a></div><div class="ttdeci">static void trace(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write trace level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00161">logging.h:161</a></div></div>
-<div class="ttc" id="aclassLogging_html_ad0aff9dffa025c0b3138a0890691e59e"><div class="ttname"><a href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a></div><div class="ttdeci">static void info(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write info level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00199">logging.h:199</a></div></div>
-<div class="ttc" id="aclassLogging_html_ae48fc6adc12bc24c60d62eb5fbac1d86"><div class="ttname"><a href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a></div><div class="ttdeci">static void error(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00237">logging.h:237</a></div></div>
+<div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00184">logging.h:184</a></div></div>
+<div class="ttc" id="aclassLogging_html_a9d2938a2b4a502b58c43a895c593d738"><div class="ttname"><a href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a></div><div class="ttdeci">static void trace(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write trace level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00165">logging.h:165</a></div></div>
+<div class="ttc" id="aclassLogging_html_ad0aff9dffa025c0b3138a0890691e59e"><div class="ttname"><a href="classLogging.html#ad0aff9dffa025c0b3138a0890691e59e">Logging::info</a></div><div class="ttdeci">static void info(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write info level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00203">logging.h:203</a></div></div>
+<div class="ttc" id="aclassLogging_html_ae48fc6adc12bc24c60d62eb5fbac1d86"><div class="ttname"><a href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a></div><div class="ttdeci">static void error(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write error level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00241">logging.h:241</a></div></div>
 <div class="ttc" id="affmpeg__utils_8cc_html_a875d699aa7bd5502a777ac266967f660"><div class="ttname"><a href="ffmpeg__utils_8cc.html#a875d699aa7bd5502a777ac266967f660">format_time</a></div><div class="ttdeci">std::string format_time(time_t value)</div><div class="ttdoc">Format a time in format &quot;w d m s&quot;.</div><div class="ttdef"><b>Definition:</b> <a href="ffmpeg__utils_8cc_source.html#l01575">ffmpeg_utils.cc:1575</a></div></div>
 <div class="ttc" id="affmpeg__utils_8h_html"><div class="ttname"><a href="ffmpeg__utils_8h.html">ffmpeg_utils.h</a></div><div class="ttdoc">Various FFmpegfs utility functions.</div></div>
 <div class="ttc" id="affmpegfs_8h_html"><div class="ttname"><a href="ffmpegfs_8h.html">ffmpegfs.h</a></div><div class="ttdoc">Main include for FFmpegfs project.</div></div>
-<div class="ttc" id="affmpegfs_8h_html_aebae3dec0e78bdcd14cc4721f5b6efeb"><div class="ttname"><a href="ffmpegfs_8h.html#aebae3dec0e78bdcd14cc4721f5b6efeb">transcoder_cache_maintenance</a></div><div class="ttdeci">bool transcoder_cache_maintenance()</div><div class="ttdoc">Run cache maintenance.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00741">transcode.cc:741</a></div></div>
+<div class="ttc" id="affmpegfs_8h_html_aebae3dec0e78bdcd14cc4721f5b6efeb"><div class="ttname"><a href="ffmpegfs_8h.html#aebae3dec0e78bdcd14cc4721f5b6efeb">transcoder_cache_maintenance</a></div><div class="ttdeci">bool transcoder_cache_maintenance()</div><div class="ttdoc">Run cache maintenance.</div><div class="ttdef"><b>Definition:</b> <a href="transcode_8cc_source.html#l00742">transcode.cc:742</a></div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Provide various log facilities to stderr, disk or syslog.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

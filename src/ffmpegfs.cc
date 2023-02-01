@@ -47,6 +47,10 @@ extern "C" {
 }
 #endif
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "ffmpegfs.h"
 #include "logging.h"
 #include "ffmpegfshelp.h"

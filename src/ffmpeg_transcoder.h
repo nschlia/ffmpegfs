@@ -372,6 +372,12 @@ public:
      */
     int64_t                     pts() const;
 
+    /**
+     * @brief Current seek frame if available.
+     * @return Returns the current seek frame; 0 if none available.
+     */
+    uint32_t                    last_seek_frame_no() const;
+
 protected:
     /**
      * @brief Copy data from audio FIFO to frame buffer.

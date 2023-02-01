@@ -63,7 +63,7 @@ typedef struct THREAD_DATA
 } THREAD_DATA;
 
 static Cache *cache;                            /**< @brief Global cache manager object */
-static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, exit all thread */
+static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
 static int transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
@@ -460,8 +460,8 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         cache_entry->m_is_decoding = false;
         cache_entry->unlock();
         cache->closeio(&cache_entry, CACHE_CLOSE_DELETE);
-        cache_entry = nullptr;  // Make sure to return NULL here even if the cache could not be deleted now (still in use)
-        errno = orgerrno;         // Restore last errno
+        cache_entry = nullptr;      // Make sure to return NULL here even if the cache could not be deleted now (still in use)
+        errno = orgerrno;           // Restore last errno
     }
 
     return cache_entry;
@@ -623,53 +623,54 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
         // Wait until decoder thread has the requested frame available
         if (cache_entry->m_is_decoding)
         {
-            bool reported = false;
-
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
             {
+                bool reported = false;
+
+                Logging::error(nullptr, "XXX SEEK TO: %1", frame_no);
+
                 cache_entry->m_seek_to_no = frame_no;
+
+                int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
+                while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
+                {
+                    if (errno != EAGAIN)
+                    {
+                        Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                        throw false;
+                    }
+
+                    if (errno == EAGAIN && !--retries)
+                    {
+                        errno = ETIMEDOUT;
+                        Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                        throw false;
+                    }
+
+                    if (fuse_interrupted())
+                    {
+                        Logging::info(cache_entry->virtname(), "The client has gone away.");
+                        throw false;
+                    }
+
+                    if (thread_exit)
+                    {
+                        Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                        throw false;
+                    }
+
+                    if (!reported)
+                    {
+                        Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+                        reported = true;
+                    }
+
+                    const struct timespec ts = { 0, GRANULARITY MS };
+                    nanosleep(&ts, nullptr);
+                }
             }
-
-            int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
-            while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
-            {
-                if (errno != EAGAIN)
-                {
-                    Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                    throw false;
-                }
-
-                if (errno == EAGAIN && !--retries)
-                {
-                    errno = ETIMEDOUT;
-                    Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                    throw false;
-                }
-
-                if (fuse_interrupted())
-                {
-                    Logging::info(cache_entry->virtname(), "Client has gone away.");
-                    throw false;
-                }
-
-                if (thread_exit)
-                {
-                    Logging::warning(cache_entry->virtname(), "Received thread exit.");
-                    throw false;
-                }
-
-                if (!reported)
-                {
-                    Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
-                    reported = true;
-                }
-
-                const struct timespec ts = { 0, GRANULARITY MS };
-                nanosleep(&ts, nullptr);
-            }
-
-            if (reported)
+            else
             {
                 Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
             }

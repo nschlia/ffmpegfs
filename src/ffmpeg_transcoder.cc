@@ -1241,7 +1241,8 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     // Open for read/write
     // Pre-allocate the predicted file size to reduce memory reallocations
-    size_t buffsize = 600 * 1024  * 1024 /*predicted_filesize() * m_video_frame_count*/;
+    size_t buffsize = predicted_filesize() * video_frame_count();
+
     if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
     {
         return AVERROR(EPERM);
@@ -1254,8 +1255,7 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 {
     int ret = 0;
 
-    m_buffer            = buffer;
-
+    m_buffer = buffer;
     m_insert_keyframe = false;
 
     if (!m_out.m_video_pts && is_hls())
@@ -5945,6 +5945,8 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_BMP:
     case AV_CODEC_ID_MJPEG:
     {
+        // Max. file size = (pixel dimensions x bit depth) / 8 for an uncompressed BMP,
+		// more than sufficient for JPG/PNG as they should never get this large.
         *filesize += static_cast<size_t>(width * height * 24 / 8);   // Get the max. size
         break;
     }
@@ -7796,3 +7798,9 @@ int64_t FFmpeg_Transcoder::pts() const
         return 0;
     }
 }
+
+uint32_t FFmpeg_Transcoder::last_seek_frame_no() const
+{
+    return m_last_seek_frame_no;
+}
+

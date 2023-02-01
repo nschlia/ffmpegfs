@@ -873,6 +873,13 @@ static int transcoder_thread(void *arg)
                 cache_entry->update_access(false);
             }
 
+            averror = transcoder.process_single_fr(status);
+            if (status < 0)
+            {
+                errno = EIO;
+                throw (static_cast<int>(errno));
+            }
+
             if (transcoder.is_frameset())
             {
                 uint32_t frame_no = cache_entry->m_seek_to_no;
@@ -900,13 +907,6 @@ static int transcoder_thread(void *arg)
                         throw (static_cast<int>(errno));
                     }
                 }
-            }
-
-            averror = transcoder.process_single_fr(status);
-            if (status < 0)
-            {
-                errno = EIO;
-                throw (static_cast<int>(errno));
             }
 
             if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))

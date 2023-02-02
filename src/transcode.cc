@@ -628,8 +628,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
             {
                 bool reported = false;
 
-                Logging::error(nullptr, "XXX SEEK TO: %1", frame_no);
-
                 cache_entry->m_seek_to_no = frame_no;
 
                 int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;

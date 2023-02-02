@@ -26,7 +26,7 @@ News
 
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
-- **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for sencond process.
+- **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for second process.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations. 
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.

@@ -117,7 +117,7 @@ Choose WebM or MP4 for live streaming for the best results. While *MP3* will wor
 
 All the frames from a video source file will be displayed in a virtual directory called after the source file when a destination of *JPG*, *PNG*, or *BMP* is selected. Audio will not be available.
 
-By choosing *HLS*, TS segments and an M3U playlist (master.m3u8 and index 0 av.m3u8) are created in a directory. A generated hls.html file that can be accessed in a browser can also be used to play the segments.
+By choosing *HLS*, TS segments and an M3U playlist (master.m3u8 and index_0_av.m3u8) are created in a directory. A generated hls.html file that can be accessed in a browser can also be used to play the segments.
 
 Please be aware that since most browsers cannot open the files from disc due to restrictions, they must be on a web server. For further information, see [problems](PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output).
 

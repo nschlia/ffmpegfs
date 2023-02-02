@@ -153,9 +153,9 @@
  * @code
  *  { "moov_size",              "1000000",                  0, OPT_ALL },   // bytes
  *  { "movflags",               "+frag_keyframe",           0, OPT_ALL },
- *  { "frag_duration",          "1000000",                  0, OPT_ALL },   // microsenconds
+ *  { "frag_duration",          "1000000",                  0, OPT_ALL },   // microseconds
  *  { "frag_size",              "100000",                   0, OPT_ALL },   // bytes
- *  { "min_frag_duration",      "1000",                     0, OPT_ALL },   // microsenconds
+ *  { "min_frag_duration",      "1000",                     0, OPT_ALL },   // microseconds
  *  { "movflags",               "+empty_moov",              0, OPT_ALL },
  *  { "movflags",               "+delay_moov",              0, OPT_ALL },
  *  { "movflags",               "+separate_moof",           0, OPT_ALL },
@@ -199,7 +199,7 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
         //! @brief No optimisations, just plain mp4. MP4 format options.
         {
             { "movflags",               "+faststart",               0, OPT_ALL },
-            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microseconds
             { "movflags",               "+empty_moov",              0, OPT_ALL },
         }
     },
@@ -223,7 +223,7 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
         //  @brief Firefox profile: MP4 format options.
         //
         {
-            { "frag_duration",          "1000000",                  0, OPT_AUDIO },     // microsenconds
+            { "frag_duration",          "1000000",                  0, OPT_AUDIO },     // microseconds
             { "movflags",               "+empty_moov",              0, OPT_ALL },
         }
     },
@@ -244,7 +244,7 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
         //! @brief MS Edge profile: MP4 format options.
         //!
         {
-            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microseconds
             { "movflags",               "+empty_moov",              0, OPT_ALL },
             { "movflags",               "+separate_moof",           0, OPT_ALL },
             { "movflags",               "+faststart",               0, OPT_ALL },
@@ -442,7 +442,7 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
         {
             //{ "flags",                  "+cgop",                    0,  0 },
             { "movflags",               "+faststart",               0, OPT_ALL },
-            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microsenconds
+            { "frag_duration",          "1000000",                  0, OPT_ALL },     // microseconds
             { "movflags",               "+empty_moov",              0, OPT_ALL },
         }
     },

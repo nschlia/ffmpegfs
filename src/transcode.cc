@@ -60,12 +60,13 @@ typedef struct THREAD_DATA
     void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *cache;                            /**< @brief Global cache manager object */
+static Cache *              cache;              /**< @brief Global cache manager object */
 static std::atomic_bool     thread_exit;        /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
-static int transcoder_thread(void *arg);
+static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
+static int  transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
-static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
+static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
 /**
  * @brief Transcode the buffer until the buffer has enough or until an error occurs.
@@ -759,18 +760,17 @@ bool transcoder_cache_clear()
 }
 
 /**
- * @brief Transcoding thread
- * @param[in] arg - Corresponding Cache_Entry object.
- * @returns Returns 0 on success; or errno code on error.
+ * @brief Actually transcode file
+ * @param[inout] thread_data - Thread data with lock objects
+ * @param[inout] cache_entry - Underlying thread entry
+ * @param[in] transcoder - Transcoder object for transcoding
+ * @param[out] timeout - True if transcoding timed out, false if not
+ * @return On success, returns true; on error, returns false
  */
-static int transcoder_thread(void *arg)
+static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout)
 {
-    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
-    Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
-    FFmpeg_Transcoder transcoder;
     int averror = 0;
     int syserror = 0;
-    bool timeout = false;
     bool success = true;
 
     std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
@@ -858,7 +858,7 @@ static int transcoder_thread(void *arg)
             }
         }
 
-        while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+        while (!cache_entry->is_finished() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
             DECODER_STATUS status = DECODER_SUCCESS;
 
@@ -935,7 +935,7 @@ static int transcoder_thread(void *arg)
 
                 Logging::info(cache_entry->virtname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
-                while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+                while (cache_entry->suspend_timeout() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
                     mssleep(GRANULARITY);
                 }
@@ -968,16 +968,41 @@ static int transcoder_thread(void *arg)
             syserror = AVUNERROR(averror);
         }
 
-        cache_entry->m_is_decoding              = false;
-        cache_entry->m_cache_info.m_error       = true;
-        cache_entry->m_cache_info.m_errno       = syserror ? syserror : EIO;        // Preserve errno
-        cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
+        cache_entry->m_is_decoding          = false;
+        cache_entry->m_cache_info.m_error   = true;
+        if (!syserror)
+        {
+            // If system error is still zero, set to EIO to return at least anything else than success.
+            syserror = EIO;
+        }
 
         thread_data->m_lock_guard = true;
         thread_data->m_cond.notify_all();           // unlock main thread
     }
 
+    cache_entry->m_cache_info.m_errno       = syserror;                         // Preserve errno
+    cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
+
     transcoder.closeio();
+    return success;
+}
+
+/**
+ * @brief Transcoding thread
+ * @param[in] arg - Corresponding Cache_Entry object.
+ * @returns Returns 0 on success; or errno code on error.
+ */
+static int transcoder_thread(void *arg)
+{
+    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
+    Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
+    FFmpeg_Transcoder transcoder;
+    bool timeout = false;
+    bool success = true;
+
+    std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
+
+    success = transcode(thread_data, cache_entry, transcoder, &timeout);
 
     if (timeout || thread_exit || transcoder.have_seeked())
     {
@@ -988,7 +1013,6 @@ static int transcoder_thread(void *arg)
             //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_ERROR;
             cache_entry->m_cache_info.m_error       = true;
             cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
-            cache_entry->m_cache_info.m_averror     = averror;  // Preserve averror
 
             if (timeout)
             {
@@ -1012,12 +1036,13 @@ static int transcoder_thread(void *arg)
     {
         cache_entry->m_is_decoding                  = false;
         cache_entry->m_cache_info.m_error           = !success;
-        cache_entry->m_cache_info.m_errno           = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
-        cache_entry->m_cache_info.m_averror         = success ? 0 : averror;                        // Preserve averror
 
         if (success)
         {
             Logging::info(cache_entry->virtname(), "Transcoding completed successfully.");
+
+            cache_entry->m_cache_info.m_errno       = 0;
+            cache_entry->m_cache_info.m_averror     = 0;
         }
         else
         {
@@ -1026,6 +1051,7 @@ static int transcoder_thread(void *arg)
             {
                 Logging::error(cache_entry->virtname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
             }
+
             if (cache_entry->m_cache_info.m_averror)
             {
                 Logging::error(cache_entry->virtname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
@@ -1040,7 +1066,7 @@ static int transcoder_thread(void *arg)
 
     delete thread_data;
 
-    errno = syserror;
+    errno = cache_entry->m_cache_info.m_errno;
 
     return errno;
 }

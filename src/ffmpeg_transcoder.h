@@ -38,7 +38,6 @@
 #include "ffmpeg_frame.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
-#include "ffmpegfs.h"
 #include "fileio.h"
 #include "ffmpeg_profiles.h"
 

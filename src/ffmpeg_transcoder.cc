@@ -53,11 +53,11 @@ extern "C" {
 #endif
 
 #include "ffmpeg_transcoder.h"
-#include "transcode.h"
 #include "buffer.h"
 #include "wave.h"
 #include "aiff.h"
 #include "logging.h"
+#include "ffmpegfs.h"
 
 #include <unistd.h>
 #include <filesystem>

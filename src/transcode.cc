@@ -53,15 +53,15 @@
   */
 typedef struct THREAD_DATA
 {
-    std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
-    std::condition_variable m_cond;             /**< @brief Condition when thread is running */
-    std::atomic_bool        m_lock_guard;       /**< @brief Lock guard to avoid spurious or missed unlocks */
-    bool                    m_initialised;      /**< @brief True when this object is completely initialised */
-    void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
+    std::mutex              m_thread_running_mutex;         /**< @brief Mutex when thread is running */
+    std::condition_variable m_thread_running_cond;          /**< @brief Condition when thread is running */
+    std::atomic_bool        m_thread_running_lock_guard;    /**< @brief Lock guard to avoid spurious or missed unlocks */
+    bool                    m_initialised;                  /**< @brief True when this object is completely initialised */
+    void *                  m_arg;                          /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *              cache;              /**< @brief Global cache manager object */
-static std::atomic_bool     thread_exit;        /**< @brief Used for shutdown: if true, forcibly exit all threads */
+static Cache *              cache;                          /**< @brief Global cache manager object */
+static std::atomic_bool     thread_exit;                    /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
 static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
 static int  transcoder_thread(void *arg);
@@ -403,23 +403,23 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 cache_entry->clear();
 
                 // Must decode the file, otherwise simply use cache
-                cache_entry->m_is_decoding  = true;
+                cache_entry->m_is_decoding                  = true;
 
-                THREAD_DATA* thread_data    = new(std::nothrow) THREAD_DATA;
+                THREAD_DATA* thread_data                    = new(std::nothrow) THREAD_DATA;
 
-                thread_data->m_initialised  = false;
-                thread_data->m_arg          = cache_entry;
-                thread_data->m_lock_guard   = false;
+                thread_data->m_initialised                  = false;
+                thread_data->m_arg                          = cache_entry;
+                thread_data->m_thread_running_lock_guard    = false;
 
                 {
-                    std::unique_lock<std::mutex> lock(thread_data->m_mutex);
+                    std::unique_lock<std::mutex> lock_thread_running_mutex(thread_data->m_thread_running_mutex);
 
                     tp->schedule_thread(&transcoder_thread, thread_data);
 
                     // Let decoder get into gear before returning from open
-                    while (!thread_data->m_lock_guard)
+                    while (!thread_data->m_thread_running_lock_guard)
                     {
-                        thread_data->m_cond.wait(lock);
+                        thread_data->m_thread_running_cond.wait(lock_thread_running_mutex);
                     }
                 }
 
@@ -707,6 +707,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
     {
         success = _success;
     }
+
     return success;
 }
 
@@ -843,8 +844,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
         {
             // Unlock frame set from beginning
             unlocked = true;
-            thread_data->m_lock_guard = true;
-            thread_data->m_cond.notify_all();       // signal that we are running
+            thread_data->m_thread_running_lock_guard = true;
+            thread_data->m_thread_running_cond.notify_all();       // signal that we are running
         }
         else
         {
@@ -915,13 +916,12 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
                 }
             }
 
-
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size && transcoder.pts() > static_cast<int64_t>(params.m_prebuffer_time) * AV_TIME_BASE)
             {
                 unlocked = true;
                 Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
-                thread_data->m_lock_guard = true;
-                thread_data->m_cond.notify_all();       // signal that we are running
+                thread_data->m_thread_running_lock_guard = true;
+                thread_data->m_thread_running_cond.notify_all();       // signal that we are running
             }
 
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
@@ -929,8 +929,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
                 if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
                 {
                     unlocked = true;
-                    thread_data->m_lock_guard = true;
-                    thread_data->m_cond.notify_all();  // signal that we are running
+                    thread_data->m_thread_running_lock_guard = true;
+                    thread_data->m_thread_running_cond.notify_all();  // signal that we are running
                 }
 
                 Logging::info(cache_entry->virtname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
@@ -952,8 +952,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
         if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
         {
             Logging::debug(cache_entry->virtname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
-            thread_data->m_lock_guard = true;
-            thread_data->m_cond.notify_all();       // signal that we are running
+            thread_data->m_thread_running_lock_guard = true;
+            thread_data->m_thread_running_cond.notify_all();       // signal that we are running
         }
     }
     catch (int _syserror)
@@ -976,14 +976,15 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             syserror = EIO;
         }
 
-        thread_data->m_lock_guard = true;
-        thread_data->m_cond.notify_all();           // unlock main thread
+        thread_data->m_thread_running_lock_guard = true;
+        thread_data->m_thread_running_cond.notify_all();           // unlock main thread
     }
 
     cache_entry->m_cache_info.m_errno       = syserror;                         // Preserve errno
     cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
 
     transcoder.closeio();
+
     return success;
 }
 
@@ -1000,7 +1001,7 @@ static int transcoder_thread(void *arg)
     bool timeout = false;
     bool success = true;
 
-    std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
+    std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex);
 
     success = transcode(thread_data, cache_entry, transcoder, &timeout);
 

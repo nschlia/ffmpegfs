@@ -5428,7 +5428,7 @@ int FFmpeg_Transcoder::seek_frame()
     {
         // No current seek frame, check if new seek frame was stacked.
         {
-            std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+            std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
 
             while (!m_seek_to_fifo.empty())
             {

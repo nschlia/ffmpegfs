@@ -116,7 +116,7 @@ private:
 protected:
     std::vector<std::thread>    m_thread_pool;      /**< Thread pool */
     std::mutex                  m_queue_mutex;      /**< Mutex for critical section */
-    std::condition_variable     m_queue_condition;  /**< Condition for critical section */
+    std::condition_variable     m_queue_cond;       /**< Condition for critical section */
     std::queue<THREADINFO>      m_thread_queue;     /**< Thread queue parameters */
     std::atomic_bool            m_queue_shutdown;   /**< If true all threads have been shut down */
     unsigned int                m_num_threads;      /**< Max. number of threads. Defaults to 4x number of CPU cores. */

@@ -59,12 +59,12 @@ void thread_pool::loop_function()
     {
         THREADINFO info;
         {
-            std::unique_lock<std::mutex> lock(m_queue_mutex);
-            m_queue_condition.wait(lock, [this]{ return (!m_thread_queue.empty() || m_queue_shutdown); });
+            std::unique_lock<std::mutex> lock_queue_mutex(m_queue_mutex);
+            m_queue_cond.wait(lock_queue_mutex, [this]{ return (!m_thread_queue.empty() || m_queue_shutdown); });
 
             if (m_queue_shutdown)
             {
-                lock.unlock();
+                lock_queue_mutex.unlock();
                 break;
             }
 
@@ -95,7 +95,7 @@ bool thread_pool::schedule_thread(int (*thread_func)(void *), void *opaque)
             m_thread_queue.push(info);
         }
 
-        m_queue_condition.notify_one();
+        m_queue_cond.notify_one();
 
         return true;
     }
@@ -147,7 +147,7 @@ void thread_pool::tear_down(bool silent)
     m_queue_mutex.lock();
     m_queue_shutdown = true;
     m_queue_mutex.unlock();
-    m_queue_condition.notify_all();
+    m_queue_cond.notify_all();
 
     while (!m_thread_pool.empty())
     {

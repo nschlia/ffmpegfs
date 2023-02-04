@@ -62,7 +62,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
 Cache_Entry::~Cache_Entry()
 {
-    std::unique_lock<std::recursive_mutex> lock(m_active_mutex);
+    std::unique_lock<std::recursive_mutex> lock_active_mutex(m_active_mutex);
 
     delete m_buffer;
 

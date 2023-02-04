@@ -34,6 +34,8 @@
 #include "logging.h"
 #include "ffmpegfs.h"
 
+#include <sys/time.h>
+
 #include <cstdarg>
 #include <iostream>
 #include <syslog.h>
@@ -109,14 +111,26 @@ Logging::Logger::~Logger()
     std::lock_guard<std::recursive_mutex> lck (m_mutex);
 
     // Construct string containing time
-    time_t now = time(nullptr);
-    struct tm buffer;
-    std::string time_string(30, '\0');
+    struct timeval tv;
+    long int millisec;
+    std::string time_string(sizeof("YYYY-MM-DD MM:HH:SS.###"), '\0');  // Reserve space for "YYYY-MM-DD MM:HH:SS.###" plus \0
+    std::string fmt;
     std::string loglevel;
     std::string filename;
     std::string msg;
 
-    time_string.resize(strftime(&time_string[0], time_string.size(), "%F %T", localtime_r(&now, &buffer)));   // Mind the blank at the end
+    gettimeofday(&tv, NULL);
+
+    millisec = std::lrint(static_cast<double>(tv.tv_usec) / 1000.0); // Round to nearest millisec
+    if (millisec >= 1000)
+    { // Allow for rounding up to nearest second
+        millisec -= 1000;
+        tv.tv_sec++;
+    }
+
+    strsprintf(&fmt, "%%F %%T.%03d", millisec);
+
+    time_string.resize(strftime(&time_string[0], time_string.size(), fmt.c_str(), localtime(&tv.tv_sec)));  // Mind the blank at the end
 
     loglevel = m_level_name_map.at(m_loglevel) + ":";
 
@@ -131,7 +145,6 @@ Logging::Logger::~Logger()
         {
             filename = "INPUT   [" + filename + "] ";
         }
-
         else if (replace_start(&filename, params.m_mountpath))
         {
             filename = "OUTPUT  [" + filename + "] ";

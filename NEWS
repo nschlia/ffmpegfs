@@ -10,6 +10,7 @@ Important changes in 2.14 (2023-02-XX):
   allocation.
 * Bugfix: Avoid race condition causing the inter-process semaphore creation
   to fail for second process.
+* Enhancement: Record milliseconds for every log event.
 * Optimisation: When reopening after invalidating the cache, the size
   remained at 0. The original size now is once more reserved in order to
   prevent reallocations.

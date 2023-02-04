@@ -148,6 +148,10 @@ Logging::Logger::~Logger()
             }
             else
             {
+                if (filename.size() && filename[0] == '/')
+                {
+                    filename.erase(0, 1);
+                }
                 filename = "OTHER   [" + filename + "] ";
             }
         }

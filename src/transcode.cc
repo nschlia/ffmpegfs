@@ -63,7 +63,7 @@ typedef struct THREAD_DATA
 } THREAD_DATA;
 
 static Cache *cache;                            /**< @brief Global cache manager object */
-static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, forcibly exit all threads */
+static std::atomic_bool     thread_exit;        /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
 static int transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);

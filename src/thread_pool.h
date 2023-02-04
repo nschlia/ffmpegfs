@@ -45,6 +45,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <unistd.h>
+#include <atomic>
 
 /**
  * @brief The thread_pool class.
@@ -117,10 +118,10 @@ protected:
     std::mutex                  m_queue_mutex;      /**< Mutex for critical section */
     std::condition_variable     m_queue_condition;  /**< Condition for critical section */
     std::queue<THREADINFO>      m_thread_queue;     /**< Thread queue parameters */
-    volatile bool               m_queue_shutdown;   /**< If true all threads have been shut down */
+    std::atomic_bool            m_queue_shutdown;   /**< If true all threads have been shut down */
     unsigned int                m_num_threads;      /**< Max. number of threads. Defaults to 4x number of CPU cores. */
     unsigned int                m_cur_threads;      /**< Current number of threads. */
-    volatile unsigned int       m_threads_running;  /**< Currently running threads. */
+    std::atomic_uint32_t        m_threads_running;  /**< Currently running threads. */
 };
 
 #endif // THREAD_POOL_H

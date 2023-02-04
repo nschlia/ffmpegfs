@@ -38,6 +38,8 @@
 
 #include "id3v1tag.h"
 
+#include <atomic>
+
 class Buffer;
 
 /**
@@ -261,20 +263,20 @@ protected:
     Cache *                 m_owner;                        /**< @brief Owner cache object */
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
 
-    volatile int            m_ref_count;                    /**< @brief Reference counter */
+    std::atomic_int         m_ref_count;                    /**< @brief Reference counter */
 
     LPVIRTUALFILE           m_virtualfile;                  /**< @brief Underlying virtual file object */
 
 public:
     Buffer *                m_buffer;                       /**< @brief Buffer object */
-    volatile bool           m_is_decoding;                  /**< @brief true while file is decoding */
+    std::atomic_bool        m_is_decoding;                  /**< @brief true while file is decoding */
     std::recursive_mutex    m_active_mutex;                 /**< @brief Mutex while thread is active */
 
     CACHE_INFO              m_cache_info;                   /**< @brief Info about cached object */
 
     ID3v1                   m_id3v1;                        /**< @brief ID3v1 structure which is used to send to clients */
 
-    volatile uint32_t       m_seek_to_no;                   /**< @brief If not 0, seeks to specified frame */
+    std::atomic_uint32_t    m_seek_to_no;                   /**< @brief If not 0, seeks to specified frame */
 };
 
 #endif // CACHE_ENTRY_H

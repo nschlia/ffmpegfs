@@ -168,8 +168,9 @@ bool Cache_Entry::openio(bool create_cache /*= true*/)
         return false;
     }
 
-    if (__sync_fetch_and_add(&m_ref_count, 1) > 0)
+    if (m_ref_count++ > 0)	// fetch_and_add
     {
+        // Already open
         return true;
     }
 
@@ -233,7 +234,7 @@ bool Cache_Entry::closeio(int flags)
         return true;
     }
 
-    if (__sync_sub_and_fetch(&m_ref_count, 1) > 0)
+    if (--m_ref_count > 0)	// sub_and_fetch
     {
         // Just flush to disk
         flush();
@@ -342,12 +343,12 @@ int Cache_Entry::ref_count() const
 
 int Cache_Entry::inc_refcount()
 {
-    return __sync_fetch_and_add(&m_ref_count, 1);
+    return m_ref_count++;	// fetch_and_add
 }
 
 int Cache_Entry::decr_refcount()
 {
-    return __sync_sub_and_fetch(&m_ref_count, 1);
+    return --m_ref_count;	// sub_and_fetch
 }
 
 bool Cache_Entry::outdated() const

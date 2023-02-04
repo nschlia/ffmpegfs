@@ -47,6 +47,7 @@
 #include <variant>
 #include <functional>
 #include <optional>
+#include <atomic>
 
 class Buffer;
 struct SwrContext;
@@ -1199,7 +1200,7 @@ private:
     time_t                      m_mtime;                        /**< @brief Modified time of input file */
     std::recursive_mutex        m_seek_to_fifo_mutex;           /**< @brief Access mutex for seek FIFO */
     std::queue<uint32_t>        m_seek_to_fifo;                 /**< @brief Stack of seek requests. Will be processed FIFO */
-    volatile uint32_t           m_last_seek_frame_no;           /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
+    std::atomic_uint32_t        m_last_seek_frame_no;           /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
     bool                        m_have_seeked;                  /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
     bool                        m_skip_next_frame;              /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                     /**< @brief true if input is a video file */

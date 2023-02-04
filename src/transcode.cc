@@ -863,19 +863,12 @@ static int transcoder_thread(void *arg)
 
         while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
-            int status = 0;
+            DECODER_STATUS status = DECODER_SUCCESS;
 
             if (cache_entry->ref_count() > 1)
             {
                 // Set last access time
                 cache_entry->update_access(false);
-            }
-
-            averror = transcoder.process_single_fr(status);
-            if (status < 0)
-            {
-                errno = EIO;
-                throw (static_cast<int>(errno));
             }
 
             if (transcoder.is_frameset())
@@ -907,11 +900,24 @@ static int transcoder_thread(void *arg)
                 }
             }
 
-            if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
+            averror = transcoder.process_single_fr(&status);
+
+            if (status == DECODER_ERROR)
             {
                 errno = EIO;
                 throw (static_cast<int>(errno));
             }
+            else if (status == DECODER_EOF)
+			{
+                averror = transcode_finish(cache_entry, transcoder);
+
+                if (averror < 0)
+                {
+                    errno = EIO;
+                    throw (static_cast<int>(errno));
+                }
+            }
+
 
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size && transcoder.pts() > static_cast<int64_t>(params.m_prebuffer_time) * AV_TIME_BASE)
             {

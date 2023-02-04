@@ -5198,11 +5198,11 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     return 0;
 }
 
-int FFmpeg_Transcoder::process_single_fr(int &status)
+int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
 {
     int finished = 0;
 
-    status = 0;
+    *status = DECODER_SUCCESS;
 
     try
     {
@@ -5214,7 +5214,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             ret = seek_frame();
             if (ret == AVERROR_EOF)
             {
-                status = 1; // Report EOF, but return no error
+                *status = DECODER_EOF;  // Report EOF, but return no error
                 throw 0;
             }
 
@@ -5249,7 +5249,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (finished)
             {
-                status = 1;
+                *status = DECODER_EOF;  // Report EOF
             }
         }
 
@@ -5409,12 +5409,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             flush_delayed_video();
             flush_delayed_subtitles();
 
-            status = 1;
+            *status = DECODER_EOF;  // Report EOF
         }
     }
     catch (int _ret)
     {
-        status = (_ret != AVERROR_EOF ? -1 : 1);   // If _ret == AVERROR_EOF, simply signal EOF
+        *status = (_ret != AVERROR_EOF ? DECODER_ERROR : DECODER_EOF);   // If _ret == AVERROR_EOF, simply signal EOF
         return _ret;
     }
 
@@ -5434,10 +5434,13 @@ int FFmpeg_Transcoder::seek_frame()
                 uint32_t frame_no = m_seek_to_fifo.front();
                 m_seek_to_fifo.pop();
 
+                Logging::error(virtname(), "XXX SEEK A: %1 FIFO: %2", frame_no, m_seek_to_fifo.size());
                 if (!m_buffer->have_frame(frame_no))
                 {
                     // Frame not yet decoded, so skip to it.
                     m_last_seek_frame_no = frame_no;
+
+                    Logging::error(virtname(), "XXX SEEK B: %1 FIFO: %2", (uint32_t)m_last_seek_frame_no, m_seek_to_fifo.size());
                     break;
                 }
             }

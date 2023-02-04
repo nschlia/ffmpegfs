@@ -58,6 +58,14 @@ struct AVAudioFifo;
 struct AVCodecContext;
 struct AVSubtitle;
 
+typedef enum DECODER_STATUS
+{
+    DECODER_ERROR = -1,                                         /**< @brief Decoder error, see return code */
+    DECODER_SUCCESS = 0,                                        /**< @brief Frame decoded successfully */
+    DECODER_EOF = 1                                             /**< @brief Read to end of file */
+} DECODER_STATUS, *LPDECODER_STATUS;                            /**< @brief Pointer version of DECODER_STATUS */
+typedef DECODER_STATUS const * LPCDECODER_STATUS;               /**< @brief Pointer to const version of DECODER_STATUS */
+
 /**
  * @brief The #FFmpeg_Transcoder class
  */
@@ -216,10 +224,10 @@ public:
      * Process a single frame of audio data. The encode_pcm_data() method
      * of the Encoder will be used to process the resulting audio data, with the
      * result going into the given Buffer.
-     * @param[out] status - On success, returns 0; if at EOF, returns 1; on error, returns -1
+     * @param[out] status - On success, returns DECODER_SUCCESS; if at EOF, returns DECODER_EOF; on error, returns DECODER_ERROR
      * @return On success, returns 0; on error, a negative AVERROR value. If EOF is reached, it returns 1.
      */
-    int                         process_single_fr(int & status);
+    int                         process_single_fr(DECODER_STATUS *status);
     /**
      * Encode any remaining PCM data to the given buffer. This should be called
      * after all input data has already been passed to encode_pcm_data().

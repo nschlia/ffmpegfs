@@ -45,8 +45,6 @@
 #include <unistd.h>
 #include <atomic>
 
-
-#define MS              *1000000L   /**< @brief 1 millisecond = 1,000,000 Nanoseconds */
 #define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is available */
 #define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is available */
 

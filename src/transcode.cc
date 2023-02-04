@@ -823,7 +823,7 @@ static int transcoder_thread(void *arg)
             cache_entry->m_cache_info.m_duration        = transcoder.duration();
         }
 
-        if (!cache->maintenance(transcoder.predicted_filesize()))
+        if (cache != nullptr && !cache->maintenance(transcoder.predicted_filesize()))
         {
             throw (static_cast<int>(errno));
         }
@@ -1033,7 +1033,10 @@ static int transcoder_thread(void *arg)
         }
     }
 
-    cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
+    if (cache != nullptr)
+    {
+        cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
+    }
 
     delete thread_data;
 

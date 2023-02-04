@@ -61,6 +61,7 @@ extern "C" {
 
 #include <unistd.h>
 #include <filesystem>
+#include <thread>
 
 #ifdef __cplusplus
 extern "C" {
@@ -5022,7 +5023,7 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     // Seek next undecoded frame
     for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
     {
-        sleep(0);
+        std::this_thread::yield();
     }
 
     if (next_frame_no > m_virtualfile->m_video_frame_count)

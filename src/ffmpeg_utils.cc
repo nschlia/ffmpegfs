@@ -60,6 +60,8 @@ extern "C" {
 #include <vector>
 #include <cstring>
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include <iconv.h>
 #ifdef HAVE_CONFIG_H
@@ -1268,9 +1270,9 @@ int show_caps(int device_only)
     int is_dev;
 
     std::printf("%s\n"
-        " D. = Demuxing supported\n"
-        " .E = Muxing supported\n"
-        " --\n", device_only ? "Devices:" : "File formats:");
+                " D. = Demuxing supported\n"
+                " .E = Muxing supported\n"
+                " --\n", device_only ? "Devices:" : "File formats:");
     last_name = "000";
     for (;;)
     {
@@ -2528,4 +2530,19 @@ void save_free(void **p)
     {
         free(tmp);
     }
+}
+
+void mssleep(int milliseconds)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
+
+void ussleep(int microseconds)
+{
+    std::this_thread::sleep_for(std::chrono::microseconds(microseconds));
+}
+
+void nssleep(int nanoseconds)
+{
+    std::this_thread::sleep_for(std::chrono::nanoseconds(nanoseconds));
 }

@@ -121,7 +121,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                     }
                     reported = true;
                 }
-                sleep(0);
+                mssleep(250);
             }
 
             if (reported)
@@ -664,8 +664,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         reported = true;
                     }
 
-                    const struct timespec ts = { 0, GRANULARITY MS };
-                    nanosleep(&ts, nullptr);
+                    mssleep(GRANULARITY);
                 }
             }
             else
@@ -940,8 +939,7 @@ static int transcoder_thread(void *arg)
 
                 while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
-                    const struct timespec ts = { 0, GRANULARITY MS };
-                    nanosleep(&ts, nullptr);
+                    mssleep(GRANULARITY);
                 }
 
                 if (timeout)

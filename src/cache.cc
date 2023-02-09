@@ -1049,7 +1049,7 @@ Cache_Entry *Cache::openio(LPVIRTUALFILE virtualfile)
 
 bool Cache::closeio(Cache_Entry **cache_entry, int flags /*= CACHE_CLOSE_NOOPT*/)
 {
-    if ((*cache_entry) == nullptr)
+    if (*cache_entry == nullptr)
     {
         return true;
     }

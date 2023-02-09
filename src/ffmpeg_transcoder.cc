@@ -5423,13 +5423,10 @@ int FFmpeg_Transcoder::seek_frame()
                 uint32_t frame_no = m_seek_to_fifo.front();
                 m_seek_to_fifo.pop();
 
-                Logging::error(virtname(), "XXX SEEK A: %1 FIFO: %2", frame_no, m_seek_to_fifo.size());
                 if (!m_buffer->have_frame(frame_no))
                 {
                     // Frame not yet decoded, so skip to it.
                     m_last_seek_frame_no = frame_no;
-
-                    Logging::error(virtname(), "XXX SEEK B: %1 FIFO: %2", (uint32_t)m_last_seek_frame_no, m_seek_to_fifo.size());
                     break;
                 }
             }

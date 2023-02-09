@@ -758,7 +758,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file); // TEST
+                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file);
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
                             if (virtualfile2 == nullptr)

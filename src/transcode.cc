@@ -472,11 +472,11 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     if (!segment_no)
     {
-        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2.", len, offset);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3.", len, offset, len + offset);
     }
     else
     {
-        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for segment no. %3.", len, offset, segment_no);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3 for segment no. %4.", len, offset, len + offset, segment_no);
     }
 
     // Store access time
@@ -601,7 +601,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 {
     bool success = false;
 
-    Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for frame no. %3.", len, offset, frame_no);
+    Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3 for frame no. %4.", len, offset, len + offset, frame_no);
 
     // Store access time
     cache_entry->update_access();
@@ -1019,9 +1019,13 @@ static int transcoder_thread(void *arg)
             {
                 Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
             }
-            else
+            else if (thread_exit)
             {
                 Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
+            }
+            else
+            {
+                Logging::info(cache_entry->virtname(), "Transcoding aborted.");
             }
         }
         else

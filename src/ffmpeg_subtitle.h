@@ -34,6 +34,8 @@
 
 #pragma once
 
+#include "ffmpeg_utils.h"
+
 #include <memory>
 
 struct AVSubtitle;

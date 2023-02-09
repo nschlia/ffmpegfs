@@ -47,6 +47,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavformat/avio.h>
 #include <libavutil/file.h>
+#include <libswresample/swresample.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
@@ -62,19 +63,6 @@ extern "C" {
 #include <unistd.h>
 #include <filesystem>
 #include <thread>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-// Disable annoying warnings outside our code
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#include <libswresample/swresample.h>
-#pragma GCC diagnostic pop
-#ifdef __cplusplus
-}
-#endif
 
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 

@@ -42,7 +42,6 @@ extern "C" {
 }
 #endif
 
-#include "ffmpeg_utils.h"
 #include "ffmpeg_subtitle.h"
 
 FFmpeg_Subtitle::FFmpeg_Subtitle(int stream_index) :

@@ -1221,6 +1221,12 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     if (!free_bytes && errno)
     {
+        if (errno == ENOENT)
+        {
+            // Cache path does not exist. Strange problem, but not error. Ignore silently.
+            return true;
+        }
+
         Logging::error(cachepath, "prune_disk_space() cannot determine free disk space: (%1) %2", errno, strerror(errno));
         return false;
     }

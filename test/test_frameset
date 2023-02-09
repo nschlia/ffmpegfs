@@ -4,6 +4,19 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+check_filesize_frameset() {
+	if [ "${FILEEXT}" == "png" ];
+	then
+		check_filesize "${1}" 38625 139606 "${TMPPATH}"
+	elif [ "${FILEEXT}" == "jpg" ];
+	then
+		check_filesize "${1}" 26287 70678 "${TMPPATH}"
+	elif [ "${FILEEXT}" == "bmp" ];
+	then
+		check_filesize "${1}" 7372854 7372854 "${TMPPATH}"
+	fi
+}
+
 # Should be 250 files for 250 frames in source
 FILES=250
 
@@ -17,6 +30,7 @@ do
 	FILE="${DIRNAME}"/frame_test_pal.mp4/${i}.${FILEEXT}
         cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
         #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+	check_filesize_frameset "${i}"
 done
 
 echo "Checking access with regular expression"
@@ -28,6 +42,7 @@ do
 		FILENAME="${FILE##*/}"
                 cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
                 #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+		check_filesize_frameset "${FILENAME%.*}"
 	done 2>/dev/null
 done
 echo "Access OK"

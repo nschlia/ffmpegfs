@@ -15,6 +15,7 @@ Important changes in 2.14 (2023-02-XX):
   building frame sets. Otherwise, output images may vary if searched for or
   continuously decoded.
 * Enhancement: Record milliseconds for every log event.
+* Enhancement: make check: Added file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size
   remained at 0. The original size now is once more reserved in order to
   prevent reallocations.

@@ -364,7 +364,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     }
     else
     {
-        Logging::error(filename, "Mapping cache file. Size %1", defaultsize);
+        Logging::trace(filename, "Mapping cache file with %1.", format_size(defaultsize).c_str());
     }
 
     try

@@ -6,12 +6,12 @@ ADDOPT=""
 
 XDIRNAME="${DIRNAME}"/snowboard.mp4
 
-#cp "${XDIRNAME}"/*.ts /dev/null
+#cp -vpf "${XDIRNAME}"/*.ts "${TMPPATH}"
 
 for FILE in "${XDIRNAME}"/*.ts
 do
-   cp -v $FILE /dev/null
-   cp -v $FILE /dev/null
+   cp -vpf $FILE "${TMPPATH}" > /dev/null
+   cp -vpf $FILE "${TMPPATH}" > /dev/null
 done 2>/dev/null
 
 echo "File sizes"

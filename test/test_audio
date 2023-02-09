@@ -14,7 +14,8 @@ check_audio() {
     SRCFILE="$1.$2"
     EXPECTED="$3"
 
-    cp -v "${DIRNAME}/${TGTFILE}" /dev/null > /dev/null
+    cp -vpf "${DIRNAME}/${TGTFILE}" "${TMPPATH}" > /dev/null
+    #cp -vpf "${DIRNAME}/${TGTFILE}" "${TMPPATH}" > /dev/null
 
     RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "${DIRNAME}/${TGTFILE}")"
 

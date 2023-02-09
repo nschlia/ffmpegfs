@@ -6,11 +6,12 @@ ADDOPT=""
 
 # Ensure log contains file sizes, predicted and actual
 echo "Transcoding ${DIRNAME}/raven_e.flac.${FILEEXT}"
-cp -v "${DIRNAME}/raven_e.flac.${FILEEXT}" /dev/null
-cp -v "${DIRNAME}/raven_e.flac.${FILEEXT}" /dev/null
+cp -vpf "${DIRNAME}/raven_e.flac.${FILEEXT}" "${TMPPATH}" > /dev/null
+cp -vpf "${DIRNAME}/raven_e.flac.${FILEEXT}" "${TMPPATH}" > /dev/null
+
 echo "Transcoding ${DIRNAME}/raven_d.ogg.${FILEEXT}"
-cp -v "${DIRNAME}/raven_d.ogg.${FILEEXT}" /dev/null
-cp -v "${DIRNAME}/raven_d.ogg.${FILEEXT}" /dev/null
+cp -vpf "${DIRNAME}/raven_d.ogg.${FILEEXT}" "${TMPPATH}" > /dev/null
+cp -vpf "${DIRNAME}/raven_d.ogg.${FILEEXT}" "${TMPPATH}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then

@@ -18,6 +18,7 @@ cleanup () {
     # Remove temporary directories
     rmdir "${DIRNAME}"
     rm -Rf "${CACHEPATH}"
+	rm -Rf "${TMPPATH}"
     # Arrividerci
     exit ${EXIT}
 }
@@ -100,6 +101,7 @@ fi
 SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
 DIRNAME="$(mktemp -d)"
 CACHEPATH="$(mktemp -d)"
+TMPPATH="$(mktemp -d)"
 
 #--disable_cache
 ( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=${0##*/}${EXTRANAME}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null || kill -USR1 $$ ) &

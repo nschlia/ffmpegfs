@@ -24,6 +24,7 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for second process.
 - **Bugfix:** Avoid crash during shutdown if cache object had already been closed.
+- **Bugfix:** The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
 - **Enhancement:** Record milliseconds for every log event.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations. 
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.

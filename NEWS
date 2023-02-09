@@ -11,6 +11,9 @@ Important changes in 2.14 (2023-02-XX):
 * Bugfix: Avoid race condition causing the inter-process semaphore creation
   to fail for second process.
 * Bugfix: Avoid crash during shutdown if cache object had already been closed.
+* Bugfix: The AVSEEK_FLAG_FRAME set should be used to seek to frames when
+  building frame sets. Otherwise, output images may vary if searched for or
+  continuously decoded.
 * Enhancement: Record milliseconds for every log event.
 * Optimisation: When reopening after invalidating the cache, the size
   remained at 0. The original size now is once more reserved in order to

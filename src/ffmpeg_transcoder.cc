@@ -5001,7 +5001,7 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
         pts += m_in.m_video.m_stream->start_time;
     }
 
-    return av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+    return av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD|AVSEEK_FLAG_FRAME);
 }
 
 int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)

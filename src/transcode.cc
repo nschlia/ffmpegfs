@@ -920,6 +920,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             {
                 unlocked = true;
                 Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
+
                 thread_data->m_thread_running_lock_guard = true;
                 thread_data->m_thread_running_cond.notify_all();       // signal that we are running
             }

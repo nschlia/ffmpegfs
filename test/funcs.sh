@@ -51,21 +51,27 @@ check_filesize() {
     else
 	SIZE=$(stat -c %s "${4}/${FILE}")
     fi
-    echo "File: ${FILE}"
-    if [ ${MIN} -eq ${MAX} ]
-    then
-        echo "Size: ${SIZE} (expected ${MIN})"
-    else
-        echo "Size: ${SIZE} (expected ${MIN}...${MAX})"
-    fi
 
     if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]
     then
-        echo "Pass"
+        RESULT="Pass"
+		RETURN=0
     else
-        echo "FAIL!"
-        exit 1
+        RESULT="FAIL"
+        RETURN=1
     fi
+
+    if [ ${MIN} -eq ${MAX} ]
+    then
+        printf "%s -> File: %-20s Size: %8i (expected %8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN}
+    else
+        printf "%s -> File: %-20s Size: %8i (expected %8i...%8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN} ${MAX}
+    fi
+
+	if [ ${RETURN} != 0 ];
+	then
+		exit ${RETURN}
+	fi
 }
 
 set -e
